@@ -1,3 +1,4 @@
+@using System.Linq
 @model List<Risebird.Entities.Data.OpenAIApiLog>
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -36,8 +37,8 @@
         <div class="col-md-3">
             <div class="card text-white bg-info">
                 <div class="card-body">
-                    <h5 class="card-title">Success Rate</h5>
-                    <h3 class="card-text">@(Model.Any() ? ((Model.Count(x => x.IsSuccess) * 100.0 / Model.Count).ToString("N1")) : "0")%</h3>
+                    <h5 class="card-title">Successful</h5>
+                    <h3 class="card-text">@ViewBag.SuccessCount</h3>
                 </div>
             </div>
         </div>
@@ -45,7 +46,7 @@
             <div class="card text-white bg-warning">
                 <div class="card-body">
                     <h5 class="card-title">Failed Calls</h5>
-                    <h3 class="card-text">@Model.Count(x => !x.IsSuccess)</h3>
+                    <h3 class="card-text">@ViewBag.FailedCount</h3>
                 </div>
             </div>
         </div>
@@ -54,7 +55,7 @@
     <!-- Date Range Filter -->
     <div class="row mb-3">
         <div class="col-md-12">
-            <form method="get" class="form-inline">
+            <form method="get" class="form-inline" id="filterForm">
                 <div class="form-group mr-3">
                     <label for="startDate" class="mr-2">Start Date:</label>
                     <input type="date" id="startDate" name="startDate" class="form-control" value="@ViewBag.StartDate" />
@@ -63,9 +64,20 @@
                     <label for="endDate" class="mr-2">End Date:</label>
                     <input type="date" id="endDate" name="endDate" class="form-control" value="@ViewBag.EndDate" />
                 </div>
+                <div class="form-group mr-3">
+                    <label for="pageSize" class="mr-2">Show:</label>
+                    <select id="pageSize" name="pageSize" class="form-control" style="width: 100px;">
+                        <option value="25" selected="@(ViewBag.PageSize == 25)">25</option>
+                        <option value="50" selected="@(ViewBag.PageSize == 50)">50</option>
+                        <option value="100" selected="@(ViewBag.PageSize == 100)">100</option>
+                        <option value="200" selected="@(ViewBag.PageSize == 200)">200</option>
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary">Filter</button>
+                <a asp-action="Index" class="btn btn-secondary ml-2">Reset</a>
                 <a asp-action="Summary" asp-route-startDate="@ViewBag.StartDate" asp-route-endDate="@ViewBag.EndDate" class="btn btn-info ml-2">View Summary</a>
                 <a asp-action="Failed" asp-route-startDate="@ViewBag.StartDate" asp-route-endDate="@ViewBag.EndDate" class="btn btn-danger ml-2">View Failed</a>
+                <a asp-action="AssistantRanking" class="btn btn-success ml-2">Assistant Costs</a>
             </form>
         </div>
     </div>
@@ -75,7 +87,12 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4>API Call Logs (@Model.Count records)</h4>
+                    <h4>
+                        API Call Logs 
+                        <small class="text-muted">
+                            (Showing @Model.Count of @ViewBag.TotalCount records - Page @ViewBag.PageNumber of @ViewBag.TotalPages)
+                        </small>
+                    </h4>
                 </div>
                 <div class="card-body">
                     @if (Model.Any())
@@ -150,6 +167,67 @@
                     {
                         <p class="text-center">No logs found for the selected date range.</p>
                     }
+
+                    @* Pagination Controls *@
+                    @if (ViewBag.TotalPages > 1)
+                    {
+                        <nav aria-label="Page navigation" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                @* First Page *@
+                                <li class="page-item @(!ViewBag.HasPreviousPage ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = 1, pageSize = ViewBag.PageSize })">
+                                        &laquo; First
+                                    </a>
+                                </li>
+
+                                @* Previous Page *@
+                                <li class="page-item @(!ViewBag.HasPreviousPage ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = ViewBag.PageNumber - 1, pageSize = ViewBag.PageSize })">
+                                        &lsaquo; Previous
+                                    </a>
+                                </li>
+
+                                @* Page Numbers *@
+                                @{
+                                    int currentPage = ViewBag.PageNumber;
+                                    int totalPages = ViewBag.TotalPages;
+                                    int startPage = Math.Max(1, currentPage - 2);
+                                    int endPage = Math.Min(totalPages, currentPage + 2);
+                                }
+
+                                @for (int i = startPage; i <= endPage; i++)
+                                {
+                                    <li class="page-item @(i == currentPage ? "active" : "")">
+                                        <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = i, pageSize = ViewBag.PageSize })">
+                                            @i
+                                        </a>
+                                    </li>
+                                }
+
+                                @* Next Page *@
+                                <li class="page-item @(!ViewBag.HasNextPage ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = ViewBag.PageNumber + 1, pageSize = ViewBag.PageSize })">
+                                        Next &rsaquo;
+                                    </a>
+                                </li>
+
+                                @* Last Page *@
+                                <li class="page-item @(!ViewBag.HasNextPage ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = ViewBag.TotalPages, pageSize = ViewBag.PageSize })">
+                                        Last &raquo;
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <div class="text-center text-muted">
+                            <small>
+                                Go to page: 
+                                <input type="number" id="gotoPage" min="1" max="@ViewBag.TotalPages" value="@ViewBag.PageNumber" style="width: 70px;" class="form-control d-inline-block" />
+                                <button onclick="goToPage()" class="btn btn-sm btn-primary">Go</button>
+                            </small>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -158,9 +236,33 @@
     </div>
 </div>
 
+<script>
+    function goToPage() {
+        var pageNum = document.getElementById('gotoPage').value;
+        var url = '@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageSize = ViewBag.PageSize })' + '&pageNumber=' + pageNum;
+        window.location.href = url;
+    }
+
+    // Auto-submit on page size change
+    document.getElementById('pageSize').addEventListener('change', function() {
+        document.getElementById('filterForm').submit();
+    });
+</script>
+
 <style>
     .table-responsive {
-        max-height: 600px;
-        overflow-y: auto;
+        max-height: none; /* Remove max-height since we're paginating */
+    }
+    .pagination .page-link {
+        color: #007bff;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        cursor: not-allowed;
     }
 </style>

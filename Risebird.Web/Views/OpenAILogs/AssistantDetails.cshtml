@@ -1,0 +1,332 @@
+@using System.Linq
+@model Risebird.Entities.Data.AssistantCostDetails
+@{
+    ViewData["Title"] = "Assistant Cost Details";
+    ViewBag.PageHeader = "Assistant Cost Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-panel" id="main-panel">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Assistant Cost Details</h2>
+                    <p class="text-muted">
+                        <code>@ViewBag.AssistantId</code>
+                    </p>
+                    <hr />
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-success">$@Model.Summary.TotalCostUSD.ToString("N4")</h3>
+                            <p class="text-muted mb-0">Total Cost</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-info">@Model.Summary.CompletedRuns.ToString("N0")</h3>
+                            <p class="text-muted mb-0">Completed Runs</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-primary">@Model.Summary.TotalCalls.ToString("N0")</h3>
+                            <p class="text-muted mb-0">Total API Calls</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-warning">@Model.Summary.TotalTokens.ToString("N0")</h3>
+                            <p class="text-muted mb-0">Total Tokens</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Performance Metrics</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <p><strong>Success Rate:</strong></p>
+                                    <p class="text-success">
+                                        @((Model.Summary.TotalCalls > 0 ? (Model.Summary.SuccessfulCalls * 100.0 / Model.Summary.TotalCalls) : 0).ToString("N2"))%
+                                        (@Model.Summary.SuccessfulCalls / @Model.Summary.TotalCalls calls)
+                                    </p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p><strong>Avg Cost per Run:</strong></p>
+                                    <p class="text-info">$@(Model.Summary.AvgCostPerRun?.ToString("N4") ?? "0.0000")</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p><strong>Avg Response Time:</strong></p>
+                                    <p>@(Model.Summary.AvgResponseTimeMs?.ToString("N0") ?? "N/A") ms</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p><strong>Days Active:</strong></p>
+                                    <p>@(Model.Summary.DaysActive ?? 0) days</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost by Operation Type -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Cost by Operation Type</h4>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.CostByOperation.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Operation</th>
+                                                <th class="text-right">Runs</th>
+                                                <th class="text-right">Tokens</th>
+                                                <th class="text-right">Cost</th>
+                                                <th class="text-right">Avg</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var op in Model.CostByOperation.OrderByDescending(o => o.TotalCost))
+                                            {
+                                                <tr>
+                                                    <td><span class="badge badge-info">@op.OperationType</span></td>
+                                                    <td class="text-right">@op.CompletedRuns</td>
+                                                    <td class="text-right">@op.TotalTokens.ToString("N0")</td>
+                                                    <td class="text-right text-success"><strong>$@op.TotalCost.ToString("N4")</strong></td>
+                                                    <td class="text-right">$@op.AvgCost.ToString("N4")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="font-weight-bold">
+                                                <td>TOTAL</td>
+                                                <td class="text-right">@Model.CostByOperation.Sum(o => o.CompletedRuns)</td>
+                                                <td class="text-right">@Model.CostByOperation.Sum(o => o.TotalTokens).ToString("N0")</td>
+                                                <td class="text-right text-success">$@Model.CostByOperation.Sum(o => o.TotalCost).ToString("N4")</td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No operation data available.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cost by Model -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Cost by Model</h4>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.CostByModel.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Model</th>
+                                                <th class="text-right">Calls</th>
+                                                <th class="text-right">Tokens</th>
+                                                <th class="text-right">Cost</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var mdl in Model.CostByModel.OrderByDescending(m => m.TotalCost))
+                                            {
+                                                <tr>
+                                                    <td><code>@mdl.Model</code></td>
+                                                    <td class="text-right">@mdl.TotalCalls</td>
+                                                    <td class="text-right">@mdl.TotalTokens.ToString("N0")</td>
+                                                    <td class="text-right text-success"><strong>$@mdl.TotalCost.ToString("N4")</strong></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="font-weight-bold">
+                                                <td>TOTAL</td>
+                                                <td class="text-right">@Model.CostByModel.Sum(m => m.TotalCalls)</td>
+                                                <td class="text-right">@Model.CostByModel.Sum(m => m.TotalTokens).ToString("N0")</td>
+                                                <td class="text-right text-success">$@Model.CostByModel.Sum(m => m.TotalCost).ToString("N4")</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No model data available.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Cost Trend -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Daily Cost Trend</h4>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.DailyCosts.Any())
+                            {
+                                <canvas id="dailyCostChart" height="80"></canvas>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No daily cost data available.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Token Usage Breakdown -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Token Usage Breakdown</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="text-center p-3 border rounded">
+                                        <h5>Prompt Tokens</h5>
+                                        <h3 class="text-primary">@Model.Summary.TotalPromptTokens.ToString("N0")</h3>
+                                        <p class="text-muted mb-0">
+                                            @((Model.Summary.TotalTokens > 0 ? (Model.Summary.TotalPromptTokens * 100.0 / Model.Summary.TotalTokens) : 0).ToString("N1"))%
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center p-3 border rounded">
+                                        <h5>Completion Tokens</h5>
+                                        <h3 class="text-success">@Model.Summary.TotalCompletionTokens.ToString("N0")</h3>
+                                        <p class="text-muted mb-0">
+                                            @((Model.Summary.TotalTokens > 0 ? (Model.Summary.TotalCompletionTokens * 100.0 / Model.Summary.TotalTokens) : 0).ToString("N1"))%
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center p-3 border rounded">
+                                        <h5>Total Tokens</h5>
+                                        <h3 class="text-info">@Model.Summary.TotalTokens.ToString("N0")</h3>
+                                        <p class="text-muted mb-0">100%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="row">
+                <div class="col-md-12">
+                    <a asp-action="AssistantRanking" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Ranking
+                    </a>
+                    <a asp-action="Index" asp-route-assistantId="@ViewBag.AssistantId" class="btn btn-primary">
+                        <i class="fas fa-list"></i> View All Logs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Daily Cost Trend Chart
+        @if (Model.DailyCosts.Any())
+        {
+            <text>
+            const ctx = document.getElementById('dailyCostChart').getContext('2d');
+            const dailyCostChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", Model.DailyCosts.OrderBy(d => d.Date).Select(d => $"'{d.Date:MM/dd}'")))],
+                    datasets: [{
+                        label: 'Daily Cost ($)',
+                        data: [@Html.Raw(string.Join(",", Model.DailyCosts.OrderBy(d => d.Date).Select(d => d.Cost)))],
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1
+                    }, {
+                        label: 'Daily Runs',
+                        data: [@Html.Raw(string.Join(",", Model.DailyCosts.OrderBy(d => d.Date).Select(d => d.Runs)))],
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.1,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Cost ($)'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Runs'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+            </text>
+        }
+    </script>
+}

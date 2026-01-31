@@ -99,6 +99,35 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<(List<OpenAIApiLog> logs, int totalCount)> GetLogsByDateRangePagedAsync(DateTime startDate, DateTime endDate, int pageNumber, int pageSize)
+        {
+            try
+            {
+                using var conn = new SqlConnection(connectionString);
+                
+                // Get total count
+                var countSql = "SELECT COUNT(*) FROM OpenAIApiLogs WHERE LogDate >= @StartDate AND LogDate <= @EndDate";
+                var totalCount = await conn.ExecuteScalarAsync<int>(countSql, new { StartDate = startDate, EndDate = endDate });
+                
+                // Get paged data
+                var sql = @"
+                    SELECT * FROM OpenAIApiLogs 
+                    WHERE LogDate >= @StartDate AND LogDate <= @EndDate 
+                    ORDER BY LogDate DESC
+                    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+                
+                var offset = (pageNumber - 1) * pageSize;
+                var result = await conn.QueryAsync<OpenAIApiLog>(sql, new { StartDate = startDate, EndDate = endDate, Offset = offset, PageSize = pageSize });
+                
+                return (result?.ToList() ?? new List<OpenAIApiLog>(), totalCount);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (new List<OpenAIApiLog>(), 0);
+            }
+        }
+
         public async Task<List<OpenAIApiLog>> GetLogsByOperationTypeAsync(string operationType, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
@@ -319,6 +348,70 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return new List<OpenAIApiLog>();
+            }
+        }
+
+        public async Task RefreshAssistantCostSummaryAsync()
+        {
+            try
+            {
+                using var conn = new SqlConnection(connectionString);
+                await conn.ExecuteAsync("usp_RefreshAssistantCostSummary", commandType: System.Data.CommandType.StoredProcedure, commandTimeout: 120);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        public async Task<List<OpenAIAssistantCostSummary>> GetAssistantCostRankingAsync(int? topN = null, decimal? minCost = null, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                using var conn = new SqlConnection(connectionString);
+                var result = await conn.QueryAsync<OpenAIAssistantCostSummary>(
+                    "usp_GetAssistantCostRanking",
+                    new { TopN = topN, MinCost = minCost, StartDate = startDate, EndDate = endDate },
+                    commandType: System.Data.CommandType.StoredProcedure
+                );
+                return result?.ToList() ?? new List<OpenAIAssistantCostSummary>();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<OpenAIAssistantCostSummary>();
+            }
+        }
+
+        public async Task<AssistantCostDetails> GetAssistantCostDetailsAsync(string assistantId, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                using var conn = new SqlConnection(connectionString);
+                
+                using var multi = await conn.QueryMultipleAsync(
+                    "usp_GetAssistantCostDetails",
+                    new { AssistantId = assistantId, StartDate = startDate, EndDate = endDate },
+                    commandType: System.Data.CommandType.StoredProcedure
+                );
+                
+                var summary = await multi.ReadFirstOrDefaultAsync<OpenAIAssistantCostSummary>();
+                var costByOperation = (await multi.ReadAsync<AssistantCostByOperation>()).ToList();
+                var costByModel = (await multi.ReadAsync<AssistantCostByModel>()).ToList();
+                var dailyCosts = (await multi.ReadAsync<AssistantDailyCost>()).ToList();
+                
+                return new AssistantCostDetails
+                {
+                    Summary = summary,
+                    CostByOperation = costByOperation,
+                    CostByModel = costByModel,
+                    DailyCosts = dailyCosts
+                };
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }
