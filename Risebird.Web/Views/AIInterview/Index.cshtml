@@ -227,7 +227,7 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
-        z-index: 10000;
+        z-index: 500;
         align-items: center;
         justify-content: center;
         animation: fadeInPopup 0.3s ease;
@@ -580,7 +580,7 @@
         font-size: 0.85rem;
         color: #856404;
         display: none;
-        z-index: 1000;
+        z-index: 100;
         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         animation: slideDown 0.3s ease;
         max-width: 100%;
@@ -987,7 +987,7 @@
         justify-content: center;
         gap: 32px;
         margin-top: 15px;
-        z-index: 10000;
+        z-index: 10;
     }
 
     .rb-footer-btn {
@@ -1027,7 +1027,7 @@
             white-space: nowrap;
             visibility: hidden;
             transition: all 0.3s ease;
-            z-index: 1000;
+            z-index: 100;
             margin-bottom: 8px;
             border: 0px !important;
             box-shadow: none !important;
@@ -1106,7 +1106,7 @@
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
-            z-index: 1000;
+            z-index: 100;
             margin-bottom: 8px;
         }
 
@@ -1658,13 +1658,13 @@
         </div>
     </div>
     <div id="waitOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); z-index: 100000; color: white; font-size: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.6); z-index: 2000; color: white; font-size: 1.5rem;
     align-items: center; justify-content: center;">
         <div>Please wait while the assistant prepares the next question...May take upto a minute!</div>
     </div>
     <!-- Recording Indicator Overlay -->
     <div id="recordingOverlay" style="display: none; position: fixed; top: 0; left: 0px; width: 100%; height: 100%;
-    background-color: rgba(255, 81, 107, 0.1); z-index: 999; align-items: center; justify-content: center; pointer-events: none;">
+    background-color: rgba(255, 81, 107, 0.1); z-index: 500; align-items: center; justify-content: center; pointer-events: none;">
         <div class="shift-Chat" style="background: rgba(255, 81, 107, 0.95); color: white; padding: 20px 40px; border-radius: 16px;margin-left:200px;
         text-align: center; box-shadow: 0 8px 32px rgba(255, 81, 107, 0.3); animation: recordingPulse 2s infinite; ">
             <div style="font-size:2rem;">
@@ -2373,7 +2373,7 @@
 <style>
     .custom-modal {
         position: fixed;
-        z-index: 1000000;
+        z-index: 2000;
         left: 0;
         top: 0;
         width: 100%;
