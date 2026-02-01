@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Repository.Interface;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
@@ -14,17 +15,38 @@ namespace Risebird.Web.Controllers
             _openAIApiLogRepository = openAIApiLogRepository;
         }
 
-        public async Task<IActionResult> Index(DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<IActionResult> Index(DateTime? startDate = null, DateTime? endDate = null, int pageNumber = 1, int pageSize = 50)
         {
-            var start = startDate ?? DateTime.UtcNow.AddDays(-30);
+            // Reduced default range from 30 days to 7 days for better performance
+            var start = startDate ?? DateTime.UtcNow.AddDays(-7);
             var end = endDate ?? DateTime.UtcNow;
+
+            // Validate page size (min 10, max 200)
+            pageSize = Math.Max(10, Math.Min(200, pageSize));
+            pageNumber = Math.Max(1, pageNumber);
 
             ViewBag.StartDate = start.ToString("yyyy-MM-dd");
             ViewBag.EndDate = end.ToString("yyyy-MM-dd");
+            ViewBag.PageNumber = pageNumber;
+            ViewBag.PageSize = pageSize;
+
+            // Get summary data
             ViewBag.TotalCost = await _openAIApiLogRepository.GetTotalCostAsync(start, end);
             ViewBag.TotalCalls = await _openAIApiLogRepository.GetTotalCallsAsync(start, end);
 
-            var logs = await _openAIApiLogRepository.GetLogsByDateRangeAsync(start, end);
+            // Get paged logs
+            var (logs, totalCount) = await _openAIApiLogRepository.GetLogsByDateRangePagedAsync(start, end, pageNumber, pageSize);
+            
+            // Calculate pagination data
+            ViewBag.TotalCount = totalCount;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            ViewBag.HasPreviousPage = pageNumber > 1;
+            ViewBag.HasNextPage = pageNumber < ViewBag.TotalPages;
+            
+            // Success and failed counts from server
+            ViewBag.SuccessCount = logs.Count(x => x.IsSuccess);
+            ViewBag.FailedCount = logs.Count(x => !x.IsSuccess);
+
             return View(logs);
         }
 
@@ -135,6 +157,55 @@ namespace Risebird.Web.Controllers
                 operationTypeSummary,
                 modelSummary
             });
+        }
+
+        // Assistant Cost Tracking Actions
+        public async Task<IActionResult> AssistantRanking(int? topN = null, decimal? minCost = null, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            ViewBag.TopN = topN;
+            ViewBag.MinCost = minCost;
+            ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
+            ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
+
+            var ranking = await _openAIApiLogRepository.GetAssistantCostRankingAsync(topN, minCost, startDate, endDate);
+            return View(ranking);
+        }
+
+        public async Task<IActionResult> AssistantDetails(string assistantId, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            if (string.IsNullOrEmpty(assistantId))
+            {
+                return RedirectToAction(nameof(AssistantRanking));
+            }
+
+            ViewBag.AssistantId = assistantId;
+            ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
+            ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
+
+            var details = await _openAIApiLogRepository.GetAssistantCostDetailsAsync(assistantId, startDate, endDate);
+            
+            if (details == null)
+            {
+                return NotFound();
+            }
+
+            return View(details);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RefreshAssistantSummary()
+        {
+            try
+            {
+                await _openAIApiLogRepository.RefreshAssistantCostSummaryAsync();
+                TempData["SuccessMessage"] = "Assistant cost summary refreshed successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error refreshing summary: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(AssistantRanking));
         }
     }
 }

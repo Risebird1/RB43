@@ -1,0 +1,266 @@
+@using System.Linq
+@model List<Risebird.Entities.Data.OpenAIAssistantCostSummary>
+@{
+    ViewData["Title"] = "OpenAI Assistant Cost Ranking";
+    ViewBag.PageHeader = "OpenAI Assistant Cost Ranking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-panel" id="main-panel">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>OpenAI Assistant Cost Ranking</h2>
+                    <p class="text-muted">Track costs by individual assistants to identify expensive operations</p>
+                    <hr />
+                </div>
+            </div>
+
+            <!-- Filter Form -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form asp-action="AssistantRanking" method="get" class="form-inline">
+                                <div class="form-group mr-3">
+                                    <label for="topN" class="mr-2">Show Top:</label>
+                                    <input type="number" id="topN" name="topN" class="form-control" value="@ViewBag.TopN" placeholder="All" min="1" style="width: 100px;">
+                                </div>
+                                <div class="form-group mr-3">
+                                    <label for="minCost" class="mr-2">Min Cost ($):</label>
+                                    <input type="number" id="minCost" name="minCost" class="form-control" value="@ViewBag.MinCost" placeholder="0.00" step="0.01" min="0" style="width: 120px;">
+                                </div>
+                                <div class="form-group mr-3">
+                                    <label for="startDate" class="mr-2">From:</label>
+                                    <input type="date" id="startDate" name="startDate" class="form-control" value="@ViewBag.StartDate">
+                                </div>
+                                <div class="form-group mr-3">
+                                    <label for="endDate" class="mr-2">To:</label>
+                                    <input type="date" id="endDate" name="endDate" class="form-control" value="@ViewBag.EndDate">
+                                </div>
+                                <button type="submit" class="btn btn-primary mr-2">Filter</button>
+                                <a asp-action="AssistantRanking" class="btn btn-secondary">Clear</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-primary">@Model.Count</h3>
+                            <p class="text-muted mb-0">Total Assistants</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-success">$@Model.Sum(m => m.TotalCostUSD).ToString("N2")</h3>
+                            <p class="text-muted mb-0">Total Cost</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-info">@Model.Sum(m => m.CompletedRuns).ToString("N0")</h3>
+                            <p class="text-muted mb-0">Total Runs</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-warning">@Model.Sum(m => m.TotalTokens).ToString("N0")</h3>
+                            <p class="text-muted mb-0">Total Tokens</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Refresh Button -->
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <form asp-action="RefreshAssistantSummary" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-sync-alt"></i> Refresh Summary Data
+                        </button>
+                    </form>
+                    <span class="text-muted ml-3">
+                        <small>Last updated: @(Model.Any() ? Model.Max(m => m.LastUpdated).ToString("g") : "Never")</small>
+                    </span>
+                </div>
+            </div>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+            }
+
+            <!-- Assistant Ranking Table -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            @if (Model.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Rank</th>
+                                                <th>Assistant ID</th>
+                                                <th>Primary Purpose</th>
+                                                <th>Model</th>
+                                                <th class="text-right">Total Cost</th>
+                                                <th class="text-right">Runs</th>
+                                                <th class="text-right">Calls</th>
+                                                <th class="text-right">Tokens</th>
+                                                <th class="text-right">Avg Cost/Run</th>
+                                                <th class="text-right">Success Rate</th>
+                                                <th>Active Period</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{ var rank = 1; }
+                                            @foreach (var assistant in Model)
+                                            {
+                                                var successRate = assistant.TotalCalls > 0 
+                                                    ? (assistant.SuccessfulCalls * 100.0 / assistant.TotalCalls) 
+                                                    : 0;
+                                                
+                                                <tr>
+                                                    <td>
+                                                        @if (rank <= 3)
+                                                        {
+                                                            <span class="badge badge-warning">🏆 @rank</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@rank</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (!string.IsNullOrEmpty(assistant.AssistantId))
+                                                        {
+                                                            <code style="font-size: 0.9em;">@assistant.AssistantId.Substring(0, Math.Min(20, assistant.AssistantId.Length))...</code>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">N/A</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-info">@(assistant.PrimaryOperationType ?? "Unknown")</span>
+                                                    </td>
+                                                    <td>@(assistant.Model ?? "N/A")</td>
+                                                    <td class="text-right">
+                                                        <strong class="text-success">$@assistant.TotalCostUSD.ToString("N4")</strong>
+                                                    </td>
+                                                    <td class="text-right">@assistant.CompletedRuns.ToString("N0")</td>
+                                                    <td class="text-right">@assistant.TotalCalls.ToString("N0")</td>
+                                                    <td class="text-right">@assistant.TotalTokens.ToString("N0")</td>
+                                                    <td class="text-right">$@(assistant.AvgCostPerRun?.ToString("N4") ?? "0.0000")</td>
+                                                    <td class="text-right">
+                                                        @if (successRate >= 95)
+                                                        {
+                                                            <span class="badge badge-success">@successRate.ToString("N1")%</span>
+                                                        }
+                                                        else if (successRate >= 80)
+                                                        {
+                                                            <span class="badge badge-warning">@successRate.ToString("N1")%</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge badge-danger">@successRate.ToString("N1")%</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <small>
+                                                            @assistant.FirstUsedDate?.ToString("MM/dd/yy") - @assistant.LastUsedDate?.ToString("MM/dd/yy")
+                                                            <br />(@assistant.DaysActive days)
+                                                        </small>
+                                                    </td>
+                                                    <td>
+                                                        <a asp-action="AssistantDetails" asp-route-assistantId="@assistant.AssistantId" 
+                                                           class="btn btn-sm btn-primary">
+                                                            <i class="fas fa-chart-line"></i> Details
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                rank++;
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="font-weight-bold">
+                                                <td colspan="4">TOTAL</td>
+                                                <td class="text-right text-success">$@Model.Sum(m => m.TotalCostUSD).ToString("N2")</td>
+                                                <td class="text-right">@Model.Sum(m => m.CompletedRuns).ToString("N0")</td>
+                                                <td class="text-right">@Model.Sum(m => m.TotalCalls).ToString("N0")</td>
+                                                <td class="text-right">@Model.Sum(m => m.TotalTokens).ToString("N0")</td>
+                                                <td colspan="4"></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">
+                                    <p class="mb-0">
+                                        <i class="fas fa-info-circle"></i>
+                                        No assistant cost data available. 
+                                        <a asp-action="RefreshAssistantSummary" class="alert-link">Click here to refresh the summary</a>.
+                                    </p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Logs
+                    </a>
+                    <a asp-action="Summary" class="btn btn-secondary">
+                        <i class="fas fa-chart-bar"></i> View Summary
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table-responsive {
+        max-height: none;
+    }
+    .table th {
+        white-space: nowrap;
+    }
+    code {
+        background-color: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 3px;
+    }
+</style>
