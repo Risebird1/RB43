@@ -30,7 +30,7 @@ Begin
 
 	else
 	begin
-		select distinct id, Comment, SkillName from TechSkillComments tsc where IRFId = @IRFId and (UserId is null or UserId=@UserId)
+		select distinct id, Comment, SkillName from TechSkillComments tsc where IRFId = @IRFId and (UserId=@UserId)  --UserId is null or
 	end
 End
 

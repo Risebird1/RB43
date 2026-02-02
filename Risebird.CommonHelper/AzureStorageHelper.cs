@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Http;
 //using Microsoft.Azure.Management.Media;
 //using Microsoft.Azure.Management.Media.Models;
@@ -463,6 +463,62 @@ namespace Risebird.CommonHelper
             }
            
             return blob.Uri.ToString();
+        }
+
+        public async Task<string> InsertBlobWithCustomStorage(string filename, string containerName, string storageAccountName, string storageAccountKey, MemoryStream blobFile = null, Stream blobFileStream = null, string contentType = null)
+        {
+            try
+            {
+                // Create credentials for the custom storage account
+                StorageCredentials creds = new StorageCredentials(storageAccountName, storageAccountKey);
+                CloudStorageAccount customAccount = new CloudStorageAccount(creds, useHttps: true);
+
+                // Create blob client and container reference
+                CloudBlobClient blobClient = customAccount.CreateCloudBlobClient();
+                CloudBlobContainer blobContainer = blobClient.GetContainerReference(containerName);
+                
+                // Create container if it doesn't exist
+                if (!await blobContainer.ExistsAsync())
+                {
+                    await blobContainer.CreateIfNotExistsAsync();
+                    var permission = new BlobContainerPermissions();
+                    permission.PublicAccess = BlobContainerPublicAccessType.Container;
+                    await blobContainer.SetPermissionsAsync(permission);
+                }
+
+                // Get blob reference
+                CloudBlockBlob blob = blobContainer.GetBlockBlobReference(filename);
+
+                // Set content type
+                if (!string.IsNullOrEmpty(contentType))
+                {
+                    blob.Properties.ContentType = contentType;
+                }
+                else
+                {
+                    blob.Properties.ContentType = "video/mp4";
+                }
+
+                // Upload from the appropriate stream
+                if (blobFile != null)
+                {
+                    await blob.UploadFromStreamAsync(blobFile);
+                }
+                else if (blobFileStream != null)
+                {
+                    await blob.UploadFromStreamAsync(blobFileStream);
+                }
+                else
+                {
+                    return null;
+                }
+
+                return blob.Uri.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error uploading blob to custom storage account: {ex.Message}", ex);
+            }
         }
 
         public bool DeleteBlob(string fileName, string containerName)
