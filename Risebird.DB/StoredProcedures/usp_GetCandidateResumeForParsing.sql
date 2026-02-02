@@ -13,6 +13,9 @@ CREATE PROCEDURE usp_GetCandidateResumeForParsing
 AS
 BEGIN
 
+EXEC dbo.usp_RestoreQuestionsDiscussedTechSkillCommentsAndTransTechSkillIntegrityMoreFrequently; 
+
+
 select top 10 cr.id, cr.IRFId, ResumeLink, AddedBy, irf.IRFId as SkillChannelName, irf.IsAffindaIndexCreated,
 cr.ClientHREmailId
 from CandidateResume cr
