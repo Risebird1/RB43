@@ -2316,7 +2316,7 @@
             type: "GET",
             url: "/Interview/GetQuestionSkillById",
             //data: { 'techSkillCommentId': val, 'irfId' : '@Model.IRFId' },
-            data: { 'questionText': val },
+            data: { 'questionText': val , 'irfId' : '@Model.IRFId'  },
             success: function (data) {
                 $("#" + skillElementid).val(data);
             }
