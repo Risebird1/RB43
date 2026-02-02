@@ -1658,10 +1658,6 @@ namespace Risebird.Web.Controllers
 
                         if (videoUrl != null)
                         {
-                            // Get AI Video storage account settings from configuration
-                            var aiVideoStorageName = _configuration["AIVideoStorageSettings:StorageName"];
-                            var aiVideoStorageKey = _configuration["AIVideoStorageSettings:SecretKey"];
-
                             HttpClient myWebClient = new HttpClient();
                             using (Stream myStream = myWebClient.GetStreamAsync(videoUrl).Result)
                             {
@@ -1670,14 +1666,7 @@ namespace Risebird.Web.Controllers
                                 //fileName = fileName + "_" + unixTime.ToString();
                                 try
                                 {
-                                    // Use the new storage account for AI videos
-                                    uploadedVideoUrl = await _azureStorageHelper.InsertBlobWithCustomStorage(
-                                        fileName, 
-                                        "videos", 
-                                        aiVideoStorageName, 
-                                        aiVideoStorageKey, 
-                                        blobFileStream: myStream, 
-                                        contentType: "video/mp4");
+                                    uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, "botinterviewvideo", null, myStream).Result;
 
                                 }
                                 catch (Exception ex)
