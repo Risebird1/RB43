@@ -1208,6 +1208,46 @@ namespace Risebird.Web.Controllers
                         // Invalid video type: treat as a failure for the video-response workflow.
                         return false;
                     }
+
+                    //if (VideoLink != null)
+                    //{
+                    //    // Get AI Video storage account settings from configuration
+                    //    var aiVideoStorageName = _configuration["AIVideoStorageSettings:StorageName"];
+                    //    var aiVideoStorageKey = _configuration["AIVideoStorageSettings:SecretKey"];
+
+                    //    HttpClient myWebClient = new HttpClient();
+                    //    using (Stream myStream = myWebClient.GetStreamAsync(VideoLink).Result)
+                    //    {
+                    //        var fileName = $"aiVideo__{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
+                    //        //long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    //        //fileName = fileName + "_" + unixTime.ToString();
+                    //        try
+                    //        {
+                    //            // Use the new storage account for AI videos
+                    //            var uploadedVideoUrl = await _azureStorageHelper.InsertBlobWithCustomStorage(
+                    //                fileName,
+                    //                "videos",
+                    //                aiVideoStorageName,
+                    //                aiVideoStorageKey,
+                    //                blobFileStream: myStream,
+                    //                contentType: "video/mp4");
+
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                    //        }
+
+                    //        //generate SAS URL from the uploaded video url
+                    //        //var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
+
+                    //        //if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                    //        //{
+                    //        //    videoSasUrl = uploadedVideoUrl + "?" + sas;
+                    //        //}
+                    //    }
+                    //}
                 }
                 // If no video file but there's a text/code response, save it with empty VideoLink
                 // This allows text/code submissions to be saved successfully
@@ -1618,6 +1658,10 @@ namespace Risebird.Web.Controllers
 
                         if (videoUrl != null)
                         {
+                            // Get AI Video storage account settings from configuration
+                            var aiVideoStorageName = _configuration["AIVideoStorageSettings:StorageName"];
+                            var aiVideoStorageKey = _configuration["AIVideoStorageSettings:SecretKey"];
+
                             HttpClient myWebClient = new HttpClient();
                             using (Stream myStream = myWebClient.GetStreamAsync(videoUrl).Result)
                             {
@@ -1626,7 +1670,14 @@ namespace Risebird.Web.Controllers
                                 //fileName = fileName + "_" + unixTime.ToString();
                                 try
                                 {
-                                    uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, "videos", null, myStream).Result;
+                                    // Use the new storage account for AI videos
+                                    uploadedVideoUrl = await _azureStorageHelper.InsertBlobWithCustomStorage(
+                                        fileName, 
+                                        "videos", 
+                                        aiVideoStorageName, 
+                                        aiVideoStorageKey, 
+                                        blobFileStream: myStream, 
+                                        contentType: "video/mp4");
 
                                 }
                                 catch (Exception ex)
