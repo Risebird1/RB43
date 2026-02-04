@@ -11,7 +11,7 @@ namespace Risebird.Repository.Interface
         Task<OpenAIApiLog> GetLogByIdAsync(long id);
         Task<List<OpenAIApiLog>> GetLogsBySessionIdAsync(Guid sessionId);
         Task<List<OpenAIApiLog>> GetLogsByDateRangeAsync(DateTime startDate, DateTime endDate);
-        Task<(List<OpenAIApiLog> logs, int totalCount)> GetLogsByDateRangePagedAsync(DateTime startDate, DateTime endDate, int pageNumber, int pageSize);
+        Task<(List<OpenAIApiLog> logs, int totalCount)> GetLogsByDateRangePagedAsync(DateTime startDate, DateTime endDate, int pageNumber, int pageSize, string sortBy = "LogDate", string sortOrder = "desc");
         Task<List<OpenAIApiLog>> GetLogsByOperationTypeAsync(string operationType, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<OpenAIApiLogSummary>> GetDailySummaryAsync(DateTime startDate, DateTime endDate);
         Task<List<OpenAIApiLogSummary>> GetSummaryByOperationTypeAsync(DateTime startDate, DateTime endDate);
