@@ -1,4 +1,4 @@
-﻿using Google.Apis.Calendar.v3.Data;
+using Google.Apis.Calendar.v3.Data;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
@@ -574,137 +574,161 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                // 1. Validate session first
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var loggedInUser = HttpContext.Session.GetString("email")?.Trim();
-                    loggedInUser = loggedInUser.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
-                    {
-                        var file = Request.Form.Files;
-                        var nvc = Request.Form;
-                        string primarySpecialization = string.Empty;
-                        string emailId = string.Empty;
-                        //string currentUserEmail = string.Empty;
-                        if (!string.IsNullOrEmpty(nvc["emailId"]))
-                        {
-                            emailId = nvc["emailId"];
-                        }
-                        if (!string.IsNullOrEmpty(nvc["primarySpecialization"]))
-                        {
-                            primarySpecialization = nvc["primarySpecialization"];
-                        }
-
-                        var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
-                        string uploadedFileURL = string.Empty;
-                        if (file != null)
-                        {
-                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file[0]);
-                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
-                            {
-                                await _azureStorageHelper.InsertBlob(fileName, "resumes", file[0]);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(fileName);
-                                uploadedFileURL = blob.Uri.ToString();
-                            }
-                            else
-                            {
-                                return null;
-                            }
-                            //var request = new ScreeningRequest
-                            //{
-                            //    //Skills = skills,
-                            //    JDTitle = primarySpecialization,
-                            //    ResumeLink = uploadedFileURL,
-                            //    Type = ProfileNames.Interviewer
-                            //};
-                            //var response = await _assistantServiceHelper.ScreenAsync(request);
-
-                            var resumeStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
-                            var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, primarySpecialization);
-
-                            var aiAnalysisModel = new InterviewerResumeFitmentAnalysisSchema();
-                            //var responseInJson = JsonConvert.SerializeObject(response);
-                            bool saveOperationResult = false;
-                            string aiResponseUrl = string.Empty;
-                            if (response != null )
-                            {
-                                try
-                                {
-                                    aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", ""));
-
-                                    //saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdict(emailId, primarySpecialization, responseInJson.Replace("'", ""), loggedInUser);
-                                    saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdictV2(emailId, primarySpecialization, aiAnalysisModel, loggedInUser);
-                                    //aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
-
-                                }
-                                catch (Exception ex)
-                                {
-                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-
-                                    aiAnalysisModel = null;
-                                    saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdictV2(emailId, primarySpecialization, null, loggedInUser);
-
-                                }
-                            }
-                            else
-                            {
-                                saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdictV2(emailId, primarySpecialization, null, loggedInUser);
-
-                            }
-                            if (saveOperationResult && response != null && aiAnalysisModel != null)
-                            {
-                                aiResponseUrl = Url.Action("PreOnboardingAIVerdictDetails", "AIScreener",
-                                new { emailId = emailId, primarySpecialization = primarySpecialization, resumeLink = uploadedFileURL },
-                                Request.Scheme);
-
-                            }
-                            else
-                            {
-                                return Json(new { isfavourableVerdict = false, resumeLink = string.Empty, errorMessage = "Pre-onboarding failed. Please try again." });
-
-                            }
-
-                            string AIVerdict = aiAnalysisModel.verdict; // Default value
-                            
-                            if(!string.IsNullOrEmpty(AIVerdict) && (AIVerdict.ToLower().Contains("no") || AIVerdict.ToLower().Contains("not") || AIVerdict.ToLower().Contains("doesn't")))
-                            {
-                                return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });
-                            }
-                            else if(!string.IsNullOrEmpty(AIVerdict) && AIVerdict.ToLower().Contains("yes"))
-                            {
-                                return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
-
-                            }
-                            else
-                            {
-                                return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, errorMessage = "API Failure! Verdict bypassed!" });//we bypass the verdict in this case as the api is not a 100% reliable
-                            }
-
-                        }
-                        else
-                        {
-                            return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = string.Empty, errorMessage = "Please select a file." });
-                        }
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
+                    return Json(new { isfavourableVerdict = false, resumeLink = string.Empty, errorMessage = "Session expired. Please login again." });
                 }
-                else
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var loggedInUser = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                
+                // 2. Validate authorization
+                var allowedRoles = new[] { "Admin", "SeniorHR", "SupportAdmin", "InterviewerManagement", "SeniorInterviewerManagement" };
+                if (!allowedRoles.Contains(profileName))
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
 
+                // 3. Get and validate form data
+                var file = Request.Form.Files;
+                var nvc = Request.Form;
+                
+                if (!nvc.TryGetValue("emailId", out var emailId) || string.IsNullOrWhiteSpace(emailId))
+                {
+                    return Json(new { isfavourableVerdict = false, resumeLink = string.Empty, errorMessage = "Email ID is required." });
+                }
+                
+                if (!nvc.TryGetValue("primarySpecialization", out var primarySpecialization) || string.IsNullOrWhiteSpace(primarySpecialization))
+                {
+                    return Json(new { isfavourableVerdict = false, resumeLink = string.Empty, errorMessage = "Primary Specialization is required." });
+                }
 
+                // 4. Validate file upload
+                if (file == null || file.Count == 0)
+                {
+                    return Json(new { isfavourableVerdict = false, resumeLink = string.Empty, errorMessage = "Please select a file." });
+                }
+
+                var uploadedFile = file[0];
+                
+                // Validate file size (max 10MB)
+                const long maxFileSize = 10 * 1024 * 1024;
+                if (uploadedFile.Length > maxFileSize)
+                {
+                    return Json(new { isfavourableVerdict = false, resumeLink = string.Empty, errorMessage = "File size exceeds 10MB limit." });
+                }
+
+                var fileName = ContentDispositionHeaderValue.Parse(uploadedFile.ContentDisposition).FileName.Trim('"');
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(uploadedFile);
+                
+                // 5. Validate file type
+                var allowedMimeTypes = new[]
+                {
+                    "application/pdf",
+                    "application/msword",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                };
+                
+                if (!allowedMimeTypes.Contains(fileMimeType))
+                {
+                    return Json(new { isfavourableVerdict = false, resumeLink = string.Empty, errorMessage = "Invalid file type. Only PDF, DOC, and DOCX files are allowed." });
+                }
+
+                // 6. Upload file
+                await _azureStorageHelper.InsertBlob(fileName, "resumes", uploadedFile);
+                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                var blob = containerRef.GetBlockBlobReference(fileName);
+                string uploadedFileURL = blob.Uri.ToString();
+
+                // 7. Process resume
+                var resumeStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
+                if (string.IsNullOrEmpty(resumeStringContent))
+                {
+                    return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, errorMessage = "Failed to read resume content." });
+                }
+
+                var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, primarySpecialization);
+                
+                if (response == null)
+                {
+                    return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, errorMessage = "Failed to generate verdict. Please try again." });
+                }
+
+                // 8. Parse AI response
+                InterviewerResumeFitmentAnalysisSchema aiAnalysisModel = null;
+                try
+                {
+                    var jsonContent = response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value
+                        ?.Replace("```json", "").Replace("```", "");
+                    
+                    if (string.IsNullOrEmpty(jsonContent))
+                    {
+                        return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, errorMessage = "AI response is empty." });
+                    }
+                    
+                    aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(jsonContent);
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, errorMessage = "Failed to parse AI response." });
+                }
+
+                if (aiAnalysisModel == null)
+                {
+                    return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, errorMessage = "Failed to parse AI response." });
+                }
+
+                // 9. Save verdict
+                var saveOperationResult = await _interviewerService.SaveInterviewerPreOnboardingVerdictV2(
+                    emailId, 
+                    primarySpecialization, 
+                    aiAnalysisModel, 
+                    loggedInUser);
+
+                if (!saveOperationResult)
+                {
+                    return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, errorMessage = "Failed to save verdict." });
+                }
+
+                // 10. Generate response URL
+                var aiResponseUrl = Url.Action("PreOnboardingAIVerdictDetails", "AIScreener",
+                    new { emailId = emailId, primarySpecialization = primarySpecialization, resumeLink = uploadedFileURL },
+                    Request.Scheme);
+
+                // 11. Evaluate verdict with improved logic
+                string aiVerdict = aiAnalysisModel.verdict?.Trim().ToLowerInvariant();
+                
+                if (string.IsNullOrEmpty(aiVerdict))
+                {
+                    return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = "AI verdict is empty." });
+                }
+
+                // Use more precise matching - check for exact words not substrings
+                bool isFavorable = aiVerdict == "yes" || aiVerdict.StartsWith("yes,") || aiVerdict.StartsWith("yes.");
+                bool isUnfavorable = aiVerdict == "no" || aiVerdict.StartsWith("no,") || aiVerdict.StartsWith("no.");
+
+                if (isFavorable)
+                {
+                    return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });
+                }
+                else if (isUnfavorable)
+                {
+                    return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = aiAnalysisModel.verdict });
+                }
+                else
+                {
+                    // Don't bypass - require manual review for unclear verdicts
+                    return Json(new { isfavourableVerdict = false, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = $"Unclear AI verdict: '{aiAnalysisModel.verdict}'. Manual review required." });
+                }
             }
             catch (Exception ex)
             {
-                var resultDe = _activityTrackerService.DebugLogger($"ScreenInterviewerBeforeOnboarding function error : {ex.Message}, {ex.StackTrace}", "openai", string.Empty).Result;
-
+                await _activityTrackerService.DebugLogger(
+                    $"ScreenInterviewerBeforeOnboarding function error : {ex.Message}, {ex.StackTrace}", 
+                    "openai", 
+                    string.Empty);
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { isfavourableVerdict = false, resumeLink = string.Empty, errorMessage = "Failed to generate verdict. Please try again." });
             }

@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.InterviewerProfileVM
+@model Risebird.Entities.ViewModel.InterviewerProfileVM
 @using Risebird.Entities.Enum
 
 @{
@@ -1084,17 +1084,39 @@
     }
 </script> *@
 <script>
-        function GenerateAIVerdict() {
+    function GenerateAIVerdict() {
         var button = document.getElementById("id_btn_generateAIVerdict");
-
-        button.disabled = true;
-
-        // Change the button text to "Processing...may take upto 30s! Please wait!"
-        button.innerHTML = "Processing...may take upto 30s! Please wait!";
         var primarySpecialization = $("#PrimarySpecializationForAIVerdict").val().trim();
         var emailId = $("#txt_EmailId").val().trim();
+        var resume_file = $("#ResumeFile")[0]?.files[0];
 
-        var resume_file = $("#ResumeFile")[0].files[0];
+        // Client-side validation
+        if (!primarySpecialization) {
+            swal.fire("Error", "Please enter Primary Specialization.", "error");
+            return;
+        }
+
+        if (!resume_file) {
+            swal.fire("Error", "Please select a resume file.", "error");
+            return;
+        }
+
+        // Validate file type
+        var allowedExtensions = /(\.pdf|\.doc|\.docx)$/i;
+        if (!allowedExtensions.exec(resume_file.name)) {
+            swal.fire("Error", "Please upload a PDF, DOC, or DOCX file only.", "error");
+            return;
+        }
+
+        // Validate file size (10MB max)
+        var maxSize = 10 * 1024 * 1024;
+        if (resume_file.size > maxSize) {
+            swal.fire("Error", "File size must be less than 10MB.", "error");
+            return;
+        }
+
+        button.disabled = true;
+        button.innerHTML = "Processing...may take up to 30s! Please wait!";
 
         var formdata = new FormData();
         formdata.append('resume_file', resume_file);
@@ -1104,65 +1126,60 @@
         $.ajax({
             type: "POST",
             url: "/AIScreener/ScreenInterviewerBeforeOnboarding",
-            async : true,
             contentType: false,
             processData: false,
             data: formdata,
             success: function (data) {
-                if (data != null && (data.errorMessage == '' || data.errorMessage.includes("bypassed"))) {
-                    if (data.isfavourableVerdict) {
-                        document.getElementById("divAIVerdict").style.display = "none";
-                        document.getElementById("divEVverified").style.display = "block";
-                        $("#ResumeLink").val(data.resumeLink);
-                        $("#PrimarySpecializationForAcknowledgement").val(primarySpecialization);
-                        if (data.aiResponseHref != null && data.aiResponseHref != "") {
-                            document.getElementById("id_aiResponseUrl").style.display = "block";
-                            document.getElementById("id_aiResponseUrl").href = data.aiResponseHref;
-                            //$("#AIResponse").val(data.aiResponse);
-                            button.innerHTML = "Processed! Click to Regenerate!";
-                            button.disabled = false;
-                        }
-                    } else if (!data.isfavourableVerdict && data.errorMessage.includes("bypassed")) {
-                        swal.fire("Bypassing AI Verdict due to API failure...");
-                        document.getElementById("divAIVerdict").style.display = "none";
-                        document.getElementById("divEVverified").style.display = "block";
-                        $("#ResumeLink").val(data.resumeLink);
-                        $("#PrimarySpecializationForAcknowledgement").val(primarySpecialization);
-                        button.innerHTML = "Bypassing...";
-                        button.disabled = true;
-                    } else {
-                        swal.fire("Not a suitable Panel for this specialization. Not to be processed further.");
-
-                        if (data.aiResponseHref != null && data.aiResponseHref != "") {
-                            document.getElementById("id_aiResponseUrl").style.display = "block";
-                            document.getElementById("id_aiResponseUrl").href = data.aiResponseHref;
-                            //$("#AIResponse").val(data.aiResponse);
-                        }
-
-                        button.innerHTML = "Processed! Click to Regenerate!";
-                        button.disabled = false;
-
-                        // Previously:
-                        // button.disabled = false;
-                        // button.innerHTML = "Generate AI Verdict";
-                    }
-                } 
-                else if (data != null && data.errorMessage.includes("onboarding")) {
-                    swal.fire(data.errorMessage);
-                    //button.disabled = false;
-                    button.innerHTML = "Unexpected Error. Please try later.";
-                }
-                else if (data != null && data.errorMessage != '') {
-                    swal.fire(data.errorMessage);
-                    button.disabled = false;
-                    button.innerHTML = "Generate AI Verdict";
-                } else {
-                    swal.fire("Error generating verdict. Please try again.");
-                    button.disabled = false;
-                    button.innerHTML = "Generate AI Verdict";
-                }
+                handleVerdictResponse(data, button, primarySpecialization);
+            },
+            error: function (xhr, status, error) {
+                swal.fire("Error", "Network error occurred. Please try again.", "error");
+                button.disabled = false;
+                button.innerHTML = "Generate AI Verdict";
             }
         });
+    }
+
+    function handleVerdictResponse(data, button, primarySpecialization) {
+        if (!data) {
+            swal.fire("Error", "No response from server.", "error");
+            button.disabled = false;
+            button.innerHTML = "Generate AI Verdict";
+            return;
+        }
+
+        if (data.isfavourableVerdict) {
+            // Success case - favorable verdict
+            proceedToOnboarding(data, primarySpecialization, button);
+        } else {
+            // Unfavorable verdict or error
+            var errorMessage = data.errorMessage || "An error occurred.";
+            swal.fire("AI Screening Result", errorMessage, "warning");
+
+            // Show AI response link if available
+            if (data.aiResponseHref) {
+                document.getElementById("id_aiResponseUrl").style.display = "block";
+                document.getElementById("id_aiResponseUrl").href = data.aiResponseHref;
+            }
+
+            button.innerHTML = "Processed! Click to Regenerate!";
+            button.disabled = false;
+        }
+    }
+
+    function proceedToOnboarding(data, primarySpecialization, button) {
+        document.getElementById("divAIVerdict").style.display = "none";
+        document.getElementById("divEVverified").style.display = "block";
+        $("#ResumeLink").val(data.resumeLink);
+        $("#PrimarySpecializationForAcknowledgement").val(primarySpecialization);
+        
+        if (data.aiResponseHref) {
+            document.getElementById("id_aiResponseUrl").style.display = "block";
+            document.getElementById("id_aiResponseUrl").href = data.aiResponseHref;
+        }
+
+        button.innerHTML = "Processed! Click to Regenerate!";
+        button.disabled = false;
     }
 
 </script>
