@@ -1452,7 +1452,7 @@
                 data: { uniqueid: $("#id_UniqueId").val(), Emailid: $("#txtEmailid").val().trim(), Interviewid: $("#hidtxtinterviewid").val() },
                 success: function (data) {
                     if (data == "success") {
-                        window.location = "/Interview/ClientReportV3?publicEmailId=" + $("#txtEmailid").val() + "&uniqueid=" + $("#id_UniqueId").val() + "&interviewid=" + $("#hidtxtinterviewid").val() + "&irfid=" + $("#hidtxtirfid").val();
+                        window.location = "/Interview/ClientReportV2?publicEmailId=" + $("#txtEmailid").val() + "&uniqueid=" + $("#id_UniqueId").val() + "&interviewid=" + $("#hidtxtinterviewid").val() + "&irfid=" + $("#hidtxtirfid").val();
                     } else {
                         swal.fire(data);
                     }
