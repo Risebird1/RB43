@@ -15,7 +15,7 @@ namespace Risebird.Web.Controllers
             _openAIApiLogRepository = openAIApiLogRepository;
         }
 
-        public async Task<IActionResult> Index(DateTime? startDate = null, DateTime? endDate = null, int pageNumber = 1, int pageSize = 50)
+        public async Task<IActionResult> Index(DateTime? startDate = null, DateTime? endDate = null, int pageNumber = 1, int pageSize = 50, string sortBy = "LogDate", string sortOrder = "desc")
         {
             // Reduced default range from 30 days to 7 days for better performance
             var start = startDate ?? DateTime.UtcNow.AddDays(-7);
@@ -29,13 +29,15 @@ namespace Risebird.Web.Controllers
             ViewBag.EndDate = end.ToString("yyyy-MM-dd");
             ViewBag.PageNumber = pageNumber;
             ViewBag.PageSize = pageSize;
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortOrder = sortOrder;
 
             // Get summary data
             ViewBag.TotalCost = await _openAIApiLogRepository.GetTotalCostAsync(start, end);
             ViewBag.TotalCalls = await _openAIApiLogRepository.GetTotalCallsAsync(start, end);
 
             // Get paged logs
-            var (logs, totalCount) = await _openAIApiLogRepository.GetLogsByDateRangePagedAsync(start, end, pageNumber, pageSize);
+            var (logs, totalCount) = await _openAIApiLogRepository.GetLogsByDateRangePagedAsync(start, end, pageNumber, pageSize, sortBy, sortOrder);
             
             // Calculate pagination data
             ViewBag.TotalCount = totalCount;
