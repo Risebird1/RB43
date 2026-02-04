@@ -101,13 +101,68 @@
                             <table class="table table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Date/Time</th>
-                                        <th>Operation Type</th>
-                                        <th>Model</th>
-                                        <th>Status</th>
-                                        <th>Response Time</th>
-                                        <th>Tokens</th>
-                                        <th>Cost</th>
+                                        @{
+                                            string GetSortIcon(string columnName)
+                                            {
+                                                if (ViewBag.SortBy == columnName)
+                                                {
+                                                    return ViewBag.SortOrder == "asc" ? "▲" : "▼";
+                                                }
+                                                return "⇅";
+                                            }
+                                            
+                                            string GetSortUrl(string columnName)
+                                            {
+                                                var newSortOrder = "desc";
+                                                if (ViewBag.SortBy == columnName && ViewBag.SortOrder == "desc")
+                                                {
+                                                    newSortOrder = "asc";
+                                                }
+                                                return Url.Action("Index", new { 
+                                                    startDate = ViewBag.StartDate, 
+                                                    endDate = ViewBag.EndDate, 
+                                                    pageNumber = 1,
+                                                    pageSize = ViewBag.PageSize,
+                                                    sortBy = columnName, 
+                                                    sortOrder = newSortOrder 
+                                                });
+                                            }
+                                        }
+                                        <th>
+                                            <a href="@GetSortUrl("LogDate")" class="text-dark">
+                                                Date/Time @GetSortIcon("LogDate")
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="@GetSortUrl("OperationType")" class="text-dark">
+                                                Operation Type @GetSortIcon("OperationType")
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="@GetSortUrl("Model")" class="text-dark">
+                                                Model @GetSortIcon("Model")
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="@GetSortUrl("IsSuccess")" class="text-dark">
+                                                Status @GetSortIcon("IsSuccess")
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="@GetSortUrl("ResponseTimeMs")" class="text-dark">
+                                                Response Time @GetSortIcon("ResponseTimeMs")
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="@GetSortUrl("TotalTokens")" class="text-dark">
+                                                Tokens @GetSortIcon("TotalTokens")
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="@GetSortUrl("EstimatedCostUSD")" class="text-dark">
+                                                Cost @GetSortIcon("EstimatedCostUSD")
+                                            </a>
+                                        </th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -175,14 +230,14 @@
                             <ul class="pagination justify-content-center">
                                 @* First Page *@
                                 <li class="page-item @(!ViewBag.HasPreviousPage ? "disabled" : "")">
-                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = 1, pageSize = ViewBag.PageSize })">
+                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = 1, pageSize = ViewBag.PageSize, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })">
                                         &laquo; First
                                     </a>
                                 </li>
 
                                 @* Previous Page *@
                                 <li class="page-item @(!ViewBag.HasPreviousPage ? "disabled" : "")">
-                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = ViewBag.PageNumber - 1, pageSize = ViewBag.PageSize })">
+                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = ViewBag.PageNumber - 1, pageSize = ViewBag.PageSize, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })">
                                         &lsaquo; Previous
                                     </a>
                                 </li>
@@ -198,7 +253,7 @@
                                 @for (int i = startPage; i <= endPage; i++)
                                 {
                                     <li class="page-item @(i == currentPage ? "active" : "")">
-                                        <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = i, pageSize = ViewBag.PageSize })">
+                                        <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = i, pageSize = ViewBag.PageSize, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })">
                                             @i
                                         </a>
                                     </li>
@@ -206,14 +261,14 @@
 
                                 @* Next Page *@
                                 <li class="page-item @(!ViewBag.HasNextPage ? "disabled" : "")">
-                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = ViewBag.PageNumber + 1, pageSize = ViewBag.PageSize })">
+                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = ViewBag.PageNumber + 1, pageSize = ViewBag.PageSize, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })">
                                         Next &rsaquo;
                                     </a>
                                 </li>
 
                                 @* Last Page *@
                                 <li class="page-item @(!ViewBag.HasNextPage ? "disabled" : "")">
-                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = ViewBag.TotalPages, pageSize = ViewBag.PageSize })">
+                                    <a class="page-link" href="@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageNumber = ViewBag.TotalPages, pageSize = ViewBag.PageSize, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })">
                                         Last &raquo;
                                     </a>
                                 </li>
@@ -239,7 +294,7 @@
 <script>
     function goToPage() {
         var pageNum = document.getElementById('gotoPage').value;
-        var url = '@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageSize = ViewBag.PageSize })' + '&pageNumber=' + pageNum;
+        var url = '@Url.Action("Index", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, pageSize = ViewBag.PageSize, sortBy = ViewBag.SortBy, sortOrder = ViewBag.SortOrder })' + '&pageNumber=' + pageNum;
         window.location.href = url;
     }
 
@@ -264,5 +319,14 @@
         color: #6c757d;
         pointer-events: none;
         cursor: not-allowed;
+    }
+    
+    /* Sortable column headers */
+    thead th a {
+        text-decoration: none;
+        cursor: pointer;
+    }
+    thead th a:hover {
+        text-decoration: underline;
     }
 </style>

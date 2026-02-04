@@ -99,7 +99,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<(List<OpenAIApiLog> logs, int totalCount)> GetLogsByDateRangePagedAsync(DateTime startDate, DateTime endDate, int pageNumber, int pageSize)
+        public async Task<(List<OpenAIApiLog> logs, int totalCount)> GetLogsByDateRangePagedAsync(DateTime startDate, DateTime endDate, int pageNumber, int pageSize, string sortBy = "LogDate", string sortOrder = "desc")
         {
             try
             {
@@ -109,11 +109,24 @@ namespace Risebird.Repository
                 var countSql = "SELECT COUNT(*) FROM OpenAIApiLogs WHERE LogDate >= @StartDate AND LogDate <= @EndDate";
                 var totalCount = await conn.ExecuteScalarAsync<int>(countSql, new { StartDate = startDate, EndDate = endDate });
                 
+                // Validate sort column to prevent SQL injection
+                var validSortColumns = new[] { "LogDate", "OperationType", "Model", "IsSuccess", "ResponseTimeMs", "TotalTokens", "PromptTokens", "CompletionTokens", "EstimatedCostUSD" };
+                if (!validSortColumns.Contains(sortBy))
+                {
+                    sortBy = "LogDate";
+                }
+                
+                // Validate sort order
+                sortOrder = sortOrder.ToLower() == "asc" ? "ASC" : "DESC";
+                
+                // Build ORDER BY clause
+                var orderByClause = $"ORDER BY {sortBy} {sortOrder}";
+                
                 // Get paged data
-                var sql = @"
+                var sql = $@"
                     SELECT * FROM OpenAIApiLogs 
                     WHERE LogDate >= @StartDate AND LogDate <= @EndDate 
-                    ORDER BY LogDate DESC
+                    {orderByClause}
                     OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
                 
                 var offset = (pageNumber - 1) * pageSize;
