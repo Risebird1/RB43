@@ -25,5 +25,8 @@ namespace Risebird.Entities.ViewModel
         public int AIInterviewType { get; set; }
         public string AIQuestionVideoLink { get; set; }
         public bool IsTypingSpeedAssessment { get; set; }
+        public bool IsListeningComprehension { get; set; }
+        public string ListeningAudioUrl { get; set; }
+        public string ListeningAudioTranscription { get; set; }
     }
 }
