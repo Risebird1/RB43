@@ -35,6 +35,13 @@ namespace Risebird.Entities.ViewModel
         public int TypingCorrectChars { get; set; }
         public decimal TypingAccuracy { get; set; }
         public decimal TypingWPM { get; set; }
+        public bool IsListeningComprehensionQuestion { get; set; }
+        public string ListeningAudioUrl { get; set; }
+        public string ListeningAudioTranscription { get; set; }
+        public string ListeningSummary { get; set; }
+        public string ListeningStartTime { get; set; }
+        public string ListeningEndTime { get; set; }
+        public decimal ListeningTimeTaken { get; set; }
     }
 
     public class ChatLine

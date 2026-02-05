@@ -26,11 +26,11 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
             _aWSRekognitionService = aWSRekognitionService;
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false)
         {
             try
             {
-                return await _aiInterviewerRepository.UpdateBotInterviewVideoDetails(VideoLink, question, SessionId,botSynthesizedVideoLink, candidateResponse, secondsLeft, interviewId, BotAudioLink, deliveryHeadQuestionId, isTypingSpeedQuestion);
+                return await _aiInterviewerRepository.UpdateBotInterviewVideoDetails(VideoLink, question, SessionId,botSynthesizedVideoLink, candidateResponse, secondsLeft, interviewId, BotAudioLink, deliveryHeadQuestionId, isTypingSpeedQuestion, isListeningComprehension);
             }
             catch (Exception e)
             {
@@ -280,6 +280,19 @@ namespace Risebird.Business
             try
             {
                 return await _aiInterviewerRepository.SaveTypingSpeedAssessment(obj);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> SaveListeningComprehensionAssessment(ListeningComprehensionAssessment obj)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.SaveListeningComprehensionAssessment(obj);
             }
             catch (Exception e)
             {

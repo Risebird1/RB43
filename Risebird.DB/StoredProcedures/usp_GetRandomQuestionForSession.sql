@@ -55,12 +55,16 @@ BEGIN
 
     ;WITH OrderedQuestions AS (
         SELECT q.id, q.Comment, q.AIQuestionVideoLink, q.IsTypingSpeedAssessment,
+               q.IsListeningComprehension, q.ListeningAudioUrl, q.ListeningAudioTranscription,
                ROW_NUMBER() OVER (ORDER BY q.Id) AS RowNum
         FROM SkillChannelSampleQuestions q
         WHERE q.IRFId = @irfId
     )
     SELECT Comment AS [Message], AIQuestionVideoLink, id, 
-           ISNULL(IsTypingSpeedAssessment, 0) AS IsTypingSpeedAssessment
+           ISNULL(IsTypingSpeedAssessment, 0) AS IsTypingSpeedAssessment,
+           ISNULL(IsListeningComprehension, 0) AS IsListeningComprehension,
+           ListeningAudioUrl,
+           ListeningAudioTranscription
     FROM OrderedQuestions
     WHERE RowNum = @AskedCount + 1; -- ? pick the next question
 
