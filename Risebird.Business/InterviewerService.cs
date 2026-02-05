@@ -1,4 +1,4 @@
-﻿using Risebird.Business.Interface;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -138,29 +138,53 @@ namespace Risebird.Business
                 interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
                 interviewerProfile.OutsideIndiaServiceRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate + 150);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
-                //int userId;
-                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId, out uniqueid);
+                
+                // Call repository and get operation type from stored procedure
+                bool isInsertOperation;
+                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId, out uniqueid, out isInsertOperation);
                 interviewerProfile.uniqueid = uniqueid;
+                
                 if (result)
                 {
-                    if (isApplicant.HasValue && isApplicant.Value)
+                    // Send acknowledgement email ONLY for INSERT operations (new interviewers)
+                    // The stored procedure determines if this was an INSERT or UPDATE operation
+                    if (isInsertOperation)
                     {
-                        //var encryptedUserId = _encryptionHelper.EncryptInteger(userId).Result;
-                        //var encodedUserId = System.Net.WebUtility.UrlEncode(encryptedUserId);
-
-                        string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + userId.ToString();//encodedUserId;// interviewerProfile.UserId
-
-                        string dropProfileButton = "";
-                        //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
-                        var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement,interviewerProfile.uniqueid).Result;
-
+                        try
+                        {
+                            string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + userId.ToString();
+                            string dropProfileButton = "";
+                            
+                            // Shoot acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
+                            var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(
+                                interviewerProfile.EmailId, 
+                                (interviewerProfile.FirstName + " " + interviewerProfile.LastName), 
+                                yesButton, 
+                                dropProfileButton, 
+                                string.Empty, 
+                                interviewerProfile.PrimarySpecializationForAcknowledgement,
+                                interviewerProfile.uniqueid).Result;
+                            
+                            // Log the email result for debugging purposes
+                            if (string.IsNullOrEmpty(mailResult) || mailResult.Contains("Failed"))
+                            {
+                                _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                    new Exception($"Acknowledgement email may have failed for interviewer {interviewerProfile.EmailId}. Result: {mailResult}"));
+                            }
+                        }
+                        catch (Exception emailEx)
+                        {
+                            // Log email sending failure but don't fail the entire operation
+                            _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                                new Exception($"Failed to send acknowledgement email to {interviewerProfile.EmailId}", emailEx));
+                        }
                     }
 
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateInterviewer;
                     activityTrackerModel.Particulars = "Interviewer: " + interviewerProfile.EmailId;
                     activityTrackerModel.PerformedBy = loggedInUser;
-                    activityTrackerModel.Summary = "Add Interviewer";
+                    activityTrackerModel.Summary = isInsertOperation ? "Add Interviewer" : "Update Interviewer";
                     activityTrackerModel.ResourceUrl = interviewerProfile.ResourceUrl;
                     _activityTrackerRepository.AddActivity(activityTrackerModel);
 
@@ -234,14 +258,15 @@ namespace Risebird.Business
                 interviewerProfile.OutsideIndiaServiceRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate + 150);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
                 int userId;
-                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId, out uniqueid);
+                bool isInsertOperation;
+                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId, out uniqueid, out isInsertOperation);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateInterviewer;
                     activityTrackerModel.Particulars = "Interviewer: " + interviewerProfile.EmailId;
                     activityTrackerModel.PerformedBy = loggedInUser;
-                    activityTrackerModel.Summary = "Update Interviewer";
+                    activityTrackerModel.Summary = isInsertOperation ? "Add Interviewer" : "Update Interviewer";
                     activityTrackerModel.ResourceUrl = interviewerProfile.ResourceUrl;
                     _activityTrackerRepository.AddActivity(activityTrackerModel);
                 }
@@ -1664,18 +1689,24 @@ namespace Risebird.Business
             {
                 if (await _interviewerRepository.AddTargetSkillChannelToInterviewerPreOnboarding(interviewerProfile.UserId, interviewerProfile.TargetIrfId))
                 {
-                    string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + interviewerProfile.UserId;// _encryptionHelper.EncryptData(userId.ToString()).Result;+ "&irf=" + interviewerProfile.TargetIrfId.ToString()
-
-                    string dropProfileButton = "";
-                    //shoot an acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer
-                    var mailResult = _notificationHelper.SendAcknowledgementEmailToInterviewer(interviewerProfile.EmailId, (interviewerProfile.FirstName + " " + interviewerProfile.LastName), yesButton, dropProfileButton, string.Empty, interviewerProfile.PrimarySpecializationForAcknowledgement, interviewerProfile.uniqueid).Result;
+                    // Email is now sent in AddInterviewerProfile after successful database insertion
+                    // This prevents duplicate emails and ensures email is sent even if this step fails
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, 
+                        new Exception($"Successfully added target skill channel for interviewer UserId: {interviewerProfile.UserId}, IrfId: {interviewerProfile.TargetIrfId}"));
                     return true;
                 }
-                return false;
+                else
+                {
+                    // Log the failure for better diagnostics
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                        new Exception($"Failed to add target skill channel for interviewer UserId: {interviewerProfile.UserId}, IrfId: {interviewerProfile.TargetIrfId}. Repository returned false."));
+                    return false;
+                }
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                    new Exception($"Exception while adding target skill channel for interviewer UserId: {interviewerProfile.UserId}, IrfId: {interviewerProfile.TargetIrfId}", ex));
                 return false;
             }
         }
