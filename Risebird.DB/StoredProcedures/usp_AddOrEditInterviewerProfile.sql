@@ -57,7 +57,8 @@ Create PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @RemovedAssessmentGroups varchar(max)=null,
 @TargetIrfId int,
 @outputUserId int out,
-@uniqueid varchar(50) out
+@uniqueid varchar(50) out,
+@IsInsertOperation bit out
 AS              
 Begin
 
@@ -88,6 +89,8 @@ Begin
  If Exists (select 1 from [dbo].[InterviewerProfile] where userId = @UserId)              
 -- Edit in both the tables              
  Begin              
+  -- Set flag to indicate UPDATE operation
+  SET @IsInsertOperation = 0;
               
  Declare @v_ProfileId int;              
               
@@ -178,6 +181,9 @@ Begin
  Else              
 --Insert new record for Add request              
  Begin              
+  -- Set flag to indicate INSERT operation
+  SET @IsInsertOperation = 1;
+
 Declare @v_User_Id int;              
               
  INSERT INTO [dbo].[UserList]              
