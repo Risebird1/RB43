@@ -113,6 +113,9 @@ namespace Risebird.Web.Controllers
                                     model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                                     model.CurrentQuestionId = sampleQuestion.id;
                                     model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
+                                    model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
+                                    model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
+                                    model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
                                     await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                 }
@@ -264,6 +267,9 @@ namespace Risebird.Web.Controllers
                                                 model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                                                 model.CurrentQuestionId = sampleQuestion.id;//latestEntry.DeliveryHeadQuestionId;
                                                 model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
+                                                model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
+                                                model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
+                                                model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
                                                 await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                             }
@@ -724,7 +730,13 @@ namespace Risebird.Web.Controllers
                     string userMessage = model.Message;
                     string tranScribedResponse = string.Empty;
                     string codeResponse = string.Empty;
-                    if(!model.showChatBox)
+
+                    // For typing speed or listening comprehension assessments, skip audio transcription
+                    if (model.IsTypingSpeedQuestion || model.IsListeningComprehensionQuestion)
+                    {
+                        userMessage = "Typed Out";
+                    }
+                    else if(!model.showChatBox)
                     {
                         if (model.AudioFile != null && model.AudioFile.Length > 0)
                         {
@@ -925,6 +937,32 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
+                        // Save listening comprehension assessment if this was a listening comprehension question
+                        if (model.IsListeningComprehensionQuestion && !string.IsNullOrEmpty(model.ListeningSummary))
+                        {
+                            try
+                            {
+                                var listeningAssessment = new ListeningComprehensionAssessment
+                                {
+                                    SessionId = model.SessionId.ToString(),
+                                    QuestionId = model.CurrentQuestionId,
+                                    AudioUrl = model.ListeningAudioUrl,
+                                    AudioTranscription = model.ListeningAudioTranscription,
+                                    CandidateSummary = model.ListeningSummary,
+                                    TimeStarted = DateTime.Parse(model.ListeningStartTime),
+                                    TimeCompleted = DateTime.Parse(model.ListeningEndTime),
+                                    TimeTakenInSeconds = model.ListeningTimeTaken,
+                                    CreatedBy = model.candidateName
+                                };
+                                await _aiinterviewerService.SaveListeningComprehensionAssessment(listeningAssessment);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                // Continue even if listening assessment save fails - don't block the interview
+                            }
+                        }
+
                         await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
 
                         var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(model.InterviewId, model.IRFId);
@@ -942,6 +980,9 @@ namespace Risebird.Web.Controllers
                             model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                             model.CurrentQuestionId = sampleQuestion.id;
                             model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
+                            model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
+                            model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
+                            model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
 
                             if (!string.IsNullOrEmpty(model.CurrentQuestion))//&& string.IsNullOrEmpty(model.AIInterviewerAudioLink)
                             {
@@ -949,6 +990,9 @@ namespace Risebird.Web.Controllers
                                 model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                                 model.CurrentQuestionId = sampleQuestion.id;
                                 model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
+                                model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
+                                model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
+                                model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
                                 await _aiinterviewerService.LogTranscript(model.SessionId, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                             }
@@ -1253,7 +1297,7 @@ namespace Risebird.Web.Controllers
                 // This allows text/code submissions to be saved successfully
                 
                 // Save in db with question.sessionid,videoLink,Datetime (VideoLink can be empty for text responses)
-                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId, model.IsTypingSpeedQuestion);
+                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion);
                 return result;
             }
             catch (Exception ex)
