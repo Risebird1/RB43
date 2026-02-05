@@ -11,7 +11,7 @@ namespace Risebird.Business.Interface
 {
     public interface IAIInterviewerService
     {
-        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false);
+        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false);
         Task<string> GetThreadId(Guid sessionId);
         Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
         Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId);
@@ -28,5 +28,6 @@ namespace Risebird.Business.Interface
         Task<VideoSentimentAnalysis> GetSentimentAnalysisById(int videoId);
         Task<MeetingVM> GetAIInterviewSpecificDetailsByCandidateVideoId(int videoId);
         Task<bool> SaveTypingSpeedAssessment(TypingSpeedAssessment obj);
+        Task<bool> SaveListeningComprehensionAssessment(ListeningComprehensionAssessment obj);
     }
 }
