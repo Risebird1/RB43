@@ -949,6 +949,9 @@ namespace Risebird.Web.Controllers
                         {
                             try
                             {
+                                // Calculate pass/fail based on criteria: 30 WPM and 97% accuracy
+                                bool isPassed = model.TypingWPM >= 30.00M && model.TypingAccuracy >= 97.00M;
+                                
                                 var typingAssessment = new TypingSpeedAssessment
                                 {
                                     SessionId = model.SessionId.ToString(),
@@ -962,6 +965,9 @@ namespace Risebird.Web.Controllers
                                     CorrectCharacters = model.TypingCorrectChars,
                                     AccuracyPercentage = model.TypingAccuracy,
                                     WordsPerMinute = model.TypingWPM,
+                                    PassingWPM = 30.00M,
+                                    PassingAccuracyPercentage = 97.00M,
+                                    IsPassed = isPassed,
                                     CreatedBy = model.candidateName
                                 };
                                 await _aiinterviewerService.SaveTypingSpeedAssessment(typingAssessment);

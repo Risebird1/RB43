@@ -719,6 +719,9 @@ namespace Risebird.Repository
                     parameters.Add("@CorrectCharacters", obj.CorrectCharacters);
                     parameters.Add("@AccuracyPercentage", obj.AccuracyPercentage);
                     parameters.Add("@WordsPerMinute", obj.WordsPerMinute);
+                    parameters.Add("@PassingWPM", obj.PassingWPM);
+                    parameters.Add("@PassingAccuracyPercentage", obj.PassingAccuracyPercentage);
+                    parameters.Add("@IsPassed", obj.IsPassed);
                     parameters.Add("@CreatedBy", obj.CreatedBy);
                     
                     await SqlMapper.QueryAsync(con, "usp_SaveTypingSpeedAssessment", parameters,

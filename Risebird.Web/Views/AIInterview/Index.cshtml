@@ -3407,16 +3407,18 @@
                             <strong>Instructions:</strong>
                             <ul style="margin: 10px 0 0 20px; font-size: 13px; color: #555;">
                                 <li>Click "Start" to begin the typing test</li>
+                                <li><strong>Duration: 2 minutes maximum</strong></li>
                                 <li>Type the text exactly as shown</li>
-                                <li>Video recording will start automatically when you begin typing</li>
-                                <li>Click "Submit" when finished</li>
+                                <li>Video recording will start automatically</li>
+                                <li><strong>Passing Criteria: 30 WPM with 97% accuracy</strong></li>
+                                <li>Click "Submit" when finished or test will auto-submit after 2 minutes</li>
                             </ul>
                         </div>
                         <div id="typingSampleTextContainer" style="display: none; background: #e8f2ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">
                             ${sampleText}
                         </div>
                         <div id="typingTimerDisplay" style="display: none; text-align: center; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #4eda92;">
-                            Time: <span id="typingTimerValue">0:00</span>
+                            Time Remaining: <span id="typingTimerValue">2:00</span>
                         </div>
                         <textarea id="typingInputArea" 
                                   placeholder="Start typing here after clicking 'Start'..." 
@@ -3456,20 +3458,45 @@
                         confirmBtn.innerHTML = '<i class="fa fa-check"></i> Submit';
                         confirmBtn.style.backgroundColor = '#28a745';
                         
-                        // Start timer
+                        // Start 2-minute countdown timer
+                        const maxDuration = 120; // 2 minutes in seconds
                         timerInterval = setInterval(() => {
                             const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                            const minutes = Math.floor(elapsed / 60);
-                            const seconds = elapsed % 60;
+                            const remaining = maxDuration - elapsed;
                             const timerValueElement = document.getElementById('typingTimerValue');
-                            if (timerValueElement) {
-                                timerValueElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                            
+                            if (remaining <= 0) {
+                                // Time's up - auto-submit
+                                if (timerValueElement) {
+                                    timerValueElement.textContent = '0:00';
+                                    timerValueElement.style.color = '#dc3545'; // Red color
+                                }
+                                clearInterval(timerInterval);
+                                confirmBtn.click(); // Trigger submit
+                            } else {
+                                const minutes = Math.floor(remaining / 60);
+                                const seconds = remaining % 60;
+                                if (timerValueElement) {
+                                    timerValueElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                                    // Change color to red when less than 30 seconds
+                                    if (remaining <= 30) {
+                                        timerValueElement.style.color = '#dc3545';
+                                    }
+                                }
                             }
                         }, 1000);
 
-                        // Start video recording automatically
+                        // Start video recording immediately when Start button is clicked
+                        console.log('Start button clicked, starting video recording...');
                         if (typeof startRecording === 'function') {
-                            startRecording();
+                            try {
+                                startRecording();
+                                console.log('✓ Video recording started successfully');
+                            } catch (error) {
+                                console.error('✗ Error starting video recording:', error);
+                            }
+                        } else {
+                            console.error('✗ startRecording function not found');
                         }
                         
                         // Return false to prevent modal from closing
@@ -3493,6 +3520,11 @@
                         const accuracyData = calculateAccuracy(sampleText, typedText);
                         const wpm = calculateWPM(typedText, timeTaken);
                         
+                        // Determine pass/fail based on criteria
+                        const passingWPM = 30.00;
+                        const passingAccuracy = 97.00;
+                        const isPassed = wpm >= passingWPM && accuracyData.accuracy >= passingAccuracy;
+                        
                         // Store data in hidden form fields
                         document.getElementById('TypingSampleText').value = sampleText;
                         document.getElementById('TypedText').value = typedText;
@@ -3503,22 +3535,39 @@
                         document.getElementById('TypingCorrectChars').value = accuracyData.correctChars;
                         document.getElementById('TypingAccuracy').value = accuracyData.accuracy.toFixed(2);
                         document.getElementById('TypingWPM').value = wpm.toFixed(2);
+                        document.getElementById('TypingPassingWPM').value = passingWPM.toFixed(2);
+                        document.getElementById('TypingPassingAccuracy').value = passingAccuracy.toFixed(2);
+                        document.getElementById('TypingIsPassed').value = isPassed;
                         
                         // Show results first, then trigger form submission
+                        const resultIcon = isPassed ? 'success' : 'warning';
+                        const resultTitle = isPassed ? 'Typing Test Passed!' : 'Typing Test Complete';
+                        const statusColor = isPassed ? '#28a745' : '#ffc107';
+                        const statusText = isPassed ? 'PASSED ✓' : 'NEEDS IMPROVEMENT';
+                        
                         Swal.fire({
-                            title: 'Typing Test Complete!',
+                            title: resultTitle,
                             html: `
                                 <div style="text-align: left;">
+                                    <div style="background: ${isPassed ? '#d4edda' : '#fff3cd'}; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid ${statusColor};">
+                                        <h3 style="color: ${statusColor}; margin: 0; text-align: center;">${statusText}</h3>
+                                    </div>
                                     <h4 style="color: #4eda92; margin-bottom: 15px;">Your Results:</h4>
                                     <ul style="list-style: none; padding: 0;">
                                         <li style="margin-bottom: 10px; font-size: 16px;">
-                                            <strong>Time Taken:</strong> ${timeTaken.toFixed(2)} seconds
+                                            <strong>Time Taken:</strong> ${timeTaken.toFixed(2)} seconds (Max: 120 seconds)
                                         </li>
                                         <li style="margin-bottom: 10px; font-size: 16px;">
-                                            <strong>Accuracy:</strong> ${accuracyData.accuracy.toFixed(2)}%
+                                            <strong>Accuracy:</strong> ${accuracyData.accuracy.toFixed(2)}% 
+                                            <span style="color: ${accuracyData.accuracy >= passingAccuracy ? '#28a745' : '#dc3545'};">
+                                                (Required: ${passingAccuracy}%)
+                                            </span>
                                         </li>
                                         <li style="margin-bottom: 10px; font-size: 16px;">
-                                            <strong>Words Per Minute:</strong> ${wpm.toFixed(2)} WPM
+                                            <strong>Words Per Minute:</strong> ${wpm.toFixed(2)} WPM 
+                                            <span style="color: ${wpm >= passingWPM ? '#28a745' : '#dc3545'};">
+                                                (Required: ${passingWPM} WPM)
+                                            </span>
                                         </li>
                                         <li style="margin-bottom: 10px; font-size: 16px;">
                                             <strong>Correct Characters:</strong> ${accuracyData.correctChars} / ${accuracyData.totalChars}
@@ -3526,7 +3575,7 @@
                                     </ul>
                                 </div>
                             `,
-                            icon: 'success',
+                            icon: resultIcon,
                             confirmButtonText: 'Continue',
                             confirmButtonColor: '#4eda92',
                             allowOutsideClick: false
@@ -3580,7 +3629,10 @@
                 { name: 'TypingTotalChars', value: '' },
                 { name: 'TypingCorrectChars', value: '' },
                 { name: 'TypingAccuracy', value: '' },
-                { name: 'TypingWPM', value: '' }
+                { name: 'TypingWPM', value: '' },
+                { name: 'TypingPassingWPM', value: '' },
+                { name: 'TypingPassingAccuracy', value: '' },
+                { name: 'TypingIsPassed', value: '' }
             ];
 
             hiddenFields.forEach(field => {

@@ -36,6 +36,9 @@ namespace Risebird.Entities.ViewModel
         public int TypingCorrectChars { get; set; }
         public decimal TypingAccuracy { get; set; }
         public decimal TypingWPM { get; set; }
+        public decimal TypingPassingWPM { get; set; } = 30.00M;
+        public decimal TypingPassingAccuracy { get; set; } = 97.00M;
+        public bool? TypingIsPassed { get; set; }
         public bool IsListeningComprehensionQuestion { get; set; }
         public string ListeningAudioUrl { get; set; }
         public string ListeningAudioTranscription { get; set; }
