@@ -20,27 +20,76 @@ Create PROCEDURE [dbo].[usp_SaveInterviewerPreOnboardingVerdictV2]
 @result bit out
 As
 Begin
+	SET NOCOUNT ON;
+	
+	DECLARE @RowsAffected INT = 0
+	DECLARE @RecordExists BIT = 0
+	
+	BEGIN TRY
+		select @result = 0
 
-select @result = 0
+		-- Check if record exists with both EmailId AND PrimarySpecialization
+		if exists(select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization)
+		Begin
+			SET @RecordExists = 1
+			
+			-- Update existing record
+			update PreOnboardingInterviewerAIVerdict set OpenAIResponse = @completeFitmentAnalysis, AIVerdict =@verdict,
+			ModifiedBy =@PerformedBy, ModifiedAt =@timeNow, AIScreeningScore = @fitmentScore 
+			where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization
 
-if exists(select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId)
-Begin
-	if exists(select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization)
-	Begin
-		update PreOnboardingInterviewerAIVerdict set OpenAIResponse = @completeFitmentAnalysis, AIVerdict =@verdict,
-		ModifiedBy =@PerformedBy, ModifiedAt =@timeNow, AIScreeningScore = @fitmentScore 
-		where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization
+			SET @RowsAffected = @@ROWCOUNT
+			
+			IF @RowsAffected > 0
+				select @result = 1
+			ELSE
+				-- Debug: Update attempted but no rows affected
+				RAISERROR('UPDATE executed but @@ROWCOUNT = 0', 16, 1)
+		End
+		else
+		Begin
+			SET @RecordExists = 0
+			
+			-- Validate required parameters before INSERT
+			IF @EmailId IS NULL OR @EmailId = ''
+				RAISERROR('EmailId is NULL or empty', 16, 1)
+			IF @PrimarySpecialization IS NULL OR @PrimarySpecialization = ''
+				RAISERROR('PrimarySpecialization is NULL or empty', 16, 1)
+			IF @PerformedBy IS NULL OR @PerformedBy = ''
+				RAISERROR('PerformedBy (CreatedBy) is NULL or empty', 16, 1)
+			
+			-- Insert new record (either EmailId doesn't exist, or exists with different PrimarySpecialization)
+			insert into PreOnboardingInterviewerAIVerdict(EmailId, PrimarySpecialization, OpenAIResponse, AIVerdict, CreatedAt, CreatedBy, AIScreeningScore)
+			values (@EmailId, @PrimarySpecialization, @completeFitmentAnalysis, @verdict, @timeNow, @PerformedBy, @fitmentScore)
 
-		select @result = 1
-	End	
-End
-else
-Begin
-	insert into PreOnboardingInterviewerAIVerdict(EmailId, PrimarySpecialization, OpenAIResponse, AIVerdict, CreatedAt, CreatedBy, AIScreeningScore)
-	values (@EmailId, @PrimarySpecialization, @completeFitmentAnalysis, @verdict, @timeNow, @PerformedBy, @fitmentScore)
-
-	select @result = 1
-End
- 
+			SET @RowsAffected = @@ROWCOUNT
+			
+			IF @RowsAffected > 0
+				select @result = 1
+			ELSE
+				-- Debug: Insert attempted but no rows affected
+				RAISERROR('INSERT executed but @@ROWCOUNT = 0', 16, 1)
+		End
+	END TRY
+	BEGIN CATCH
+		-- Log error and set result to 0
+		select @result = 0
+		
+		-- Re-throw the error with detailed information
+		DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE()
+		DECLARE @ErrorSeverity INT = ERROR_SEVERITY()
+		DECLARE @ErrorState INT = ERROR_STATE()
+		DECLARE @ErrorLine INT = ERROR_LINE()
+		
+		DECLARE @FullErrorMessage NVARCHAR(4000) = 
+			'Error in usp_SaveInterviewerPreOnboardingVerdictV2: ' + @ErrorMessage + 
+			' | Line: ' + CAST(@ErrorLine AS VARCHAR(10)) +
+			' | RecordExists: ' + CAST(@RecordExists AS VARCHAR(1)) +
+			' | RowsAffected: ' + CAST(@RowsAffected AS VARCHAR(10)) +
+			' | EmailId: ' + ISNULL(@EmailId, 'NULL') +
+			' | PerformedBy: ' + ISNULL(@PerformedBy, 'NULL')
+		
+		RAISERROR(@FullErrorMessage, @ErrorSeverity, @ErrorState)
+	END CATCH
 End
 GO

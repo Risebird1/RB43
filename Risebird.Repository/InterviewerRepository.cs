@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -225,10 +225,11 @@ namespace Risebird.Repository
         //    }
         //}
 
-        public bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, out string uniqueid)
+        public bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, out string uniqueid, out bool isInsertOperation)
         {
             assessmentGroupList = string.Empty;
             uniqueid = string.Empty;
+            isInsertOperation = false;
             try
             {
                 int ProfileId;
@@ -247,6 +248,7 @@ namespace Risebird.Repository
                     assessmentGroupList = parameters.Get<string>("@assessmentGroupList");
                     userId = parameters.Get<int>("@outputUserId");
                     uniqueid = parameters.Get<string>("@uniqueid");
+                    isInsertOperation = parameters.Get<bool>("@IsInsertOperation");
                     if (!string.IsNullOrEmpty(assessmentGroupList))
                     {
                         return false;
@@ -401,6 +403,7 @@ namespace Risebird.Repository
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 userId = 0;
+                isInsertOperation = false;
                 return false;
             }
 
@@ -408,6 +411,7 @@ namespace Risebird.Repository
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 userId = 0;
+                isInsertOperation = false;
                 return false;
             }
         }
@@ -468,6 +472,7 @@ namespace Risebird.Repository
             parameters.Add("@assessmentGroupList", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
             parameters.Add("@outputUserId", dbType: DbType.Int32, direction: ParameterDirection.Output, size: 5215585);
             parameters.Add("@uniqueid", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
+            parameters.Add("@IsInsertOperation", dbType: DbType.Boolean, direction: ParameterDirection.Output);
 
             return parameters;
         }
@@ -3582,11 +3587,13 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                    new Exception($"SQL Exception in AddTargetSkillChannelToInterviewerPreOnboarding for UserId: {userId}, TargetIrfId: {targetIrfId}. SQL Error: {ex.Message}, Number: {ex.Number}, State: {ex.State}", ex));
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                    new Exception($"Exception in AddTargetSkillChannelToInterviewerPreOnboarding for UserId: {userId}, TargetIrfId: {targetIrfId}", ex));
             }
             return false;
         }

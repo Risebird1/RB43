@@ -1,4 +1,4 @@
-﻿using Risebird.Entities.Data;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace Risebird.Repository.Interface
     {
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewers();
         //Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
-        bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, out string uniqueid);
+        bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, out string uniqueid, out bool isInsertOperation);
 
         Task<bool> DeleteInterviewerProfile(int UserId);
         Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional);
