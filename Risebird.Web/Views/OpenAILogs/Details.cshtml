@@ -3,8 +3,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "API Call Details";
 }
-
-<div class="container-fluid mt-4">
+<div class="main-panel ps" id="main-panel">
+    <div class="content">
+<div class="container-fluid mt-4" style="margin-top:50px!important;">
     <div class="row">
         <div class="col-md-12">
             <h2>OpenAI API Call Details</h2>
@@ -19,7 +20,7 @@
     </div>
 
     <!-- Status Badge -->
-    <div class="row mb-3">
+    <div class="row mb-3" style="display:none">
         <div class="col-md-12">
             @if (Model.IsSuccess)
             {
@@ -34,10 +35,10 @@
 
     <!-- Basic Information -->
     <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5>Basic Information</h5>
+        <div class="col-md-7">
+                    <div class="card" style="padding: 10px 0px;">
+                        <div class="card-header bg-primary text-white" style="margin: 0px 15px;">
+                            <h5 style="padding: 5px 5px 0px 5px;">Basic Information</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless">
@@ -51,7 +52,7 @@
                         </tr>
                         <tr>
                             <th>Operation Type:</th>
-                            <td><span class="badge badge-info">@Model.OperationType</span></td>
+                            <td><span class="badge badge-info" style="width:auto;">@Model.OperationType</span></td>
                         </tr>
                         <tr>
                             <th>API Endpoint:</th>
@@ -74,10 +75,10 @@
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h5>Token & Cost Information</h5>
+        <div class="col-md-5">
+                    <div class="card" style="padding: 10px 0px;">
+                        <div class="card-header bg-success text-white" style="margin: 0px 15px;">
+                            <h5 style="padding: 5px 5px 0px 5px;">Token & Cost Information</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless">
@@ -110,9 +111,9 @@
     <!-- OpenAI Resource IDs -->
     <div class="row mb-4">
         <div class="col-md-12">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    <h5>OpenAI Resource IDs</h5>
+                    <div class="card" style="padding: 10px 0px;">
+                        <div class="card-header bg-info text-white" style="margin: 0px 15px;">
+                            <h5 style="padding: 5px 5px 0px 5px;">OpenAI Resource IDs</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless">
@@ -141,9 +142,9 @@
     <!-- Context Information -->
     <div class="row mb-4">
         <div class="col-md-12">
-            <div class="card">
-                <div class="card-header bg-warning">
-                    <h5>Context Information</h5>
+                    <div class="card" style="padding: 10px 0px;">
+                        <div class="card-header bg-warning" style="margin: 0px 15px;">
+                            <h5 style="padding: 5px 5px 0px 5px;">Context Information</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless">
@@ -249,8 +250,8 @@
         <div class="row mb-4">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h5>Response Payload</h5>
+                            <div class="card-header" style="padding: 10px 0px 10px 0px;">
+                        <h5 style="font-size:16px;">Response Payload</h5>
                     </div>
                     <div class="card-body">
                         <pre class="bg-light p-3" style="max-height: 400px; overflow-y: auto;"><code>@Model.ResponsePayload</code></pre>
@@ -279,3 +280,6 @@
     </div>
 </div>
 </div>
+</div>
+</div>
+
