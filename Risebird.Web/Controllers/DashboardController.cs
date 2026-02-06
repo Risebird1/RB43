@@ -124,7 +124,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
-                        await ParseresumeCopy2();
+                        //await ParseresumeCopy2();
                         //var list = new List<string>();
                         //list.Add("harshitjajoo95@gmail.com");
                         //await _notificationHelper.SendIRFBasedInterviewerMail(list, DateTime.Now.ToString(), string.Empty, 100, 100);
