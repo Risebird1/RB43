@@ -118,7 +118,11 @@ namespace Risebird.CommonHelper
         {
             var url = $"https://api.openai.com/v1/threads/{threadId}/runs";
             //var payload = new { assistant_id = _assistantId };
-            var payload = new { assistant_id = assistantId };
+            // Add response_format to request structured JSON output (reduces output tokens)
+            var payload = new { 
+                assistant_id = assistantId,
+                response_format = new { type = "json_object" }
+            };
             var requestJson = JsonConvert.SerializeObject(payload);
             
             var sw = System.Diagnostics.Stopwatch.StartNew();

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.AffIndaModels;
@@ -26,6 +27,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IOpenAIInterviewerAssistantHelper _ai;
         private readonly IPdfReaderHelper _pdfReaderHelper;
+        private readonly IResumeOptimizationHelper _resumeOptimizationHelper;
 
         private readonly ILogger log;
 
@@ -33,7 +35,8 @@ namespace Risebird.AzureTimerFunctions
             IMeetingRespository meetingRespository, ICandidateRepository candidateRepository,
             ISASUrlHelper sasUrlHelper, IIRFService irfService,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper,
-            IAssistantServiceHelper assistantServiceHelper, IOpenAIInterviewerAssistantHelper ai, IPdfReaderHelper pdfReaderHelper)
+            IAssistantServiceHelper assistantServiceHelper, IOpenAIInterviewerAssistantHelper ai, IPdfReaderHelper pdfReaderHelper,
+            IResumeOptimizationHelper resumeOptimizationHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -48,6 +51,7 @@ namespace Risebird.AzureTimerFunctions
             log = loggerFactory.CreateLogger<MCQResumeParserJob>();
             _ai = ai;
             _pdfReaderHelper = pdfReaderHelper;
+            _resumeOptimizationHelper = resumeOptimizationHelper;
         }
 
         [Function("MCQResumeParserJob")]
@@ -80,6 +84,29 @@ namespace Risebird.AzureTimerFunctions
                         var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
                         if(!string.IsNullOrEmpty(resumeStringContent))
                         {
+                            // OPTIMIZATION: Pre-screen resume for validity (saves API calls on corrupted resumes)
+                            var (isValid, validationReason) = _resumeOptimizationHelper.ValidateResumeForParsing(resumeStringContent);
+                            if (!isValid)
+                            {
+                                log.LogInformation($"MCQResumeParserJob: Resume {resume.id} validation failed: {validationReason}");
+                                candidateResumeList.Add(new CandidateResume 
+                                { 
+                                    id = resume.id, 
+                                    IsResumeParsed = false, 
+                                    IsProcessed = false, 
+                                    IsResumeParsingFailed = true,
+                                    ReasonBehindNotProcessed = validationReason
+                                });
+                                continue;
+                            }
+
+                            // OPTIMIZATION: Reduce token usage by removing boilerplate and excessive whitespace
+                            var estimatedTokensBefore = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                            resumeStringContent = _resumeOptimizationHelper.OptimizeResumeText(resumeStringContent);
+                            var estimatedTokensAfter = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                            
+                            log.LogInformation($"MCQResumeParserJob: Resume {resume.id} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter})");
+
                             var threadId = await _ai.CreateThreadAsync();
                             //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
                             await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
