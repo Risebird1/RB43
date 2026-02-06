@@ -1,4 +1,4 @@
-﻿using ExcelDataReader.Log;
+using ExcelDataReader.Log;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -65,6 +65,7 @@ namespace Risebird.Web.Controllers
         private readonly IOpenAIInterviewerAssistantHelper _ai;
         private readonly IAWSRekognitionService _aWSRekognitionService;
         private readonly IZohoMeetingHelper _zoho;
+        private readonly IResumeOptimizationHelper _resumeOptimizationHelper;
 
         //private readonly IIRFService _irfService;
 
@@ -78,7 +79,7 @@ namespace Risebird.Web.Controllers
             ICandidateRepository candidateRepository, IPdfReaderHelper pdfReaderHelper,
             IValidationHelper validationHelper, IOpenAIInterviewerAssistantHelper ai,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IAWSRekognitionService aWSRekognitionService,
-            IZohoMeetingHelper zoho)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IZohoMeetingHelper zoho, IResumeOptimizationHelper resumeOptimizationHelper)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -107,6 +108,7 @@ namespace Risebird.Web.Controllers
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _aWSRekognitionService = aWSRekognitionService;
             _zoho = zoho;
+            _resumeOptimizationHelper = resumeOptimizationHelper;
         }
 
         [Authorize]
@@ -511,6 +513,31 @@ namespace Risebird.Web.Controllers
 
                     if (!string.IsNullOrEmpty(resumeStringContent))
                     {
+                        // OPTIMIZATION: Pre-screen resume for validity (saves API calls on corrupted resumes)
+                        var (isValid, validationReason) = _resumeOptimizationHelper.ValidateResumeForParsing(resumeStringContent);
+                        if (!isValid)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, 
+                                new Exception($"Resume {resume.id} validation failed: {validationReason}"));
+                            candidateResumeList.Add(new CandidateResume 
+                            { 
+                                id = resume.id, 
+                                IsResumeParsed = false, 
+                                IsProcessed = false, 
+                                IsResumeParsingFailed = true,
+                                ReasonBehindNotProcessed = validationReason
+                            });
+                            continue;
+                        }
+
+                        // OPTIMIZATION: Reduce token usage by removing boilerplate and excessive whitespace
+                        var estimatedTokensBefore = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                        resumeStringContent = _resumeOptimizationHelper.OptimizeResumeText(resumeStringContent);
+                        var estimatedTokensAfter = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                        
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, 
+                            new Exception($"Resume {resume.id} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter} tokens)"));
+
                         var threadId = await _ai.CreateThreadAsync();
                         //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
                         await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
@@ -911,6 +938,31 @@ namespace Risebird.Web.Controllers
 
                         if (!string.IsNullOrEmpty(resumeStringContent))
                         {
+                            // OPTIMIZATION: Pre-screen resume for validity (saves API calls on corrupted resumes)
+                            var (isValid, validationReason) = _resumeOptimizationHelper.ValidateResumeForParsing(resumeStringContent);
+                            if (!isValid)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, 
+                                    new Exception($"Resume {resume.id} validation failed: {validationReason}"));
+                                candidateResumeList.Add(new CandidateResume 
+                                { 
+                                    id = resume.id, 
+                                    IsResumeParsed = false, 
+                                    IsProcessed = false, 
+                                    IsResumeParsingFailed = true,
+                                    ReasonBehindNotProcessed = validationReason
+                                });
+                                continue;
+                            }
+
+                            // OPTIMIZATION: Reduce token usage by removing boilerplate and excessive whitespace
+                            var estimatedTokensBefore = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                            resumeStringContent = _resumeOptimizationHelper.OptimizeResumeText(resumeStringContent);
+                            var estimatedTokensAfter = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                            
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, 
+                                new Exception($"Resume {resume.id} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter} tokens)"));
+
                             var threadId = await _ai.CreateThreadAsync();
                             await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
 
