@@ -2,6 +2,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.AffIndaModels;
@@ -81,6 +82,29 @@ namespace Risebird.AzureTimerFunctions
 
                         if (!string.IsNullOrEmpty(resumeStringContent))
                         {
+                            // OPTIMIZATION: Pre-screen resume for validity (saves API calls on corrupted resumes)
+                            var (isValid, validationReason) = ResumeOptimizationHelper.ValidateResumeForParsing(resumeStringContent);
+                            if (!isValid)
+                            {
+                                log.LogInformation($"ResumeParserJob: Resume {resume.id} validation failed: {validationReason}");
+                                candidateResumeList.Add(new CandidateResume 
+                                { 
+                                    id = resume.id, 
+                                    IsResumeParsed = false, 
+                                    IsProcessed = false, 
+                                    IsResumeParsingFailed = true,
+                                    ReasonBehindNotProcessed = validationReason
+                                });
+                                continue;
+                            }
+
+                            // OPTIMIZATION: Reduce token usage by removing boilerplate and excessive whitespace
+                            var estimatedTokensBefore = ResumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                            resumeStringContent = ResumeOptimizationHelper.OptimizeResumeText(resumeStringContent);
+                            var estimatedTokensAfter = ResumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                            
+                            log.LogInformation($"ResumeParserJob: Resume {resume.id} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter})");
+
                             var threadId = await _ai.CreateThreadAsync();
                             await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
 
