@@ -116,6 +116,24 @@ namespace Risebird.Web.Controllers
                                     model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
                                     model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                     model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
+                                    
+                                    // Fetch random typing sample text from database if it's a typing speed question
+                                    if (sampleQuestion.IsTypingSpeedAssessment)
+                                    {
+                                        var typingSample = await _aiinterviewerService.GetRandomTypingSpeedSampleText();
+                                        if (typingSample != null && !string.IsNullOrWhiteSpace(typingSample.SampleText))
+                                        {
+                                            model.TypingSampleTextFromDB = typingSample.SampleText;
+                                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                                new Exception($"Typing sample text loaded successfully. Length: {typingSample.SampleText.Length}"));
+                                        }
+                                        else
+                                        {
+                                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                                new Exception("No typing sample text available in database. Please add sample texts to TypingSpeedSampleTexts table."));
+                                        }
+                                    }
+                                    
                                     await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                 }
@@ -270,6 +288,24 @@ namespace Risebird.Web.Controllers
                                                 model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
                                                 model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                                 model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
+                                                
+                                                // Fetch random typing sample text from database if it's a typing speed question
+                                                if (sampleQuestion.IsTypingSpeedAssessment)
+                                                {
+                                                    var typingSample = await _aiinterviewerService.GetRandomTypingSpeedSampleText();
+                                                    if (typingSample != null && !string.IsNullOrWhiteSpace(typingSample.SampleText))
+                                                    {
+                                                        model.TypingSampleTextFromDB = typingSample.SampleText;
+                                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                                            new Exception($"Typing sample text loaded successfully. Length: {typingSample.SampleText.Length}"));
+                                                    }
+                                                    else
+                                                    {
+                                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                                            new Exception("No typing sample text available in database. Please add sample texts to TypingSpeedSampleTexts table."));
+                                                    }
+                                                }
+                                                
                                                 await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                             }
@@ -993,6 +1029,24 @@ namespace Risebird.Web.Controllers
                                 model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
                                 model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                 model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
+                                
+                                // Fetch random typing sample text from database if it's a typing speed question
+                                if (sampleQuestion.IsTypingSpeedAssessment)
+                                {
+                                    var typingSample = await _aiinterviewerService.GetRandomTypingSpeedSampleText();
+                                    if (typingSample != null && !string.IsNullOrWhiteSpace(typingSample.SampleText))
+                                    {
+                                        model.TypingSampleTextFromDB = typingSample.SampleText;
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                            new Exception($"Typing sample text loaded successfully. Length: {typingSample.SampleText.Length}"));
+                                    }
+                                    else
+                                    {
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                            new Exception("No typing sample text available in database. Please add sample texts to TypingSpeedSampleTexts table."));
+                                    }
+                                }
+                                
                                 await _aiinterviewerService.LogTranscript(model.SessionId, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                             }

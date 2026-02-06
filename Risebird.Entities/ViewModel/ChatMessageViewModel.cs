@@ -27,6 +27,7 @@ namespace Risebird.Entities.ViewModel
         public bool isMultiLingual { get; set; }
         public bool IsTypingSpeedQuestion { get; set; }
         public string TypingSampleText { get; set; }
+        public string TypingSampleTextFromDB { get; set; } // Sample text fetched from database to display to candidate
         public string TypedText { get; set; }
         public string TypingStartTime { get; set; }
         public string TypingEndTime { get; set; }

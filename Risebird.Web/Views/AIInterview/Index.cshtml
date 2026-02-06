@@ -3342,17 +3342,24 @@
             return; // Not a typing speed question, skip this functionality
         }
 
-        // Sample texts for typing assessment (randomly selected)
-        const sampleTexts = [
-            "The quick brown fox jumps over the lazy dog. Programming requires attention to detail and careful consideration of logic. Software development is both an art and a science that requires constant learning and adaptation.",
-            "In the world of technology, innovation drives progress forward. Developers must balance creativity with practicality while building solutions that meet user needs. Effective communication and teamwork are essential skills in modern software development.",
-            "Artificial intelligence and machine learning are transforming industries across the globe. These technologies enable computers to learn from data and make intelligent decisions. The future of computing lies in creating systems that can think and adapt like humans.",
-            "Web development encompasses a wide range of technologies and frameworks. From frontend design to backend architecture, developers must master multiple disciplines. Building responsive and accessible applications requires dedication and continuous improvement.",
-            "Data structures and algorithms form the foundation of computer science. Understanding how to efficiently store and manipulate data is crucial for building scalable systems. Problem-solving skills are developed through practice and perseverance."
-        ];
-
-        // Select a random sample text
-        const sampleText = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+        // Get sample text from database (fetched in controller)
+        const sampleText = @Html.Raw(Json.Serialize(Model.TypingSampleTextFromDB ?? ""));
+        
+        // Debug: Log sample text to console
+        console.log('Typing Assessment - Sample Text Length:', sampleText ? sampleText.length : 0);
+        console.log('Typing Assessment - Sample Text:', sampleText);
+        
+        // Validate sample text exists
+        if (!sampleText || sampleText.trim() === '') {
+            console.error('ERROR: No sample text available for typing assessment!');
+            Swal.fire({
+                title: 'Configuration Error',
+                text: 'No typing sample text is available. Please contact the administrator to add sample texts to the database.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return; // Exit if no sample text
+        }
         
         // Store typing assessment data
         let typingStartTime = null;

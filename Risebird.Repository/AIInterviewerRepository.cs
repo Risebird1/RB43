@@ -770,5 +770,27 @@ namespace Risebird.Repository
             return false;
         }
 
+        public async Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<TypingSpeedSampleText>(con, "usp_GetRandomTypingSpeedSampleText",
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }
