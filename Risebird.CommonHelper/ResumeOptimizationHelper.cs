@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using Risebird.CommonHelper.Interface;
 
 namespace Risebird.CommonHelper
 {
@@ -8,12 +9,12 @@ namespace Risebird.CommonHelper
     /// Helper class to optimize resume text before sending to OpenAI
     /// Reduces token usage by removing unnecessary content
     /// </summary>
-    public class ResumeOptimizationHelper
+    public class ResumeOptimizationHelper : IResumeOptimizationHelper
     {
         /// <summary>
         /// Optimizes resume text to reduce token count while preserving important information
         /// </summary>
-        public static string OptimizeResumeText(string resumeText)
+        public string OptimizeResumeText(string resumeText)
         {
             if (string.IsNullOrWhiteSpace(resumeText))
                 return resumeText;
@@ -36,7 +37,7 @@ namespace Risebird.CommonHelper
         /// <summary>
         /// Validates if resume is worth processing (basic quality checks)
         /// </summary>
-        public static (bool isValid, string reason) ValidateResumeForParsing(string resumeText)
+        public (bool isValid, string reason) ValidateResumeForParsing(string resumeText)
         {
             if (string.IsNullOrWhiteSpace(resumeText))
                 return (false, "Resume text is empty or null");
@@ -81,7 +82,7 @@ namespace Risebird.CommonHelper
         /// <summary>
         /// Estimates token count (rough approximation: 1 token ≈ 4 characters)
         /// </summary>
-        public static int EstimateTokenCount(string text)
+        public int EstimateTokenCount(string text)
         {
             if (string.IsNullOrEmpty(text))
                 return 0;
@@ -92,7 +93,7 @@ namespace Risebird.CommonHelper
         /// <summary>
         /// Determines if resume is simple enough for cheaper model
         /// </summary>
-        public static bool IsSimpleResume(string resumeText)
+        public bool IsSimpleResume(string resumeText)
         {
             if (string.IsNullOrWhiteSpace(resumeText))
                 return false;

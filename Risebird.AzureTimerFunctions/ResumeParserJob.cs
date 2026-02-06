@@ -23,6 +23,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IValidationHelper _validationHelper;
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly IOpenAIInterviewerAssistantHelper _ai;
+        private readonly IResumeOptimizationHelper _resumeOptimizationHelper;
 
 
         private readonly ILogger log;
@@ -32,7 +33,8 @@ namespace Risebird.AzureTimerFunctions
             IIRFService irfService,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper,
             IPdfReaderHelper pdfReaderHelper,
-            IOpenAIInterviewerAssistantHelper ai)
+            IOpenAIInterviewerAssistantHelper ai,
+            IResumeOptimizationHelper resumeOptimizationHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -44,6 +46,7 @@ namespace Risebird.AzureTimerFunctions
             log = loggerFactory.CreateLogger<ResumeParserJob>();
             _pdfReaderHelper = pdfReaderHelper;
             _ai = ai;
+            _resumeOptimizationHelper = resumeOptimizationHelper;
         }
 
         [Function("ResumeParserJob")]
@@ -83,7 +86,7 @@ namespace Risebird.AzureTimerFunctions
                         if (!string.IsNullOrEmpty(resumeStringContent))
                         {
                             // OPTIMIZATION: Pre-screen resume for validity (saves API calls on corrupted resumes)
-                            var (isValid, validationReason) = ResumeOptimizationHelper.ValidateResumeForParsing(resumeStringContent);
+                            var (isValid, validationReason) = _resumeOptimizationHelper.ValidateResumeForParsing(resumeStringContent);
                             if (!isValid)
                             {
                                 log.LogInformation($"ResumeParserJob: Resume {resume.id} validation failed: {validationReason}");
@@ -99,9 +102,9 @@ namespace Risebird.AzureTimerFunctions
                             }
 
                             // OPTIMIZATION: Reduce token usage by removing boilerplate and excessive whitespace
-                            var estimatedTokensBefore = ResumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
-                            resumeStringContent = ResumeOptimizationHelper.OptimizeResumeText(resumeStringContent);
-                            var estimatedTokensAfter = ResumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                            var estimatedTokensBefore = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                            resumeStringContent = _resumeOptimizationHelper.OptimizeResumeText(resumeStringContent);
+                            var estimatedTokensAfter = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
                             
                             log.LogInformation($"ResumeParserJob: Resume {resume.id} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter})");
 
