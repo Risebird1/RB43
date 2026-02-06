@@ -158,6 +158,7 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
             services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();
             services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
+            services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
             return services;
         }
     }

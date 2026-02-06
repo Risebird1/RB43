@@ -216,6 +216,7 @@ builder.Services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
 builder.Services.AddScoped<IAWSRekognitionService, AWSRekognitionService>();
 builder.Services.AddScoped<IOpenAIApiLogRepository, OpenAIApiLogRepository>();
 builder.Services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
+builder.Services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 
 var app = builder.Build();
