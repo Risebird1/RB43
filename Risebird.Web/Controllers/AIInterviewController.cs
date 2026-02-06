@@ -112,6 +112,28 @@ namespace Risebird.Web.Controllers
                                     model.SynthesizedVideoUrl = sampleQuestion.AIQuestionVideoLink;
                                     model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                                     model.CurrentQuestionId = sampleQuestion.id;
+                                    model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
+                                    model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
+                                    model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
+                                    model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
+                                    
+                                    // Fetch random typing sample text from database if it's a typing speed question
+                                    if (sampleQuestion.IsTypingSpeedAssessment)
+                                    {
+                                        var typingSample = await _aiinterviewerService.GetRandomTypingSpeedSampleText();
+                                        if (typingSample != null && !string.IsNullOrWhiteSpace(typingSample.SampleText))
+                                        {
+                                            model.TypingSampleTextFromDB = typingSample.SampleText;
+                                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                                new Exception($"Typing sample text loaded successfully. Length: {typingSample.SampleText.Length}"));
+                                        }
+                                        else
+                                        {
+                                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                                new Exception("No typing sample text available in database. Please add sample texts to TypingSpeedSampleTexts table."));
+                                        }
+                                    }
+                                    
                                     await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                 }
@@ -262,6 +284,28 @@ namespace Risebird.Web.Controllers
                                                 model.SynthesizedVideoUrl = sampleQuestion.AIQuestionVideoLink;//latestEntry.AIQuestionVideoLink;
                                                 model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                                                 model.CurrentQuestionId = sampleQuestion.id;//latestEntry.DeliveryHeadQuestionId;
+                                                model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
+                                                model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
+                                                model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
+                                                model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
+                                                
+                                                // Fetch random typing sample text from database if it's a typing speed question
+                                                if (sampleQuestion.IsTypingSpeedAssessment)
+                                                {
+                                                    var typingSample = await _aiinterviewerService.GetRandomTypingSpeedSampleText();
+                                                    if (typingSample != null && !string.IsNullOrWhiteSpace(typingSample.SampleText))
+                                                    {
+                                                        model.TypingSampleTextFromDB = typingSample.SampleText;
+                                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                                            new Exception($"Typing sample text loaded successfully. Length: {typingSample.SampleText.Length}"));
+                                                    }
+                                                    else
+                                                    {
+                                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                                            new Exception("No typing sample text available in database. Please add sample texts to TypingSpeedSampleTexts table."));
+                                                    }
+                                                }
+                                                
                                                 await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                             }
@@ -722,7 +766,13 @@ namespace Risebird.Web.Controllers
                     string userMessage = model.Message;
                     string tranScribedResponse = string.Empty;
                     string codeResponse = string.Empty;
-                    if(!model.showChatBox)
+
+                    // For typing speed or listening comprehension assessments, skip audio transcription
+                    if (model.IsTypingSpeedQuestion || model.IsListeningComprehensionQuestion)
+                    {
+                        userMessage = "Typed Out";
+                    }
+                    else if(!model.showChatBox)
                     {
                         if (model.AudioFile != null && model.AudioFile.Length > 0)
                         {
@@ -893,6 +943,68 @@ namespace Risebird.Web.Controllers
                             };
                             return View("ExitModalPartial", exitModel);
                         }
+
+                        // Save typing speed assessment if this was a typing speed question
+                        if (model.IsTypingSpeedQuestion && !string.IsNullOrEmpty(model.TypedText))
+                        {
+                            try
+                            {
+                                // Calculate pass/fail based on criteria: 30 WPM and 97% accuracy
+                                bool isPassed = model.TypingWPM >= 30.00M && model.TypingAccuracy >= 97.00M;
+                                
+                                var typingAssessment = new TypingSpeedAssessment
+                                {
+                                    SessionId = model.SessionId.ToString(),
+                                    QuestionId = model.CurrentQuestionId,
+                                    SampleText = model.TypingSampleText,
+                                    TypedText = model.TypedText,
+                                    TimeStarted = DateTime.Parse(model.TypingStartTime),
+                                    TimeCompleted = DateTime.Parse(model.TypingEndTime),
+                                    TimeTakenInSeconds = model.TypingTimeTaken,
+                                    TotalCharacters = model.TypingTotalChars,
+                                    CorrectCharacters = model.TypingCorrectChars,
+                                    AccuracyPercentage = model.TypingAccuracy,
+                                    WordsPerMinute = model.TypingWPM,
+                                    PassingWPM = 30.00M,
+                                    PassingAccuracyPercentage = 97.00M,
+                                    IsPassed = isPassed,
+                                    CreatedBy = model.candidateName
+                                };
+                                await _aiinterviewerService.SaveTypingSpeedAssessment(typingAssessment);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                // Continue even if typing speed save fails - don't block the interview
+                            }
+                        }
+
+                        // Save listening comprehension assessment if this was a listening comprehension question
+                        if (model.IsListeningComprehensionQuestion && !string.IsNullOrEmpty(model.ListeningSummary))
+                        {
+                            try
+                            {
+                                var listeningAssessment = new ListeningComprehensionAssessment
+                                {
+                                    SessionId = model.SessionId.ToString(),
+                                    QuestionId = model.CurrentQuestionId,
+                                    AudioUrl = model.ListeningAudioUrl,
+                                    AudioTranscription = model.ListeningAudioTranscription,
+                                    CandidateSummary = model.ListeningSummary,
+                                    TimeStarted = DateTime.Parse(model.ListeningStartTime),
+                                    TimeCompleted = DateTime.Parse(model.ListeningEndTime),
+                                    TimeTakenInSeconds = model.ListeningTimeTaken,
+                                    CreatedBy = model.candidateName
+                                };
+                                await _aiinterviewerService.SaveListeningComprehensionAssessment(listeningAssessment);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                // Continue even if listening assessment save fails - don't block the interview
+                            }
+                        }
+
                         await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
 
                         var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(model.InterviewId, model.IRFId);
@@ -909,12 +1021,38 @@ namespace Risebird.Web.Controllers
                             //current question changes to the latest reply by the assistant and is set only after the earlier question-answer response is saved using UploadBotInterviewVideo()
                             model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                             model.CurrentQuestionId = sampleQuestion.id;
+                            model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
+                            model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
+                            model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
+                            model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
 
                             if (!string.IsNullOrEmpty(model.CurrentQuestion))//&& string.IsNullOrEmpty(model.AIInterviewerAudioLink)
                             {
                                 model.SynthesizedVideoUrl = sampleQuestion.AIQuestionVideoLink;
                                 model.CurrentQuestion = CleanMessage(sampleQuestion.Message);
                                 model.CurrentQuestionId = sampleQuestion.id;
+                                model.IsTypingSpeedQuestion = sampleQuestion.IsTypingSpeedAssessment;
+                                model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
+                                model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
+                                model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
+                                
+                                // Fetch random typing sample text from database if it's a typing speed question
+                                if (sampleQuestion.IsTypingSpeedAssessment)
+                                {
+                                    var typingSample = await _aiinterviewerService.GetRandomTypingSpeedSampleText();
+                                    if (typingSample != null && !string.IsNullOrWhiteSpace(typingSample.SampleText))
+                                    {
+                                        model.TypingSampleTextFromDB = typingSample.SampleText;
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                            new Exception($"Typing sample text loaded successfully. Length: {typingSample.SampleText.Length}"));
+                                    }
+                                    else
+                                    {
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                            new Exception("No typing sample text available in database. Please add sample texts to TypingSpeedSampleTexts table."));
+                                    }
+                                }
+                                
                                 await _aiinterviewerService.LogTranscript(model.SessionId, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                             }
@@ -1174,12 +1312,52 @@ namespace Risebird.Web.Controllers
                         // Invalid video type: treat as a failure for the video-response workflow.
                         return false;
                     }
+
+                    //if (VideoLink != null)
+                    //{
+                    //    // Get AI Video storage account settings from configuration
+                    //    var aiVideoStorageName = _configuration["AIVideoStorageSettings:StorageName"];
+                    //    var aiVideoStorageKey = _configuration["AIVideoStorageSettings:SecretKey"];
+
+                    //    HttpClient myWebClient = new HttpClient();
+                    //    using (Stream myStream = myWebClient.GetStreamAsync(VideoLink).Result)
+                    //    {
+                    //        var fileName = $"aiVideo__{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
+                    //        //long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    //        //fileName = fileName + "_" + unixTime.ToString();
+                    //        try
+                    //        {
+                    //            // Use the new storage account for AI videos
+                    //            var uploadedVideoUrl = await _azureStorageHelper.InsertBlobWithCustomStorage(
+                    //                fileName,
+                    //                "videos",
+                    //                aiVideoStorageName,
+                    //                aiVideoStorageKey,
+                    //                blobFileStream: myStream,
+                    //                contentType: "video/mp4");
+
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                    //        }
+
+                    //        //generate SAS URL from the uploaded video url
+                    //        //var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
+
+                    //        //if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                    //        //{
+                    //        //    videoSasUrl = uploadedVideoUrl + "?" + sas;
+                    //        //}
+                    //    }
+                    //}
                 }
                 // If no video file but there's a text/code response, save it with empty VideoLink
                 // This allows text/code submissions to be saved successfully
                 
                 // Save in db with question.sessionid,videoLink,Datetime (VideoLink can be empty for text responses)
-                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId);
+                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion);
                 return result;
             }
             catch (Exception ex)
@@ -1592,7 +1770,7 @@ namespace Risebird.Web.Controllers
                                 //fileName = fileName + "_" + unixTime.ToString();
                                 try
                                 {
-                                    uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, "videos", null, myStream).Result;
+                                    uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, "botinterviewvideo", null, myStream).Result;
 
                                 }
                                 catch (Exception ex)

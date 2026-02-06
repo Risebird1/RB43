@@ -943,7 +943,7 @@ namespace Risebird.Repository
                 }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetCandidateResumeForParsing", null,
+                    return await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetCandidateResumeForParsing", null,//usp_GetCandidateResumeForParsingTesting
                         commandType: CommandType.StoredProcedure);
                 }
             }

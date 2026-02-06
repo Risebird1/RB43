@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 
@@ -25,6 +25,27 @@ namespace Risebird.Entities.ViewModel
         public int IRFId { get; set; }
         public bool showChatBox { get; set; }
         public bool isMultiLingual { get; set; }
+        public bool IsTypingSpeedQuestion { get; set; }
+        public string TypingSampleText { get; set; }
+        public string TypingSampleTextFromDB { get; set; } // Sample text fetched from database to display to candidate
+        public string TypedText { get; set; }
+        public string TypingStartTime { get; set; }
+        public string TypingEndTime { get; set; }
+        public decimal TypingTimeTaken { get; set; }
+        public int TypingTotalChars { get; set; }
+        public int TypingCorrectChars { get; set; }
+        public decimal TypingAccuracy { get; set; }
+        public decimal TypingWPM { get; set; }
+        public decimal TypingPassingWPM { get; set; } = 30.00M;
+        public decimal TypingPassingAccuracy { get; set; } = 97.00M;
+        public bool? TypingIsPassed { get; set; }
+        public bool IsListeningComprehensionQuestion { get; set; }
+        public string ListeningAudioUrl { get; set; }
+        public string ListeningAudioTranscription { get; set; }
+        public string ListeningSummary { get; set; }
+        public string ListeningStartTime { get; set; }
+        public string ListeningEndTime { get; set; }
+        public decimal ListeningTimeTaken { get; set; }
     }
 
     public class ChatLine

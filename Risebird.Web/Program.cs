@@ -1,4 +1,4 @@
-﻿using DinkToPdf;
+using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
@@ -214,6 +214,9 @@ builder.Services.AddScoped<IAIInterviewerService, AIInterviewerService>();
 builder.Services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();
 builder.Services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
 builder.Services.AddScoped<IAWSRekognitionService, AWSRekognitionService>();
+builder.Services.AddScoped<IOpenAIApiLogRepository, OpenAIApiLogRepository>();
+builder.Services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
+builder.Services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 
 var app = builder.Build();

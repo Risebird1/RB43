@@ -1,0 +1,156 @@
+@using System.Linq
+@model List<Risebird.Entities.Data.OpenAIApiLog>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = $"Logs - {ViewBag.OperationType}";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>OpenAI API Logs: @ViewBag.OperationType</h2>
+            <hr />
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <a asp-action="Index" asp-route-startDate="@ViewBag.StartDate" asp-route-endDate="@ViewBag.EndDate" class="btn btn-secondary">Back to All Logs</a>
+            <a asp-action="Summary" asp-route-startDate="@ViewBag.StartDate" asp-route-endDate="@ViewBag.EndDate" class="btn btn-info">View Summary</a>
+        </div>
+    </div>
+
+    <!-- Date Range Filter -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <form method="get" class="form-inline">
+                <input type="hidden" name="operationType" value="@ViewBag.OperationType" />
+                <div class="form-group mr-3">
+                    <label for="startDate" class="mr-2" style="margin:10px 0px;">Start Date:</label>
+                    <input style="margin:10px 0px;" type="date" id="startDate" name="startDate" class="form-control" value="@ViewBag.StartDate" />
+                </div>
+                <div class="form-group mr-3">
+                    <label for="endDate" class="mr-2" style="margin:10px 0px;">End Date:</label>
+                    <input style="margin:10px 0px;" type="date" id="endDate" name="endDate" class="form-control" value="@ViewBag.EndDate" />
+                </div>
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Total Calls</h6>
+                    <h3 class="card-text">@Model.Count</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Total Cost</h6>
+                    <h3 class="card-text">$@Model.Sum(x => x.EstimatedCostUSD ?? 0).ToString("N2")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Total Tokens</h6>
+                    <h3 class="card-text">@Model.Sum(x => x.TotalTokens ?? 0).ToString("N0")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Avg Response Time</h6>
+                    <h3 class="card-text">@(Model.Any(x => x.ResponseTimeMs.HasValue) ? Model.Where(x => x.ResponseTimeMs.HasValue).Average(x => x.ResponseTimeMs.Value).ToString("N0") : "0") ms</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logs Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>API Call Logs (@Model.Count records)</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date/Time</th>
+                                        <th>Model</th>
+                                        <th>Status</th>
+                                        <th>Response Time</th>
+                                        <th>Tokens</th>
+                                        <th>Cost</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var log in Model)
+                                    {
+                                        <tr class="@(log.IsSuccess ? "" : "table-danger")">
+                                            <td>@log.LogDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                            <td>@(string.IsNullOrEmpty(log.Model) ? "N/A" : log.Model)</td>
+                                            <td>
+                                                @if (log.IsSuccess)
+                                                {
+                                                    <span class="badge badge-success">Success</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">Failed</span>
+                                                }
+                                            </td>
+                                            <td>@(log.ResponseTimeMs.HasValue ? log.ResponseTimeMs.Value + " ms" : "N/A")</td>
+                                            <td>
+                                                @if (log.TotalTokens.HasValue && log.TotalTokens.Value > 0)
+                                                {
+                                                    <span>@log.TotalTokens.Value.ToString("N0")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (log.EstimatedCostUSD.HasValue && log.EstimatedCostUSD.Value > 0)
+                                                {
+                                                    <strong>$@log.EstimatedCostUSD.Value.ToString("N6")</strong>
+                                                }
+                                                else
+                                                {
+                                                    <span>-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a asp-action="Details" asp-route-id="@log.Id" class="btn btn-sm btn-primary">Details</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-center">No logs found for this operation type in the selected date range.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>

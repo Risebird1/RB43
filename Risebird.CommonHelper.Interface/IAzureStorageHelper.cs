@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -45,5 +45,6 @@ namespace Risebird.CommonHelper.Interface
         Task<bool> IsDocFileAsync(string url);
         Task<string> DownloadAndConvertFromDocToPdfAsync(string url);
         Task<string> InsertBlobAIInterviewerAudio(string filename, string containerName, MemoryStream blobFile = null, string contentType = null);
+        Task<string> InsertBlobWithCustomStorage(string filename, string containerName, string storageAccountName, string storageAccountKey, MemoryStream blobFile = null, Stream blobFileStream = null, string contentType = null);
     }
 }

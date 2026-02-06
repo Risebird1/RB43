@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
@@ -100,7 +100,7 @@ namespace Risebird.Repository
                 DeliveryHeadQuestionId = deliveryHeadQuestionId
             });
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false)
         {
             try
             {
@@ -116,6 +116,29 @@ namespace Risebird.Repository
                     var normalizedBotAudioLink = NormalizeForDb(BotAudioLink);
 
                     // Required fields for a meaningful row in BotInterviewQuestionVideos.
+                    //if(isTypingSpeedQuestion || isListeningComprehension)
+                    //{
+                    //    if (normalizedSessionId is null ||
+                    //    normalizedVideoLink is null ||
+                    //    //normalizedCandidateResponse is null ||
+                    //    normalizedQuestion is null ||
+                    //    interviewId <= 0)
+                    //    {
+                    //        return false;
+                    //    }
+                    //    normalizedCandidateResponse = "Response Typed Out";
+                    //}
+                    //else
+                    //{
+                    //    if (normalizedSessionId is null ||
+                    //    normalizedVideoLink is null ||
+                    //    normalizedCandidateResponse is null ||
+                    //    normalizedQuestion is null ||
+                    //    interviewId <= 0)
+                    //    {
+                    //        return false;
+                    //    }
+                    //}
                     if (normalizedSessionId is null ||
                         normalizedVideoLink is null ||
                         normalizedCandidateResponse is null ||
@@ -124,6 +147,7 @@ namespace Risebird.Repository
                     {
                         return false;
                     }
+
 
                     var parameters = new DynamicParameters();
                     parameters.Add("@VideoLink", normalizedVideoLink);
@@ -663,6 +687,100 @@ namespace Risebird.Repository
                     parameters.Add("@biqvId", videoId);
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetAIInterviewSpecificDetailsByCandidateVideoId", parameters,
                          commandType: CommandType.StoredProcedure, commandTimeout: 150);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> SaveTypingSpeedAssessment(TypingSpeedAssessment obj)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", obj.SessionId);
+                    parameters.Add("@QuestionId", obj.QuestionId);
+                    parameters.Add("@SampleText", obj.SampleText);
+                    parameters.Add("@TypedText", obj.TypedText);
+                    parameters.Add("@TimeStarted", obj.TimeStarted);
+                    parameters.Add("@TimeCompleted", obj.TimeCompleted);
+                    parameters.Add("@TimeTakenInSeconds", obj.TimeTakenInSeconds);
+                    parameters.Add("@TotalCharacters", obj.TotalCharacters);
+                    parameters.Add("@CorrectCharacters", obj.CorrectCharacters);
+                    parameters.Add("@AccuracyPercentage", obj.AccuracyPercentage);
+                    parameters.Add("@WordsPerMinute", obj.WordsPerMinute);
+                    parameters.Add("@PassingWPM", obj.PassingWPM);
+                    parameters.Add("@PassingAccuracyPercentage", obj.PassingAccuracyPercentage);
+                    parameters.Add("@IsPassed", obj.IsPassed);
+                    parameters.Add("@CreatedBy", obj.CreatedBy);
+                    
+                    await SqlMapper.QueryAsync(con, "usp_SaveTypingSpeedAssessment", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> SaveListeningComprehensionAssessment(ListeningComprehensionAssessment obj)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", obj.SessionId);
+                    parameters.Add("@QuestionId", obj.QuestionId);
+                    parameters.Add("@AudioUrl", obj.AudioUrl);
+                    parameters.Add("@AudioTranscription", obj.AudioTranscription);
+                    parameters.Add("@CandidateSummary", obj.CandidateSummary);
+                    parameters.Add("@TimeStarted", obj.TimeStarted);
+                    parameters.Add("@TimeCompleted", obj.TimeCompleted);
+                    parameters.Add("@TimeTakenInSeconds", obj.TimeTakenInSeconds);
+                    parameters.Add("@CreatedBy", obj.CreatedBy);
+                    
+                    await SqlMapper.QueryAsync(con, "usp_SaveListeningComprehensionAssessment", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<TypingSpeedSampleText>(con, "usp_GetRandomTypingSpeedSampleText",
+                         commandType: CommandType.StoredProcedure);
                     return result?.FirstOrDefault();
                 }
             }

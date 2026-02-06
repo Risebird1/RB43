@@ -1,0 +1,147 @@
+@using System.Linq
+@model List<Risebird.Entities.Data.OpenAIApiLog>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = $"Logs - Session {ViewBag.SessionId}";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>OpenAI API Logs for Session</h2>
+            <p class="text-muted">Session ID: <code>@ViewBag.SessionId</code></p>
+            <hr />
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <a asp-action="Index" class="btn btn-secondary">Back to All Logs</a>
+            <a asp-action="Summary" class="btn btn-info">View Summary</a>
+        </div>
+    </div>
+
+    <!-- Session Summary -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Total API Calls</h6>
+                    <h3 class="card-text">@Model.Count</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Session Cost</h6>
+                    <h3 class="card-text text-success">$@Model.Sum(x => x.EstimatedCostUSD ?? 0).ToString("N4")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Total Tokens</h6>
+                    <h3 class="card-text">@Model.Sum(x => x.TotalTokens ?? 0).ToString("N0")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Duration</h6>
+                    <h3 class="card-text">
+                        @if (Model.Any())
+                        {
+                            var duration = Model.Max(x => x.LogDate) - Model.Min(x => x.LogDate);
+                            @duration.ToString(@"hh\:mm\:ss")
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logs Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Session API Calls Timeline</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Time</th>
+                                        <th>Operation Type</th>
+                                        <th>Model</th>
+                                        <th>Status</th>
+                                        <th>Response Time</th>
+                                        <th>Tokens</th>
+                                        <th>Cost</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        var counter = 1;
+                                    }
+                                    @foreach (var log in Model.OrderBy(x => x.LogDate))
+                                    {
+                                        <tr class="@(log.IsSuccess ? "" : "table-danger")">
+                                            <td>@counter</td>
+                                            <td>@log.LogDate.ToString("HH:mm:ss.fff")</td>
+                                            <td><span class="badge badge-info">@log.OperationType</span></td>
+                                            <td>@(string.IsNullOrEmpty(log.Model) ? "N/A" : log.Model)</td>
+                                            <td>
+                                                @if (log.IsSuccess)
+                                                {
+                                                    <span class="badge badge-success">✓</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">✗</span>
+                                                }
+                                            </td>
+                                            <td>@(log.ResponseTimeMs.HasValue ? log.ResponseTimeMs.Value + " ms" : "-")</td>
+                                            <td>@(log.TotalTokens.HasValue && log.TotalTokens.Value > 0 ? log.TotalTokens.Value.ToString("N0") : "-")</td>
+                                            <td>@(log.EstimatedCostUSD.HasValue && log.EstimatedCostUSD.Value > 0 ? "$" + log.EstimatedCostUSD.Value.ToString("N6") : "-")</td>
+                                            <td>
+                                                <a asp-action="Details" asp-route-id="@log.Id" class="btn btn-sm btn-primary">Details</a>
+                                            </td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-info">
+                                        <td colspan="6"><strong>TOTAL</strong></td>
+                                        <td><strong>@Model.Sum(x => x.TotalTokens ?? 0).ToString("N0")</strong></td>
+                                        <td><strong>$@Model.Sum(x => x.EstimatedCostUSD ?? 0).ToString("N6")</strong></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-center">No logs found for this session.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
