@@ -16,6 +16,9 @@ namespace Risebird.Entities.ViewModel
         public int CorrectCharacters { get; set; }
         public decimal AccuracyPercentage { get; set; }
         public decimal WordsPerMinute { get; set; }
+        public decimal PassingWPM { get; set; } = 30.00M;
+        public decimal PassingAccuracyPercentage { get; set; } = 97.00M;
+        public bool? IsPassed { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
     }

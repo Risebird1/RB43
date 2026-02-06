@@ -29,5 +29,6 @@ namespace Risebird.Repository.Interface
         Task<MeetingVM> GetAIInterviewSpecificDetailsByCandidateVideoId(int videoId);
         Task<bool> SaveTypingSpeedAssessment(TypingSpeedAssessment obj);
         Task<bool> SaveListeningComprehensionAssessment(ListeningComprehensionAssessment obj);
+        Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText();
     }
 }
