@@ -27,6 +27,7 @@ namespace Risebird.Entities.ViewModel
         public bool isMultiLingual { get; set; }
         public bool IsTypingSpeedQuestion { get; set; }
         public string TypingSampleText { get; set; }
+        public string TypingSampleTextFromDB { get; set; } // Sample text fetched from database to display to candidate
         public string TypedText { get; set; }
         public string TypingStartTime { get; set; }
         public string TypingEndTime { get; set; }
@@ -35,6 +36,9 @@ namespace Risebird.Entities.ViewModel
         public int TypingCorrectChars { get; set; }
         public decimal TypingAccuracy { get; set; }
         public decimal TypingWPM { get; set; }
+        public decimal TypingPassingWPM { get; set; } = 30.00M;
+        public decimal TypingPassingAccuracy { get; set; } = 97.00M;
+        public bool? TypingIsPassed { get; set; }
         public bool IsListeningComprehensionQuestion { get; set; }
         public string ListeningAudioUrl { get; set; }
         public string ListeningAudioTranscription { get; set; }

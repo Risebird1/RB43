@@ -300,5 +300,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText()
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetRandomTypingSpeedSampleText();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
