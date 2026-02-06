@@ -719,6 +719,9 @@ namespace Risebird.Repository
                     parameters.Add("@CorrectCharacters", obj.CorrectCharacters);
                     parameters.Add("@AccuracyPercentage", obj.AccuracyPercentage);
                     parameters.Add("@WordsPerMinute", obj.WordsPerMinute);
+                    parameters.Add("@PassingWPM", obj.PassingWPM);
+                    parameters.Add("@PassingAccuracyPercentage", obj.PassingAccuracyPercentage);
+                    parameters.Add("@IsPassed", obj.IsPassed);
                     parameters.Add("@CreatedBy", obj.CreatedBy);
                     
                     await SqlMapper.QueryAsync(con, "usp_SaveTypingSpeedAssessment", parameters,
@@ -768,6 +771,28 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+
+        public async Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<TypingSpeedSampleText>(con, "usp_GetRandomTypingSpeedSampleText",
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
 
     }
