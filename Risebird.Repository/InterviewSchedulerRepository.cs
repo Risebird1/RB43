@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.CognitiveServices.Speech.Transcription;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -742,7 +743,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<List<string>> SaveCalibrationCallDetail(string meetinglink, int irfid, DateTime meetingdate, string Emailid)
+        public async Task<List<string>> SaveCalibrationCallDetail(string meetinglink, int irfid, DateTime meetingdate, string Emailid, string meetingid)
         {
             try
             {
@@ -754,6 +755,7 @@ namespace Risebird.Repository
                     parameters.Add("@irfid", irfid);
                     parameters.Add("@Emailid", Emailid);
                     parameters.Add("@CreatedOn", DateTime.Now);
+                    parameters.Add("@meetingid", meetingid);
                     var data = await SqlMapper.QueryAsync<string>(con, "usp_SaveCalibrationMeetingDetails", parameters,
                          commandType: CommandType.StoredProcedure);
                     return data.ToList();
