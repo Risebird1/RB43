@@ -9,6 +9,8 @@ CREATE TABLE [dbo].[CalibrationMeetings](
 	[CreatedOn] [datetime] NULL,
 	[CreatedBy] [varchar](150) NULL,
 	[VideoLink] [varchar](1000) NULL,
+	[TranscriptLink] [varchar](1000) NULL,
+	[ZoomMeetingId] [varchar](200) NULL,
 	CONSTRAINT [FK_CalibrationIRF] FOREIGN KEY([Irfid]) REFERENCES [dbo].[IRF] ([id]),
  CONSTRAINT [PK_CalibrationMeetings] PRIMARY KEY CLUSTERED 
 (
