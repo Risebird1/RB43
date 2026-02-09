@@ -8,12 +8,12 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_FetchMeetingPendingVideo]  
-@timeStart datetime,
-@timeEnd datetime
-AS  
-Begin 
-Select id as imid,MeetingDate as interviewDate,MeetingLink as zoomLink,VideoLink,'CalibrationMeetings' as meetingtype from CalibrationMeetings 
-where (VideoLink is null or VideoLink='') and MeetingDate<=@timeEnd and MeetingDate>=@timeStart
-End
+CREATE PROCEDURE [dbo].[usp_FetchMeetingPendingVideo]    
+@timeStart datetime,  
+@timeEnd datetime  
+AS    
+Begin   
+Select id as imid,MeetingDate as interviewDate,MeetingLink as zoomLink,VideoLink,'CalibrationMeetings' as meetingtype,ZoomMeetingId from CalibrationMeetings   
+where (VideoLink is null or VideoLink='') and MeetingDate<=@timeEnd and MeetingDate>=@timeStart  
+End  
 GO
