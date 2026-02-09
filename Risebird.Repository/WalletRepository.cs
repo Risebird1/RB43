@@ -85,7 +85,7 @@ namespace Risebird.Repository
                 parameters.Add("@CreatedBy", loginedUser);
                 parameters.Add("@TransactionType", "Manual");
                 parameters.Add("@Credit", CreditAmount);
-                parameters.Add("@CreatedOn", CreatedOn);
+                parameters.Add("@CreatedOn", DateTime.Now);
                 parameters.Add("@TransactionDate", transactionDate);
                 parameters.Add("@TransactionRefNumber", transactionRefNumber);
                 parameters.Add("@InvoicePDF", invoicePDF);

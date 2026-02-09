@@ -73,7 +73,7 @@
         var model = $("#AddWalletBalanceModal");
         model.css("display", "block");
         $("#txtClientIdWallet").val(id);
-        
+
         // Load client details and billing type
         $.ajax({
             url: '/Wallet/AddWalletBalance',
@@ -83,17 +83,17 @@
                 $('#divAddWalletCredit').html(data);
                 var billingType = $(data).find('#hidBillingType').val();
                 $("#txtBillingType").val(billingType);
-                
+
                 // Get and set Transaction Date from loaded form
                 var transactionDate = $(data).find('#txtTransactionDate').val();
                 if (transactionDate) {
                     $("#txtTransactionDate").val(transactionDate);
                 }
-                
+
                 // Display billing type text
                 var billingTypeText = billingType == 1 ? "Billing Owner" : "Client";
                 $("#txtBillingTypeDisplay").val(billingTypeText);
-                
+
                 // If billing type is 1 (Billing Owner), load client users
                 if (billingType == 1) {
                     $("#divClientHRUser").show();
@@ -144,17 +144,11 @@
         formData.append("billingType", billingType);
         formData.append("CreditAmount", creditAmount);
         formData.append("transactionId", transactionId || "");
-        if (billingOwnerId) {
             formData.append("billingOwnerId", billingOwnerId);
-        }
         // CreatedOn is set automatically to current timestamp in stored procedure
         // TransactionDate is the date entered by the user
-        if (transactionDate) {
             formData.append("transactionDate", transactionDate);
-        }
-        if (invoicePDFFile) {
             formData.append("file", invoicePDFFile);
-        }
 
         $.ajax({
             url: '/Wallet/AddWalletBalance',
@@ -183,11 +177,11 @@
     #AddWalletBalanceModal .modal-body .col-md-12 {
         margin-bottom: 5px !important;
     }
-    
+
     #AddWalletBalanceModal .video-url {
         margin-bottom: 10px !important;
     }
-    
+
     /* Style for datetime-local input */
     #AddWalletBalanceModal .form-control[type="datetime-local"] {
         background-position: 98% 50% !important;
