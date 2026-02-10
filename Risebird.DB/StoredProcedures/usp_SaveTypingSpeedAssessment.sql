@@ -74,7 +74,7 @@ BEGIN
 		@IsPassed,
 		GETDATE(),
 		@CreatedBy
-	)
+	);
 
 	SELECT SCOPE_IDENTITY() AS NewId;
 END;

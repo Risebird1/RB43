@@ -740,6 +740,30 @@ namespace Risebird.Repository
             return false;
         }
 
+        public async Task<List<TypingSpeedAssessment>> GetTypingSpeedAssessmentBySessionId(string sessionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    var result = await SqlMapper.QueryAsync<TypingSpeedAssessment>(con, "usp_GetTypingSpeedAssessmentBySessionId", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.ToList() ?? new List<TypingSpeedAssessment>();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new List<TypingSpeedAssessment>();
+        }
+
         public async Task<bool> SaveListeningComprehensionAssessment(ListeningComprehensionAssessment obj)
         {
             try

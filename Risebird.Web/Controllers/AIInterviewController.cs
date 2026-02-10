@@ -1536,6 +1536,10 @@ namespace Risebird.Web.Controllers
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = false;
+                List<TypingSpeedAssessment> typingAssessments;
+                try { typingAssessments = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessments = new List<TypingSpeedAssessment>(); }
+                ViewBag.TypingSpeedAssessments = typingAssessments;
+                reportModel.TypingSpeedAssessments = typingAssessments;
                 reportModel.CandidateEmail = meetingDetails.candidateEmail;
                 reportModel.CandidateName = meetingDetails.candidateName;
                 reportModel.InterviewDate = meetingDetails.interviewDate;
@@ -1666,6 +1670,10 @@ namespace Risebird.Web.Controllers
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault()); //JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = true;
+                List<TypingSpeedAssessment> typingAssessmentsAdaptive;
+                try { typingAssessmentsAdaptive = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessmentsAdaptive = new List<TypingSpeedAssessment>(); }
+                ViewBag.TypingSpeedAssessments = typingAssessmentsAdaptive;
+                reportModel.TypingSpeedAssessments = typingAssessmentsAdaptive;
                 reportModel.CandidateEmail = meetingDetails.candidateEmail;
                 reportModel.CandidateName = meetingDetails.candidateName;
                 reportModel.resumeLink = meetingDetails.resumeLink;
