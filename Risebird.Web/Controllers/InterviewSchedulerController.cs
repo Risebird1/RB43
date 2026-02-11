@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
@@ -1907,11 +1908,13 @@ namespace Risebird.Web.Controllers
                 Emailid = Emailid.Replace("\"", "");
             }
             //create zoom meeting link
-            var zoomLink = await CreateCalibrationZoomMeeting(subject, meetingdate, "");
-            if (!string.IsNullOrEmpty(zoomLink.join_url))
+            //var zoomLink = await CreateCalibrationZoomMeeting(subject, meetingdate, "");
+            //create Zoho meeting link
+            var rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(subject, subject, meetingdate, 60));
+            if (!string.IsNullOrEmpty(rbMeetingLinkResponse.joinLink))
             {
                 //save into db and fetch emailid's
-                var emailids = await _interviewSchedulerservice.SaveCalibrationCallDetail(zoomLink.join_url, irfid, meetingdate, Emailid);
+                var emailids = await _interviewSchedulerservice.SaveCalibrationCallDetail(rbMeetingLinkResponse.joinLink, irfid, meetingdate, Emailid, rbMeetingLinkResponse.meetingKey);
                 Mail _mail = new Mail
                 {
                     TO = risebirdhr,
@@ -1919,7 +1922,7 @@ namespace Risebird.Web.Controllers
                     Subject = $"{subject}"
                 };
                 //send mail to respentive emailid in bcc
-                var result = await _notificationHelper.SendCalibrationMeetingNotification(_mail, zoomLink.join_url, meetingdate, irfid);
+                var result = await _notificationHelper.SendCalibrationMeetingNotification(_mail, rbMeetingLinkResponse.joinLink, meetingdate, irfid);
                 return Json("Mail notification send successfully.");
             }
             //return success message
