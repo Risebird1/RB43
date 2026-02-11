@@ -28,6 +28,7 @@ namespace Risebird.Business.Interface
         Task<VideoSentimentAnalysis> GetSentimentAnalysisById(int videoId);
         Task<MeetingVM> GetAIInterviewSpecificDetailsByCandidateVideoId(int videoId);
         Task<bool> SaveTypingSpeedAssessment(TypingSpeedAssessment obj);
+        Task<List<TypingSpeedAssessment>> GetTypingSpeedAssessmentBySessionId(string sessionId);
         Task<bool> SaveListeningComprehensionAssessment(ListeningComprehensionAssessment obj);
         Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText();
     }
