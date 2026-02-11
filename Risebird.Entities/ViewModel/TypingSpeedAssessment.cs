@@ -19,7 +19,13 @@ namespace Risebird.Entities.ViewModel
         public decimal PassingWPM { get; set; } = 30.00M;
         public decimal PassingAccuracyPercentage { get; set; } = 97.00M;
         public bool? IsPassed { get; set; }
+        public string OpenAIAnalysisJson { get; set; }
+        public string OpenAIThreadId { get; set; }
+        public string OpenAIRunId { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
+        // Video and Question details from BotInterviewQuestionVideos
+        public string VideoLink { get; set; }
+        public string QuestionText { get; set; }
     }
 }

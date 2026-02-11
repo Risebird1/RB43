@@ -722,6 +722,9 @@ namespace Risebird.Repository
                     parameters.Add("@PassingWPM", obj.PassingWPM);
                     parameters.Add("@PassingAccuracyPercentage", obj.PassingAccuracyPercentage);
                     parameters.Add("@IsPassed", obj.IsPassed);
+                    parameters.Add("@OpenAIAnalysisJson", obj.OpenAIAnalysisJson);
+                    parameters.Add("@OpenAIThreadId", obj.OpenAIThreadId);
+                    parameters.Add("@OpenAIRunId", obj.OpenAIRunId);
                     parameters.Add("@CreatedBy", obj.CreatedBy);
                     
                     await SqlMapper.QueryAsync(con, "usp_SaveTypingSpeedAssessment", parameters,
@@ -738,6 +741,30 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+
+        public async Task<List<TypingSpeedAssessment>> GetTypingSpeedAssessmentBySessionId(string sessionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    var result = await SqlMapper.QueryAsync<TypingSpeedAssessment>(con, "usp_GetTypingSpeedAssessmentBySessionId", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.ToList() ?? new List<TypingSpeedAssessment>();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new List<TypingSpeedAssessment>();
         }
 
         public async Task<bool> SaveListeningComprehensionAssessment(ListeningComprehensionAssessment obj)
