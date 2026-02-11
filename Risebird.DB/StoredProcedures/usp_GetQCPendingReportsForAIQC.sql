@@ -13,7 +13,7 @@ Create PROCEDURE [dbo].[usp_GetQCPendingReportsForAIQC]
 As
 Begin
 
-EXEC dbo.usp_RestoreQuestionsDiscussedTechSkillCommentsAndTransTechSkillIntegrityMoreFrequently; 
+--EXEC dbo.usp_RestoreQuestionsDiscussedTechSkillCommentsAndTransTechSkillIntegrityMoreFrequently; 
 
 
 ----------

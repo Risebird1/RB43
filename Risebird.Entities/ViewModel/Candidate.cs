@@ -170,6 +170,7 @@ namespace Risebird.Entities.ViewModel
         public string ResumeSummary { get; set; }
         public string AIResumeScreeningVerdict { get; set; }
         public string AIScreeningResultJsonV2 { get; set; }
+        public string AssessmentGroup { get; set; }
 
     }
 }

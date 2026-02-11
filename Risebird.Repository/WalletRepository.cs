@@ -27,7 +27,7 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public async Task<IEnumerable<WalletVM>> GetWallet(int billingType, int? clientId = null, int? billingOwnerId = null, string action = null)
+        public async Task<IEnumerable<WalletVM>> GetWallet(int billingType, int? clientId = null, int? billingOwnerId = null, string action = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
@@ -36,6 +36,8 @@ namespace Risebird.Repository
                 parameters.Add("@ClientId", clientId);
                 parameters.Add("@BillingOwnerId", billingOwnerId);
                 parameters.Add("@Action", action);
+                parameters.Add("@StartDate", startDate);
+                parameters.Add("@EndDate", endDate);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -83,7 +85,7 @@ namespace Risebird.Repository
                 parameters.Add("@CreatedBy", loginedUser);
                 parameters.Add("@TransactionType", "Manual");
                 parameters.Add("@Credit", CreditAmount);
-                parameters.Add("@CreatedOn", CreatedOn);
+                parameters.Add("@CreatedOn", DateTime.Now);
                 parameters.Add("@TransactionDate", transactionDate);
                 parameters.Add("@TransactionRefNumber", transactionRefNumber);
                 parameters.Add("@InvoicePDF", invoicePDF);

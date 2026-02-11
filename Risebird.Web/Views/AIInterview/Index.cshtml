@@ -1,4 +1,4 @@
-﻿@using Risebird.Entities.ViewModel
+@using Risebird.Entities.ViewModel
 @using System.Text.Json
 @model ChatMessageViewModel
 @{
@@ -227,7 +227,7 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
-        z-index: 10000;
+        z-index: 500;
         align-items: center;
         justify-content: center;
         animation: fadeInPopup 0.3s ease;
@@ -580,7 +580,7 @@
         font-size: 0.85rem;
         color: #856404;
         display: none;
-        z-index: 1000;
+        z-index: 100;
         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         animation: slideDown 0.3s ease;
         max-width: 100%;
@@ -987,7 +987,7 @@
         justify-content: center;
         gap: 32px;
         margin-top: 15px;
-        z-index: 10000;
+        z-index: 10;
     }
 
     .rb-footer-btn {
@@ -1027,7 +1027,7 @@
             white-space: nowrap;
             visibility: hidden;
             transition: all 0.3s ease;
-            z-index: 1000;
+            z-index: 100;
             margin-bottom: 8px;
             border: 0px !important;
             box-shadow: none !important;
@@ -1106,7 +1106,7 @@
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
-            z-index: 1000;
+            z-index: 100;
             margin-bottom: 8px;
         }
 
@@ -1468,6 +1468,7 @@
                         <input type="hidden" asp-for="AIInterviewType" value="@Model.AIInterviewType" />
                         <input type="hidden" asp-for="SynthesizedVideoUrl" value="@Model.SynthesizedVideoUrl" />
                         <input type="hidden" asp-for="showChatBox" value="@Model.showChatBox" />
+                        <input type="hidden" asp-for="isMultiLingual" value="@Model.isMultiLingual" />
 
                         <!-- Audio and Video file inputs - Always available for recording functionality -->
                         <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
@@ -1657,13 +1658,13 @@
         </div>
     </div>
     <div id="waitOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); z-index: 100000; color: white; font-size: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.6); z-index: 2000; color: white; font-size: 1.5rem;
     align-items: center; justify-content: center;">
         <div>Please wait while the assistant prepares the next question...May take upto a minute!</div>
     </div>
     <!-- Recording Indicator Overlay -->
     <div id="recordingOverlay" style="display: none; position: fixed; top: 0; left: 0px; width: 100%; height: 100%;
-    background-color: rgba(255, 81, 107, 0.1); z-index: 999; align-items: center; justify-content: center; pointer-events: none;">
+    background-color: rgba(255, 81, 107, 0.1); z-index: 500; align-items: center; justify-content: center; pointer-events: none;">
         <div class="shift-Chat" style="background: rgba(255, 81, 107, 0.95); color: white; padding: 20px 40px; border-radius: 16px;margin-left:200px;
         text-align: center; box-shadow: 0 8px 32px rgba(255, 81, 107, 0.3); animation: recordingPulse 2s infinite; ">
             <div style="font-size:2rem;">
@@ -2372,7 +2373,7 @@
 <style>
     .custom-modal {
         position: fixed;
-        z-index: 1000000;
+        z-index: 2000;
         left: 0;
         top: 0;
         width: 100%;
@@ -3330,4 +3331,594 @@
             }
         };
     });
+
+    // ===============================================
+    // TYPING SPEED ASSESSMENT FUNCTIONALITY
+    // ===============================================
+    (function() {
+        const isTypingSpeedQuestion = @Json.Serialize(Model.IsTypingSpeedQuestion);
+        
+        if (!isTypingSpeedQuestion) {
+            return; // Not a typing speed question, skip this functionality
+        }
+
+        // Get sample text from database (fetched in controller)
+        const sampleText = @Html.Raw(Json.Serialize(Model.TypingSampleTextFromDB ?? ""));
+        
+        // Debug: Log sample text to console
+        console.log('Typing Assessment - Sample Text Length:', sampleText ? sampleText.length : 0);
+        console.log('Typing Assessment - Sample Text:', sampleText);
+        
+        // Validate sample text exists
+        if (!sampleText || sampleText.trim() === '') {
+            console.error('ERROR: No sample text available for typing assessment!');
+            Swal.fire({
+                title: 'Configuration Error',
+                text: 'No typing sample text is available. Please contact the administrator to add sample texts to the database.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return; // Exit if no sample text
+        }
+        
+        // Store typing assessment data
+        let typingStartTime = null;
+        let typingEndTime = null;
+        let typingInProgress = false;
+
+        // Function to calculate accuracy
+        function calculateAccuracy(originalText, typedText) {
+            let correctChars = 0;
+            const minLength = Math.min(originalText.length, typedText.length);
+            
+            for (let i = 0; i < minLength; i++) {
+                if (originalText[i] === typedText[i]) {
+                    correctChars++;
+                }
+            }
+            
+            return {
+                correctChars: correctChars,
+                totalChars: originalText.length,
+                accuracy: (correctChars / originalText.length) * 100
+            };
+        }
+
+        // Function to calculate WPM
+        function calculateWPM(text, timeInSeconds) {
+            const words = text.trim().split(/\s+/).length;
+            const minutes = timeInSeconds / 60;
+            return words / minutes;
+        }
+
+        // Show typing test modal when page loads
+        function showTypingTestModal() {
+            let timerInterval = null;
+            let startTime = null;
+            
+            Swal.fire({
+                title: 'Typing Speed Assessment',
+                html: `
+                    <div style="text-align: left; margin-bottom: 20px;">
+                        <p style="margin-bottom: 15px; font-size: 14px; color: #666;">
+                            This question will assess your typing speed. Please read the text below and click "Start" when ready.
+                        </p>
+                        <div id="typingInstructions" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #4eda92;">
+                            <strong>Instructions:</strong>
+                            <ul style="margin: 10px 0 0 20px; font-size: 13px; color: #555;">
+                                <li>Click "Start" to begin the typing test</li>
+                                <li><strong>Duration: 2 minutes maximum</strong></li>
+                                <li>Type the text exactly as shown</li>
+                                <li>Video recording will start automatically</li>
+                                <li><strong>Passing Criteria: 30 WPM with 97% accuracy</strong></li>
+                                <li>Click "Submit" when finished or test will auto-submit after 2 minutes</li>
+                            </ul>
+                        </div>
+                        <div id="typingSampleTextContainer" style="display: none; background: #e8f2ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">
+                            ${sampleText}
+                        </div>
+                        <div id="typingTimerDisplay" style="display: none; text-align: center; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #4eda92;">
+                            Time Remaining: <span id="typingTimerValue">2:00</span>
+                        </div>
+                        <textarea id="typingInputArea" 
+                                  placeholder="Start typing here after clicking 'Start'..." 
+                                  style="width: 100%; height: 150px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 14px; resize: vertical; display: none;"
+                                  disabled></textarea>
+                    </div>
+                `,
+                showCancelButton: false,
+                showConfirmButton: true,
+                confirmButtonText: '<i class="fa fa-play"></i> Start',
+                confirmButtonColor: '#4eda92',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                width: '700px',
+                preConfirm: () => {
+                    const inputArea = document.getElementById('typingInputArea');
+                    const sampleTextContainer = document.getElementById('typingSampleTextContainer');
+                    const timerDisplay = document.getElementById('typingTimerDisplay');
+                    const instructions = document.getElementById('typingInstructions');
+                    const confirmBtn = Swal.getConfirmButton();
+
+                    if (!typingInProgress) {
+                        // Start the typing test
+                        typingInProgress = true;
+                        typingStartTime = new Date();
+                        startTime = Date.now();
+                        
+                        // Update UI
+                        instructions.style.display = 'none';
+                        sampleTextContainer.style.display = 'block';
+                        timerDisplay.style.display = 'block';
+                        inputArea.style.display = 'block';
+                        inputArea.disabled = false;
+                        inputArea.focus();
+                        
+                        // Change button to Submit
+                        confirmBtn.innerHTML = '<i class="fa fa-check"></i> Submit';
+                        confirmBtn.style.backgroundColor = '#28a745';
+                        
+                        // Start 2-minute countdown timer
+                        const maxDuration = 120; // 2 minutes in seconds
+                        timerInterval = setInterval(() => {
+                            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                            const remaining = maxDuration - elapsed;
+                            const timerValueElement = document.getElementById('typingTimerValue');
+                            
+                            if (remaining <= 0) {
+                                // Time's up - auto-submit
+                                if (timerValueElement) {
+                                    timerValueElement.textContent = '0:00';
+                                    timerValueElement.style.color = '#dc3545'; // Red color
+                                }
+                                clearInterval(timerInterval);
+                                confirmBtn.click(); // Trigger submit
+                            } else {
+                                const minutes = Math.floor(remaining / 60);
+                                const seconds = remaining % 60;
+                                if (timerValueElement) {
+                                    timerValueElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                                    // Change color to red when less than 30 seconds
+                                    if (remaining <= 30) {
+                                        timerValueElement.style.color = '#dc3545';
+                                    }
+                                }
+                            }
+                        }, 1000);
+
+                        // Start video recording immediately when Start button is clicked
+                        console.log('Start button clicked, starting video recording...');
+                        if (typeof startRecording === 'function') {
+                            try {
+                                startRecording();
+                                console.log('✓ Video recording started successfully');
+                            } catch (error) {
+                                console.error('✗ Error starting video recording:', error);
+                            }
+                        } else {
+                            console.error('✗ startRecording function not found');
+                        }
+                        
+                        // Return false to prevent modal from closing
+                        return false;
+                    } else {
+                        // Submit the typing test
+                        if (timerInterval) {
+                            clearInterval(timerInterval);
+                        }
+                        
+                        // Stop video recording when typing test is submitted
+                        if (typeof stopRecording === 'function') {
+                            stopRecording();
+                        }
+                        
+                        typingEndTime = new Date();
+                        const typedText = inputArea.value;
+                        
+                        // Calculate metrics
+                        const timeTaken = (typingEndTime - typingStartTime) / 1000; // in seconds
+                        const accuracyData = calculateAccuracy(sampleText, typedText);
+                        const wpm = calculateWPM(typedText, timeTaken);
+                        
+                        // Determine pass/fail based on criteria
+                        const passingWPM = 30.00;
+                        const passingAccuracy = 97.00;
+                        const isPassed = wpm >= passingWPM && accuracyData.accuracy >= passingAccuracy;
+                        
+                        // Store data in hidden form fields
+                        document.getElementById('TypingSampleText').value = sampleText;
+                        document.getElementById('TypedText').value = typedText;
+                        document.getElementById('TypingStartTime').value = typingStartTime.toISOString();
+                        document.getElementById('TypingEndTime').value = typingEndTime.toISOString();
+                        document.getElementById('TypingTimeTaken').value = timeTaken.toFixed(2);
+                        document.getElementById('TypingTotalChars').value = accuracyData.totalChars;
+                        document.getElementById('TypingCorrectChars').value = accuracyData.correctChars;
+                        document.getElementById('TypingAccuracy').value = accuracyData.accuracy.toFixed(2);
+                        document.getElementById('TypingWPM').value = wpm.toFixed(2);
+                        document.getElementById('TypingPassingWPM').value = passingWPM.toFixed(2);
+                        document.getElementById('TypingPassingAccuracy').value = passingAccuracy.toFixed(2);
+                        document.getElementById('TypingIsPassed').value = isPassed;
+                        
+                        // Show results first, then trigger form submission
+                        const resultIcon = isPassed ? 'success' : 'warning';
+                        const resultTitle = isPassed ? 'Typing Test Passed!' : 'Typing Test Complete';
+                        const statusColor = isPassed ? '#28a745' : '#ffc107';
+                        const statusText = isPassed ? 'PASSED ✓' : 'NEEDS IMPROVEMENT';
+                        
+                        Swal.fire({
+                            title: resultTitle,
+                            html: `
+                                <div style="text-align: left;">
+                                    <div style="background: ${isPassed ? '#d4edda' : '#fff3cd'}; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid ${statusColor};">
+                                        <h3 style="color: ${statusColor}; margin: 0; text-align: center;">${statusText}</h3>
+                                    </div>
+                                    <h4 style="color: #4eda92; margin-bottom: 15px;">Your Results:</h4>
+                                    <ul style="list-style: none; padding: 0;">
+                                        <li style="margin-bottom: 10px; font-size: 16px;">
+                                            <strong>Time Taken:</strong> ${timeTaken.toFixed(2)} seconds (Max: 120 seconds)
+                                        </li>
+                                        <li style="margin-bottom: 10px; font-size: 16px;">
+                                            <strong>Accuracy:</strong> ${accuracyData.accuracy.toFixed(2)}% 
+                                            <span style="color: ${accuracyData.accuracy >= passingAccuracy ? '#28a745' : '#dc3545'};">
+                                                (Required: ${passingAccuracy}%)
+                                            </span>
+                                        </li>
+                                        <li style="margin-bottom: 10px; font-size: 16px;">
+                                            <strong>Words Per Minute:</strong> ${wpm.toFixed(2)} WPM 
+                                            <span style="color: ${wpm >= passingWPM ? '#28a745' : '#dc3545'};">
+                                                (Required: ${passingWPM} WPM)
+                                            </span>
+                                        </li>
+                                        <li style="margin-bottom: 10px; font-size: 16px;">
+                                            <strong>Correct Characters:</strong> ${accuracyData.correctChars} / ${accuracyData.totalChars}
+                                        </li>
+                                    </ul>
+                                </div>
+                            `,
+                            icon: resultIcon,
+                            confirmButtonText: 'Continue',
+                            confirmButtonColor: '#4eda92',
+                            allowOutsideClick: false
+                        }).then(() => {
+                            // After showing results, trigger the existing form submission flow
+                            // This will show the "Are you sure you want to submit?" confirmation
+                            const form = document.getElementById('chatForm');
+                            if (form) {
+                                Swal.fire({
+                                    title: 'Submit Answer?',
+                                    text: 'Are you sure you want to submit your typing assessment?',
+                                    icon: 'question',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#4eda92',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: 'Submit Answer',
+                                    cancelButtonText: 'Cancel',
+                                    reverseButtons: false,
+                                    focusConfirm: true
+                                }).then((result) => {
+                                    if (result.isConfirmed || result.value === true) {
+                                        // User confirmed - submit the form
+                                        form.submit();
+                                    } else {
+                                        // User cancelled
+                                        console.log("Typing assessment submission cancelled");
+                                    }
+                                });
+                            }
+                        });
+                        
+                        // Return true to allow the modal to close
+                        return true;
+                    }
+                }
+            });
+        }
+
+        // Add hidden form fields to store typing data
+        function addHiddenFormFields() {
+            const form = document.getElementById('chatForm');
+            if (!form) return;
+
+            const hiddenFields = [
+                { name: 'IsTypingSpeedQuestion', value: 'true' },
+                { name: 'TypingSampleText', value: '' },
+                { name: 'TypedText', value: '' },
+                { name: 'TypingStartTime', value: '' },
+                { name: 'TypingEndTime', value: '' },
+                { name: 'TypingTimeTaken', value: '' },
+                { name: 'TypingTotalChars', value: '' },
+                { name: 'TypingCorrectChars', value: '' },
+                { name: 'TypingAccuracy', value: '' },
+                { name: 'TypingWPM', value: '' },
+                { name: 'TypingPassingWPM', value: '' },
+                { name: 'TypingPassingAccuracy', value: '' },
+                { name: 'TypingIsPassed', value: '' }
+            ];
+
+            hiddenFields.forEach(field => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = field.name;
+                input.id = field.name;
+                input.value = field.value;
+                form.appendChild(input);
+            });
+        }
+
+        // Initialize typing speed assessment
+        setTimeout(() => {
+            addHiddenFormFields();
+            showTypingTestModal();
+        }, 1000); // Show modal 1 second after page load
+
+    })();
+
+    // ===============================================
+    // LISTENING COMPREHENSION ASSESSMENT FUNCTIONALITY
+    // ===============================================
+    (function() {
+        const isListeningComprehensionQuestion = @Json.Serialize(Model.IsListeningComprehensionQuestion);
+        
+        if (!isListeningComprehensionQuestion) {
+            return; // Not a listening comprehension question, skip this functionality
+        }
+
+        // Get audio URL and transcription from model
+        const audioUrl = @Json.Serialize(Model.ListeningAudioUrl);
+        const audioTranscription = @Json.Serialize(Model.ListeningAudioTranscription);
+        
+        // Store listening assessment data
+        let listeningStartTime = null;
+        let listeningEndTime = null;
+        let listeningInProgress = false;
+        let audioPlayCount = 0;
+        let timerStarted = false;
+
+        // Show listening comprehension modal when page loads
+        function showListeningComprehensionModal() {
+            let timerInterval = null;
+            let startTime = null;
+            let audioElement = null;
+            
+            Swal.fire({
+                title: 'Listening Comprehension Assessment',
+                html: `
+                    <div style="text-align: left; margin-bottom: 20px;">
+                        <p style="margin-bottom: 15px; font-size: 14px; color: #666;">
+                            This question assesses your listening comprehension. You can listen to the audio twice, then summarize what you heard.
+                        </p>
+                        <div id="listeningInstructions" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #4eda92;">
+                            <strong>Instructions:</strong>
+                            <ul style="margin: 10px 0 0 20px; font-size: 13px; color: #555;">
+                                <li>Click "Start" to begin the assessment</li>
+                                <li>Use the audio player controls to play the audio</li>
+                                <li>You can listen to the audio up to 2 times</li>
+                                <li>Timer starts after the first playback completes</li>
+                                <li>Write a summary of what you heard in the text area</li>
+                                <li>Video recording will track your response</li>
+                                <li>Click "Submit" when finished</li>
+                            </ul>
+                        </div>
+                        <div id="listeningAudioContainer" style="display: none; background: #e8f2ff; padding: 20px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                            <audio id="listeningAudio" style="width: 100%; max-width: 400px;" controls></audio>
+                            <p id="audioPlayCountMsg" style="margin-top: 10px; font-size: 13px; color: #666;">
+                                <i class="fa fa-info-circle"></i> <span id="playsRemaining">You can play the audio 2 times.</span>
+                            </p>
+                        </div>
+                        <div id="listeningTimerDisplay" style="display: none; text-align: center; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #4eda92;">
+                            Time: <span id="listeningTimerValue">0:00</span>
+                        </div>
+                        <textarea id="listeningSummaryArea" 
+                                  placeholder="Write your summary here after listening to the audio..." 
+                                  style="width: 100%; height: 150px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; resize: vertical; display: none;"
+                                  disabled></textarea>
+                    </div>
+                `,
+                showCancelButton: false,
+                showConfirmButton: true,
+                confirmButtonText: '<i class="fa fa-play"></i> Start',
+                confirmButtonColor: '#4eda92',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                width: '700px',
+                preConfirm: () => {
+                    const summaryArea = document.getElementById('listeningSummaryArea');
+                    const audioContainer = document.getElementById('listeningAudioContainer');
+                    const timerDisplay = document.getElementById('listeningTimerDisplay');
+                    const instructions = document.getElementById('listeningInstructions');
+                    const confirmBtn = Swal.getConfirmButton();
+
+                    if (!listeningInProgress) {
+                        // Start the listening comprehension test
+                        listeningInProgress = true;
+                        
+                        // Update UI
+                        instructions.style.display = 'none';
+                        audioContainer.style.display = 'block';
+                        summaryArea.style.display = 'block';
+                        
+                        // Setup audio element
+                        audioElement = document.getElementById('listeningAudio');
+                        audioElement.src = audioUrl;
+                        
+                        // Track play count and control replays
+                        audioElement.addEventListener('play', function() {
+                            if (audioPlayCount >= 2) {
+                                audioElement.pause();
+                                audioElement.currentTime = 0;
+                                Swal.showValidationMessage('Audio can only be played 2 times!');
+                            }
+                        });
+                        
+                        audioElement.addEventListener('ended', function() {
+                            audioPlayCount++;
+                            
+                            const playsRemainingElement = document.getElementById('playsRemaining');
+                            if (playsRemainingElement) {
+                                const remaining = 2 - audioPlayCount;
+                                if (remaining > 0) {
+                                    playsRemainingElement.textContent = `You can play the audio ${remaining} more time${remaining > 1 ? 's' : ''}.`;
+                                    playsRemainingElement.style.color = '#4eda92';
+                                } else {
+                                    playsRemainingElement.textContent = 'Audio playback limit reached (2/2).';
+                                    playsRemainingElement.style.color = '#dc3545';
+                                    // Disable audio controls
+                                    audioElement.style.pointerEvents = 'none';
+                                    audioElement.style.opacity = '0.6';
+                                }
+                            }
+                            
+                            // After first playback, start timer and enable text area
+                            if (audioPlayCount === 1) {
+                                // Start timer only after first playback
+                                if (!timerStarted) {
+                                    timerStarted = true;
+                                    listeningStartTime = new Date();
+                                    startTime = Date.now();
+                                    timerDisplay.style.display = 'block';
+                                    
+                                    timerInterval = setInterval(() => {
+                                        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                                        const minutes = Math.floor(elapsed / 60);
+                                        const seconds = elapsed % 60;
+                                        const timerValueElement = document.getElementById('listeningTimerValue');
+                                        if (timerValueElement) {
+                                            timerValueElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                                        }
+                                    }, 1000);
+                                }
+                                
+                                // Enable text area after first playback
+                                summaryArea.disabled = false;
+                                summaryArea.focus();
+                            }
+                        });
+                        
+                        // Change button to Submit
+                        confirmBtn.innerHTML = '<i class="fa fa-check"></i> Submit';
+                        confirmBtn.style.backgroundColor = '#28a745';
+
+                        // Start video recording automatically
+                        if (typeof startRecording === 'function') {
+                            startRecording();
+                        }
+                        
+                        // Do NOT auto-play audio - let candidate control it
+                        
+                        // Return false to prevent modal from closing
+                        return false;
+                    } else {
+                        // Submit the listening comprehension test
+                        if (timerInterval) {
+                            clearInterval(timerInterval);
+                        }
+                        
+                        // Stop video recording when test is submitted
+                        if (typeof stopRecording === 'function') {
+                            stopRecording();
+                        }
+                        
+                        listeningEndTime = new Date();
+                        const candidateSummary = summaryArea.value;
+                        
+                        // Validate that candidate wrote something
+                        if (!candidateSummary || candidateSummary.trim().length === 0) {
+                            Swal.showValidationMessage('Please write a summary before submitting!');
+                            return false;
+                        }
+                        
+                        // Calculate time taken
+                        const timeTaken = (listeningEndTime - listeningStartTime) / 1000; // in seconds
+                        
+                        // Store data in hidden form fields
+                        document.getElementById('ListeningAudioUrl').value = audioUrl;
+                        document.getElementById('ListeningAudioTranscription').value = audioTranscription;
+                        document.getElementById('ListeningSummary').value = candidateSummary;
+                        document.getElementById('ListeningStartTime').value = listeningStartTime.toISOString();
+                        document.getElementById('ListeningEndTime').value = listeningEndTime.toISOString();
+                        document.getElementById('ListeningTimeTaken').value = timeTaken.toFixed(2);
+                        
+                        // Show confirmation and submit
+                        Swal.fire({
+                            title: 'Assessment Complete!',
+                            html: `
+                                <div style="text-align: left;">
+                                    <p style="margin-bottom: 15px; color: #666;">
+                                        Your listening comprehension assessment has been recorded.
+                                    </p>
+                                    <p style="font-size: 14px; color: #666;">
+                                        <strong>Time taken:</strong> ${timeTaken.toFixed(2)} seconds
+                                    </p>
+                                </div>
+                            `,
+                            icon: 'success',
+                            confirmButtonText: 'Continue',
+                            confirmButtonColor: '#4eda92',
+                            allowOutsideClick: false
+                        }).then(() => {
+                            // After showing result, trigger form submission with confirmation
+                            const form = document.getElementById('chatForm');
+                            if (form) {
+                                Swal.fire({
+                                    title: 'Submit Answer?',
+                                    text: 'Are you sure you want to submit your listening comprehension assessment?',
+                                    icon: 'question',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#4eda92',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: 'Submit Answer',
+                                    cancelButtonText: 'Cancel',
+                                    reverseButtons: false,
+                                    focusConfirm: true
+                                }).then((result) => {
+                                    if (result.isConfirmed || result.value === true) {
+                                        // User confirmed - submit the form
+                                        form.submit();
+                                    } else {
+                                        // User cancelled
+                                        console.log("Listening comprehension assessment submission cancelled");
+                                    }
+                                });
+                            }
+                        });
+                        
+                        // Return true to allow the modal to close
+                        return true;
+                    }
+                }
+            });
+        }
+
+        // Add hidden form fields to store listening comprehension data
+        function addListeningHiddenFormFields() {
+            const form = document.getElementById('chatForm');
+            if (!form) return;
+
+            const hiddenFields = [
+                { name: 'IsListeningComprehensionQuestion', value: 'true' },
+                { name: 'ListeningAudioUrl', value: '' },
+                { name: 'ListeningAudioTranscription', value: '' },
+                { name: 'ListeningSummary', value: '' },
+                { name: 'ListeningStartTime', value: '' },
+                { name: 'ListeningEndTime', value: '' },
+                { name: 'ListeningTimeTaken', value: '' }
+            ];
+
+            hiddenFields.forEach(field => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = field.name;
+                input.id = field.name;
+                input.value = field.value;
+                form.appendChild(input);
+            });
+        }
+
+        // Initialize listening comprehension assessment
+        setTimeout(() => {
+            addListeningHiddenFormFields();
+            showListeningComprehensionModal();
+        }, 1000); // Show modal 1 second after page load
+
+    })();
 </script>

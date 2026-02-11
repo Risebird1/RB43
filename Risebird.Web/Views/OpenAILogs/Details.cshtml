@@ -1,0 +1,285 @@
+@model Risebird.Entities.Data.OpenAIApiLog
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "API Call Details";
+}
+<div class="main-panel ps" id="main-panel">
+    <div class="content">
+<div class="container-fluid mt-4" style="margin-top:50px!important;">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>OpenAI API Call Details</h2>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+
+    <!-- Status Badge -->
+    <div class="row mb-3" style="display:none">
+        <div class="col-md-12">
+            @if (Model.IsSuccess)
+            {
+                <span class="badge badge-success" style="font-size: 1.2em;">✓ SUCCESS</span>
+            }
+            else
+            {
+                <span class="badge badge-danger" style="font-size: 1.2em;">✗ FAILED</span>
+            }
+        </div>
+    </div>
+
+    <!-- Basic Information -->
+    <div class="row mb-4">
+        <div class="col-md-7">
+                    <div class="card" style="padding: 10px 0px;">
+                        <div class="card-header bg-primary text-white" style="margin: 0px 15px;">
+                            <h5 style="padding: 5px 5px 0px 5px;">Basic Information</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th>Log ID:</th>
+                            <td>@Model.Id</td>
+                        </tr>
+                        <tr>
+                            <th>Date/Time:</th>
+                            <td>@Model.LogDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        </tr>
+                        <tr>
+                            <th>Operation Type:</th>
+                            <td><span class="badge badge-info" style="width:auto;">@Model.OperationType</span></td>
+                        </tr>
+                        <tr>
+                            <th>API Endpoint:</th>
+                            <td><code>@Model.ApiEndpoint</code></td>
+                        </tr>
+                        <tr>
+                            <th>HTTP Method:</th>
+                            <td><span class="badge badge-secondary">@Model.ApiMethod</span></td>
+                        </tr>
+                        <tr>
+                            <th>Status Code:</th>
+                            <td>@Model.StatusCode</td>
+                        </tr>
+                        <tr>
+                            <th>Response Time:</th>
+                            <td>@(Model.ResponseTimeMs.HasValue ? Model.ResponseTimeMs.Value + " ms" : "N/A")</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+                    <div class="card" style="padding: 10px 0px;">
+                        <div class="card-header bg-success text-white" style="margin: 0px 15px;">
+                            <h5 style="padding: 5px 5px 0px 5px;">Token & Cost Information</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th>Model:</th>
+                            <td>@(string.IsNullOrEmpty(Model.Model) ? "N/A" : Model.Model)</td>
+                        </tr>
+                        <tr>
+                            <th>Prompt Tokens:</th>
+                            <td>@(Model.PromptTokens.HasValue ? Model.PromptTokens.Value.ToString("N0") : "0")</td>
+                        </tr>
+                        <tr>
+                            <th>Completion Tokens:</th>
+                            <td>@(Model.CompletionTokens.HasValue ? Model.CompletionTokens.Value.ToString("N0") : "0")</td>
+                        </tr>
+                        <tr>
+                            <th>Total Tokens:</th>
+                            <td><strong>@(Model.TotalTokens.HasValue ? Model.TotalTokens.Value.ToString("N0") : "0")</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Estimated Cost:</th>
+                            <td><strong class="text-success">$@(Model.EstimatedCostUSD.HasValue ? Model.EstimatedCostUSD.Value.ToString("N6") : "0.000000")</strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OpenAI Resource IDs -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+                    <div class="card" style="padding: 10px 0px;">
+                        <div class="card-header bg-info text-white" style="margin: 0px 15px;">
+                            <h5 style="padding: 5px 5px 0px 5px;">OpenAI Resource IDs</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th>Assistant ID:</th>
+                            <td>@(string.IsNullOrEmpty(Model.AssistantId) ? "N/A" : Model.AssistantId)</td>
+                        </tr>
+                        <tr>
+                            <th>Thread ID:</th>
+                            <td>@(string.IsNullOrEmpty(Model.ThreadId) ? "N/A" : Model.ThreadId)</td>
+                        </tr>
+                        <tr>
+                            <th>Run ID:</th>
+                            <td>@(string.IsNullOrEmpty(Model.RunId) ? "N/A" : Model.RunId)</td>
+                        </tr>
+                        <tr>
+                            <th>File ID:</th>
+                            <td>@(string.IsNullOrEmpty(Model.FileId) ? "N/A" : Model.FileId)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Information -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+                    <div class="card" style="padding: 10px 0px;">
+                        <div class="card-header bg-warning" style="margin: 0px 15px;">
+                            <h5 style="padding: 5px 5px 0px 5px;">Context Information</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th>Session ID:</th>
+                            <td>
+                                @if (Model.SessionId.HasValue)
+                                {
+                                    <a asp-action="BySession" asp-route-sessionId="@Model.SessionId.Value">@Model.SessionId.Value</a>
+                                }
+                                else
+                                {
+                                    <span>N/A</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>User ID:</th>
+                            <td>@(Model.UserId.HasValue ? Model.UserId.Value.ToString() : "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>Candidate ID:</th>
+                            <td>
+                                @if (Model.CandidateId.HasValue)
+                                {
+                                    <a asp-action="ByCandidate" asp-route-candidateId="@Model.CandidateId.Value">@Model.CandidateId.Value</a>
+                                }
+                                else
+                                {
+                                    <span>N/A</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Interviewer ID:</th>
+                            <td>
+                                @if (Model.InterviewerId.HasValue)
+                                {
+                                    <a asp-action="ByInterviewer" asp-route-interviewerId="@Model.InterviewerId.Value">@Model.InterviewerId.Value</a>
+                                }
+                                else
+                                {
+                                    <span>N/A</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>IRF ID:</th>
+                            <td>
+                                @if (Model.IRFId.HasValue)
+                                {
+                                    <a asp-action="ByIRF" asp-route-irfId="@Model.IRFId.Value">@Model.IRFId.Value</a>
+                                }
+                                else
+                                {
+                                    <span>N/A</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Meeting ID:</th>
+                            <td>
+                                @if (Model.MeetingId.HasValue)
+                                {
+                                    <a asp-action="ByMeeting" asp-route-meetingId="@Model.MeetingId.Value">@Model.MeetingId.Value</a>
+                                }
+                                else
+                                {
+                                    <span>N/A</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Created By:</th>
+                            <td>@(string.IsNullOrEmpty(Model.CreatedBy) ? "N/A" : Model.CreatedBy)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Payload -->
+    @if (!string.IsNullOrEmpty(Model.RequestPayload))
+    {
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Request Payload</h5>
+                    </div>
+                    <div class="card-body">
+                        <pre class="bg-light p-3" style="max-height: 400px; overflow-y: auto;"><code>@Model.RequestPayload</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Response Payload -->
+    @if (!string.IsNullOrEmpty(Model.ResponsePayload))
+    {
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                            <div class="card-header" style="padding: 10px 0px 10px 0px;">
+                        <h5 style="font-size:16px;">Response Payload</h5>
+                    </div>
+                    <div class="card-body">
+                        <pre class="bg-light p-3" style="max-height: 400px; overflow-y: auto;"><code>@Model.ResponsePayload</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Error Message -->
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card border-danger">
+                    <div class="card-header bg-danger text-white">
+                        <h5>Error Message</h5>
+                    </div>
+                    <div class="card-body">
+                        <pre class="text-danger"><code>@Model.ErrorMessage</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+</div>
+</div>
+</div>
+</div>
+

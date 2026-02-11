@@ -1,0 +1,1112 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "HR Screen Evaluator UI";
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>HR Screen Evaluator UI</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --panel: #111827;
+            --panel2: #0f172a;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --border: #243041;
+            --chip: #1f2937;
+            --chip2: #0b1220;
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --bad: #ef4444;
+            --info: #60a5fa;
+            --shadow: 0 8px 24px rgba(0,0,0,.35);
+            --radius: 14px;
+            --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+            --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--sans);
+            background: radial-gradient(1200px 700px at 15% 0%, #111827 0%, var(--bg) 55%, #060812 100%);
+            color: var(--text);
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: blur(10px);
+            background: rgba(11,15,25,.78);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 18px;
+        }
+
+        .titleRow {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap
+        }
+
+        h1 {
+            font-size: 18px;
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: .2px
+        }
+
+        .sub {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border: 1px solid var(--border);
+            background: rgba(17,24,39,.6);
+            border-radius: 999px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+            .pill b {
+                color: var(--text);
+                font-weight: 700
+            }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 14px
+        }
+
+        @@media (max-width: 980px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(17,24,39,.92), rgba(15,23,42,.92));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .cardHead {
+            padding: 14px 14px 10px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+            .cardHead h2 {
+                margin: 0;
+                font-size: 14px;
+                font-weight: 700
+            }
+
+            .cardHead .hint {
+                font-size: 12px;
+                color: var(--muted)
+            }
+
+        .cardBody {
+            padding: 14px
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 240px;
+            resize: vertical;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(7,10,18,.6);
+            color: var(--text);
+            font-family: var(--mono);
+            font-size: 12px;
+            line-height: 1.45;
+            outline: none;
+        }
+
+        .btnRow {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px
+        }
+
+        button {
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: rgba(17,24,39,.7);
+            color: var(--text);
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-weight: 650;
+            font-size: 12px;
+        }
+
+            button:hover {
+                border-color: #3b4a63
+            }
+
+        .danger {
+            border-color: rgba(239,68,68,.45)
+        }
+
+            .danger:hover {
+                border-color: rgba(239,68,68,.75)
+            }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .kpi {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+
+            .kpi .box {
+                flex: 1;
+                min-width: 190px;
+                padding: 12px;
+                border-radius: 14px;
+                border: 1px solid var(--border);
+                background: rgba(11,18,32,.7);
+            }
+
+        .box .label {
+            color: var(--muted);
+            font-size: 11px
+        }
+
+        .box .value {
+            font-size: 18px;
+            font-weight: 800;
+            margin-top: 4px
+        }
+
+        .box .mini {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(11,18,32,.55);
+        }
+
+        .tab {
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            background: rgba(17,24,39,.55);
+            border-radius: 999px;
+            font-size: 12px;
+            color: var(--muted);
+            cursor: pointer;
+            user-select: none;
+        }
+
+            .tab.active {
+                color: var(--text);
+                border-color: #3b4a63;
+                background: rgba(30,41,59,.65)
+            }
+
+        .panel {
+            display: none
+        }
+
+            .panel.active {
+                display: block
+            }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin: 12px 0 8px;
+        }
+
+            .controls input[type="text"] {
+                flex: 1;
+                min-width: 220px;
+                padding: 10px 12px;
+                border-radius: 12px;
+                border: 1px solid var(--border);
+                background: rgba(7,10,18,.6);
+                color: var(--text);
+                outline: none;
+                font-size: 12px;
+            }
+
+        .toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(17,24,39,.55);
+            font-size: 12px;
+            color: var(--muted);
+            user-select: none;
+        }
+
+            .toggle input {
+                accent-color: #60a5fa
+            }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(7,10,18,.35);
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: rgba(15,23,42,.92);
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 11px;
+            text-align: left;
+            padding: 10px 10px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 10px 10px;
+            border-bottom: 1px solid rgba(36,48,65,.55);
+            vertical-align: top;
+            font-size: 12px;
+        }
+
+        tbody tr:hover td {
+            background: rgba(17,24,39,.35)
+        }
+
+        .muted {
+            color: var(--muted)
+        }
+
+        .mono {
+            font-family: var(--mono)
+        }
+
+        .chips {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap
+        }
+
+        .chip {
+            background: rgba(17,24,39,.7);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .tag {
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid var(--border);
+            background: rgba(17,24,39,.65);
+            color: var(--text);
+            white-space: nowrap;
+        }
+
+            .tag.ok {
+                border-color: rgba(34,197,94,.35);
+                background: rgba(34,197,94,.12)
+            }
+
+            .tag.warn {
+                border-color: rgba(245,158,11,.35);
+                background: rgba(245,158,11,.12)
+            }
+
+            .tag.bad {
+                border-color: rgba(239,68,68,.35);
+                background: rgba(239,68,68,.12)
+            }
+
+            .tag.info {
+                border-color: rgba(96,165,250,.35);
+                background: rgba(96,165,250,.12)
+            }
+
+        details {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(11,18,32,.55);
+            padding: 10px 12px;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: 700
+        }
+
+        .twoCol {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px
+        }
+
+        @@media (max-width: 980px) {
+            .twoCol {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .empty {
+            padding: 12px;
+            border: 1px dashed rgba(59,74,99,.7);
+            border-radius: 12px;
+            color: var(--muted);
+            background: rgba(7,10,18,.25);
+            font-size: 12px;
+        }
+
+        footer {
+            color: var(--muted);
+            font-size: 12px;
+            padding: 18px;
+            text-align: center
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="wrap">
+            <div class="titleRow">
+                <div>
+                    <h1>HR Screen Evaluator UI</h1>
+                    <div class="sub">Paste evaluator output JSON → renders Role Fitment, Motivation Fitment, Overall Score, Recruiter Quality, Candidate Quality.</div>
+                </div>
+                <div class="row">
+                    <span class="pill"><b id="metaVersion">v—</b></span>
+                    <span class="pill">Scale: <b id="metaScale">—</b></span>
+                    <span class="pill">Speaker Confidence: <b id="speakerConf">—</b></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="wrap" style="padding-top:14px">
+        <div class="grid">
+            <div class="card">
+                <div class="cardHead">
+                    <div>
+                        <h2>1) Input: Evaluator Output JSON</h2>
+                        <div class="hint">Paste the JSON produced by your OpenAI evaluator (schema v1.3). Then click "Render UI".</div>
+                    </div>
+                </div>
+                <div class="cardBody">
+                    <textarea id="jsonInput" spellcheck="false" placeholder='Paste output JSON here...'></textarea>
+                    <div class="btnRow">
+                        <button id="renderBtn">Render UI</button>
+                        <button id="loadSampleBtn">Load Sample Skeleton</button>
+                        <button id="clearBtn" class="danger">Clear</button>
+                    </div>
+                    <div style="margin-top:10px" class="muted">
+                        Tip: keep timestamps in transcript turns for best UX. If missing, UI shows null + flags.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="cardHead">
+                    <div>
+                        <h2>2) Summary</h2>
+                        <div class="hint">Auto-derived from JSON: section scores, overall score, quick flags.</div>
+                    </div>
+                </div>
+                <div class="cardBody">
+                    <div class="kpi">
+                        <div class="box">
+                            <div class="label">Role Fitment (0–100)</div>
+                            <div class="value" id="kpiRole">—</div>
+                            <div class="mini" id="kpiRoleVerdict">—</div>
+                        </div>
+                        <div class="box">
+                            <div class="label">Motivation Fitment (0–100)</div>
+                            <div class="value" id="kpiMot">—</div>
+                            <div class="mini" id="kpiMotVerdict">—</div>
+                        </div>
+                        <div class="box">
+                            <div class="label">Overall (0–100 normalized)</div>
+                            <div class="value" id="kpiOverall">—</div>
+                            <div class="mini" id="kpiOverallVerdict">—</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:12px" class="twoCol">
+                        <details open>
+                            <summary>Overall Observation</summary>
+                            <div id="overallObs" class="muted" style="margin-top:10px">—</div>
+                            <div class="chips" id="overallFlags" style="margin-top:10px"></div>
+                        </details>
+
+                        <details open>
+                            <summary>Speaker Detection</summary>
+                            <div class="muted" style="margin-top:10px">
+                                <div><b>Recruiter:</b> <span id="speakerRecruiter">—</span></div>
+                                <div><b>Candidate:</b> <span id="speakerCandidate">—</span></div>
+                            </div>
+                            <div class="chips" id="speakerNotes" style="margin-top:10px"></div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+            <div class="tabs" id="tabs">
+                <div class="tab active" data-panel="pRole">Role Fitment</div>
+                <div class="tab" data-panel="pMot">Motivation Fitment</div>
+                <div class="tab" data-panel="pRecruiter">Recruiter Quality</div>
+                <div class="tab" data-panel="pCandidate">Candidate Quality</div>
+            </div>
+
+            <div class="cardBody">
+                <!-- ROLE -->
+                <section class="panel active" id="pRole">
+                    <div class="row" style="justify-content:space-between; align-items:flex-start">
+                        <div>
+                            <h2 style="margin:0;font-size:14px">Role_Fitment_Score — Parameters</h2>
+                            <div class="muted" id="roleSectionLine" style="margin-top:4px">—</div>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <input id="roleSearch" type="text" placeholder="Search Role Fitment parameters / flags / evidence..." />
+                        <label class="toggle"><input id="roleShowGuidance" type="checkbox" /> Show anchors & guidance columns</label>
+                    </div>
+
+                    <div id="roleTableWrap" class="empty">Render to view table.</div>
+                </section>
+
+                <!-- MOTIVATION -->
+                <section class="panel" id="pMot">
+                    <div class="row" style="justify-content:space-between; align-items:flex-start">
+                        <div>
+                            <h2 style="margin:0;font-size:14px">Motivation_to_join_fitment_Score — Parameters</h2>
+                            <div class="muted" id="motSectionLine" style="margin-top:4px">—</div>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <input id="motSearch" type="text" placeholder="Search Motivation parameters / flags / evidence..." />
+                        <label class="toggle"><input id="motShowGuidance" type="checkbox" /> Show anchors & guidance columns</label>
+                    </div>
+
+                    <div id="motTableWrap" class="empty">Render to view table.</div>
+                </section>
+
+                <!-- RECRUITER -->
+                <section class="panel" id="pRecruiter">
+                    <div class="twoCol">
+                        <div>
+                            <h2 style="margin:0 0 6px 0;font-size:14px">Recruiter Interaction Quality — Summary</h2>
+                            <div id="recruiterSummaryWrap" class="empty">Render to view summary.</div>
+                        </div>
+                        <div>
+                            <h2 style="margin:0 0 6px 0;font-size:14px">Recruiter Red Flags</h2>
+                            <div id="recruiterRedFlagsWrap" class="empty">Render to view red flags.</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:12px">
+                        <h2 style="margin:0 0 6px 0;font-size:14px">Recruiter Parameter Probe Gaps</h2>
+                        <div class="controls">
+                            <input id="recruiterParamSearch" type="text" placeholder="Search parameter probe gaps..." />
+                        </div>
+                        <div id="recruiterParamWrap" class="empty">Render to view probe gaps.</div>
+                    </div>
+                </section>
+
+                <!-- CANDIDATE -->
+                <section class="panel" id="pCandidate">
+                    <div class="twoCol">
+                        <div>
+                            <h2 style="margin:0 0 6px 0;font-size:14px">Candidate Interaction Quality — Dimensions</h2>
+                            <div id="candidateDimsWrap" class="empty">Render to view dimensions.</div>
+                        </div>
+                        <div>
+                            <h2 style="margin:0 0 6px 0;font-size:14px">Candidate Behavior Flags</h2>
+                            <div id="candidateFlagsWrap" class="empty">Render to view flags.</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>Single-file UI • No external libraries • Paste your evaluator output JSON to render.</footer>
+
+    <script>
+  // ---------- helpers ----------
+  const $ = (id) => document.getElementById(id);
+
+  function isNil(v){ return v === null || v === undefined; }
+  function arr(v){ return Array.isArray(v) ? v : (isNil(v) ? [] : [v]); }
+  function txt(v, fallback="—"){
+    if (isNil(v)) return fallback;
+    if (typeof v === "string" && v.trim() === "") return fallback;
+    return String(v);
+  }
+  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+  function verdictTag(verdict){
+    const v = (verdict||"").toLowerCase();
+    if (v.includes("very strong fit")) return `<span class="tag ok">Very Strong Fit</span>`;
+    if (v.includes("strong fit")) return `<span class="tag ok">Strong Fit</span>`;
+    if (v.includes("marginal fit")) return `<span class="tag info">Marginal Fit</span>`;
+    if (v.includes("marginal misfit")) return `<span class="tag warn">Marginal Misfit</span>`;
+    if (v.includes("strong misfit")) return `<span class="tag bad">Strong Misfit</span>`;
+    return `<span class="tag">${txt(verdict,"—")}</span>`;
+  }
+  function statusTag(status){
+    const s = (status||"").toLowerCase();
+    if (s === "covered") return `<span class="tag ok">Covered</span>`;
+    if (s === "partially covered") return `<span class="tag warn">Partially</span>`;
+    if (s === "not covered") return `<span class="tag bad">Not Covered</span>`;
+    return `<span class="tag">${txt(status,"—")}</span>`;
+  }
+  function severityTag(sev){
+    const s = (sev||"").toLowerCase();
+    if (s === "high") return `<span class="tag bad">High</span>`;
+    if (s === "medium") return `<span class="tag warn">Medium</span>`;
+    if (s === "low") return `<span class="tag info">Low</span>`;
+    if (s === "none") return `<span class="tag ok">None</span>`;
+    return `<span class="tag">${txt(sev,"—")}</span>`;
+  }
+  function chips(list){
+    const items = arr(list).filter(x => !isNil(x) && String(x).trim() !== "");
+    if (!items.length) return `<span class="muted">—</span>`;
+    return `<div class="chips">${items.map(x => `<span class="chip">${escapeHtml(String(x))}</span>`).join("")}</div>`;
+  }
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  }
+  function tsRange(start, end){
+    if (isNil(start) && isNil(end)) return "—";
+    if (!isNil(start) && isNil(end)) return txt(start);
+    if (isNil(start) && !isNil(end)) return txt(end);
+    return `${txt(start)}–${txt(end)}`;
+  }
+  function num(v, fallback="—"){
+    if (isNil(v) || v === "") return fallback;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  // ---------- rendering ----------
+  let currentData = null;
+
+  function renderAll(data){
+    currentData = data;
+
+    // Meta strip
+    $("metaVersion").textContent = txt(data?.meta?.version, "v—");
+    $("metaScale").textContent = txt(data?.meta?.scoring_scale, "—");
+    $("speakerConf").textContent = txt(data?.speaker_detection?.confidence, "—");
+
+    // Speaker details
+    $("speakerRecruiter").textContent = arr(data?.speaker_detection?.recruiter_speaker_names_or_labels).join(", ") || "—";
+    $("speakerCandidate").textContent = arr(data?.speaker_detection?.candidate_speaker_names_or_labels).join(", ") || "—";
+    $("speakerNotes").innerHTML = chips(data?.speaker_detection?.ambiguity_notes);
+
+    // KPI summary
+    $("kpiRole").textContent = txt(num(data?.Role_Fitment_Score?.section_score), "—");
+    $("kpiRoleVerdict").innerHTML = verdictTag(data?.Role_Fitment_Score?.assistant_verdict);
+    $("kpiMot").textContent = txt(num(data?.Motivation_to_join_fitment_Score?.section_score), "—");
+    $("kpiMotVerdict").innerHTML = verdictTag(data?.Motivation_to_join_fitment_Score?.assistant_verdict);
+    $("kpiOverall").textContent = txt(num(data?.Overall_HR_Screen_Score?.overall_score_normalized), "—");
+    $("kpiOverallVerdict").innerHTML = verdictTag(data?.Overall_HR_Screen_Score?.assistant_verdict);
+
+    $("overallObs").textContent = txt(data?.Overall_HR_Screen_Score?.overall_observation, "—");
+    $("overallFlags").innerHTML = chips(data?.Overall_HR_Screen_Score?.overall_flags);
+
+    // Section lines
+    $("roleSectionLine").innerHTML =
+      `Score: <b>${txt(num(data?.Role_Fitment_Score?.section_score),"—")}</b> / 100 • ${verdictTag(data?.Role_Fitment_Score?.assistant_verdict)}<br/><span class="muted">${escapeHtml(txt(data?.Role_Fitment_Score?.section_observation,"—"))}</span>`;
+    $("motSectionLine").innerHTML =
+      `Score: <b>${txt(num(data?.Motivation_to_join_fitment_Score?.section_score),"—")}</b> / 100 • ${verdictTag(data?.Motivation_to_join_fitment_Score?.assistant_verdict)}<br/><span class="muted">${escapeHtml(txt(data?.Motivation_to_join_fitment_Score?.section_observation,"—"))}</span>`;
+
+    // Role + Mot tables
+    renderParamTable({
+      wrapId: "roleTableWrap",
+      section: data?.Role_Fitment_Score,
+      searchId: "roleSearch",
+      showGuidanceId: "roleShowGuidance",
+      sectionKeyLabel: "Role_Fitment_Score"
+    });
+
+    renderParamTable({
+      wrapId: "motTableWrap",
+      section: data?.Motivation_to_join_fitment_Score,
+      searchId: "motSearch",
+      showGuidanceId: "motShowGuidance",
+      sectionKeyLabel: "Motivation_to_join_fitment_Score"
+    });
+
+    // Recruiter UI
+    renderRecruiter(data?.Recruiter_Interaction_Quality);
+
+    // Candidate UI
+    renderCandidate(data?.Candidate_Interaction_Quality);
+  }
+
+  function renderParamTable({wrapId, section, searchId, showGuidanceId, sectionKeyLabel}){
+    const wrap = $(wrapId);
+    const params = arr(section?.parameters);
+
+    if (!params.length){
+      wrap.className = "empty";
+      wrap.textContent = "No parameters found in JSON for " + sectionKeyLabel;
+      return;
+    }
+
+    const showGuidance = $(showGuidanceId).checked;
+    const q = ($(searchId).value || "").trim().toLowerCase();
+
+    const filtered = params.filter(p => {
+      if (!q) return true;
+      const hay = [
+        p?.parameter, p?.flags?.join(" "), p?.evidence_snippets?.join(" "),
+        p?.assistant_observation, p?.recruiter_observation,
+        p?.coverage_status, p?.probe_depth, p?.evidence_quality
+      ].map(x => (x||"").toString().toLowerCase()).join(" | ");
+      return hay.includes(q);
+    });
+
+    const cols = {
+      base: [
+        {k:"parameter", h:"Parameter"},
+        {k:"max_weight", h:"Max Wt"},
+        {k:"recruiter_question", h:"Recruiter Q"},
+        {k:"recruiter_q_ts", h:"Recruiter Q TS"},
+        {k:"candidate_response", h:"Candidate Response"},
+        {k:"candidate_ts", h:"Candidate TS"},
+        {k:"recruiter_score", h:"Recruiter Score"},
+        {k:"recruiter_observation", h:"Recruiter Observation"},
+        {k:"assistant_score", h:"Assistant Score"},
+        {k:"assistant_verdict", h:"Assistant Verdict"},
+        {k:"assistant_observation", h:"Assistant Observation"},
+        {k:"parameter_score", h:"Parameter Score"},
+        {k:"coverage_status", h:"Coverage"},
+        {k:"probe_depth", h:"Probe Depth"},
+        {k:"evidence_quality", h:"Evidence"},
+        {k:"evidence_snippets", h:"Evidence Snips"},
+        {k:"flags", h:"Flags"},
+        {k:"missing_probe_questions", h:"Missing Probe Qs"}
+      ],
+      guidance: [
+        {k:"system_guidance_anchors", h:"Anchors"},
+        {k:"guidance", h:"Guidance"}
+      ]
+    };
+
+    const headers = showGuidance
+      ? [cols.base[0], cols.base[1], ...cols.guidance, ...cols.base.slice(2)]
+      : cols.base;
+
+    const thead = `<thead><tr>${headers.map(c => `<th>${c.h}</th>`).join("")}</tr></thead>`;
+
+    const rows = filtered.map(p => {
+      const rq = p?.recruiter_question?.text;
+      const rqTS = tsRange(p?.recruiter_question?.timestamp_start, p?.recruiter_question?.timestamp_end);
+      const cr = p?.candidate_response?.text;
+      const crTS = tsRange(p?.candidate_response?.timestamp_start, p?.candidate_response?.timestamp_end);
+
+      const cells = [];
+
+      cells.push(`<td><b>${escapeHtml(txt(p?.parameter))}</b></td>`);
+      cells.push(`<td class="mono">${escapeHtml(txt(p?.max_weight))}</td>`);
+
+      if (showGuidance){
+        cells.push(`<td>${escapeHtml(txt(p?.system_guidance_anchors,""))}</td>`);
+        cells.push(`<td>${escapeHtml(txt(p?.guidance,""))}</td>`);
+      }
+
+      cells.push(`<td>${escapeHtml(txt(rq))}</td>`);
+      cells.push(`<td class="mono">${escapeHtml(rqTS)}</td>`);
+      cells.push(`<td>${escapeHtml(txt(cr))}</td>`);
+      cells.push(`<td class="mono">${escapeHtml(crTS)}</td>`);
+
+      // recruiter fields (may be null)
+      cells.push(`<td class="mono">${escapeHtml(txt(p?.recruiter_score, "—"))}</td>`);
+      cells.push(`<td>${escapeHtml(txt(p?.recruiter_observation, "—"))}</td>`);
+
+      // assistant fields
+      cells.push(`<td class="mono"><b>${escapeHtml(txt(p?.assistant_score,"—"))}</b></td>`);
+      cells.push(`<td>${verdictTag(p?.assistant_verdict)}</td>`);
+      cells.push(`<td>${escapeHtml(txt(p?.assistant_observation,"—"))}</td>`);
+
+      cells.push(`<td class="mono">${escapeHtml(txt(p?.parameter_score,"—"))}</td>`);
+
+      cells.push(`<td>${statusTag(p?.coverage_status)}</td>`);
+      cells.push(`<td><span class="tag info">${escapeHtml(txt(p?.probe_depth,"—"))}</span></td>`);
+      cells.push(`<td><span class="tag info">${escapeHtml(txt(p?.evidence_quality,"—"))}</span></td>`);
+
+      cells.push(`<td>${chips(p?.evidence_snippets)}</td>`);
+      cells.push(`<td>${chips(p?.flags)}</td>`);
+      cells.push(`<td>${chips(p?.missing_probe_questions)}</td>`);
+
+      return `<tr>${cells.join("")}</tr>`;
+    }).join("");
+
+    wrap.className = "";
+    wrap.innerHTML = `<table>${thead}<tbody>${rows || `<tr><td colspan="${headers.length}" class="muted">No matches.</td></tr>`}</tbody></table>`;
+  }
+
+  function renderRecruiter(rq){
+    // Summary table
+    const sWrap = $("recruiterSummaryWrap");
+    const pWrap = $("recruiterParamWrap");
+    const rfWrap = $("recruiterRedFlagsWrap");
+
+    const summaryRows = arr(rq?.summary_table_rows);
+    if (!summaryRows.length){
+      sWrap.className = "empty";
+      sWrap.textContent = "No recruiter summary_table_rows found.";
+    } else {
+      const thead = `<thead><tr>
+        <th>Metric Name</th><th>Score (1–5)</th><th>Verdict</th><th>Observation</th>
+      </tr></thead>`;
+      const tbody = summaryRows.map(r => `<tr>
+        <td><b>${escapeHtml(txt(r?.metric_name))}</b></td>
+        <td class="mono">${escapeHtml(txt(r?.score_1_to_5,"—"))}</td>
+        <td>${verdictTag(r?.verdict)}</td>
+        <td>${escapeHtml(txt(r?.observation,"—"))}</td>
+      </tr>`).join("");
+      sWrap.className = "";
+      sWrap.innerHTML = `<table>${thead}<tbody>${tbody}</tbody></table>
+        <div class="muted" style="margin-top:8px"><b>Overall:</b> ${escapeHtml(txt(rq?.overall_score,"—"))} / 5 • ${txt(rq?.assistant_verdict,"—")}<br/>${escapeHtml(txt(rq?.overall_observation,"—"))}</div>`;
+    }
+
+    // Red flags table
+    const red = arr(rq?.red_flags);
+    if (!red.length){
+      rfWrap.className = "empty";
+      rfWrap.textContent = "No recruiter red_flags found.";
+    } else {
+      const thead = `<thead><tr>
+        <th>Category</th><th>Status</th><th>Severity</th><th>Observation</th><th>Evidence</th><th>Timestamp(s)</th>
+      </tr></thead>`;
+      const tbody = red.map(x => `<tr>
+        <td><b>${escapeHtml(txt(x?.category))}</b></td>
+        <td><span class="tag ${String(x?.status||"").toLowerCase().includes("detected") ? "warn" : "ok"}">${escapeHtml(txt(x?.status,"—"))}</span></td>
+        <td>${severityTag(x?.severity)}</td>
+        <td>${escapeHtml(txt(x?.observation,"—"))}</td>
+        <td>${chips(x?.evidence_snippets)}</td>
+        <td class="mono">${chips(x?.timestamps)}</td>
+      </tr>`).join("");
+      rfWrap.className = "";
+      rfWrap.innerHTML = `<table>${thead}<tbody>${tbody}</tbody></table>`;
+    }
+
+    // Parameter probe gaps table with search
+    const q = ($("recruiterParamSearch").value || "").trim().toLowerCase();
+    const rows = arr(rq?.parameter_table_rows);
+    const filtered = rows.filter(r => {
+      if (!q) return true;
+      const hay = [r?.score_area, r?.parameter, r?.coverage_status, r?.probing_depth, r?.evidence_quality, r?.recruiter_gap_observation, r?.suggested_probe_question]
+        .map(x => (x||"").toString().toLowerCase()).join(" | ");
+      return hay.includes(q);
+    });
+
+    if (!rows.length){
+      pWrap.className = "empty";
+      pWrap.textContent = "No recruiter parameter_table_rows found.";
+    } else {
+      const thead = `<thead><tr>
+        <th>Score Area</th><th>Parameter</th><th>Coverage</th><th>Probing Depth</th><th>Evidence</th><th>Recruiter Gap Observation</th><th>Suggested Probe Question</th>
+      </tr></thead>`;
+      const tbody = filtered.map(r => `<tr>
+        <td class="mono">${escapeHtml(txt(r?.score_area))}</td>
+        <td><b>${escapeHtml(txt(r?.parameter))}</b></td>
+        <td>${statusTag(r?.coverage_status)}</td>
+        <td><span class="tag info">${escapeHtml(txt(r?.probing_depth,"—"))}</span></td>
+        <td><span class="tag info">${escapeHtml(txt(r?.evidence_quality,"—"))}</span></td>
+        <td>${escapeHtml(txt(r?.recruiter_gap_observation,"—"))}</td>
+        <td>${escapeHtml(txt(r?.suggested_probe_question,"—"))}</td>
+      </tr>`).join("");
+
+      pWrap.className = "";
+      pWrap.innerHTML = `<table>${thead}<tbody>${tbody || `<tr><td colspan="7" class="muted">No matches.</td></tr>`}</tbody></table>`;
+    }
+  }
+
+  function renderCandidate(cq){
+    const dWrap = $("candidateDimsWrap");
+    const fWrap = $("candidateFlagsWrap");
+
+    const dims = arr(cq?.dimensions);
+    if (!dims.length){
+      dWrap.className = "empty";
+      dWrap.textContent = "No candidate dimensions found.";
+    } else {
+      const thead = `<thead><tr>
+        <th>Metric / Dimension</th><th>Score (1–5)</th><th>Verdict</th><th>Notes</th><th>Evidence</th><th>Timestamp(s)</th>
+      </tr></thead>`;
+
+      // Add an overall row first
+      const overallRow = `<tr>
+        <td><b>Candidate Interaction Quality (Overall)</b></td>
+        <td class="mono"><b>${escapeHtml(txt(cq?.overall_score,"—"))}</b></td>
+        <td>${verdictTag(cq?.assistant_verdict)}</td>
+        <td>${escapeHtml(txt(cq?.overall_observation,"—"))}</td>
+        <td class="muted">—</td>
+        <td class="muted">—</td>
+      </tr>`;
+
+      const tbodyRows = dims.map(d => `<tr>
+        <td><b>${escapeHtml(txt(d?.dimension))}</b></td>
+        <td class="mono">${escapeHtml(txt(d?.score_1_to_5,"—"))}</td>
+        <td>${verdictTag(d?.verdict)}</td>
+        <td>${escapeHtml(txt(d?.notes,"—"))}</td>
+        <td>${chips(d?.evidence_snippets)}</td>
+        <td class="mono">${chips(d?.timestamps)}</td>
+      </tr>`).join("");
+
+      dWrap.className = "";
+      dWrap.innerHTML = `<table>${thead}<tbody>${overallRow}${tbodyRows}</tbody></table>`;
+    }
+
+    const flags = arr(cq?.behavior_flags);
+    if (!flags.length){
+      fWrap.className = "empty";
+      fWrap.textContent = "No candidate behavior_flags found.";
+    } else {
+      const thead = `<thead><tr>
+        <th>Flag</th><th>Severity</th><th>Evidence</th><th>Timestamp(s)</th>
+      </tr></thead>`;
+      const tbody = flags.map(f => `<tr>
+        <td><b>${escapeHtml(txt(f?.flag))}</b></td>
+        <td>${severityTag(f?.severity)}</td>
+        <td>${chips(f?.evidence_snippets)}</td>
+        <td class="mono">${chips(f?.timestamps)}</td>
+      </tr>`).join("");
+      fWrap.className = "";
+      fWrap.innerHTML = `<table>${thead}<tbody>${tbody}</tbody></table>`;
+    }
+  }
+
+  // ---------- events ----------
+  function setActiveTab(panelId){
+    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.panel === panelId));
+    document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === panelId));
+  }
+
+  document.querySelectorAll(".tab").forEach(t => {
+    t.addEventListener("click", () => setActiveTab(t.dataset.panel));
+  });
+
+  $("renderBtn").addEventListener("click", () => {
+    const raw = $("jsonInput").value.trim();
+    if (!raw){
+      alert("Paste output JSON first.");
+      return;
+    }
+    try{
+      const data = JSON.parse(raw);
+      renderAll(data);
+    }catch(e){
+      console.error(e);
+      alert("Invalid JSON. Please paste valid evaluator output JSON.");
+    }
+  });
+
+  $("loadSampleBtn").addEventListener("click", () => {
+    const sample = {
+      meta: { version: "hr-screen-output.v1.3", generated_at: new Date().toISOString(), scoring_scale: 5 },
+      speaker_detection: {
+        recruiter_speaker_names_or_labels: ["Recruiter"],
+        candidate_speaker_names_or_labels: ["Candidate"],
+        confidence: "medium",
+        ambiguity_notes: ["Sample skeleton only. Replace with real output JSON."]
+      },
+      Role_Fitment_Score: {
+        total_weight: 100,
+        section_score_raw: 0,
+        section_score: 0,
+        assistant_verdict: "Marginal Fit",
+        section_observation: "Sample section observation.",
+        section_flags: ["Timestamp missing in transcript input"],
+        parameters: [
+          {
+            parameter: "Finance Industry Experience Breadth and Depth",
+            max_weight: 30,
+            system_guidance_anchors: "10+ years in finance industry with focus on digital/online/mobile banking.",
+            guidance: "Assess years, exposure to banking, consumer/SMB products.",
+            recruiter_question: { text: null, timestamp_start: null, timestamp_end: null },
+            candidate_response: { text: null, timestamp_start: null, timestamp_end: null },
+            assistant_score: 1,
+            assistant_verdict: "Strong Misfit",
+            assistant_observation: "Not covered in transcript.\nMissing: years + domain specifics.\nProbe: How many years in consumer/SMB digital banking?",
+            parameter_score_raw: 0,
+            parameter_score: 0,
+            evidence_snippets: [],
+            coverage_status: "Not Covered",
+            probe_depth: "None",
+            evidence_quality: "None",
+            flags: ["Not covered in transcript", "Timestamp missing in transcript input"],
+            missing_probe_questions: ["How many years in consumer vs SMB digital banking?"],
+            recruiter_score: null,
+            recruiter_observation: null
+          }
+        ]
+      },
+      Motivation_to_join_fitment_Score: {
+        total_weight: 100,
+        section_score_raw: 0,
+        section_score: 0,
+        assistant_verdict: "Marginal Fit",
+        section_observation: "Sample section observation.",
+        section_flags: [],
+        parameters: []
+      },
+      Overall_HR_Screen_Score: {
+        overall_score_raw: 0,
+        overall_score_normalized: 0,
+        assistant_verdict: "Marginal Fit",
+        overall_observation: "Sample overall observation.",
+        overall_flags: ["Sample flag"],
+        score_breakdown: { Role_Fitment_Score: 0, Motivation_to_join_fitment_Score: 0 }
+      },
+      Recruiter_Interaction_Quality: {
+        overall_score: 2.8,
+        assistant_verdict: "Marginal Misfit",
+        overall_observation: "Sample recruiter observation.",
+        summary_table_rows: [
+          { metric_name: "Recruiter Interaction Quality (Overall)", score_1_to_5: 2.8, verdict: "Marginal Misfit", observation: "Sample." }
+        ],
+        parameter_table_rows: [
+          {
+            score_area: "Role_Fitment_Score",
+            parameter: "Finance Industry Experience Breadth and Depth",
+            coverage_status: "Not Covered",
+            probing_depth: "None",
+            evidence_quality: "None",
+            recruiter_gap_observation: "Parameter not asked explicitly.",
+            suggested_probe_question: "How many years in consumer vs SMB digital banking?"
+          }
+        ],
+        red_flags: [
+          {
+            category: "Scripted, Robotic, or Low-Effort Interviewer",
+            status: "Detected",
+            severity: "High",
+            observation: "Sample flag.",
+            evidence_snippets: ["Okay, next question."],
+            timestamps: ["Throughout"]
+          }
+        ]
+      },
+      Candidate_Interaction_Quality: {
+        overall_score: 3.4,
+        assistant_verdict: "Marginal Fit",
+        overall_observation: "Sample candidate observation.",
+        dimensions: [
+          {
+            dimension: "Candidate Engagement & Energy",
+            score_1_to_5: 3,
+            verdict: "Marginal Fit",
+            notes: "Sample notes.",
+            evidence_snippets: [],
+            timestamps: []
+          }
+        ],
+        behavior_flags: [
+          { flag: "Low curiosity (few questions asked)", severity: "Medium", evidence_snippets: [], timestamps: ["Throughout"] }
+        ]
+      }
+    };
+    $("jsonInput").value = JSON.stringify(sample, null, 2);
+  });
+
+  $("clearBtn").addEventListener("click", () => {
+    $("jsonInput").value = "";
+  });
+
+  // Live re-render on search/toggles (if data loaded)
+  ["roleSearch","motSearch","recruiterParamSearch","roleShowGuidance","motShowGuidance"].forEach(id => {
+    $(id).addEventListener("input", () => {
+      if (!currentData) return;
+      // Re-render only affected panels (simple, safe)
+      renderParamTable({
+        wrapId: "roleTableWrap",
+        section: currentData?.Role_Fitment_Score,
+        searchId: "roleSearch",
+        showGuidanceId: "roleShowGuidance",
+        sectionKeyLabel: "Role_Fitment_Score"
+      });
+      renderParamTable({
+        wrapId: "motTableWrap",
+        section: currentData?.Motivation_to_join_fitment_Score,
+        searchId: "motSearch",
+        showGuidanceId: "motShowGuidance",
+        sectionKeyLabel: "Motivation_to_join_fitment_Score"
+      });
+      renderRecruiter(currentData?.Recruiter_Interaction_Quality);
+      // candidate tables do not depend on search in this template
+    });
+  });
+    </script>
+</body>
+</html>

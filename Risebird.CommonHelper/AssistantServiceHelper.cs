@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.OpenAIModels;
@@ -20,6 +21,7 @@ namespace Risebird.CommonHelper
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IOpenAIApiLogger _openAIApiLogger;
         private readonly string apiKey;
         private readonly string baseUrl;
         private readonly string candidateScreenerAssistantId;
@@ -37,11 +39,12 @@ namespace Risebird.CommonHelper
         private readonly string stringResumeAnalysisAssistantIdV2;
 
         //private readonly List<string> candidateResumesVectorStoreId;
-        public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
+        public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IOpenAIApiLogger openAIApiLogger)
         {
             _httpClient = new HttpClient();
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
+            _openAIApiLogger = openAIApiLogger;
             apiKey = _configuration["OpenAI:ApiKey"];
             baseUrl = _configuration["OpenAI:BaseUrl"];
             candidateScreenerAssistantId = _configuration["OpenAI:CandidateScreenerAssistantId"];
@@ -111,14 +114,27 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
+                    
+                    // After run completes, retrieve run steps to capture token usage
+                    if (runStatus == "completed")
+                    {
+                        await RetrieveRunStepsForTokenUsage(runId, threadId);
+                    }
+                    
                     var messages = await ListRunMessages(threadId);
                     if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
                     {
@@ -169,14 +185,27 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
+                    
+                    // After run completes, retrieve run steps to capture token usage
+                    if (runStatus == "completed")
+                    {
+                        await RetrieveRunStepsForTokenUsage(runId, threadId);
+                    }
+                    
                     var messages = await ListRunMessages(threadId);
                     if (messages != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
                     {
@@ -202,42 +231,52 @@ namespace Risebird.CommonHelper
             {
                 HttpClient client = new HttpClient();
                 string assistantId = string.Empty;
+                string operationType = "Unknown";
+                
                 if(!string.IsNullOrEmpty(profileType))
                 {
                     if (profileType == ProfileNames.Candidate)
                     {
                         assistantId = candidateScreenerAssistantId;
+                        operationType = "CandidateScreening";
                     }
                     else if (profileType == ProfileNames.Interviewer)
                     {
                         assistantId = interviewerScreenerAssistantId;
+                        operationType = "InterviewerScreening";
                     }
                     else if (profileType == ProfileNames.ResumeParserAIAssistant)
                     {
                         assistantId = resumeParserAssistantId;
+                        operationType = "ResumeParsing";
                     }
                     else if (profileType == ProfileNames.TranscriptAnalysisAIAssistant)
                     {
                         assistantId = aiTranscriptAnalysisAssistantId;
+                        operationType = "TranscriptAnalysis";
                     }
                     else if (profileType == ProfileNames.StringResumeAnalysisAIAssistant)
                     {
                         //assistantId = stringResumeAnalysisAssistantId;
                         assistantId = stringResumeAnalysisAssistantIdV2;
+                        operationType = "ResumeAnalysis";
                     }
                     else if (profileType == ProfileNames.StringReportQCAIAssistant)
                     {
                         assistantId = stringReportQCAssistantIdStructuredOutput;//stringReportQCAssistantId;
+                        operationType = "ReportQC";
                     }
                     else
                     {
                         assistantId = reportQCAssistantId;
+                        operationType = "QualityCheck";
                     }
 
                 }
                 else
                 {
                     assistantId = rubricGeneratorAssistantId;
+                    operationType = "RubricGeneration";
                 }
                 
 
@@ -258,12 +297,48 @@ namespace Risebird.CommonHelper
 
                 request.Content = content;
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
+                sw.Stop();
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Extract model from response
+                string modelName = null;
+                string runIdFromResponse = null;
+                try
+                {
+                    var runResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
+                    if (runResponse != null)
+                    {
+                        modelName = runResponse.ContainsKey("model") ? runResponse["model"]?.ToString() : null;
+                        runIdFromResponse = runResponse.ContainsKey("id") ? runResponse["id"]?.ToString() : null;
+                    }
+                }
+                catch { /* Continue even if extraction fails */ }
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/threads/{threadId}/runs",
+                    apiMethod: "POST",
+                    requestPayload: jsonContent,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: modelName,
+                    assistantId: assistantId,
+                    threadId: threadId,
+                    runId: runIdFromResponse,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = operationType
+                    });
 
                 response.EnsureSuccessStatusCode();
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var runResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
-                return runResponse["id"].ToString();
+                return runIdFromResponse;
             }
             catch (Exception ex)
             {
@@ -284,21 +359,55 @@ namespace Risebird.CommonHelper
                     Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },
                 };
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
-                //HttpClient client = new HttpClient();
-                //client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
-                //client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-                //client.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
-                //var response = await client.PostAsync($"{baseUrl}/threads/{threadId}/runs", content);
-                response.EnsureSuccessStatusCode();
+                sw.Stop();
+                
                 var responseContent = await response.Content.ReadAsStringAsync();
-                var runResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
-                var failedAt = runResponse["failed_at"];
-                if (failedAt != null)
+                
+                // Extract model and assistant from response
+                string modelName = null;
+                string assistantIdFromResponse = null;
+                string statusFromResponse = null;
+                try
                 {
-                    return "failed";
+                    var runResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
+                    if (runResponse != null)
+                    {
+                        modelName = runResponse.ContainsKey("model") ? runResponse["model"]?.ToString() : null;
+                        assistantIdFromResponse = runResponse.ContainsKey("assistant_id") ? runResponse["assistant_id"]?.ToString() : null;
+                        statusFromResponse = runResponse.ContainsKey("status") ? runResponse["status"]?.ToString() : null;
+                        var failedAt = runResponse["failed_at"];
+                        if (failedAt != null)
+                        {
+                            statusFromResponse = "failed";
+                        }
+                    }
                 }
-                return runResponse["status"].ToString();
+                catch { /* Continue even if extraction fails */ }
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/threads/{threadId}/runs/{runId}",
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: modelName,
+                    assistantId: assistantIdFromResponse,
+                    threadId: threadId,
+                    runId: runId,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "RunRetrieval"
+                    });
+                
+                response.EnsureSuccessStatusCode();
+                return statusFromResponse;
             }
             catch (Exception ex)
             {
@@ -307,6 +416,67 @@ namespace Risebird.CommonHelper
             }
 
         }
+        
+        private async Task RetrieveRunStepsForTokenUsage(string runId, string threadId)
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/threads/{threadId}/runs/{runId}/steps")
+                {
+                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }
+                };
+
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                var response = await client.SendAsync(request);
+                sw.Stop();
+                
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Extract model from the parent run context if available
+                string modelName = null;
+                string assistantIdFromResponse = null;
+                try
+                {
+                    var json = JObject.Parse(responseContent);
+                    var dataArray = json["data"] as JArray;
+                    if (dataArray != null && dataArray.Count > 0)
+                    {
+                        var firstStep = dataArray[0] as JObject;
+                        // The model might be in step details
+                        modelName = firstStep?["model"]?.ToString();
+                        assistantIdFromResponse = firstStep?["assistant_id"]?.ToString();
+                    }
+                }
+                catch { /* Continue even if extraction fails */ }
+                
+                // Log the API call - this will extract token usage from run steps
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/threads/{threadId}/runs/{runId}/steps",
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: modelName,
+                    assistantId: assistantIdFromResponse,
+                    threadId: threadId,
+                    runId: runId,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "RunStepsRetrieval-TokenUsage"
+                    });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+        
         private async Task<RunResult> ListRunMessages(string threadId)
         {
             try
@@ -318,10 +488,33 @@ namespace Risebird.CommonHelper
                     Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },
                 };
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
+                sw.Stop();
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/threads/{threadId}/messages",
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: null,
+                    assistantId: null,
+                    threadId: threadId,
+                    runId: null,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "MessageRetrieval"
+                    });
 
                 response.EnsureSuccessStatusCode();
-                var responseContent = await response.Content.ReadAsStringAsync();
 
                 RunResult runResultMessages = JsonConvert.DeserializeObject<RunResult>(responseContent);
                 return runResultMessages;
@@ -361,10 +554,34 @@ namespace Risebird.CommonHelper
 
                         HttpClient client = new HttpClient();
                         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+                        
+                        var sw = System.Diagnostics.Stopwatch.StartNew();
                         var response = await client.PostAsync($"{baseUrl}/files", content);
-                        response.EnsureSuccessStatusCode();
+                        sw.Stop();
 
                         var responseContent = await response.Content.ReadAsStringAsync();
+                        
+                        // Log the API call
+                        await _openAIApiLogger.LogApiCallAsync(
+                            apiEndpoint: $"{baseUrl}/files",
+                            apiMethod: "POST",
+                            requestPayload: $"{{\"purpose\":\"assistants\",\"file\":\"{fcName}\"}}",
+                            responsePayload: responseContent,
+                            responseTimeMs: (int)sw.ElapsedMilliseconds,
+                            statusCode: (int)response.StatusCode,
+                            isSuccess: response.IsSuccessStatusCode,
+                            errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                            model: null,
+                            assistantId: null,
+                            threadId: null,
+                            runId: null,
+                            fileId: null,
+                            context: new OpenAIApiLogContext
+                            {
+                                OperationType = "FileUpload"
+                            });
+                        
+                        response.EnsureSuccessStatusCode();
 
                         var fileResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
                         return fileResponse["id"].ToString();
@@ -551,10 +768,34 @@ namespace Risebird.CommonHelper
 
                 request.Content = content;
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await _httpClient.SendAsync(request);
+                sw.Stop();
+                
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/threads",
+                    apiMethod: "POST",
+                    requestPayload: jsonContent,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: null,
+                    assistantId: null,
+                    threadId: null,
+                    runId: null,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "ThreadCreation"
+                    });
+                
                 response.EnsureSuccessStatusCode();
 
-                var responseContent = await response.Content.ReadAsStringAsync();
                 dynamic thread = JsonConvert.DeserializeObject(responseContent);
 
                 //return JsonConvert.DeserializeObject<CandidateScreeningResponse>(responseContent);
@@ -579,10 +820,33 @@ namespace Risebird.CommonHelper
                     Headers = { { "Authorization", $"Bearer {apiKey}" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
                 };
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
+                sw.Stop();
 
-                response.EnsureSuccessStatusCode();
                 var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/files",
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: null,
+                    assistantId: null,
+                    threadId: null,
+                    runId: null,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "FileList"
+                    });
+                
+                response.EnsureSuccessStatusCode();
 
                 FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
                 return files;
@@ -594,67 +858,83 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<bool> DeleteFiles()
+        public async Task<bool> DeleteFiles(int maxIterations = 10)
         {
             try
             {
-                var filesList = await ListFiles();
-                if (filesList != null && filesList.data != null && filesList.data.Count() > 0)
+                int iteration = 0;
+                int totalDeleted = 0;
+
+                // Loop with circuit breaker to prevent infinite recursion
+                while (iteration < maxIterations)
                 {
+                    var filesList = await ListFiles();
+                    
+                    // No more files to delete
+                    if (filesList == null || filesList.data == null || filesList.data.Count() == 0)
+                    {
+                        return true;
+                    }
 
-                    //Parallel.ForEach(filesList?.data, item =>
-                    //{
-                    //    HttpClient client = new HttpClient();
-
-                    //    var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
-                    //    {
-                    //        Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
-                    //    };
-
-                    //    var response = client.SendAsync(request).Result;
-
-                    //    response.EnsureSuccessStatusCode();
-                    //    var responseContent = response.Content.ReadAsStringAsync().Result;
-
-                    //    //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
-                    //    //return files;
-                    //}
-                    //);
-                    foreach (var item in filesList?.data)
+                    // Delete all files in current batch
+                    foreach (var item in filesList.data)
                     {
                         try
                         {
                             HttpClient client = new HttpClient();
 
-                            //var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
-                            //{
-                            //    Headers = { { "Authorization", $"Bearer {apiKey}" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
-                            //};
-
                             var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
                             {
-                                Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
+                                Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }
                             };
 
+                            var sw = System.Diagnostics.Stopwatch.StartNew();
                             var response = await client.SendAsync(request);
-
-                            response.EnsureSuccessStatusCode();
+                            sw.Stop();
+                            
                             var responseContent = await response.Content.ReadAsStringAsync();
-
-                            //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
-                            //return files;
+                            
+                            // Log the API call
+                            await _openAIApiLogger.LogApiCallAsync(
+                                apiEndpoint: $"{baseUrl}/files/{item.id}",
+                                apiMethod: "DELETE",
+                                requestPayload: null,
+                                responsePayload: responseContent,
+                                responseTimeMs: (int)sw.ElapsedMilliseconds,
+                                statusCode: (int)response.StatusCode,
+                                isSuccess: response.IsSuccessStatusCode,
+                                errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                                model: null,
+                                assistantId: null,
+                                threadId: null,
+                                runId: null,
+                                fileId: item.id,
+                                context: new OpenAIApiLogContext
+                                {
+                                    OperationType = "FileDelete"
+                                });
+                            
+                            response.EnsureSuccessStatusCode();
+                            
+                            totalDeleted++;
                         }
                         catch (Exception ex)
                         {
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         }
-
                     }
-                    await DeleteFiles();
+
+                    iteration++;
+                }
+
+                // Log if we hit the max iterations (potential issue)
+                if (iteration >= maxIterations)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                        new Exception($"DeleteFiles: Hit max iterations ({maxIterations}). Deleted {totalDeleted} files. More files may still exist."));
                 }
 
                 return true;
-
             }
             catch (Exception ex)
             {
@@ -674,10 +954,33 @@ namespace Risebird.CommonHelper
                     Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
                 };
 
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
+                sw.Stop();
 
-                response.EnsureSuccessStatusCode();
                 var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{baseUrl}/vector_stores",
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: null,
+                    assistantId: null,
+                    threadId: null,
+                    runId: null,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "VectorStoreList"
+                    });
+                
+                response.EnsureSuccessStatusCode();
 
                 FilesList vectors = JsonConvert.DeserializeObject<FilesList>(responseContent);//FilesList: used the same type for vector list
                 return vectors;
@@ -698,6 +1001,7 @@ namespace Risebird.CommonHelper
                 {
                     Parallel.ForEach(vectorsList?.data, item =>
                     {
+                        var sw = System.Diagnostics.Stopwatch.StartNew();
                         HttpClient client = new HttpClient();
 
                         var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/vector_stores/{item.id}")
@@ -706,9 +1010,31 @@ namespace Risebird.CommonHelper
                         };
 
                         var response = client.SendAsync(request).Result;
+                        sw.Stop();
 
-                        response.EnsureSuccessStatusCode();
                         var responseContent = response.Content.ReadAsStringAsync().Result;
+                        
+                        // Log the API call (using GetAwaiter().GetResult() for sync context)
+                        _openAIApiLogger.LogApiCallAsync(
+                            apiEndpoint: $"{baseUrl}/vector_stores/{item.id}",
+                            apiMethod: "DELETE",
+                            requestPayload: null,
+                            responsePayload: responseContent,
+                            responseTimeMs: (int)sw.ElapsedMilliseconds,
+                            statusCode: (int)response.StatusCode,
+                            isSuccess: response.IsSuccessStatusCode,
+                            errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                            model: null,
+                            assistantId: null,
+                            threadId: null,
+                            runId: null,
+                            fileId: null,
+                            context: new OpenAIApiLogContext
+                            {
+                                OperationType = "VectorStoreDelete"
+                            }).GetAwaiter().GetResult();
+                        
+                        response.EnsureSuccessStatusCode();
 
                         //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
                         //return files;
@@ -775,14 +1101,27 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 4s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(4000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
+                    
+                    // After run completes, retrieve run steps to capture token usage
+                    if (runStatus == "completed")
+                    {
+                        await RetrieveRunStepsForTokenUsage(runId, threadId);
+                    }
+                    
                     var messages = await ListRunMessages(threadId);
                     //if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
                     //{
@@ -834,14 +1173,27 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
+                    
+                    // After run completes, retrieve run steps to capture token usage
+                    if (runStatus == "completed")
+                    {
+                        await RetrieveRunStepsForTokenUsage(runId, threadId);
+                    }
+                    
                     var messages = await ListRunMessages(threadId);
                     
                     return messages;
@@ -882,14 +1234,27 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
+                    
+                    // After run completes, retrieve run steps to capture token usage
+                    if (runStatus == "completed")
+                    {
+                        await RetrieveRunStepsForTokenUsage(runId, threadId);
+                    }
+                    
                     var messages = await ListRunMessages(threadId);
 
                     return messages;
@@ -928,14 +1293,27 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
+                    
+                    // After run completes, retrieve run steps to capture token usage
+                    if (runStatus == "completed")
+                    {
+                        await RetrieveRunStepsForTokenUsage(runId, threadId);
+                    }
+                    
                     var messages = await ListRunMessages(threadId);
 
                     return messages;
@@ -975,14 +1353,27 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    //retrieve a run
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+                    
+                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
-                        await Task.Delay(5000);
+                        await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
+                        
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
+                    
+                    // After run completes, retrieve run steps to capture token usage
+                    if (runStatus == "completed")
+                    {
+                        await RetrieveRunStepsForTokenUsage(runId, threadId);
+                    }
+                    
                     var messages = await ListRunMessages(threadId);
 
                     return messages;

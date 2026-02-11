@@ -345,12 +345,21 @@ namespace Risebird.Repository
                     resumeListDt.Columns.Add("IsResumeParsed", typeof(bool));
                     resumeListDt.Columns.Add("IsResumeParsingFailed", typeof(bool));
                     resumeListDt.Columns.Add("IsEmailMissing", typeof(bool));
-                    resumeListDt.Columns.Add("ReasonBehindNotProcessed", typeof(string));
-
+                    if (!ismcqdb)
+                    {
+                        resumeListDt.Columns.Add("ReasonBehindNotProcessed", typeof(string));
+                    }
 
                     foreach (var item in resumeList)
                     {
-                        resumeListDt.Rows.Add(item.id, item.IsProcessed, item.IsResumeParsed, item.IsResumeParsingFailed, item.IsEmailMissing, item.ReasonBehindNotProcessed);
+                        if (ismcqdb)
+                        {
+                            resumeListDt.Rows.Add(item.id, item.IsProcessed, item.IsResumeParsed, item.IsResumeParsingFailed, item.IsEmailMissing);
+                        }
+                        else
+                        {
+                            resumeListDt.Rows.Add(item.id, item.IsProcessed, item.IsResumeParsed, item.IsResumeParsingFailed, item.IsEmailMissing, item.ReasonBehindNotProcessed);
+                        }
                     }
 
                     SqlCommand cmd = new SqlCommand("usp_CandidateResumeBulkUpdate", con);
@@ -934,7 +943,7 @@ namespace Risebird.Repository
                 }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetCandidateResumeForParsing", null,
+                    return await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetCandidateResumeForParsing", null,//usp_GetCandidateResumeForParsingTesting
                         commandType: CommandType.StoredProcedure);
                 }
             }
@@ -1491,7 +1500,7 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<bool> SaveCandidateOpenAIScreeningResultsV2(int irfId, int candidateMasterId, string screeningResponseJson, string verdict)
+        public async Task<bool> SaveCandidateOpenAIScreeningResultsV2(int irfId, int candidateMasterId, string screeningResponseJson, string verdict, int resumeScreeningScore)
         {
             try
             {
@@ -1502,7 +1511,8 @@ namespace Risebird.Repository
                     parameters.Add("@candidateMasterId", candidateMasterId);
                     parameters.Add("@screeningResponseJson", screeningResponseJson);
                     parameters.Add("@verdict", verdict);
-                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveCandidateResumeAIScreeningResultsV2", parameters, commandTimeout: 600,  
+                    parameters.Add("@resumeScreeningScore", resumeScreeningScore);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveCandidateResumeAIScreeningResultsV2", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }

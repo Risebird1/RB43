@@ -37,7 +37,7 @@ namespace Risebird.Business.Interface
         Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate, string loginemail);
         Task<CandidateIRFData> CheckCandidateDetailsByEmail(string IRFId, string Emailid);
         Task<IEnumerable<RecommendedSlotsVM>> FetchrecommendedSlots(List<DateTime> _slotscheck);
-        Task<List<string>> SaveCalibrationCallDetail(string meetinglink, int irfid, DateTime meetingdate, string Emailid);
+        Task<List<string>> SaveCalibrationCallDetail(string meetinglink, int irfid, DateTime meetingdate, string Emailid,string meetingid);
         Task<string> GenerateOneTimeEvent(string olduniqueid, string candidateEmail);
         Task<bool> CheckFutureCancelInterview(string IRFId, DateTime interviewdate, string CandidateEmailid);
         Task<string> GetAvailableZohoAccount(DateTime startTime, DateTime endTime, string currentZohoAccount = null);

@@ -2,6 +2,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.AffIndaModels;
@@ -22,6 +23,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IValidationHelper _validationHelper;
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly IOpenAIInterviewerAssistantHelper _ai;
+        private readonly IResumeOptimizationHelper _resumeOptimizationHelper;
 
 
         private readonly ILogger log;
@@ -31,7 +33,8 @@ namespace Risebird.AzureTimerFunctions
             IIRFService irfService,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper,
             IPdfReaderHelper pdfReaderHelper,
-            IOpenAIInterviewerAssistantHelper ai)
+            IOpenAIInterviewerAssistantHelper ai,
+            IResumeOptimizationHelper resumeOptimizationHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -43,10 +46,11 @@ namespace Risebird.AzureTimerFunctions
             log = loggerFactory.CreateLogger<ResumeParserJob>();
             _pdfReaderHelper = pdfReaderHelper;
             _ai = ai;
+            _resumeOptimizationHelper = resumeOptimizationHelper;
         }
 
         [Function("ResumeParserJob")]
-        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)//0 */5 * * * *
+        public async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer) // Every 10 minutes (was: 5 min - reduced OpenAI costs)
         {
             try
             {
@@ -81,6 +85,29 @@ namespace Risebird.AzureTimerFunctions
 
                         if (!string.IsNullOrEmpty(resumeStringContent))
                         {
+                            // OPTIMIZATION: Pre-screen resume for validity (saves API calls on corrupted resumes)
+                            var (isValid, validationReason) = _resumeOptimizationHelper.ValidateResumeForParsing(resumeStringContent);
+                            if (!isValid)
+                            {
+                                log.LogInformation($"ResumeParserJob: Resume {resume.id} validation failed: {validationReason}");
+                                candidateResumeList.Add(new CandidateResume 
+                                { 
+                                    id = resume.id, 
+                                    IsResumeParsed = false, 
+                                    IsProcessed = false, 
+                                    IsResumeParsingFailed = true,
+                                    ReasonBehindNotProcessed = validationReason
+                                });
+                                continue;
+                            }
+
+                            // OPTIMIZATION: Reduce token usage by removing boilerplate and excessive whitespace
+                            var estimatedTokensBefore = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                            resumeStringContent = _resumeOptimizationHelper.OptimizeResumeText(resumeStringContent);
+                            var estimatedTokensAfter = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
+                            
+                            log.LogInformation($"ResumeParserJob: Resume {resume.id} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter})");
+
                             var threadId = await _ai.CreateThreadAsync();
                             await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
 

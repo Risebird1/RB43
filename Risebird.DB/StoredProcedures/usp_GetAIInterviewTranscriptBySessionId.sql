@@ -9,12 +9,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 Create Procedure usp_GetAIInterviewTranscriptBySessionId
-@SessionId varchar(200)
+@SessionId uniqueidentifier
 AS
 BEGIN
 
 select SessionId, [Role], [Message], [Timestamp], DeliveryHeadQuestionId, sq.AIQuestionVideoLink 
-from TranscriptsConv tc
+from TransCriptsConv tc
 left join SkillChannelSampleQuestions sq on tc.DeliveryHeadQuestionId = sq.id
 where SessionId = @SessionId order by [Timestamp] desc
 

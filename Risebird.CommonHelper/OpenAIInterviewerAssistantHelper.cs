@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
@@ -22,15 +22,17 @@ namespace Risebird.CommonHelper
     {
         private readonly HttpClient _http;
         private readonly IConfiguration _config;
+        private readonly IOpenAIApiLogger _openAIApiLogger;
 
         private readonly string _openAiKey;
         //private readonly string _assistantId;
 
-        public OpenAIInterviewerAssistantHelper(IConfiguration config)//HttpClient http, 
+        public OpenAIInterviewerAssistantHelper(IConfiguration config, IOpenAIApiLogger openAIApiLogger)//HttpClient http, 
         {
             //_http = http;
             _http = new HttpClient();
             _config = config;
+            _openAIApiLogger = openAIApiLogger;
             _openAiKey = _config["OpenAI:ApiKey"];
             //_assistantId = _config["OpenAI:AIInterviewerAssistantId"];
 
@@ -40,17 +42,38 @@ namespace Risebird.CommonHelper
 
         public async Task<string> CreateThreadAsync()
         {
-            //var response = await _http.PostAsync("https://api.openai.com/v1/threads", null);
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var response = await _http.PostAsJsonAsync("https://api.openai.com/v1/threads", new { });
+            sw.Stop();
 
+            var content = await response.Content.ReadAsStringAsync();
+            
+            // Log the API call
+            await _openAIApiLogger.LogApiCallAsync(
+                apiEndpoint: "https://api.openai.com/v1/threads",
+                apiMethod: "POST",
+                requestPayload: "{}",
+                responsePayload: content,
+                responseTimeMs: (int)sw.ElapsedMilliseconds,
+                statusCode: (int)response.StatusCode,
+                isSuccess: response.IsSuccessStatusCode,
+                errorMessage: response.IsSuccessStatusCode ? null : content,
+                model: null,
+                assistantId: null,
+                threadId: null,
+                runId: null,
+                fileId: null,
+                context: new OpenAIApiLogContext
+                {
+                    OperationType = "AIInterview-ThreadCreation"
+                });
 
             if (!response.IsSuccessStatusCode)
             {
-                var error = await response.Content.ReadAsStringAsync();
+                var error = content;
                 throw new Exception($"Failed to create thread: {response.StatusCode} - {error}");
             }
 
-            var content = await response.Content.ReadAsStringAsync();
             var json = JObject.Parse(content);
             return json["id"]?.ToString();
 
@@ -62,19 +85,84 @@ namespace Risebird.CommonHelper
         {
             var url = $"https://api.openai.com/v1/threads/{threadId}/messages";
             var payload = new { role, content };
-            await _http.PostAsJsonAsync(url, payload);
+            var requestJson = JsonConvert.SerializeObject(payload);
+            
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var response = await _http.PostAsJsonAsync(url, payload);
+            sw.Stop();
+            
+            var responseContent = await response.Content.ReadAsStringAsync();
+            
+            // Log the API call
+            await _openAIApiLogger.LogApiCallAsync(
+                apiEndpoint: url,
+                apiMethod: "POST",
+                requestPayload: requestJson,
+                responsePayload: responseContent,
+                responseTimeMs: (int)sw.ElapsedMilliseconds,
+                statusCode: (int)response.StatusCode,
+                isSuccess: response.IsSuccessStatusCode,
+                errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                model: null,
+                assistantId: null,
+                threadId: threadId,
+                runId: null,
+                fileId: null,
+                context: new OpenAIApiLogContext
+                {
+                    OperationType = "AIInterview-AddMessage"
+                });
         }
 
         public async Task<string> CreateRunAsync(string threadId, string assistantId)
         {
             var url = $"https://api.openai.com/v1/threads/{threadId}/runs";
             //var payload = new { assistant_id = _assistantId };
-            var payload = new { assistant_id = assistantId };
+            // Add response_format to request structured JSON output (reduces output tokens)
+            var payload = new { 
+                assistant_id = assistantId,
+                response_format = new { type = "json_object" }
+            };
+            var requestJson = JsonConvert.SerializeObject(payload);
+            
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var response = await _http.PostAsJsonAsync(url, payload);
+            sw.Stop();
 
             var content = await response.Content.ReadAsStringAsync();
-            var json = JObject.Parse(content);
-            return json["id"]?.ToString();
+            
+            // Extract model and runId from response
+            string modelName = null;
+            string runIdFromResponse = null;
+            try
+            {
+                var json = JObject.Parse(content);
+                modelName = json["model"]?.ToString();
+                runIdFromResponse = json["id"]?.ToString();
+            }
+            catch { /* Continue even if extraction fails */ }
+            
+            // Log the API call
+            await _openAIApiLogger.LogApiCallAsync(
+                apiEndpoint: url,
+                apiMethod: "POST",
+                requestPayload: requestJson,
+                responsePayload: content,
+                responseTimeMs: (int)sw.ElapsedMilliseconds,
+                statusCode: (int)response.StatusCode,
+                isSuccess: response.IsSuccessStatusCode,
+                errorMessage: response.IsSuccessStatusCode ? null : content,
+                model: modelName,
+                assistantId: assistantId,
+                threadId: threadId,
+                runId: runIdFromResponse,
+                fileId: null,
+                context: new OpenAIApiLogContext
+                {
+                    OperationType = "AIInterview-CreateRun"
+                });
+            
+            return runIdFromResponse;
 
             //var result = await response.Content.ReadFromJsonAsync<dynamic>();
             //return result.id;
@@ -83,21 +171,120 @@ namespace Risebird.CommonHelper
         public async Task<string> WaitForRunAsync(string threadId, string runId)
         {
             string url = $"https://api.openai.com/v1/threads/{threadId}/runs/{runId}";
-            string status;
+            string status = "queued"; // Initialize to prevent unassigned variable error
             do
             {
                 await Task.Delay(2000);
+                
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await _http.GetAsync(url);
+                sw.Stop();
+                
                 var content = await response.Content.ReadAsStringAsync();
-                var json = JObject.Parse(content);
-                status = json["status"]?.ToString();
+                
+                // Extract model and assistant from response
+                string modelName = null;
+                string assistantIdFromResponse = null;
+                try
+                {
+                    var json = JObject.Parse(content);
+                    modelName = json["model"]?.ToString();
+                    assistantIdFromResponse = json["assistant_id"]?.ToString();
+                    status = json["status"]?.ToString() ?? "completed"; // Default to completed if null to exit loop
+                }
+                catch 
+                { 
+                    // If parsing fails, default to completed to exit loop
+                    status = "completed";
+                }
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: url,
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: content,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : content,
+                    model: modelName,
+                    assistantId: assistantIdFromResponse,
+                    threadId: threadId,
+                    runId: runId,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "AIInterview-RunStatusCheck"
+                    });
 
                 //var result = await response.Content.ReadFromJsonAsync<dynamic>();
                 //status = result.status;
             }
             while (status == "queued" || status == "in_progress");
 
+            // After run completes, retrieve run steps to capture token usage
+            if (status == "completed")
+            {
+                await RetrieveRunStepsForTokenUsage(runId, threadId);
+            }
+
             return status;
+        }
+        
+        private async Task RetrieveRunStepsForTokenUsage(string runId, string threadId)
+        {
+            try
+            {
+                var url = $"https://api.openai.com/v1/threads/{threadId}/runs/{runId}/steps";
+                
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                var response = await _http.GetAsync(url);
+                sw.Stop();
+                
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                // Extract model from the steps if available
+                string modelName = null;
+                string assistantIdFromResponse = null;
+                try
+                {
+                    var json = JObject.Parse(responseContent);
+                    var dataArray = json["data"] as JArray;
+                    if (dataArray != null && dataArray.Count > 0)
+                    {
+                        var firstStep = dataArray[0] as JObject;
+                        modelName = firstStep?["model"]?.ToString();
+                        assistantIdFromResponse = firstStep?["assistant_id"]?.ToString();
+                    }
+                }
+                catch { /* Continue even if extraction fails */ }
+                
+                // Log the API call - this will extract token usage from run steps
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: url,
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: modelName,
+                    assistantId: assistantIdFromResponse,
+                    threadId: threadId,
+                    runId: runId,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "AIInterview-RunStepsRetrieval-TokenUsage"
+                    });
+            }
+            catch (Exception ex)
+            {
+                // Silently fail - we don't want to break the main flow if run steps retrieval fails
+                // The error will be logged by the OpenAIApiLogger
+            }
         }
 
         public async Task<List<string>> GetMessagesAsync(string threadId)
@@ -105,7 +292,33 @@ namespace Risebird.CommonHelper
             try
             {
                 var url = $"https://api.openai.com/v1/threads/{threadId}/messages";
+                
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await _http.GetAsync(url);
+                sw.Stop();
+                
+                var content = await response.Content.ReadAsStringAsync();
+                
+                // Log the API call
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: url,
+                    apiMethod: "GET",
+                    requestPayload: null,
+                    responsePayload: content,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : content,
+                    model: null,
+                    assistantId: null,
+                    threadId: threadId,
+                    runId: null,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "AIInterview-GetMessages"
+                    });
+                
                 //var result = await response.Content.ReadFromJsonAsync<dynamic>();
                 var result = await response.Content.ReadFromJsonAsync<MessageListResponse>();
                 var messages = new List<string>();
@@ -139,20 +352,47 @@ namespace Risebird.CommonHelper
         public async Task<List<TranscriptConv>> GetFullConversation(Guid sessionId, string threadId)
         {
             var url = $"https://api.openai.com/v1/threads/{threadId}/messages";
+            
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var response = await _http.GetAsync(url);
+            sw.Stop();
+            
+            var content = await response.Content.ReadAsStringAsync();
+            
+            // Log the API call
+            await _openAIApiLogger.LogApiCallAsync(
+                apiEndpoint: url,
+                apiMethod: "GET",
+                requestPayload: null,
+                responsePayload: content,
+                responseTimeMs: (int)sw.ElapsedMilliseconds,
+                statusCode: (int)response.StatusCode,
+                isSuccess: response.IsSuccessStatusCode,
+                errorMessage: response.IsSuccessStatusCode ? null : content,
+                model: null,
+                assistantId: null,
+                threadId: threadId,
+                runId: null,
+                fileId: null,
+                context: new OpenAIApiLogContext
+                {
+                    SessionId = sessionId,
+                    OperationType = "AIInterview-GetFullConversation"
+                });
+            
             var result = await response.Content.ReadFromJsonAsync<dynamic>();
 
             var messages = new List<TranscriptConv>();
             foreach (var msg in result.data)
             {
                 var role = (string)msg.role;
-                var content = (string)msg.content[0].text.value;
+                var messageContent = (string)msg.content[0].text.value;
 
                 messages.Add(new TranscriptConv
                 {
                     SessionId = sessionId,
                     Role = role,
-                    Message = content,
+                    Message = messageContent,
                     Timestamp = DateTime.UtcNow
                 });
             }

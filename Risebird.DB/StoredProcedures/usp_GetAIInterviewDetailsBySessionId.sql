@@ -26,8 +26,9 @@ im.TimeLeftInSeconds, im.TimeZonesValue, im.TimeZoneoffset, irf.JDTiltle, iss.Th
 ISNULL(ad.matchPercentage, 0) as MatchScorePercentage,
 ISNULL(ad.id, 0) as AadharVerificationId, ic.MeetingStatus, ic.InterviewStatus,
 case when (im.candidateName is not null and im.candidateName != '')  then im.candidateName else ulc.FirstName end as candidateName,
-irf.id as irfIntId, irf.AIInterviewType, IRF.IsAIInterview,  irf.OpenAIAssistantId, irf.showChatBox,
-case when irf.AIInterviewType = 1 then 1 else 0 end as IsAdaptive, @biqvId as CandidateAnswerVideoIdAI  
+irf.id as irfIntId, irf.AIInterviewType, IRF.IsAIInterview,  irf.OpenAIAssistantId, irf.showChatBox, irf.isMultiLingual,
+case when irf.AIInterviewType = 1 then 1 else 0 end as IsAdaptive, @biqvId as CandidateAnswerVideoIdAI,
+ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore
 from InterviewMeetings im
 left join InterviewComments ic on ic.InterviewId = im.id
 left join AadhaarDetails ad on (ad.email = im.candidateEmail and ad.reference_id = CAST(im.id AS varchar(50)))
