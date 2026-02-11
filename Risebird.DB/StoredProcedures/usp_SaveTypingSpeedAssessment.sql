@@ -24,6 +24,9 @@ CREATE PROCEDURE usp_SaveTypingSpeedAssessment
 	@PassingWPM DECIMAL(10,2) = 30.00,
 	@PassingAccuracyPercentage DECIMAL(5,2) = 97.00,
 	@IsPassed BIT = NULL,
+	@OpenAIAnalysisJson NVARCHAR(MAX) = NULL,
+	@OpenAIThreadId VARCHAR(100) = NULL,
+	@OpenAIRunId VARCHAR(100) = NULL,
 	@CreatedBy VARCHAR(150) = NULL
 AS
 BEGIN
@@ -54,6 +57,9 @@ BEGIN
 		PassingWPM,
 		PassingAccuracyPercentage,
 		IsPassed,
+		OpenAIAnalysisJson,
+		OpenAIThreadId,
+		OpenAIRunId,
 		CreatedAt,
 		CreatedBy
 	)
@@ -72,6 +78,9 @@ BEGIN
 		@PassingWPM,
 		@PassingAccuracyPercentage,
 		@IsPassed,
+		@OpenAIAnalysisJson,
+		@OpenAIThreadId,
+		@OpenAIRunId,
 		GETDATE(),
 		@CreatedBy
 	);

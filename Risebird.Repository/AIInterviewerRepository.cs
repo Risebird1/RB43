@@ -722,6 +722,9 @@ namespace Risebird.Repository
                     parameters.Add("@PassingWPM", obj.PassingWPM);
                     parameters.Add("@PassingAccuracyPercentage", obj.PassingAccuracyPercentage);
                     parameters.Add("@IsPassed", obj.IsPassed);
+                    parameters.Add("@OpenAIAnalysisJson", obj.OpenAIAnalysisJson);
+                    parameters.Add("@OpenAIThreadId", obj.OpenAIThreadId);
+                    parameters.Add("@OpenAIRunId", obj.OpenAIRunId);
                     parameters.Add("@CreatedBy", obj.CreatedBy);
                     
                     await SqlMapper.QueryAsync(con, "usp_SaveTypingSpeedAssessment", parameters,

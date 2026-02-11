@@ -18,6 +18,9 @@ CREATE TABLE [dbo].[TypingSpeedAssessment](
 	[PassingWPM] [decimal](10,2) NULL DEFAULT 30.00,
 	[PassingAccuracyPercentage] [decimal](5,2) NULL DEFAULT 97.00,
 	[IsPassed] [bit] NULL,
+	[OpenAIAnalysisJson] [nvarchar](max) NULL,
+	[OpenAIThreadId] [varchar](100) NULL,
+	[OpenAIRunId] [varchar](100) NULL,
 	[CreatedAt] [datetime] NULL,
 	[CreatedBy] [varchar](150) NULL,
  CONSTRAINT [PK_TypingSpeedAssessment] PRIMARY KEY CLUSTERED 
@@ -57,6 +60,36 @@ BEGIN
 	BEGIN
 		ALTER TABLE TypingSpeedAssessment
 		Add IsPassed bit NULL
+	END
+
+	IF NOT EXISTS(
+		SELECT *
+		FROM sys.columns
+		WHERE Name IN (N'OpenAIAnalysisJson')
+		  AND Object_ID = Object_ID(N'TypingSpeedAssessment'))
+	BEGIN
+		ALTER TABLE TypingSpeedAssessment
+		Add OpenAIAnalysisJson nvarchar(max) NULL
+	END
+
+	IF NOT EXISTS(
+		SELECT *
+		FROM sys.columns
+		WHERE Name IN (N'OpenAIThreadId')
+		  AND Object_ID = Object_ID(N'TypingSpeedAssessment'))
+	BEGIN
+		ALTER TABLE TypingSpeedAssessment
+		Add OpenAIThreadId varchar(100) NULL
+	END
+
+	IF NOT EXISTS(
+		SELECT *
+		FROM sys.columns
+		WHERE Name IN (N'OpenAIRunId')
+		  AND Object_ID = Object_ID(N'TypingSpeedAssessment'))
+	BEGIN
+		ALTER TABLE TypingSpeedAssessment
+		Add OpenAIRunId varchar(100) NULL
 	END
 END
 GO

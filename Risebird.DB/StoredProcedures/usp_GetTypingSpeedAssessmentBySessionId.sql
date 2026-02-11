@@ -23,25 +23,34 @@ BEGIN
     SET NOCOUNT ON;
 
     SELECT 
-        id,
-        SessionId,
-        QuestionId,
-        SampleText,
-        TypedText,
-        TimeStarted,
-        TimeCompleted,
-        TimeTakenInSeconds,
-        TotalCharacters,
-        CorrectCharacters,
-        AccuracyPercentage,
-        WordsPerMinute,
-        PassingWPM,
-        PassingAccuracyPercentage,
-        IsPassed,
-        CreatedAt,
-        CreatedBy
-    FROM TypingSpeedAssessment
-    WHERE SessionId = @SessionId
-    ORDER BY CreatedAt DESC;
+        tsa.id,
+        tsa.SessionId,
+        tsa.QuestionId,
+        tsa.SampleText,
+        tsa.TypedText,
+        tsa.TimeStarted,
+        tsa.TimeCompleted,
+        tsa.TimeTakenInSeconds,
+        tsa.TotalCharacters,
+        tsa.CorrectCharacters,
+        tsa.AccuracyPercentage,
+        tsa.WordsPerMinute,
+        tsa.PassingWPM,
+        tsa.PassingAccuracyPercentage,
+        tsa.IsPassed,
+        tsa.OpenAIAnalysisJson,
+        tsa.OpenAIThreadId,
+        tsa.OpenAIRunId,
+        tsa.CreatedAt,
+        tsa.CreatedBy,
+        -- Get video link from BotInterviewQuestionVideos
+        bv.VideoLink,
+        bv.question AS QuestionText
+    FROM TypingSpeedAssessment tsa
+    LEFT JOIN BotInterviewQuestionVideos bv 
+        ON tsa.SessionId = bv.SessionId 
+        AND tsa.QuestionId = bv.DeliveryHeadQuestionId
+    WHERE tsa.SessionId = @SessionId
+    ORDER BY tsa.CreatedAt DESC;
 END
 GO

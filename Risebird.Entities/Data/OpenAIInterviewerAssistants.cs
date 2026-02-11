@@ -7,6 +7,7 @@ namespace Risebird.Entities.Data
     {
         public static readonly string Assistant1 = "asst_a0SoTcORyO0qmKmdeUMabTZ2";// asst_feVto3eUoHe1s3qAcEIafhIC";
         public static readonly string Assistant2 = "asst_a0SoTcORyO0qmKmdeUMabTZ2";// asst_feVto3eUoHe1s3qAcEIafhIC";    //change this id to the new assistant that you will create
+        public static readonly string TypingAssessmentAssistant = "asst_6EvWNjC931JwsZXZyXzSGXAO"; // Replace with actual assistant ID for typing assessment
 
         private static readonly List<string> _allValues = new List<string> { Assistant1, Assistant2 };
 

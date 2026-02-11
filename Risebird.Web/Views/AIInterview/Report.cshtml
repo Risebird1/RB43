@@ -1664,67 +1664,195 @@
                 {
                     @foreach (var tsa in typingAssessments)
                     {
-                <div class="row rb-analysis-row" style="margin: 0 0 16px 0;">
-                    <div class="col-md-4 col-sm-12" style="padding: 8px;">
-                        <div class="rb-section-video rb-video-placeholder">
-                            <div style="text-align: center; color: #999;">
-                                <i class="fa fa-video-camera" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
-                                <p style="margin: 0; font-size: 0.9rem;">Video placeholder</p>
+                        
+                            var analysis = !string.IsNullOrEmpty(tsa.OpenAIAnalysisJson) 
+                                ? Newtonsoft.Json.JsonConvert.DeserializeObject<Risebird.Entities.ViewModel.TypingAssessmentOpenAIResponse>(tsa.OpenAIAnalysisJson) 
+                                : null;
+                        
+                        <div class="row rb-analysis-row" style="margin: 0 0 16px 0;">
+                            <div class="col-md-4 col-sm-12" style="padding: 8px;">
+                                @if (!string.IsNullOrEmpty(tsa.VideoLink))
+                                {
+                                    <div class="rb-section-video" style="background: #000; border-radius: 8px; overflow: hidden;">
+                                        <video controls style="width: 100%; height: auto; display: block;">
+                                            <source src="@tsa.VideoLink" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="rb-section-video rb-video-placeholder">
+                                        <div style="text-align: center; color: #999;">
+                                            <i class="fa fa-video-camera" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
+                                            <p style="margin: 0; font-size: 0.9rem;">Video not available</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-md-8 col-sm-12 rb-section-analysis" style="padding: 8px;">
+                                <div class="rb-analysis-item" style="margin:8px 12px;padding:10px!important">
+                                    <div class="rb-analysis-header" style="margin-bottom:6px;">
+                                        <i class="fa fa-keyboard-o"></i>
+                                        <span class="rb-analysis-title">@(tsa.QuestionText ?? "Typing Speed Assessment")</span>
+                                        @if (tsa.IsPassed == true)
+                                        {
+                                            <span class="badge" style="background: #28a745; margin-left: 6px; font-size: 0.75rem;width:auto;margin-top:10px;">Passed ✓</span>
+                                        }
+                                        else if (tsa.IsPassed == false)
+                                        {
+                                            <span class="badge" style="background: #dc3545; margin-left: 6px; font-size: 0.75rem;width:auto;margin-top:10px;">Not Passed</span>
+                                        }
+                                    </div>
+
+                                    @if (analysis != null && analysis.scores != null)
+                                    {
+                                        <!-- AI Analysis Results -->
+                                        <div style="margin-top:12px;">
+                                            <!-- Overall Grade Badge -->
+                                            <div style="margin-bottom:12px; padding:10px; background: @(analysis.scores.overall_grade == "Excellent" || analysis.scores.overall_grade == "Very Good" ? "#d4edda" : analysis.scores.overall_grade == "Good" ? "#fff3cd" : "#f8d7da"); border-radius:6px; border-left:4px solid @(analysis.scores.overall_grade == "Excellent" || analysis.scores.overall_grade == "Very Good" ? "#28a745" : analysis.scores.overall_grade == "Good" ? "#ffc107" : "#dc3545");">
+                                                <strong style="font-size:1.1rem; color:@(analysis.scores.overall_grade == "Excellent" || analysis.scores.overall_grade == "Very Good" ? "#155724" : analysis.scores.overall_grade == "Good" ? "#856404" : "#721c24");">
+                                                    <i class="fa fa-certificate"></i> Grade: @analysis.scores.overall_grade
+                                                </strong>
+                                            </div>
+
+                                            <!-- Accuracy Scores -->
+                                            <table class="table table-bordered table-sm" style="font-size: 0.85rem; margin-bottom: 12px;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="width: 160px; font-weight: 600; background: #f8f9fa; padding: 6px 10px;">
+                                                            <i class="fa fa-check-circle"></i> Word Accuracy
+                                                        </td>
+                                                        <td style="padding: 6px 10px;">
+                                                            <strong style="font-size:1.1rem; color:@(analysis.scores.word_level_accuracy_percent >= 97 ? "#28a745" : "#dc3545");">
+                                                                @analysis.scores.word_level_accuracy_percent.ToString("N1")%
+                                                            </strong>
+                                                            <span style="margin-left:8px; color:#666; font-size:0.8rem;">(Required: 97%)</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="font-weight: 600; background: #f8f9fa; padding: 6px 10px;">
+                                                            <i class="fa fa-font"></i> Character Accuracy
+                                                        </td>
+                                                        <td style="padding: 6px 10px;">
+                                                            <strong>@analysis.scores.character_level_accuracy_percent.ToString("N1")%</strong>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="font-weight: 600; background: #f8f9fa; padding: 6px 10px;">
+                                                            <i class="fa fa-clock-o"></i> Time Taken
+                                                        </td>
+                                                        <td style="padding: 6px 10px;">
+                                                            <strong>@tsa.TimeTakenInSeconds.ToString("N1")</strong> seconds <span style="color:#666; font-size:0.8rem;">(Max: 120s)</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            @if (analysis.counts != null)
+                                            {
+                                                <!-- Error Categories -->
+                                                <div style="margin-bottom:12px;">
+                                                    <h5 style="font-size:0.9rem; margin-bottom:6px; color:#666;">
+                                                        <i class="fa fa-exclamation-triangle"></i> Error Breakdown
+                                                    </h5>
+                                                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:8px;">
+                                                        <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
+                                                            <div style="font-size:0.75rem; color:#666;">Correct Words</div>
+                                                            <div style="font-size:1.1rem; font-weight:600; color:#28a745;">@analysis.counts.correct_words</div>
+                                                        </div>
+                                                        <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
+                                                            <div style="font-size:0.75rem; color:#666;">Incorrect</div>
+                                                            <div style="font-size:1.1rem; font-weight:600; color:#dc3545;">@analysis.counts.incorrect_words</div>
+                                                        </div>
+                                                        <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
+                                                            <div style="font-size:0.75rem; color:#666;">Missing</div>
+                                                            <div style="font-size:1.1rem; font-weight:600; color:#dc3545;">@analysis.counts.missing_words</div>
+                                                        </div>
+                                                        <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
+                                                            <div style="font-size:0.75rem; color:#666;">Spelling Errors</div>
+                                                            <div style="font-size:1.1rem; font-weight:600; color:#ffc107;">@analysis.counts.spelling_errors</div>
+                                                        </div>
+                                                        <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
+                                                            <div style="font-size:0.75rem; color:#666;">Capitalization</div>
+                                                            <div style="font-size:1.1rem; font-weight:600; color:#ffc107;">@analysis.counts.capitalization_errors</div>
+                                                        </div>
+                                                        <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
+                                                            <div style="font-size:0.75rem; color:#666;">Punctuation</div>
+                                                            <div style="font-size:1.1rem; font-weight:600; color:#ffc107;">@analysis.counts.punctuation_errors</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            @if (analysis.verdict != null && analysis.verdict.actionable_tips != null && analysis.verdict.actionable_tips.Any())
+                                            {
+                                                <!-- Actionable Tips -->
+                                                <div style="margin-top:12px; padding:10px; background:#e8f4f8; border-radius:6px; border-left:4px solid #17a2b8;">
+                                                    <h5 style="font-size:0.9rem; margin-bottom:6px; color:#0c5460;">
+                                                        <i class="fa fa-lightbulb-o"></i> Tips for Improvement
+                                                    </h5>
+                                                    <ul style="margin:0; padding-left:20px; font-size:0.85rem; line-height:1.6; color:#0c5460;">
+                                                        @foreach (var tip in analysis.verdict.actionable_tips)
+                                                        {
+                                                            <li>@tip</li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            }
+
+                                            @if (analysis.verdict != null)
+                                            {
+                                                <!-- Comments -->
+                                                <div style="margin-top:12px; padding:8px; background:#f8f9fa; border-radius:4px; font-size:0.85rem;">
+                                                    @if (!string.IsNullOrEmpty(analysis.verdict.speed_comment))
+                                                    {
+                                                        <p style="margin:0 0 6px 0; color:#666;">
+                                                            <strong>Speed:</strong> @analysis.verdict.speed_comment
+                                                        </p>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(analysis.verdict.accuracy_comment))
+                                                    {
+                                                        <p style="margin:0; color:#666;">
+                                                            <strong>Accuracy:</strong> @analysis.verdict.accuracy_comment
+                                                        </p>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <!-- Fallback to basic metrics if no AI analysis -->
+                                        <div style="margin-top:4px; overflow: hidden;">
+                                            <table class="table table-bordered table-sm" style="font-size: 0.8rem; margin-bottom: 0;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="width: 140px; font-weight: 600; background: #f8f9fa; padding: 4px 8px;">Metrics</td>
+                                                        <td style="padding: 4px 8px;">
+                                                            <span>WPM: <strong>@tsa.WordsPerMinute.ToString("N1")</strong></span>
+                                                            <span style="margin-left: 12px;">Accuracy: <strong>@(tsa.AccuracyPercentage.ToString("N1") + "%")</strong></span>
+                                                            <span style="margin-left: 12px;">Time: <strong>@tsa.TimeTakenInSeconds</strong>s</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="font-weight: 600; background: #f8f9fa; padding: 4px 8px;">Started / Completed</td>
+                                                        <td style="padding: 4px 8px; font-size: 0.75rem;">
+                                                            @(tsa.TimeStarted != default(DateTime) ? tsa.TimeStarted.ToString("yyyy-MM-dd HH:mm") : "-")
+                                                            &nbsp;→&nbsp;
+                                                            @(tsa.TimeCompleted != default(DateTime) ? tsa.TimeCompleted.ToString("yyyy-MM-dd HH:mm") : "-")
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <p style="margin-top:10px; padding:8px; background:#fff3cd; border-radius:4px; font-size:0.8rem; color:#856404;">
+                                                <i class="fa fa-info-circle"></i> AI analysis not available for this assessment.
+                                            </p>
+                                        </div>
+                                    }
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-8 col-sm-12 rb-section-analysis" style="padding: 8px;">
-                        <div class="rb-analysis-item" style="margin:8px 12px;padding:10px!important">
-                            <div class="rb-analysis-header" style="margin-bottom:6px;">
-                                <i class="fa fa-keyboard-o"></i>
-                                <span class="rb-analysis-title">Q#</span>
-                                @if (tsa.IsPassed == true)
-                                {
-                                    <span class="badge" style="background: #28a745; margin-left: 6px; font-size: 0.75rem;width:auto;margin-top:10px;">Passed</span>
-                                }
-                                else if (tsa.IsPassed == false)
-                                {
-                                    <span class="badge" style="background: #dc3545; margin-left: 6px; font-size: 0.75rem;width:auto;margin-top:10px;">Not Passed</span>
-                                }
-                            </div>
-                            <div style="margin-top:4px; overflow: hidden;">
-                                <table class="table table-bordered table-sm" style="font-size: 0.8rem; margin-bottom: 0; table-layout: fixed; width: 100%;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="width: 140px; font-weight: 600; background: #f8f9fa; padding: 4px 8px;">SampleText</td>
-                                            <td style="padding: 4px 8px; word-wrap: break-word;">
-                                                <span style="display: block; line-height: 1.3; font-size: 0.8rem; word-break: break-all; overflow-wrap: anywhere; white-space:normal; color: #9A9A9A;">@(tsa.SampleText ?? "-")</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight: 600; background: #f8f9fa; padding: 4px 8px;">TypedText</td>
-                                            <td style="padding: 4px 8px; word-wrap: break-word;">
-                                                <span style="display: block; line-height: 1.3; font-size: 0.8rem; word-break: break-all; overflow-wrap: anywhere; white-space:normal;color: #9A9A9A;">@(tsa.TypedText ?? "-")</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight: 600; background: #f8f9fa; padding: 4px 8px;">Metrics</td>
-                                            <td style="padding: 4px 8px;">
-                                                <span style="white-space: nowrap;">WPM: <strong>@tsa.WordsPerMinute.ToString("N1")</strong></span>
-                                                <span style="margin-left: 12px;">Accuracy: <strong>@(tsa.AccuracyPercentage.ToString("N1") + "%")</strong></span>
-                                                <span style="margin-left: 12px;">Time: <strong>@tsa.TimeTakenInSeconds</strong>s</span>
-                                                <span style="margin-left: 12px;">Correct Chars / Total Chars: <strong>@tsa.CorrectCharacters</strong>/@tsa.TotalCharacters</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight: 600; background: #f8f9fa; padding: 4px 8px;">Started / Completed</td>
-                                            <td style="padding: 4px 8px; font-size: 0.75rem;">
-                                                @(tsa.TimeStarted != default(DateTime) ? tsa.TimeStarted.ToString("yyyy-MM-dd HH:mm") : "-")
-                                                &nbsp;→&nbsp;
-                                                @(tsa.TimeCompleted != default(DateTime) ? tsa.TimeCompleted.ToString("yyyy-MM-dd HH:mm") : "-")
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                     }
                 }
                 else
