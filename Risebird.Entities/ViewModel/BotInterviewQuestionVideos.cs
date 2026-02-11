@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,7 +37,8 @@ namespace Risebird.Entities.ViewModel
         public int InterviewId { get; set; }
         public string SessionId { get; set; } //Guid
         public string AIResumeScreeningVerdict { get; set; } 
-        public int AIResumeScreeningScore { get; set; } 
+        public int AIResumeScreeningScore { get; set; }
+        public List<TypingSpeedAssessment> TypingSpeedAssessments { get; set; }
     }
 
 }

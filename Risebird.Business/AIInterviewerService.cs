@@ -288,6 +288,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<List<TypingSpeedAssessment>> GetTypingSpeedAssessmentBySessionId(string sessionId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetTypingSpeedAssessmentBySessionId(sessionId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<TypingSpeedAssessment>();
+            }
+        }
+
         public async Task<bool> SaveListeningComprehensionAssessment(ListeningComprehensionAssessment obj)
         {
             try
