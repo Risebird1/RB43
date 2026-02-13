@@ -21,15 +21,41 @@ Create Procedure usp_SaveBotInterviewQuestionVideos
 @DeliveryHeadQuestionId int = null
 AS
 BEGIN
+    SET NOCOUNT ON;
 
-if(@VideoLink is not null and @VideoLink != '' and @CandidateResponse is not null and @CandidateResponse != '')
-Begin
-Insert into BotInterviewQuestionVideos (SessionId, VideoLink, question, CreatedAt, BotSynthesizedVideoLink, CandidateAnswer, BotAudioLink, DeliveryHeadQuestionId) 
-values(@SessionId, @VideoLink, @question, @CreatedAt, @BotSynthesizedVideoLink, @CandidateResponse, @BotAudioLink, @DeliveryHeadQuestionId)
+    if(@VideoLink is not null and @VideoLink != '' and @CandidateResponse is not null and @CandidateResponse != '')
+    Begin
+        -- Check if a record already exists for this SessionId + DeliveryHeadQuestionId combination
+        IF EXISTS (
+            SELECT 1 
+            FROM BotInterviewQuestionVideos 
+            WHERE SessionId = @SessionId 
+              AND DeliveryHeadQuestionId = @DeliveryHeadQuestionId
+              AND DeliveryHeadQuestionId IS NOT NULL
+        )
+        BEGIN
+            -- Update existing record
+            UPDATE BotInterviewQuestionVideos
+            SET 
+                VideoLink = @VideoLink,
+                question = @question,
+                BotSynthesizedVideoLink = @BotSynthesizedVideoLink,
+                CandidateAnswer = @CandidateResponse,
+                BotAudioLink = @BotAudioLink,
+                AnswerModifiedAt = GETDATE(),
+                AnswerModifiedBy = 'System'
+            WHERE SessionId = @SessionId 
+              AND DeliveryHeadQuestionId = @DeliveryHeadQuestionId;
+        END
+        ELSE
+        BEGIN
+            -- Insert new record
+            Insert into BotInterviewQuestionVideos (SessionId, VideoLink, question, CreatedAt, BotSynthesizedVideoLink, CandidateAnswer, BotAudioLink, DeliveryHeadQuestionId) 
+            values(@SessionId, @VideoLink, @question, @CreatedAt, @BotSynthesizedVideoLink, @CandidateResponse, @BotAudioLink, @DeliveryHeadQuestionId)
+        END
 
-update InterviewMeetings set TimeLeftInSeconds = @secondsLeft where id = @interviewId
-End
-
+        update InterviewMeetings set TimeLeftInSeconds = @secondsLeft where id = @interviewId
+    End
 
 END
 GO

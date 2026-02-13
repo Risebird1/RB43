@@ -104,4 +104,21 @@ END
 END
 GO
 
+-- =====================================================
+-- Add unique index to prevent duplicate entries
+-- =====================================================
+IF NOT EXISTS (
+    SELECT * FROM sys.indexes 
+    WHERE name = 'UQ_BotInterviewQuestionVideos_SessionQuestion' 
+    AND object_id = OBJECT_ID('BotInterviewQuestionVideos')
+)
+BEGIN
+    -- Use filtered index to only apply uniqueness where DeliveryHeadQuestionId IS NOT NULL
+    CREATE UNIQUE NONCLUSTERED INDEX UQ_BotInterviewQuestionVideos_SessionQuestion
+    ON BotInterviewQuestionVideos (SessionId, DeliveryHeadQuestionId)
+    WHERE DeliveryHeadQuestionId IS NOT NULL;
+    PRINT '✓ Unique constraint added to BotInterviewQuestionVideos to prevent duplicates';
+END
+GO
+
 
