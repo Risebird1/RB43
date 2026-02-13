@@ -89,16 +89,26 @@ namespace Risebird.Repository
             var cleanedMessage = NormalizeForDb(CleanMessage(message));
             if (cleanedMessage is null) return;
 
-            var sql = "INSERT INTO TransCriptsConv (SessionId, Role, Message, Timestamp, DeliveryHeadQuestionId) VALUES (@SessionId, @Role, @Message, @Timestamp, @DeliveryHeadQuestionId)";
-            using var conn = new SqlConnection(connectionString);
-            await conn.ExecuteAsync(sql, new
+            try
             {
-                SessionId = sessionId,
-                Role = cleanedRole,
-                Message = cleanedMessage,
-                Timestamp = DateTime.UtcNow,
-                DeliveryHeadQuestionId = deliveryHeadQuestionId
-            });
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    parameters.Add("@Role", cleanedRole);
+                    parameters.Add("@Message", cleanedMessage);
+                    parameters.Add("@Timestamp", DateTime.UtcNow);
+                    parameters.Add("@DeliveryHeadQuestionId", deliveryHeadQuestionId);
+
+                    await SqlMapper.QueryAsync(con, "usp_LogTranscript", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                // Silently fail to not block the interview flow
+            }
         }
         public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false)
         {

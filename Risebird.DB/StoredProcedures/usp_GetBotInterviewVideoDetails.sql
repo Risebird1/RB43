@@ -16,7 +16,8 @@ BEGIN
 
 select biqv.*, sq.IsFlaggedForSentimentAnalysis from BotInterviewQuestionVideos biqv 
 join SkillChannelSampleQuestions sq on sq.id = biqv.DeliveryHeadQuestionId
-where SessionId = @SessionId
+where SessionId = @SessionId and (sq.IsTypingSpeedAssessment is null or sq.IsTypingSpeedAssessment = 0)
+and (sq.IsListeningComprehension is null or sq.IsListeningComprehension = 0)
 order by CreatedAt 
 
 END
