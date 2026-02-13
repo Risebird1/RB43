@@ -42,49 +42,84 @@ BEGIN
 		END
 	END
 
-	INSERT INTO TypingSpeedAssessment (
-		SessionId,
-		QuestionId,
-		SampleText,
-		TypedText,
-		TimeStarted,
-		TimeCompleted,
-		TimeTakenInSeconds,
-		TotalCharacters,
-		CorrectCharacters,
-		AccuracyPercentage,
-		WordsPerMinute,
-		PassingWPM,
-		PassingAccuracyPercentage,
-		IsPassed,
-		OpenAIAnalysisJson,
-		OpenAIThreadId,
-		OpenAIRunId,
-		CreatedAt,
-		CreatedBy
-	)
-	VALUES (
-		@SessionId,
-		@QuestionId,
-		@SampleText,
-		@TypedText,
-		@TimeStarted,
-		@TimeCompleted,
-		@TimeTakenInSeconds,
-		@TotalCharacters,
-		@CorrectCharacters,
-		@AccuracyPercentage,
-		@WordsPerMinute,
-		@PassingWPM,
-		@PassingAccuracyPercentage,
-		@IsPassed,
-		@OpenAIAnalysisJson,
-		@OpenAIThreadId,
-		@OpenAIRunId,
-		GETDATE(),
-		@CreatedBy
-	);
+	-- Check if a record already exists for this SessionId + QuestionId combination
+	DECLARE @ExistingId INT;
+	SELECT @ExistingId = id 
+	FROM TypingSpeedAssessment 
+	WHERE SessionId = @SessionId AND QuestionId = @QuestionId;
 
-	SELECT SCOPE_IDENTITY() AS NewId;
+	IF @ExistingId IS NOT NULL
+	BEGIN
+		-- Update existing record (prevents duplicates from resubmissions)
+		UPDATE TypingSpeedAssessment
+		SET 
+			SampleText = @SampleText,
+			TypedText = @TypedText,
+			TimeStarted = @TimeStarted,
+			TimeCompleted = @TimeCompleted,
+			TimeTakenInSeconds = @TimeTakenInSeconds,
+			TotalCharacters = @TotalCharacters,
+			CorrectCharacters = @CorrectCharacters,
+			AccuracyPercentage = @AccuracyPercentage,
+			WordsPerMinute = @WordsPerMinute,
+			PassingWPM = @PassingWPM,
+			PassingAccuracyPercentage = @PassingAccuracyPercentage,
+			IsPassed = @IsPassed,
+			OpenAIAnalysisJson = @OpenAIAnalysisJson,
+			OpenAIThreadId = @OpenAIThreadId,
+			OpenAIRunId = @OpenAIRunId,
+			CreatedBy = @CreatedBy
+		WHERE id = @ExistingId;
+
+		SELECT @ExistingId AS NewId;
+	END
+	ELSE
+	BEGIN
+		-- Insert new record
+		INSERT INTO TypingSpeedAssessment (
+			SessionId,
+			QuestionId,
+			SampleText,
+			TypedText,
+			TimeStarted,
+			TimeCompleted,
+			TimeTakenInSeconds,
+			TotalCharacters,
+			CorrectCharacters,
+			AccuracyPercentage,
+			WordsPerMinute,
+			PassingWPM,
+			PassingAccuracyPercentage,
+			IsPassed,
+			OpenAIAnalysisJson,
+			OpenAIThreadId,
+			OpenAIRunId,
+			CreatedAt,
+			CreatedBy
+		)
+		VALUES (
+			@SessionId,
+			@QuestionId,
+			@SampleText,
+			@TypedText,
+			@TimeStarted,
+			@TimeCompleted,
+			@TimeTakenInSeconds,
+			@TotalCharacters,
+			@CorrectCharacters,
+			@AccuracyPercentage,
+			@WordsPerMinute,
+			@PassingWPM,
+			@PassingAccuracyPercentage,
+			@IsPassed,
+			@OpenAIAnalysisJson,
+			@OpenAIThreadId,
+			@OpenAIRunId,
+			GETDATE(),
+			@CreatedBy
+		);
+
+		SELECT SCOPE_IDENTITY() AS NewId;
+	END
 END;
 GO

@@ -93,3 +93,18 @@ BEGIN
 	END
 END
 GO
+
+-- =====================================================
+-- Add unique index to prevent duplicate entries
+-- =====================================================
+IF NOT EXISTS (
+    SELECT * FROM sys.indexes 
+    WHERE name = 'UQ_TypingSpeedAssessment_SessionQuestion' 
+    AND object_id = OBJECT_ID('TypingSpeedAssessment')
+)
+BEGIN
+    CREATE UNIQUE NONCLUSTERED INDEX UQ_TypingSpeedAssessment_SessionQuestion
+    ON TypingSpeedAssessment (SessionId, QuestionId);
+    PRINT '✓ Unique constraint added to TypingSpeedAssessment to prevent duplicates';
+END
+GO
