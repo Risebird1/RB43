@@ -42,6 +42,10 @@
     .modifier-tag.confidence-normal .modifier-tag-progress-fill {
     background: linear-gradient(90deg, #4a90e2, #5ba3f5);
     }
+
+    .table-bordered {
+        border: 1px solid #b3a7a740 !important;
+    }
     .rb-report-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -647,7 +651,9 @@
     .rb-video-header {
     width: 100% !important;
     }
-
+    .table-sm-font{
+    font-size:1rem!important;
+    }
     .rb-question-separator {
     width: 100%;
     min-height: 2px !important;
@@ -670,7 +676,7 @@
     background-size: 5%!important;
     }
     .rb-analysis-title {
-    font-size: 1.5rem!important;
+    font-size: 1.1rem!important;
     }
     }
     .question ul { list-style: disc; margin: 0;padding:0 }
@@ -1553,6 +1559,14 @@
     gap: 10px;
     }
     }
+
+    /* Typing assessment: paragraph on mobile, table on desktop */
+    .rb-typing-paragraph { display: block; margin-top: 12px; margin-bottom: 12px; }
+    .rb-typing-table-wrap { display: none; }
+    @@media (min-width: 768px) {
+        .rb-typing-paragraph { display: none !important; }
+        .rb-typing-table-wrap { display: block !important; }
+    }
 </style>
 <div class="rb-report-container">
     <div class="rb-report-header">
@@ -1705,6 +1719,49 @@
                                         }
                                     </div>
 
+                                    @* Sample text and typed text: paragraph on mobile, table on desktop *@
+                                    @if (!string.IsNullOrWhiteSpace(tsa.SampleText) || !string.IsNullOrWhiteSpace(tsa.TypedText))
+                                    {
+                                        @* Mobile: normal paragraph format *@
+                                        <div class="rb-typing-paragraph">
+                                            @if (!string.IsNullOrWhiteSpace(tsa.SampleText))
+                                            {
+                                                <div style="margin-bottom:12px;">
+                                                    <div style="font-size:1rem; font-weight: 600; color: #495057; margin-bottom: 4px;"><i class="fa fa-file-text"></i> Sample Text</div>
+                                                    <p style="margin: 0; font-size:1rem; line-height: 1.6; color: #333; white-space: pre-wrap; word-break: break-word;">@tsa.SampleText</p>
+                                                </div>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(tsa.TypedText))
+                                            {
+                                                <div>
+                                                    <div style="font-size:1rem; font-weight: 600; color: #495057; margin-bottom: 4px;"><i class="fa fa-keyboard-o"></i> Typed Text</div>
+                                                    <p style="margin: 0; font-size:1rem; line-height: 1.6; color: #333; white-space: pre-wrap; word-break: break-word;">@tsa.TypedText</p>
+                                                </div>
+                                            }
+                                        </div>
+                                        @* Desktop: table format (same as Word/Character Accuracy) *@
+                                        <div class="rb-typing-table-wrap">
+                                            <table class="table table-bordered table-sm" style="font-size: 0.85rem; margin-top: 12px; margin-bottom: 12px;">
+                                                <tbody>
+                                                    @if (!string.IsNullOrWhiteSpace(tsa.SampleText))
+                                                    {
+                                                        <tr>
+                                                            <td style="width: 160px; font-weight: 600; background: #f8f9fa; padding: 6px 10px; vertical-align: top;"><i class="fa fa-file-text"></i> Sample Text</td>
+                                                            <td style="padding: 6px 10px; white-space: pre-wrap; word-break: break-word;">@tsa.SampleText</td>
+                                                        </tr>
+                                                    }
+                                                    @if (!string.IsNullOrWhiteSpace(tsa.TypedText))
+                                                    {
+                                                        <tr>
+                                                            <td style="font-weight: 600; background: #f8f9fa; padding: 6px 10px; vertical-align: top;"><i class="fa fa-keyboard-o"></i> Typed Text</td>
+                                                            <td style="padding: 6px 10px; white-space: pre-wrap; word-break: break-word;">@tsa.TypedText</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+
                                     @if (analysis != null && analysis.scores != null)
                                     {
                                         <!-- AI Analysis Results -->
@@ -1717,7 +1774,7 @@
                                             </div>
 
                                             <!-- Accuracy Scores -->
-                                            <table class="table table-bordered table-sm" style="font-size: 0.85rem; margin-bottom: 12px;">
+                                            <table class="table table-bordered table-sm table-sm-font" style="font-size: 0.85rem; margin-bottom: 12px;">
                                                 <tbody>
                                                     <tr>
                                                         <td style="width: 160px; font-weight: 600; background: #f8f9fa; padding: 6px 10px;">
@@ -1753,32 +1810,32 @@
                                             {
                                                 <!-- Error Categories -->
                                                 <div style="margin-bottom:12px;">
-                                                    <h5 style="font-size:0.9rem; margin-bottom:6px; color:#666;margin-left:12px;">
+                                                    <h5 class="table-sm-font" style="font-size:0.9rem; margin-bottom:6px; color:#666;margin-left:12px;">
                                                         <i class="fa fa-exclamation-triangle" style="font-size:12px;"></i> Error Breakdown
                                                     </h5>
                                                     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:8px;">
                                                         <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
-                                                            <div style="font-size:0.75rem; color:#666;">Correct Words</div>
+                                                            <div class="table-sm-font" style="font-size:0.75rem; color:#666;">Correct Words</div>
                                                             <div style="font-size:1.1rem; font-weight:600; color:#28a745;">@analysis.counts.correct_words</div>
                                                         </div>
                                                         <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
-                                                            <div style="font-size:0.75rem; color:#666;">Incorrect</div>
+                                                            <div class="table-sm-font" style="font-size:0.75rem; color:#666;">Incorrect</div>
                                                             <div style="font-size:1.1rem; font-weight:600; color:#dc3545;">@analysis.counts.incorrect_words</div>
                                                         </div>
                                                         <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
-                                                            <div style="font-size:0.75rem; color:#666;">Missing</div>
+                                                            <div class="table-sm-font" style="font-size:0.75rem; color:#666;">Missing</div>
                                                             <div style="font-size:1.1rem; font-weight:600; color:#dc3545;">@analysis.counts.missing_words</div>
                                                         </div>
                                                         <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
-                                                            <div style="font-size:0.75rem; color:#666;">Spelling Errors</div>
+                                                            <div class="table-sm-font" style="font-size:0.75rem; color:#666;">Spelling Errors</div>
                                                             <div style="font-size:1.1rem; font-weight:600; color:#ffc107;">@analysis.counts.spelling_errors</div>
                                                         </div>
                                                         <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
-                                                            <div style="font-size:0.75rem; color:#666;">Capitalization</div>
+                                                            <div class="table-sm-font" style="font-size:0.75rem; color:#666;">Capitalization</div>
                                                             <div style="font-size:1.1rem; font-weight:600; color:#ffc107;">@analysis.counts.capitalization_errors</div>
                                                         </div>
                                                         <div style="padding:6px 10px; background:#f8f9fa; border-radius:4px; text-align:center;">
-                                                            <div style="font-size:0.75rem; color:#666;">Punctuation</div>
+                                                            <div class="table-sm-font" style="font-size:0.75rem; color:#666;">Punctuation</div>
                                                             <div style="font-size:1.1rem; font-weight:600; color:#ffc107;">@analysis.counts.punctuation_errors</div>
                                                         </div>
                                                     </div>
@@ -1855,33 +1912,14 @@
                         </div>
                     }
                 }
-                else
-                {
-                <div class="row rb-analysis-row" style="margin: 0 0 16px 0;">
-                    <div class="col-md-4 col-sm-12" style="padding: 8px;">
-                        <div class="rb-section-video rb-video-placeholder">
-                            <div style="text-align: center; color: #999;">
-                                <i class="fa fa-video-camera" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
-                                <p style="margin: 0; font-size: 0.9rem;">Video placeholder</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-8 col-sm-12 rb-section-analysis" style="padding: 8px;">
-                    <div class="rb-analysis-item" style="margin: 16px; padding-top: 20px; padding-bottom: 20px!important; color: #666;">
-                        <p style="margin: 0;"><i class="fa fa-info-circle"></i> No typing speed assessment data for this session.</p>
-                        <p style="margin: 8px 0 0 0; font-size: 0.9rem;">SessionId queried: <strong>@Model.SessionId</strong></p>
-
-                    </div>
-                    </div>
-                </div>
-                }
+               
             </div>
         </div>
 
 
         <div>
         <div class="rb-report-section" style="margin-bottom:20px;">
-            <div class="rb-section-header">
+                <div class="rb-section-header" style="margin-bottom:0px;">
                 <h2><i class="fa fa-robot"></i> AI Analysis & Recommendations</h2>
             </div>
             <div class="rb-analysis-content">
@@ -1931,7 +1969,7 @@
                                
                                
                                   
-                                <div class="rb-analysis-item ai-tech-score" style="padding-bottom:20px;padding-top: 20px;">
+                                <div class="rb-analysis-item ai-tech-score" style="padding-bottom:20px;">
 
 
                                  <div class="rb-analysis-header">
@@ -1967,7 +2005,8 @@
 
                                 <div class="rb-analysis-header">
                                     <img style="width:29px;left:-5px; top:0px; position:relative;" src="/img/techskill-score.png">
-                                    <span class="rb-analysis-title">Overall Technical Score:
+                                        <span class="rb-analysis-title" style="font-size:17px!important">
+                                            Overall Technical Score:
                                         @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
                                         {
 
@@ -2023,7 +2062,7 @@
                                         <div class="question" style="margin-top:10px;">
                                             <div class="rb-analysis-header" style="margin:0px">
                                                 <img style="width:26px;left:0px; top:-1px; position:relative;" src="/img/communication-score.png">
-                                                <span class="rb-analysis-title">Overall Communication :</span>
+                                                    <span class="rb-analysis-title" style="font-size:17px!important">Overall Communication :</span>
                                             </div>
                                             @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
                                             {
@@ -2062,7 +2101,7 @@
                                 <div id="question-list" class="rb-analysis-item" style="box-shadow:none">
                                     <div class="rb-analysis-header">
                                         <img style="width:27px;position: relative;left: -4px;top:11px;" src="/img/question-asked.png">
-                                        <span class="rb-analysis-title">Questions Discussed</span>
+                                        <span class="rb-analysis-title" style="font-size:17px!important">Questions Discussed</span>
                                     </div>
                                     <div class="rb-analysis-text">
                                         <div class="question question-scroll">
@@ -2117,7 +2156,7 @@
                                 <div class="rb-analysis-item ai-interviewer-cmt">
                                     <div class="rb-analysis-header">
                                         <img style="width:27px;position: relative;left: -2px;top:11px;" src="/img/interviewer-comment.png">
-                                        <span class="rb-analysis-title">AI Interviewer Comment</span>
+                                            <span class="rb-analysis-title" style="font-size:17px!important">AI Interviewer Comment</span>
                                     </div>
                                     <div class="rb-analysis-text">
                                         @if (Model.AIInterviewEvaluation != null && (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict) || !string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalComment)))
@@ -2150,7 +2189,7 @@
                                 
                                 @if (Model.AIInterviewEvaluation.LlmDetection != null)
                                 {
-                                <div class="row rb-analysis-row" style="margin:0 0 16px 0;">
+                                <div class="row rb-analysis-row" style="margin:0 0 0px 0;">
                                     <div class="col-md-4 col-sm-12" style="padding: 8px;">
                                         <div class="rb-section-video rb-video-placeholder">
                                             <div style="text-align: center; color: #999;">
