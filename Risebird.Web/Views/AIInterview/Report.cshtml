@@ -1670,9 +1670,7 @@
             var typingAssessments = (ViewBag.TypingSpeedAssessments as IEnumerable<Risebird.Entities.ViewModel.TypingSpeedAssessment>) ?? Enumerable.Empty<Risebird.Entities.ViewModel.TypingSpeedAssessment>();
         }
         <div class="rb-report-section" style="margin-bottom:20px;">
-            <div class="rb-section-header" style="margin-bottom:5px;">
-                <h2><i class="fa fa-keyboard-o"></i> Typing Speed Assessment</h2>
-            </div>
+           
             <div class="rb-analysis-content" style="overflow: hidden;">
                 @if (typingAssessments.Any())
                 {
@@ -1682,7 +1680,9 @@
                             var analysis = !string.IsNullOrEmpty(tsa.OpenAIAnalysisJson) 
                                 ? Newtonsoft.Json.JsonConvert.DeserializeObject<Risebird.Entities.ViewModel.TypingAssessmentOpenAIResponse>(tsa.OpenAIAnalysisJson) 
                                 : null;
-                        
+                         <div class="rb-section-header" style="margin-bottom:5px;">
+                         <h2><i class="fa fa-keyboard-o"></i> Typing Speed Assessment</h2>
+                         </div>
                         <div class="row rb-analysis-row" style="margin: 0 0 16px 0;">
                             <div class="col-md-4 col-sm-12" style="padding: 8px;">
                                 @if (!string.IsNullOrEmpty(tsa.VideoLink))
