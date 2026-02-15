@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -32,6 +32,7 @@ namespace Risebird.CommonHelper
         private readonly string _sendGridClientKey = string.Empty;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IValidationHelper _validationHelper;
+        private readonly int _unsubscribeGroupId;
 
         public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger, ISendGridRepository sendGridRepository, IHttpContextAccessor httpContextAccessor, IValidationHelper validationHelper)
         {
@@ -41,6 +42,7 @@ namespace Risebird.CommonHelper
             sendGridPassword = _configuration["SendGridKeySettings:Password"];
             mailFrom = _configuration["SendGridKeySettings:MailFrom"];
             _sendGridClientKey = _configuration["SendGridKeySettings:ApiKey"];
+            int.TryParse(_configuration["SendGridKeySettings:UnsubscribeGroupId"], out _unsubscribeGroupId);
             _errorLogger = errorLogger;
             _sendGridRepository = sendGridRepository;
             _httpContextAccessor = httpContextAccessor;
@@ -1309,6 +1311,12 @@ namespace Risebird.CommonHelper
                 catch (Exception ex)
                 {
                     await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+
+                // Add unsubscribe group to enable recipients to manage their email preferences
+                if (_unsubscribeGroupId > 0)
+                {
+                    msg.SetAsm(_unsubscribeGroupId, new List<int> { _unsubscribeGroupId });
                 }
 
                 var client = new SendGridClient(_sendGridClientKey);
