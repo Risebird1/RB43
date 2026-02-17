@@ -4611,6 +4611,7 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+        public async Task<IActionResult> QCOwnerDashboard()
         public async Task<IActionResult> TechQCDetails(string type, int ReturnBack)
         {
             try
