@@ -1,0 +1,176 @@
+@using Risebird.Entities.ViewModel
+@{
+    ViewData["Title"] = "QC Owner Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "<div>Founder QC Owner Dashboard</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"><h4 class="card-title">Founder QC Owner Dashboard</h4></div>
+                </div>
+                <div class="pull-right">
+                    <div class="form-inline">
+                        <label class="control-label mr-2">From</label>
+                        <input type="date" id="dateFrom" class="form-control mr-2" />
+                        <label class="control-label mr-2">To</label>
+                        <input type="date" id="dateTo" class="form-control mr-2" />
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnApply">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+                            <div class="dataloading">
+                                <div class="mb-2 text-muted" id="dateRangeLabel"></div>
+                                <div class="scrollbar int-table" id="style-2">
+                                    <div id="tableID" class="second">
+                                        <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>QC Owner</th>
+                                                    <th>QC Done</th>
+                                                    <th>Reports With Flags</th>
+                                                    <th>Reports Without Flags</th>
+                                                    <th>Critical Queue – No Flags</th>
+                                                    <th>Total Flags Reported</th>
+                                                    <th>Total Redo Marked</th>
+                                                    <th>Total Proxy Marked</th>
+                                                    <th>Total Penalty %</th>
+                                                    <th>Penalized Reports</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>QC Owner</th>
+                                                    <th>QC Done</th>
+                                                    <th>Reports With Flags</th>
+                                                    <th>Reports Without Flags</th>
+                                                    <th>Critical Queue – No Flags</th>
+                                                    <th>Total Flags Reported</th>
+                                                    <th>Total Redo Marked</th>
+                                                    <th>Total Proxy Marked</th>
+                                                    <th>Total Penalty %</th>
+                                                    <th>Penalized Reports</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody id="qcOwnerTableBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/common.js?v=2024"></script>
+<script>
+    var dataTableInstance = null;
+
+    function setDefaultDates() {
+        var to = new Date();
+        var from = new Date();
+        from.setDate(from.getDate() - 30);
+        document.getElementById('dateFrom').value = from.toISOString().slice(0, 10);
+        document.getElementById('dateTo').value = to.toISOString().slice(0, 10);
+    }
+
+    function loadData() {
+        var from = document.getElementById('dateFrom').value;
+        var to = document.getElementById('dateTo').value;
+        if (!from || !to) {
+            setDefaultDates();
+            from = document.getElementById('dateFrom').value;
+            to = document.getElementById('dateTo').value;
+        }
+        var url = '/Dashboard/GetQCOwnerDashboardData?dateFrom=' + encodeURIComponent(from) + '&dateTo=' + encodeURIComponent(to);
+        $(".loader").show();
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        $.getJSON(url)
+            .done(function (data) {
+                $(".loader").hide();
+                $(".dataloading").show();
+                $("#meeting").show();
+                if (data && data.rows && data.rows.length >= 0) {
+                    document.getElementById('dateRangeLabel').textContent = 'Date range: ' + (data.dateFrom || '') + ' to ' + (data.dateTo || '');
+                    var tbody = document.getElementById('qcOwnerTableBody');
+                    tbody.innerHTML = '';
+                    data.rows.forEach(function (row) {
+                        var tr = document.createElement('tr');
+                        tr.innerHTML =
+                            '<td>' + (row.qcOwner || '') + '</td>' +
+                            '<td>' + (row.qcDone ?? '') + '</td>' +
+                            '<td>' + (row.reportsWithFlags ?? '') + '</td>' +
+                            '<td>' + (row.reportsWithoutFlags ?? '') + '</td>' +
+                            '<td>' + (row.criticalQueue_NoFlags ?? '') + '</td>' +
+                            '<td>' + (row.totalFlagsReported ?? '') + '</td>' +
+                            '<td>' + (row.totalRedoMarked ?? '') + '</td>' +
+                            '<td>' + (row.totalProxyMarked ?? '') + '</td>' +
+                            '<td>' + (row.totalPenaltyPercent ?? '') + '</td>' +
+                            '<td>' + (row.penalizedReports ?? '') + '</td>';
+                        tbody.appendChild(tr);
+                    });
+                    if (dataTableInstance) {
+                        dataTableInstance.destroy();
+                        dataTableInstance = null;
+                    }
+                    dataTableInstance = $('#meeting').DataTable({
+                        "pagingType": "full_numbers",
+                        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                        order: [[1, "desc"]],
+                        responsive: true,
+                        language: { search: "_INPUT_", searchPlaceholder: "Search records" }
+                    });
+                } else {
+                    document.getElementById('dateRangeLabel').textContent = 'No data for the selected range.';
+                    if (dataTableInstance) {
+                        dataTableInstance.destroy();
+                        dataTableInstance = null;
+                    }
+                    $('#meeting').DataTable({
+                        "pagingType": "full_numbers",
+                        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                        order: [],
+                        responsive: true,
+                        language: { search: "_INPUT_", searchPlaceholder: "Search records" }
+                    });
+                }
+            })
+            .fail(function () {
+                $(".loader").hide();
+                $(".dataloading").show();
+                $("#meeting").show();
+                document.getElementById('dateRangeLabel').textContent = 'Error loading data.';
+                document.getElementById('qcOwnerTableBody').innerHTML = '';
+            });
+    }
+
+    $(document).ready(function () {
+        setDefaultDates();
+        loadData();
+        $('#btnApply').on('click', function () {
+            loadData();
+        });
+    });
+</script>
