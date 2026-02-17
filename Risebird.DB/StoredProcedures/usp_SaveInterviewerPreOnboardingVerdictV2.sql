@@ -27,27 +27,49 @@ Begin
 	
 	BEGIN TRY
 		select @result = 0
+		
+		DECLARE @ExistingSpecialization VARCHAR(250)
 
-		-- Check if record exists with both EmailId AND PrimarySpecialization
-		if exists(select top 1 id from PreOnboardingInterviewerAIVerdict where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization)
+		-- Check if email already exists (regardless of specialization)
+		SELECT @ExistingSpecialization = PrimarySpecialization 
+		FROM PreOnboardingInterviewerAIVerdict 
+		WHERE EmailId = @EmailId
+
+		-- If email exists, verify the specialization matches
+		IF @ExistingSpecialization IS NOT NULL
 		Begin
-			SET @RecordExists = 1
-			
-			-- Update existing record
-			update PreOnboardingInterviewerAIVerdict set OpenAIResponse = @completeFitmentAnalysis, AIVerdict =@verdict,
-			ModifiedBy =@PerformedBy, ModifiedAt =@timeNow, AIScreeningScore = @fitmentScore 
-			where EmailId = @EmailId and PrimarySpecialization = @PrimarySpecialization
+			-- Email exists - check if specialization matches
+			IF @ExistingSpecialization <> @PrimarySpecialization
+			Begin
+				-- Email exists with different specialization - not allowed
+				DECLARE @ErrorMsg NVARCHAR(500) = 
+					'Email ' + @EmailId + ' already exists with specialization ''' + 
+					@ExistingSpecialization + '''. Cannot change to ''' + @PrimarySpecialization + 
+					'''. Email and PrimarySpecialization cannot be modified once set.'
+				RAISERROR(@ErrorMsg, 16, 1)
+			End
+			Else
+			Begin
+				-- Email exists with same specialization - allow update of other fields
+				SET @RecordExists = 1
+				
+				-- Update existing record (only updatable fields)
+				update PreOnboardingInterviewerAIVerdict set OpenAIResponse = @completeFitmentAnalysis, AIVerdict =@verdict,
+				ModifiedBy =@PerformedBy, ModifiedAt =@timeNow, AIScreeningScore = @fitmentScore 
+				where EmailId = @EmailId
 
-			SET @RowsAffected = @@ROWCOUNT
-			
-			IF @RowsAffected > 0
-				select @result = 1
-			ELSE
-				-- Debug: Update attempted but no rows affected
-				RAISERROR('UPDATE executed but @@ROWCOUNT = 0', 16, 1)
+				SET @RowsAffected = @@ROWCOUNT
+				
+				IF @RowsAffected > 0
+					select @result = 1
+				ELSE
+					-- Debug: Update attempted but no rows affected
+					RAISERROR('UPDATE executed but @@ROWCOUNT = 0', 16, 1)
+			End
 		End
-		else
+		Else
 		Begin
+			-- Email doesn't exist - allow insert
 			SET @RecordExists = 0
 			
 			-- Validate required parameters before INSERT
@@ -58,7 +80,7 @@ Begin
 			IF @PerformedBy IS NULL OR @PerformedBy = ''
 				RAISERROR('PerformedBy (CreatedBy) is NULL or empty', 16, 1)
 			
-			-- Insert new record (either EmailId doesn't exist, or exists with different PrimarySpecialization)
+			-- Insert new record
 			insert into PreOnboardingInterviewerAIVerdict(EmailId, PrimarySpecialization, OpenAIResponse, AIVerdict, CreatedAt, CreatedBy, AIScreeningScore)
 			values (@EmailId, @PrimarySpecialization, @completeFitmentAnalysis, @verdict, @timeNow, @PerformedBy, @fitmentScore)
 
