@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.CallibrationCallVM>
+@model IEnumerable<Risebird.Entities.ViewModel.CallibrationCallVM>
 @{
 
     ViewData["Title"] = "Calibration Meetings";
@@ -55,7 +55,9 @@
                                                     <th class="text-left">Created on</th>
                                                     <th class="text-center">Created By</th>
                                                     <th class="text-center">Video</th>
+                                                    <th class="text-center">Transcript</th>
                                                     <th class="text-center">Channel Owner</th>
+                                                    <th class="text-center">Notes</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -67,14 +69,16 @@
                                                     <th class="text-left">Created on</th>
                                                     <th class="text-center">Created By</th>
                                                     <th class="text-center">Video</th>
+                                                    <th class="text-center">Transcript</th>
                                                     <th class="text-center">Channel Owner</th>
+                                                    <th class="text-center">Notes</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
                                                 @if (Model.Count() == 0)
                                                 {
                                                     <tr>
-                                                        <td colspan="7" class="text-center">No data available in table</td>
+                                                        <td colspan="10" class="text-center">No data available in table</td>
                                                     </tr>
                                                 }
 
@@ -102,7 +106,21 @@
                                                         {
                                                             <td></td>
                                                         }
+                                                        @if (!string.IsNullOrWhiteSpace(item.TranscriptLink))
+                                                        {
+                                                            <td><a target="_blank" href="@item.TranscriptLink">Transcript</a></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
                                                         <td>@item.ChannelOwner</td>
+                                                        <td class="text-center">
+                                                            @{
+                                                                var notesUrl = Url.Action("CalibrationMeetingNotes", "IRF", new { id = item.id });
+                                                            }
+                                                            <a href="@notesUrl" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); window.open(this.href, '_blank'); return false;">Notes</a>
+                                                        </td>
                                                     </tr>
                                                 }
                                             </tbody>

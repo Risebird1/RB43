@@ -1,4 +1,4 @@
-﻿using ExcelDataReader.Log;
+using ExcelDataReader.Log;
 using iTextSharp.text.pdf.qrcode;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9636,6 +9636,12 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+        [Authorize]
+        public IActionResult CalibrationMeetingNotes(int? id)
+        {
+            ViewBag.MeetingId = id ?? 0;
+            return View();
         }
         #endregion
         #region Candidate Consent Form

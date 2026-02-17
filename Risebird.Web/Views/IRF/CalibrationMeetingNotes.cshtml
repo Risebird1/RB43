@@ -1,0 +1,710 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Calibration Transcript → Live Output Viewer";
+}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calibration Transcript → Live Output Viewer</title>
+  <style>
+    :root{
+      --bg:#0b0f19; --panel:#111827; --panel2:#0f172a; --text:#e5e7eb; --muted:#9ca3af;
+      --border:#243041; --chip:#1f2937; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#070a12, #0b0f19);color:var(--text);font-family:var(--sans)}
+    header{
+      position:sticky; top:0; z-index:5;
+      background:rgba(11,15,25,.92); backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:1400px;margin:0 auto;padding:14px 16px}
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    h1{font-size:16px;margin:0;font-weight:650;letter-spacing:.2px}
+    .pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--border);background:rgba(17,24,39,.7);padding:7px 10px;border-radius:999px;color:var(--muted);font-size:12px}
+    .pill b{color:var(--text);font-weight:600}
+    .btn{
+      border:1px solid var(--border); background:rgba(17,24,39,.85);
+      color:var(--text); padding:9px 11px; border-radius:10px; cursor:pointer;
+      font-size:12px; display:inline-flex; gap:8px; align-items:center;
+    }
+    .btn:hover{border-color:#3b4a63}
+    .btn.primary{background:rgba(34,197,94,.12); border-color:rgba(34,197,94,.35)}
+    .btn.bad{background:rgba(239,68,68,.10); border-color:rgba(239,68,68,.35)}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    main{max-width:1400px;margin:0 auto;padding:14px 16px}
+    .grid{display:grid;grid-template-columns: 1.05fr .95fr; gap:12px}
+    @@media (max-width:1100px){.grid{grid-template-columns:1fr}}
+    .card{
+      border:1px solid var(--border);
+      background:rgba(17,24,39,.7);
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,.28);
+    }
+    .card .hd{
+      padding:12px 12px; border-bottom:1px solid var(--border);
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      background:rgba(15,23,42,.55);
+    }
+    .card .hd .title{font-size:13px;font-weight:650}
+    .card .bd{padding:12px}
+    textarea, input, select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(11,18,32,.65);
+      color:var(--text);
+      outline:none;
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.35;
+    }
+    textarea{min-height:320px; resize:vertical}
+    .hint{color:var(--muted); font-size:12px; line-height:1.4}
+    .two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @@media (max-width:700px){.two{grid-template-columns:1fr}}
+    .kv{display:grid; grid-template-columns: 170px 1fr; gap:10px; align-items:center}
+    @@media (max-width:700px){.kv{grid-template-columns:1fr}}
+    .mono{font-family:var(--mono)}
+    pre{
+      margin:0; padding:12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(11,18,32,.55);
+      overflow:auto;
+      max-height:520px;
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.4;
+      white-space:pre;
+    }
+    .status{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .badge{
+      font-size:12px; padding:6px 9px; border-radius:999px; border:1px solid var(--border);
+      background:rgba(31,41,55,.6); color:var(--muted);
+      display:inline-flex; gap:8px; align-items:center;
+    }
+    .dot{width:8px;height:8px;border-radius:50%}
+    .ok{background:var(--ok)} .warn{background:var(--warn)} .bad{background:var(--bad)}
+    .split{display:grid; grid-template-columns: 1fr; gap:10px}
+    .tabs{display:flex; gap:8px; flex-wrap:wrap}
+    .tab{
+      border:1px solid var(--border); background:rgba(31,41,55,.45);
+      padding:7px 10px; border-radius:999px; font-size:12px; color:var(--muted);
+      cursor:pointer; user-select:none;
+    }
+    .tab.active{color:var(--text); border-color:#3b4a63; background:rgba(31,41,55,.75)}
+    .small{font-size:11px;color:var(--muted)}
+    .list{display:flex; flex-direction:column; gap:8px}
+    .item{
+      border:1px solid var(--border);
+      background:rgba(11,18,32,.45);
+      border-radius:12px;
+      padding:10px;
+    }
+    .item .top{display:flex; justify-content:space-between; gap:10px}
+    .chip{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 8px; border-radius:999px;
+      background:rgba(31,41,55,.65);
+      border:1px solid var(--border);
+      color:var(--muted);
+      font-size:11px;
+    }
+    .item b{font-weight:650}
+    .hr{height:1px;background:var(--border);margin:10px 0}
+    .footer-note{padding:10px 12px;border-top:1px solid var(--border);color:var(--muted);font-size:11px}
+    .inline{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .tog{display:flex; gap:8px; align-items:center}
+    .tog input{width:auto}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div class="row" style="justify-content:space-between">
+      <div class="row">
+        <h1>Transcript JSON → Live Output</h1>
+        <span class="pill"><b>Mode:</b> Viewer + optional backend call</span>
+      </div>
+      <div class="row">
+        <button class="btn" id="btnLoadSample">Load sample</button>
+        <button class="btn" id="btnCopyOut">Copy output JSON</button>
+        <button class="btn primary" id="btnDownloadOut">Download output.json</button>
+        <button class="btn bad" id="btnReset">Reset</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <!-- LEFT: INPUT -->
+    <section class="card">
+      @* <div class="hd">
+        <div class="title">Input: Transcript JSON</div>
+        <div class="status" id="inputStatus"></div>
+      </div> *@
+      <div class="bd">
+        <div class="three" style="margin-bottom:10px">
+          <div class="card" style="border-radius:14px">
+            <div class="hd"><div class="title">Backend (optional)</div></div>
+            <div class="bd">
+              <div class="kv">
+                <div class="hint">POST endpoint</div>
+                <input id="endpoint" class="mono" placeholder="https://your-api.example.com/calibrate" />
+              </div>
+              <div class="kv" style="margin-top:8px">
+                <div class="hint">Auth (optional)</div>
+                <input id="auth" class="mono" placeholder="Bearer … (or leave empty)" />
+              </div>
+              <div class="inline" style="margin-top:10px">
+                <button class="btn primary" id="btnRun">Run (debounced live)</button>
+                <button class="btn" id="btnRunOnce">Run once</button>
+                <span class="small" id="runHint">If no endpoint, uses local demo transform.</span>
+              </div>
+              <div class="hr"></div>
+              <div class="tog">
+                <input type="checkbox" id="liveToggle" checked />
+                <label for="liveToggle" class="hint">Live update on input change</label>
+              </div>
+              <div class="tog" style="margin-top:6px">
+                <input type="checkbox" id="prettyToggle" checked />
+                <label for="prettyToggle" class="hint">Pretty-print output JSON</label>
+              </div>
+            </div>
+            <div class="footer-note">
+              Tip: keep your API response strictly JSON with the schema you defined.
+            </div>
+          </div>
+
+          @* <div class="card" style="border-radius:14px">
+            <div class="hd"><div class="title">Input requirements</div></div>
+            <div class="bd">
+              <div class="hint">
+                Expected input format (you control this). Typical options:
+                <ul>
+                  <li><span class="mono">{"transcript":"..."}</span></li>
+                  <li><span class="mono">{"turns":[{"speaker_label":"HM","text":"..."}]}</span></li>
+                </ul>
+                This UI just parses JSON and sends it to your endpoint.
+              </div>
+            </div>
+            <div class="footer-note">
+              If JSON is invalid, output won't run.
+            </div>
+          </div> *@
+        </div>
+
+        <textarea id="input" spellcheck="false" placeholder='Paste JSON here...'></textarea>
+
+        <div class="hr"></div>
+        <div class="hint">
+          Notes:
+          <ul>
+            <li>Viewer renders key sections from your output schema: attendees, screens, interview design, handoff pack, open questions.</li>
+            <li>Validation here is lightweight (schema-ish checks + missing arrays). Your backend should enforce strict schema.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: OUTPUT -->
+    <section class="card">
+      <div class="hd">
+        <div class="title">Output: Live JSON + Structured View</div>
+        <div class="status" id="outputStatus"></div>
+      </div>
+      <div class="bd">
+        <div class="tabs" style="margin-bottom:10px">
+          <div class="tab active" data-tab="view">Structured view</div>
+          <div class="tab" data-tab="json">Raw JSON</div>
+          <div class="tab" data-tab="checks">Checks</div>
+        </div>
+
+        <div id="tab-view" class="split"></div>
+        <div id="tab-json" class="split" style="display:none">
+          <pre id="outPre">{}</pre>
+        </div>
+        <div id="tab-checks" class="split" style="display:none">
+          <div id="checksBox" class="list"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+  // -----------------------------
+  // Utilities
+  // -----------------------------
+  const $ = (id) => document.getElementById(id);
+
+  function safeJsonParse(txt){
+    try { return { ok:true, value: JSON.parse(txt) }; }
+    catch(e){ return { ok:false, error: String(e) }; }
+  }
+  function pretty(obj){
+    return JSON.stringify(obj, null, 2);
+  }
+  function clamp01(x){
+    const n = Number(x);
+    if (Number.isNaN(n)) return 0;
+    return Math.max(0, Math.min(1, n));
+  }
+  function mkBadge(kind, text){
+    const colorClass = kind === "ok" ? "ok" : (kind === "warn" ? "warn" : "bad");
+    return `<span class="badge"><span class="dot ${colorClass}"></span>${escapeHtml(text)}</span>`;
+  }
+  function escapeHtml(s){
+    return String(s)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+  function isArr(x){ return Array.isArray(x); }
+  function asArr(x){ return Array.isArray(x) ? x : []; }
+
+  // -----------------------------
+  // Lightweight output checks (not a full schema validator)
+  // -----------------------------
+  function validateOutput(o){
+    const issues = [];
+
+    if (!o || typeof o !== "object") {
+      issues.push({level:"bad", msg:"Output is not an object."});
+      return issues;
+    }
+    if (!("attendees" in o)) issues.push({level:"warn", msg:"Missing key: attendees"});
+    if (!("screens" in o)) issues.push({level:"warn", msg:"Missing key: screens"});
+    if (!("interview_design" in o)) issues.push({level:"warn", msg:"Missing key: interview_design"});
+    if (!("interviewer_expectations" in o)) issues.push({level:"warn", msg:"Missing key: interviewer_expectations"});
+    if (!("handoff_pack" in o)) issues.push({level:"warn", msg:"Missing key: handoff_pack"});
+    if (!("open_questions" in o)) issues.push({level:"warn", msg:"Missing key: open_questions"});
+
+    // arrays sanity
+    if ("attendees" in o && !isArr(o.attendees)) issues.push({level:"bad", msg:"attendees must be an array."});
+    if ("open_questions" in o && !isArr(o.open_questions)) issues.push({level:"bad", msg:"open_questions must be an array."});
+
+    // confidence range
+    const atts = asArr(o.attendees);
+    atts.forEach((a, i) => {
+      if (a && typeof a === "object" && "confidence" in a) {
+        const c = Number(a.confidence);
+        if (!(c >= 0 && c <= 1)) issues.push({level:"warn", msg:`attendees[${i}].confidence should be within [0,1].`});
+      }
+      if (a && typeof a === "object" && "evidence_snippets" in a && !isArr(a.evidence_snippets)) {
+        issues.push({level:"warn", msg:`attendees[${i}].evidence_snippets should be an array.`});
+      }
+    });
+
+    // strict_output_rule hints
+    if (o.strict_output_rule && typeof o.strict_output_rule === "object") {
+      const r = o.strict_output_rule;
+      if (r.json_only !== true) issues.push({level:"warn", msg:"strict_output_rule.json_only should be true."});
+      if (r.no_markdown !== true) issues.push({level:"warn", msg:"strict_output_rule.no_markdown should be true."});
+      if (r.no_text_before_or_after !== true) issues.push({level:"warn", msg:"strict_output_rule.no_text_before_or_after should be true."});
+    } else {
+      issues.push({level:"warn", msg:"Missing strict_output_rule object (recommended)."});
+    }
+
+    if (issues.length === 0) issues.push({level:"ok", msg:"No obvious issues detected (light checks only)."});
+    return issues;
+  }
+
+  // -----------------------------
+  // Local demo transform
+  // -----------------------------
+  function demoTransform(input){
+    let transcriptText = "";
+    let turns = [];
+    if (input && typeof input === "object") {
+      if (typeof input.transcript === "string") transcriptText = input.transcript;
+      if (Array.isArray(input.turns)) turns = input.turns;
+    }
+
+    const sampleAttendees = [];
+    const speakerSet = new Set();
+    turns.forEach(t => {
+      if (t && t.speaker_label) speakerSet.add(String(t.speaker_label));
+    });
+    if (speakerSet.size) {
+      [...speakerSet].slice(0,6).forEach(lbl => {
+        sampleAttendees.push({
+          name: "",
+          speaker_label: lbl,
+          organization: "Unknown",
+          role_inferred: "Unknown",
+          confidence: 0.2,
+          evidence_snippets: []
+        });
+      });
+    }
+
+    const out = {
+      attendees: sampleAttendees,
+      screens: {
+        resume_screen: { must_have: [], nice_to_have: [], red_flags: [], deal_breakers: [], screening_shortcuts: [], evidence_map: [] },
+        skill_screen: { must_have: [], nice_to_have: [], red_flags: [], deal_breakers: [], round_structure: [], competency_rubrics: [], evidence_map: [] },
+        hr_screen:    { must_have: [], nice_to_have: [], red_flags: [], deal_breakers: [], behavioral_signals: [], evidence_map: [] }
+      },
+      interview_design: {
+        format: { stages: [], requires_acknowledgement: false },
+        difficulty_level: {
+          overall: "unspecified", coding: "unspecified", system_design: "unspecified",
+          debugging: "unspecified", domain_depth: "unspecified",
+          evidence_snippets: []
+        },
+        sample_question_ideas: []
+      },
+      interviewer_expectations: { dos: [], donts: [], mandatory_components: [], interviewer_notes: [], requires_acknowledgement: false },
+      handoff_pack: {
+        calibration_summary: [
+          "Demo mode: connect backend endpoint to generate real calibration output.",
+          transcriptText ? `Transcript chars: ${transcriptText.length}` : "No transcript text detected in input."
+        ],
+        dos: [], donts: [], mandatory_components: [],
+        final_recommendation_logic: "",
+        conflict_detected: false,
+        conflicts: []
+      },
+      open_questions: [
+        "Provide backend endpoint to generate real role inference + criteria extraction."
+      ],
+      strict_output_rule: { json_only:true, no_markdown:true, no_text_before_or_after:true }
+    };
+
+    return out;
+  }
+
+  // -----------------------------
+  // Backend call (optional)
+  // -----------------------------
+  async function callBackend(endpoint, auth, payload){
+    const headers = { "Content-Type":"application/json" };
+    if (auth && auth.trim()) headers["Authorization"] = auth.trim();
+
+    const res = await fetch(endpoint, {
+      method:"POST",
+      headers,
+      body: JSON.stringify(payload)
+    });
+
+    const text = await res.text();
+    const parsed = safeJsonParse(text);
+    if (!res.ok) {
+      const msg = parsed.ok ? pretty(parsed.value) : text;
+      throw new Error(`HTTP ${res.status}: ${msg.slice(0, 4000)}`);
+    }
+    if (!parsed.ok) throw new Error(`Backend did not return valid JSON: ${parsed.error}`);
+    return parsed.value;
+  }
+
+  // -----------------------------
+  // Structured view renderer
+  // -----------------------------
+  function renderStructured(out){
+    const tab = $("tab-view");
+    tab.innerHTML = "";
+
+    const attendees = asArr(out?.attendees);
+    const screens = out?.screens || {};
+    const interview = out?.interview_design || {};
+    const expectations = out?.interviewer_expectations || {};
+    const handoff = out?.handoff_pack || {};
+    const openQ = asArr(out?.open_questions);
+
+    tab.appendChild(sectionAttendees(attendees));
+    tab.appendChild(sectionScreens("Resume Screen", screens?.resume_screen));
+    tab.appendChild(sectionScreens("Skill Screen", screens?.skill_screen, true));
+    tab.appendChild(sectionScreens("HR Screen", screens?.hr_screen));
+    tab.appendChild(sectionInterview(interview));
+    tab.appendChild(sectionExpectations(expectations));
+    tab.appendChild(sectionHandoff(handoff));
+    tab.appendChild(sectionOpenQuestions(openQ));
+  }
+
+  function mkSection(title, bodyHtml){
+    const wrap = document.createElement("div");
+    wrap.className = "item";
+    wrap.innerHTML = `
+      <div class="top"><b>${escapeHtml(title)}</b><span class="chip">viewer</span></div>
+      <div style="margin-top:8px">${bodyHtml}</div>
+    `;
+    return wrap;
+  }
+
+  function sectionAttendees(attendees){
+    if (!attendees.length) {
+      return mkSection("Attendees", `<div class="hint">No attendees detected.</div>`);
+    }
+    const rows = attendees.map(a => {
+      const conf = clamp01(a?.confidence);
+      const ev = asArr(a?.evidence_snippets).slice(0,3).map(s => `<div class="small mono">• ${escapeHtml(s)}</div>`).join("");
+      return `
+        <div class="item" style="margin-top:8px">
+          <div class="top">
+            <b>${escapeHtml(a?.speaker_label || "Unknown")}</b>
+            <span class="chip">${escapeHtml(a?.role_inferred || "Unknown")} · ${(conf*100).toFixed(0)}%</span>
+          </div>
+          <div class="small">Org: <span class="mono">${escapeHtml(a?.organization || "Unknown")}</span> · Name: <span class="mono">${escapeHtml(a?.name || "")}</span></div>
+          ${ev ? `<div style="margin-top:6px">${ev}</div>` : `<div class="small" style="margin-top:6px">No evidence snippets.</div>`}
+        </div>
+      `;
+    }).join("");
+    return mkSection("Attendees", rows);
+  }
+
+  function bucketBlock(label, arr){
+    const xs = asArr(arr);
+    if (!xs.length) return `<div class="small">${escapeHtml(label)}: <span class="mono">[]</span></div>`;
+    const items = xs.slice(0,30).map(x => `<div class="small mono">• ${escapeHtml(x)}</div>`).join("");
+    const more = xs.length > 30 ? `<div class="small">… +${xs.length-30} more</div>` : "";
+    return `<div style="margin-top:6px"><div class="small"><b>${escapeHtml(label)}</b> (${xs.length})</div>${items}${more}</div>`;
+  }
+
+  function sectionScreens(title, screenObj, isSkill=false){
+    const s = screenObj || {};
+    const extra = isSkill ? `
+      <div class="hr"></div>
+      <div class="small"><b>Round structure</b> (${asArr(s.round_structure).length})</div>
+      <div class="small mono">${escapeHtml(JSON.stringify(asArr(s.round_structure).slice(0,6), null, 2))}${asArr(s.round_structure).length>6 ? "\n…":""}</div>
+      <div class="hr"></div>
+      <div class="small"><b>Competency rubrics</b> (${asArr(s.competency_rubrics).length})</div>
+      <div class="small mono">${escapeHtml(JSON.stringify(asArr(s.competency_rubrics).slice(0,4), null, 2))}${asArr(s.competency_rubrics).length>4 ? "\n…":""}</div>
+    ` : "";
+
+    const html = `
+      ${bucketBlock("Must-have", s.must_have)}
+      ${bucketBlock("Nice-to-have", s.nice_to_have)}
+      ${bucketBlock("Red flags", s.red_flags)}
+      ${bucketBlock("Deal-breakers", s.deal_breakers)}
+      ${("screening_shortcuts" in s) ? bucketBlock("Screening shortcuts", s.screening_shortcuts) : ""}
+      <div class="hr"></div>
+      <div class="small"><b>Evidence map</b> (${asArr(s.evidence_map).length})</div>
+      <div class="small mono">${escapeHtml(JSON.stringify(asArr(s.evidence_map).slice(0,6), null, 2))}${asArr(s.evidence_map).length>6 ? "\n…":""}</div>
+      ${extra}
+    `;
+    return mkSection(title, html);
+  }
+
+  function sectionInterview(interview){
+    const fmt = interview?.format || {};
+    const diff = interview?.difficulty_level || {};
+    const qs  = asArr(interview?.sample_question_ideas);
+
+    const html = `
+      <div class="small"><b>Stages</b> (${asArr(fmt.stages).length})</div>
+      <div class="small mono">${escapeHtml(JSON.stringify(asArr(fmt.stages), null, 2))}</div>
+      <div class="hr"></div>
+      <div class="small"><b>Difficulty</b></div>
+      <div class="small mono">${escapeHtml(JSON.stringify({
+        overall: diff.overall, coding: diff.coding, system_design: diff.system_design,
+        debugging: diff.debugging, domain_depth: diff.domain_depth
+      }, null, 2))}</div>
+      <div class="small"><b>Difficulty evidence</b> (${asArr(diff.evidence_snippets).length})</div>
+      <div class="small mono">${escapeHtml(JSON.stringify(asArr(diff.evidence_snippets).slice(0,6), null, 2))}${asArr(diff.evidence_snippets).length>6 ? "\n…":""}</div>
+      <div class="hr"></div>
+      <div class="small"><b>Sample question ideas</b> (${qs.length})</div>
+      <div class="small mono">${escapeHtml(JSON.stringify(qs.slice(0,6), null, 2))}${qs.length>6 ? "\n…":""}</div>
+    `;
+    return mkSection("Interview Design", html);
+  }
+
+  function sectionExpectations(exp){
+    const html = `
+      ${bucketBlock("Do's", exp?.dos)}
+      ${bucketBlock("Don'ts", exp?.donts)}
+      ${bucketBlock("Mandatory components", exp?.mandatory_components)}
+      <div class="hr"></div>
+      <div class="small"><b>Interviewer notes</b> (${asArr(exp?.interviewer_notes).length})</div>
+      <div class="small mono">${escapeHtml(JSON.stringify(asArr(exp?.interviewer_notes).slice(0,10), null, 2))}${asArr(exp?.interviewer_notes).length>10 ? "\n…":""}</div>
+      <div class="hr"></div>
+      <div class="small">requires_acknowledgement: <span class="mono">${escapeHtml(String(!!exp?.requires_acknowledgement))}</span></div>
+    `;
+    return mkSection("Interviewer Expectations", html);
+  }
+
+  function sectionHandoff(h){
+    const html = `
+      <div class="small"><b>Calibration summary</b> (${asArr(h?.calibration_summary).length})</div>
+      <div class="small mono">${escapeHtml(JSON.stringify(asArr(h?.calibration_summary).slice(0,12), null, 2))}${asArr(h?.calibration_summary).length>12 ? "\n…":""}</div>
+      <div class="hr"></div>
+      ${bucketBlock("Do's", h?.dos)}
+      ${bucketBlock("Don'ts", h?.donts)}
+      ${bucketBlock("Mandatory components", h?.mandatory_components)}
+      <div class="hr"></div>
+      <div class="small"><b>Final recommendation logic</b></div>
+      <div class="small mono">${escapeHtml(h?.final_recommendation_logic || "")}</div>
+      <div class="hr"></div>
+      <div class="small">conflict_detected: <span class="mono">${escapeHtml(String(!!h?.conflict_detected))}</span></div>
+      <div class="small"><b>Conflicts</b> (${asArr(h?.conflicts).length})</div>
+      <div class="small mono">${escapeHtml(JSON.stringify(asArr(h?.conflicts).slice(0,10), null, 2))}${asArr(h?.conflicts).length>10 ? "\n…":""}</div>
+    `;
+    return mkSection("Handoff Pack", html);
+  }
+
+  function sectionOpenQuestions(qs){
+    const html = qs.length
+      ? qs.slice(0,30).map(q => `<div class="small mono">• ${escapeHtml(q)}</div>`).join("") + (qs.length>30 ? `<div class="small">… +${qs.length-30} more</div>`:"")
+      : `<div class="hint">No open questions.</div>`;
+    return mkSection("Open Questions", html);
+  }
+
+  // -----------------------------
+  // Live run orchestration
+  // -----------------------------
+  let debounceTimer = null;
+  let lastOutputObj = null;
+
+  function setInputStatus(badgesHtml){
+    $("inputStatus").innerHTML = badgesHtml;
+  }
+  function setOutputStatus(badgesHtml){
+    $("outputStatus").innerHTML = badgesHtml;
+  }
+
+  async function runTransform({forceOnce=false}={}){
+    const live = $("liveToggle").checked;
+    if (!live && !forceOnce) return;
+
+    const txt = $("input").value.trim();
+    const parsed = safeJsonParse(txt);
+    if (!parsed.ok){
+      setInputStatus(mkBadge("bad", "Invalid JSON") + mkBadge("warn", parsed.error));
+      setOutputStatus(mkBadge("warn", "Waiting for valid input JSON"));
+      return;
+    }
+
+    setInputStatus(mkBadge("ok", "Valid JSON"));
+    const endpoint = $("endpoint").value.trim();
+    const auth = $("auth").value.trim();
+
+    try{
+      setOutputStatus(mkBadge("warn", endpoint ? "Calling backend…" : "Demo transform…"));
+      const t0 = performance.now();
+
+      let out;
+      if (endpoint){
+        out = await callBackend(endpoint, auth, parsed.value);
+      } else {
+        out = demoTransform(parsed.value);
+      }
+
+      const dt = Math.max(0, performance.now() - t0);
+      lastOutputObj = out;
+
+      const prettyOn = $("prettyToggle").checked;
+      $("outPre").textContent = prettyOn ? pretty(out) : JSON.stringify(out);
+
+      renderStructured(out);
+
+      const issues = validateOutput(out);
+      const checksBox = $("checksBox");
+      checksBox.innerHTML = issues.map(it => {
+        const badge = it.level === "ok" ? mkBadge("ok", "OK") : (it.level === "warn" ? mkBadge("warn","WARN") : mkBadge("bad","FAIL"));
+        return `<div class="item"><div class="top"><b>${badge} ${escapeHtml(it.msg)}</b><span class="chip">${endpoint ? "backend" : "demo"}</span></div></div>`;
+      }).join("");
+
+      setOutputStatus(
+        mkBadge("ok", "Rendered") +
+        mkBadge("ok", `${endpoint ? "Backend" : "Demo"} in ${dt.toFixed(0)}ms`)
+      );
+
+    } catch(err){
+      setOutputStatus(mkBadge("bad", "Run failed") + mkBadge("warn", String(err).slice(0, 220)));
+      $("checksBox").innerHTML = `<div class="item"><div class="top"><b>${mkBadge("bad","FAIL")} ${escapeHtml(String(err))}</b></div></div>`;
+    }
+  }
+
+  function scheduleRun(){
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => runTransform(), 350);
+  }
+
+  // -----------------------------
+  // Tabs
+  // -----------------------------
+  function setTab(name){
+    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+    $("tab-view").style.display = name === "view" ? "" : "none";
+    $("tab-json").style.display  = name === "json" ? "" : "none";
+    $("tab-checks").style.display= name === "checks" ? "" : "none";
+  }
+  document.querySelectorAll(".tab").forEach(t => {
+    t.addEventListener("click", () => setTab(t.dataset.tab));
+  });
+
+  // -----------------------------
+  // Buttons
+  // -----------------------------
+  $("btnRun").addEventListener("click", () => scheduleRun());
+  $("btnRunOnce").addEventListener("click", () => runTransform({forceOnce:true}));
+
+  $("btnCopyOut").addEventListener("click", async () => {
+    try{
+      const txt = $("outPre").textContent || "{}";
+      await navigator.clipboard.writeText(txt);
+      setOutputStatus(mkBadge("ok","Copied output JSON"));
+      setTimeout(()=> setOutputStatus(""), 1200);
+    } catch(e){
+      setOutputStatus(mkBadge("warn","Copy failed (browser permission)"));
+    }
+  });
+
+  $("btnDownloadOut").addEventListener("click", () => {
+    const txt = $("outPre").textContent || "{}";
+    const blob = new Blob([txt], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "output.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  });
+
+  $("btnReset").addEventListener("click", () => {
+    $("input").value = "";
+    $("endpoint").value = "";
+    $("auth").value = "";
+    $("outPre").textContent = "{}";
+    $("tab-view").innerHTML = "";
+    $("checksBox").innerHTML = "";
+    setInputStatus("");
+    setOutputStatus("");
+  });
+
+  $("btnLoadSample").addEventListener("click", () => {
+    const sample = {
+      transcript: "HM: We need strong system design. TA: Notice period under 30 days. Ops: We will share rubric.",
+      turns: [
+        { speaker_label:"HM", text:"We need strong system design and reject if no ownership." },
+        { speaker_label:"TA", text:"Filter for notice period under 30 days, location Bangalore." },
+        { speaker_label:"Ops", text:"We will share rubric + interviewer notes just-in-time." }
+      ]
+    };
+    $("input").value = pretty(sample);
+    scheduleRun();
+  });
+
+  $("input").addEventListener("input", scheduleRun);
+  $("endpoint").addEventListener("input", scheduleRun);
+  $("auth").addEventListener("input", scheduleRun);
+  $("prettyToggle").addEventListener("change", () => { if (lastOutputObj) $("outPre").textContent = $("prettyToggle").checked ? pretty(lastOutputObj) : JSON.stringify(lastOutputObj); });
+
+  setTab("view");
+  setInputStatus(mkBadge("warn","Paste JSON to start"));
+  setOutputStatus(mkBadge("warn","No output yet"));
+</script>
+</body>
+</html>
