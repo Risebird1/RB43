@@ -4628,6 +4628,48 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> QCOwnerDashboard()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement" || profileName == "Finance")
+                    {
+                        return View();
+                    }
+                    return RedirectToAction("SignOut", "Session");
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetQCOwnerDashboardData(DateTime? dateFrom, DateTime? dateTo)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(null);
+                var response = await _dashboardService.GetQCOwnerDashboardMetrics(dateFrom, dateTo);
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(null);
+            }
+        }
+
         public async Task<IActionResult> TechQCDetails(string type, int ReturnBack)
         {
             try
