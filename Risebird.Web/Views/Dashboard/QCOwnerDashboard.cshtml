@@ -101,6 +101,7 @@
                                                     <th>Total Redo Marked</th>
                                                     <th>Total Proxy Marked</th>
                                                     <th>Total Penalty %</th>
+                                                    <th>Total Penalty Amount</th>
                                                     <th>Penalized Reports</th>
                                                     <th>Total Suspicious Interviewers</th>
                                                 </tr>
@@ -116,6 +117,7 @@
                                                     <th>Total Redo Marked</th>
                                                     <th>Total Proxy Marked</th>
                                                     <th>Total Penalty %</th>
+                                                    <th>Total Penalty Amount</th>
                                                     <th>Penalized Reports</th>
                                                     <th>Total Suspicious Interviewers</th>
                                                 </tr>
@@ -183,8 +185,9 @@
                             '<td>' + (row.totalRedoMarked ?? '') + '</td>' +
                             '<td>' + (row.totalProxyMarked ?? '') + '</td>' +
                             '<td>' + (row.totalPenaltyPercent ?? '') + '</td>' +
+                            '<td>' + (row.totalPenaltyamount ?? '') + '</td>'+
                             '<td>' + (row.penalizedReports ?? '') + '</td>' +
-                            '<td>' + (row.totalSuspiciousInterviewersMarkedForQCCreatedBy ?? '') + '</td>';
+                            '<td>' + (row.totalSuspiciousInterviewersMarked ?? '') + '</td>';
                         tbody.appendChild(tr);
                     });
 

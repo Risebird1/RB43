@@ -35,7 +35,7 @@ BEGIN
 			Case When ri.id is null then 0 else 1 end as RedoInterview,  
             pr.isProxyCandidate AS ProxyReported,
             ic.QCStatus,
-
+			Case When ip.Points>=0 then (ip.Points*IsNull(psd.PaymentDeduction,0)/100) else 0 end as Penaltyamount,
             -- Flag count: each flag column non-empty = 1 (PaymentSLADetails stores varchar)
             (CASE WHEN LEN(LTRIM(RTRIM(ISNULL(psd.Inaccuratedecisionmaking,'')))) > 0 THEN 1 ELSE 0 END) +
             (CASE WHEN LEN(LTRIM(RTRIM(ISNULL(psd.TimeManagement,'')))) > 0 THEN 1 ELSE 0 END) +
@@ -55,6 +55,7 @@ BEGIN
         LEFT JOIN InterviewComments ic ON ic.InterviewId = psd.Interviewid
         LEFT JOIN ProxyReport pr ON pr.interviewid = psd.Interviewid AND ISNULL(pr.isProxyCandidate, 0) = 1
 		LEFT JOIN RedoInterviews ri on ri.Interviewid=im.id and ri.CreatedBy=psd.CreatedBy  
+		LEFT JOIN InterviewPoints ip on ip.Interviewid=im.id
         WHERE psd.isQcDone = 1
           AND psd.CreatedOn >= @DateFrom
           AND psd.CreatedOn < DATEADD(DAY, 1, @DateTo)
@@ -93,8 +94,9 @@ BEGIN
         -- 7) Total Proxy Marked
         SUM(CASE WHEN ISNULL(b.ProxyReported, 0) = 1 THEN 1 ELSE 0 END) AS TotalProxyMarked,
 
-        -- 8) Total Penalty (PaymentDeduction as % or value; Penalized count)
-        SUM(ISNULL(b.PaymentDeduction, 0)) AS TotalPenaltyPercent,
+        -- 8) Total Penalty (PaymentDeduction as % and value)
+        SUM(ISNULL(b.PaymentDeduction, 0))  AS TotalPenaltyPercent,
+		SUM(ISNULL(b.Penaltyamount, 0)) AS TotalPenaltyamount,
         SUM(
             CASE
                 WHEN ISNULL(b.PaymentDeduction, 0) > 0 OR ISNULL(b.PaymentComplianceCount, 0) > 0

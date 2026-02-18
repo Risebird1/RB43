@@ -214,7 +214,7 @@ namespace Risebird.Web.Controllers
 
             if (pendingRBMeetings.Count() > 0)
             {
-                
+
                 foreach (var meeting in pendingRBMeetings)
                 {
                     try
@@ -233,7 +233,7 @@ namespace Risebird.Web.Controllers
                             if (recordinginfo.Count() > 0)
                                 maxduration = recordinginfo.Max(r => r.duration);
                             var _recordingupload = recordinginfo?.Where(x => x.duration == maxduration).FirstOrDefault();
-                            
+
                             var transcriptSummaryCleanedJson = string.Empty;
 
                             if (string.IsNullOrEmpty(meeting.AudioTranscriptFileLink))
@@ -279,7 +279,7 @@ namespace Risebird.Web.Controllers
                                     }
                                 }
                             }
-                            
+
                         }
                         catch (Exception ex)
                         {
@@ -517,13 +517,13 @@ namespace Risebird.Web.Controllers
                         var (isValid, validationReason) = _resumeOptimizationHelper.ValidateResumeForParsing(resumeStringContent);
                         if (!isValid)
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, 
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
                                 new Exception($"Resume {resume.id} validation failed: {validationReason}"));
-                            candidateResumeList.Add(new CandidateResume 
-                            { 
-                                id = resume.id, 
-                                IsResumeParsed = false, 
-                                IsProcessed = false, 
+                            candidateResumeList.Add(new CandidateResume
+                            {
+                                id = resume.id,
+                                IsResumeParsed = false,
+                                IsProcessed = false,
                                 IsResumeParsingFailed = true,
                                 ReasonBehindNotProcessed = validationReason
                             });
@@ -534,8 +534,8 @@ namespace Risebird.Web.Controllers
                         var estimatedTokensBefore = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
                         resumeStringContent = _resumeOptimizationHelper.OptimizeResumeText(resumeStringContent);
                         var estimatedTokensAfter = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
-                        
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, 
+
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
                             new Exception($"Resume {resume.id} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter} tokens)"));
 
                         var threadId = await _ai.CreateThreadAsync();
@@ -942,13 +942,13 @@ namespace Risebird.Web.Controllers
                             var (isValid, validationReason) = _resumeOptimizationHelper.ValidateResumeForParsing(resumeStringContent);
                             if (!isValid)
                             {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, 
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
                                     new Exception($"Resume {resume.id} validation failed: {validationReason}"));
-                                candidateResumeList.Add(new CandidateResume 
-                                { 
-                                    id = resume.id, 
-                                    IsResumeParsed = false, 
-                                    IsProcessed = false, 
+                                candidateResumeList.Add(new CandidateResume
+                                {
+                                    id = resume.id,
+                                    IsResumeParsed = false,
+                                    IsProcessed = false,
                                     IsResumeParsingFailed = true,
                                     ReasonBehindNotProcessed = validationReason
                                 });
@@ -959,8 +959,8 @@ namespace Risebird.Web.Controllers
                             var estimatedTokensBefore = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
                             resumeStringContent = _resumeOptimizationHelper.OptimizeResumeText(resumeStringContent);
                             var estimatedTokensAfter = _resumeOptimizationHelper.EstimateTokenCount(resumeStringContent);
-                            
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, 
+
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
                                 new Exception($"Resume {resume.id} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter} tokens)"));
 
                             var threadId = await _ai.CreateThreadAsync();
@@ -4644,6 +4644,11 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
                     return Json(null);
                 var response = await _dashboardService.GetQCOwnerDashboardMetrics(dateFrom, dateTo);
+                foreach (var item in response.Rows)
+                {
+                    if (item.PenalizedReports > 0)
+                        item.TotalPenaltyPercent = Math.Round(item.TotalPenaltyPercent / item.PenalizedReports, 2);
+                }
                 return Json(response);
             }
             catch (Exception ex)

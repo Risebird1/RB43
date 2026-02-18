@@ -18,7 +18,8 @@ namespace Risebird.Entities.ViewModel
         public decimal TotalPenaltyPercent { get; set; }
         public int PenalizedReports { get; set; }
         /// <summary>Total suspicious interviewers marked by this QC owner (QC created By) in the date range.</summary>
-        public int TotalSuspiciousInterviewersMarkedForQCCreatedBy { get; set; }
+        public int TotalSuspiciousInterviewersMarked { get; set; }
+        public int TotalPenaltyamount { get; set; }
     }
 
     /// <summary>
