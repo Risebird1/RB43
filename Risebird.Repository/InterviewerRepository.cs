@@ -3441,7 +3441,7 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<bool> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser)
+        public async Task<SaveOperationResult> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser)
         {
             try
             {
@@ -3461,15 +3461,69 @@ namespace Risebird.Repository
                         commandType: CommandType.StoredProcedure);
 
                     var queryPerformed = parameters.Get<Boolean>("@result");
-                    return queryPerformed;
+                    return queryPerformed ? SaveOperationResult.SuccessResult() : SaveOperationResult.FailureResult("Operation failed. Please try again.");
                 }
 
             }
             catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                
+                // Extract user-friendly error message from SQL exception
+                string errorMessage = ExtractUserFriendlyErrorMessage(ex.Message);
+                return SaveOperationResult.FailureResult(errorMessage);
             }
-            return false;
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return SaveOperationResult.FailureResult("An unexpected error occurred. Please try again.");
+            }
+        }
+
+        private string ExtractUserFriendlyErrorMessage(string sqlErrorMessage)
+        {
+            // The stored procedure raises errors with custom messages
+            // Extract the message after "Error in usp_SaveInterviewerPreOnboardingVerdictV2: "
+            if (string.IsNullOrEmpty(sqlErrorMessage))
+                return "Failed to save verdict.";
+
+            // Try to extract the main error message before additional metadata (| Line:, etc.)
+            if (sqlErrorMessage.Contains("Error in usp_SaveInterviewerPreOnboardingVerdictV2:"))
+            {
+                var startIndex = sqlErrorMessage.IndexOf("Error in usp_SaveInterviewerPreOnboardingVerdictV2:") + "Error in usp_SaveInterviewerPreOnboardingVerdictV2:".Length;
+                var errorPart = sqlErrorMessage.Substring(startIndex).Trim();
+                
+                // Remove metadata after the pipe symbol
+                if (errorPart.Contains(" | "))
+                {
+                    errorPart = errorPart.Substring(0, errorPart.IndexOf(" | ")).Trim();
+                }
+                
+                return string.IsNullOrEmpty(errorPart) ? "Failed to save verdict." : errorPart;
+            }
+
+            // Check for direct error messages from RAISERROR
+            if (sqlErrorMessage.Contains("Email") && sqlErrorMessage.Contains("already exists"))
+            {
+                // Extract the part of the message related to email conflict
+                var lines = sqlErrorMessage.Split('\n');
+                foreach (var line in lines)
+                {
+                    if (line.Contains("Email") && line.Contains("already exists"))
+                    {
+                        return line.Trim();
+                    }
+                }
+            }
+
+            // Check for NULL or empty parameter errors
+            if (sqlErrorMessage.Contains("is NULL or empty"))
+            {
+                return "Required information is missing. Please ensure all fields are filled.";
+            }
+
+            // Default fallback
+            return "Failed to save verdict. Please check your inputs and try again.";
         }
 
         //public async Task<bool> SaveApplicantAIVerdict(InterviewerDirectApplicationVM model)

@@ -1,4 +1,4 @@
-﻿using Risebird.Entities.Data;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -95,7 +95,7 @@ namespace Risebird.Business.Interface
         Task<bool> SaveInterviewerCodedResume(InterviewerProfileVM model);
         Task<bool> SaveInterviewerResumesAndCodedResume(InterviewerProfileVM model);
         Task<bool> SaveInterviewerPreOnboardingVerdict(string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
-        Task<bool> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser);
+        Task<SaveOperationResult> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser);
 
 
         Task<UserList> UpdateInterviewerActiveStatus(int status, int userId);
