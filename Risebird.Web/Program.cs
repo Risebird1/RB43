@@ -219,6 +219,15 @@ builder.Services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
 builder.Services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 
+// ============================================
+// Vapi.ai Voice AI Integration Services
+// ============================================
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IVapiService, VapiService>();
+builder.Services.AddScoped<IVapiCallRepository, VapiCallRepository>();
+builder.Services.AddScoped<IVapiInterviewService, VapiInterviewService>();
+// ============================================
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
