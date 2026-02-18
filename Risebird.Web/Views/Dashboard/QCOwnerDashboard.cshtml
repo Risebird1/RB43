@@ -102,6 +102,7 @@
                                                     <th>Total Proxy Marked</th>
                                                     <th>Total Penalty %</th>
                                                     <th>Penalized Reports</th>
+                                                    <th>Total Suspicious Interviewers Marked (QC Created By)</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -116,6 +117,7 @@
                                                     <th>Total Proxy Marked</th>
                                                     <th>Total Penalty %</th>
                                                     <th>Penalized Reports</th>
+                                                    <th>Total Suspicious Interviewers Marked (QC Created By)</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody id="qcOwnerTableBody">
@@ -181,7 +183,8 @@
                             '<td>' + (row.totalRedoMarked ?? '') + '</td>' +
                             '<td>' + (row.totalProxyMarked ?? '') + '</td>' +
                             '<td>' + (row.totalPenaltyPercent ?? '') + '</td>' +
-                            '<td>' + (row.penalizedReports ?? '') + '</td>';
+                            '<td>' + (row.penalizedReports ?? '') + '</td>' +
+                            '<td>' + (row.totalSuspiciousInterviewersMarkedForQCCreatedBy ?? '') + '</td>';
                         tbody.appendChild(tr);
                     });
 

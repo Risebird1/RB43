@@ -17,6 +17,8 @@ namespace Risebird.Entities.ViewModel
         public int TotalProxyMarked { get; set; }
         public decimal TotalPenaltyPercent { get; set; }
         public int PenalizedReports { get; set; }
+        /// <summary>Total suspicious interviewers marked by this QC owner (QC created By) in the date range.</summary>
+        public int TotalSuspiciousInterviewersMarkedForQCCreatedBy { get; set; }
     }
 
     /// <summary>
