@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.FLNInterviewerAcknowledgementStatusVM>
+@model IEnumerable<Risebird.Entities.ViewModel.FLNInterviewerAcknowledgementStatusVM>
 @using Risebird.Entities
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
@@ -28,12 +28,30 @@
                 </div>
 
                 <div class="pull-right">
-                    <div>
-                        @* <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                        <div class="mdc-button__ripple"></div>
-                        </button> *@
-
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <label style="margin: 0; white-space: nowrap;">From:</label>
+                            <input type="date" id="startDate" class="form-control" style="width: 150px;" value="@ViewBag.StartDate" />
+                        </div>
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <label style="margin: 0; white-space: nowrap;">To:</label>
+                            <input type="date" id="endDate" class="form-control" style="width: 150px;" value="@ViewBag.EndDate" />
+                        </div>
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" onclick="applyDateFilter()">
+                            <span class="mdc-button__label">
+                                <span class="fa fa-filter"></span> Apply Filter
+                            </span>
+                        </button>
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" onclick="clearDateFilter()">
+                            <span class="mdc-button__label">
+                                <span class="fa fa-times"></span> Clear
+                            </span>
+                        </button>
+                        <button class="mdc-button mdc-button--raised inline-demo-button mdc-ripple-upgraded" onclick="exportToExcel()" style="background-color: #28a745; color: white;">
+                            <span class="mdc-button__label">
+                                <span class="fa fa-download"></span> Download Excel
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -264,6 +282,59 @@
         }, 2000);
     };
     //// script for loader ends here
+</script>
+
+<script>
+    function applyDateFilter() {
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+        
+        if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+            alert('Start date cannot be greater than end date');
+            return;
+        }
+        
+        var url = '@Url.Action("FLNInterviewersAcknowledgementStatus", "Interviewer")';
+        var params = [];
+        
+        if (startDate) {
+            params.push('startDate=' + encodeURIComponent(startDate));
+        }
+        if (endDate) {
+            params.push('endDate=' + encodeURIComponent(endDate));
+        }
+        
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+        
+        window.location.href = url;
+    }
+    
+    function clearDateFilter() {
+        window.location.href = '@Url.Action("FLNInterviewersAcknowledgementStatus", "Interviewer")';
+    }
+    
+    function exportToExcel() {
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+        
+        var url = '@Url.Action("ExportFLNAcknowledgementStatusToExcel", "Interviewer")';
+        var params = [];
+        
+        if (startDate) {
+            params.push('startDate=' + encodeURIComponent(startDate));
+        }
+        if (endDate) {
+            params.push('endDate=' + encodeURIComponent(endDate));
+        }
+        
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+        
+        window.location.href = url;
+    }
 </script>
 
 
