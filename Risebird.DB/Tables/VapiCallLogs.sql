@@ -4,10 +4,10 @@ CREATE TABLE [dbo].[VapiCallLogs]
     [Id] INT IDENTITY(1,1) PRIMARY KEY,
     [VapiCallId] NVARCHAR(100) NOT NULL UNIQUE,
     [InterviewId] INT NULL,
-    [CandidateId] INT NULL,
-    [CandidatePhone] NVARCHAR(20) NOT NULL,
-    [CandidateName] NVARCHAR(255) NULL,
-    [CandidateEmail] NVARCHAR(255) NULL,
+    [RecipientId] INT NULL,
+    [RecipientPhone] NVARCHAR(20) NOT NULL,
+    [RecipientName] NVARCHAR(255) NULL,
+    [RecipientEmail] NVARCHAR(255) NULL,
     [CallStatus] NVARCHAR(50) NULL, -- queued, ringing, in-progress, forwarding, ended
     [ScheduledDateTime] DATETIME NULL,
     [CallStartedAt] DATETIME NULL,
@@ -28,12 +28,9 @@ CREATE TABLE [dbo].[VapiCallLogs]
     [CreatedBy] NVARCHAR(255) NULL,
     [UpdatedBy] NVARCHAR(255) NULL,
     
-    CONSTRAINT [FK_VapiCallLogs_Interview] FOREIGN KEY ([InterviewId]) 
-        REFERENCES [dbo].[Interviews]([InterviewId]) ON DELETE SET NULL,
-    
     INDEX [IX_VapiCallLogs_VapiCallId] NONCLUSTERED ([VapiCallId]),
     INDEX [IX_VapiCallLogs_InterviewId] NONCLUSTERED ([InterviewId]),
-    INDEX [IX_VapiCallLogs_CandidateId] NONCLUSTERED ([CandidateId]),
+    INDEX [IX_VapiCallLogs_RecipientId] NONCLUSTERED ([RecipientId]),
     INDEX [IX_VapiCallLogs_CreatedAt] NONCLUSTERED ([CreatedAt] DESC)
 );
 GO

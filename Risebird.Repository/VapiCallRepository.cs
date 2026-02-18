@@ -40,13 +40,13 @@ namespace Risebird.Repository
                 {
                     var sql = @"
                         INSERT INTO VapiCallLogs (
-                            VapiCallId, InterviewId, CandidateId, CandidatePhone, CandidateName, CandidateEmail,
+                            VapiCallId, InterviewId, RecipientId, RecipientPhone, RecipientName, RecipientEmail,
                             CallStatus, ScheduledDateTime, CallStartedAt, CallEndedAt, EndedReason, DurationSeconds,
                             Transcript, RecordingUrl, InterviewBooked, BookedInterviewDateTime, BookingConfirmationDetails,
                             CallCost, AssistantId, Summary, StructuredData, CreatedAt, CreatedBy
                         )
                         VALUES (
-                            @VapiCallId, @InterviewId, @CandidateId, @CandidatePhone, @CandidateName, @CandidateEmail,
+                            @VapiCallId, @InterviewId, @RecipientId, @RecipientPhone, @RecipientName, @RecipientEmail,
                             @CallStatus, @ScheduledDateTime, @CallStartedAt, @CallEndedAt, @EndedReason, @DurationSeconds,
                             @Transcript, @RecordingUrl, @InterviewBooked, @BookedInterviewDateTime, @BookingConfirmationDetails,
                             @CallCost, @AssistantId, @Summary, @StructuredData, @CreatedAt, @CreatedBy
@@ -165,16 +165,16 @@ namespace Risebird.Repository
         }
 
         /// <summary>
-        /// Gets all call logs for a candidate
+        /// Gets all call logs for a recipient
         /// </summary>
-        public async Task<List<VapiCallLog>> GetCallLogsByCandidateIdAsync(int candidateId)
+        public async Task<List<VapiCallLog>> GetCallLogsByRecipientIdAsync(int recipientId)
         {
             try
             {
                 using (var conn = new SqlConnection(_connectionString))
                 {
-                    var sql = "SELECT * FROM VapiCallLogs WHERE CandidateId = @CandidateId ORDER BY CreatedAt DESC";
-                    var results = await conn.QueryAsync<VapiCallLog>(sql, new { CandidateId = candidateId });
+                    var sql = "SELECT * FROM VapiCallLogs WHERE RecipientId = @RecipientId ORDER BY CreatedAt DESC";
+                    var results = await conn.QueryAsync<VapiCallLog>(sql, new { RecipientId = recipientId });
                     return results.ToList();
                 }
             }
