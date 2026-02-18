@@ -31,6 +31,7 @@ using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Net.Http;
 using Azure.Core;
+using Risebird.Entities.Data.VapiModels;
 //using System.Web.WebPages;
 //using UglyToad.PdfPig.Logging;
 //using Risebird.Entities.Data.AffIndaModels;
@@ -66,6 +67,7 @@ namespace Risebird.Web.Controllers
         private readonly IAWSRekognitionService _aWSRekognitionService;
         private readonly IZohoMeetingHelper _zoho;
         private readonly IResumeOptimizationHelper _resumeOptimizationHelper;
+        private readonly IVapiService _vapiService;
 
         //private readonly IIRFService _irfService;
 
@@ -79,7 +81,7 @@ namespace Risebird.Web.Controllers
             ICandidateRepository candidateRepository, IPdfReaderHelper pdfReaderHelper,
             IValidationHelper validationHelper, IOpenAIInterviewerAssistantHelper ai,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IAWSRekognitionService aWSRekognitionService,
-            IZohoMeetingHelper zoho, IResumeOptimizationHelper resumeOptimizationHelper)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IZohoMeetingHelper zoho, IResumeOptimizationHelper resumeOptimizationHelper, IVapiService vapiService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -109,6 +111,7 @@ namespace Risebird.Web.Controllers
             _aWSRekognitionService = aWSRekognitionService;
             _zoho = zoho;
             _resumeOptimizationHelper = resumeOptimizationHelper;
+            _vapiService = vapiService;
         }
 
         [Authorize]
@@ -126,6 +129,20 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+
+                        //var callRequest = new VapiCallRequest
+                        //{
+                        //    PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
+                        //    Customer = new VapiCustomer
+                        //    {
+                        //        Number = "+919830929409",//8888571923
+                        //        Name = "harshit",
+                        //        Email = "harshitjajoo95@gmail.com"
+                        //    },
+                        //    AssistantId = "23306fcb-31c5-41e9-8b9c-9587d9351281"
+                        //};
+
+                        //var response = await _vapiService.InitiateCallAsync(callRequest);
                         //await ParseresumeCopy2();
                         //var list = new List<string>();
                         //list.Add("harshitjajoo95@gmail.com");
