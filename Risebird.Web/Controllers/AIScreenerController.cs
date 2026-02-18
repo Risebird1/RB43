@@ -690,9 +690,9 @@ namespace Risebird.Web.Controllers
                     aiAnalysisModel, 
                     loggedInUser);
 
-                if (!saveOperationResult)
+                if (!saveOperationResult.Success)
                 {
-                    return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, errorMessage = "Failed to save verdict." });
+                    return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, errorMessage = saveOperationResult.ErrorMessage });
                 }
 
                 // 10. Generate response URL
