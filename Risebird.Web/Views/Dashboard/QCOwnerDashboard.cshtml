@@ -15,31 +15,36 @@
         gap: 6px;
         font-size: 13px;
     }
-    .date-filter-bar .control-label {
-        margin: 0;
-        font-weight: 500;
-        color: #495057;
-    }
-    .date-filter-bar input[type="date"] {
-        width: 130px;
-        padding: 4px 8px;
-        font-size: 13px;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        height: 28px;
-    }
-    .date-filter-bar input[type="date"]:focus {
-        border-color: #80bdff;
-        outline: 0;
-        box-shadow: 0 0 0 2px rgba(0,123,255,.2);
-    }
-    .date-filter-bar #btnApply {
-        height: 28px;
-        padding: 0 12px;
-        font-size: 12px;
-        font-weight: 500;
-        min-width: auto;
-    }
+
+        .date-filter-bar .control-label {
+            margin: 0;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .date-filter-bar input[type="date"] {
+            width: 130px;
+            padding: 4px 8px;
+            font-size: 13px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            height: 28px;
+        }
+
+            .date-filter-bar input[type="date"]:focus {
+                border-color: #80bdff;
+                outline: 0;
+                box-shadow: 0 0 0 2px rgba(0,123,255,.2);
+            }
+
+        .date-filter-bar #btnApply {
+            height: 28px;
+            padding: 0 12px;
+            font-size: 12px;
+            font-weight: 500;
+            min-width: auto;
+        }
+
     #dateRangeLabel {
         font-size: 13px;
         font-weight: 600;
@@ -156,6 +161,10 @@
                 $(".loader").hide();
                 $(".dataloading").show();
                 $("#meeting").show();
+                    if (dataTableInstance) {
+                        dataTableInstance.destroy();
+                        dataTableInstance = null;
+                    }
                 if (data && data.rows && data.rows.length >= 0) {
                     document.getElementById('dateRangeLabel').textContent = 'Date range: ' + (data.dateFrom || '') + ' to ' + (data.dateTo || '');
                     var tbody = document.getElementById('qcOwnerTableBody');
@@ -175,10 +184,7 @@
                             '<td>' + (row.penalizedReports ?? '') + '</td>';
                         tbody.appendChild(tr);
                     });
-                    if (dataTableInstance) {
-                        dataTableInstance.destroy();
-                        dataTableInstance = null;
-                    }
+
                     dataTableInstance = $('#meeting').DataTable({
                         "pagingType": "full_numbers",
                         "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
