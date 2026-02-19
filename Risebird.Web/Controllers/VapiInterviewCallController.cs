@@ -10,6 +10,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dapper;
 
 namespace Risebird.Web.Controllers
 {
@@ -154,16 +155,30 @@ namespace Risebird.Web.Controllers
         /// </summary>
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Webhook([FromBody] VapiWebhookMessage message)
+        public async Task<IActionResult> Webhook([FromBody] object rawPayload)
         {
+            VapiWebhookMessage message = null;
+            string rawJson = null;
+            
             try
             {
+                // Log raw payload for debugging
+                rawJson = JsonConvert.SerializeObject(rawPayload);
+                await LogWebhookDebug(rawJson, "received", null, null);
+                
+                // Try to deserialize
+                message = JsonConvert.DeserializeObject<VapiWebhookMessage>(rawJson);
+                
                 if (message?.Message == null)
                 {
+                    await LogWebhookDebug(rawJson, "error", "Invalid webhook message - message is null", null);
                     return BadRequest("Invalid webhook message");
                 }
 
                 var messageType = message.Message.Type;
+                var callId = message.Message.CallId ?? message.Message.Call?.Id;
+
+                await LogWebhookDebug(rawJson, "processing", null, messageType, callId);
 
                 switch (messageType)
                 {
@@ -176,6 +191,7 @@ namespace Risebird.Web.Controllers
                         break;
 
                     case "tool-calls":
+                        await LogWebhookDebug(rawJson, "tool-call-received", null, "tool-calls", callId);
                         var result = await _vapiService.ProcessToolCallAsync(message);
                         // Also handle interview slot submissions
                         await HandleInterviewSlotSubmission(message);
@@ -189,6 +205,7 @@ namespace Risebird.Web.Controllers
                         // Log unhandled message type
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
                             new Exception($"Unhandled Vapi webhook message type: {messageType}"));
+                        await LogWebhookDebug(rawJson, "unhandled", $"Unknown type: {messageType}", messageType, callId);
                         break;
                 }
 
@@ -197,7 +214,39 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await LogWebhookDebug(rawJson ?? "null", "error", $"Exception: {ex.Message}\nStack: {ex.StackTrace}", null);
                 return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Logs webhook debug information to database for troubleshooting
+        /// </summary>
+        private async Task LogWebhookDebug(string rawPayload, string status, string errorMsg, string webhookType = null, string callId = null)
+        {
+            try
+            {
+                using (var conn = new System.Data.SqlClient.SqlConnection(_configuration["ConnectionString:DBConnectionString"]))
+                {
+                    var sql = @"INSERT INTO VapiWebhookDebugLogs 
+                        (RequestTimestamp, WebhookType, CallId, RawPayload, ProcessingStatus, ErrorMessage)
+                        VALUES (@Timestamp, @Type, @CallId, @Payload, @Status, @Error)";
+                    
+                    await conn.ExecuteAsync(sql, new
+                    {
+                        Timestamp = DateTime.UtcNow,
+                        Type = webhookType,
+                        CallId = callId,
+                        Payload = rawPayload?.Length > 10000 ? rawPayload.Substring(0, 10000) : rawPayload,
+                        Status = status,
+                        Error = errorMsg
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                    new Exception($"Failed to log webhook debug: {ex.Message}"));
             }
         }
 
@@ -287,29 +336,33 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-                        if (!parsedDateTime.HasValue)
-                        {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
-                                new Exception($"Failed to parse date/time - Date: {interviewDate}, Time: {interviewTime}"));
-                            return;
-                        }
+                    if (!parsedDateTime.HasValue)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                            new Exception($"❌ SKIPPED: Failed to parse date/time - Date: {interviewDate}, Time: {interviewTime}"));
+                        await UpdateWebhookDebugLog(callId, "skipped", $"Failed to parse date/time: {interviewDate} {interviewTime}", null, null, false);
+                        return;
+                    }
 
                         if (!candidateConfirmed)
                         {
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
-                                new Exception($"Candidate not confirmed - CallId: {callId}"));
+                                new Exception($"❌ SKIPPED: Candidate not confirmed - CallId: {callId}"));
+                            await UpdateWebhookDebugLog(callId, "skipped", "Candidate not confirmed", null, null, false);
                             return;
                         }
 
                         // Try to find existing call log
                         var callLog = await _vapiCallRepository.GetCallLogByVapiCallIdAsync(callId);
                         
+                        bool isNewCallLog = false;
                         if (callLog == null)
                         {
                             // Call log doesn't exist - create it
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
                                 new Exception($"Call log not found for CallId: {callId}, creating new entry"));
                             
+                            isNewCallLog = true;
                             callLog = new VapiCallLog
                             {
                                 VapiCallId = callId,
@@ -338,17 +391,36 @@ namespace Risebird.Web.Controllers
                         callLog.UpdatedAt = DateTime.UtcNow;
 
                         // Save or update
-                        if (callLog.Id == 0)
+                        try
                         {
-                            await _vapiCallRepository.SaveCallLogAsync(callLog);
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
-                                new Exception($"NEW call log created and interview booked - CallId: {callId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}"));
+                            int savedId = 0;
+                            if (isNewCallLog)
+                            {
+                                savedId = await _vapiCallRepository.SaveCallLogAsync(callLog);
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                                    new Exception($"✅ SUCCESS: NEW call log created - ID: {savedId}, CallId: {callId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}"));
+                                
+                                // Update debug log
+                                await UpdateWebhookDebugLog(callId, "success", null, true, savedId, true);
+                            }
+                            else
+                            {
+                                await _vapiCallRepository.UpdateCallLogAsync(callLog);
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                                    new Exception($"✅ SUCCESS: Interview slot updated - CallId: {callId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}"));
+                                
+                                // Update debug log
+                                await UpdateWebhookDebugLog(callId, "success", null, true, callLog.Id, true);
+                            }
                         }
-                        else
+                        catch (Exception saveEx)
                         {
-                            await _vapiCallRepository.UpdateCallLogAsync(callLog);
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
-                                new Exception($"Interview slot booked via Vapi - CallId: {callId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}"));
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                                new Exception($"❌ FAILED to save call log - CallId: {callId}, Error: {saveEx.Message}", saveEx));
+                            
+                            // Update debug log with error
+                            await UpdateWebhookDebugLog(callId, "error", $"Database save failed: {saveEx.Message}", null, null, false);
+                            throw;
                         }
                     }
                 }
@@ -465,6 +537,78 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Updates the webhook debug log with processing results
+        /// </summary>
+        private async Task UpdateWebhookDebugLog(string callId, string status, string error, bool? callLogFound, int? callLogId, bool? dataSaved)
+        {
+            try
+            {
+                using (var conn = new System.Data.SqlClient.SqlConnection(_configuration["ConnectionString:DBConnectionString"]))
+                {
+                    var sql = @"UPDATE VapiWebhookDebugLogs 
+                        SET ProcessingStatus = @Status, 
+                            ErrorMessage = @Error, 
+                            CallLogFound = @Found,
+                            CallLogId = @LogId,
+                            DataSaved = @Saved
+                        WHERE CallId = @CallId 
+                        AND Id = (SELECT MAX(Id) FROM VapiWebhookDebugLogs WHERE CallId = @CallId)";
+                    
+                    await conn.ExecuteAsync(sql, new
+                    {
+                        Status = status,
+                        Error = error,
+                        Found = callLogFound,
+                        LogId = callLogId,
+                        Saved = dataSaved,
+                        CallId = callId
+                    });
+                }
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Test endpoint to verify webhook is accessible
+        /// </summary>
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult WebhookTest()
+        {
+            return Json(new
+            {
+                status = "ok",
+                message = "Vapi webhook endpoint is accessible",
+                timestamp = DateTime.UtcNow,
+                url = $"{Request.Scheme}://{Request.Host}/VapiInterviewCall/Webhook"
+            });
+        }
+
+        /// <summary>
+        /// Gets recent webhook debug logs for troubleshooting
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> WebhookDebugLogs(int count = 20)
+        {
+            try
+            {
+                using (var conn = new System.Data.SqlClient.SqlConnection(_configuration["ConnectionString:DBConnectionString"]))
+                {
+                    var sql = @"SELECT TOP (@Count) * 
+                        FROM VapiWebhookDebugLogs 
+                        ORDER BY RequestTimestamp DESC";
+                    
+                    var logs = await conn.QueryAsync<VapiWebhookDebugLog>(sql, new { Count = count });
+                    return Json(new { success = true, logs });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, error = ex.Message });
             }
         }
 
