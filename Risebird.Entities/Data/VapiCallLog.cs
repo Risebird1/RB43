@@ -10,10 +10,10 @@ namespace Risebird.Entities.Data
         public int Id { get; set; }
         public string VapiCallId { get; set; }
         public int? InterviewId { get; set; }
-        public int? CandidateId { get; set; }
-        public string CandidatePhone { get; set; }
-        public string CandidateName { get; set; }
-        public string CandidateEmail { get; set; }
+        public int? RecipientId { get; set; }
+        public string RecipientPhone { get; set; }
+        public string RecipientName { get; set; }
+        public string RecipientEmail { get; set; }
         public string CallStatus { get; set; }
         public DateTime? ScheduledDateTime { get; set; }
         public DateTime? CallStartedAt { get; set; }

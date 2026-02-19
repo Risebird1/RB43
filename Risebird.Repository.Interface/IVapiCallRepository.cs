@@ -36,9 +36,9 @@ namespace Risebird.Repository.Interface
         Task<List<VapiCallLog>> GetCallLogsByInterviewIdAsync(int interviewId);
 
         /// <summary>
-        /// Gets all call logs for a candidate
+        /// Gets all call logs for a recipient
         /// </summary>
-        Task<List<VapiCallLog>> GetCallLogsByCandidateIdAsync(int candidateId);
+        Task<List<VapiCallLog>> GetCallLogsByRecipientIdAsync(int recipientId);
 
         /// <summary>
         /// Gets recent call logs
