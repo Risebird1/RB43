@@ -23,6 +23,27 @@ namespace Risebird.Entities.ViewModel
     }
 
     /// <summary>
+    /// Flag detail row for QC Owner Dashboard popup (flag name, sub value, count).
+    /// </summary>
+    public class QCOwnerFlagDetailRowVM
+    {
+        public string FlagName { get; set; }
+        public string SubFlagValue { get; set; }
+        public int FlagCount { get; set; }
+    }
+
+    /// <summary>
+    /// Response for GetQCOwnerFlagDetails API (popup when clicking Total Flags Reported).
+    /// </summary>
+    public class QCOwnerFlagDetailResponseVM
+    {
+        public string QcOwner { get; set; }
+        public string DateFrom { get; set; }
+        public string DateTo { get; set; }
+        public List<QCOwnerFlagDetailRowVM> FlagDetails { get; set; } = new List<QCOwnerFlagDetailRowVM>();
+    }
+
+    /// <summary>
     /// Response for QC Owner Dashboard API: date range + list of rows.
     /// </summary>
     public class QCOwnerDashboardResponseVM

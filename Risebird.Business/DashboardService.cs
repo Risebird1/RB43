@@ -1293,5 +1293,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<QCOwnerFlagDetailResponseVM> GetQCOwnerFlagDetails(string qcOwner, DateTime? dateFrom, DateTime? dateTo)
+        {
+            try
+            {
+                return await _dashboardRespository.GetQCOwnerFlagDetails(qcOwner, dateFrom, dateTo);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

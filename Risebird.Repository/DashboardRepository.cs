@@ -2418,5 +2418,42 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<QCOwnerFlagDetailResponseVM> GetQCOwnerFlagDetails(string qcOwner, DateTime? dateFrom, DateTime? dateTo)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(qcOwner))
+                    return null;
+                var dateFromVal = dateFrom ?? DateTime.Now.AddDays(-30);
+                var dateToVal = dateTo ?? DateTime.Now;
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@QCOwner", qcOwner);
+                parameters.Add("@DateFrom", dateFromVal.Date);
+                parameters.Add("@DateTo", dateToVal.Date);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var rows = await SqlMapper.QueryAsync<QCOwnerFlagDetailRowVM>(con, "usp_GetQCOwnerFlagDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return new QCOwnerFlagDetailResponseVM
+                    {
+                        QcOwner = qcOwner,
+                        DateFrom = dateFromVal.ToString("yyyy-MM-dd"),
+                        DateTo = dateToVal.ToString("yyyy-MM-dd"),
+                        FlagDetails = rows?.ToList() ?? new List<QCOwnerFlagDetailRowVM>()
+                    };
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

@@ -56,6 +56,15 @@
         border-left: 3px solid #0d6efd;
         border-radius: 0 4px 4px 0;
     }
+
+    .flag-detail-link {
+        color: #0d6efd;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+        .flag-detail-link:hover {
+            color: #0a58ca;
+        }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -87,6 +96,35 @@
                             </div>
                             <div class="dataloading">
                                 <div id="dateRangeLabel" class="date-range-label"></div>
+                                <!-- Flag Details Modal -->
+                                <div class="modal fade" id="flagDetailsModal" tabindex="-1" role="dialog" aria-labelledby="flagDetailsModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="flagDetailsModalLabel">Flag Details - <span id="modalQcOwnerName"></span></h5>
+                                                <button type="button" class="close" id="flagDetailsModalClose" aria-label="Close" style="background:none;border:none;font-size:1.5rem;opacity:.5;cursor:pointer;">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                                                <p class="text-muted small mb-2" id="modalDateRange"></p>
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-bordered" id="flagDetailsTable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Flag Name</th>
+                                                                <th>Sub Flag Value</th>
+                                                                <th>Count</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="flagDetailsTableBody"></tbody>
+                                                    </table>
+                                                </div>
+                                                <div id="flagDetailsEmpty" class="text-muted text-center py-3" style="display: none;">No flag details found.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="scrollbar int-table" id="style-2">
                                     <div id="tableID" class="second">
                                         <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
@@ -175,13 +213,16 @@
                     tbody.innerHTML = '';
                     data.rows.forEach(function (row) {
                         var tr = document.createElement('tr');
+                        var flagsCell = (row.totalFlagsReported ?? 0) > 0
+                            ? '<td><a href="javascript:void(0);" class="flag-detail-link" data-qcowner="' + (row.qcOwner || '').replace(/"/g, '&quot;') + '" title="View flag details">' + (row.totalFlagsReported ?? '') + '</a></td>'
+                            : '<td>' + (row.totalFlagsReported ?? '') + '</td>';
                         tr.innerHTML =
                             '<td>' + (row.qcOwner || '') + '</td>' +
                             '<td>' + (row.qcDone ?? '') + '</td>' +
                             '<td>' + (row.reportsWithFlags ?? '') + '</td>' +
                             '<td>' + (row.reportsWithoutFlags ?? '') + '</td>' +
                             '<td>' + (row.criticalQueue_NoFlags ?? '') + '</td>' +
-                            '<td>' + (row.totalFlagsReported ?? '') + '</td>' +
+                            flagsCell +
                             '<td>' + (row.totalRedoMarked ?? '') + '</td>' +
                             '<td>' + (row.totalProxyMarked ?? '') + '</td>' +
                             '<td>' + (row.totalPenaltyPercent ?? '') + '</td>' +
@@ -222,11 +263,54 @@
             });
     }
 
+    function showFlagDetails(qcOwner) {
+        var from = document.getElementById('dateFrom').value;
+        var to = document.getElementById('dateTo').value;
+        if (!from || !to) {
+            setDefaultDates();
+            from = document.getElementById('dateFrom').value;
+            to = document.getElementById('dateTo').value;
+        }
+        var url = '/Dashboard/GetQCOwnerFlagDetails?qcOwner=' + encodeURIComponent(qcOwner) + '&dateFrom=' + encodeURIComponent(from) + '&dateTo=' + encodeURIComponent(to);
+        document.getElementById('modalQcOwnerName').textContent = qcOwner || '';
+        document.getElementById('modalDateRange').textContent = 'Date range: ' + from + ' to ' + to;
+        document.getElementById('flagDetailsTable').style.display = 'table';
+        document.getElementById('flagDetailsEmpty').style.display = 'none';
+        document.getElementById('flagDetailsTableBody').innerHTML = '<tr><td colspan="3" class="text-center">Loading...</td></tr>';
+        $('#flagDetailsModal').modal('show');
+        $.getJSON(url)
+            .done(function (data) {
+                var tbody = document.getElementById('flagDetailsTableBody');
+                tbody.innerHTML = '';
+                if (data && data.flagDetails && data.flagDetails.length > 0) {
+                    data.flagDetails.forEach(function (item) {
+                        var tr = document.createElement('tr');
+                        tr.innerHTML = '<td>' + (item.flagName || '') + '</td><td>' + (item.subFlagValue || '') + '</td><td>' + (item.flagCount ?? '') + '</td>';
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    document.getElementById('flagDetailsTable').style.display = 'none';
+                    document.getElementById('flagDetailsEmpty').style.display = 'block';
+                }
+            })
+            .fail(function () {
+                document.getElementById('flagDetailsTableBody').innerHTML = '<tr><td colspan="3" class="text-center text-danger">Error loading flag details.</td></tr>';
+            });
+    }
+
     $(document).ready(function () {
         setDefaultDates();
         loadData();
         $('#btnApply').on('click', function () {
             loadData();
+        });
+        $(document).on('click', '.flag-detail-link', function (e) {
+            e.preventDefault();
+            var qcOwner = $(this).data('qcowner');
+            if (qcOwner) showFlagDetails(qcOwner);
+        });
+        $('#flagDetailsModalClose').on('click', function () {
+            $('#flagDetailsModal').modal('hide');
         });
     });
 </script>

@@ -4658,6 +4658,24 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetQCOwnerFlagDetails(string qcOwner, DateTime? dateFrom, DateTime? dateTo)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(null);
+                var response = await _dashboardService.GetQCOwnerFlagDetails(qcOwner, dateFrom, dateTo);
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(null);
+            }
+        }
+
         public async Task<IActionResult> TechQCDetails(string type, int ReturnBack)
         {
             try
