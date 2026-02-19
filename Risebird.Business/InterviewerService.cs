@@ -1614,7 +1614,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser)
+        public async Task<SaveOperationResult> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser)
         {
             try
             {
@@ -1623,7 +1623,7 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
+                return SaveOperationResult.FailureResult("An unexpected error occurred. Please try again.");
             }
         }
 

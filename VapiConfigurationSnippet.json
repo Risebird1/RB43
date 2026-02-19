@@ -1,0 +1,60 @@
+{
+  "_comment": "Add this section to your appsettings.json file",
+  "Vapi": {
+    "ApiKey": "YOUR_VAPI_API_KEY_HERE",
+    "BaseUrl": "https://api.vapi.ai",
+    "InterviewBookingAssistantId": "",
+    "_note_ApiKey": "Get this from https://dashboard.vapi.ai/ -> Settings -> API Keys",
+    "_note_AssistantId": "Run SetupAssistant endpoint first to generate this",
+    
+    "CallSettings": {
+      "MaxDurationSeconds": 600,
+      "DefaultCountryCode": "+91",
+      "EnableRecording": true,
+      "EnableTranscription": true,
+      "BackgroundSound": "office"
+    },
+    
+    "VoiceSettings": {
+      "Provider": "11labs",
+      "VoiceId": "sarah",
+      "Speed": 1.0,
+      "Stability": 0.5,
+      "SimilarityBoost": 0.75
+    },
+    
+    "ModelSettings": {
+      "Provider": "openai",
+      "Model": "gpt-4o-mini",
+      "Temperature": 0.7,
+      "MaxTokens": 250
+    },
+    
+    "TranscriberSettings": {
+      "Provider": "deepgram",
+      "Model": "nova-2",
+      "Language": "en"
+    },
+    
+    "WebhookSettings": {
+      "EndpointPath": "/VapiInterviewCall/Webhook",
+      "TimeoutSeconds": 20,
+      "_note": "Full URL will be: {HostDetails:baseUrl}/VapiInterviewCall/Webhook"
+    },
+    
+    "Features": {
+      "EnableVoicemailDetection": true,
+      "EnableCallRecording": true,
+      "EnableBatchCalling": true,
+      "EnableAutoRetry": true,
+      "MaxRetryAttempts": 3
+    },
+    
+    "Cost": {
+      "_note": "Approximate costs (USD)",
+      "PerMinute": 0.08,
+      "MonthlyBudget": 500.0,
+      "AlertThreshold": 400.0
+    }
+  }
+}

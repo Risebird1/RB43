@@ -1,8 +1,19 @@
-﻿@model Risebird.Entities.ViewModel.ResumeListViewModel
+@model Risebird.Entities.ViewModel.ResumeListViewModel
 @{
     ViewData["Title"] = "Candidate Resume List";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    
+    string GetUserFriendlyReason(string reason)
+    {
+        if (string.IsNullOrEmpty(reason))
+            return "";
+            
+        if (reason.StartsWith("Exception during processing:", StringComparison.OrdinalIgnoreCase))
+            return "An error occurred while processing this resume. Please contact support.";
+            
+        return reason;
+    }
 }
 <script>
     var Header = "Resume(s) for <strong>@(Model.IRFName)</strong>";
@@ -10,6 +21,48 @@
 </script>
 <link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .nav-tabs {
+        margin-top: 20px;
+        margin-bottom: 0px;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .nav-tabs .nav-link {
+        border: 1px solid transparent;
+        border-radius: 0.25rem 0.25rem 0 0;
+        padding: 10px 20px;
+        color: #495057;
+        font-weight: 500;
+    }
+    .nav-tabs .nav-link:hover {
+        border-color: #e9ecef #e9ecef #dee2e6;
+        background-color: #f8f9fa;
+    }
+    .nav-tabs .nav-link.active {
+        color: #495057;
+        background-color: #fff;
+        border-color: #dee2e6 #dee2e6 #fff;
+        font-weight: 600;
+    }
+    .tab-content {
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-top: none;
+    }
+    
+    /* Fix for File Name column overflow */
+    #resumeTable1 td, #resumeTable2 td, #resumeTable3 td, #resumeTable4 td {
+        word-wrap: break-word;
+        word-break: break-word;
+        white-space: normal;
+        max-width: 300px;
+    }
+    
+    #resumeTable1 th, #resumeTable2 th, #resumeTable3 th, #resumeTable4 th {
+        white-space: normal;
+    }
+</style>
 
 <div id="main-panel">
     <div class="pt30">
@@ -43,73 +96,298 @@
                         </div>
                         <div class="dataloading">
                             <div class="candidate_resume">
-                                <div id="tableID">
-                                    <table id="resumeTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>File Name</th>
-                                                <th class="text-center">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tfoot>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>File Name</th>
-                                                <th class="text-center">Actions</th>
-                                            </tr>
-                                        </tfoot>
-                                        <tbody>
-                                            @foreach (var item in Model.ResumeList)
-                                            {
-                                                <tr id=@item.id>
-                                                    <td> @item.AddedOn</td>
-                                                    <td>
-                                                        @{
-                                                            var fileName = string.Empty;
-                                                            if (item.ResumeLink.Split('/')?.Last().Split('?') != null)
-                                                            {
-                                                                fileName = item.ResumeLink.Split('/')?.Last().Split('?')?.First();
-                                                            }
-                                                            else
-                                                            {
-                                                                fileName = item.ResumeLink.Split('/')?.Last();
 
-                                                            }
-                                                        }
-                                                        <a id="resumeLink_@item.id" target="_blank" title="Resume" href=@item.ResumeLink.ToString().Replace(" ","%20")>@fileName</a>
-                                                        <button class="copy-btn" onclick="copyToClipboard('resumeLink_@item.id', 'special_text_@item.id')">
-                                                            <p class="special-text">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
-                                                                <span id="special_text_@item.id" class="special-text__tooltip">
-                                                                    Copy Link
-                                                                </span>
-                                                            </p>
-                                                        </button>
-                                                    </td>
-                                                    <td class="text-center action">
-                                                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
-                                                        {
-                                                            @if (!item.IsProcessed)
-                                                            {
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Processed">
-                                                                    <span onclick="javascript:ProcessedResume('@item.id', '@fileName');" title="Processed" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cpu-fill" viewBox="0 0 16 16">
-                                                                            <path d="M6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
-                                                                            <path d="M5.5.5a.5.5 0 0 0-1 0V2A2.5 2.5 0 0 0 2 4.5H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2A2.5 2.5 0 0 0 4.5 14v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14a2.5 2.5 0 0 0 2.5-2.5h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14A2.5 2.5 0 0 0 11.5 2V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5zm1 4.5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3A1.5 1.5 0 0 1 6.5 5z" />
-                                                                        </svg>
-                                                                    </span>
+                                <!-- Tabs Navigation -->
+                                <ul class="nav nav-tabs" id="resumeTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="yetToProcess-tab" data-bs-toggle="tab" data-bs-target="#yetToProcess" type="button" role="tab" aria-controls="yetToProcess" aria-selected="true">
+                                            Yet to be processed (@Model.YetToBeProcessed.Count)
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="notProcessed-tab" data-bs-toggle="tab" data-bs-target="#notProcessed" type="button" role="tab" aria-controls="notProcessed" aria-selected="false">
+                                            Not Processed (@Model.NotProcessed.Count)
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="duplicates-tab" data-bs-toggle="tab" data-bs-target="#duplicates" type="button" role="tab" aria-controls="duplicates" aria-selected="false">
+                                            Duplicates (@Model.Duplicates.Count)
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="processed-tab" data-bs-toggle="tab" data-bs-target="#processed" type="button" role="tab" aria-controls="processed" aria-selected="false">
+                                            Processed (@Model.Processed.Count)
+                                        </button>
+                                    </li>
+                                </ul>
+
+                                <!-- Tabs Content -->
+                                <div class="tab-content" id="resumeTabsContent">
+                                    
+                                    <!-- Tab 1: Yet to be processed -->
+                                    <div class="tab-pane fade show active" id="yetToProcess" role="tabpanel" aria-labelledby="yetToProcess-tab">
+                                        <div id="tableID1">
+                                            <table id="resumeTable1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>File Name</th>
+                                                        <th>Processed</th>
+                                                        <th>Resume Parsed</th>
+                                                        <th>Reason Behind Not Processed</th>
+                                                        <th class="text-center">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.YetToBeProcessed)
+                                                    {
+                                                        <tr id=@item.id>
+                                                            <td>@item.AddedOn</td>
+                                                            <td>
+                                                                @{
+                                                                    var fileName = string.Empty;
+                                                                    if (item.ResumeLink.Split('/')?.Last().Split('?') != null)
+                                                                    {
+                                                                        fileName = item.ResumeLink.Split('/')?.Last().Split('?')?.First();
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        fileName = item.ResumeLink.Split('/')?.Last();
+                                                                    }
+                                                                }
+                                                                <a id="resumeLink_@item.id" target="_blank" title="Resume" href=@item.ResumeLink.ToString().Replace(" ","%20")>@fileName</a>
+                                                                <button class="copy-btn" onclick="copyToClipboard('resumeLink_@item.id', 'special_text_@item.id')">
+                                                                    <p class="special-text">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                                                        <span id="special_text_@item.id" class="special-text__tooltip">Copy Link</span>
+                                                                    </p>
                                                                 </button>
-                                                            }
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                    @Html.HiddenFor(m => m.IRFId)
-                                    @Html.HiddenFor(m => m.IRFName)
+                                                            </td>
+                                                            <td>@(item.IsProcessed == true ? "Yes" : "No")</td>
+                                                            <td>@(item.IsResumeParsed == null ? "" : (item.IsResumeParsed == true ? "Yes" : "No"))</td>
+                                                            <td>@GetUserFriendlyReason(item.ReasonBehindNotProcessed)</td>
+                                                            <td class="text-center action">
+                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
+                                                                {
+                                                                    @if (item.IsProcessed != true)
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Processed">
+                                                                            <span onclick="javascript:ProcessedResume('@item.id', '@fileName');" title="Processed" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cpu-fill" viewBox="0 0 16 16">
+                                                                                    <path d="M6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
+                                                                                    <path d="M5.5.5a.5.5 0 0 0-1 0V2A2.5 2.5 0 0 0 2 4.5H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2A2.5 2.5 0 0 0 4.5 14v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14a2.5 2.5 0 0 0 2.5-2.5h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14A2.5 2.5 0 0 0 11.5 2V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5zm1 4.5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3A1.5 1.5 0 0 1 6.5 5z" />
+                                                                                </svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tab 2: Not Processed -->
+                                    <div class="tab-pane fade" id="notProcessed" role="tabpanel" aria-labelledby="notProcessed-tab">
+                                        <div id="tableID2">
+                                            <table id="resumeTable2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>File Name</th>
+                                                        <th>Processed</th>
+                                                        <th>Resume Parsed</th>
+                                                        <th>Reason Behind Not Processed</th>
+                                                        <th class="text-center">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.NotProcessed)
+                                                    {
+                                                        <tr id=@item.id>
+                                                            <td>@item.AddedOn</td>
+                                                            <td>
+                                                                @{
+                                                                    var fileName = string.Empty;
+                                                                    if (item.ResumeLink.Split('/')?.Last().Split('?') != null)
+                                                                    {
+                                                                        fileName = item.ResumeLink.Split('/')?.Last().Split('?')?.First();
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        fileName = item.ResumeLink.Split('/')?.Last();
+                                                                    }
+                                                                }
+                                                                <a id="resumeLink_@item.id" target="_blank" title="Resume" href=@item.ResumeLink.ToString().Replace(" ","%20")>@fileName</a>
+                                                                <button class="copy-btn" onclick="copyToClipboard('resumeLink_@item.id', 'special_text_@item.id')">
+                                                                    <p class="special-text">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                                                        <span id="special_text_@item.id" class="special-text__tooltip">Copy Link</span>
+                                                                    </p>
+                                                                </button>
+                                                            </td>
+                                                            <td>@(item.IsProcessed == true ? "Yes" : "No")</td>
+                                                            <td>@(item.IsResumeParsed == null ? "" : (item.IsResumeParsed == true ? "Yes" : "No"))</td>
+                                                            <td>@GetUserFriendlyReason(item.ReasonBehindNotProcessed)</td>
+                                                            <td class="text-center action">
+                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
+                                                                {
+                                                                    @if (item.IsProcessed != true)
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Processed">
+                                                                            <span onclick="javascript:ProcessedResume('@item.id', '@fileName');" title="Processed" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cpu-fill" viewBox="0 0 16 16">
+                                                                                    <path d="M6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
+                                                                                    <path d="M5.5.5a.5.5 0 0 0-1 0V2A2.5 2.5 0 0 0 2 4.5H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2A2.5 2.5 0 0 0 4.5 14v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14a2.5 2.5 0 0 0 2.5-2.5h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14A2.5 2.5 0 0 0 11.5 2V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5zm1 4.5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3A1.5 1.5 0 0 1 6.5 5z" />
+                                                                                </svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tab 3: Duplicates -->
+                                    <div class="tab-pane fade" id="duplicates" role="tabpanel" aria-labelledby="duplicates-tab">
+                                        <div id="tableID3">
+                                            <table id="resumeTable3" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>File Name</th>
+                                                        <th>Processed</th>
+                                                        <th>Resume Parsed</th>
+                                                        <th>Reason Behind Not Processed</th>
+                                                        <th class="text-center">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.Duplicates)
+                                                    {
+                                                        <tr id=@item.id>
+                                                            <td>@item.AddedOn</td>
+                                                            <td>
+                                                                @{
+                                                                    var fileName = string.Empty;
+                                                                    if (item.ResumeLink.Split('/')?.Last().Split('?') != null)
+                                                                    {
+                                                                        fileName = item.ResumeLink.Split('/')?.Last().Split('?')?.First();
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        fileName = item.ResumeLink.Split('/')?.Last();
+                                                                    }
+                                                                }
+                                                                <a id="resumeLink_@item.id" target="_blank" title="Resume" href=@item.ResumeLink.ToString().Replace(" ","%20")>@fileName</a>
+                                                                <button class="copy-btn" onclick="copyToClipboard('resumeLink_@item.id', 'special_text_@item.id')">
+                                                                    <p class="special-text">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                                                        <span id="special_text_@item.id" class="special-text__tooltip">Copy Link</span>
+                                                                    </p>
+                                                                </button>
+                                                            </td>
+                                                            <td>@(item.IsProcessed == true ? "Yes" : "No")</td>
+                                                            <td>@(item.IsResumeParsed == null ? "" : (item.IsResumeParsed == true ? "Yes" : "No"))</td>
+                                                            <td>@GetUserFriendlyReason(item.ReasonBehindNotProcessed)</td>
+                                                            <td class="text-center action">
+                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
+                                                                {
+                                                                    @if (item.IsProcessed != true)
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Processed">
+                                                                            <span onclick="javascript:ProcessedResume('@item.id', '@fileName');" title="Processed" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cpu-fill" viewBox="0 0 16 16">
+                                                                                    <path d="M6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
+                                                                                    <path d="M5.5.5a.5.5 0 0 0-1 0V2A2.5 2.5 0 0 0 2 4.5H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2A2.5 2.5 0 0 0 4.5 14v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14a2.5 2.5 0 0 0 2.5-2.5h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14A2.5 2.5 0 0 0 11.5 2V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5zm1 4.5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3A1.5 1.5 0 0 1 6.5 5z" />
+                                                                                </svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tab 4: Processed -->
+                                    <div class="tab-pane fade" id="processed" role="tabpanel" aria-labelledby="processed-tab">
+                                        <div id="tableID4">
+                                            <table id="resumeTable4" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>File Name</th>
+                                                        <th>Processed</th>
+                                                        <th>Resume Parsed</th>
+                                                        <th>Reason Behind Not Processed</th>
+                                                        <th class="text-center">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.Processed)
+                                                    {
+                                                        <tr id=@item.id>
+                                                            <td>@item.AddedOn</td>
+                                                            <td>
+                                                                @{
+                                                                    var fileName = string.Empty;
+                                                                    if (item.ResumeLink.Split('/')?.Last().Split('?') != null)
+                                                                    {
+                                                                        fileName = item.ResumeLink.Split('/')?.Last().Split('?')?.First();
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        fileName = item.ResumeLink.Split('/')?.Last();
+                                                                    }
+                                                                }
+                                                                <a id="resumeLink_@item.id" target="_blank" title="Resume" href=@item.ResumeLink.ToString().Replace(" ","%20")>@fileName</a>
+                                                                <button class="copy-btn" onclick="copyToClipboard('resumeLink_@item.id', 'special_text_@item.id')">
+                                                                    <p class="special-text">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                                                        <span id="special_text_@item.id" class="special-text__tooltip">Copy Link</span>
+                                                                    </p>
+                                                                </button>
+                                                            </td>
+                                                            <td>@(item.IsProcessed == true ? "Yes" : "No")</td>
+                                                            <td>@(item.IsResumeParsed == null ? "" : (item.IsResumeParsed == true ? "Yes" : "No"))</td>
+                                                            <td>@GetUserFriendlyReason(item.ReasonBehindNotProcessed)</td>
+                                                            <td class="text-center action">
+                                                                @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
+                                                                {
+                                                                    @if (item.IsProcessed != true)
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Processed">
+                                                                            <span onclick="javascript:ProcessedResume('@item.id', '@fileName');" title="Processed" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cpu-fill" viewBox="0 0 16 16">
+                                                                                    <path d="M6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
+                                                                                    <path d="M5.5.5a.5.5 0 0 0-1 0V2A2.5 2.5 0 0 0 2 4.5H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2v1H.5a.5.5 0 0 0 0 1H2A2.5 2.5 0 0 0 4.5 14v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14h1v1.5a.5.5 0 0 0 1 0V14a2.5 2.5 0 0 0 2.5-2.5h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14v-1h1.5a.5.5 0 0 0 0-1H14A2.5 2.5 0 0 0 11.5 2V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5a.5.5 0 0 0-1 0V2h-1V.5zm1 4.5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3A1.5 1.5 0 0 1 6.5 5z" />
+                                                                                </svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
                                 </div>
+
+                                @Html.HiddenFor(m => m.IRFId)
+                                @Html.HiddenFor(m => m.IRFName)
                             </div>
                         </div>
                     </div>
@@ -189,7 +467,10 @@
 <script>
 
     function RefreshSearch() {
-        $('#resumeTable').DataTable().destroy();
+        $('#resumeTable1').DataTable().destroy();
+        $('#resumeTable2').DataTable().destroy();
+        $('#resumeTable3').DataTable().destroy();
+        $('#resumeTable4').DataTable().destroy();
 
         setTimeout(function () {
             applyDataTable();
@@ -204,7 +485,7 @@
     });
 
     function applyDataTable() {
-        $('#resumeTable').DataTable({
+        var tableConfig = {
             "pagingType": "full_numbers",
             "lengthMenu": [
                 [10, 25, 50, -1],
@@ -228,18 +509,29 @@
                 });
             }
 
-        });
+        };
+
+        $('#resumeTable1').DataTable(tableConfig);
+        $('#resumeTable2').DataTable(tableConfig);
+        $('#resumeTable3').DataTable(tableConfig);
+        $('#resumeTable4').DataTable(tableConfig);
     }
 </script>
 
 <script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();
-    $("#resumeTable").hide();
+    $("#resumeTable1").hide();
+    $("#resumeTable2").hide();
+    $("#resumeTable3").hide();
+    $("#resumeTable4").hide();
     var loader;
     function ShowProgress() {
         $(".dataloading").hide();
-        $("#resumeTable").hide();
+        $("#resumeTable1").hide();
+        $("#resumeTable2").hide();
+        $("#resumeTable3").hide();
+        $("#resumeTable4").hide();
         loader = document.getElementsByClassName("loader")[0];
         loader.style.display = "block";
         var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
@@ -253,7 +545,10 @@
         setTimeout(function () {
             loader.style.display = "none";
             $(".dataloading").show();
-            $("#resumeTable").show();
+            $("#resumeTable1").show();
+            $("#resumeTable2").show();
+            $("#resumeTable3").show();
+            $("#resumeTable4").show();
         }, 2000);
     };
     //// script for loader ends here
