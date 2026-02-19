@@ -77,6 +77,73 @@
         margin-top: 30px !important;
     }
 
+    .screen-score-section:hover {
+        box-shadow: 0 6px 16px rgba(91, 155, 213, 0.2) !important;
+        border-color: #5B9BD5 !important;
+    }
+
+    .screen-overall-ring {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        background: conic-gradient(#fff 0deg calc(var(--p, 0) * 3.6deg), rgba(255,255,255,0.25) calc(var(--p, 0) * 3.6deg) 360deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .screen-overall-ring-inner {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #5B9BD5 0%, #4a8bc2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.02em;
+    }
+
+    /* Full-width breakout for report sections */
+    .report-full-width-sections {
+        width: 100vw;
+        max-width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding-left: calc(50vw - 50% + 15px);
+        padding-right: calc(50vw - 50% + 15px);
+        box-sizing: border-box;
+    }
+
+    .ai-qa-card {
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+    }
+    .ai-qa-item {
+        padding: 10px 14px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.15s ease;
+    }
+    .ai-qa-item:last-child { border-bottom: none; }
+    .ai-qa-item:hover { background: #fafbfc; }
+
+    .screen-overall-ring {
+        width: 72px;
+        height: 72px;
+    }
+    .screen-overall-ring-inner {
+        width: 58px;
+        height: 58px;
+        font-size: 18px;
+    }
+    .screen-overall-ring-inner-teal {
+        background: #249c90 !important;
+    }
+
 </style>
 
 @if (ViewBag.PageStatus == "Public")
@@ -907,15 +974,14 @@
                                                 }
                                             </div>
                                        
-                                          <div class="col-lg-3 col-md-5 clientnfo">
+                                          @* <div class="col-lg-3 col-md-5 clientnfo">
                                               @if (Model.TranscriptSummaryObject != null){
                                                 @if (Model.TranscriptSummaryObject.IntervieweeAnalysis?.Summary != null)
                                                 {
                                                     var summary = Model.TranscriptSummaryObject.IntervieweeAnalysis.Summary;
                                                     <div style="margin-top:30px;">
                                                        
-                                                        @* Strengths *@
-                   @* @if (summary.Strengths != null && summary.Strengths.Any())
+                  @if (summary.Strengths != null && summary.Strengths.Any())
                                                         {
                                                             <div style="margin-bottom: 20px; padding: 15px; background-color: #e8f5e9; border-radius: 8px; border-left: 4px solid #4caf50;">
                                                                 <h4 style="margin: 0 0 15px 0; color: #2e7d32; font-size: 18px;">
@@ -928,9 +994,9 @@
                                                                     }
                                                                 </ul>
                                                             </div>
-                                                        }*@
-                                                        @* Areas of Improvement *@
-                                                        @* @if (summary.AreasOfImprovement != null && summary.AreasOfImprovement.Any())
+                                                        }
+                                                       
+                                                         @if (summary.AreasOfImprovement != null && summary.AreasOfImprovement.Any())
                                                         {
                                                             <div style="margin-bottom: 20px; padding: 15px; background-color: #fff3e0; border-radius: 8px; border-left: 4px solid #ff9800;">
                                                                 <h4 style="margin: 0 0 15px 0; color: #e65100; font-size: 18px;">
@@ -943,113 +1009,78 @@
                                                                     }
                                                                 </ul>
                                                             </div>
-                                                        } *@
+                                                        }
                                                     </div>
                                                 }
                                                 }
-                                            </div>
-                                            <div class="col-lg-9 col-md-7">
+                                            </div> *@
+                                            <div class="col-lg-12 col-md-12">
                                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                    @* AI Interview Questions and Answers from Transcript Summary *@
+                                                    <div class="report-full-width-sections" style="margin-top: 16px;">
+                                                    @* AI Interview Questions & Answers – sleek compact *@
                                                     @if (Model.TranscriptSummaryObject != null)
                                                     {
-                                                        <h3 style="margin-top: 30px;">
-                                                            <img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">
-                                                            AI Interview Questions & Answers
-                                                        </h3>
-                                                        <div class="question ai-ques" style="font-size:16px;">
-                                                            <ul>
+                                                        <div class="ai-qa-card" style="margin-bottom: 16px;border-radius:0px;">
+                                                                <div style="background:#249c90; padding:5px 16px; display: flex; align-items: center; gap: 8px;">
+                                                                <img style="width: 22px; height: 22px; opacity: 0.95;" src="/img/question-asked.png" alt="" />
+                                                                <h2 style="margin: 0; color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;">AI Interview Questions &amp; Answers</h2>
+                                                            </div>
+                                                            <div class="question ai-ques">
                                                                 @if (Model.TranscriptSummaryObject.IntervieweeAnalysis != null)
                                                                 {
                                                                     int answerIndex = 0;
-                                                                    int commentIndex = 0;
-
+                                                                    int qIndex = 0;
                                                                     @foreach (var qaPair in Model.TranscriptSummaryObject.IntervieweeAnalysis.QaPairs)
                                                                     {
-                                                                        <li style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
-
-                                                                            @* Timestamp *@
-                                                                            @if (!string.IsNullOrEmpty(qaPair.Timestamp))
-                                                                            {
-                                                                                <span style="color: #9A9A9A; font-size: 14px; display: block; margin-bottom: 5px;">
-                                                                                   <svg fill="#ccc" width="13" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="color: #ccc;"><path d="M256 0a256 256 0 1 1 0 512 256 256 0 1 1 0-512zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"></path></svg> Time: @qaPair.Timestamp
-                                                                                </span>
-                                                                            }
-
-                                                                            @* Question *@
-                                                                            <div style="margin-bottom: 10px;background:#bdedf378;padding: 5px 9px;">
-                                                                                <strong style="color: #333; font-size:17px;font-weight:500">Question:</strong>
-                                                                                <p style="margin: 5px 0; color: #555; font-size:16px;font-weight:400">@qaPair.Question</p>
-                                                                            </div>
-
-                                                                            @*Answer*@
-                                                                            <div style="margin-bottom: 10px;box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.1);padding: 5px 9px;">
-                                                                                <strong style="color: #333; font-size: 17px;font-weight:500; float:left">Answer:</strong>
-
-                                                                                @if (qaPair.AnswerRating > 0)
+                                                                        qIndex++;
+                                                                        var answerId = Model.id * 10000 + answerIndex;
+                                                                        answerIndex++;
+                                                                        <div class="ai-qa-item">
+                                                                            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 8px; margin-bottom: 6px;">
+                                                                                <span style="font-size:15px; font-weight: 700; color: #5B9BD5; letter-spacing: 0.05em;">Q@(qIndex): </span>
+                                                                                @if (!string.IsNullOrEmpty(qaPair.Timestamp))
                                                                                 {
-                                                                                    <div style="margin-bottom: 5px;">
-                                                                                        <label style="font-size: 14px; color: #9A9A9A; float:right;">
-                                                                                            Rating: @qaPair.AnswerRating / 5
-                                                                                        </label>
-                                                                                    </div>
+                                                                                    <span style="color: #95a5a6; font-size: 10px;"><svg fill="currentColor" width="10" height="10" viewBox="0 0 512 512" style="vertical-align: -1px;"><path d="M256 0a256 256 0 1 1 0 512 256 256 0 1 1 0-512zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"></path></svg> @qaPair.Timestamp</span>
                                                                                 }
-
-                                                                                <div style="clear:both"></div>
-
-                                                                                @{
-                                                                                    int answerId = Model.id * 10000 + answerIndex;
-                                                                                    answerIndex++;
-                                                                                }
-
+                                                                            </div>
+                                                                            <div style="background: #f0f7fc; border-left: 3px solid #5B9BD5; border-radius: 4px; padding: 8px 12px; margin-bottom: 8px;">
+                                                                                <div style="font-size:13px; font-weight: 700; color: #3d7bb8; letter-spacing: 0.04em; margin-bottom: 2px;">Question</div>
+                                                                                <p style="margin: 0; color: #2c3e50; font-size: 13px; font-weight: 500; line-height: 1.4;">@qaPair.Question</p>
+                                                                            </div>
+                                                                            <div style="background: #fafbfc; border-radius: 4px; padding: 8px 12px; border: 1px solid #eee;">
+                                                                                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;">
+                                                                                    <span style="font-size: 13px; font-weight: 700; color: #64798a; letter-spacing: 0.04em;">Answer</span>
+                                                                                    @if (qaPair.AnswerRating > 0)
+                                                                                    {
+                                                                                        <span style="display: inline-flex; align-items: center; gap: 4px; background: rgba(36,156,144,0.1); border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; color: #249c90;"><span style="font-size: 10px; font-weight: 600; color: #64798a; text-transform: uppercase; letter-spacing: 0.03em;">Rating</span> @qaPair.AnswerRating/5</span>
+                                                                                    }
+                                                                                </div>
                                                                                 @if (!string.IsNullOrEmpty(qaPair.Answer) && qaPair.Answer.Length > 300)
                                                                                 {
-                                                                                    <div class="article" style="border-top: 1px #bfb5b5e6 dotted; padding-top: 10px;">
-                                                                                        <p style="margin: 5px 0; color: #555; font-size:16px;font-weight:400">
-                                                                                            @qaPair.Answer.Substring(0, 300)
-                                                                                        </p>
-
-                                                                                        <p class="moretext_@(answerId) moretext"
-                                                                                           style="margin: 5px 0; color: #555; font-size: 16px;font-weight:400; display: none;">
-                                                                                            @qaPair.Answer.Substring(150, qaPair.Answer.Length - 150)
-                                                                                        </p>
+                                                                                    <div class="article">
+                                                                                        <p style="margin: 0; color: #4a5568; font-size: 12px; line-height: 1.45;">@qaPair.Answer.Substring(0, 300)</p>
+                                                                                        <p class="moretext_@(answerId) moretext" style="margin: 4px 0 0 0; color: #4a5568; font-size: 12px; line-height: 1.45; display: none;">@qaPair.Answer.Substring(150, qaPair.Answer.Length - 150)</p>
                                                                                     </div>
-
-                                                                                    <a onclick="return moreless(@answerId, event);" class="moreless-btn" id="read_@(answerId)"
-                                                                                       href="javascript:void(0);" style="font-size: 14px; color: #0066cc!important;background:none!important;margin:0px;padding:0px; text-decoration: none;">
-                                                                                        Read more
-                                                                                    </a>
+                                                                                    <a onclick="return moreless(@answerId, event);" class="moreless-btn" id="read_@(answerId)" href="javascript:void(0);" style="font-size: 11px; font-weight: 600; color: #5B9BD5; margin-top: 4px; display: inline-block;">Read more</a>
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    <p style="margin: 5px 0; color: #555; font-size: 16px;font-weight:400; border-top: 1px #bfb5b5e6 dotted; padding-top: 10px;">
-                                                                                        @qaPair.Answer
-                                                                                    </p>
+                                                                                    <p style="margin: 0; color: #4a5568; font-size: 12px; line-height: 1.45;">@qaPair.Answer</p>
                                                                                 }
                                                                             </div>
-
-                                                                            
-
-                                                                        </li>
+                                                                        </div>
                                                                     }
                                                                 }
-                                                            </ul>
+                                                            </div>
                                                         </div>
-
-
                                                     }
 
-                                                    <!-- Start: Screen Section -  Report -->
-                                                <div class="screen-section" style="margin-top: 40px; background-color: #f5f5f5; padding: 0;">
-                                                    <!-- Blue Header Bar -->
-                                                    <div style="background-color: #5B9BD5; padding: 20px 30px; margin-bottom: 0;">
-                                                        <h2 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: bold; text-transform: uppercase;">
-                                                            Overall Screen Performance
-                                                        </h2>
+                                                    <!-- Overall Screen Performance – sleek compact -->
+                                                <div class="screen-section" style="margin-top: 0; background: #fff; padding: 0; border-radius:0px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);">
+                                                            <div style="background:#249c90; padding:5px 16px;">
+                                                        <h2 style="margin: 0; color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;">Overall Screen Performance</h2>
                                                     </div>
-
-                                                    <!-- Main Content Area -->
-                                                    <div style="background-color:#f5f5f5; padding:30px;">
+                                                    <div style="background: #f8fafc; padding: 14px 18px; border-radius: 0 0 8px 8px;">
 
                                                         @functions{
                                                             int ToPercent(int score, int max)
@@ -1061,93 +1092,92 @@
                                                         }
 
                                                         @{
-                                                            const int overallMax = 150;
+                                                            const int overallMax = 100;
                                                             const double testPercent = 0.50;
                                                             const double hrScreeningPercent = 0.30;
                                                             const double resumeScreeningPercent = 0.20;
 
-                                                            var testScoreValue = (int)Math.Round(overallMax * testPercent);
-                                                            var hrScreeningScore = (int)Math.Round(overallMax * hrScreeningPercent);
-                                                            var resumeScreeningScore = (int)Math.Round(overallMax * resumeScreeningPercent);
-                                                            var aiHrScore = overallMax - testScoreValue - hrScreeningScore - resumeScreeningScore;
+                                                            var resumePct = (int)Math.Round(resumeScreeningPercent * 100);
+                                                            var testPct = (int)Math.Round(testPercent * 100);
+                                                            var hrScreeningPct = (int)Math.Round(hrScreeningPercent * 100);
+                                                            var candidateInteractionPct = 100 - resumePct - testPct - hrScreeningPct;
+                                                            if (candidateInteractionPct < 0) { candidateInteractionPct = 0; }
 
-                                                            var overallScoreValue = overallMax;
+                                                            var overallPercentage = (resumePct + testPct + hrScreeningPct + candidateInteractionPct) / 4;
 
-                                                            var sections = new[]
+                                                            var scoreSections = new[]
                                                             {
-                                                                new { Name = "Overall Score", Score = overallScoreValue, Max = overallMax },
-                                                                new { Name = "Test Score", Score = testScoreValue, Max = overallMax },
-                                                                new { Name = "AI HR Evaluation Score", Score = aiHrScore, Max = overallMax },
-                                                                new { Name = "HR Screening Evaluation Score", Score = hrScreeningScore, Max = overallMax },
-                                                                new { Name = "Resume Screening Score", Score = resumeScreeningScore, Max = overallMax }
+                                                                new { Name = "Resume Screening Score", Percent = resumePct, Key = "Resume Screening Score", Description = "Fit of candidate profile, experience & qualifications against role requirements." },
+                                                                new { Name = "Test Score", Percent = testPct, Key = "Test Score", Description = "Performance on assessments and role-specific tests." },
+                                                                new { Name = "HR Screening Evaluation Score", Percent = hrScreeningPct, Key = "HR Screening Evaluation (Recruiter Score)", Description = "Recruiter assessment from screening call or interview." },
+                                                                new { Name = "Candidate Interaction Quality Score", Percent = candidateInteractionPct, Key = "Candidate Interaction Quality Score", Description = "Communication, clarity and engagement during interactions." }
                                                             };
                                                         }
 
-                                                        @foreach (var sec in sections)
-                                                        {
-                                                            var percent = ToPercent(sec.Score, sec.Max);
-
-                                                            <div class="screen-score-section"
-                                                                 onclick="openScreenReport('@sec.Name')"
-                                                                 style="cursor:pointer; background:#fff; padding:18px;
-            border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.1);
-            margin-bottom:20px;">
-
-                                                                <div style="font-size:13px; font-weight:600; text-transform:uppercase; margin-bottom:12px;">
-                                                                    @sec.Name
+                                                        <!-- Overall score hero – matches header color scheme, full details -->
+                                                        <div style="display: flex; align-items: center; gap: 16px 24px; margin-bottom: 14px; padding: 14px 16px; background: #249c90; border-radius: 0; box-shadow: none; border-bottom: 2px solid rgba(255,255,255,0.15);">
+                                                            <div class="screen-overall-ring screen-overall-ring-teal" style="--p: @overallPercentage;">
+                                                                <div class="screen-overall-ring-inner screen-overall-ring-inner-teal">@overallPercentage%</div>
+                                                            </div>
+                                                            <div style="display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0;">
+                                                                <div>
+                                                                    <div style="font-size: 14px; font-weight: 700; letter-spacing: 0.08em; color: rgba(255,255,255,0.95); text-transform: uppercase;">Overall Score</div>
+                                                                    <div style="font-size: 12px; color: rgba(255,255,255,0.9); margin-top: 2px;">Average of 4 evaluation dimensions</div>
                                                                 </div>
-
-                                                                <!-- ===== COMPACT ROW ===== -->
-                                                                <div style="display:flex; align-items:center; gap:20px;">
-
-                                                                    <!-- SCORE COLUMN -->
-                                                                    <div style="min-width:90px;">
-                                                                        <div style="font-size:36px; font-weight:bold; color:#7a3ea1; line-height:1;">
-                                                                            @sec.Score
-                                                                        </div>
-                                                                        <div style="font-size:11px; font-weight:600; color:#4a4a4a; text-transform:uppercase;">
-                                                                            Score
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <!-- SCORE % COLUMN -->
-                                                                    <div style="flex:1;">
-                                                                        <div style="font-size:11px; font-weight:600; text-transform:uppercase; margin-bottom:4px;">
-                                                                            Score %
-                                                                        </div>
-
-                                                                        <!-- Progress Bar -->
-                                                                        <div style="position:relative; height:28px; background:#e8e8e8; border-radius:2px; overflow:hidden;">
-
-                                                                            <!-- 10% grid -->
-                                                                            <div style="position:absolute; inset:0;background-image:repeating-linear-gradient(to right, transparent 0%,transparent 9.8%, rgba(200,200,200,0.4) 10%);"></div>
-
-                                                                            <!-- 20% grid -->
-                                                                            <div style="position:absolute; inset:0; background-image:repeating-linear-gradient( to right, transparent 0%,transparent 19.6%, rgba(150,150,150,0.6) 20%);"></div>
-
-                                                                            <!-- Fill -->
-                                                                            <div style="position:absolute; top:0; left:0; width:@percent%;height:100%; background:#9b59b6;display:flex; align-items:center;justify-content:flex-end; padding-right:6px;">
-                                                                                <span style="color:#fff; font-size:13px; font-weight:600;">
-                                                                                    @percent%
-                                                                                </span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <!-- Scale -->
-                                                                        <div style="display:flex; justify-content:space-between; font-size:10px; margin-top:3px; color:#4a4a4a;">
-                                                                            <span>0</span><span>20</span><span>40</span>
-                                                                            <span>60</span><span>80</span><span>100</span>
-                                                                        </div>
-                                                                    </div>
+                                                                <div style="height: 32px; width: 1px; background: rgba(255,255,255,0.3); flex-shrink: 0;"></div>
+                                                                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                                                    <span style="background: rgba(255,255,255,0.22); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; color: #fff; letter-spacing: 0.02em;">Resume Screening</span>
+                                                                    <span style="background: rgba(255,255,255,0.22); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; color: #fff; letter-spacing: 0.02em;">Test</span>
+                                                                    <span style="background: rgba(255,255,255,0.22); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; color: #fff; letter-spacing: 0.02em;">HR Screening</span>
+                                                                    <span style="background: rgba(255,255,255,0.22); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; color: #fff; letter-spacing: 0.02em;">Candidate Interaction</span>
                                                                 </div>
                                                             </div>
-                                                        }
+                                                        </div>
+
+                                                        <!-- Score cards – compact -->
+                                                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                                                            @foreach (var sec in scoreSections)
+                                                            {
+                                                                var percent = sec.Percent;
+                                                                var barColor = percent >= 70 ? "#27ae60" : percent >= 40 ? "#e67e22" : "#c0392b";
+                                                                var bandLabel = percent >= 70 ? "Strong" : percent >= 40 ? "Moderate" : "Needs focus";
+                                                                var bandBg = percent >= 70 ? "rgba(39,174,96,0.12)" : percent >= 40 ? "rgba(230,126,34,0.12)" : "rgba(192,57,43,0.1)";
+                                                                <div class="screen-score-section"
+                                                                     onclick="openScreenReport('@sec.Key')"
+                                                                     title="View full details"
+                                                                     style="cursor: pointer; background: #fff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.04); border-left: 3px solid @barColor; transition: all 0.2s ease; overflow: hidden;">
+
+                                                                    <div style="padding: 10px 12px;">
+                                                                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px;">
+                                                                            <h3 style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: #34495e; line-height: 1.25; flex: 1;">@sec.Name</h3>
+                                                                            <div style="flex-shrink: 0; text-align: right;">
+                                                                                <span style="display: block; font-size: 20px; font-weight: 800; color: #2c3e50; line-height: 1; letter-spacing: -0.02em;">@percent<span style="font-size: 10px; font-weight: 700; color: #7f8c8d;">%</span></span>
+                                                                                <span style="display: inline-block; font-size:9px; font-weight: 700; color: @barColor; background: @bandBg; padding: 2px 5px; border-radius: 3px; margin-top: 3px;">@bandLabel</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <p style="margin: 0 0 8px 0; font-size: 10px; line-height: 1.4; color: #5a6c7d;">@sec.Description</p>
+                                                                        <div style="margin-bottom: 6px;">
+                                                                            <div style="position: relative; height: 14px; background: #ecf0f1; border-radius: 4px; overflow: hidden;">
+                                                                                <div style="position: absolute; top: 0; left: 0; width: @(percent > 100 ? 100 : percent)%; height: 100%; background: @barColor; border-radius: 4px;"></div>
+                                                                                <span style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 9px; font-weight: 700; color: @(percent >= 45 ? "#fff" : "#2c3e50");">@percent%</span>
+                                                                            </div>
+                                                                            <div style="display: flex; justify-content: space-between; font-size: 8px; font-weight: 600; color: #95a5a6; margin-top: 4px;">
+                                                                                <span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div style="font-size: 9px; font-weight: 600; color: #5B9BD5;">View details →</div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
 
                                                     </div>
 
 
                                                 </div>
                                                     <!-- End: Screen Section - Report -->
+                                                    </div>
+                                                    <!-- End: report-full-width-sections -->
                                                 </div>
                                             </div>
                                         </div>
