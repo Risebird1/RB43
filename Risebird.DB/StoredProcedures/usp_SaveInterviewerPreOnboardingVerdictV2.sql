@@ -50,7 +50,6 @@ Begin
 			End
 			Else
 			Begin
-				-- Email exists with same specialization - allow update of other fields
 				SET @RecordExists = 1
 				
 				-- Update existing record (only updatable fields)
