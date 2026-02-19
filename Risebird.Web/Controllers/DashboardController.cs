@@ -135,11 +135,11 @@ namespace Risebird.Web.Controllers
                         //    PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
                         //    Customer = new VapiCustomer
                         //    {
-                        //        Number = "+918105232468",//8888571923
+                        //        Number = "+918888571923",//8888571923 8105232468
                         //        Name = "harshit",
                         //        Email = "harshitjajoo95@gmail.com"
                         //    },
-                        //    AssistantId = "23306fcb-31c5-41e9-8b9c-9587d9351281"
+                        //    AssistantId = "5a7c4ecb-fcba-4fa6-bcf1-48842d742144"
                         //};
 
                         //var response = await _vapiService.InitiateCallAsync(callRequest);
