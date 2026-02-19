@@ -142,7 +142,7 @@ namespace Risebird.Web.Controllers
                         //    AssistantId = "5a7c4ecb-fcba-4fa6-bcf1-48842d742144"
                         //};
 
-                        var response = await _vapiService.InitiateCallAsync(callRequest);
+                        //var response = await _vapiService.InitiateCallAsync(callRequest);
                         //await ParseresumeCopy2();
                         //var list = new List<string>();
                         //list.Add("harshitjajoo95@gmail.com");
