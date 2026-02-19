@@ -48,6 +48,7 @@ namespace Risebird.Web.Controllers
         private readonly IActivityTrackerService _activityTrackerService;
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly IOpenAIInterviewerAssistantHelper _ai;
+        private readonly ITranscriptOptimizationHelper _transcriptOptimizationHelper;
 
         public AIScreenerController(IAssistantServiceHelper assistantServiceHelper,
             IApplicationErrorLogger applicationErrorLogger, ICandidateService candidateService,
@@ -55,7 +56,8 @@ namespace Risebird.Web.Controllers
             IAzureStorageHelper azureStorageHelper, IInterviewerService interviewerService,
             IIRFRepository irfRepository, IMeetingService meetingService,
             IActivityTrackerService activityTrackerService, IPdfReaderHelper pdfReaderHelper,
-            IOpenAIInterviewerAssistantHelper ai)
+            IOpenAIInterviewerAssistantHelper ai,
+            ITranscriptOptimizationHelper transcriptOptimizationHelper)
         {
             _assistantServiceHelper = assistantServiceHelper;
             _applicationErrorLogger = applicationErrorLogger;
@@ -69,6 +71,7 @@ namespace Risebird.Web.Controllers
             _activityTrackerService = activityTrackerService;
             _pdfReaderHelper = pdfReaderHelper;
             _ai = ai;
+            _transcriptOptimizationHelper = transcriptOptimizationHelper;
         }
 
 
@@ -687,9 +690,9 @@ namespace Risebird.Web.Controllers
                     aiAnalysisModel, 
                     loggedInUser);
 
-                if (!saveOperationResult)
+                if (!saveOperationResult.Success)
                 {
-                    return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, errorMessage = "Failed to save verdict." });
+                    return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, errorMessage = saveOperationResult.ErrorMessage });
                 }
 
                 // 10. Generate response URL
@@ -1301,11 +1304,44 @@ namespace Risebird.Web.Controllers
                         }
 
 
+                        // OPTIMIZATION: Validate transcript link before attempting download
+                        if (string.IsNullOrEmpty(report.AudioTranscriptFileLink))
+                        {
+                            ViewBag.SaveOperationResult = "Transcript link is missing. Cannot perform analysis.";
+                            return View("SavedTransciptAnalysis", string.Empty);
+                        }
+
                         string transcriptText;
                         using (HttpClient client = new HttpClient())
                         {
                             transcriptText = await client.GetStringAsync(report.AudioTranscriptFileLink);
                         }
+
+                        // OPTIMIZATION: Pre-screen transcript for validity (saves API calls on corrupted/empty transcripts)
+                        if (!string.IsNullOrEmpty(transcriptText))
+                        {
+                            var (isValid, validationReason) = _transcriptOptimizationHelper.ValidateTranscriptForAnalysis(transcriptText);
+                            if (!isValid)
+                            {
+                                await _activityTrackerService.DebugLogger($"TranscriptAnalysis: Interview {interviewId} validation failed: {validationReason}", "transcriptOptimization", string.Empty);
+                                ViewBag.SaveOperationResult = $"Transcript validation failed: {validationReason}";
+                                return View("SavedTransciptAnalysis", string.Empty);
+                            }
+
+                            // OPTIMIZATION: Reduce token usage by removing filler words, timestamps, and excessive whitespace
+                            var estimatedTokensBefore = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
+                            transcriptText = _transcriptOptimizationHelper.OptimizeTranscriptText(transcriptText);
+                            var estimatedTokensAfter = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
+                            
+                            await _activityTrackerService.DebugLogger($"TranscriptAnalysis: Interview {interviewId} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter})", "transcriptOptimization", string.Empty);
+                        }
+                        else
+                        {
+                            await _activityTrackerService.DebugLogger($"TranscriptAnalysis: Interview {interviewId} transcript is empty or could not be downloaded", "transcriptOptimization", string.Empty);
+                            ViewBag.SaveOperationResult = "Transcript is empty or could not be downloaded.";
+                            return View("SavedTransciptAnalysis", string.Empty);
+                        }
+
                         var aiAnalysis = await _assistantServiceHelper.GenerateTranscriptAnalysis(transcriptText);
                         
                         bool saveOperationResult = true;

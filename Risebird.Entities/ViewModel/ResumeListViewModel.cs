@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
 using System.Collections.Generic;
@@ -11,9 +11,17 @@ namespace Risebird.Entities.ViewModel
         public ResumeListViewModel()
         {
             ResumeList = new List<CandidateResume>();
+            YetToBeProcessed = new List<CandidateResume>();
+            NotProcessed = new List<CandidateResume>();
+            Duplicates = new List<CandidateResume>();
+            Processed = new List<CandidateResume>();
         }
         public string IRFName { get; set; }
         public List<CandidateResume> ResumeList { get; set; }
+        public List<CandidateResume> YetToBeProcessed { get; set; }
+        public List<CandidateResume> NotProcessed { get; set; }
+        public List<CandidateResume> Duplicates { get; set; }
+        public List<CandidateResume> Processed { get; set; }
         public string Message { get; set; }
         public string Profile { get; set; }
         public int IRFId { get; set; }

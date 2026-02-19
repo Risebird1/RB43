@@ -123,7 +123,7 @@ namespace Risebird.MicroService
                                 if (!_validationHelper.ValidateEmailAddress(candidate.EmailId))
                                 {
                                     //mark it as cant be processed in the database
-                                    candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false });
+                                    candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false, ReasonBehindNotProcessed = $"Invalid email format: {candidate.EmailId}" });
                                     continue;
                                 }
 
@@ -131,7 +131,7 @@ namespace Risebird.MicroService
                             else
                             {
                                 //mark it as cant be processed in the database
-                                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = true });
+                                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = true, ReasonBehindNotProcessed = "Email address not found in resume" });
                                 continue;
                             }
                             if (documentData.data.phoneNumberDetails != null && documentData.data.phoneNumberDetails.Count() > 0)
@@ -152,14 +152,15 @@ namespace Risebird.MicroService
                         }
                         else//parsing was tried, but failed due to some reason, in that case, we wont parse the resume again
                         {
-                            candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true });
+                            candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true, ReasonBehindNotProcessed = "Resume parsing failed - unable to extract data from resume" });
 
                         }
                     }
                     catch (Exception ex)
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-
+                        log.LogInformation($" ResumeParserJob : Threw an exception for resume {resume.id}. Message :{ex.Message}, stacktrace : {ex.StackTrace}, source : {ex.Source}");
+                        candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true, ReasonBehindNotProcessed = $"Exception during processing: {ex.Message}" });
                         continue;
                     }
 

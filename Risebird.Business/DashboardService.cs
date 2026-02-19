@@ -1,4 +1,4 @@
-﻿using Risebird.Business.Interface;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -1273,6 +1273,19 @@ namespace Risebird.Business
             try
             {
                 return await _dashboardRespository.FetchMissingParticipantFakeReporting(emailid, profileName, actionstatus, filters);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<QCOwnerDashboardResponseVM> GetQCOwnerDashboardMetrics(DateTime? dateFrom, DateTime? dateTo)
+        {
+            try
+            {
+                return await _dashboardRespository.GetQCOwnerDashboardMetrics(dateFrom, dateTo);
             }
             catch (Exception ex)
             {

@@ -283,8 +283,8 @@ namespace Risebird.AzureTimerFunctions
                         catch (Exception ex)
                         {
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                            log.LogInformation($" ResumeParserJob : Threw an exception Message :{ex.Message}, stacktrace : {ex.StackTrace}, source : {ex.Source}, line 260");
-
+                            log.LogInformation($" ResumeParserJob : Threw an exception for resume {resume.id}. Message :{ex.Message}, stacktrace : {ex.StackTrace}, source : {ex.Source}, line 260");
+                            candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = false, IsProcessed = false, IsResumeParsingFailed = true, ReasonBehindNotProcessed = $"Exception during processing: {ex.Message}" });
                             continue;
                         }
                     }

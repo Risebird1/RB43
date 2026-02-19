@@ -24,6 +24,9 @@ CREATE PROCEDURE usp_SaveTypingSpeedAssessment
 	@PassingWPM DECIMAL(10,2) = 30.00,
 	@PassingAccuracyPercentage DECIMAL(5,2) = 97.00,
 	@IsPassed BIT = NULL,
+	@OpenAIAnalysisJson NVARCHAR(MAX) = NULL,
+	@OpenAIThreadId VARCHAR(100) = NULL,
+	@OpenAIRunId VARCHAR(100) = NULL,
 	@CreatedBy VARCHAR(150) = NULL
 AS
 BEGIN
@@ -39,43 +42,84 @@ BEGIN
 		END
 	END
 
-	INSERT INTO TypingSpeedAssessment (
-		SessionId,
-		QuestionId,
-		SampleText,
-		TypedText,
-		TimeStarted,
-		TimeCompleted,
-		TimeTakenInSeconds,
-		TotalCharacters,
-		CorrectCharacters,
-		AccuracyPercentage,
-		WordsPerMinute,
-		PassingWPM,
-		PassingAccuracyPercentage,
-		IsPassed,
-		CreatedAt,
-		CreatedBy
-	)
-	VALUES (
-		@SessionId,
-		@QuestionId,
-		@SampleText,
-		@TypedText,
-		@TimeStarted,
-		@TimeCompleted,
-		@TimeTakenInSeconds,
-		@TotalCharacters,
-		@CorrectCharacters,
-		@AccuracyPercentage,
-		@WordsPerMinute,
-		@PassingWPM,
-		@PassingAccuracyPercentage,
-		@IsPassed,
-		GETDATE(),
-		@CreatedBy
-	)
+	-- Check if a record already exists for this SessionId + QuestionId combination
+	DECLARE @ExistingId INT;
+	SELECT @ExistingId = id 
+	FROM TypingSpeedAssessment 
+	WHERE SessionId = @SessionId AND QuestionId = @QuestionId;
 
-	SELECT SCOPE_IDENTITY() AS NewId;
+	IF @ExistingId IS NOT NULL
+	BEGIN
+		-- Update existing record (prevents duplicates from resubmissions)
+		UPDATE TypingSpeedAssessment
+		SET 
+			SampleText = @SampleText,
+			TypedText = @TypedText,
+			TimeStarted = @TimeStarted,
+			TimeCompleted = @TimeCompleted,
+			TimeTakenInSeconds = @TimeTakenInSeconds,
+			TotalCharacters = @TotalCharacters,
+			CorrectCharacters = @CorrectCharacters,
+			AccuracyPercentage = @AccuracyPercentage,
+			WordsPerMinute = @WordsPerMinute,
+			PassingWPM = @PassingWPM,
+			PassingAccuracyPercentage = @PassingAccuracyPercentage,
+			IsPassed = @IsPassed,
+			OpenAIAnalysisJson = @OpenAIAnalysisJson,
+			OpenAIThreadId = @OpenAIThreadId,
+			OpenAIRunId = @OpenAIRunId,
+			CreatedBy = @CreatedBy
+		WHERE id = @ExistingId;
+
+		SELECT @ExistingId AS NewId;
+	END
+	ELSE
+	BEGIN
+		-- Insert new record
+		INSERT INTO TypingSpeedAssessment (
+			SessionId,
+			QuestionId,
+			SampleText,
+			TypedText,
+			TimeStarted,
+			TimeCompleted,
+			TimeTakenInSeconds,
+			TotalCharacters,
+			CorrectCharacters,
+			AccuracyPercentage,
+			WordsPerMinute,
+			PassingWPM,
+			PassingAccuracyPercentage,
+			IsPassed,
+			OpenAIAnalysisJson,
+			OpenAIThreadId,
+			OpenAIRunId,
+			CreatedAt,
+			CreatedBy
+		)
+		VALUES (
+			@SessionId,
+			@QuestionId,
+			@SampleText,
+			@TypedText,
+			@TimeStarted,
+			@TimeCompleted,
+			@TimeTakenInSeconds,
+			@TotalCharacters,
+			@CorrectCharacters,
+			@AccuracyPercentage,
+			@WordsPerMinute,
+			@PassingWPM,
+			@PassingAccuracyPercentage,
+			@IsPassed,
+			@OpenAIAnalysisJson,
+			@OpenAIThreadId,
+			@OpenAIRunId,
+			GETDATE(),
+			@CreatedBy
+		);
+
+		SELECT SCOPE_IDENTITY() AS NewId;
+	END
 END;
 GO

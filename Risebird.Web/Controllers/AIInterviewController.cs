@@ -50,6 +50,7 @@ namespace Risebird.Web.Controllers
         private readonly IAWSRekognitionService _aWSRekognitionService;
         private readonly ICandidateService _candidateService;
         private readonly IIRFRepository _irfRepository;
+        private readonly IOpenAIInterviewerAssistantHelper _openAIAssistantHelper;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
@@ -57,7 +58,7 @@ namespace Risebird.Web.Controllers
             ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
             ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper,
             IIRFService iRFService, IAWSRekognitionService aWSRekognitionService, ICandidateService candidateService,
-            IIRFRepository irfRepository)
+            IIRFRepository irfRepository, IOpenAIInterviewerAssistantHelper openAIAssistantHelper)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -73,6 +74,7 @@ namespace Risebird.Web.Controllers
             _aWSRekognitionService = aWSRekognitionService;
             _candidateService = candidateService;
             _irfRepository = irfRepository;
+            _openAIAssistantHelper = openAIAssistantHelper;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -949,28 +951,98 @@ namespace Risebird.Web.Controllers
                         {
                             try
                             {
-                                // Calculate pass/fail based on criteria: 30 WPM and 97% accuracy
-                                bool isPassed = model.TypingWPM >= 30.00M && model.TypingAccuracy >= 97.00M;
-                                
-                                var typingAssessment = new TypingSpeedAssessment
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                    new Exception($"Starting OpenAI typing assessment analysis for session {model.SessionId}"));
+
+                                // Prepare input data for OpenAI assistant (assistant is pre-configured with instructions)
+                                var inputs = new TypingInputs
                                 {
-                                    SessionId = model.SessionId.ToString(),
-                                    QuestionId = model.CurrentQuestionId,
-                                    SampleText = model.TypingSampleText,
-                                    TypedText = model.TypedText,
-                                    TimeStarted = DateTime.Parse(model.TypingStartTime),
-                                    TimeCompleted = DateTime.Parse(model.TypingEndTime),
-                                    TimeTakenInSeconds = model.TypingTimeTaken,
-                                    TotalCharacters = model.TypingTotalChars,
-                                    CorrectCharacters = model.TypingCorrectChars,
-                                    AccuracyPercentage = model.TypingAccuracy,
-                                    WordsPerMinute = model.TypingWPM,
-                                    PassingWPM = 30.00M,
-                                    PassingAccuracyPercentage = 97.00M,
-                                    IsPassed = isPassed,
-                                    CreatedBy = model.candidateName
+                                    reference_paragraph = model.TypingSampleText,
+                                    user_typed_text = model.TypedText,
+                                    words_per_minute = 30.00M, // Passing criteria
+                                    total_minutes = 2.00M // 2 minute duration
                                 };
-                                await _aiinterviewerService.SaveTypingSpeedAssessment(typingAssessment);
+
+                                // Serialize inputs to JSON
+                                string inputsJson = JsonConvert.SerializeObject(inputs, Formatting.Indented);
+                                
+                                // Send only the inputs to the assistant
+                                string assistantMessage = inputsJson;
+
+                                // Create OpenAI thread and run
+                                string threadId = await _openAIAssistantHelper.CreateThreadAsync();
+                                await _openAIAssistantHelper.AddMessageAsync(threadId, "user", assistantMessage);
+                                string runId = await _openAIAssistantHelper.CreateRunAsync(threadId, OpenAIInterviewerAssistants.TypingAssessmentAssistant);
+                                
+                                // Wait for completion
+                                string runStatus = await _openAIAssistantHelper.WaitForRunAsync(threadId, runId);
+                                
+                                if (runStatus == "completed")
+                                {
+                                    // Get response
+                                    var messages = await _openAIAssistantHelper.GetMessagesAsync(threadId);
+                                    string openAIResponse = messages.FirstOrDefault() ?? "{}";
+                                    
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                        new Exception($"OpenAI typing assessment response received. Length: {openAIResponse.Length}"));
+
+                                    // Parse OpenAI response
+                                    TypingAssessmentOpenAIResponse analysisResult = null;
+                                    try
+                                    {
+                                        analysisResult = JsonConvert.DeserializeObject<TypingAssessmentOpenAIResponse>(openAIResponse);
+                                    }
+                                    catch (JsonException jsonEx)
+                                    {
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                            new Exception($"Failed to parse OpenAI response as JSON: {jsonEx.Message}. Raw response: {openAIResponse}"));
+                                    }
+
+                                    // Determine pass/fail based on OpenAI analysis
+                                    bool isPassed = false;
+                                    decimal wordAccuracy = 0;
+                                    decimal charAccuracy = 0;
+                                    
+                                    if (analysisResult != null && analysisResult.scores != null)
+                                    {
+                                        wordAccuracy = analysisResult.scores.word_level_accuracy_percent;
+                                        charAccuracy = analysisResult.scores.character_level_accuracy_percent;
+                                        // Pass if word accuracy >= 97%
+                                        isPassed = wordAccuracy >= 97.00M;
+                                    }
+
+                                    var typingAssessment = new TypingSpeedAssessment
+                                    {
+                                        SessionId = model.SessionId.ToString(),
+                                        QuestionId = model.CurrentQuestionId,
+                                        SampleText = model.TypingSampleText,
+                                        TypedText = model.TypedText,
+                                        TimeStarted = DateTime.Parse(model.TypingStartTime),
+                                        TimeCompleted = DateTime.Parse(model.TypingEndTime),
+                                        TimeTakenInSeconds = model.TypingTimeTaken,
+                                        TotalCharacters = analysisResult?.meta?.user_total_words_typed ?? 0,
+                                        CorrectCharacters = analysisResult?.counts?.correct_words ?? 0,
+                                        AccuracyPercentage = wordAccuracy,
+                                        WordsPerMinute = 30.00M, // Based on requirement
+                                        PassingWPM = 30.00M,
+                                        PassingAccuracyPercentage = 97.00M,
+                                        IsPassed = isPassed,
+                                        OpenAIAnalysisJson = openAIResponse,
+                                        OpenAIThreadId = threadId,
+                                        OpenAIRunId = runId,
+                                        CreatedBy = model.candidateName
+                                    };
+                                    
+                                    await _aiinterviewerService.SaveTypingSpeedAssessment(typingAssessment);
+                                    
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                        new Exception($"Typing assessment saved successfully. Passed: {isPassed}, Accuracy: {wordAccuracy}%"));
+                                }
+                                else
+                                {
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                        new Exception($"OpenAI typing assessment run status: {runStatus}. ThreadId: {threadId}, RunId: {runId}"));
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -1536,6 +1608,10 @@ namespace Risebird.Web.Controllers
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = false;
+                List<TypingSpeedAssessment> typingAssessments;
+                try { typingAssessments = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessments = new List<TypingSpeedAssessment>(); }
+                ViewBag.TypingSpeedAssessments = typingAssessments;
+                reportModel.TypingSpeedAssessments = typingAssessments;
                 reportModel.CandidateEmail = meetingDetails.candidateEmail;
                 reportModel.CandidateName = meetingDetails.candidateName;
                 reportModel.InterviewDate = meetingDetails.interviewDate;
@@ -1666,6 +1742,10 @@ namespace Risebird.Web.Controllers
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault()); //JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = true;
+                List<TypingSpeedAssessment> typingAssessmentsAdaptive;
+                try { typingAssessmentsAdaptive = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessmentsAdaptive = new List<TypingSpeedAssessment>(); }
+                ViewBag.TypingSpeedAssessments = typingAssessmentsAdaptive;
+                reportModel.TypingSpeedAssessments = typingAssessmentsAdaptive;
                 reportModel.CandidateEmail = meetingDetails.candidateEmail;
                 reportModel.CandidateName = meetingDetails.candidateName;
                 reportModel.resumeLink = meetingDetails.resumeLink;
