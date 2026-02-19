@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -155,15 +156,37 @@ namespace Risebird.Web.Controllers
         /// </summary>
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Webhook([FromBody] object rawPayload)
+        public async Task<IActionResult> Webhook()
         {
             VapiWebhookMessage message = null;
             string rawJson = null;
             
             try
             {
-                // Log raw payload for debugging
-                rawJson = JsonConvert.SerializeObject(rawPayload);
+                // Enable buffering so we can read the body multiple times
+                Request.EnableBuffering();
+                
+                // Read raw body first for debugging
+                using (var reader = new System.IO.StreamReader(
+                    Request.Body, 
+                    System.Text.Encoding.UTF8,
+                    detectEncodingFromByteOrderMarks: false,
+                    bufferSize: 1024,
+                    leaveOpen: true))
+                {
+                    rawJson = await reader.ReadToEndAsync();
+                    
+                    // Reset the stream position so it can be read again
+                    Request.Body.Position = 0;
+                }
+                
+                // Log that we received the webhook
+                if (string.IsNullOrWhiteSpace(rawJson))
+                {
+                    await LogWebhookDebug("EMPTY BODY", "error", "Request body is empty", null);
+                    return BadRequest("Empty request body");
+                }
+                
                 await LogWebhookDebug(rawJson, "received", null, null);
                 
                 // Try to deserialize
@@ -171,7 +194,9 @@ namespace Risebird.Web.Controllers
                 
                 if (message?.Message == null)
                 {
-                    await LogWebhookDebug(rawJson, "error", "Invalid webhook message - message is null", null);
+                    await LogWebhookDebug(rawJson, "error", 
+                        $"Invalid webhook message - message is null. Deserialized type: {message?.GetType().Name ?? "null"}", 
+                        null);
                     return BadRequest("Invalid webhook message");
                 }
 
