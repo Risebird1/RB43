@@ -1,3 +1,8 @@
+
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'VapiCallLogs')
+BEGIN 
+
 -- Table to store Vapi call logs and interview booking details
 CREATE TABLE [dbo].[VapiCallLogs]
 (
@@ -33,6 +38,8 @@ CREATE TABLE [dbo].[VapiCallLogs]
     INDEX [IX_VapiCallLogs_RecipientId] NONCLUSTERED ([RecipientId]),
     INDEX [IX_VapiCallLogs_CreatedAt] NONCLUSTERED ([CreatedAt] DESC)
 );
+
+End
 GO
 
 -- Add description
