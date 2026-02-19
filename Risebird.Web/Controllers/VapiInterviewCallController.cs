@@ -254,6 +254,10 @@ namespace Risebird.Web.Controllers
                         var args = toolCall.Function.Arguments;
                         var callId = message.Message.CallId;
 
+                        // Log that we received the tool call
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                            new Exception($"Received submitInterviewSlot tool call - CallId: {callId}, Args: {JsonConvert.SerializeObject(args)}"));
+
                         // Extract interview slot data
                         var candidateName = args.ContainsKey("candidateName") ? args["candidateName"]?.ToString() : null;
                         var interviewDate = args.ContainsKey("interviewDate") ? args["interviewDate"]?.ToString() : null;
@@ -283,31 +287,68 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-                        if (parsedDateTime.HasValue && candidateConfirmed)
+                        if (!parsedDateTime.HasValue)
                         {
-                            // Update the call log with booking information
-                            var callLog = await _vapiCallRepository.GetCallLogByVapiCallIdAsync(callId);
-                            if (callLog != null)
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                new Exception($"Failed to parse date/time - Date: {interviewDate}, Time: {interviewTime}"));
+                            return;
+                        }
+
+                        if (!candidateConfirmed)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                new Exception($"Candidate not confirmed - CallId: {callId}"));
+                            return;
+                        }
+
+                        // Try to find existing call log
+                        var callLog = await _vapiCallRepository.GetCallLogByVapiCallIdAsync(callId);
+                        
+                        if (callLog == null)
+                        {
+                            // Call log doesn't exist - create it
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                new Exception($"Call log not found for CallId: {callId}, creating new entry"));
+                            
+                            callLog = new VapiCallLog
                             {
-                                callLog.InterviewBooked = true;
-                                callLog.BookedInterviewDateTime = parsedDateTime.Value;
-                                callLog.BookingConfirmationDetails = JsonConvert.SerializeObject(new
-                                {
-                                    candidateName = candidateName,
-                                    interviewDate = interviewDate,
-                                    interviewTime = interviewTime,
-                                    timezone = timezone,
-                                    confirmedAt = DateTime.UtcNow,
-                                    toolCallId = toolCall.Id
-                                });
-                                callLog.UpdatedAt = DateTime.UtcNow;
+                                VapiCallId = callId,
+                                RecipientPhone = message.Message.Call?.Customer?.Number ?? "unknown",
+                                RecipientName = candidateName,
+                                RecipientEmail = message.Message.Call?.Customer?.Email,
+                                CallStatus = message.Message.Call?.Status ?? "ended",
+                                AssistantId = message.Message.Call?.AssistantId,
+                                CreatedAt = DateTime.UtcNow,
+                                CreatedBy = "Webhook"
+                            };
+                        }
 
-                                await _vapiCallRepository.UpdateCallLogAsync(callLog);
+                        // Update with booking information
+                        callLog.InterviewBooked = true;
+                        callLog.BookedInterviewDateTime = parsedDateTime.Value;
+                        callLog.BookingConfirmationDetails = JsonConvert.SerializeObject(new
+                        {
+                            candidateName = candidateName,
+                            interviewDate = interviewDate,
+                            interviewTime = interviewTime,
+                            timezone = timezone,
+                            confirmedAt = DateTime.UtcNow,
+                            toolCallId = toolCall.Id
+                        });
+                        callLog.UpdatedAt = DateTime.UtcNow;
 
-                                // Log success
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
-                                    new Exception($"Interview slot booked via Vapi - CallId: {callId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}"));
-                            }
+                        // Save or update
+                        if (callLog.Id == 0)
+                        {
+                            await _vapiCallRepository.SaveCallLogAsync(callLog);
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                                new Exception($"NEW call log created and interview booked - CallId: {callId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}"));
+                        }
+                        else
+                        {
+                            await _vapiCallRepository.UpdateCallLogAsync(callLog);
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                                new Exception($"Interview slot booked via Vapi - CallId: {callId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}"));
                         }
                     }
                 }
