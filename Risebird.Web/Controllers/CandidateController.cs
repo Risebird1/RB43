@@ -1,4 +1,4 @@
-﻿using Aspose.Html;
+using Aspose.Html;
 using iTextSharp.text.pdf.parser.clipper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -3513,6 +3513,41 @@ namespace Risebird.Web.Controllers
                         var model = new ResumeListViewModel();
                         model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId))?.ToList();
                         model.ResumeList = model.ResumeList.OrderBy(x => x.IsProcessed).ToList();
+                        
+                        // Categorize resumes into tabs
+                        foreach (var resume in model.ResumeList)
+                        {
+                            if (resume.IsProcessed == true)
+                            {
+                                // Tab 4: Processed
+                                model.Processed.Add(resume);
+                            }
+                            else if (resume.IsProcessed == false || resume.IsProcessed == null)
+                            {
+                                bool hasAttemptedProcessing = resume.IsResumeParsed != null || 
+                                                             resume.IsResumeParsingFailed != null || 
+                                                             !string.IsNullOrEmpty(resume.ReasonBehindNotProcessed);
+                                
+                                if (!hasAttemptedProcessing)
+                                {
+                                    // Tab 1: Yet to be processed
+                                    model.YetToBeProcessed.Add(resume);
+                                }
+                                else if (hasAttemptedProcessing && 
+                                        !string.IsNullOrEmpty(resume.ReasonBehindNotProcessed) && 
+                                        resume.ReasonBehindNotProcessed.ToLower().Contains("duplicate"))
+                                {
+                                    // Tab 3: Duplicates
+                                    model.Duplicates.Add(resume);
+                                }
+                                else if (hasAttemptedProcessing)
+                                {
+                                    // Tab 2: Not Processed
+                                    model.NotProcessed.Add(resume);
+                                }
+                            }
+                        }
+                        
                         model.IRFName = irfName;
                         model.IRFId = irfId;
                         model.Profile = profileName;
@@ -3592,13 +3627,13 @@ namespace Risebird.Web.Controllers
             try
             {
                 var model = await _candidateService.GetCandidatesResumes(irfId);
-                Sheet.Cells["A1:F1"].Style.Font.Bold = true;
-                Sheet.Cells["A1:F1"].Style.Font.Size = 12;
-                Sheet.Cells["A1:F1"].Style.WrapText = true;
+                Sheet.Cells["A1:G1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:G1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:G1"].Style.WrapText = true;
 
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
-                int startColumn = 1; int endColumn = 6;
+                int startColumn = 1; int endColumn = 7;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 40;
@@ -3607,6 +3642,9 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "Skills Channel";
                 Sheet.Cells[1, 3].Value = "File Name";
                 Sheet.Cells[1, 4].Value = "Resume URL";
+                Sheet.Cells[1, 5].Value = "Processed";
+                Sheet.Cells[1, 6].Value = "Resume Parsed";
+                Sheet.Cells[1, 7].Value = "Reason Behind Not Processed";
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
@@ -3647,6 +3685,11 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 4].Value = "No Resume";
                         }
+                        
+                        Sheet.Cells[i, 5].Value = item.IsProcessed == true ? "Yes" : "No";
+                        Sheet.Cells[i, 6].Value = item.IsResumeParsed == null ? "" : (item.IsResumeParsed == true ? "Yes" : "No");
+                        Sheet.Cells[i, 7].Value = item.ReasonBehindNotProcessed ?? "";
+                        
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -4843,6 +4886,41 @@ namespace Risebird.Web.Controllers
                 var model = new ResumeListViewModel();
                 model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId, emailid))?.ToList();
                 model.ResumeList = model.ResumeList?.OrderBy(x => x.IsProcessed)?.ToList();
+                
+                // Categorize resumes into tabs
+                foreach (var resume in model.ResumeList)
+                {
+                    if (resume.IsProcessed == true)
+                    {
+                        // Tab 4: Processed
+                        model.Processed.Add(resume);
+                    }
+                    else if (resume.IsProcessed == false || resume.IsProcessed == null)
+                    {
+                        bool hasAttemptedProcessing = resume.IsResumeParsed != null || 
+                                                     resume.IsResumeParsingFailed != null || 
+                                                     !string.IsNullOrEmpty(resume.ReasonBehindNotProcessed);
+                        
+                        if (!hasAttemptedProcessing)
+                        {
+                            // Tab 1: Yet to be processed
+                            model.YetToBeProcessed.Add(resume);
+                        }
+                        else if (hasAttemptedProcessing && 
+                                !string.IsNullOrEmpty(resume.ReasonBehindNotProcessed) && 
+                                resume.ReasonBehindNotProcessed.ToLower().Contains("duplicate"))
+                        {
+                            // Tab 3: Duplicates
+                            model.Duplicates.Add(resume);
+                        }
+                        else if (hasAttemptedProcessing)
+                        {
+                            // Tab 2: Not Processed
+                            model.NotProcessed.Add(resume);
+                        }
+                    }
+                }
+                
                 model.IRFName = irfName;
                 model.IRFId = irfId;
                 model.Profile = "Client";
