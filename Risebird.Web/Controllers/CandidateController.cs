@@ -3617,6 +3617,17 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        private string GetUserFriendlyReason(string reason)
+        {
+            if (string.IsNullOrEmpty(reason))
+                return "";
+                
+            if (reason.StartsWith("Exception during processing:", StringComparison.OrdinalIgnoreCase))
+                return "An error occurred while processing this resume. Please contact support.";
+                
+            return reason;
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<FileContentResult> CandidateResumesExporttoExcel(int irfId, string irfName)
@@ -3688,7 +3699,7 @@ namespace Risebird.Web.Controllers
                         
                         Sheet.Cells[i, 5].Value = item.IsProcessed == true ? "Yes" : "No";
                         Sheet.Cells[i, 6].Value = item.IsResumeParsed == null ? "" : (item.IsResumeParsed == true ? "Yes" : "No");
-                        Sheet.Cells[i, 7].Value = item.ReasonBehindNotProcessed ?? "";
+                        Sheet.Cells[i, 7].Value = GetUserFriendlyReason(item.ReasonBehindNotProcessed);
                         
                         i++;
                     }
