@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -5192,7 +5192,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FLNInterviewersAcknowledgementStatus()
+        public async Task<IActionResult> FLNInterviewersAcknowledgementStatus(DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
@@ -5204,7 +5204,15 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "HR")//|| profileName== "InterviewerManagement"
                     {
-                        var model = await _interviewerService.GetFLNAcknowledgementStatus(emailId);
+                        if (!startDate.HasValue && !endDate.HasValue)
+                        {
+                            endDate = DateTime.Now.Date;
+                            startDate = endDate.Value.AddDays(-7);
+                        }
+                        
+                        var model = await _interviewerService.GetFLNAcknowledgementStatus(emailId, startDate, endDate);
+                        ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
+                        ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
                         return View(model);
                     }
                     else
@@ -5221,6 +5229,108 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<FileContentResult> ExportFLNAcknowledgementStatusToExcel(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("FLN Acknowledgement Status");
+            string fileName = "FLN_Acknowledgement_Status_" + DateTime.Now.ToString("ddMMyyyy_HHmmss") + ".xlsx";
+            
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "HR")
+                    {
+                        if (!startDate.HasValue && !endDate.HasValue)
+                        {
+                            endDate = DateTime.Now.Date;
+                            startDate = endDate.Value.AddDays(-7);
+                        }
+                        
+                        var modelList = await _interviewerService.GetFLNAcknowledgementStatus(emailId, startDate, endDate);
+                        
+                        if (modelList != null && modelList.Count() > 0)
+                        {
+                            Sheet.Cells["A1:L1"].Style.Font.Bold = true;
+                            Sheet.Cells["A1:L1"].Style.Font.Size = 12;
+                            Sheet.Cells["A1:L1"].Style.WrapText = true;
+                            
+                            for (int a = 1; a <= 12; a++)
+                            {
+                                Sheet.Column(a).Width = 25;
+                            }
+                            
+                            Sheet.Cells[1, 1].Value = "Email Id";
+                            Sheet.Cells[1, 2].Value = "Primary Specialization";
+                            Sheet.Cells[1, 3].Value = "AI Verdict";
+                            Sheet.Cells[1, 4].Value = "FLN";
+                            Sheet.Cells[1, 5].Value = "Added On";
+                            Sheet.Cells[1, 6].Value = "Company Name";
+                            Sheet.Cells[1, 7].Value = "Resume Link";
+                            Sheet.Cells[1, 8].Value = "Mobile Number";
+                            Sheet.Cells[1, 9].Value = "Name";
+                            Sheet.Cells[1, 10].Value = "Acknowledgement Status";
+                            Sheet.Cells[1, 11].Value = "Target Skill Channel";
+                            Sheet.Cells[1, 12].Value = "Assessment Group";
+                            
+                            int i = 2;
+                            foreach (var item in modelList)
+                            {
+                                Sheet.Cells[i, 1].Value = item.EmailId;
+                                Sheet.Cells[i, 2].Value = item.PrimarySpecialization;
+                                Sheet.Cells[i, 3].Value = item.AIVerdict;
+                                Sheet.Cells[i, 4].Value = item.FLN;
+                                Sheet.Cells[i, 5].Value = item.AddedOn.ToString("yyyy-MM-dd HH:mm:ss");
+                                Sheet.Cells[i, 6].Value = item.CompanyName;
+                                Sheet.Cells[i, 7].Value = item.ResumeLink;
+                                Sheet.Cells[i, 8].Value = item.MobileNumber;
+                                Sheet.Cells[i, 9].Value = item.Name;
+                                Sheet.Cells[i, 10].Value = item.AcknowledgementStatus;
+                                Sheet.Cells[i, 11].Value = item.TargetSkillChannel;
+                                Sheet.Cells[i, 12].Value = item.AssessmentGroup;
+                                i++;
+                            }
+                            
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                        else
+                        {
+                            ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                            Rng.Value = "No data available in table !!!";
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                    }
+                    else
+                    {
+                        ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                        Rng.Value = "Access Denied !!!";
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "Session Expired !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "An error occurred while exporting data !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -2219,7 +2219,8 @@ namespace Risebird.Business
                         }
                         else
                         {
-                            candidateResumeList.Add(new CandidateResume { id = Convert.ToInt32(row.ItemArray[2].ToString()), IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false });
+                            string errorMessage = row.ItemArray[1]?.ToString() ?? "Unknown error during candidate creation";
+                            candidateResumeList.Add(new CandidateResume { id = Convert.ToInt32(row.ItemArray[2].ToString()), IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, ReasonBehindNotProcessed = errorMessage });
                         }
                     }
 
