@@ -130,19 +130,19 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
 
-                        //var callRequest = new VapiCallRequest
-                        //{
-                        //    PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
-                        //    Customer = new VapiCustomer
-                        //    {
-                        //        Number = "+918888571923",//8888571923 8105232468
-                        //        Name = "harshit",
-                        //        Email = "harshitjajoo95@gmail.com"
-                        //    },
-                        //    AssistantId = "5a7c4ecb-fcba-4fa6-bcf1-48842d742144"
-                        //};
+                        var callRequest = new VapiCallRequest
+                        {
+                            PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
+                            Customer = new VapiCustomer
+                            {
+                                Number = "+918888571923",//8888571923 8105232468
+                                Name = "harshit",
+                                Email = "harshitjajoo95@gmail.com"
+                            },
+                            AssistantId = "5a7c4ecb-fcba-4fa6-bcf1-48842d742144"
+                        };
 
-                        //var response = await _vapiService.InitiateCallAsync(callRequest);
+                        var response = await _vapiService.InitiateCallAsync(callRequest);
                         //await ParseresumeCopy2();
                         //var list = new List<string>();
                         //list.Add("harshitjajoo95@gmail.com");
