@@ -118,10 +118,10 @@ namespace Risebird.Web.Controllers
                 {
                     VapiCallId = callResponse.Id,
                     InterviewId = interviewId,
-                    CandidateId = candidateId,
-                    CandidatePhone = candidatePhone,
-                    CandidateName = candidateName,
-                    CandidateEmail = candidateEmail,
+                    RecipientId = candidateId,
+                    RecipientPhone = candidatePhone,
+                    RecipientName = candidateName,
+                    RecipientEmail = candidateEmail,
                     CallStatus = callResponse.Status,
                     ScheduledDateTime = preferredDateTime,
                     CallStartedAt = callResponse.StartedAt,
@@ -177,6 +177,8 @@ namespace Risebird.Web.Controllers
 
                     case "tool-calls":
                         var result = await _vapiService.ProcessToolCallAsync(message);
+                        // Also handle interview slot submissions
+                        await HandleInterviewSlotSubmission(message);
                         return Json(result);
 
                     case "end-of-call-report":
@@ -233,6 +235,87 @@ namespace Risebird.Web.Controllers
             // Log transcript for monitoring/debugging
             await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
                 new Exception($"Vapi Transcript - CallId: {callId}, Role: {transcript.Role}, Text: {transcript.Transcript}"));
+        }
+
+        /// <summary>
+        /// Handles interview slot submission from tool calls
+        /// </summary>
+        private async Task HandleInterviewSlotSubmission(VapiWebhookMessage message)
+        {
+            try
+            {
+                if (message?.Message?.ToolCalls?.ToolCalls == null)
+                    return;
+
+                foreach (var toolCall in message.Message.ToolCalls.ToolCalls)
+                {
+                    if (toolCall.Function?.Name == "submitInterviewSlot")
+                    {
+                        var args = toolCall.Function.Arguments;
+                        var callId = message.Message.CallId;
+
+                        // Extract interview slot data
+                        var candidateName = args.ContainsKey("candidateName") ? args["candidateName"]?.ToString() : null;
+                        var interviewDate = args.ContainsKey("interviewDate") ? args["interviewDate"]?.ToString() : null;
+                        var interviewTime = args.ContainsKey("interviewTime") ? args["interviewTime"]?.ToString() : null;
+                        var timezone = args.ContainsKey("timezone") ? args["timezone"]?.ToString() : "IST";
+                        var candidateConfirmed = args.ContainsKey("candidateConfirmed") && Convert.ToBoolean(args["candidateConfirmed"]);
+
+                        // Parse the interview date/time
+                        var dateTimeString = $"{interviewDate} {interviewTime}";
+                        DateTime? parsedDateTime = null;
+
+                        string[] formats = { 
+                            "yyyy-MM-dd hh:mm tt",
+                            "yyyy-MM-dd h:mm tt",
+                            "yyyy-MM-dd HH:mm",
+                            "yyyy-MM-dd H:mm"
+                        };
+
+                        foreach (var format in formats)
+                        {
+                            if (DateTime.TryParseExact(dateTimeString, format, 
+                                System.Globalization.CultureInfo.InvariantCulture, 
+                                System.Globalization.DateTimeStyles.None, out DateTime result))
+                            {
+                                parsedDateTime = result;
+                                break;
+                            }
+                        }
+
+                        if (parsedDateTime.HasValue && candidateConfirmed)
+                        {
+                            // Update the call log with booking information
+                            var callLog = await _vapiCallRepository.GetCallLogByVapiCallIdAsync(callId);
+                            if (callLog != null)
+                            {
+                                callLog.InterviewBooked = true;
+                                callLog.BookedInterviewDateTime = parsedDateTime.Value;
+                                callLog.BookingConfirmationDetails = JsonConvert.SerializeObject(new
+                                {
+                                    candidateName = candidateName,
+                                    interviewDate = interviewDate,
+                                    interviewTime = interviewTime,
+                                    timezone = timezone,
+                                    confirmedAt = DateTime.UtcNow,
+                                    toolCallId = toolCall.Id
+                                });
+                                callLog.UpdatedAt = DateTime.UtcNow;
+
+                                await _vapiCallRepository.UpdateCallLogAsync(callLog);
+
+                                // Log success
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                                    new Exception($"Interview slot booked via Vapi - CallId: {callId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}"));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
         }
 
         /// <summary>

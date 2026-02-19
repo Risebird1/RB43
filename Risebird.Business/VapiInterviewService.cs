@@ -35,13 +35,13 @@ namespace Risebird.Business
         }
 
         /// <summary>
-        /// Initiates interview booking calls for multiple candidates
+        /// Initiates interview booking calls for multiple recipients
         /// </summary>
-        public async Task<List<VapiCallLog>> InitiateBatchCallsAsync(List<CandidateCallInfo> candidates)
+        public async Task<List<VapiCallLog>> InitiateBatchCallsAsync(List<RecipientCallInfo> recipients)
         {
             var callLogs = new List<VapiCallLog>();
 
-            foreach (var candidate in candidates)
+            foreach (var recipient in recipients)
             {
                 try
                 {
@@ -56,9 +56,9 @@ namespace Risebird.Business
                         PhoneNumberId = _phoneNumberId,
                         Customer = new VapiCustomer
                         {
-                            Number = NormalizePhoneNumber(candidate.CandidatePhone),
-                            Name = candidate.CandidateName,
-                            Email = candidate.CandidateEmail
+                            Number = NormalizePhoneNumber(recipient.RecipientPhone),
+                            Name = recipient.RecipientName,
+                            Email = recipient.RecipientEmail
                         },
                         AssistantId = _assistantId
                     };
@@ -68,13 +68,13 @@ namespace Risebird.Business
                     var callLog = new VapiCallLog
                     {
                         VapiCallId = response.Id,
-                        InterviewId = candidate.InterviewId,
-                        CandidateId = candidate.CandidateId,
-                        CandidatePhone = candidate.CandidatePhone,
-                        CandidateName = candidate.CandidateName,
-                        CandidateEmail = candidate.CandidateEmail,
+                        InterviewId = recipient.InterviewId,
+                        RecipientId = recipient.RecipientId,
+                        RecipientPhone = recipient.RecipientPhone,
+                        RecipientName = recipient.RecipientName,
+                        RecipientEmail = recipient.RecipientEmail,
                         CallStatus = response.Status,
-                        ScheduledDateTime = candidate.PreferredDateTime,
+                        ScheduledDateTime = recipient.PreferredDateTime,
                         AssistantId = _assistantId,
                         CreatedAt = DateTime.UtcNow,
                         CreatedBy = "System"
@@ -86,7 +86,7 @@ namespace Risebird.Business
                 catch (Exception ex)
                 {
                     await _logger.LogMessage(Entities.Enum.LogLevelInfo.Exception, ex);
-                    // Continue with next candidate even if one fails
+                    // Continue with next recipient even if one fails
                 }
             }
 
@@ -199,7 +199,7 @@ namespace Risebird.Business
         }
 
         /// <summary>
-        /// Gets candidates who need follow-up calls
+        /// Gets recipients who need follow-up calls
         /// </summary>
         public async Task<List<VapiCallLog>> GetPendingCallbacksAsync()
         {

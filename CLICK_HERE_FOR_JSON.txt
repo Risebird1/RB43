@@ -1,0 +1,195 @@
+================================================================================
+                    WHERE TO PASTE THE JSON - VISUAL GUIDE
+================================================================================
+
+YOU ARE SEEING THIS (Form Mode):
+---------------------------------
+
+┌──────────────────────────────────────────────────────────────────┐
+│  Add Tool / Add Function                                   [×]   │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│     ┌─────────┐       ┌─────────┐                               │
+│     │Form Mode│       │JSON Mode│         ← CLICK THIS ONE!     │
+│     │    ○    │       │    ○    │            ▲▲▲▲▲▲▲▲▲          │
+│     └─────────┘       └─────────┘            Click here!        │
+│      ^                    ^                                      │
+│      │                    │                                      │
+│   You are here        Switch to this!                            │
+│                                                                   │
+│  Tool Name: _________________________________                    │
+│                                                                   │
+│  Description: _______________________________________________    │
+│                                                                   │
+│  Parameters:                                      [+ Add]        │
+│  ┌────────────────────────────────────────────────────────┐     │
+│  │                                                         │     │
+│  │    ❌ DON'T PASTE JSON HERE!                           │     │
+│  │    ❌ This is the wrong place!                         │     │
+│  │                                                         │     │
+│  └────────────────────────────────────────────────────────┘     │
+│                                                                   │
+│  [Add]  [Cancel]                                                 │
+└──────────────────────────────────────────────────────────────────┘
+
+
+AFTER CLICKING "JSON Mode":
+----------------------------
+
+┌──────────────────────────────────────────────────────────────────┐
+│  Add Tool / Add Function                                   [×]   │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│     ┌─────────┐       ┌─────────┐                               │
+│     │Form Mode│       │JSON Mode│         ← NOW SELECTED!       │
+│     │    ○    │       │    ●    │                                │
+│     └─────────┘       └─────────┘                                │
+│                           ^                                       │
+│                           │                                       │
+│                      You are here now!                            │
+│                                                                   │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │ {                                                          │  │
+│  │                                                            │  │
+│  │    ✅ PASTE THE ENTIRE JSON HERE!                         │  │
+│  │    ✅ From VAPI_TOOL_DEFINITION.json                      │  │
+│  │    ✅ Ctrl+A in that file, Ctrl+C, then Ctrl+V here      │  │
+│  │                                                            │  │
+│  │    The JSON should start with: { "type": "function"...    │  │
+│  │    And end with: ... "timeoutSeconds": 20 } }             │  │
+│  │                                                            │  │
+│  │                                                            │  │
+│  │ }                                                          │  │
+│  └────────────────────────────────────────────────────────────┘  │
+│                                                                   │
+│  [Add]  [Cancel]                                                 │
+└──────────────────────────────────────────────────────────────────┘
+
+
+WHAT YOU NEED TO DO:
+====================
+
+Step 1: Look at the TOP of your popup
+      You'll see two circles/buttons: "Form Mode" and "JSON Mode"
+
+Step 2: Click on "JSON Mode" (the RIGHT one)
+      The form fields will disappear
+      A big text box will appear
+
+Step 3: Open VAPI_TOOL_DEFINITION.json in notepad
+      Press Ctrl+A (select all)
+      Press Ctrl+C (copy)
+
+Step 4: Click in the big text box in Vapi
+      Press Ctrl+V (paste)
+
+Step 5: Click the [Add] button at bottom
+
+DONE! ✓
+
+
+REMEMBER:
+=========
+❌ DON'T paste in "Parameters" section (that's Form Mode)
+✅ DO paste in the big text box (that's JSON Mode)
+
+The entire JSON goes in ONE place!
+
+
+VISUAL SUMMARY:
+===============
+
+Form Mode (WRONG)              JSON Mode (RIGHT)
+─────────────────              ─────────────────
+
+Multiple fields:               One big box:
+├─ Name                        ├─ Paste entire
+├─ Description                 │   JSON here
+├─ Parameters  ← NO!           │   { ... }
+└─ Server                      └─ Everything!
+
+
+IF YOU DON'T SEE "JSON Mode":
+==============================
+
+Some older Vapi UIs might not have JSON mode.
+
+In that case, you'll need to fill the form manually:
+- Add each parameter one by one
+- Click [+ Add] for each parameter
+- Enter details from the JSON
+
+But TRY to find JSON mode first - it's MUCH easier!
+
+
+WHAT THE FINAL JSON SHOULD LOOK LIKE WHEN PASTED:
+==================================================
+
+{
+  "type": "function",
+  "function": {
+    "name": "submitInterviewSlot",
+    "description": "Submits the confirmed interview time slot...",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "candidateName": {
+          "type": "string",
+          "description": "Full name of the candidate"
+        },
+        "interviewDate": {
+          "type": "string",
+          "description": "Date in YYYY-MM-DD format..."
+        },
+        "interviewTime": {
+          "type": "string",
+          "description": "Time in HH:MM AM/PM format..."
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Always IST",
+          "enum": ["IST"],
+          "default": "IST"
+        },
+        "candidateConfirmed": {
+          "type": "boolean",
+          "description": "True only if candidate confirmed..."
+        }
+      },
+      "required": [
+        "candidateName",
+        "interviewDate",
+        "interviewTime",
+        "timezone",
+        "candidateConfirmed"
+      ]
+    }
+  },
+  "server": {
+    "url": "https://portal.risebird.io/VapiInterviewCall/Webhook",
+    "timeoutSeconds": 20
+  }
+}
+
+
+TLDR (Too Long, Didn't Read):
+==============================
+
+1. Click "JSON Mode" at top of popup
+2. Paste entire VAPI_TOOL_DEFINITION.json in the big text box
+3. Click [Add]
+
+That's it!
+
+
+================================================================================
+                           STILL CONFUSED?
+================================================================================
+
+Take a screenshot of what you see and share it!
+
+Or look for these keywords on your screen:
+- "Form Mode" and "JSON Mode" at the top → Click "JSON Mode"!
+- "Parameters" section with [+ Add] → You're in wrong mode!
+
+================================================================================

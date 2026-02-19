@@ -303,6 +303,9 @@ You have access to tools to:
                     case "book_interview":
                         return BookInterview(toolCall.Function.Arguments);
 
+                    case "submitInterviewSlot":
+                        return SubmitInterviewSlot(toolCall.Function.Arguments);
+
                     default:
                         return JsonConvert.SerializeObject(new { success = false, message = "Unknown function" });
                 }
@@ -369,6 +372,125 @@ You have access to tools to:
             };
 
             return JsonConvert.SerializeObject(bookingResult);
+        }
+
+        /// <summary>
+        /// Handles interview slot submission from the scheduling assistant
+        /// This is called when the assistant collects a confirmed time slot
+        /// </summary>
+        private string SubmitInterviewSlot(Dictionary<string, object> arguments)
+        {
+            try
+            {
+                // Extract arguments
+                var candidateName = arguments.ContainsKey("candidateName") ? arguments["candidateName"]?.ToString() : null;
+                var interviewDate = arguments.ContainsKey("interviewDate") ? arguments["interviewDate"]?.ToString() : null;
+                var interviewTime = arguments.ContainsKey("interviewTime") ? arguments["interviewTime"]?.ToString() : null;
+                var timezone = arguments.ContainsKey("timezone") ? arguments["timezone"]?.ToString() : "IST";
+                var candidateConfirmed = arguments.ContainsKey("candidateConfirmed") && Convert.ToBoolean(arguments["candidateConfirmed"]);
+
+                // Validate required fields
+                if (string.IsNullOrWhiteSpace(candidateName))
+                {
+                    return JsonConvert.SerializeObject(new
+                    {
+                        success = false,
+                        message = "Please confirm the candidate's name before proceeding."
+                    });
+                }
+
+                if (string.IsNullOrWhiteSpace(interviewDate) || string.IsNullOrWhiteSpace(interviewTime))
+                {
+                    return JsonConvert.SerializeObject(new
+                    {
+                        success = false,
+                        message = "Please ensure both date and time are provided."
+                    });
+                }
+
+                if (!candidateConfirmed)
+                {
+                    return JsonConvert.SerializeObject(new
+                    {
+                        success = false,
+                        message = "Candidate has not confirmed the time slot. Please get explicit confirmation before submitting."
+                    });
+                }
+
+                // Parse and validate date/time
+                var dateTimeString = $"{interviewDate} {interviewTime}";
+                DateTime parsedDateTime;
+                string[] formats = { 
+                    "yyyy-MM-dd hh:mm tt",
+                    "yyyy-MM-dd h:mm tt",
+                    "yyyy-MM-dd HH:mm",
+                    "yyyy-MM-dd H:mm"
+                };
+
+                bool parsed = false;
+                foreach (var format in formats)
+                {
+                    if (DateTime.TryParseExact(dateTimeString, format, 
+                        System.Globalization.CultureInfo.InvariantCulture, 
+                        System.Globalization.DateTimeStyles.None, out parsedDateTime))
+                    {
+                        parsed = true;
+                        
+                        // Validate it's within next 2 days
+                        var maxDate = DateTime.Now.AddDays(2).Date.AddDays(1);
+                        if (parsedDateTime > maxDate)
+                        {
+                            return JsonConvert.SerializeObject(new
+                            {
+                                success = false,
+                                message = "The interview must be scheduled within the next 1-2 days only. Please ask for an earlier slot."
+                            });
+                        }
+
+                        if (parsedDateTime < DateTime.Now)
+                        {
+                            return JsonConvert.SerializeObject(new
+                            {
+                                success = false,
+                                message = "The time slot is in the past. Please ask for a valid future time."
+                            });
+                        }
+
+                        // Success - This will be logged in the database via webhook
+                        return JsonConvert.SerializeObject(new
+                        {
+                            success = true,
+                            message = $"Perfect! I've confirmed your interview for {interviewDate} at {interviewTime} {timezone}. You'll receive a confirmation email shortly.",
+                            interviewDateTime = parsedDateTime.ToString("yyyy-MM-dd HH:mm"),
+                            candidateName = candidateName,
+                            timezone = timezone
+                        });
+                    }
+                }
+
+                if (!parsed)
+                {
+                    return JsonConvert.SerializeObject(new
+                    {
+                        success = false,
+                        message = "I couldn't understand the time format. Please ask the candidate to provide the time clearly with AM or PM."
+                    });
+                }
+
+                return JsonConvert.SerializeObject(new
+                {
+                    success = false,
+                    message = "An error occurred while processing the interview slot."
+                });
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new
+                {
+                    success = false,
+                    message = $"Error: {ex.Message}"
+                });
+            }
         }
     }
 }

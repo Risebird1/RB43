@@ -76,8 +76,8 @@ BEGIN
     SELECT TOP 20
         Id,
         VapiCallId,
-        CandidateName,
-        CandidatePhone,
+        RecipientName,
+        RecipientPhone,
         CallStatus,
         InterviewBooked,
         DurationSeconds,
