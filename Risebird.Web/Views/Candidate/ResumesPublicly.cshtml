@@ -3,6 +3,17 @@
     ViewData["Title"] = "Candidate Resume List";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    
+    string GetUserFriendlyReason(string reason)
+    {
+        if (string.IsNullOrEmpty(reason))
+            return "";
+            
+        if (reason.StartsWith("Exception during processing:", StringComparison.OrdinalIgnoreCase))
+            return "An error occurred while processing this resume. Please contact support.";
+            
+        return reason;
+    }
 }
 <script>
     var Header = "Resume(s) for <strong>@(Model.IRFName)</strong>";
@@ -154,7 +165,7 @@
                                                             </td>
                                                             <td>@(item.IsProcessed == true ? "Yes" : "No")</td>
                                                             <td>@(item.IsResumeParsed == null ? "" : (item.IsResumeParsed == true ? "Yes" : "No"))</td>
-                                                            <td>@(item.ReasonBehindNotProcessed ?? "")</td>
+                                                            <td>@GetUserFriendlyReason(item.ReasonBehindNotProcessed)</td>
                                                             <td class="text-center action">
                                                                 @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
                                                                 {
@@ -219,7 +230,7 @@
                                                             </td>
                                                             <td>@(item.IsProcessed == true ? "Yes" : "No")</td>
                                                             <td>@(item.IsResumeParsed == null ? "" : (item.IsResumeParsed == true ? "Yes" : "No"))</td>
-                                                            <td>@(item.ReasonBehindNotProcessed ?? "")</td>
+                                                            <td>@GetUserFriendlyReason(item.ReasonBehindNotProcessed)</td>
                                                             <td class="text-center action">
                                                                 @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
                                                                 {
@@ -284,7 +295,7 @@
                                                             </td>
                                                             <td>@(item.IsProcessed == true ? "Yes" : "No")</td>
                                                             <td>@(item.IsResumeParsed == null ? "" : (item.IsResumeParsed == true ? "Yes" : "No"))</td>
-                                                            <td>@(item.ReasonBehindNotProcessed ?? "")</td>
+                                                            <td>@GetUserFriendlyReason(item.ReasonBehindNotProcessed)</td>
                                                             <td class="text-center action">
                                                                 @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
                                                                 {
@@ -349,7 +360,7 @@
                                                             </td>
                                                             <td>@(item.IsProcessed == true ? "Yes" : "No")</td>
                                                             <td>@(item.IsResumeParsed == null ? "" : (item.IsResumeParsed == true ? "Yes" : "No"))</td>
-                                                            <td>@(item.ReasonBehindNotProcessed ?? "")</td>
+                                                            <td>@GetUserFriendlyReason(item.ReasonBehindNotProcessed)</td>
                                                             <td class="text-center action">
                                                                 @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Client" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
                                                                 {
