@@ -146,7 +146,7 @@ namespace Risebird.Web.Controllers
                         //};
 
                         // Inject today's date dynamically into system prompt
-                        //var systemPromptWithDate = GetSystemPromptWithCurrentDate("harshitjajoo95@gmail.com", ".net developer");
+                        //var systemPromptWithDate = GetSystemPromptWithCurrentDate("harshit", ".net developer");
 
                         ////Create call request with customer info and date injection
                         //var callRequest = new VapiCallRequest
