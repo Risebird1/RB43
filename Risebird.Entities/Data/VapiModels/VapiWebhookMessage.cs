@@ -40,7 +40,11 @@ namespace Risebird.Entities.Data.VapiModels
         
         public VapiCall Call { get; set; }
         public VapiTranscript Transcript { get; set; }
-        public VapiToolCalls ToolCalls { get; set; }
+        
+        /// <summary>
+        /// Tool calls array (direct array, not wrapped in object)
+        /// </summary>
+        public List<VapiToolCall> ToolCalls { get; set; }
     }
 
     /// <summary>
@@ -75,14 +79,6 @@ namespace Risebird.Entities.Data.VapiModels
         public string Role { get; set; }
         public string TranscriptType { get; set; }
         public string Transcript { get; set; }
-    }
-
-    /// <summary>
-    /// Tool calls from webhook
-    /// </summary>
-    public class VapiToolCalls
-    {
-        public List<VapiToolCall> ToolCalls { get; set; }
     }
 
     /// <summary>
