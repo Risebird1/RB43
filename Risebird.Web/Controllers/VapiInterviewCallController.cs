@@ -10,6 +10,7 @@ using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 
@@ -335,10 +336,10 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (message?.Message?.ToolCalls?.ToolCalls == null)
+                if (message?.Message?.ToolCalls == null || !message.Message.ToolCalls.Any())
                     return;
 
-                foreach (var toolCall in message.Message.ToolCalls.ToolCalls)
+                foreach (var toolCall in message.Message.ToolCalls)
                 {
                     if (toolCall.Function?.Name == "submitInterviewSlot")
                     {

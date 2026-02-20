@@ -162,6 +162,18 @@ namespace Risebird.Entities.Data.VapiModels
     public class VapiModelOverride
     {
         /// <summary>
+        /// Model provider (required when overriding)
+        /// </summary>
+        [JsonProperty("provider")]
+        public string Provider { get; set; } = "openai";
+        
+        /// <summary>
+        /// Model name (optional)
+        /// </summary>
+        [JsonProperty("model")]
+        public string Model { get; set; }
+        
+        /// <summary>
         /// Override the system messages
         /// </summary>
         [JsonProperty("messages")]
