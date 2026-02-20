@@ -83,7 +83,10 @@ namespace Risebird.Entities.Data.VapiModels
     /// </summary>
     public class VapiMessage
     {
+        [JsonProperty("role")]
         public string Role { get; set; }
+        
+        [JsonProperty("content")]
         public string Content { get; set; }
     }
 
@@ -168,10 +171,11 @@ namespace Risebird.Entities.Data.VapiModels
         public string Provider { get; set; } = "openai";
         
         /// <summary>
-        /// Model name (optional)
+        /// Model name (required when overriding - must be a valid Vapi model identifier)
+        /// Common options: gpt-4o-mini (cost-effective), gpt-4o (more capable), gpt-3.5-turbo (fastest/cheapest)
         /// </summary>
         [JsonProperty("model")]
-        public string Model { get; set; }
+        public string Model { get; set; } = "gpt-4o-mini";
         
         /// <summary>
         /// Override the system messages
