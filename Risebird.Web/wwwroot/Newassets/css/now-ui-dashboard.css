@@ -11474,7 +11474,7 @@ div.dataTables_wrapper div.dataTables_length label {
 }
 
 div.dataTables_wrapper div.dataTables_length select {
-    width: 75px !important;
+    width: 60px !important;
     display: inline-block;
 }
 
@@ -11546,7 +11546,7 @@ table.dataTable thead .sorting_desc_disabled {
     cursor: pointer;
     position: relative;
 
-    font-size: 13px;
+    font-size: 12px;
     text-transform: uppercase;
     font-family: "Raleway", sans-serif;
 }

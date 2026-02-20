@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 @using Risebird.Entities
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
@@ -56,9 +56,120 @@
 </script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link href="~/Newassets/css/interviewer.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<style>
+    /* Header: single row, no wrapping */
+    .interview-header-flex.interviewer-page-header {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        min-height: 44px;
+        padding: 8px 14px;
+    }
+
+    .interview-header-flex .interview-header-left {
+        min-width: 0;
+        flex: 0 0 auto;
+    }
+
+    /* Tabs container: flex row, no wrap, can shrink so buttons fit */
+    .interviewer-page-header .interview-tabs-wrap {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 2px;
+        flex: 1 1 auto;
+        min-width: 0;
+        background: rgb(241, 245, 249);
+        border-radius: 10px;
+        padding: 3px;
+        margin-right:5px;
+        border: 1px solid rgb(226, 232, 240);
+    }
+
+        .interviewer-page-header .interview-tabs-wrap .feedback-tab {
+            float: none;
+            line-height: 1.25;
+            font-weight: 600;
+            flex-shrink: 0;
+            color: rgb(100, 116, 139);
+            position: relative;
+            font-size: 11px !important;
+            padding: 6px 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+            transition: background 0.2s, color 0.2s, box-shadow 0.12s;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .interviewer-page-header .interview-tabs-wrap .feedback-tab-ac {
+            color: rgb(15, 23, 42);
+            box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 3px;
+            background: rgb(255, 255, 255);
+            padding: 6px 12px;
+            border: 1px solid rgb(226, 232, 240);
+        }
+        .interviewer-page-header .mdc-button--raised.card-title-space:hover:not(:disabled) {
+            box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px;
+            color: rgb(255, 255, 255) !important;
+            background: #4590e0 !important;
+    }
+
+    /* Right section: buttons in one row, no wrap */
+    .interviewer-page-header .interview-header-right {
+        flex: 0 0 auto;
+        min-width: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .interviewer-page-header .interview-header-right.client-ms {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .interviewer-page-header .interview-header-right.client-ms .pull-left {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* Table toolbar: search + length dropdown in one row */
+    #meeting_wrapper .interview-dt-toolbar {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    #meeting_wrapper .interview-dt-toolbar-right {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 12px;
+    }
+    #meeting_wrapper .interview-dt-length-wrap {
+        flex-shrink: 0;
+    }
+    #meeting_wrapper .interview-dt-length-wrap .dataTables_length {
+        margin: 0;
+    }
+    #meeting_wrapper .interview-dt-length-wrap .dataTables_length label {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+    }
+</style>
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
 
 <script>
     function shrink() {
@@ -73,16 +184,16 @@
 
 <div class="main-panel" id="main-panel">
     <div class="pt30">
-        <div class="col-md-12 nopad" style="margin:0px;">
-            <div class="card-header bg-w clearfix">
-                <div class="pull-left">
+        <div class="col-md-12 nopad">
+            <div class="card-header bg-w clearfix interviewer-page-header interview-header-flex">
+                <div class="interview-header-left">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title"> Interviews</h4></div>
+                    <div class="mobile-view"><h4 class="card-title">Interviews</h4></div>
                 </div>
-                <div class="pull-left">
+                <div class="interview-tabs-wrap">
                     @if (ViewBag.Type == "TemplateInterviews")
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
+                        <div class="feedback-tab feedback-tab-ac" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
@@ -90,7 +201,7 @@
                     else if (ViewBag.Type == "Interviews")
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
+                        <div class="feedback-tab feedback-tab-ac" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
                     }
@@ -99,55 +210,48 @@
                         <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
+                        <div class="feedback-tab feedback-tab-ac" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
                     }
-
                     else
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('TemplateInterviews')"><strong>Template Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
+                        <div class="feedback-tab feedback-tab-ac" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
                     }
-
                 </div>
-                <div class="pull-right">
-                    <div>
-                        <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview" , new { type = ViewBag.Type })'"></i></span>
-                        <span class="interview_3">
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                <div class="interview-header-right client-ms">
+                    <div class="pull-left">
+                        <span class="interview_2">
+                            <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview", new { type = ViewBag.Type })'" title="Export to Excel" aria-label="Export to Excel">
+                                <span class="mdc-button__label"><span class="fa fa-file-excel" style="font-size:12px;"></span><font style="font-family: Roboto, sans-serif; font-size:12px;"> Export</font></span>
                                 <div class="mdc-button__ripple"></div>
                             </button>
                         </span>
-                        @*  @if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
-                        {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("SelectedCandidate", "CommonPool" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Selected Candidates</font></span>
+                        <span class="interview_3">
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-bs-toggle="tooltip" data-placement="top" title="Filter"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
                             </button>
-
-                        } *@
-
-
-
+                        </span>
+                    </div>
+                    <div class="pull-left">
                         @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
+                                <span data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="currentColor" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
                             </button>
                         }
-
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("Add", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Add Interview" onclick="location.href='@Url.Action("Add", "Interview")'"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
                         </button>
-
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("MultipleCandidateInvites", "Interview" )'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Multiple Candidate Invites</font></span>
+                            <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="Multiple Candidate Invites" onclick="location.href='@Url.Action("MultipleCandidateInvites", "Interview")'"><font style="font-size:12px; font-family: Roboto, sans-serif;"> Multiple Candidate Invites</font></span>
                         </button>
                         @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("AadharDetails", "Aadhaar")'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;">Aadhar Details</font></span>
+                                <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="Aadhar Details" onclick="location.href='@Url.Action("AadharDetails", "Aadhaar")'"><font style="font-size:12px; font-family: Roboto, sans-serif;"> Aadhar Details</font></span>
                             </button>
                         }
                     </div>
@@ -191,7 +295,7 @@
 
                             <div class="toolbar">
 
-                                <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
                                             <div class="filheader">
@@ -466,10 +570,28 @@
                                     </div>
 
                                 </div>
-                                <div class="scrollbar int-table" id="style-2">
-
+                                <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4 interviewer-dt-wrapper scrollbar int-table style-2">
+                                    <div class="row interview-dt-toolbar align-items-center">
+                                        <div class="interview-dt-toolbar-right d-flex flex-nowrap align-items-center gap-3">
+                                            <div class="interview-dt-length-wrap"></div>
+                                            <div id="interview_search_wrap" class="interviewer-search-wrap flex-shrink-0">
+                                                <div class="interviewer-search-box">
+                                                    <span class="interviewer-search-ico" aria-hidden="true">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                                                    </span>
+                                                    <input type="search" class="interviewer-search-inp" id="txtinterview_filter" placeholder="Search interviews..." aria-controls="meeting" value="" autocomplete="off">
+                                                    <button type="button" class="interviewer-search-reset" onclick="ClearInterviewSearch()" title="Clear" aria-label="Clear search">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 nopad">
+                                        <div class="interview-table-scroll-wrap">
+                                        <div class="table-responsive interviewer-table-wrap">
                                     <div id="tableID" class="second ">
-                                        <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                        <table id="meeting" class="table table-hover table-bordered dt-responsive interviewer-table-modern" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
@@ -1024,7 +1146,7 @@
                                                                 <span class="call-area">
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                     {
-                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>
+                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="15" /></span>
                                                                     }
                                                                 </span>
                                                                 @item.MobileNumber
@@ -1441,6 +1563,9 @@
                                                 }
                                             </tbody>
                                         </table>
+                                    </div>
+                                        </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -2207,27 +2332,30 @@
     }
     function RefreshSearch() {
         $('#meeting').DataTable().destroy();
-
         setTimeout(function () {
             applyDataTable();
         }, 2000);
     }
+    function ClearInterviewSearch() {
+        var $inp = $('#txtinterview_filter');
+        $inp.val('');
+        $('#interview_search_wrap').removeClass('has-value');
+        if ($.fn.DataTable.isDataTable('#meeting')) {
+            $('#meeting').DataTable().search('').draw();
+        }
+    }
 
     $(document).ready(function () {
         applyDataTable();
-
     });
 
-
-
     function applyDataTable() {
-        $('#meeting').DataTable({
+        var table = $('#meeting').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-
             order: [],
             responsive: true,
             language: {
@@ -2235,18 +2363,27 @@
                 searchPlaceholder: "Search records",
             },
             "fnInitComplete": function () {
-                $(".dataTables_filter input:eq(0)").after("<button style='z-index:0' onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
-                $(".dataTables_filter").keyup(function (e) {
-                    if ($(this).val() != "") {
-                        $("#x").show();
-
+                var $wrapper = $('#meeting_wrapper');
+                var $dtRow = $wrapper.find('.row').has('.dataTables_length').first();
+                var $length = $dtRow.find('.dataTables_length');
+                var $left = $wrapper.find('.interview-dt-toolbar-left');
+                var $toolbarRow = $wrapper.find('.interview-dt-toolbar');
+                if ($length.length) {
+                    var $lengthWrap = $wrapper.find('.interview-dt-length-wrap');
+                    if ($lengthWrap.length) {
+                        $length.appendTo($lengthWrap);
                     }
-                    else { $("#x").show(); }
+                    $dtRow.remove();
+                }
+                $(".dataTables_filter").addClass('d-none');
+                var $headerSearch = $('#txtinterview_filter');
+                $headerSearch.off('input keyup').on('input keyup', function () {
+                    var v = this.value;
+                    $('#interview_search_wrap').toggleClass('has-value', v.length > 0);
+                    table.search(v).draw();
                 });
             }
-
         });
-
     }
 
 

@@ -549,26 +549,7 @@
                                                                     <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
                                                                 }
 
-                                                                @* @if (Model.IsTranscript && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
-                                                        {
-                                                        <div class="transcript">
-                                                        <h3 style="padding:0px;"><svg width="30" style="color: rgb(150, 145, 145);" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 16C5 15.4477 5.44772 15 6 15H14C14.5523 15 15 15.4477 15 16C15 16.5523 14.5523 17 14 17H6C5.44772 17 5 16.5523 5 16Z" fill="#969191"></path> <path d="M18 11C18.5523 11 19 11.4477 19 12C19 12.5523 18.5523 13 18 13H10C9.44772 13 9 12.5523 9 12C9 11.4477 9.44772 11 10 11H18Z" fill="#969191"></path> <path d="M16 16C16 15.4477 16.4477 15 17 15H18C18.5523 15 19 15.4477 19 16C19 16.5523 18.5523 17 18 17H17C16.4477 17 16 16.5523 16 16Z" fill="#969191"></path> <path d="M7 11C7.55228 11 8 11.4477 8 12C8 12.5523 7.55228 13 7 13H6C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11H7Z" fill="#969191"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M4 3C2.34315 3 1 4.34315 1 6V18C1 19.6569 2.34315 21 4 21H20C21.6569 21 23 19.6569 23 18V6C23 4.34315 21.6569 3 20 3H4ZM20 5H4C3.44772 5 3 5.44772 3 6V18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18V6C21 5.44771 20.5523 5 20 5Z" fill="#969191"></path> </svg> Meeting Transcript</h3>
-                                                        <h4 class="accordion-title js-accordion-title"></h4>
-                                                        <div class="accordion-content">
-                                                        <p id="id_transcript" style="margin-bottom:10px;">
-
-                                                        </p>
-                                                        <div style="width: 100%;float:left;background: #cccccc17;padding: 5px;">
-                                                        <div class="transcript-btn">
-
-                                                        <a id="idbtnPrevious" style="margin-right:10px;height:30px;pointer-events: none; opacity:0.5" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('p')"><i class="fa fa-chevron-left" aria-hidden="true"></i>  Previous</a>
-                                                        <a id="idbtnNext" style="height:30px;" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('n')"> Next  <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
-
-                                                        </div>
-                                                        </div>
-                                                        </div>
-                                                        </div>
-                                                        }*@
+                                                               
                                                             </div>
                                                         </div>
 
@@ -974,46 +955,7 @@
                                                 }
                                             </div>
                                        
-                                          @* <div class="col-lg-3 col-md-5 clientnfo">
-                                              @if (Model.TranscriptSummaryObject != null){
-                                                @if (Model.TranscriptSummaryObject.IntervieweeAnalysis?.Summary != null)
-                                                {
-                                                    var summary = Model.TranscriptSummaryObject.IntervieweeAnalysis.Summary;
-                                                    <div style="margin-top:30px;">
-                                                       
-                  @if (summary.Strengths != null && summary.Strengths.Any())
-                                                        {
-                                                            <div style="margin-bottom: 20px; padding: 15px; background-color: #e8f5e9; border-radius: 8px; border-left: 4px solid #4caf50;">
-                                                                <h4 style="margin: 0 0 15px 0; color: #2e7d32; font-size: 18px;">
-                                                                    <i class="fa fa-check-circle" style="margin-right: 8px;"></i>Strengths
-                                                                </h4>
-                                                                <ul style="margin: 0; padding-left: 20px; color: #555;">
-                                                                    @foreach (var strength in summary.Strengths)
-                                                                    {
-                                                                        <li style="margin-bottom: 8px; font-size: 15px;">@strength</li>
-                                                                    }
-                                                                </ul>
-                                                            </div>
-                                                        }
-                                                       
-                                                         @if (summary.AreasOfImprovement != null && summary.AreasOfImprovement.Any())
-                                                        {
-                                                            <div style="margin-bottom: 20px; padding: 15px; background-color: #fff3e0; border-radius: 8px; border-left: 4px solid #ff9800;">
-                                                                <h4 style="margin: 0 0 15px 0; color: #e65100; font-size: 18px;">
-                                                                    <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>Areas of Improvement
-                                                                </h4>
-                                                                <ul style="margin: 0; padding-left: 20px; color: #555;">
-                                                                    @foreach (var improvement in summary.AreasOfImprovement)
-                                                                    {
-                                                                        <li style="margin-bottom: 8px; font-size: 15px;">@improvement</li>
-                                                                    }
-                                                                </ul>
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                }
-                                                }
-                                            </div> *@
+                                        
                                             <div class="col-lg-12 col-md-12">
                                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                     <div class="report-full-width-sections" style="margin-top: 16px;">
@@ -1075,109 +1017,7 @@
                                                         </div>
                                                     }
 
-                                                    <!-- Overall Screen Performance – sleek compact -->
-                                                @* <div class="screen-section" style="margin-top: 0; background: #fff; padding: 0; border-radius:0px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);">
-                                                            <div style="background:#249c90; padding:5px 16px;">
-                                                        <h2 style="margin: 0; color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;">Overall Screen Performance</h2>
-                                                    </div>
-                                                    <div style="background: #f8fafc; padding: 14px 18px; border-radius: 0 0 8px 8px;">
-
-                                                        @functions{
-                                                            int ToPercent(int score, int max)
-                                                            {
-                                                                if (score <= 0 || max <= 0) return 0;
-                                                                var p = (int)((score / (double)max) * 100);
-                                                                return p > 100 ? 100 : p;
-                                                            }
-                                                        }
-
-                                                        @{
-                                                            const int overallMax = 100;
-                                                            const double testPercent = 0.50;
-                                                            const double hrScreeningPercent = 0.30;
-                                                            const double resumeScreeningPercent = 0.20;
-
-                                                            var resumePct = (int)Math.Round(resumeScreeningPercent * 100);
-                                                            var testPct = (int)Math.Round(testPercent * 100);
-                                                            var hrScreeningPct = (int)Math.Round(hrScreeningPercent * 100);
-                                                            var candidateInteractionPct = 100 - resumePct - testPct - hrScreeningPct;
-                                                            if (candidateInteractionPct < 0) { candidateInteractionPct = 0; }
-
-                                                            var overallPercentage = (resumePct + testPct + hrScreeningPct + candidateInteractionPct) / 4;
-
-                                                            var scoreSections = new[]
-                                                            {
-                                                                new { Name = "Resume Screening Score", Percent = resumePct, Key = "Resume Screening Score", Description = "Fit of candidate profile, experience & qualifications against role requirements." },
-                                                                new { Name = "Test Score", Percent = testPct, Key = "Test Score", Description = "Performance on assessments and role-specific tests." },
-                                                                new { Name = "HR Screening Evaluation Score", Percent = hrScreeningPct, Key = "HR Screening Evaluation (Recruiter Score)", Description = "Recruiter assessment from screening call or interview." },
-                                                                new { Name = "Candidate Interaction Quality Score", Percent = candidateInteractionPct, Key = "Candidate Interaction Quality Score", Description = "Communication, clarity and engagement during interactions." }
-                                                            };
-                                                        }
-
-                                                        <!-- Overall score hero – matches header color scheme, full details -->
-                                                        <div style="display: flex; align-items: center; gap: 16px 24px; margin-bottom: 14px; padding: 14px 16px; background: #249c90; border-radius: 0; box-shadow: none; border-bottom: 2px solid rgba(255,255,255,0.15);">
-                                                            <div class="screen-overall-ring screen-overall-ring-teal" style="--p: @overallPercentage;">
-                                                                <div class="screen-overall-ring-inner screen-overall-ring-inner-teal">@overallPercentage%</div>
-                                                            </div>
-                                                            <div style="display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0;">
-                                                                <div>
-                                                                    <div style="font-size: 14px; font-weight: 700; letter-spacing: 0.08em; color: rgba(255,255,255,0.95); text-transform: uppercase;">Overall Score</div>
-                                                                    <div style="font-size: 12px; color: rgba(255,255,255,0.9); margin-top: 2px;">Average of 4 evaluation dimensions</div>
-                                                                </div>
-                                                                <div style="height: 32px; width: 1px; background: rgba(255,255,255,0.3); flex-shrink: 0;"></div>
-                                                                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                                                    <span style="background: rgba(255,255,255,0.22); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; color: #fff; letter-spacing: 0.02em;">Resume Screening</span>
-                                                                    <span style="background: rgba(255,255,255,0.22); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; color: #fff; letter-spacing: 0.02em;">Test</span>
-                                                                    <span style="background: rgba(255,255,255,0.22); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; color: #fff; letter-spacing: 0.02em;">HR Screening</span>
-                                                                    <span style="background: rgba(255,255,255,0.22); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; color: #fff; letter-spacing: 0.02em;">Candidate Interaction</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- Score cards – compact -->
-                                                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                                                            @foreach (var sec in scoreSections)
-                                                            {
-                                                                var percent = sec.Percent;
-                                                                var barColor = percent >= 70 ? "#27ae60" : percent >= 40 ? "#e67e22" : "#c0392b";
-                                                                var bandLabel = percent >= 70 ? "Strong" : percent >= 40 ? "Moderate" : "Needs focus";
-                                                                var bandBg = percent >= 70 ? "rgba(39,174,96,0.12)" : percent >= 40 ? "rgba(230,126,34,0.12)" : "rgba(192,57,43,0.1)";
-                                                                <div class="screen-score-section"
-                                                                     onclick="openScreenReport('@sec.Key')"
-                                                                     title="View full details"
-                                                                     style="cursor: pointer; background: #fff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.04); border-left: 3px solid @barColor; transition: all 0.2s ease; overflow: hidden;">
-
-                                                                    <div style="padding: 10px 12px;">
-                                                                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px;">
-                                                                            <h3 style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: #34495e; line-height: 1.25; flex: 1;">@sec.Name</h3>
-                                                                            <div style="flex-shrink: 0; text-align: right;">
-                                                                                <span style="display: block; font-size: 20px; font-weight: 800; color: #2c3e50; line-height: 1; letter-spacing: -0.02em;">@percent<span style="font-size: 10px; font-weight: 700; color: #7f8c8d;">%</span></span>
-                                                                                <span style="display: inline-block; font-size:9px; font-weight: 700; color: @barColor; background: @bandBg; padding: 2px 5px; border-radius: 3px; margin-top: 3px;">@bandLabel</span>
-                                                                            </div>
-                                                                        </div>
-                                                                        <p style="margin: 0 0 8px 0; font-size: 10px; line-height: 1.4; color: #5a6c7d;">@sec.Description</p>
-                                                                        <div style="margin-bottom: 6px;">
-                                                                            <div style="position: relative; height: 14px; background: #ecf0f1; border-radius: 4px; overflow: hidden;">
-                                                                                <div style="position: absolute; top: 0; left: 0; width: @(percent > 100 ? 100 : percent)%; height: 100%; background: @barColor; border-radius: 4px;"></div>
-                                                                                <span style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 9px; font-weight: 700; color: @(percent >= 45 ? "#fff" : "#2c3e50");">@percent%</span>
-                                                                            </div>
-                                                                            <div style="display: flex; justify-content: space-between; font-size: 8px; font-weight: 600; color: #95a5a6; margin-top: 4px;">
-                                                                                <span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div style="font-size: 9px; font-weight: 600; color: #5B9BD5;">View details →</div>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        </div>
-
-                                                    </div>
-
-
-                                                </div>
-                                                   
-                                                    </div> *@ <!-- End: Screen Section - Report -->
-                                                    <!-- End: report-full-width-sections -->
+                                                
                                                 </div>
                                             </div>
                                         </div>
