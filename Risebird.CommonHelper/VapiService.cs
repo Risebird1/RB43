@@ -286,7 +286,8 @@ You have access to tools to:
                 }
             }
 
-            return new VapiToolCallResult { Results = results };
+            // Note: This method is synchronous, so we use Task.CompletedTask
+            return await Task.FromResult(new VapiToolCallResult { Results = results });
         }
 
         /// <summary>
