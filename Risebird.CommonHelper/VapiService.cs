@@ -396,7 +396,17 @@ You have access to tools to:
                     return JsonConvert.SerializeObject(new
                     {
                         success = false,
-                        message = "Please confirm the candidate's name before proceeding."
+                        message = "Please ask the candidate for their full name before proceeding."
+                    });
+                }
+
+                // Validate that candidateName is not an email address
+                if (candidateName.Contains("@"))
+                {
+                    return JsonConvert.SerializeObject(new
+                    {
+                        success = false,
+                        message = "The candidate name appears to be an email address. Please ask for the candidate's actual full name (first and last name)."
                     });
                 }
 

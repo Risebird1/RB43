@@ -3,7 +3,7 @@
   "properties": {
     "candidateName": {
       "type": "string",
-      "description": "Full name of the candidate as confirmed during the call"
+      "description": "Full name of the candidate as spoken/confirmed by them during the call. Must be their actual name (e.g., 'John Smith'), NOT their email address or phone number. Ask the candidate 'May I have your full name please?' and use their response."
     },
     "interviewDate": {
       "type": "string",
