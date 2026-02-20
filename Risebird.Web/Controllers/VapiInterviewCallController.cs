@@ -235,9 +235,17 @@ namespace Risebird.Web.Controllers
 
                     case "tool-calls":
                         await LogWebhookDebug(rawJson, "tool-call-received", null, "tool-calls", callId);
+                        await LogCheckpoint("WEBHOOK-START", $"Processing tool-calls - Tool count: {message.Message.ToolCalls?.Count ?? 0}", callId);
+                        
                         var result = await _vapiService.ProcessToolCallAsync(message);
+                        
+                        await LogCheckpoint("WEBHOOK-BEFORE-HANDLER", "About to call HandleInterviewSlotSubmission", callId);
+                        
                         // Also handle interview slot submissions
                         await HandleInterviewSlotSubmission(message);
+                        
+                        await LogCheckpoint("WEBHOOK-AFTER-HANDLER", "HandleInterviewSlotSubmission completed", callId);
+                        
                         return Json(result);
 
                     case "end-of-call-report":
@@ -294,6 +302,36 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
+        /// Logs checkpoint information to database for debugging webhook flow
+        /// </summary>
+        private async Task LogCheckpoint(string checkpointName, string message, string callId = null, string toolCallName = null, string additionalData = null)
+        {
+            try
+            {
+                using (var conn = new System.Data.SqlClient.SqlConnection(_configuration["ConnectionString:DBConnectionString"]))
+                {
+                    var sql = @"INSERT INTO VapiWebhookCheckpoints 
+                        (Timestamp, CheckpointName, Message, CallId, ToolCallName, AdditionalData)
+                        VALUES (@Timestamp, @CheckpointName, @Message, @CallId, @ToolCallName, @AdditionalData)";
+                    
+                    await conn.ExecuteAsync(sql, new
+                    {
+                        Timestamp = DateTime.UtcNow,
+                        CheckpointName = checkpointName,
+                        Message = message,
+                        CallId = callId,
+                        ToolCallName = toolCallName,
+                        AdditionalData = additionalData?.Length > 5000 ? additionalData.Substring(0, 5000) : additionalData
+                    });
+                }
+            }
+            catch
+            {
+                // Silently fail - don't want logging to break the webhook
+            }
+        }
+
+        /// <summary>
         /// Handles status update webhooks
         /// </summary>
         private async Task HandleStatusUpdate(VapiWebhookMessage message)
@@ -337,28 +375,39 @@ namespace Risebird.Web.Controllers
             string callId = null;
             try
             {
+                await LogCheckpoint("CHECKPOINT-1", "HandleInterviewSlotSubmission method entry");
+
                 if (message?.Message?.ToolCalls == null || !message.Message.ToolCalls.Any())
+                {
+                    await LogCheckpoint("CHECKPOINT-1a", $"ToolCalls null or empty - Message null: {message == null}, Message.Message null: {message?.Message == null}, ToolCalls null: {message?.Message?.ToolCalls == null}, ToolCalls count: {message?.Message?.ToolCalls?.Count ?? 0}");
                     return;
+                }
+
+                var toolNames = string.Join(", ", message.Message.ToolCalls.Select(tc => tc.Function?.Name ?? "null"));
+                await LogCheckpoint("CHECKPOINT-2", $"ToolCalls found - Count: {message.Message.ToolCalls.Count}", additionalData: $"Tool names: {toolNames}");
 
                 foreach (var toolCall in message.Message.ToolCalls)
                 {
+                    await LogCheckpoint("CHECKPOINT-3", $"Examining tool call - Name: {toolCall.Function?.Name ?? "null"}, Function null: {toolCall.Function == null}");
+
                     if (toolCall.Function?.Name == "submitInterviewSlot")
                     {
                         var args = toolCall.Function.Arguments;
                         callId = message.Message.CallId;
 
-                        // Log that we received the tool call
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
-                            new Exception($"Received submitInterviewSlot tool call - CallId: {callId}, Args: {JsonConvert.SerializeObject(args)}"));
+                        var argsJson = args != null ? JsonConvert.SerializeObject(args) : "NULL";
+                        await LogCheckpoint("CHECKPOINT-4", "Found submitInterviewSlot tool call", callId, "submitInterviewSlot");
+                        await LogCheckpoint("CHECKPOINT-5", $"Arguments - Args null: {args == null}, Args count: {args?.Count ?? 0}", callId, "submitInterviewSlot", argsJson);
 
                         // Validate CallId
                         if (string.IsNullOrWhiteSpace(callId))
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
-                                new Exception($"❌ CRITICAL: CallId is null or empty in tool call webhook"));
+                            await LogCheckpoint("CHECKPOINT-6-ERROR", "CallId is null or empty");
                             await UpdateWebhookDebugLog(callId, "error", "CallId is null or empty", null, null, false);
                             return;
                         }
+
+                        await LogCheckpoint("CHECKPOINT-6", $"CallId validated: {callId}", callId);
 
                         // Extract interview slot data
                         var candidateName = args.ContainsKey("candidateName") ? args["candidateName"]?.ToString() : null;
@@ -366,6 +415,8 @@ namespace Risebird.Web.Controllers
                         var interviewTime = args.ContainsKey("interviewTime") ? args["interviewTime"]?.ToString() : null;
                         var timezone = args.ContainsKey("timezone") ? args["timezone"]?.ToString() : "IST";
                         var candidateConfirmed = args.ContainsKey("candidateConfirmed") && Convert.ToBoolean(args["candidateConfirmed"]);
+
+                        await LogCheckpoint("CHECKPOINT-7", $"Data extracted - Name: '{candidateName}', Date: '{interviewDate}', Time: '{interviewTime}', TZ: '{timezone}', Confirmed: {candidateConfirmed}", callId);
                         
                         // Check for old dates (likely from dashboard-initiated calls)
                         if (!string.IsNullOrEmpty(interviewDate) && DateTime.TryParse(interviewDate, out DateTime parsedDate))
@@ -404,29 +455,33 @@ namespace Risebird.Web.Controllers
 
                     if (!parsedDateTime.HasValue)
                     {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
-                            new Exception($"❌ SKIPPED: Failed to parse date/time - Date: {interviewDate}, Time: {interviewTime}"));
+                        await LogCheckpoint("CHECKPOINT-8-SKIPPED", $"Failed to parse date/time - Date: {interviewDate}, Time: {interviewTime}", callId);
                         await UpdateWebhookDebugLog(callId, "skipped", $"Failed to parse date/time: {interviewDate} {interviewTime}", null, null, false);
                         return;
                     }
 
+                        await LogCheckpoint("CHECKPOINT-8", $"DateTime parsed successfully - {parsedDateTime.Value}", callId);
+
                         if (!candidateConfirmed)
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
-                                new Exception($"❌ SKIPPED: Candidate not confirmed - CallId: {callId}"));
+                            await LogCheckpoint("CHECKPOINT-9-SKIPPED", "Candidate not confirmed", callId);
                             await UpdateWebhookDebugLog(callId, "skipped", "Candidate not confirmed", null, null, false);
                             return;
                         }
 
+                        await LogCheckpoint("CHECKPOINT-9", "Candidate confirmed - proceeding to find/create call log", callId);
+
+                        await LogCheckpoint("CHECKPOINT-10", "Looking for existing call log", callId);
+
                         // Try to find existing call log
                         var callLog = await _vapiCallRepository.GetCallLogByVapiCallIdAsync(callId);
                         
+                        await LogCheckpoint("CHECKPOINT-11", $"Call log lookup result - Found: {callLog != null}, Will create new: {callLog == null}", callId);
+
                         bool isNewCallLog = false;
                         if (callLog == null)
                         {
-                            // Call log doesn't exist - need to fetch call details from Vapi
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
-                                new Exception($"⚠️ Call log not found for CallId: {callId}. This usually means the call was initiated from Vapi dashboard, not through the application."));
+                            await LogCheckpoint("CHECKPOINT-12", "Call log not found - likely initiated from Vapi dashboard, not through application", callId);
                             
                             // Try to get call details from Vapi API
                             VapiCallResponse callDetails = null;
@@ -478,24 +533,30 @@ namespace Risebird.Web.Controllers
                         });
                         callLog.UpdatedAt = DateTime.UtcNow;
 
+                        await LogCheckpoint("CHECKPOINT-13", $"About to save to database - IsNew: {isNewCallLog}, RecipientPhone: {callLog.RecipientPhone}, RecipientName: {callLog.RecipientName}", callId);
+
                         // Save or update
                         try
                         {
                             int savedId = 0;
                             if (isNewCallLog)
                             {
+                                await LogCheckpoint("CHECKPOINT-14", "Calling SaveCallLogAsync for new call log", callId);
+
                                 savedId = await _vapiCallRepository.SaveCallLogAsync(callLog);
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
-                                    new Exception($"✅ SUCCESS: NEW call log created - ID: {savedId}, CallId: {callId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}"));
+
+                                await LogCheckpoint("CHECKPOINT-15-SUCCESS", $"NEW call log created - ID: {savedId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}", callId);
                                 
                                 // Update debug log
                                 await UpdateWebhookDebugLog(callId, "success", null, true, savedId, true);
                             }
                             else
                             {
+                                await LogCheckpoint("CHECKPOINT-16", $"Calling UpdateCallLogAsync for existing call log - ID: {callLog.Id}", callId);
+
                                 await _vapiCallRepository.UpdateCallLogAsync(callLog);
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
-                                    new Exception($"✅ SUCCESS: Interview slot updated - CallId: {callId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}"));
+
+                                await LogCheckpoint("CHECKPOINT-17-SUCCESS", $"Interview slot updated - DateTime: {parsedDateTime.Value}, Candidate: {candidateName}", callId);
                                 
                                 // Update debug log
                                 await UpdateWebhookDebugLog(callId, "success", null, true, callLog.Id, true);
@@ -503,8 +564,7 @@ namespace Risebird.Web.Controllers
                         }
                         catch (Exception saveEx)
                         {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
-                                new Exception($"❌ FAILED to save call log - CallId: {callId}, Error: {saveEx.Message}, InnerException: {saveEx.InnerException?.Message}", saveEx));
+                            await LogCheckpoint("CHECKPOINT-18-ERROR", $"Database save FAILED - Error: {saveEx.Message}, InnerException: {saveEx.InnerException?.Message}", callId, additionalData: saveEx.StackTrace);
                             
                             // Update debug log with error
                             await UpdateWebhookDebugLog(callId, "error", 
@@ -517,8 +577,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
-                    new Exception($"❌ HandleInterviewSlotSubmission failed for CallId: {callId ?? "unknown"}: {ex.Message}", ex));
+                await LogCheckpoint("CHECKPOINT-19-EXCEPTION", $"HandleInterviewSlotSubmission method-level exception: {ex.Message}", callId ?? "unknown", additionalData: $"InnerException: {ex.InnerException?.Message}\nStackTrace: {ex.StackTrace}");
                 
                 // Try to update debug log even if we failed
                 try
