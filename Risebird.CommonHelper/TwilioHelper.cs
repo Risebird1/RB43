@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -103,14 +103,14 @@ namespace Risebird.CommonHelper
         {
             try
             {
-
-                TwilioClient.Init(_configuration["TwilioSettings:ACCOUNT_SID"], _configuration["TwilioSettings:AUTH_TOKEN"]);
-                var to = new PhoneNumber(userMobileNumber);
-                var from = new PhoneNumber(_twilioCallerNumber);
-                var call = await CallResource.CreateAsync(
-                    to: to,
-                    from: from,
-                    url: new Uri("https://beige-vulture-6005.twil.io/assets/phoneCallFile.xml"));
+                // COMMENTED OUT: Twilio IVR call disabled
+                //TwilioClient.Init(_configuration["TwilioSettings:ACCOUNT_SID"], _configuration["TwilioSettings:AUTH_TOKEN"]);
+                //var to = new PhoneNumber(userMobileNumber);
+                //var from = new PhoneNumber(_twilioCallerNumber);
+                //var call = await CallResource.CreateAsync(
+                //    to: to,
+                //    from: from,
+                //    url: new Uri("https://beige-vulture-6005.twil.io/assets/phoneCallFile.xml"));
 
 
             }
@@ -129,31 +129,33 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var link = string.Format("https://portal.risebird.io/TwilioVoice/Index?irfId={0}", irfId.ToString());
-                var url = new Uri(link);
-                TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
-                var to = new PhoneNumber(phoneNumber);
-                var from = new PhoneNumber(_twilioCallerNumber);
+                // COMMENTED OUT: Twilio IVR call disabled
+                //var link = string.Format("https://portal.risebird.io/TwilioVoice/Index?irfId={0}", irfId.ToString());
+                //var url = new Uri(link);
+                //TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+                //var to = new PhoneNumber(phoneNumber);
+                //var from = new PhoneNumber(_twilioCallerNumber);
 
-                var call = await CallResource.CreateAsync(
-                    to: to,
-                    from: from,
-                    url: url);
+                //var call = await CallResource.CreateAsync(
+                //    to: to,
+                //    from: from,
+                //    url: url);
 
-                if (call.Status != null)
-                {
-                    var result = call.Status.ToString();
-                    if (result != CallResource.StatusEnum.Failed.ToString())
-                    {
-                        //await _irfService.AddCandidateStatus(loggedInEmail, candidateId, irfId, "Placed a reminder call", (int)CandidateStatusOptions.ReminderCall);
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                return false;
+                //if (call.Status != null)
+                //{
+                //    var result = call.Status.ToString();
+                //    if (result != CallResource.StatusEnum.Failed.ToString())
+                //    {
+                //        //await _irfService.AddCandidateStatus(loggedInEmail, candidateId, irfId, "Placed a reminder call", (int)CandidateStatusOptions.ReminderCall);
+                //        return true;
+                //    }
+                //    else
+                //    {
+                //        return false;
+                //    }
+                //}
+                //return false;
+                return true;
 
             }
             catch (Exception e)
@@ -197,31 +199,33 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                FirstName = FirstName?.Trim().Replace(" ", "_");
-                interviewdate = interviewdate.Replace(" ", "_").Replace("/", "_");
-                var link = string.Format("https://portal.risebird.io/TwilioVoice/CandidateReminderCall?name={0}&interviewdate={1}", FirstName, interviewdate);
-                var url = new Uri(link);
-                TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
-                var to = new PhoneNumber(phoneNumber);
-                var from = new PhoneNumber(_twilioCallerNumber);
-                var call = await CallResource.CreateAsync(
-                    to: to,
-                    from: from,
-                    url: url);
+                // COMMENTED OUT: Twilio IVR call disabled
+                //FirstName = FirstName?.Trim().Replace(" ", "_");
+                //interviewdate = interviewdate.Replace(" ", "_").Replace("/", "_");
+                //var link = string.Format("https://portal.risebird.io/TwilioVoice/CandidateReminderCall?name={0}&interviewdate={1}", FirstName, interviewdate);
+                //var url = new Uri(link);
+                //TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+                //var to = new PhoneNumber(phoneNumber);
+                //var from = new PhoneNumber(_twilioCallerNumber);
+                //var call = await CallResource.CreateAsync(
+                //    to: to,
+                //    from: from,
+                //    url: url);
 
-                if (call.Status != null)
-                {
-                    var result = call.Status.ToString();
-                    if (result != CallResource.StatusEnum.Failed.ToString())
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                return false;
+                //if (call.Status != null)
+                //{
+                //    var result = call.Status.ToString();
+                //    if (result != CallResource.StatusEnum.Failed.ToString())
+                //    {
+                //        return true;
+                //    }
+                //    else
+                //    {
+                //        return false;
+                //    }
+                //}
+                //return false;
+                return true;
             }
             catch (Exception e)
             {
@@ -263,39 +267,41 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
-                var uniqueId = "5DF6F746-A820-4129-BE42-34970C6679E7";
-                var irfId = 10681;
-                int assessmentGroupId = 0;
-                string jdTitle = "Python Developer";
-                jdTitle = jdTitle?.Trim()?.Replace(" ", "_")?.Replace("/", "_");
+                // COMMENTED OUT: Twilio IVR call disabled
+                //TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+                //var uniqueId = "5DF6F746-A820-4129-BE42-34970C6679E7";
+                //var irfId = 10681;
+                //int assessmentGroupId = 0;
+                //string jdTitle = "Python Developer";
+                //jdTitle = jdTitle?.Trim()?.Replace(" ", "_")?.Replace("/", "_");
 
-                var link = $"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?uniqueId={uniqueId}&irfId={irfId}&assessmentGroupId={assessmentGroupId}&jdTitle={jdTitle}";
+                //var link = $"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?uniqueId={uniqueId}&irfId={irfId}&assessmentGroupId={assessmentGroupId}&jdTitle={jdTitle}";
 
-                //var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={0}&irfId={1}", recipientName, interviewDate);
-                //var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={0}&interviewDate={1}", recipientName, interviewDate);
+                ////var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={0}&irfId={1}", recipientName, interviewDate);
+                ////var link = string.Format("https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailabilityTesting?recipientName={0}&interviewDate={1}", recipientName, interviewDate);
 
-                //var link = string.Format("https://portal.risebird.io/TwilioVoice/CandidateReminderCall?name={0}&interviewdate={1}", "FirstName", "interviewdate");
-                var url = new Uri(link);
+                ////var link = string.Format("https://portal.risebird.io/TwilioVoice/CandidateReminderCall?name={0}&interviewdate={1}", "FirstName", "interviewdate");
+                //var url = new Uri(link);
 
-                var call = await CallResource.CreateAsync(
-                    to: new PhoneNumber(userPhoneNumber),
-                    from: new PhoneNumber(_twilioCallerNumber),
-                    url: url // Replace with your public endpoint
-                );
+                //var call = await CallResource.CreateAsync(
+                //    to: new PhoneNumber(userPhoneNumber),
+                //    from: new PhoneNumber(_twilioCallerNumber),
+                //    url: url // Replace with your public endpoint
+                //);
 
-                if (call.Status != null)
-                {
-                    var result = call.Status.ToString();
-                    if (result != CallResource.StatusEnum.Failed.ToString())
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
+                //if (call.Status != null)
+                //{
+                //    var result = call.Status.ToString();
+                //    if (result != CallResource.StatusEnum.Failed.ToString())
+                //    {
+                //        return true;
+                //    }
+                //    else
+                //    {
+                //        return false;
+                //    }
+                //}
+                //return true;
                 return true;
             }
             catch (Exception ex)
@@ -311,31 +317,32 @@ namespace Risebird.CommonHelper
             {
                 await _activityTrackerService.DebugLogger($"MakeIVRCallToInterviewerForAvailability twilio function invked succesfully", "ivr", string.Empty);
 
-                TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
-                jdTitle = jdTitle?.Trim()?.Replace(" ", "")?.Replace("/", "_");
+                // COMMENTED OUT: Twilio IVR call disabled
+                //TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+                //jdTitle = jdTitle?.Trim()?.Replace(" ", "")?.Replace("/", "_");
 
-                var link = $"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?uniqueId={uniqueId}&irfId={irfId}&assessmentGroupId={assessmentGroupId}&jdTitle={jdTitle}";
+                //var link = $"https://portal.risebird.io/TwilioVoice/IvrInterviewerAvailability?uniqueId={uniqueId}&irfId={irfId}&assessmentGroupId={assessmentGroupId}&jdTitle={jdTitle}";
 
-                var url = new Uri(link);
+                //var url = new Uri(link);
 
-                    var call = await CallResource.CreateAsync(
-                        to: new PhoneNumber(userPhoneNumber),
-                        from: new PhoneNumber(_twilioCallerNumber),
-                        url: url // Replace with your public endpoint
-                    );
+                //    var call = await CallResource.CreateAsync(
+                //        to: new PhoneNumber(userPhoneNumber),
+                //        from: new PhoneNumber(_twilioCallerNumber),
+                //        url: url // Replace with your public endpoint
+                //    );
 
-                    if (call.Status != null)
-                    {
-                        var result = call.Status.ToString();
-                        if (result != CallResource.StatusEnum.Failed.ToString())
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
+                //    if (call.Status != null)
+                //    {
+                //        var result = call.Status.ToString();
+                //        if (result != CallResource.StatusEnum.Failed.ToString())
+                //        {
+                //            return true;
+                //        }
+                //        else
+                //        {
+                //            return false;
+                //        }
+                //    }
 
                 return true;
                 
@@ -447,30 +454,31 @@ namespace Risebird.CommonHelper
             {
                 await _activityTrackerService.DebugLogger($"IVRCall to Candidate for their Interview Availability Reminder", "IVR", string.Empty);
 
-                TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
+                // COMMENTED OUT: Twilio IVR call disabled
+                //TwilioClient.Init(_twilioAccountSID, _twilioAuthToken);
 
-                var link = $"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability?uniqueId={uniqueId}&irfId={irfId}&interviewId={interviewId}&candidateId={candidateId}";
+                //var link = $"https://portal.risebird.io/TwilioVoice/IvrCandidateInterviewAvailability?uniqueId={uniqueId}&irfId={irfId}&interviewId={interviewId}&candidateId={candidateId}";
 
-                var url = new Uri(link);
+                //var url = new Uri(link);
 
-                    var call = await CallResource.CreateAsync(
-                        to: new PhoneNumber(userPhoneNumber),
-                        from: new PhoneNumber(_twilioCallerNumber),
-                        url: url // Replace with your public endpoint
-                    );
+                //    var call = await CallResource.CreateAsync(
+                //        to: new PhoneNumber(userPhoneNumber),
+                //        from: new PhoneNumber(_twilioCallerNumber),
+                //        url: url // Replace with your public endpoint
+                //    );
 
-                if (call.Status != null)
-                {
-                    var result = call.Status.ToString();
-                    if (result != CallResource.StatusEnum.Failed.ToString())
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
+                //if (call.Status != null)
+                //{
+                //    var result = call.Status.ToString();
+                //    if (result != CallResource.StatusEnum.Failed.ToString())
+                //    {
+                //        return true;
+                //    }
+                //    else
+                //    {
+                //        return false;
+                //    }
+                //}
 
                 return true;
 

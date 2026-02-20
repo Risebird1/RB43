@@ -1349,7 +1349,8 @@ namespace Risebird.Business
                     {
                         try
                         {
-                            await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, loggedUserEmailId);
+                            // COMMENTED OUT: Twilio IVR call disabled
+                            //await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, loggedUserEmailId);
                         }
                         catch (Exception ex)
                         {
@@ -2416,7 +2417,8 @@ namespace Risebird.Business
                                    //auto call candidate here
                                    try
                                    {
-                                       await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, emailId);
+                                       // COMMENTED OUT: Twilio IVR call disabled
+                                       //await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, emailId);
 
                                    }
                                    catch (Exception ex)
@@ -3480,7 +3482,8 @@ namespace Risebird.Business
                     _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
                     try
                     {
-                        await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, loggedUserEmailId);
+                        // COMMENTED OUT: Twilio IVR call disabled
+                        //await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, loggedUserEmailId);
                     }
                     catch (Exception ex)
                     {
@@ -4310,7 +4313,8 @@ namespace Risebird.Business
                                     //auto call candidate here
                                     try
                                     {
-                                        await _twilioHelper.AutoCallCandidate(candidateDetails.Phone, irf.id, 0, requestedBy);//passing 0 for candidate Id because it is either way not used in the method
+                                        // COMMENTED OUT: Twilio IVR call disabled
+                                        //await _twilioHelper.AutoCallCandidate(candidateDetails.Phone, irf.id, 0, requestedBy);//passing 0 for candidate Id because it is either way not used in the method
 
                                     }
                                     catch (Exception ex)
