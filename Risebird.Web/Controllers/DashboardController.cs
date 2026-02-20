@@ -142,10 +142,10 @@ namespace Risebird.Web.Controllers
                         //    AssistantId = "5a7c4ecb-fcba-4fa6-bcf1-48842d742144"
                         //};
 
-                        //// Inject today's date dynamically into system prompt
+                        // Inject today's date dynamically into system prompt
                         //var systemPromptWithDate = GetSystemPromptWithCurrentDate("harshitjajoo95@gmail.com", ".net developer");
 
-                        // Create call request with customer info and date injection
+                        ////Create call request with customer info and date injection
                         //var callRequest = new VapiCallRequest
                         //{
                         //    PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
