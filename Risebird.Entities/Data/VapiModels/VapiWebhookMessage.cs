@@ -99,10 +99,9 @@ namespace Risebird.Entities.Data.VapiModels
         public string Name { get; set; }
         
         /// <summary>
-        /// Arguments can be either a JSON object or a JSON string
-        /// Use JsonExtensionData to capture any format
+        /// Arguments as a dictionary - maps to the "arguments" field in JSON
         /// </summary>
-        [JsonExtensionData]
+        [JsonProperty("arguments")]
         public Dictionary<string, object> Arguments { get; set; }
     }
 

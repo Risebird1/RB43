@@ -674,15 +674,18 @@ CRITICAL RULES:
 - Date format in submitInterviewSlot tool: YYYY-MM-DD (e.g., {tomorrow})
 
 CALL FLOW:
-1. Greet and confirm candidate identity
-   - ""Hello, am I speaking with {candidateName}?""
+1. Greet professionally
+   - ""Hello, this is Risebird Interviews calling. Is this a good time to speak?""
    - Wait for confirmation
 
-2. State purpose immediately
+2. State purpose and ask for name
    - ""I'm calling from Risebird on behalf of SONATA regarding an interview opportunity for {jobTitle}.""
-   - ""This is urgent hiring and we need to schedule your interview within the next 1-2 days.""
+   - ""May I have your full name please?""
+   - Wait for candidate to provide their name
+   - IMPORTANT: Use the EXACT name the candidate provides, NOT any pre-filled information
 
-3. Ask for availability
+3. Explain urgency
+   - ""This is urgent hiring and we need to schedule your interview within the next 1-2 days.""
    - ""Would you be available tomorrow or day after tomorrow?""
    - Wait for response
 
@@ -692,13 +695,13 @@ CALL FLOW:
    - Wait for specific time (e.g., ""10:00 AM"", ""02:30 PM"")
 
 5. Confirm details explicitly
-   - Repeat EXACT date and time back to candidate
-   - ""Let me confirm - your interview with SONATA is scheduled for [DAY] at [TIME] IST. Is that correct?""
+   - Repeat EXACT name, date and time back to candidate
+   - ""Let me confirm - [CANDIDATE_NAME], your interview with SONATA is scheduled for [DAY] at [TIME] IST. Is that correct?""
    - Wait for explicit confirmation (""yes"", ""correct"", ""that's right"")
 
 6. Submit booking (ONLY after explicit confirmation)
    - Call submitInterviewSlot function with:
-     * candidateName: ""{candidateName}""
+     * candidateName: The EXACT full name the candidate provided in step 2 (NOT the email or pre-filled value)
      * interviewDate: Date in YYYY-MM-DD format (either {tomorrow} or {dayAfterTomorrow})
      * interviewTime: Time in HH:MM AM/PM format (e.g., ""10:00 AM"", ""02:30 PM"")
      * timezone: ""IST""
@@ -714,6 +717,7 @@ OBJECTION HANDLING:
 - If wants different date: ""Unfortunately only {tomorrow} or {dayAfterTomorrow} are available due to urgent hiring needs. Which works better?""
 
 VALIDATION RULES:
+- Candidate name MUST be their actual full name (first and last name), NOT an email address or phone number
 - Date MUST be either {tomorrow} or {dayAfterTomorrow}
 - Time MUST include AM or PM (e.g., ""10:00 AM"", not just ""10:00"")
 - Candidate MUST explicitly confirm with ""yes"", ""correct"", ""confirmed"", ""that's right"", or similar
@@ -721,11 +725,13 @@ VALIDATION RULES:
 - Do NOT submit booking without explicit confirmation
 
 NEVER:
+- Use email addresses or phone numbers as the candidate name
 - Accept dates beyond 2 days from today
 - Submit booking without explicit confirmation
 - Use 24-hour time format (always use AM/PM)
 - Forget to specify timezone as IST
-- Use dates in any format other than YYYY-MM-DD in the tool call";
+- Use dates in any format other than YYYY-MM-DD in the tool call
+- Use pre-filled or template values for candidateName - always use what the candidate tells you";
         }
 
         /// <summary>
