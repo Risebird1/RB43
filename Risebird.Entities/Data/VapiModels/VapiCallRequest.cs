@@ -139,12 +139,44 @@ namespace Risebird.Entities.Data.VapiModels
 
     /// <summary>
     /// Assistant overrides for specific call
-    /// Note: This class is currently empty as Vapi API doesn't support custom metadata in overrides.
-    /// Store custom data in your database linked to the call ID instead.
+    /// Allows you to override assistant configuration for a specific call
     /// </summary>
     public class VapiAssistantOverrides
     {
-        // Vapi API doesn't currently support custom properties in assistantOverrides
-        // You can override assistant configuration properties here if needed in the future
+        /// <summary>
+        /// Override the model configuration (including system messages)
+        /// </summary>
+        [JsonProperty("model")]
+        public VapiModelOverride Model { get; set; }
+        
+        /// <summary>
+        /// Override the first message
+        /// </summary>
+        [JsonProperty("firstMessage")]
+        public string FirstMessage { get; set; }
+    }
+    
+    /// <summary>
+    /// Model override for assistant
+    /// </summary>
+    public class VapiModelOverride
+    {
+        /// <summary>
+        /// Model provider (required when overriding)
+        /// </summary>
+        [JsonProperty("provider")]
+        public string Provider { get; set; } = "openai";
+        
+        /// <summary>
+        /// Model name (optional)
+        /// </summary>
+        [JsonProperty("model")]
+        public string Model { get; set; }
+        
+        /// <summary>
+        /// Override the system messages
+        /// </summary>
+        [JsonProperty("messages")]
+        public List<VapiMessage> Messages { get; set; }
     }
 }

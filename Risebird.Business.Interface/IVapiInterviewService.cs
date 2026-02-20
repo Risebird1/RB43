@@ -11,9 +11,9 @@ namespace Risebird.Business.Interface
     public interface IVapiInterviewService
     {
         /// <summary>
-        /// Initiates interview booking calls for multiple candidates
+        /// Initiates interview booking calls for multiple recipients
         /// </summary>
-        Task<List<VapiCallLog>> InitiateBatchCallsAsync(List<CandidateCallInfo> candidates);
+        Task<List<VapiCallLog>> InitiateBatchCallsAsync(List<RecipientCallInfo> recipients);
 
         /// <summary>
         /// Gets call statistics for interviews
@@ -31,21 +31,21 @@ namespace Risebird.Business.Interface
         Task<bool> SendFollowUpAsync(string callId);
 
         /// <summary>
-        /// Gets candidates pending call-back
+        /// Gets recipients pending call-back
         /// </summary>
         Task<List<VapiCallLog>> GetPendingCallbacksAsync();
     }
 
     /// <summary>
-    /// Candidate information for making a call
+    /// Recipient information for making a call
     /// </summary>
-    public class CandidateCallInfo
+    public class RecipientCallInfo
     {
-        public int InterviewId { get; set; }
-        public int CandidateId { get; set; }
-        public string CandidateName { get; set; }
-        public string CandidateEmail { get; set; }
-        public string CandidatePhone { get; set; }
+        public int? InterviewId { get; set; }
+        public int? RecipientId { get; set; }
+        public string RecipientName { get; set; }
+        public string RecipientEmail { get; set; }
+        public string RecipientPhone { get; set; }
         public string JobTitle { get; set; }
         public DateTime? PreferredDateTime { get; set; }
     }

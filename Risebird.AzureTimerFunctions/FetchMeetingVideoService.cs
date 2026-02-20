@@ -38,9 +38,8 @@ namespace Risebird.AzureTimerFunctions
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try
             {
-                string videoSasUrl = string.Empty;
-                int? videoDuration = null;
-                string transcriptSasUrl = string.Empty;
+                //string videoSasUrl = string.Empty;
+                //int? videoDuration = null;
                 var pendingVideoMeetings = await _meetingRespository.FetchMeetingPendingVideo();
                 //get oauth token
                 var accesstoken = await _zoho.GetRecordingAccessTokenAsync();
@@ -48,6 +47,9 @@ namespace Risebird.AzureTimerFunctions
                 {
                     try
                     {
+                        string videoSasUrl = string.Empty;
+                        string transcriptSasUrl = string.Empty;
+                        int? videoDuration = null;
                         var ContainerName = meeting.meetingtype.ToLower();
                         var recordinginfo = _zoho.GetRecordingAsync(meeting.ZoomMeetingId, accesstoken).Result;
                         int maxduration = 0;
@@ -63,9 +65,7 @@ namespace Risebird.AzureTimerFunctions
                             var accessToken = accesstoken;
                             myWebClient.DefaultRequestHeaders.Authorization =
                                 new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken?.ToString());
-                            string videoSasUrl = string.Empty;
-                            int? videoDuration = null;
-
+                           
                             using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
                             {
                                 var topic = _recordingupload.erecordingId;
