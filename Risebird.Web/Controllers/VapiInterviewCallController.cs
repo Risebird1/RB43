@@ -372,14 +372,16 @@ namespace Risebird.Web.Controllers
         /// </summary>
         private async Task HandleInterviewSlotSubmission(VapiWebhookMessage message)
         {
-            string callId = null;
+            // Extract CallId early with fallback pattern
+            string callId = message?.Message?.CallId ?? message?.Message?.Call?.Id;
+            
             try
             {
-                await LogCheckpoint("CHECKPOINT-1", "HandleInterviewSlotSubmission method entry");
+                await LogCheckpoint("CHECKPOINT-1", $"HandleInterviewSlotSubmission method entry - CallId: {callId ?? "NULL"}", callId);
 
                 if (message?.Message?.ToolCalls == null || !message.Message.ToolCalls.Any())
                 {
-                    await LogCheckpoint("CHECKPOINT-1a", $"ToolCalls null or empty - Message null: {message == null}, Message.Message null: {message?.Message == null}, ToolCalls null: {message?.Message?.ToolCalls == null}, ToolCalls count: {message?.Message?.ToolCalls?.Count ?? 0}");
+                    await LogCheckpoint("CHECKPOINT-1a", $"ToolCalls null or empty - Message null: {message == null}, Message.Message null: {message?.Message == null}, ToolCalls null: {message?.Message?.ToolCalls == null}, ToolCalls count: {message?.Message?.ToolCalls?.Count ?? 0}", callId);
                     return;
                 }
 
@@ -393,7 +395,7 @@ namespace Risebird.Web.Controllers
                     if (toolCall.Function?.Name == "submitInterviewSlot")
                     {
                         var args = toolCall.Function.Arguments;
-                        callId = message.Message.CallId;
+                        // CallId already extracted at method level with fallback
 
                         var argsJson = args != null ? JsonConvert.SerializeObject(args) : "NULL";
                         await LogCheckpoint("CHECKPOINT-4", "Found submitInterviewSlot tool call", callId, "submitInterviewSlot");
