@@ -9665,7 +9665,7 @@ namespace Risebird.Web.Controllers
                     model.Notes = notesrespose;
                 }
             }
-            return View(model.Notes);
+            return View(model);
         }
         #endregion
         #region Candidate Consent Form

@@ -1,6 +1,7 @@
+@model Risebird.Entities.ViewModel.CallibrationCallVM
 @{
     Layout = null;
-    ViewData["Title"] = "Calibration Transcript → Live Output Viewer";
+    ViewData["Title"] = "Calibration Meeting Notes";
 }
 <!doctype html>
 <html lang="en">
@@ -65,7 +66,7 @@
       font-size:12px;
       line-height:1.35;
     }
-    textarea{min-height:320px; resize:vertical}
+    textarea{min-height:320px; resize:vertical; max-height:65vh}
     .hint{color:var(--muted); font-size:12px; line-height:1.4}
     .two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
     @@media (max-width:700px){.two{grid-template-columns:1fr}}
@@ -92,7 +93,8 @@
     }
     .dot{width:8px;height:8px;border-radius:50%}
     .ok{background:var(--ok)} .warn{background:var(--warn)} .bad{background:var(--bad)}
-    .split{display:grid; grid-template-columns: 1fr; gap:10px}
+    .split{display:grid; grid-template-columns: 1fr; gap:10px; min-height:320px; max-height:70vh; overflow:auto}
+    #tab-view .item{ margin-bottom:8px }
     .tabs{display:flex; gap:8px; flex-wrap:wrap}
     .tab{
       border:1px solid var(--border); background:rgba(31,41,55,.45);
@@ -123,6 +125,13 @@
     .inline{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
     .tog{display:flex; gap:8px; align-items:center}
     .tog input{width:auto}
+    /* Table format for notes from DB */
+    .data-table{width:100%; border-collapse:collapse; font-size:12px; margin-top:8px}
+    .data-table th,.data-table td{border:1px solid var(--border); padding:8px 10px; text-align:left; background:rgba(11,18,32,.45)}
+    .data-table th{background:rgba(15,23,42,.7); color:var(--muted); font-weight:600}
+    .data-table tr:hover td{background:rgba(17,24,39,.6)}
+    .data-table .mono{font-family:var(--mono)}
+    .notes-from-db{padding:8px 12px; margin-bottom:10px; border-radius:10px; background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.3); font-size:12px; color:var(--text)}
   </style>
 </head>
 
@@ -131,8 +140,16 @@
   <div class="wrap">
     <div class="row" style="justify-content:space-between">
       <div class="row">
-        <h1>Transcript JSON → Live Output</h1>
-        <span class="pill"><b>Mode:</b> Viewer + optional backend call</span>
+        <h1>Calibration Meeting Notes</h1>
+        @if (Model?.Notes != null && !string.IsNullOrWhiteSpace(Model.Notes))
+        {
+          <span class="pill"><b>Source:</b> Loaded from database</span>
+          if (ViewBag.MeetingId != null) { <span class="pill"><b>Meeting ID:</b> @ViewBag.MeetingId</span> }
+        }
+        else
+        {
+          <span class="pill"><b>Mode:</b> Paste JSON in Raw JSON tab</span>
+        }
       </div>
       <div class="row">
         <button class="btn" id="btnLoadSample">Load sample</button>
@@ -145,95 +162,32 @@
 </header>
 
 <main>
-  <div class="grid">
-    <!-- LEFT: INPUT -->
-    <section class="card">
-      @* <div class="hd">
-        <div class="title">Input: Transcript JSON</div>
-        <div class="status" id="inputStatus"></div>
-      </div> *@
-      <div class="bd">
-        <div class="three" style="margin-bottom:10px">
-          <div class="card" style="border-radius:14px">
-            <div class="hd"><div class="title">Backend (optional)</div></div>
-            <div class="bd">
-              <div class="kv">
-                <div class="hint">POST endpoint</div>
-                <input id="endpoint" class="mono" placeholder="https://your-api.example.com/calibrate" />
-              </div>
-              <div class="kv" style="margin-top:8px">
-                <div class="hint">Auth (optional)</div>
-                <input id="auth" class="mono" placeholder="Bearer … (or leave empty)" />
-              </div>
-              <div class="inline" style="margin-top:10px">
-                <button class="btn primary" id="btnRun">Run (debounced live)</button>
-                <button class="btn" id="btnRunOnce">Run once</button>
-                <span class="small" id="runHint">If no endpoint, uses local demo transform.</span>
-              </div>
-              <div class="hr"></div>
-              <div class="tog">
-                <input type="checkbox" id="liveToggle" checked />
-                <label for="liveToggle" class="hint">Live update on input change</label>
-              </div>
-              <div class="tog" style="margin-top:6px">
-                <input type="checkbox" id="prettyToggle" checked />
-                <label for="prettyToggle" class="hint">Pretty-print output JSON</label>
-              </div>
-            </div>
-            <div class="footer-note">
-              Tip: keep your API response strictly JSON with the schema you defined.
-            </div>
-          </div>
-
-           <div class="card" style="border-radius:14px">
-            <div class="hd"><div class="title">Input requirements</div></div>
-            <div class="bd">
-              <div class="hint">
-                Expected input format (you control this). Typical options:
-                <ul>
-                  <li><span class="mono">{"transcript":"..."}</span></li>
-                  <li><span class="mono">{"turns":[{"speaker_label":"HM","text":"..."}]}</span></li>
-                </ul>
-                This UI just parses JSON and sends it to your endpoint.
-              </div>
-            </div>
-            <div class="footer-note">
-              If JSON is invalid, output won't run.
-            </div>
-          </div> 
-        </div>
-
-        <textarea id="input" spellcheck="false" placeholder='Paste JSON here...'></textarea>
-
-        <div class="hr"></div>
-        <div class="hint">
-          Notes:
-          <ul>
-            <li>Viewer renders key sections from your output schema: attendees, screens, interview design, handoff pack, open questions.</li>
-            <li>Validation here is lightweight (schema-ish checks + missing arrays). Your backend should enforce strict schema.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- RIGHT: OUTPUT -->
+  <div class="wrap">
     <section class="card">
       <div class="hd">
-        <div class="title">Output: Live JSON + Structured View</div>
+        <div class="title">Calibration meeting notes</div>
         <div class="status" id="outputStatus"></div>
       </div>
       <div class="bd">
+        <div id="notesFromDbBanner" class="notes-from-db" style="display:none">Notes loaded from database. Edit in Raw JSON tab and switch to Structured view to refresh tables.</div>
         <div class="tabs" style="margin-bottom:10px">
           <div class="tab active" data-tab="view">Structured view</div>
           <div class="tab" data-tab="json">Raw JSON</div>
           <div class="tab" data-tab="checks">Checks</div>
         </div>
 
-        <div id="tab-view" class="split"></div>
-        <div id="tab-json" class="split" style="display:none">
-          <pre id="outPre">{}</pre>
+        <div id="tab-view" class="split" role="tabpanel" aria-label="Structured view – data in tables">
+          <div id="tab-view-placeholder" class="hint">Data will appear in tables below. Paste JSON in Raw JSON tab and click Refresh structured view.</div>
         </div>
-        <div id="tab-checks" class="split" style="display:none">
+        <div id="tab-json" class="split" style="display:none" role="tabpanel" aria-label="Raw JSON">
+          <label class="hint" style="display:block; margin-bottom:8px">Raw JSON from database (editable). Exact data read from DB.</label>
+          <textarea id="input" spellcheck="false" placeholder='Paste JSON here...'></textarea>
+          <div class="row" style="margin-top:10px; gap:8px">
+            <button class="btn primary" id="btnRefreshView">Refresh structured view</button>
+            <button class="btn" id="btnFormatJson">Format JSON</button>
+          </div>
+        </div>
+        <div id="tab-checks" class="split" style="display:none" role="tabpanel" aria-label="Validation checks">
           <div id="checksBox" class="list"></div>
         </div>
       </div>
@@ -242,6 +196,9 @@
 </main>
 
 <script>
+  // Exact data from DB – passed as JS string so no HTML encoding corrupts the JSON
+  var notesFromDb = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model?.Notes ?? ""));
+
   // -----------------------------
   // Utilities
   // -----------------------------
@@ -415,13 +372,18 @@
   function renderStructured(out){
     const tab = $("tab-view");
     tab.innerHTML = "";
+    if (!out || typeof out !== "object") {
+      tab.innerHTML = "<div class=\"hint\">No data to display. Paste valid JSON in Raw JSON tab and click Refresh structured view.</div>";
+      return;
+    }
 
-    const attendees = asArr(out?.attendees);
-    const screens = out?.screens || {};
-    const interview = out?.interview_design || {};
-    const expectations = out?.interviewer_expectations || {};
-    const handoff = out?.handoff_pack || {};
-    const openQ = asArr(out?.open_questions);
+    // Support alternate key names from API/DB
+    const attendees = asArr(out?.attendees ?? out?.Attendees);
+    const screens = out?.screens ?? out?.Screens ?? {};
+    const interview = out?.interview_design ?? out?.interviewDesign ?? {};
+    const expectations = out?.interviewer_expectations ?? out?.interviewerExpectations ?? {};
+    const handoff = out?.handoff_pack ?? out?.handoffPack ?? {};
+    const openQ = asArr(out?.open_questions ?? out?.openQuestions);
 
     tab.appendChild(sectionAttendees(attendees));
     tab.appendChild(sectionScreens("Resume Screen", screens?.resume_screen));
@@ -447,21 +409,24 @@
     if (!attendees.length) {
       return mkSection("Attendees", `<div class="hint">No attendees detected.</div>`);
     }
-    const rows = attendees.map(a => {
+    const tableRows = attendees.map(a => {
       const conf = clamp01(a?.confidence);
-      const ev = asArr(a?.evidence_snippets).slice(0,3).map(s => `<div class="small mono">• ${escapeHtml(s)}</div>`).join("");
-      return `
-        <div class="item" style="margin-top:8px">
-          <div class="top">
-            <b>${escapeHtml(a?.speaker_label || "Unknown")}</b>
-            <span class="chip">${escapeHtml(a?.role_inferred || "Unknown")} · ${(conf*100).toFixed(0)}%</span>
-          </div>
-          <div class="small">Org: <span class="mono">${escapeHtml(a?.organization || "Unknown")}</span> · Name: <span class="mono">${escapeHtml(a?.name || "")}</span></div>
-          ${ev ? `<div style="margin-top:6px">${ev}</div>` : `<div class="small" style="margin-top:6px">No evidence snippets.</div>`}
-        </div>
-      `;
+      const ev = asArr(a?.evidence_snippets).slice(0,3).map(s => escapeHtml(s)).join("; ");
+      return `<tr>
+        <td class="mono">${escapeHtml(a?.speaker_label || "—")}</td>
+        <td>${escapeHtml(a?.name || "—")}</td>
+        <td>${escapeHtml(a?.organization || "—")}</td>
+        <td>${escapeHtml(a?.role_inferred || "—")}</td>
+        <td>${(conf*100).toFixed(0)}%</td>
+        <td class="small">${ev || "—"}</td>
+      </tr>`;
     }).join("");
-    return mkSection("Attendees", rows);
+    const tableHtml = `
+      <table class="data-table">
+        <thead><tr><th>Speaker</th><th>Name</th><th>Organization</th><th>Role</th><th>Confidence</th><th>Evidence</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>`;
+    return mkSection("Attendees", tableHtml);
   }
 
   function bucketBlock(label, arr){
@@ -554,10 +519,17 @@
   }
 
   function sectionOpenQuestions(qs){
-    const html = qs.length
-      ? qs.slice(0,30).map(q => `<div class="small mono">• ${escapeHtml(q)}</div>`).join("") + (qs.length>30 ? `<div class="small">… +${qs.length-30} more</div>`:"")
-      : `<div class="hint">No open questions.</div>`;
-    return mkSection("Open Questions", html);
+    if (!qs.length) {
+      return mkSection("Open Questions", `<div class="hint">No open questions.</div>`);
+    }
+    const tableRows = qs.slice(0,50).map((q, i) => `<tr><td>${i+1}</td><td class="mono">${escapeHtml(q)}</td></tr>`).join("");
+    const more = qs.length > 50 ? `<tr><td colspan="2" class="small">… +${qs.length-50} more</td></tr>` : "";
+    const tableHtml = `
+      <table class="data-table">
+        <thead><tr><th>#</th><th>Question</th></tr></thead>
+        <tbody>${tableRows}${more}</tbody>
+      </table>`;
+    return mkSection("Open Questions", tableHtml);
   }
 
   // -----------------------------
@@ -566,58 +538,55 @@
   let debounceTimer = null;
   let lastOutputObj = null;
 
-  function setInputStatus(badgesHtml){
-    $("inputStatus").innerHTML = badgesHtml;
-  }
   function setOutputStatus(badgesHtml){
     $("outputStatus").innerHTML = badgesHtml;
   }
 
   async function runTransform({forceOnce=false}={}){
-    const live = $("liveToggle").checked;
-    if (!live && !forceOnce) return;
-
     const txt = $("input").value.trim();
     const parsed = safeJsonParse(txt);
     if (!parsed.ok){
-      setInputStatus(mkBadge("bad", "Invalid JSON") + mkBadge("warn", parsed.error));
-      setOutputStatus(mkBadge("warn", "Waiting for valid input JSON"));
+      setOutputStatus(mkBadge("bad", "Invalid JSON") + mkBadge("warn", parsed.error));
       return;
     }
 
-    setInputStatus(mkBadge("ok", "Valid JSON"));
-    const endpoint = $("endpoint").value.trim();
-    const auth = $("auth").value.trim();
-
     try{
-      setOutputStatus(mkBadge("warn", endpoint ? "Calling backend…" : "Demo transform…"));
       const t0 = performance.now();
-
       let out;
-      if (endpoint){
-        out = await callBackend(endpoint, auth, parsed.value);
-      } else {
+      // Use parsed JSON as-is when it's an object (from DB or pasted); unwrap array or data wrapper if needed
+      if (parsed.value && typeof parsed.value === "object") {
+        if (Array.isArray(parsed.value) && parsed.value.length > 0 && typeof parsed.value[0] === "object") {
+          out = parsed.value[0];
+        } else if (!Array.isArray(parsed.value)) {
+          out = parsed.value;
+          if (out && typeof out.data === "object" && !Array.isArray(out.data)) {
+            out = out.data;
+          }
+        }
+      }
+      if (!out) {
+        setOutputStatus(mkBadge("warn", "Demo transform…"));
         out = demoTransform(parsed.value);
+      } else {
+        setOutputStatus(mkBadge("warn", "Rendering…"));
       }
 
       const dt = Math.max(0, performance.now() - t0);
       lastOutputObj = out;
 
-      const prettyOn = $("prettyToggle").checked;
-      $("outPre").textContent = prettyOn ? pretty(out) : JSON.stringify(out);
-
+      // Structured view tab: bind JSON data into tables (readable table format)
       renderStructured(out);
 
       const issues = validateOutput(out);
       const checksBox = $("checksBox");
       checksBox.innerHTML = issues.map(it => {
         const badge = it.level === "ok" ? mkBadge("ok", "OK") : (it.level === "warn" ? mkBadge("warn","WARN") : mkBadge("bad","FAIL"));
-        return `<div class="item"><div class="top"><b>${badge} ${escapeHtml(it.msg)}</b><span class="chip">${endpoint ? "backend" : "demo"}</span></div></div>`;
+        return `<div class="item"><div class="top"><b>${badge} ${escapeHtml(it.msg)}</b></div></div>`;
       }).join("");
 
       setOutputStatus(
         mkBadge("ok", "Rendered") +
-        mkBadge("ok", `${endpoint ? "Backend" : "Demo"} in ${dt.toFixed(0)}ms`)
+        mkBadge("ok", `${dt.toFixed(0)}ms`)
       );
 
     } catch(err){
@@ -647,14 +616,11 @@
   // -----------------------------
   // Buttons
   // -----------------------------
-  $("btnRun").addEventListener("click", () => scheduleRun());
-  $("btnRunOnce").addEventListener("click", () => runTransform({forceOnce:true}));
-
   $("btnCopyOut").addEventListener("click", async () => {
     try{
-      const txt = $("outPre").textContent || "{}";
+      const txt = $("input").value || "{}";
       await navigator.clipboard.writeText(txt);
-      setOutputStatus(mkBadge("ok","Copied output JSON"));
+      setOutputStatus(mkBadge("ok","Copied JSON"));
       setTimeout(()=> setOutputStatus(""), 1200);
     } catch(e){
       setOutputStatus(mkBadge("warn","Copy failed (browser permission)"));
@@ -662,7 +628,7 @@
   });
 
   $("btnDownloadOut").addEventListener("click", () => {
-    const txt = $("outPre").textContent || "{}";
+    const txt = $("input").value || "{}";
     const blob = new Blob([txt], {type:"application/json"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -675,13 +641,26 @@
 
   $("btnReset").addEventListener("click", () => {
     $("input").value = "";
-    $("endpoint").value = "";
-    $("auth").value = "";
-    $("outPre").textContent = "{}";
     $("tab-view").innerHTML = "";
     $("checksBox").innerHTML = "";
-    setInputStatus("");
     setOutputStatus("");
+  });
+
+  $("btnRefreshView").addEventListener("click", async () => {
+    await runTransform({ forceOnce: true });
+    setTab("view");
+  });
+  $("btnFormatJson").addEventListener("click", () => {
+    const txt = $("input").value.trim();
+    const parsed = safeJsonParse(txt);
+    if (parsed.ok) {
+      $("input").value = pretty(parsed.value);
+      runTransform({ forceOnce: true });
+      setOutputStatus(mkBadge("ok", "Formatted"));
+      setTimeout(() => setOutputStatus(""), 1200);
+    } else {
+      setOutputStatus(mkBadge("bad", "Invalid JSON – cannot format"));
+    }
   });
 
   $("btnLoadSample").addEventListener("click", () => {
@@ -698,13 +677,19 @@
   });
 
   $("input").addEventListener("input", scheduleRun);
-  $("endpoint").addEventListener("input", scheduleRun);
-  $("auth").addEventListener("input", scheduleRun);
-  $("prettyToggle").addEventListener("change", () => { if (lastOutputObj) $("outPre").textContent = $("prettyToggle").checked ? pretty(lastOutputObj) : JSON.stringify(lastOutputObj); });
 
   setTab("view");
-  setInputStatus(mkBadge("warn","Paste JSON to start"));
-  setOutputStatus(mkBadge("warn","No output yet"));
+  var hasNotesFromDb = typeof notesFromDb === "string" && notesFromDb.length > 0;
+  if (hasNotesFromDb) {
+    $("input").value = notesFromDb;
+    document.getElementById("notesFromDbBanner").style.display = "block";
+    setOutputStatus(mkBadge("ok", "Loaded from DB"));
+    runTransform({ forceOnce: true }).then(function() {
+      setTab("view");
+    });
+  } else {
+    setOutputStatus(mkBadge("warn","Open Raw JSON tab, paste JSON, then click Refresh structured view"));
+  }
 </script>
 </body>
 </html>
