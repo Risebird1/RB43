@@ -1,4 +1,4 @@
-﻿using Risebird.Entities.Data;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections;
@@ -100,5 +100,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> FetchPropableRedoDetails(string emailid, string profileName, string actionstatus);
         Task<bool> SubmitRecruiterCopilot(string Name, string Emailid, string Designation, string Phone, string Company, string Type);
         Task<List<MeetingVM>> FetchMissingParticipantFakeReporting(string emailid, string profileName, string actionstatus, UnassignedInterviewsFilter filters = null);
+        Task<QCOwnerDashboardResponseVM> GetQCOwnerDashboardMetrics(DateTime? dateFrom, DateTime? dateTo);
+        Task<QCOwnerFlagDetailResponseVM> GetQCOwnerFlagDetails(string qcOwner, DateTime? dateFrom, DateTime? dateTo);
     }
 }

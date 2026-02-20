@@ -1,0 +1,240 @@
+===================================================================================
+                    VAPI DASHBOARD - WHERE TO FIND EVERYTHING
+===================================================================================
+
+STEP 1: NAVIGATE TO YOUR ASSISTANT
+-----------------------------------
+https://vapi.ai/dashboard
+
+Left Sidebar:
+┌─────────────────┐
+│ 🏠 Home         │
+│ 🤖 Assistants   │ ← CLICK HERE
+│ 📞 Phone Numbers│
+│ 📊 Analytics    │
+│ ⚙️  Settings    │
+└─────────────────┘
+
+
+STEP 2: OPEN YOUR ASSISTANT
+----------------------------
+Assistants Page:
+
+┌──────────────────────────────────────────────────────────────┐
+│  Assistants                                      [+ New]      │
+├──────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ┌────────────────────────────────────────────────┐          │
+│  │ 🤖 SONATA Interview Scheduler                  │ ← CLICK  │
+│  │    ID: 5a7c4ecb-fcba-4fa6-bcf1-48842d742144   │          │
+│  │    Last modified: 2 hours ago                  │          │
+│  └────────────────────────────────────────────────┘          │
+│                                                               │
+└──────────────────────────────────────────────────────────────┘
+
+
+STEP 3: ASSISTANT CONFIGURATION PAGE
+-------------------------------------
+This is where you'll spend most time:
+
+┌──────────────────────────────────────────────────────────────────────┐
+│  ← Back to Assistants                                                │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│  [TAB: General] [TAB: Advanced]                                      │
+│                                                                       │
+│  ┌─ SECTION 1: BASIC INFO ─────────────────────────────────────┐   │
+│  │                                                               │   │
+│  │  Name: SONATA Interview Scheduler                            │   │
+│  │                                                               │   │
+│  │  Assistant ID: 5a7c4ecb-fcba-4fa6-bcf1-48842d742144 [Copy]  │   │
+│  │                      ↑                                        │   │
+│  │                      └─ COPY THIS FOR appsettings.json       │   │
+│  │                                                               │   │
+│  └───────────────────────────────────────────────────────────────┘   │
+│                                                                       │
+│  ┌─ SECTION 2: SYSTEM PROMPT ──────────────────────────────────┐   │
+│  │                                                               │   │
+│  │  System Prompt: *                                            │   │
+│  │  ┌─────────────────────────────────────────────────────────┐│   │
+│  │  │ You are an outbound interview scheduling assistant      ││   │
+│  │  │ from Risebird Interviews...                             ││   │
+│  │  │                                                          ││   │
+│  │  │ [PASTE IMPROVED_ASSISTANT_INSTRUCTIONS.txt HERE]        ││   │
+│  │  │                                ↑                         ││   │
+│  │  │                                └─ STEP A: PASTE HERE     ││   │
+│  │  └─────────────────────────────────────────────────────────┘│   │
+│  │                                                               │   │
+│  └───────────────────────────────────────────────────────────────┘   │
+│                                                                       │
+│  ┌─ SECTION 3: MODEL & VOICE ───────────────────────────────────┐   │
+│  │  Model: gpt-4o-mini                                           │   │
+│  │  Voice: (select your preference)                              │   │
+│  └───────────────────────────────────────────────────────────────┘   │
+│                                                                       │
+│  ┌─ SECTION 4: SERVER CONFIGURATION ────────────────────────────┐   │
+│  │                                                               │   │
+│  │  Server URL: *                                               │   │
+│  │  ┌─────────────────────────────────────────────────────────┐│   │
+│  │  │ https://portal.risebird.io/VapiInterviewCall/Webhook    ││   │
+│  │  │                                ↑                         ││   │
+│  │  │                                └─ STEP B: ENTER THIS     ││   │
+│  │  └─────────────────────────────────────────────────────────┘│   │
+│  │                                                               │   │
+│  │  Timeout: 20 seconds                                          │   │
+│  │                                                               │   │
+│  └───────────────────────────────────────────────────────────────┘   │
+│                                                                       │
+│  ┌─ SECTION 5: TOOLS (or FUNCTIONS on older UI) ───────────────┐   │
+│  │                                                               │   │
+│  │  Tools                                            [+ Add]     │   │
+│  │  (or "Functions" if you see older UI)               ↑         │   │
+│  │                                                      └─ STEP C│   │
+│  │  ┌──────────────────────────────────────────────────────┐    │   │
+│  │  │ 📋 submitInterviewSlot                    [Edit] [×] │    │   │
+│  │  │    Submits the confirmed interview time slot...      │    │   │
+│  │  │    Parameters: 5                                      │    │   │
+│  │  └──────────────────────────────────────────────────────┘    │   │
+│  │                                                               │   │
+│  │  NOTE: Vapi is migrating from "Functions" to "Tools"         │   │
+│  │  Both work identically - just different naming!              │   │
+│  └───────────────────────────────────────────────────────────────┘   │
+│                                                                       │
+│  [Save Changes]  [Cancel]                                            │
+│                                                                       │
+└──────────────────────────────────────────────────────────────────────┘
+
+
+STEP 4: ADDING A TOOL
+----------------------
+When you click [+ Add] in Tools section (or "Functions" on older UI):
+
+┌──────────────────────────────────────────────────────────────┐
+│  Add Tool (or "Add Function" on older UI)           [×]      │
+├──────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ○ Form Mode    ● JSON Mode  ← SELECT THIS                  │
+│                                                               │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ {                                                      │  │
+│  │   "type": "function",                                  │  │
+│  │   "function": {                                        │  │
+│  │     "name": "submitInterviewSlot",                     │  │
+│  │     "description": "Submits the confirmed...",         │  │
+│  │     "parameters": {                                    │  │
+│  │       "type": "object",                                │  │
+│  │       "properties": {                                  │  │
+│  │         "candidateName": {...},                        │  │
+│  │         "interviewDate": {...},                        │  │
+│  │         ...                                            │  │
+│  │       },                                               │  │
+│  │       "required": [...]                                │  │
+│  │     }                                                  │  │
+│  │   },                                                   │  │
+│  │   "server": {                                          │  │
+│  │     "url": "https://portal.risebird.io/VapiInterv..." │  │
+│  │     "timeoutSeconds": 20                               │  │
+│  │   }                                                    │  │
+│  │ }                                                      │  │
+│  │            ↑                                           │  │
+│  │            └─ PASTE VAPI_TOOL_DEFINITION.json HERE    │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                               │
+│  [Add Tool]  [Cancel]                                         │
+│                                                               │
+└──────────────────────────────────────────────────────────────┘
+
+
+ALTERNATIVE: FORM MODE (if JSON not available)
+-----------------------------------------------
+If you don't see JSON mode, fill the form:
+
+┌──────────────────────────────────────────────────────────────┐
+│  Add Tool (or "Add Function")                       [×]      │
+├──────────────────────────────────────────────────────────────┤
+│                                                               │
+│  Tool/Function Name: *                                       │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ submitInterviewSlot                                    │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                               │
+│  Description: *                                              │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ Submits the confirmed interview time slot to the       │  │
+│  │ booking system. ONLY call this after candidate...      │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                               │
+│  Parameters:                                  [+ Add]         │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ 📝 candidateName (string) ✓ Required      [Edit] [×]  │  │
+│  │    Full name of the candidate                          │  │
+│  ├────────────────────────────────────────────────────────┤  │
+│  │ 📝 interviewDate (string) ✓ Required      [Edit] [×]  │  │
+│  │    Date in YYYY-MM-DD format                           │  │
+│  ├────────────────────────────────────────────────────────┤  │
+│  │ 📝 interviewTime (string) ✓ Required      [Edit] [×]  │  │
+│  │    Time in HH:MM AM/PM format                          │  │
+│  ├────────────────────────────────────────────────────────┤  │
+│  │ 📝 timezone (string) ✓ Required           [Edit] [×]  │  │
+│  │    Always IST                                          │  │
+│  ├────────────────────────────────────────────────────────┤  │
+│  │ ☑️  candidateConfirmed (boolean) ✓ Required [Edit] [×]│  │
+│  │    True if candidate confirmed                         │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                               │
+│  Server URL: *                                               │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ https://portal.risebird.io/VapiInterviewCall/Webhook  │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                               │
+│  Timeout (seconds): 20                                       │
+│                                                               │
+│  [Add Tool]  [Cancel]                                         │
+│                                                               │
+└──────────────────────────────────────────────────────────────┘
+
+
+FINAL CHECKLIST
+---------------
+Before closing Vapi dashboard, verify all these are saved:
+
+✓ System Prompt updated (from IMPROVED_ASSISTANT_INSTRUCTIONS.txt)
+✓ Server URL set: https://portal.risebird.io/VapiInterviewCall/Webhook
+✓ Tool "submitInterviewSlot" added (under "Tools" or "Functions" section)
+✓ Tool has correct webhook URL
+✓ Assistant ID copied (for appsettings.json)
+
+NOTE: "Tools" and "Functions" are the same thing - just different UI naming!
+      Use whichever you see in your dashboard.
+
+
+YOUR WEBHOOK URL (use everywhere)
+----------------------------------
+https://portal.risebird.io/VapiInterviewCall/Webhook
+
+
+WHERE TO SET WEBHOOK URL (BOTH PLACES)
+---------------------------------------
+1. Assistant → Server URL field
+2. Tool (submitInterviewSlot) → server.url field
+   (Or "Function" if you see older UI)
+
+Both must have the same URL!
+"Tools" and "Functions" work identically - just different naming!
+
+
+WHAT THE ASSISTANT WILL DO
+---------------------------
+✅ Ask candidate: "What time works for you?"
+✅ Wait for candidate to tell them a time
+✅ Confirm: "Let me confirm - [DATE] at [TIME] IST. Correct?"
+✅ After "yes", call submitInterviewSlot function
+✅ Webhook receives data → Database updated
+
+❌ Will NOT suggest times like "How about 2 PM?"
+❌ Will NOT accept dates beyond 2 days
+
+
+===================================================================================
+                    SETUP COMPLETE - READY TO TEST!
+===================================================================================

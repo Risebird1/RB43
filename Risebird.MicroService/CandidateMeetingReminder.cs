@@ -110,8 +110,8 @@ namespace Risebird.MicroService
                         }
                         //Send Call, WhatsApp and mail
 
-                        //With Yes/No Button
-                        await _twilioHelper.CandidateReminderCall(item.MobileNumber, item.FirstName, item.interviewDate.ToString());
+                        //With Yes/No Button - COMMENTED OUT: Twilio IVR call disabled
+                        //await _twilioHelper.CandidateReminderCall(item.MobileNumber, item.FirstName, item.interviewDate.ToString());
                     }
                     else if (item.Typefunction == 6)
                     {

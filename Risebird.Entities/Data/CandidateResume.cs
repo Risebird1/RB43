@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Risebird.Entities.Data
 {
@@ -10,9 +10,9 @@ namespace Risebird.Entities.Data
         public int AddedBy { get; set; }//Added By UserId
         public string AddedByEmailId { get; set; }
         public DateTime AddedOn { get; set; }
-        public bool IsProcessed { get; set; }
-        public bool IsResumeParsed { get; set; }
-        public bool IsResumeParsingFailed { get; set; }
+        public bool? IsProcessed { get; set; }
+        public bool? IsResumeParsed { get; set; }
+        public bool? IsResumeParsingFailed { get; set; }
         public string SkillChannelName { get; set; }
         public bool IsAffindaIndexCreated { get; set; }
         public bool? IsEmailMissing { get; set; }

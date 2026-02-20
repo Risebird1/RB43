@@ -17,7 +17,7 @@ AS
 BEGIN         
     
 
-select distinct top 1000 poi.EmailId, poi.PrimarySpecialization, poi.AIVerdict, poi.CreatedBy as FLN, poi.CreatedAt as AddedOn,-- just remove top 1000 if you want all the data
+select distinct poi.EmailId, poi.PrimarySpecialization, poi.AIVerdict, poi.CreatedBy as FLN, poi.CreatedAt as AddedOn,
 ipr.CompanyName, ipr.ResumeLink, ul.MobileNumber, ul.FirstName + ' ' + ul.LastName as [Name], irf.IRFId as TargetSkillChannel, 
 ag.AssessmentGroup,
 CASE 
@@ -30,7 +30,8 @@ join InterviewerProfile ipr on ipr.UserId = ul.id
 outer apply (select top 1 IRFId from TransInterviewer where UserId = ul.id order by CreatedAt) a
 left join irf on irf.id = a.IRFId
 left join AssessmentGroup ag on ag.id = irf.AssessmentGroupId
---where IsActive = 1
+where (@startDate IS NULL OR poi.CreatedAt >= @startDate)
+    AND (@endDate IS NULL OR poi.CreatedAt <= @endDate)
 order by poi.CreatedAt desc
 
 

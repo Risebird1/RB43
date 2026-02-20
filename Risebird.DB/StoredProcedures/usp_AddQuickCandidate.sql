@@ -55,11 +55,19 @@ Begin
        
    IF EXISTS(select 1 from IRF where id=@IRFId and (Isnull(IsPaused,0)=1 or EndDate<Getdate()))                    
    Begin                    
-   select @operationStatus='Skill Channel is not active'            
+   select @operationStatus='Skill Channel is not active'
+	if(@CandidateResumeId is not null and @CandidateResumeId > 0)
+	Begin 
+		update CandidateResume set ReasonBehindNotProcessed = @operationStatus where id = @CandidateResumeId
+	End
    End               
    Else IF(@RowCountValue=0 and @loginProfile='Client' and @Clientrole!=9)            
   Begin            
-  select @operationStatus='You do not have this Skillchannel access'                    
+  select @operationStatus='You do not have access to this Skillchannel.'
+	if(@CandidateResumeId is not null and @CandidateResumeId > 0)
+	Begin 
+		update CandidateResume set ReasonBehindNotProcessed = @operationStatus where id = @CandidateResumeId
+	End
  End              
    Else IF EXISTS(select 1 from Candidate where IRFId=@IRFId and CandidateMasterId = (select id from CandidatesMaster where UserId= (select id from UserList where EmailId=@EmailId)))                    
    Begin                    

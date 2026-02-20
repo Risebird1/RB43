@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -1349,7 +1349,8 @@ namespace Risebird.Business
                     {
                         try
                         {
-                            await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, loggedUserEmailId);
+                            // COMMENTED OUT: Twilio IVR call disabled
+                            //await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, loggedUserEmailId);
                         }
                         catch (Exception ex)
                         {
@@ -2219,7 +2220,8 @@ namespace Risebird.Business
                         }
                         else
                         {
-                            candidateResumeList.Add(new CandidateResume { id = Convert.ToInt32(row.ItemArray[2].ToString()), IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false });
+                            string errorMessage = row.ItemArray[1]?.ToString() ?? "Unknown error during candidate creation";
+                            candidateResumeList.Add(new CandidateResume { id = Convert.ToInt32(row.ItemArray[2].ToString()), IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, ReasonBehindNotProcessed = errorMessage });
                         }
                     }
 
@@ -2415,7 +2417,8 @@ namespace Risebird.Business
                                    //auto call candidate here
                                    try
                                    {
-                                       await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, emailId);
+                                       // COMMENTED OUT: Twilio IVR call disabled
+                                       //await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, emailId);
 
                                    }
                                    catch (Exception ex)
@@ -3479,7 +3482,8 @@ namespace Risebird.Business
                     _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
                     try
                     {
-                        await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, loggedUserEmailId);
+                        // COMMENTED OUT: Twilio IVR call disabled
+                        //await _twilioHelper.AutoCallCandidate(candidate.Phone, irfId, candidate.CandidateMasterId, loggedUserEmailId);
                     }
                     catch (Exception ex)
                     {
@@ -4309,7 +4313,8 @@ namespace Risebird.Business
                                     //auto call candidate here
                                     try
                                     {
-                                        await _twilioHelper.AutoCallCandidate(candidateDetails.Phone, irf.id, 0, requestedBy);//passing 0 for candidate Id because it is either way not used in the method
+                                        // COMMENTED OUT: Twilio IVR call disabled
+                                        //await _twilioHelper.AutoCallCandidate(candidateDetails.Phone, irf.id, 0, requestedBy);//passing 0 for candidate Id because it is either way not used in the method
 
                                     }
                                     catch (Exception ex)
