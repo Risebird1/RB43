@@ -68,6 +68,7 @@ namespace Risebird.Web.Controllers
         private readonly IZohoMeetingHelper _zoho;
         private readonly IResumeOptimizationHelper _resumeOptimizationHelper;
         private readonly IVapiService _vapiService;
+        private readonly IVapiCallRepository _vapiCallRepository;
 
         //private readonly IIRFService _irfService;
 
@@ -81,7 +82,8 @@ namespace Risebird.Web.Controllers
             ICandidateRepository candidateRepository, IPdfReaderHelper pdfReaderHelper,
             IValidationHelper validationHelper, IOpenAIInterviewerAssistantHelper ai,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IAWSRekognitionService aWSRekognitionService,
-            IZohoMeetingHelper zoho, IResumeOptimizationHelper resumeOptimizationHelper, IVapiService vapiService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IZohoMeetingHelper zoho, IResumeOptimizationHelper resumeOptimizationHelper,
+            IVapiService vapiService, IVapiCallRepository vapiCallRepository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -112,6 +114,7 @@ namespace Risebird.Web.Controllers
             _zoho = zoho;
             _resumeOptimizationHelper = resumeOptimizationHelper;
             _vapiService = vapiService;
+            _vapiCallRepository = vapiCallRepository;
         }
 
         [Authorize]
@@ -172,7 +175,35 @@ namespace Risebird.Web.Controllers
                         //    }
                         //};
 
-                        //var response = await _vapiService.InitiateCallAsync(callRequest);
+                        //var callResponse = await _vapiService.InitiateCallAsync(callRequest);
+
+                        //// Save call log to database
+                        //var callLog = new VapiCallLog
+                        //{
+                        //    VapiCallId = callResponse.Id,
+                        //    InterviewId = 1,
+                        //    RecipientId = 1,
+                        //    RecipientPhone = "+918888571923",
+                        //    RecipientName = "Harshit",
+                        //    RecipientEmail = "harshitjajoo95@gmail.com",
+                        //    CallStatus = callResponse.Status,
+                        //    ScheduledDateTime = null,
+                        //    CallStartedAt = callResponse.StartedAt,
+                        //    AssistantId = "5a7c4ecb-fcba-4fa6-bcf1-48842d742144",
+                        //    CreatedAt = DateTime.UtcNow,
+                        //    CreatedBy = User.Identity.Name
+                        //};
+
+                        //var logId = await _vapiCallRepository.SaveCallLogAsync(callLog);
+
+                        //return Json(new
+                        //{
+                        //    success = true,
+                        //    callId = callResponse.Id,
+                        //    logId = logId,
+                        //    status = callResponse.Status,
+                        //    message = "Call initiated successfully"
+                        //});
 
                         //await ParseresumeCopy2();
                         //var list = new List<string>();
