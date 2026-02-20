@@ -334,6 +334,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         private async Task HandleInterviewSlotSubmission(VapiWebhookMessage message)
         {
+            string callId = null;
             try
             {
                 if (message?.Message?.ToolCalls == null || !message.Message.ToolCalls.Any())
@@ -344,11 +345,20 @@ namespace Risebird.Web.Controllers
                     if (toolCall.Function?.Name == "submitInterviewSlot")
                     {
                         var args = toolCall.Function.Arguments;
-                        var callId = message.Message.CallId;
+                        callId = message.Message.CallId;
 
                         // Log that we received the tool call
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
                             new Exception($"Received submitInterviewSlot tool call - CallId: {callId}, Args: {JsonConvert.SerializeObject(args)}"));
+
+                        // Validate CallId
+                        if (string.IsNullOrWhiteSpace(callId))
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                                new Exception($"❌ CRITICAL: CallId is null or empty in tool call webhook"));
+                            await UpdateWebhookDebugLog(callId, "error", "CallId is null or empty", null, null, false);
+                            return;
+                        }
 
                         // Extract interview slot data
                         var candidateName = args.ContainsKey("candidateName") ? args["candidateName"]?.ToString() : null;
@@ -356,6 +366,19 @@ namespace Risebird.Web.Controllers
                         var interviewTime = args.ContainsKey("interviewTime") ? args["interviewTime"]?.ToString() : null;
                         var timezone = args.ContainsKey("timezone") ? args["timezone"]?.ToString() : "IST";
                         var candidateConfirmed = args.ContainsKey("candidateConfirmed") && Convert.ToBoolean(args["candidateConfirmed"]);
+                        
+                        // Check for old dates (likely from dashboard-initiated calls)
+                        if (!string.IsNullOrEmpty(interviewDate) && DateTime.TryParse(interviewDate, out DateTime parsedDate))
+                        {
+                            if (parsedDate.Year < DateTime.Now.Year - 1)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                    new Exception($"⚠️ WARNING: Old date detected ({interviewDate}). This call was likely initiated from Vapi dashboard, not through the application. Dynamic date injection only works when calling through /InitiateInterviewCall endpoint."));
+                                await UpdateWebhookDebugLog(callId, "warning", 
+                                    $"Old date detected: {interviewDate}. Call was likely made from Vapi dashboard. Use application endpoint for current dates.", 
+                                    null, null, false);
+                            }
+                        }
 
                         // Parse the interview date/time
                         var dateTimeString = $"{interviewDate} {interviewTime}";
@@ -401,19 +424,41 @@ namespace Risebird.Web.Controllers
                         bool isNewCallLog = false;
                         if (callLog == null)
                         {
-                            // Call log doesn't exist - create it
+                            // Call log doesn't exist - need to fetch call details from Vapi
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
-                                new Exception($"Call log not found for CallId: {callId}, creating new entry"));
+                                new Exception($"⚠️ Call log not found for CallId: {callId}. This usually means the call was initiated from Vapi dashboard, not through the application."));
+                            
+                            // Try to get call details from Vapi API
+                            VapiCallResponse callDetails = null;
+                            try
+                            {
+                                callDetails = await _vapiService.GetCallDetailsAsync(callId);
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                                    new Exception($"✅ Retrieved call details from Vapi API for CallId: {callId}"));
+                            }
+                            catch (Exception apiEx)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                                    new Exception($"❌ Failed to retrieve call details from Vapi API for CallId: {callId}: {apiEx.Message}"));
+                            }
                             
                             isNewCallLog = true;
                             callLog = new VapiCallLog
                             {
                                 VapiCallId = callId,
-                                RecipientPhone = message.Message.Call?.Customer?.Number ?? "unknown",
+                                RecipientPhone = callDetails?.Customer?.Number 
+                                    ?? message.Message.Call?.Customer?.Number 
+                                    ?? "unknown",
                                 RecipientName = candidateName,
-                                RecipientEmail = message.Message.Call?.Customer?.Email,
-                                CallStatus = message.Message.Call?.Status ?? "ended",
-                                AssistantId = message.Message.Call?.AssistantId,
+                                RecipientEmail = callDetails?.Customer?.Email 
+                                    ?? message.Message.Call?.Customer?.Email,
+                                CallStatus = callDetails?.Status 
+                                    ?? message.Message.Call?.Status 
+                                    ?? "ended",
+                                AssistantId = callDetails?.AssistantId 
+                                    ?? message.Message.Call?.AssistantId,
+                                CallStartedAt = callDetails?.StartedAt,
+                                CallEndedAt = callDetails?.EndedAt,
                                 CreatedAt = DateTime.UtcNow,
                                 CreatedBy = "Webhook"
                             };
@@ -459,10 +504,12 @@ namespace Risebird.Web.Controllers
                         catch (Exception saveEx)
                         {
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
-                                new Exception($"❌ FAILED to save call log - CallId: {callId}, Error: {saveEx.Message}", saveEx));
+                                new Exception($"❌ FAILED to save call log - CallId: {callId}, Error: {saveEx.Message}, InnerException: {saveEx.InnerException?.Message}", saveEx));
                             
                             // Update debug log with error
-                            await UpdateWebhookDebugLog(callId, "error", $"Database save failed: {saveEx.Message}", null, null, false);
+                            await UpdateWebhookDebugLog(callId, "error", 
+                                $"Database save failed: {saveEx.Message}. InnerException: {saveEx.InnerException?.Message}. StackTrace: {saveEx.StackTrace}", 
+                                null, null, false);
                             throw;
                         }
                     }
@@ -470,7 +517,17 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                    new Exception($"❌ HandleInterviewSlotSubmission failed for CallId: {callId ?? "unknown"}: {ex.Message}", ex));
+                
+                // Try to update debug log even if we failed
+                try
+                {
+                    await UpdateWebhookDebugLog(callId, "error", 
+                        $"HandleInterviewSlotSubmission exception: {ex.Message}. InnerException: {ex.InnerException?.Message}. StackTrace: {ex.StackTrace}", 
+                        null, null, false);
+                }
+                catch { }
             }
         }
 
