@@ -4,6 +4,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.VapiModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -272,9 +273,9 @@ You have access to tools to:
         {
             var results = new List<VapiToolCallResultItem>();
 
-            if (webhookMessage?.Message?.ToolCalls?.ToolCalls != null)
+            if (webhookMessage?.Message?.ToolCalls != null && webhookMessage.Message.ToolCalls.Any())
             {
-                foreach (var toolCall in webhookMessage.Message.ToolCalls.ToolCalls)
+                foreach (var toolCall in webhookMessage.Message.ToolCalls)
                 {
                     var result = ProcessIndividualToolCall(toolCall);
                     results.Add(new VapiToolCallResultItem
