@@ -73,28 +73,29 @@ namespace Risebird.Functions
                         var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
                         var twilioVoiceCallNumber = "+17274782239";
 
-                        Parallel.ForEach(phoneNumbers, phoneNumber =>
-                        {
-                            if (!string.IsNullOrEmpty(phoneNumber))
-                            {
-                                try
-                                {
-                                    TwilioClient.Init(twilioAccountSID, twilioAuthToken);
-                                    var to = new PhoneNumber(phoneNumber);
-                                    var from = new PhoneNumber(twilioVoiceCallNumber);
-                                    var call = CallResource.CreateAsync(
-                                        to: to,
-                                        from: from,
-                                        url: new Uri("https://beige-vulture-6005.twil.io/assets/CandidateScheduleReminder.xml"));
-                                    log.Info($"Voice call Candidate Timer trigger function executed for: {phoneNumber}");
-                                }
-                                catch (Exception)
-                                {
-                                    log.Error($"Failed to make call. Please check all filled and try again.");
-                                }
-                            }
+                        // COMMENTED OUT: Twilio IVR call disabled
+                        //Parallel.ForEach(phoneNumbers, phoneNumber =>
+                        //{
+                        //    if (!string.IsNullOrEmpty(phoneNumber))
+                        //    {
+                        //        try
+                        //        {
+                        //            TwilioClient.Init(twilioAccountSID, twilioAuthToken);
+                        //            var to = new PhoneNumber(phoneNumber);
+                        //            var from = new PhoneNumber(twilioVoiceCallNumber);
+                        //            var call = CallResource.CreateAsync(
+                        //                to: to,
+                        //                from: from,
+                        //                url: new Uri("https://beige-vulture-6005.twil.io/assets/CandidateScheduleReminder.xml"));
+                        //            log.Info($"Voice call Candidate Timer trigger function executed for: {phoneNumber}");
+                        //        }
+                        //        catch (Exception)
+                        //        {
+                        //            log.Error($"Failed to make call. Please check all filled and try again.");
+                        //        }
+                        //    }
 
-                        });
+                        //});
                     }
 
 
