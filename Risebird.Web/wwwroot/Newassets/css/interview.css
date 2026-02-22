@@ -1,4 +1,4 @@
-﻿/* CSS Document */
+/* CSS Document */
 
 
 #style-2::-webkit-scrollbar-track {
@@ -787,6 +787,7 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+
 .calendar-wrapper {
     position: absolute;
     top: 45px;
@@ -794,24 +795,28 @@ input[type=number] {
     background: #c2c7c9eb;
     padding: 6px 0px 6px 0px;
     left: 5px;
-    display:none;
+    display: none;
 }
+
     .calendar-wrapper .input-daterange input {
         width: 125px;
         float: left;
         height: 25px;
-        margin:0px 5px;
+        margin: 0px 5px;
         background: #fff;
     }
+
 .date_interview strong {
     float: left;
     padding-top: 7px;
 }
+
 .calendar-wrapper .input-group {
     margin-bottom: 0px;
     float: left;
     width: 90%;
 }
+
 .calendar-wrapper [type=submit] {
     float: right;
     background: none;
@@ -830,6 +835,7 @@ input[type=number] {
     height: 20px;
     border-radius: 100px;
 }
+
 .date_interview .calendar-div {
     border-radius: 49px;
     width: 25px;
@@ -838,8 +844,7 @@ input[type=number] {
     position: relative;
     top: -2px;
     left: 10px;
-    float:left;
-
+    float: left;
 }
 
 [type="date"] {
@@ -1035,8 +1040,8 @@ ul.panel-controls > li > button {
     }
 
 .scroller {
-   /* height: 270px;*/
-   height:135px;
+    /* height: 270px;*/
+    height: 135px;
 }
 
 .scroller-height {
@@ -1989,9 +1994,11 @@ select:-moz-focusring {
     position: relative;
     left: -10px;
 }
+
 #SurchargeHistoryModel .modal-lg {
     max-width: 1000px !important;
 }
+
 @media screen and (max-width:991px) {
     #ProctoringTable .label-type {
         white-space: normal;
@@ -2021,7 +2028,7 @@ select:-moz-focusring {
     }
 
     #SurchargeHistoryModel .modal-lg {
-        width:100%!important;
+        width: 100% !important;
     }
 }
 
@@ -2034,17 +2041,21 @@ select:-moz-focusring {
     .tp25 {
         margin-top: 0px !important
     }
+
     #reportForm .question ul li {
-        font-size: 14px!important;
-        padding: 0px 0px!important;
+        font-size: 14px !important;
+        padding: 0px 0px !important;
     }
-        .call-time {
+
+    .call-time {
         margin: 0px 0px 0px 0px !important;
         left: 0px !important;
     }
+
     #SurchargeHistoryModel .modal-lg {
         width: 100% !important;
     }
+
     .skill .table-responsive, .daily-interview .table-responsive {
         border: 0px;
     }
@@ -2181,9 +2192,11 @@ select:-moz-focusring {
     0% {
         opacity: 0;
     }
+
     50% {
         opacity: 0.7;
     }
+
     100% {
         opacity: 0;
     }
