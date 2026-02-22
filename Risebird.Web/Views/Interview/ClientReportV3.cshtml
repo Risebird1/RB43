@@ -30,6 +30,7 @@
     #reportForm .question.ai-ques ul li{
     background:none;
     padding-left:25px;
+    font-size:14px;
     }
     .tox-notifications-container {
         display: none
@@ -906,15 +907,15 @@
                                                 }
                                             </div>
                                        
-                                          <div class="col-lg-3 col-md-5 clientnfo">
+                                         @*  <div class="col-lg-3 col-md-5 clientnfo">
                                               @if (Model.TranscriptSummaryObject != null){
                                                 @if (Model.TranscriptSummaryObject.IntervieweeAnalysis?.Summary != null)
                                                 {
                                                     var summary = Model.TranscriptSummaryObject.IntervieweeAnalysis.Summary;
                                                     <div style="margin-top:30px;">
                                                        
-                                                        @* Strengths *@
-                   @* @if (summary.Strengths != null && summary.Strengths.Any())
+                                                       
+                    @if (summary.Strengths != null && summary.Strengths.Any())
                                                         {
                                                             <div style="margin-bottom: 20px; padding: 15px; background-color: #e8f5e9; border-radius: 8px; border-left: 4px solid #4caf50;">
                                                                 <h4 style="margin: 0 0 15px 0; color: #2e7d32; font-size: 18px;">
@@ -927,9 +928,9 @@
                                                                     }
                                                                 </ul>
                                                             </div>
-                                                        }*@
-                                                        @* Areas of Improvement *@
-                                                        @* @if (summary.AreasOfImprovement != null && summary.AreasOfImprovement.Any())
+                                                        }
+                                                       
+                                                        @if (summary.AreasOfImprovement != null && summary.AreasOfImprovement.Any())
                                                         {
                                                             <div style="margin-bottom: 20px; padding: 15px; background-color: #fff3e0; border-radius: 8px; border-left: 4px solid #ff9800;">
                                                                 <h4 style="margin: 0 0 15px 0; color: #e65100; font-size: 18px;">
@@ -942,105 +943,77 @@
                                                                     }
                                                                 </ul>
                                                             </div>
-                                                        } *@
+                                                        } 
                                                     </div>
                                                 }
                                                 }
-                                            </div>
-                                            <div class="col-lg-9 col-md-7">
+                                            </div> *@
+                                            <div class="col-lg-12 col-md-12">
                                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                    @* AI Interview Questions and Answers from Transcript Summary *@
-                                                    @if (Model.TranscriptSummaryObject != null)
-                                                    {
-                                                        <h3 style="margin-top: 30px;">
-                                                            <img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">
-                                                            AI Interview Questions & Answers
-                                                        </h3>
-                                                        <div class="question ai-ques" style="font-size:16px;">
-                                                            <ul>
-                                                                @if (Model.TranscriptSummaryObject.IntervieweeAnalysis != null)
-                                                                {
-                                                                    int answerIndex = 0;
-                                                                    int commentIndex = 0;
-
-                                                                    @foreach (var qaPair in Model.TranscriptSummaryObject.IntervieweeAnalysis.QaPairs)
+                                                    <div class="report-full-width-sections" style="margin-top: 16px;">
+                                                        @* AI Interview Questions & Answers – sleek compact *@
+                                                        @if (Model.TranscriptSummaryObject != null)
+                                                        {
+                                                            <div class="ai-qa-card" style="margin-bottom: 16px;border-radius:0px;">
+                                                                <div style="background:#249c90; padding:5px 16px; display: flex; align-items: center; gap: 8px;">
+                                                                    <img style="width: 22px; height: 22px; opacity: 0.95;" src="/img/question-asked.png" alt="" />
+                                                                    <h2 style="margin: 0; color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;">AI Interview Questions &amp; Answers</h2>
+                                                                </div>
+                                                                <div class="question ai-ques">
+                                                                    @if (Model.TranscriptSummaryObject.IntervieweeAnalysis != null)
                                                                     {
-                                                                        <li style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
-
-                                                                            @* Timestamp *@
-                                                                            @if (!string.IsNullOrEmpty(qaPair.Timestamp))
-                                                                            {
-                                                                                <span style="color: #9A9A9A; font-size: 14px; display: block; margin-bottom: 5px;">
-                                                                                   <svg fill="#ccc" width="13" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="color: #ccc;"><path d="M256 0a256 256 0 1 1 0 512 256 256 0 1 1 0-512zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"></path></svg> Time: @qaPair.Timestamp
-                                                                                </span>
-                                                                            }
-
-                                                                            @* Question *@
-                                                                            <div style="margin-bottom: 10px;background:#bdedf378;padding: 5px 9px;">
-                                                                                <strong style="color: #333; font-size:17px;font-weight:500">Question:</strong>
-                                                                                <p style="margin: 5px 0; color: #555; font-size:16px;font-weight:400">@qaPair.Question</p>
-                                                                            </div>
-
-                                                                            @*Answer*@
-                                                                            <div style="margin-bottom: 10px;box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.1);padding: 5px 9px;">
-                                                                                <strong style="color: #333; font-size: 17px;font-weight:500; float:left">Answer:</strong>
-
-                                                                                @if (qaPair.AnswerRating > 0)
-                                                                                {
-                                                                                    <div style="margin-bottom: 5px;">
-                                                                                        <label style="font-size: 14px; color: #9A9A9A; float:right;">
-                                                                                            Rating: @qaPair.AnswerRating / 5
-                                                                                        </label>
+                                                                        int answerIndex = 0;
+                                                                        int qIndex = 0;
+                                                                        @foreach (var qaPair in Model.TranscriptSummaryObject.IntervieweeAnalysis.QaPairs)
+                                                                        {
+                                                                            qIndex++;
+                                                                            var answerId = Model.id * 10000 + answerIndex;
+                                                                            answerIndex++;
+                                                                            <div class="ai-qa-item">
+                                                                                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 8px; margin-bottom: 6px;">
+                                                                                    <span style="font-size:15px; font-weight: 700; color: #5B9BD5; letter-spacing: 0.05em;">Q@(qIndex): </span>
+                                                                                    @if (!string.IsNullOrEmpty(qaPair.Timestamp))
+                                                                                    {
+                                                                                        <span style="color: #95a5a6; font-size: 10px;"><svg fill="currentColor" width="10" height="10" viewBox="0 0 512 512" style="vertical-align: -1px;"><path d="M256 0a256 256 0 1 1 0 512 256 256 0 1 1 0-512zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"></path></svg> @qaPair.Timestamp</span>
+                                                                                    }
+                                                                                </div>
+                                                                                <div style="background: #f0f7fc; border-left: 3px solid #5B9BD5; border-radius: 4px; padding: 8px 12px; margin-bottom: 8px;">
+                                                                                    <div style="font-size:13px; font-weight: 700; color: #3d7bb8; letter-spacing: 0.04em; margin-bottom: 2px;">Question</div>
+                                                                                    <p style="margin: 0; color: #2c3e50; font-size: 13px; font-weight: 500; line-height: 1.4;">@qaPair.Question</p>
+                                                                                </div>
+                                                                                <div style="background: #fafbfc; border-radius: 4px; padding: 8px 12px; border: 1px solid #eee;">
+                                                                                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;">
+                                                                                        <span style="font-size: 13px; font-weight: 700; color: #64798a; letter-spacing: 0.04em;">Answer</span>
+                                                                                        @if (qaPair.AnswerRating > 0)
+                                                                                        {
+                                                                                            <span style="display: inline-flex; align-items: center; gap: 4px; background: rgba(36,156,144,0.1); border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; color: #249c90;"><span style="font-size: 10px; font-weight: 600; color: #64798a; text-transform: uppercase; letter-spacing: 0.03em;">Rating</span> @qaPair.AnswerRating/5</span>
+                                                                                        }
                                                                                     </div>
-                                                                                }
-
-                                                                                <div style="clear:both"></div>
-
-                                                                                @{
-                                                                                    int answerId = Model.id * 10000 + answerIndex;
-                                                                                    answerIndex++;
-                                                                                }
-
-                                                                                @if (!string.IsNullOrEmpty(qaPair.Answer) && qaPair.Answer.Length > 300)
-                                                                                {
-                                                                                    <div class="article" style="border-top: 1px #bfb5b5e6 dotted; padding-top: 10px;">
-                                                                                        <p style="margin: 5px 0; color: #555; font-size:16px;font-weight:400">
-                                                                                            @qaPair.Answer.Substring(0, 300)
-                                                                                        </p>
-
-                                                                                        <p class="moretext_@(answerId) moretext"
-                                                                                           style="margin: 5px 0; color: #555; font-size: 16px;font-weight:400; display: none;">
-                                                                                            @qaPair.Answer.Substring(150, qaPair.Answer.Length - 150)
-                                                                                        </p>
-                                                                                    </div>
-
-                                                                                    <a onclick="return moreless(@answerId, event);" class="moreless-btn" id="read_@(answerId)"
-                                                                                       href="javascript:void(0);" style="font-size: 14px; color: #0066cc!important;background:none!important;margin:0px;padding:0px; text-decoration: none;">
-                                                                                        Read more
-                                                                                    </a>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <p style="margin: 5px 0; color: #555; font-size: 16px;font-weight:400; border-top: 1px #bfb5b5e6 dotted; padding-top: 10px;">
-                                                                                        @qaPair.Answer
-                                                                                    </p>
-                                                                                }
+                                                                                    @if (!string.IsNullOrEmpty(qaPair.Answer) && qaPair.Answer.Length > 300)
+                                                                                    {
+                                                                                        <div class="article">
+                                                                                            <p style="margin: 0; color: #4a5568; font-size: 12px; line-height: 1.45;">@qaPair.Answer.Substring(0, 300)</p>
+                                                                                            <p class="moretext_@(answerId) moretext" style="margin: 4px 0 0 0; color: #4a5568; font-size: 12px; line-height: 1.45; display: none;">@qaPair.Answer.Substring(150, qaPair.Answer.Length - 150)</p>
+                                                                                        </div>
+                                                                                        <a onclick="return moreless(@answerId, event);" class="moreless-btn" id="read_@(answerId)" href="javascript:void(0);" style="font-size: 11px; font-weight: 600; color: #5B9BD5; margin-top: 4px; display: inline-block;">Read more</a>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <p style="margin: 0; color: #4a5568; font-size: 12px; line-height: 1.45;">@qaPair.Answer</p>
+                                                                                    }
+                                                                                </div>
                                                                             </div>
-
-                                                                            
-
-                                                                        </li>
+                                                                        }
                                                                     }
-                                                                }
-                                                            </ul>
-                                                        </div>
+                                                                </div>
+                                                            </div>
+                                                        }
 
-
-                                                    }
-
-                                                </div>
-                                                    
+                                                        
                                                     </div>
+                                                    <!-- End: report-full-width-sections -->
+                                                </div>
+                                            </div>
                                         
                                         
                                         </div>
