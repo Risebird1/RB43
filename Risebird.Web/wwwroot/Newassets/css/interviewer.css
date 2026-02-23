@@ -1548,6 +1548,42 @@ div.dataTables_wrapper div.dataTables_processing {
     visibility: visible;
 }
 
+/* Search in-progress spinner */
+.interviewer-search-spin {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    width: 15px;
+    height: 15px;
+    border: 2px solid #cbd5e1;
+    border-top-color: #475569;
+    border-radius: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    animation: isr-spin .65s linear infinite;
+    display: none;
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
+@keyframes isr-spin {
+    to { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* While searching: hide magnifying glass, show spinner */
+#meeting_filter.searching .interviewer-search-ico {
+    display: none;
+}
+
+#meeting_filter.searching .interviewer-search-spin {
+    display: block;
+}
+
+/* Make search icon clickable */
+.interviewer-search-ico {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
 /* Interviewer page header: soothing background, spacing, compact buttons */
 .interviewer-page-header {
     background: linear-gradient(135deg, #f0f4f8 0%, #e8eef5 100%) !important;

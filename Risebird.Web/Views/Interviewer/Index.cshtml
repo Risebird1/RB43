@@ -62,12 +62,14 @@
 
 
 
-                    <div id="meeting_filter" class="interviewer-search-wrap pull-left">
+                    <div id="meeting_filter" class="interviewer-search-wrap dataTables_filter pull-left">
                         <div class="interviewer-search-box">
-                            <span class="interviewer-search-ico" aria-hidden="true">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            <span onclick="searchResult()" class="interviewer-search-ico" id="search" aria-hidden="true" style="background:none">
+                                <svg style="position:relative;top:13px;right:13px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                             </span>
-                            <input type="search" class="interviewer-search-inp" id="txtmeeting_filter" placeholder="Search interviewers..." aria-controls="interviewer" value="@ViewBag.Searchvalue" autocomplete="off">
+                            <span class="interviewer-search-spin" aria-hidden="true"></span>
+
+                            <input type="search" class="interviewer-search-inp" id="txtmeeting_filter" placeholder="Search interviewers..." aria-controls="interviewer" onkeyup="searchResult()" value="@ViewBag.Searchvalue" autocomplete="off">
                             <button type="button" class="interviewer-search-reset" onclick="RefreshSearch()" title="Clear" aria-label="Clear search">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                             </button>
@@ -823,7 +825,69 @@
 }
 
 
+<script>
 
+    function RefreshSearch() {
+        if (_srXHR) { _srXHR.abort(); _srXHR = null; }
+        if (_srTimeout) { clearTimeout(_srTimeout); _srTimeout = null; }
+        $('#txtmeeting_filter').val('');
+        $('#meeting_filter').removeClass('has-value searching');
+        searchResult();
+    }
+    $(document).ready(function () {
+
+        $("#x").click(function (e) {
+            RefreshSearch();
+        });
+
+
+
+
+    });
+    var start = document.getElementById('start');
+    start.focus();
+
+    function dotheneedful(sibling) {
+        if (sibling != null) {
+            start.focus();
+            start.style.backgroundColor = '';
+            start.style.color = '';
+            sibling.focus();
+            start = sibling;
+        }
+    }
+
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+        e = e || window.event;
+        if (e.keyCode == '38') {
+            // up arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.previousElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '40') {
+            // down arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.nextElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '37') {
+            // left arrow
+            var sibling = start.previousElementSibling;
+            dotheneedful(sibling);
+        } else if (e.keyCode == '39') {
+            // right arrow
+            var sibling = start.nextElementSibling;
+            dotheneedful(sibling);
+        }
+    }
+</script>
 <script>
     function closeBankDetailsModel() {
         var modal = document.getElementById("bankModal");
@@ -858,7 +922,67 @@
         var modal = document.getElementById("availModal");
         modal.style.display = "none";
     }
+    var _srTimeout = null;   // debounce timer
+    var _srXHR     = null;   // in-flight request handle
+    var _srCache   = {};     // keyed by lowercase search term
 
+    function searchResult() {
+        var term    = ($('#txtmeeting_filter').val() || '').trim();
+        var key     = term.toLowerCase();
+        var isEnter = window.event && (window.event.key === 'Enter' || window.event.keyCode === 13);
+
+        // update clear-button visibility
+        $('#meeting_filter').toggleClass('has-value', term.length > 0);
+
+        // abort any stale in-flight request (prevents race conditions)
+        if (_srXHR) { _srXHR.abort(); _srXHR = null; }
+        if (_srTimeout) { clearTimeout(_srTimeout); _srTimeout = null; }
+        $('#meeting_filter').removeClass('searching');
+
+        // skip single-character queries (too broad, costly on DB)
+        if (term.length === 1) { return; }
+
+        // serve identical searches instantly from cache (zero DB hit)
+        if (_srCache.hasOwnProperty(key)) {
+            var c = _srCache[key];
+            bindtableData(c.result);
+            bindPages(c.totalPage, c.startPage, c.endPage, c.totalentry);
+            return;
+        }
+
+        // fire immediately on Enter/icon-click, debounce while typing
+        var delay = isEnter ? 0 : 320;
+        _srTimeout = setTimeout(function () {
+            $('#meeting_filter').addClass('searching');  // show spinner
+            _srXHR = $.ajax({
+                type: "POST",
+                url: "/Interviewer/InterviewerProfileJson",
+                data: { 'searchValue': term },
+                success: function (data) {
+                    _srXHR = null;
+                    $('#meeting_filter').removeClass('searching');  // hide spinner
+                    if (data && typeof data === 'object' && data.result !== undefined) {
+                        _srCache[key] = data;   // store for instant reuse
+                        bindtableData(data.result);
+                        bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
+                    } else {
+                        $("#tblbodyInterviewerProfile").html(
+                            '<tr><td colspan="9" class="text-center text-danger">Could not load results. Please try again.</td></tr>'
+                        );
+                    }
+                },
+                error: function (xhr) {
+                    _srXHR = null;
+                    $('#meeting_filter').removeClass('searching');  // hide spinner
+                    if (xhr.statusText !== 'abort') {
+                        $("#tblbodyInterviewerProfile").html(
+                            '<tr><td colspan="9" class="text-center text-danger">Search failed. Please try again.</td></tr>'
+                        );
+                    }
+                }
+            });
+        }, delay);
+    }
     function bindavailDetailsData(data) {
         var html = '';
         html += '  <table class="table table-bordered mbn" id="availabilityDetailsTable">';
@@ -999,67 +1123,58 @@
 
 <script>
 
-    function RefreshSearch() {
-        $('#txtmeeting_filter').val('');
-        $('#meeting_filter').removeClass('has-value');
-        if (interviewerDataTable) interviewerDataTable.search('').draw();
-    }
     $(document).ready(function () {
+        // restore clear-button if search was pre-filled from server
+        if ($('#txtmeeting_filter').val()) {
+            $('#meeting_filter').addClass('has-value');
+        }
 
-        $('#txtmeeting_filter').on('input', function () {
-            if ($(this).val() === "") $("#x").hide();
-            else $("#x").show();
-        });
-        $("#x").click(function (e) {
-            RefreshSearch();
-            $(this).hide();
-        });
-
-
-
-
+        // pre-warm the empty-search cache in the background so the first
+        // refresh/clear is served instantly without any visible delay
+        setTimeout(function () {
+            if (!_srCache.hasOwnProperty('')) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Interviewer/InterviewerProfileJson",
+                    data: { 'searchValue': '' },
+                    success: function (data) {
+                        if (data && typeof data === 'object' && data.result !== undefined) {
+                            _srCache[''] = data;
+                        }
+                    }
+                });
+            }
+        }, 800);  // small delay so it doesn't compete with the visible page load
     });
+
     var start = document.getElementById('start');
-    start.focus();
+    if (start) start.focus();
 
     function dotheneedful(sibling) {
         if (sibling != null) {
-            start.focus();
-            start.style.backgroundColor = '';
-            start.style.color = '';
-            sibling.focus();
+            if (start) start.focus();
             start = sibling;
+            sibling.focus();
         }
     }
 
     document.onkeydown = checkKey;
 
     function checkKey(e) {
+        // don't hijack arrow keys while typing in the search box
+        if (document.activeElement && document.activeElement.id === 'txtmeeting_filter') return;
         e = e || window.event;
+        if (!start) return;
         if (e.keyCode == '38') {
-            // up arrow
-            var idx = start.cellIndex;
             var nextrow = start.parentElement.previousElementSibling;
-            if (nextrow != null) {
-                var sibling = nextrow.cells[idx];
-                dotheneedful(sibling);
-            }
+            if (nextrow != null) dotheneedful(nextrow.cells[start.cellIndex]);
         } else if (e.keyCode == '40') {
-            // down arrow
-            var idx = start.cellIndex;
             var nextrow = start.parentElement.nextElementSibling;
-            if (nextrow != null) {
-                var sibling = nextrow.cells[idx];
-                dotheneedful(sibling);
-            }
+            if (nextrow != null) dotheneedful(nextrow.cells[start.cellIndex]);
         } else if (e.keyCode == '37') {
-            // left arrow
-            var sibling = start.previousElementSibling;
-            dotheneedful(sibling);
+            dotheneedful(start.previousElementSibling);
         } else if (e.keyCode == '39') {
-            // right arrow
-            var sibling = start.nextElementSibling;
-            dotheneedful(sibling);
+            dotheneedful(start.nextElementSibling);
         }
     }
 </script>
