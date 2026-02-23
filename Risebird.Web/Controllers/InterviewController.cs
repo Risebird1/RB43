@@ -3211,16 +3211,23 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")// || profileName == "Quality Controller"// //
                         {
-                            var result = await _meetingService.SaveAIInterviewProctorEvaluation(model);
-                            if (result)
+                            try
                             {
-                                TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
+                                var result = await _meetingService.SaveAIInterviewProctorEvaluation(model);
+                                if (result)
+                                {
+                                    TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
 
+                                }
+                                else
+                                {
+                                    TempData["SuccessErrorMessage"] = "Failed to save the report!";
+
+                                }
                             }
-                            else
+                            catch (InvalidOperationException ex)
                             {
-                                TempData["SuccessErrorMessage"] = "Failed to save the report!";
-
+                                TempData["SuccessErrorMessage"] = ex.Message;
                             }
                             return RedirectToAction("MyInterview");
 
@@ -8008,6 +8015,24 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Renders the V4 client report UI while reusing the existing ClientReportV3 logic.
+        /// This keeps behavior (security/share handling, redirects, etc.) identical, but swaps the view to ClientReportV4.
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> ClientReportV4(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null)
+        {
+            var result = await ClientReportV3(interviewId, irfId, isClient, isClientSelected, isQC, actiontype, uniqueid, publicEmailId);
+
+            if (result is ViewResult viewResult)
+            {
+                viewResult.ViewName = "ClientReportV4";
+            }
+
+            return result;
         }
 
         [AllowAnonymous]

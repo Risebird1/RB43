@@ -613,6 +613,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@SessionId", sessionId);
                     parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@ModifiedBy", "AI_Interview_System");
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateMeetingCompletedStatusForAIInterview", parameters,
                          commandType: CommandType.StoredProcedure, commandTimeout: 150);
                     return true;
