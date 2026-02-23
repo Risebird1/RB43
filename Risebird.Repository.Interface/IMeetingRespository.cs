@@ -1,4 +1,4 @@
-﻿using Risebird.Entities.Data;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -305,5 +305,6 @@ namespace Risebird.Repository.Interface
         Task SaveZohoMeetingParticipantDetails(List<ZohoParticipantList> _participantlist);
         Task<bool> UpdateTranscriptSummary(int interviewId, string transcriptSummary = null);
         Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId);
+        Task<int> GetAIInterviewVideoCount(string sessionId);
     }
 }

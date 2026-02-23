@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
@@ -1295,6 +1295,12 @@ namespace Risebird.Business
                     reportModel.TranscriptSummaryObject = JsonConvert.DeserializeObject<TranscriptSummaryVM>(interviewDetails.TranscriptSummary);
 
                 }
+                
+                if (reportModel.IsAIInterview && !string.IsNullOrEmpty(reportModel.SessionId))
+                {
+                    reportModel.AIVideoCount = await _meetingRespository.GetAIInterviewVideoCount(reportModel.SessionId);
+                }
+                
                 return reportModel;
             }
             catch (Exception e)
@@ -1409,6 +1415,15 @@ namespace Risebird.Business
         {
             try
             {
+                if (reportModel.IsAIInterview && reportModel.MeetingStatus == (int)MeetingStatus.Completed && !string.IsNullOrEmpty(reportModel.SessionId))
+                {
+                    var videoCount = await _meetingRespository.GetAIInterviewVideoCount(reportModel.SessionId);
+                    if (videoCount == 0)
+                    {
+                        throw new InvalidOperationException("Cannot mark AI interview as completed: No candidate response videos found for this interview.");
+                    }
+                }
+                
                 if (reportModel.MeetingStatus == (int)MeetingStatus.DroppedSelected)
                 {
                     reportModel.InterviewStatus = (int)InterviewStatus.Selected;
@@ -4515,6 +4530,15 @@ namespace Risebird.Business
         {
             try
             {
+                if (model.MeetingStatus == (int)MeetingStatus.Completed && !string.IsNullOrEmpty(model.SessionId))
+                {
+                    var videoCount = await _meetingRespository.GetAIInterviewVideoCount(model.SessionId);
+                    if (videoCount == 0)
+                    {
+                        throw new InvalidOperationException("Cannot mark AI interview as completed: No candidate response videos found for this interview.");
+                    }
+                }
+                
                 return await _meetingRespository.SaveAIInterviewProctorEvaluation(model);
             }
             catch (Exception ex)
