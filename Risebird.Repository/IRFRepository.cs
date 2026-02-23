@@ -10254,6 +10254,47 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<CallibrationCallVM> GetCalibrationMeetingDetailsById(int id)
+        {
+            try
+            {
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<CallibrationCallVM>(con, "usp_GetCalibrationMeetingDetailsById", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> SaveCalibrationMeetingNotesById(int id, string Notes)
+        {
+            try
+            {
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@Notes", Notes);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveCalibrationMeetingNotesById", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
 
