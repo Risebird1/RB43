@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.CandidateTimelineVM>
+@model IEnumerable<Risebird.Entities.ViewModel.CandidateTimelineVM>
 @using Risebird.Entities.Enum
 @using Risebird.CommonHelper
 @using Newtonsoft.Json;
@@ -868,6 +868,11 @@
                                                                                     {
                                                                                         @if (@* ViewBag.ClientRole != "HRs" && *@ ViewBag.ClientRole != "Staffing Agency")
                                                                                         {
+                                                                                            @if (ViewBag.CandidateType == CandidateTypeForClient.ReportPending.GetDescription())
+                                                                                            {
+                                                                                                <th>AI Questions</th>
+                                                                                                <th>AI Videos</th>
+                                                                                            }
                                                                                             <th>Report</th>
                                                                                         }
                                                                                     }
@@ -900,6 +905,11 @@
                                                                                     {
                                                                                         @if (@* ViewBag.ClientRole != "HRs" && *@ ViewBag.ClientRole != "Staffing Agency")
                                                                                         {
+                                                                                            @if (ViewBag.CandidateType == CandidateTypeForClient.ReportPending.GetDescription())
+                                                                                            {
+                                                                                                <th>AI Questions</th>
+                                                                                                <th>AI Videos</th>
+                                                                                            }
                                                                                             <th>Report</th>
                                                                                         }
                                                                                     }
@@ -1156,7 +1166,27 @@
                                                                                         {
                                                                                             @if (@* ViewBag.ClientRole != "HRs" && *@ ViewBag.ClientRole != "Staffing Agency")
                                                                                             {
+                                                                                                @if (ViewBag.CandidateType == CandidateTypeForClient.ReportPending.GetDescription())
+                                                                                                {
+                                                                                                    <td class="text-center">@item.AITotalQuestionsCount</td>
+                                                                                                    <td class="text-center">
+                                                                                                        @if (item.IsAIInterview)
+                                                                                                        {
+                                                                                                            <span style="@(item.AICandidateResponseVideoCount == 0 ? "color:red;font-weight:bold;" : "")">@item.AICandidateResponseVideoCount</span>
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            <span>-</span>
+                                                                                                        }
+                                                                                                    </td>
+                                                                                                }
                                                                                                 <td>
+                                                                                                    @* @if (ViewBag.CandidateType == CandidateTypeForClient.ReportPending.GetDescription() && item.IsAIInterview)
+                                                                                                    {
+                                                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Report" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background:#42a5f5;color:#fff;">
+                                                                                                            <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId})'" title="Manual Report Submission" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
+                                                                                                        </button>
+                                                                                                    } *@
                                                                                                     @if (item.RedoInterview == true)
                                                                                                     {
                                                                                                         <p>No Report</p>
