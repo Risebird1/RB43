@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -405,6 +405,7 @@ namespace Risebird.Entities.ViewModel
         public string SessionId { get; set; } //applicable only if the interview is conducted by AI interviewer, i.e.: IsAIInterview is true
         public float TotalTechScore { get; set; }
         public TranscriptSummaryVM TranscriptSummaryObject { get; set; }
+        public int AIVideoCount { get; set; }
 
     }
     public class RBInterviewDetails

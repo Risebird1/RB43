@@ -36,17 +36,21 @@ namespace Risebird.Repository
         {
             try
             {
+                await LogRepositoryCheckpoint("REPO-A", $"SaveCallLogAsync called - VapiCallId: {callLog.VapiCallId}, RecipientPhone: {callLog.RecipientPhone}, RecipientName: {callLog.RecipientName}", callLog.VapiCallId);
+
                 using (var conn = new SqlConnection(_connectionString))
                 {
+                    await LogRepositoryCheckpoint("REPO-B", "Connection created, about to execute INSERT", callLog.VapiCallId);
+
                     var sql = @"
                         INSERT INTO VapiCallLogs (
-                            VapiCallId, InterviewId, CandidateId, CandidatePhone, CandidateName, CandidateEmail,
+                            VapiCallId, InterviewId, RecipientId, RecipientPhone, RecipientName, RecipientEmail,
                             CallStatus, ScheduledDateTime, CallStartedAt, CallEndedAt, EndedReason, DurationSeconds,
                             Transcript, RecordingUrl, InterviewBooked, BookedInterviewDateTime, BookingConfirmationDetails,
                             CallCost, AssistantId, Summary, StructuredData, CreatedAt, CreatedBy
                         )
                         VALUES (
-                            @VapiCallId, @InterviewId, @CandidateId, @CandidatePhone, @CandidateName, @CandidateEmail,
+                            @VapiCallId, @InterviewId, @RecipientId, @RecipientPhone, @RecipientName, @RecipientEmail,
                             @CallStatus, @ScheduledDateTime, @CallStartedAt, @CallEndedAt, @EndedReason, @DurationSeconds,
                             @Transcript, @RecordingUrl, @InterviewBooked, @BookedInterviewDateTime, @BookingConfirmationDetails,
                             @CallCost, @AssistantId, @Summary, @StructuredData, @CreatedAt, @CreatedBy
@@ -54,13 +58,46 @@ namespace Risebird.Repository
                         SELECT CAST(SCOPE_IDENTITY() as int);";
 
                     var id = await conn.ExecuteScalarAsync<int>(sql, callLog);
+
+                    await LogRepositoryCheckpoint("REPO-C-SUCCESS", $"INSERT executed successfully - New ID: {id}", callLog.VapiCallId);
+
                     return id;
                 }
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await LogRepositoryCheckpoint("REPO-ERROR", $"SaveCallLogAsync failed - {ex.Message}", callLog?.VapiCallId, $"InnerException: {ex.InnerException?.Message}\nStackTrace: {ex.StackTrace}");
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Logs repository checkpoint to database
+        /// </summary>
+        private async Task LogRepositoryCheckpoint(string checkpointName, string message, string callId = null, string additionalData = null)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_connectionString))
+                {
+                    var sql = @"INSERT INTO VapiWebhookCheckpoints 
+                        (Timestamp, CheckpointName, Message, CallId, ToolCallName, AdditionalData)
+                        VALUES (@Timestamp, @CheckpointName, @Message, @CallId, @ToolCallName, @AdditionalData)";
+                    
+                    await conn.ExecuteAsync(sql, new
+                    {
+                        Timestamp = DateTime.UtcNow,
+                        CheckpointName = checkpointName,
+                        Message = message,
+                        CallId = callId,
+                        ToolCallName = "Repository",
+                        AdditionalData = additionalData?.Length > 5000 ? additionalData.Substring(0, 5000) : additionalData
+                    });
+                }
+            }
+            catch
+            {
+                // Silently fail
             }
         }
 
@@ -110,15 +147,21 @@ namespace Risebird.Repository
         {
             try
             {
+                await LogRepositoryCheckpoint("REPO-D", $"GetCallLogByVapiCallIdAsync called - Looking for VapiCallId: {vapiCallId}", vapiCallId);
+
                 using (var conn = new SqlConnection(_connectionString))
                 {
                     var sql = "SELECT * FROM VapiCallLogs WHERE VapiCallId = @VapiCallId";
-                    return await conn.QueryFirstOrDefaultAsync<VapiCallLog>(sql, new { VapiCallId = vapiCallId });
+                    var result = await conn.QueryFirstOrDefaultAsync<VapiCallLog>(sql, new { VapiCallId = vapiCallId });
+
+                    await LogRepositoryCheckpoint("REPO-E", $"Query executed - Result found: {result != null}, Result ID: {result?.Id ?? 0}", vapiCallId);
+
+                    return result;
                 }
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await LogRepositoryCheckpoint("REPO-ERROR", $"GetCallLogByVapiCallIdAsync failed - {ex.Message}", vapiCallId, ex.StackTrace);
                 return null;
             }
         }
@@ -165,16 +208,16 @@ namespace Risebird.Repository
         }
 
         /// <summary>
-        /// Gets all call logs for a candidate
+        /// Gets all call logs for a recipient
         /// </summary>
-        public async Task<List<VapiCallLog>> GetCallLogsByCandidateIdAsync(int candidateId)
+        public async Task<List<VapiCallLog>> GetCallLogsByRecipientIdAsync(int recipientId)
         {
             try
             {
                 using (var conn = new SqlConnection(_connectionString))
                 {
-                    var sql = "SELECT * FROM VapiCallLogs WHERE CandidateId = @CandidateId ORDER BY CreatedAt DESC";
-                    var results = await conn.QueryAsync<VapiCallLog>(sql, new { CandidateId = candidateId });
+                    var sql = "SELECT * FROM VapiCallLogs WHERE RecipientId = @RecipientId ORDER BY CreatedAt DESC";
+                    var results = await conn.QueryAsync<VapiCallLog>(sql, new { RecipientId = recipientId });
                     return results.ToList();
                 }
             }

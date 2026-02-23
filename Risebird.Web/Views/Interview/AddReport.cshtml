@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.InterviewReport
+@model Risebird.Entities.ViewModel.InterviewReport
 @using System.Text.RegularExpressions
 @using Risebird.Entities.Enum
 @using Microsoft.Extensions.Configuration;
@@ -2435,8 +2435,22 @@
 
     function CheckConditionsForProctor() {
 
-        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() @* && CheckQuestions() && CheckTechSkills() && CheckQuestionsCount()  *@&& InterviewStatusChangedValue() @* && Proxyvalidation() *@);
+        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() @* && CheckQuestions() && CheckTechSkills() && CheckQuestionsCount()  *@&& InterviewStatusChangedValue() && CheckAIInterviewVideoRequirement() @* && Proxyvalidation() *@);
 
+    }
+    
+    function CheckAIInterviewVideoRequirement() {
+        var isAIInterview = document.getElementById("IsAIInterview");
+        var meetingStatus = document.getElementById("MeetingStatus");
+        
+        if (isAIInterview && isAIInterview.value === "True" && meetingStatus && meetingStatus.value === "4") {
+            var aiVideoCount = '@Model.AIVideoCount';
+            if (aiVideoCount === "0") {
+                alert("Cannot mark AI interview as completed: No candidate response videos found for this interview. Please ensure the candidate has recorded at least one video response.");
+                return false;
+            }
+        }
+        return true;
     }
 
     function CheckLength(length) {

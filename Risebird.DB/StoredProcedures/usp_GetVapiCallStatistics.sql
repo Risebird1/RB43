@@ -3,6 +3,18 @@
 -- Create date: 2026-01-29
 -- Description: Gets comprehensive statistics for Vapi calls
 -- =============================================
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetCandidatesResumes'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetCandidatesResumes
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE PROCEDURE [dbo].[usp_GetVapiCallStatistics]
     @StartDate DATETIME = NULL,
     @EndDate DATETIME = NULL,
@@ -76,8 +88,8 @@ BEGIN
     SELECT TOP 20
         Id,
         VapiCallId,
-        CandidateName,
-        CandidatePhone,
+        RecipientName,
+        RecipientPhone,
         CallStatus,
         InterviewBooked,
         DurationSeconds,
