@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -65,6 +65,8 @@ namespace Risebird.Entities.ViewModel
         public string StatusValue { get; set; }
         public bool IsAIInterview { get; set; }
         public string SessionId { get; set; }
+        public int AITotalQuestionsCount { get; set; }
+        public int AICandidateResponseVideoCount { get; set; }
         public string LatestComment { get; set; }
         public string SchedulerUniqueid { get; set; }
         public DateTime EndDate { get; set; }
