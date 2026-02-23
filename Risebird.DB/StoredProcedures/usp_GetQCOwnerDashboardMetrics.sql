@@ -102,8 +102,9 @@ where  ISNULL(im.RedoInterview,0)=0
         LEFT JOIN InterviewComments ic ON ic.InterviewId = psd.Interviewid
         LEFT JOIN ProxyReport pr ON pr.interviewid = psd.Interviewid AND ISNULL(pr.isProxyCandidate, 0) = 1
 		LEFT JOIN RedoInterviews ri on ri.Interviewid=im.id and ri.CreatedBy=psd.CreatedBy  
-		LEFT JOIN InterviewPoints ip on ip.Interviewid=im.id
 		LEFT JOIN @CreticalReports icr on icr.id=im.id
+		OUTER APPLY(Select top 1 Points From InterviewPoints where Interviewid=im.id order by Points desc) ip
+		--LEFT JOIN InterviewPoints ip on ip.Interviewid=im.id
         WHERE psd.isQcDone = 1
           AND im.Interviewdate >= @DateFrom
           AND im.Interviewdate < DATEADD(DAY, 1, @DateTo)
