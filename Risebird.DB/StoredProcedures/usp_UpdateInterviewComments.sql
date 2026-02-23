@@ -34,6 +34,32 @@ Begin Try
        
 	IF EXISTS( SELECT 1 FROM InterviewMeetings where id = @InterviewId)  
 		BEGIN  
+		
+		-- Validation: Check if AI interview has videos before marking as completed
+		IF @MeetingStatus = 4
+		BEGIN
+			DECLARE @isAIInterview bit
+			DECLARE @sessionId varchar(200)
+			DECLARE @videoCount int
+			
+			SELECT @isAIInterview = ISNULL(irf.IsAIInterview, 0), @sessionId = im.SessionId
+			FROM InterviewMeetings im
+			JOIN IRF irf on irf.IRFId = im.IRFId
+			WHERE im.id = @interviewId
+			
+			IF @isAIInterview = 1
+			BEGIN
+				SET @videoCount = (SELECT COUNT(*) FROM BotInterviewQuestionVideos WHERE SessionId = @sessionId AND VideoLink IS NOT NULL AND VideoLink != '')
+				
+				IF @videoCount = 0
+				BEGIN
+					RAISERROR ('Cannot mark AI interview as completed: No candidate response videos found in BotInterviewQuestionVideos table for this interview.', 16, 1);
+					ROLLBACK TRAN UpdateUser;
+					RETURN;
+				END
+			END
+		END
+		
 		IF EXISTS(SELECT 1 FROM InterviewComments where interviewId= @InterviewId)  
 			BEGIN  
 				UPDATE [InterviewComments] SET interviewStatus = ISNULL(@InterviewStatus,interviewStatus) ,  

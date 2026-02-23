@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,15 @@ public class InterviewApiService : IInterviewApiService
 {
     private readonly HttpClient _http;
     private readonly IConfiguration _config;
+    private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-    public InterviewApiService(IConfiguration config)//HttpClient http,
+    public InterviewApiService(IConfiguration config, IApplicationErrorLogger applicationErrorLogger)//HttpClient http,
     {
         //_http = http;
         _http = new HttpClient();
         _config = config;
         _http.BaseAddress = new Uri(_config["ApiLayer:ApiBaseUrl"]);
+        _applicationErrorLogger = applicationErrorLogger;
     }
 
     public async Task<string> SendInterviewMessage(Guid sessionId, string message)
@@ -101,22 +104,30 @@ public class InterviewApiService : IInterviewApiService
 
     public async Task<InterviewReportResult> GenerateReport(Guid sessionId, string prompt, int? aiInterviewType = null, bool? isExit = null)
     {
-        var payload = new AIReportVM
+        try
         {
-            SessionId = sessionId,
-            Message = prompt,
-            AIInterviewType = aiInterviewType,
-            isExit = isExit.HasValue ? isExit.Value : false
-        };
+            var payload = new AIReportVM
+            {
+                SessionId = sessionId,
+                Message = prompt,
+                AIInterviewType = aiInterviewType,
+                isExit = isExit.HasValue ? isExit.Value : false
+            };
 
-        var response = await _http.PostAsJsonAsync("api/OpenAIApi/report", payload);
+            var response = await _http.PostAsJsonAsync("api/OpenAIApi/report", payload);
 
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new Exception($"Failed to generate report: {response.StatusCode}");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to generate report: {response.StatusCode}");
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<InterviewReportResult>();
+            return result;
         }
-
-        var result = await response.Content.ReadFromJsonAsync<InterviewReportResult>();
-        return result;
+        catch (Exception ex)
+        {
+            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            return null;
+        }
     }
 }
