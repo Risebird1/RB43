@@ -520,7 +520,7 @@ namespace Risebird.Web.Controllers
                                 CreatedBy = "Webhook"
                             };
                         }
-
+                        //Call API with values : IRFId,ClientHr,CandidateResume,CandidateEmail,Interviewdate
                         // Update with booking information
                         callLog.InterviewBooked = true;
                         callLog.BookedInterviewDateTime = parsedDateTime.Value;
