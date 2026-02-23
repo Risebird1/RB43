@@ -132,6 +132,18 @@
     .data-table tr:hover td{background:rgba(17,24,39,.6)}
     .data-table .mono{font-family:var(--mono)}
     .notes-from-db{padding:8px 12px; margin-bottom:10px; border-radius:10px; background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.3); font-size:12px; color:var(--text)}
+    /* Criteria object display */
+    .bucket-block{margin-top:8px}
+    .bucket-items{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+    .crit-item{border-left:3px solid var(--border);padding:8px 10px;background:rgba(11,18,32,.5);border-radius:0 8px 8px 0}
+    .crit-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+    .crit-name{font-weight:600;color:var(--text)}
+    .ev-wrap{margin-top:6px;padding-left:8px;border-left:2px solid var(--chip)}
+    .ev-snip{font-size:11px;color:var(--muted);line-height:1.4;margin:4px 0;font-style:italic}
+    .crit-item.crit-must{border-left-color:rgba(34,197,94,.5)}
+    .crit-item.crit-red{border-left-color:rgba(239,68,68,.5)}
+    .crit-item.crit-deal{border-left-color:rgba(185,28,28,.7)}
+    .crit-item.crit-nice{border-left-color:rgba(59,130,246,.5)}
   </style>
 </head>
 
@@ -207,6 +219,23 @@
   function safeJsonParse(txt){
     try { return { ok:true, value: JSON.parse(txt) }; }
     catch(e){ return { ok:false, error: String(e) }; }
+  }
+  // Convert raw JSON string (from DB or paste) into JSON object; handles single or double-encoded strings
+  function parseJsonFromString(str){
+    const s = typeof str === "string" ? str.trim() : String(str || "").trim();
+    if (!s) return { ok: false, error: "Empty string" };
+    let result = safeJsonParse(s);
+    if (!result.ok) return result;
+    let val = result.value;
+    // If result is a string that looks like JSON, parse again (double-encoded from DB)
+    while (typeof val === "string") {
+      const inner = val.trim();
+      if (!inner || (inner[0] !== "{" && inner[0] !== "[")) break;
+      const next = safeJsonParse(inner);
+      if (!next.ok) break;
+      val = next.value;
+    }
+    return { ok: true, value: val };
   }
   function pretty(obj){
     return JSON.stringify(obj, null, 2);
@@ -386,9 +415,9 @@
     const openQ = asArr(out?.open_questions ?? out?.openQuestions);
 
     tab.appendChild(sectionAttendees(attendees));
-    tab.appendChild(sectionScreens("Resume Screen", screens?.resume_screen));
-    tab.appendChild(sectionScreens("Skill Screen", screens?.skill_screen, true));
-    tab.appendChild(sectionScreens("HR Screen", screens?.hr_screen));
+    tab.appendChild(sectionScreens("Resume Screen", screens?.resume_screen, {}));
+    tab.appendChild(sectionScreens("Skill Screen", screens?.skill_screen, { skill: true }));
+    tab.appendChild(sectionScreens("HR Screen", screens?.hr_screen, { hr: true }));
     tab.appendChild(sectionInterview(interview));
     tab.appendChild(sectionExpectations(expectations));
     tab.appendChild(sectionHandoff(handoff));
@@ -429,31 +458,72 @@
     return mkSection("Attendees", tableHtml);
   }
 
-  function bucketBlock(label, arr){
+  function isCriteriaObj(x){
+    return x && typeof x === "object" && ("criteria" in x || "source_type" in x);
+  }
+  function getBucketClass(label){
+    const l = String(label).toLowerCase();
+    if (l.includes("must-have") || l.includes("must_have")) return "crit-must";
+    if (l.includes("red flag")) return "crit-red";
+    if (l.includes("deal-breaker") || l.includes("deal_breaker")) return "crit-deal";
+    if (l.includes("nice-to-have") || l.includes("nice_to_have")) return "crit-nice";
+    return "";
+  }
+  function renderCriteriaItem(c, bucketClass=""){
+    const crit = escapeHtml(String(c?.criteria || c?.Criteria || "—"));
+    const conf = clamp01(c?.confidence);
+    const src = escapeHtml(String(c?.source_type || c?.sourceType || "—"));
+    const evs = asArr(c?.evidence_snippets ?? c?.evidenceSnippets);
+    const evHtml = evs.length ? evs.slice(0,3).map(e => `<div class="ev-snip">${escapeHtml(e)}</div>`).join("") + (evs.length > 3 ? `<div class="ev-snip small">… +${evs.length-3} more</div>` : "") : "";
+    return `<div class="crit-item ${bucketClass}">
+      <div class="crit-row"><span class="crit-name">${crit}</span>
+        <span class="chip">${(conf*100).toFixed(0)}%</span>
+        <span class="chip">${src}</span></div>
+      ${evHtml ? `<div class="ev-wrap">${evHtml}</div>` : ""}
+    </div>`;
+  }
+  function bucketBlock(label, arr, isCriteriaArray=false){
     const xs = asArr(arr);
+    const bucketClass = getBucketClass(label);
     if (!xs.length) return `<div class="small">${escapeHtml(label)}: <span class="mono">[]</span></div>`;
-    const items = xs.slice(0,30).map(x => `<div class="small mono">• ${escapeHtml(x)}</div>`).join("");
+    const first = xs[0];
+    const useCriteria = isCriteriaArray || isCriteriaObj(first);
+    const items = xs.slice(0,30).map(x => {
+      if (useCriteria && isCriteriaObj(x)) return renderCriteriaItem(x, bucketClass);
+      return `<div class="small mono">• ${escapeHtml(typeof x === "string" ? x : JSON.stringify(x))}</div>`;
+    }).join("");
     const more = xs.length > 30 ? `<div class="small">… +${xs.length-30} more</div>` : "";
-    return `<div style="margin-top:6px"><div class="small"><b>${escapeHtml(label)}</b> (${xs.length})</div>${items}${more}</div>`;
+    return `<div class="bucket-block" style="margin-top:6px"><div class="small"><b>${escapeHtml(label)}</b> (${xs.length})</div><div class="bucket-items">${items}</div>${more}</div>`;
   }
 
-  function sectionScreens(title, screenObj, isSkill=false){
+  function sectionScreens(title, screenObj, opts){
+    const isSkill = opts === true || (opts && opts.skill);
+    const isHr = opts && opts.hr;
     const s = screenObj || {};
-    const extra = isSkill ? `
+    let extra = "";
+    if (isSkill) {
+      extra += `
       <div class="hr"></div>
       <div class="small"><b>Round structure</b> (${asArr(s.round_structure).length})</div>
       <div class="small mono">${escapeHtml(JSON.stringify(asArr(s.round_structure).slice(0,6), null, 2))}${asArr(s.round_structure).length>6 ? "\n…":""}</div>
       <div class="hr"></div>
       <div class="small"><b>Competency rubrics</b> (${asArr(s.competency_rubrics).length})</div>
       <div class="small mono">${escapeHtml(JSON.stringify(asArr(s.competency_rubrics).slice(0,4), null, 2))}${asArr(s.competency_rubrics).length>4 ? "\n…":""}</div>
-    ` : "";
+    `;
+    }
+    if (isHr) {
+      extra += `
+      <div class="hr"></div>
+      ${bucketBlock("Behavioral signals", s.behavioral_signals, true)}
+    `;
+    }
 
     const html = `
-      ${bucketBlock("Must-have", s.must_have)}
-      ${bucketBlock("Nice-to-have", s.nice_to_have)}
-      ${bucketBlock("Red flags", s.red_flags)}
-      ${bucketBlock("Deal-breakers", s.deal_breakers)}
-      ${("screening_shortcuts" in s) ? bucketBlock("Screening shortcuts", s.screening_shortcuts) : ""}
+      ${bucketBlock("Must-have", s.must_have, true)}
+      ${bucketBlock("Nice-to-have", s.nice_to_have, true)}
+      ${bucketBlock("Red flags", s.red_flags, true)}
+      ${bucketBlock("Deal-breakers", s.deal_breakers, true)}
+      ${("screening_shortcuts" in s) ? bucketBlock("Screening shortcuts", s.screening_shortcuts, true) : ""}
       <div class="hr"></div>
       <div class="small"><b>Evidence map</b> (${asArr(s.evidence_map).length})</div>
       <div class="small mono">${escapeHtml(JSON.stringify(asArr(s.evidence_map).slice(0,6), null, 2))}${asArr(s.evidence_map).length>6 ? "\n…":""}</div>
@@ -543,8 +613,8 @@
   }
 
   async function runTransform({forceOnce=false}={}){
-    const txt = $("input").value.trim();
-    const parsed = safeJsonParse(txt);
+    const txt = $("input").value;
+    const parsed = parseJsonFromString(txt);
     if (!parsed.ok){
       setOutputStatus(mkBadge("bad", "Invalid JSON") + mkBadge("warn", parsed.error));
       return;
@@ -651,8 +721,8 @@
     setTab("view");
   });
   $("btnFormatJson").addEventListener("click", () => {
-    const txt = $("input").value.trim();
-    const parsed = safeJsonParse(txt);
+    const txt = $("input").value;
+    const parsed = parseJsonFromString(txt);
     if (parsed.ok) {
       $("input").value = pretty(parsed.value);
       runTransform({ forceOnce: true });
@@ -665,15 +735,57 @@
 
   $("btnLoadSample").addEventListener("click", () => {
     const sample = {
-      transcript: "HM: We need strong system design. TA: Notice period under 30 days. Ops: We will share rubric.",
-      turns: [
-        { speaker_label:"HM", text:"We need strong system design and reject if no ownership." },
-        { speaker_label:"TA", text:"Filter for notice period under 30 days, location Bangalore." },
-        { speaker_label:"Ops", text:"We will share rubric + interviewer notes just-in-time." }
-      ]
+      "attendees": [
+        {
+          "name": "Unknown",
+          "speaker_label": "Unknown",
+          "organization": "Unknown",
+          "role_inferred": "Hiring Manager",
+          "confidence": 0.8,
+          "evidence_snippets": [
+            "this whole world is huge of people who are in this working in the service industry processes",
+            "these quality analysts have the kpis, like how many errors they have found"
+          ]
+        }
+      ],
+      "screens": {
+        "resume_screen": {
+          "must_have": [
+            { "criteria": "Graduation", "confidence": 0.8, "source_type": "HM", "evidence_snippets": ["The graduation is Okay here, but distance learning graduation is avoidable"] },
+            { "criteria": "Stability", "confidence": 0.8, "source_type": "HM", "evidence_snippets": ["In this role, we are expecting stability to be of one years"] },
+            { "criteria": "Current company", "confidence": 0.8, "source_type": "HM", "evidence_snippets": ["Current company of course, has to be genuine"] }
+          ],
+          "nice_to_have": [],
+          "red_flags": [
+            { "criteria": "Distance learning graduation", "confidence": 0.8, "source_type": "HM", "evidence_snippets": ["distance learning graduation is avoidable"] },
+            { "criteria": "Job gap", "confidence": 0.8, "source_type": "HM", "evidence_snippets": ["please do not get someone who is having a gap from the last song"] }
+          ],
+          "deal_breakers": [],
+          "screening_shortcuts": [],
+          "evidence_map": []
+        },
+        "skill_screen": {
+          "must_have": [
+            { "criteria": "Quality analysis of voice agents", "confidence": 0.8, "source_type": "HM", "evidence_snippets": ["we are specifically looking for someone who's doing quality analysis of the voice agents"] },
+            { "criteria": "Communication skills", "confidence": 0.8, "source_type": "HM", "evidence_snippets": ["Communication skill is a very critical thing here"] }
+          ],
+          "nice_to_have": [],
+          "red_flags": [],
+          "deal_breakers": [],
+          "round_structure": [],
+          "competency_rubrics": [],
+          "evidence_map": []
+        },
+        "hr_screen": { "must_have": [], "nice_to_have": [], "red_flags": [], "deal_breakers": [], "behavioral_signals": [], "evidence_map": [] }
+      },
+      "interview_design": { "format": { "stages": [], "requires_acknowledgement": false }, "difficulty_level": { "overall": "unspecified", "coding": "unspecified", "system_design": "unspecified", "debugging": "unspecified", "domain_depth": "unspecified", "evidence_snippets": [] }, "sample_question_ideas": [] },
+      "interviewer_expectations": { "dos": [], "donts": [], "mandatory_components": [], "interviewer_notes": [], "requires_acknowledgement": false },
+      "handoff_pack": { "calibration_summary": [], "dos": [], "donts": [], "mandatory_components": [], "final_recommendation_logic": "", "conflict_detected": false, "conflicts": [] },
+      "open_questions": []
     };
     $("input").value = pretty(sample);
-    scheduleRun();
+    runTransform({ forceOnce: true });
+    setTab("view");
   });
 
   $("input").addEventListener("input", scheduleRun);
