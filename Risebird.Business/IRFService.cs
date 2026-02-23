@@ -4793,5 +4793,29 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<CallibrationCallVM> GetCalibrationMeetingDetailsById(int id)
+        {
+            try
+            {
+                return await _irfRepository.GetCalibrationMeetingDetailsById(id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> SaveCalibrationMeetingNotesById(int id, string Notes)
+        {
+            try
+            {
+                return await _irfRepository.SaveCalibrationMeetingNotesById(id, Notes);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

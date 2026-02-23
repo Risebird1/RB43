@@ -37,6 +37,7 @@ namespace Risebird.CommonHelper
         private readonly string stringReportQCAssistantId;
         private readonly string stringReportQCAssistantIdStructuredOutput;//gives output in a structured json format as opposed to the other one which takes in a string but gives back a string making it difficult and often an error prone task to extract the verdict.
         private readonly string stringResumeAnalysisAssistantIdV2;
+        private readonly string AITranscriptToNotesAssistantId;
 
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IOpenAIApiLogger openAIApiLogger)
@@ -60,6 +61,7 @@ namespace Risebird.CommonHelper
             stringReportQCAssistantId = _configuration["OpenAI:StringReportQCAssistantId"];
             stringReportQCAssistantIdStructuredOutput = _configuration["OpenAI:StringReportQCAssistantIdStructuredOutPut"];
             stringResumeAnalysisAssistantIdV2 = _configuration["OpenAI:InterviewerScreenerAssistantIdV2"];
+            AITranscriptToNotesAssistantId = _configuration["OpenAI:AITranscriptToNotesAssistantId"];
 
         }
 
@@ -116,7 +118,7 @@ namespace Risebird.CommonHelper
                     string runStatus = string.Empty;
                     int pollInterval = 10000; // Start with 10 seconds (was 5s)
                     int maxPollInterval = 30000; // Max 30 seconds
-                    
+
                     //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
@@ -124,17 +126,17 @@ namespace Risebird.CommonHelper
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
-                        
+
                         // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
-                    
+
                     // After run completes, retrieve run steps to capture token usage
                     if (runStatus == "completed")
                     {
                         await RetrieveRunStepsForTokenUsage(runId, threadId);
                     }
-                    
+
                     var messages = await ListRunMessages(threadId);
                     if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
                     {
@@ -158,7 +160,7 @@ namespace Risebird.CommonHelper
 
         private async Task<RunResult> RecreateThread(ScreeningRequest requestModel, string fileId, int? counter)
         {
-            if(counter == 0)
+            if (counter == 0)
             {
                 await Task.Delay(15000);
                 string threadId = string.Empty;
@@ -187,7 +189,7 @@ namespace Risebird.CommonHelper
                     string runStatus = string.Empty;
                     int pollInterval = 10000; // Start with 10 seconds (was 5s)
                     int maxPollInterval = 30000; // Max 30 seconds
-                    
+
                     //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
@@ -195,17 +197,17 @@ namespace Risebird.CommonHelper
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
-                        
+
                         // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
-                    
+
                     // After run completes, retrieve run steps to capture token usage
                     if (runStatus == "completed")
                     {
                         await RetrieveRunStepsForTokenUsage(runId, threadId);
                     }
-                    
+
                     var messages = await ListRunMessages(threadId);
                     if (messages != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
                     {
@@ -223,7 +225,7 @@ namespace Risebird.CommonHelper
             {
                 return null;
             }
-            
+
         }
         private async Task<string> CreateRun(string threadId, string profileType = null)
         {
@@ -232,8 +234,8 @@ namespace Risebird.CommonHelper
                 HttpClient client = new HttpClient();
                 string assistantId = string.Empty;
                 string operationType = "Unknown";
-                
-                if(!string.IsNullOrEmpty(profileType))
+
+                if (!string.IsNullOrEmpty(profileType))
                 {
                     if (profileType == ProfileNames.Candidate)
                     {
@@ -266,6 +268,11 @@ namespace Risebird.CommonHelper
                         assistantId = stringReportQCAssistantIdStructuredOutput;//stringReportQCAssistantId;
                         operationType = "ReportQC";
                     }
+                    else if (profileType == ProfileNames.TranscriptToNotesAssistantId)
+                    {
+                        assistantId = AITranscriptToNotesAssistantId;//stringReportQCAssistantId;
+                        operationType = "TranscriptToNotes";
+                    }
                     else
                     {
                         assistantId = reportQCAssistantId;
@@ -278,7 +285,7 @@ namespace Risebird.CommonHelper
                     assistantId = rubricGeneratorAssistantId;
                     operationType = "RubricGeneration";
                 }
-                
+
 
 
                 var requestBody = new
@@ -302,7 +309,7 @@ namespace Risebird.CommonHelper
                 sw.Stop();
 
                 var responseContent = await response.Content.ReadAsStringAsync();
-                
+
                 // Extract model from response
                 string modelName = null;
                 string runIdFromResponse = null;
@@ -316,7 +323,7 @@ namespace Risebird.CommonHelper
                     }
                 }
                 catch { /* Continue even if extraction fails */ }
-                
+
                 // Log the API call
                 await _openAIApiLogger.LogApiCallAsync(
                     apiEndpoint: $"{baseUrl}/threads/{threadId}/runs",
@@ -362,9 +369,9 @@ namespace Risebird.CommonHelper
                 var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
                 sw.Stop();
-                
+
                 var responseContent = await response.Content.ReadAsStringAsync();
-                
+
                 // Extract model and assistant from response
                 string modelName = null;
                 string assistantIdFromResponse = null;
@@ -385,7 +392,7 @@ namespace Risebird.CommonHelper
                     }
                 }
                 catch { /* Continue even if extraction fails */ }
-                
+
                 // Log the API call
                 await _openAIApiLogger.LogApiCallAsync(
                     apiEndpoint: $"{baseUrl}/threads/{threadId}/runs/{runId}",
@@ -405,7 +412,7 @@ namespace Risebird.CommonHelper
                     {
                         OperationType = "RunRetrieval"
                     });
-                
+
                 response.EnsureSuccessStatusCode();
                 return statusFromResponse;
             }
@@ -416,7 +423,7 @@ namespace Risebird.CommonHelper
             }
 
         }
-        
+
         private async Task RetrieveRunStepsForTokenUsage(string runId, string threadId)
         {
             try
@@ -431,9 +438,9 @@ namespace Risebird.CommonHelper
                 var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await client.SendAsync(request);
                 sw.Stop();
-                
+
                 var responseContent = await response.Content.ReadAsStringAsync();
-                
+
                 // Extract model from the parent run context if available
                 string modelName = null;
                 string assistantIdFromResponse = null;
@@ -450,7 +457,7 @@ namespace Risebird.CommonHelper
                     }
                 }
                 catch { /* Continue even if extraction fails */ }
-                
+
                 // Log the API call - this will extract token usage from run steps
                 await _openAIApiLogger.LogApiCallAsync(
                     apiEndpoint: $"{baseUrl}/threads/{threadId}/runs/{runId}/steps",
@@ -476,7 +483,7 @@ namespace Risebird.CommonHelper
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
-        
+
         private async Task<RunResult> ListRunMessages(string threadId)
         {
             try
@@ -493,7 +500,7 @@ namespace Risebird.CommonHelper
                 sw.Stop();
 
                 var responseContent = await response.Content.ReadAsStringAsync();
-                
+
                 // Log the API call
                 await _openAIApiLogger.LogApiCallAsync(
                     apiEndpoint: $"{baseUrl}/threads/{threadId}/messages",
@@ -554,13 +561,13 @@ namespace Risebird.CommonHelper
 
                         HttpClient client = new HttpClient();
                         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
-                        
+
                         var sw = System.Diagnostics.Stopwatch.StartNew();
                         var response = await client.PostAsync($"{baseUrl}/files", content);
                         sw.Stop();
 
                         var responseContent = await response.Content.ReadAsStringAsync();
-                        
+
                         // Log the API call
                         await _openAIApiLogger.LogApiCallAsync(
                             apiEndpoint: $"{baseUrl}/files",
@@ -580,7 +587,7 @@ namespace Risebird.CommonHelper
                             {
                                 OperationType = "FileUpload"
                             });
-                        
+
                         response.EnsureSuccessStatusCode();
 
                         var fileResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
@@ -649,7 +656,7 @@ namespace Risebird.CommonHelper
         //    }
 
         //}
-        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null, string resumeStringData = null, string reportStringData = null, string jdTitle =null, string resumeStringDataForParsing = null)
+        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null, string resumeStringData = null, string reportStringData = null, string jdTitle = null, string resumeStringDataForParsing = null, string transcripttonotes = null)
         {
             try
             {
@@ -661,7 +668,7 @@ namespace Risebird.CommonHelper
 
                 string queryContent = string.Empty;
 
-                if(requestModel != null)
+                if (requestModel != null)
                 {
                     if (requestModel.Type == ProfileNames.Candidate)
                     {
@@ -682,11 +689,11 @@ namespace Risebird.CommonHelper
                     }
 
                 }
-                else if(!string.IsNullOrEmpty(jobTitleForRubrics))//case for generating tech skill rubric
+                else if (!string.IsNullOrEmpty(jobTitleForRubrics))//case for generating tech skill rubric
                 {
                     queryContent = $"Generate an output as per the instructions fed to the assistant. The job title you need to generate a tech rubric against is {jobTitleForRubrics}.";
                 }
-                else if(!string.IsNullOrEmpty(transcriptData))
+                else if (!string.IsNullOrEmpty(transcriptData))
                 {
                     queryContent = $"Generate an output as per the instructions fed to the assistant. The transcript data you need to generate an analysis against is {transcriptData}.";
 
@@ -704,6 +711,11 @@ namespace Risebird.CommonHelper
                 else if (!string.IsNullOrEmpty(resumeStringDataForParsing))
                 {
                     queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you.";
+
+                }
+                else if (!string.IsNullOrEmpty(transcripttonotes))
+                {
+                    queryContent = $"Generate the Summary for {transcripttonotes}";
 
                 }
                 var threadRequest = new Thread();
@@ -771,9 +783,9 @@ namespace Risebird.CommonHelper
                 var sw = System.Diagnostics.Stopwatch.StartNew();
                 var response = await _httpClient.SendAsync(request);
                 sw.Stop();
-                
+
                 var responseContent = await response.Content.ReadAsStringAsync();
-                
+
                 // Log the API call
                 await _openAIApiLogger.LogApiCallAsync(
                     apiEndpoint: $"{baseUrl}/threads",
@@ -793,7 +805,7 @@ namespace Risebird.CommonHelper
                     {
                         OperationType = "ThreadCreation"
                     });
-                
+
                 response.EnsureSuccessStatusCode();
 
                 dynamic thread = JsonConvert.DeserializeObject(responseContent);
@@ -825,7 +837,7 @@ namespace Risebird.CommonHelper
                 sw.Stop();
 
                 var responseContent = await response.Content.ReadAsStringAsync();
-                
+
                 // Log the API call
                 await _openAIApiLogger.LogApiCallAsync(
                     apiEndpoint: $"{baseUrl}/files",
@@ -845,7 +857,7 @@ namespace Risebird.CommonHelper
                     {
                         OperationType = "FileList"
                     });
-                
+
                 response.EnsureSuccessStatusCode();
 
                 FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
@@ -869,7 +881,7 @@ namespace Risebird.CommonHelper
                 while (iteration < maxIterations)
                 {
                     var filesList = await ListFiles();
-                    
+
                     // No more files to delete
                     if (filesList == null || filesList.data == null || filesList.data.Count() == 0)
                     {
@@ -891,9 +903,9 @@ namespace Risebird.CommonHelper
                             var sw = System.Diagnostics.Stopwatch.StartNew();
                             var response = await client.SendAsync(request);
                             sw.Stop();
-                            
+
                             var responseContent = await response.Content.ReadAsStringAsync();
-                            
+
                             // Log the API call
                             await _openAIApiLogger.LogApiCallAsync(
                                 apiEndpoint: $"{baseUrl}/files/{item.id}",
@@ -913,9 +925,9 @@ namespace Risebird.CommonHelper
                                 {
                                     OperationType = "FileDelete"
                                 });
-                            
+
                             response.EnsureSuccessStatusCode();
-                            
+
                             totalDeleted++;
                         }
                         catch (Exception ex)
@@ -930,7 +942,7 @@ namespace Risebird.CommonHelper
                 // Log if we hit the max iterations (potential issue)
                 if (iteration >= maxIterations)
                 {
-                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
                         new Exception($"DeleteFiles: Hit max iterations ({maxIterations}). Deleted {totalDeleted} files. More files may still exist."));
                 }
 
@@ -959,7 +971,7 @@ namespace Risebird.CommonHelper
                 sw.Stop();
 
                 var responseContent = await response.Content.ReadAsStringAsync();
-                
+
                 // Log the API call
                 await _openAIApiLogger.LogApiCallAsync(
                     apiEndpoint: $"{baseUrl}/vector_stores",
@@ -979,7 +991,7 @@ namespace Risebird.CommonHelper
                     {
                         OperationType = "VectorStoreList"
                     });
-                
+
                 response.EnsureSuccessStatusCode();
 
                 FilesList vectors = JsonConvert.DeserializeObject<FilesList>(responseContent);//FilesList: used the same type for vector list
@@ -1013,7 +1025,7 @@ namespace Risebird.CommonHelper
                         sw.Stop();
 
                         var responseContent = response.Content.ReadAsStringAsync().Result;
-                        
+
                         // Log the API call (using GetAwaiter().GetResult() for sync context)
                         _openAIApiLogger.LogApiCallAsync(
                             apiEndpoint: $"{baseUrl}/vector_stores/{item.id}",
@@ -1033,7 +1045,7 @@ namespace Risebird.CommonHelper
                             {
                                 OperationType = "VectorStoreDelete"
                             }).GetAwaiter().GetResult();
-                        
+
                         response.EnsureSuccessStatusCode();
 
                         //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
@@ -1075,13 +1087,13 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                
+
                 string threadId = string.Empty;
                 threadId = await CreateThreadAsync(jobTitleForRubrics: jobTitle);
                 //if (!string.IsNullOrEmpty(fileId))
                 //{
                 //    await Task.Delay(15000);//60000
-                    
+
                 //}
                 //else
                 //{
@@ -1103,7 +1115,7 @@ namespace Risebird.CommonHelper
                     string runStatus = string.Empty;
                     int pollInterval = 10000; // Start with 10 seconds (was 4s)
                     int maxPollInterval = 30000; // Max 30 seconds
-                    
+
                     //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
@@ -1111,17 +1123,17 @@ namespace Risebird.CommonHelper
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
-                        
+
                         // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
-                    
+
                     // After run completes, retrieve run steps to capture token usage
                     if (runStatus == "completed")
                     {
                         await RetrieveRunStepsForTokenUsage(runId, threadId);
                     }
-                    
+
                     var messages = await ListRunMessages(threadId);
                     //if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
                     //{
@@ -1175,7 +1187,7 @@ namespace Risebird.CommonHelper
                     string runStatus = string.Empty;
                     int pollInterval = 10000; // Start with 10 seconds (was 5s)
                     int maxPollInterval = 30000; // Max 30 seconds
-                    
+
                     //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
@@ -1183,19 +1195,19 @@ namespace Risebird.CommonHelper
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
-                        
+
                         // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
-                    
+
                     // After run completes, retrieve run steps to capture token usage
                     if (runStatus == "completed")
                     {
                         await RetrieveRunStepsForTokenUsage(runId, threadId);
                     }
-                    
+
                     var messages = await ListRunMessages(threadId);
-                    
+
                     return messages;
                 }
                 else
@@ -1219,7 +1231,7 @@ namespace Risebird.CommonHelper
 
                 string threadId = string.Empty;
                 threadId = await CreateThreadAsync(resumeStringDataForParsing: resumeData);
-                
+
                 string runId;
                 //now create a run
                 if (!string.IsNullOrEmpty(threadId))
@@ -1236,7 +1248,7 @@ namespace Risebird.CommonHelper
                     string runStatus = string.Empty;
                     int pollInterval = 10000; // Start with 10 seconds (was 5s)
                     int maxPollInterval = 30000; // Max 30 seconds
-                    
+
                     //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
@@ -1244,17 +1256,17 @@ namespace Risebird.CommonHelper
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
-                        
+
                         // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
-                    
+
                     // After run completes, retrieve run steps to capture token usage
                     if (runStatus == "completed")
                     {
                         await RetrieveRunStepsForTokenUsage(runId, threadId);
                     }
-                    
+
                     var messages = await ListRunMessages(threadId);
 
                     return messages;
@@ -1295,7 +1307,7 @@ namespace Risebird.CommonHelper
                     string runStatus = string.Empty;
                     int pollInterval = 10000; // Start with 10 seconds (was 5s)
                     int maxPollInterval = 30000; // Max 30 seconds
-                    
+
                     //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
@@ -1303,17 +1315,17 @@ namespace Risebird.CommonHelper
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
-                        
+
                         // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
-                    
+
                     // After run completes, retrieve run steps to capture token usage
                     if (runStatus == "completed")
                     {
                         await RetrieveRunStepsForTokenUsage(runId, threadId);
                     }
-                    
+
                     var messages = await ListRunMessages(threadId);
 
                     return messages;
@@ -1355,7 +1367,7 @@ namespace Risebird.CommonHelper
                     string runStatus = string.Empty;
                     int pollInterval = 10000; // Start with 10 seconds (was 5s)
                     int maxPollInterval = 30000; // Max 30 seconds
-                    
+
                     //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
@@ -1363,17 +1375,77 @@ namespace Risebird.CommonHelper
                         runStatus = await RetrieveRun(runId, threadId);
                         if (runStatus == "failed")
                             break;
-                        
+
                         // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
-                    
+
                     // After run completes, retrieve run steps to capture token usage
                     if (runStatus == "completed")
                     {
                         await RetrieveRunStepsForTokenUsage(runId, threadId);
                     }
-                    
+
+                    var messages = await ListRunMessages(threadId);
+
+                    return messages;
+                }
+                else
+                {
+                    return null;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<RunResult> TranscriptToNotes(string transcriptdata)
+        {
+            try
+            {
+
+                string threadId = string.Empty;
+                threadId = await CreateThreadAsync(transcripttonotes: transcriptdata);
+
+                string runId;
+                //now create a run
+                if (!string.IsNullOrEmpty(threadId))
+                {
+                    runId = await CreateRun(threadId, ProfileNames.TranscriptToNotesAssistantId);
+                }
+                else
+                {
+                    return null;
+                }
+                await Task.Delay(10000);
+                if (!string.IsNullOrEmpty(runId))
+                {
+                    string runStatus = string.Empty;
+                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
+                    int maxPollInterval = 30000; // Max 30 seconds
+
+                    //retrieve a run with exponential backoff
+                    while (runStatus != "completed")
+                    {
+                        await Task.Delay(pollInterval);
+                        runStatus = await RetrieveRun(runId, threadId);
+                        if (runStatus == "failed")
+                            break;
+
+                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
+                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
+                    }
+
+                    // After run completes, retrieve run steps to capture token usage
+                    if (runStatus == "completed")
+                    {
+                        await RetrieveRunStepsForTokenUsage(runId, threadId);
+                    }
+
                     var messages = await ListRunMessages(threadId);
 
                     return messages;

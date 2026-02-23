@@ -1,4 +1,4 @@
-﻿using ExcelDataReader.Log;
+using ExcelDataReader.Log;
 using iTextSharp.text.pdf.qrcode;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +14,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.VapiModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -74,13 +75,14 @@ namespace Risebird.Web.Controllers
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly ITwilioHelper _twilioHelper;
         private readonly IActivityTrackerService _activityTrackerService;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
             HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper,
-            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper, IActivityTrackerService activityTrackerService)
+            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper, IActivityTrackerService activityTrackerService, IAssistantServiceHelper assistantServiceHelper)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -110,6 +112,7 @@ namespace Risebird.Web.Controllers
             _sasUrlHelper = sasUrlHelper;
             _twilioHelper = twilioHelper;
             _activityTrackerService = activityTrackerService;
+            _assistantServiceHelper = assistantServiceHelper;
         }
 
         [Authorize]
@@ -2128,7 +2131,7 @@ namespace Risebird.Web.Controllers
                             await SetEditIRFProperties(model);
                             return View("EditIRF", model);
                         }
-                        var isEmptyskillName = model?.SkillCollection?.Any(x => string.IsNullOrEmpty(x.SkillName) && x.LevelId>0);
+                        var isEmptyskillName = model?.SkillCollection?.Any(x => string.IsNullOrEmpty(x.SkillName) && x.LevelId > 0);
                         if (isEmptyskillName.HasValue && isEmptyskillName.Value == true)
                         {
                             ModelState.AddModelError("", "The Skill Name column cant be empty in the Tech Rubric.");
@@ -9636,6 +9639,33 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+        [Authorize]
+        public async Task<IActionResult> CalibrationMeetingNotes(int id)
+        {
+            ViewBag.MeetingId = id;
+            var model = await _irfService.GetCalibrationMeetingDetailsById(id);
+            if (string.IsNullOrWhiteSpace(model.Notes))
+            {
+                string transcriptText;
+                using (HttpClient client = new HttpClient())
+                {
+                    transcriptText = await client.GetStringAsync(model.TranscriptLink);
+                }
+                var aiAnalysis = await _assistantServiceHelper.TranscriptToNotes(transcriptText);
+                if (aiAnalysis != null)
+                {
+                    var notesrespose = aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value;
+                    //var response = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                    //bool saveOperationResult = true;
+                    if (notesrespose != null)
+                    {
+                        await _irfService.SaveCalibrationMeetingNotesById(id, notesrespose);
+                    }
+                    model.Notes = notesrespose;
+                }
+            }
+            return View(model);
         }
         #endregion
         #region Candidate Consent Form
