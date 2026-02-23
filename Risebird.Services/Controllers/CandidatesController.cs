@@ -32,8 +32,9 @@ namespace Risebird.Services.Controllers
         private readonly IRisebirdMeetingsRepository _risebirdMeetings;
         private readonly INotificationHelper _notificationHelper;
         private readonly ICandidateService _candidateService;
+        private readonly IZohoMeetingHelper _zoho;
 
-        public CandidatesController(IApplicationErrorLogger applicationErrorLogger, IClientService clientService, IIRFService irfService, IIRFRepository irfRepository, IInterviewSchedulerService interviewSchedulerservice, IZoomHelper zoomHelper, IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings, INotificationHelper notificationHelper, ICandidateService candidateService)
+        public CandidatesController(IApplicationErrorLogger applicationErrorLogger, IClientService clientService, IIRFService irfService, IIRFRepository irfRepository, IInterviewSchedulerService interviewSchedulerservice, IZoomHelper zoomHelper, IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings, INotificationHelper notificationHelper, ICandidateService candidateService, IZohoMeetingHelper zoho)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _clientService = clientService;
@@ -45,6 +46,7 @@ namespace Risebird.Services.Controllers
             _risebirdMeetings = risebirdMeetings;
             _notificationHelper = notificationHelper;
             _candidateService = candidateService;
+            _zoho = zoho;
         }
         [HttpPost]
         [Route("Add")]
@@ -259,15 +261,23 @@ namespace Risebird.Services.Controllers
                                             var indianTime = item.Interviewdate;
                                             var interviewdatetime = item.Interviewdate;
                                             var zoomLink = new InstaZoomMeetingResponse();
-                                            zoomLink = await CreateZoomMeeting(item.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration);
-                                            if (zoomLink == null)
+                                            //zoomLink = await CreateZoomMeeting(item.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration);
+                                            var rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(item.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration));
+                                            if (rbMeetingLinkResponse == null)
                                             {
                                                 _ScheduleCandidateStatus.onboardingStatus = "Apologies, the selected slot for the meeting is currently unavailable. Please open this Scheduling link again and choose another time slot to schedule the interview, Please contact Client HR if any issues.";
                                             }
+                                            else
+                                            {
+                                                zoomLink.meetingid = rbMeetingLinkResponse.meetingKey;
+                                                zoomLink.join_url = rbMeetingLinkResponse.joinLink;
+                                                zoomLink.accountemail = rbMeetingLinkResponse.accountEmail;
+                                            }
+
                                             string textreminder = string.Empty;
                                             textreminder = item.Phone;
                                             int interviewId = 0;
-                                            var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.EmailId, item.ResumeLink, zoomLink.join_url, reqData.skillChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, "Zoom", out interviewId, zoomLink.accountemail);
+                                            var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.EmailId, item.ResumeLink, zoomLink.join_url, reqData.skillChannelId, zoomLink.meetingid, interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, "Zoom", out interviewId, zoomLink.accountemail);
                                             if (result)
                                             {
                                                 _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(Uniqueid);
@@ -368,57 +378,57 @@ namespace Risebird.Services.Controllers
             }
         }
         #region Create Zoom Meeting
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<InstaZoomMeetingResponse> CreateZoomMeeting(string CandidateName, string Role, DateTime indianTime, int interviewduration)
-        {
-            InstaZoomMeetingVM _zoommetingobject = new InstaZoomMeetingVM();
-            _zoommetingobject.topic = CandidateName + "| " + Role + "| Video Interview";
-            //TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
-            //DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(interviewDate, INDIAN_ZONE);
-            _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddTHH:mm:ss");
-            //var accountEmail = await _interviewSchedulerservice.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
-            var accountEmail = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30));
-            if (string.IsNullOrEmpty(accountEmail))
-            {
-                return null;
-            }
-            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime, interviewduration);
-            zoomlink.accountemail = accountEmail;
-            var succeresult = await _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
-            return zoomlink;
-        }
-        [ApiExplorerSettings(IgnoreApi = true)]
-        private InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime, int interviewduration)
-        {
-            _zoommetingobject.type = 2;
-            //_zoommetingobject.duration = 60;
-            _zoommetingobject.duration = interviewduration;
-            _zoommetingobject.timezone = "Asia/Calcutta";
-            _zoommetingobject.settings.host_video = true;
-            _zoommetingobject.settings.participant_video = true;
-            _zoommetingobject.settings.join_before_host = true;
-            _zoommetingobject.settings.jbh_time = 5;
-            _zoommetingobject.settings.auto_recording = "cloud";
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //public async Task<InstaZoomMeetingResponse> CreateZoomMeeting(string CandidateName, string Role, DateTime indianTime, int interviewduration)
+        //{
+        //    InstaZoomMeetingVM _zoommetingobject = new InstaZoomMeetingVM();
+        //    _zoommetingobject.topic = CandidateName + "| " + Role + "| Video Interview";
+        //    //TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+        //    //DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(interviewDate, INDIAN_ZONE);
+        //    _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddTHH:mm:ss");
+        //    //var accountEmail = await _interviewSchedulerservice.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
+        //    var accountEmail = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30));
+        //    if (string.IsNullOrEmpty(accountEmail))
+        //    {
+        //        return null;
+        //    }
+        //    var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime, interviewduration);
+        //    zoomlink.accountemail = accountEmail;
+        //    var succeresult = await _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
+        //    return zoomlink;
+        //}
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //private InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime, int interviewduration)
+        //{
+        //    _zoommetingobject.type = 2;
+        //    //_zoommetingobject.duration = 60;
+        //    _zoommetingobject.duration = interviewduration;
+        //    _zoommetingobject.timezone = "Asia/Calcutta";
+        //    _zoommetingobject.settings.host_video = true;
+        //    _zoommetingobject.settings.participant_video = true;
+        //    _zoommetingobject.settings.join_before_host = true;
+        //    _zoommetingobject.settings.jbh_time = 5;
+        //    _zoommetingobject.settings.auto_recording = "cloud";
 
-            //string token = ZoomToken();
+        //    //string token = ZoomToken();
 
-            //get oauth token
-            string token = _zoomHelper.GenerateAccessToken().Result;
+        //    //get oauth token
+        //    string token = _zoomHelper.GenerateAccessToken().Result;
 
-            var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
+        //    var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
 
-            var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"), Method.Post);
-            request.AddHeader("content-type", "application/json");
-            request.AddHeader("authorization", "Bearer " + token);
-            var body = JsonConvert.SerializeObject(_zoommetingobject);
-            request.AddParameter("application/json", body, ParameterType.RequestBody);
-            RestResponse response = client.Execute(request);
-            var content = response.Content;
-            var convertedResponse = JsonConvert.DeserializeObject<InstaZoomMeetingResponse>(content);
-            convertedResponse.InterviewDate = indianTime;
-            convertedResponse.accountemail = accountEmail;
-            return convertedResponse;
-        }
+        //    var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"), Method.Post);
+        //    request.AddHeader("content-type", "application/json");
+        //    request.AddHeader("authorization", "Bearer " + token);
+        //    var body = JsonConvert.SerializeObject(_zoommetingobject);
+        //    request.AddParameter("application/json", body, ParameterType.RequestBody);
+        //    RestResponse response = client.Execute(request);
+        //    var content = response.Content;
+        //    var convertedResponse = JsonConvert.DeserializeObject<InstaZoomMeetingResponse>(content);
+        //    convertedResponse.InterviewDate = indianTime;
+        //    convertedResponse.accountemail = accountEmail;
+        //    return convertedResponse;
+        //}
         #endregion
         [ApiExplorerSettings(IgnoreApi = true)]
         private async Task<bool> CheckInterviewDateMeetingSchedule(int day, int month, int year, string id, DateTime interviewdate)
