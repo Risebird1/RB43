@@ -109,7 +109,7 @@
     }
 
     .rb-section-header h2 {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 600;
     color: #000;
     display: flex;
@@ -739,7 +739,7 @@
     }
 
     .rb-candidate-name {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: #000;
     margin: 0 0 8px 0;
@@ -1916,12 +1916,20 @@
             </div>
         </div>
 
+        <div style="display:flex; align-items:center; margin: 32px 0 28px 0; gap: 0;">
+            <div style="flex:1; height:2px; background: linear-gradient(90deg, transparent 0%, #4eda92 40%, #56e0cb 100%); border-radius:2px; opacity:0.5;"></div>
+            <div style="display:flex; align-items:center; gap:8px; padding: 0 18px; background:#fff; position:relative; z-index:1;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%); box-shadow: 0 2px 8px rgba(78,218,146,0.35);">
+                    <i class="fa fa-robot" style="color:#fff; font-size:15px;"></i>
+                </span>
+                <span style="font-size:17px; font-weight:600; color:#000; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap;">AI Analysis &amp; Recommendations</span>
+            </div>
+            <div style="flex:1; height:2px; background: linear-gradient(90deg, #56e0cb 0%, #4eda92 60%, transparent 100%); border-radius:2px; opacity:0.5;"></div>
+        </div>
 
         <div>
         <div class="rb-report-section" style="margin-bottom:20px;">
-                <div class="rb-section-header" style="margin-bottom:0px;">
-                <h2><i class="fa fa-robot"></i> AI Analysis & Recommendations</h2>
-            </div>
+               
             <div class="rb-analysis-content">
                 @if (Model.AIInterviewEvaluation != null)
                 {
@@ -1969,7 +1977,7 @@
                                
                                
                                   
-                                <div class="rb-analysis-item ai-tech-score" style="padding-bottom:20px;">
+                                <div class="rb-analysis-item ai-tech-score" style="padding-bottom:20px;padding-top:0px;">
 
 
                                  <div class="rb-analysis-header">
@@ -2003,18 +2011,6 @@
 
 
 
-                                <div class="rb-analysis-header">
-                                    <img style="width:29px;left:-5px; top:0px; position:relative;" src="/img/techskill-score.png">
-                                        <span class="rb-analysis-title" style="font-size:17px!important">
-                                            Overall Technical Score:
-                                        @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
-                                        {
-
-                                            <span style="color:#000;margin-left:6px;font-weight:bold">@Model.AIInterviewEvaluation.OverallTechnicalScore</span>
-
-                                        }
-                                    </span>
-                                </div>
                                 <div class="rb-analysis-text">
                                     <h4 style="color: brown;background: #df9b9b4d;height: 18px;position: relative;top:0px;padding: 14px 5px;font-size:16px;">
                                         <span style="position: relative;top: -10px;padding: 0px 12px">Score Rubic / Score Parameters:</span>
@@ -2057,20 +2053,33 @@
                                         </div>
                                     }
 
+                                    <div class="rb-analysis-header" style="margin-top:14px;">
+                                        <img style="width:25px;left:-5px; top:5px; position:relative;" src="/img/techskill-score.png">
+                                        <span class="rb-analysis-title" style="font-size:16px!important;font-weight:600">
+                                            Overall Skill Score:
+                                            @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
+                                            {
+                                                <span style="color:#000;margin-left:6px;font-weight:bold">@Model.AIInterviewEvaluation.OverallTechnicalScore</span>
+                                            }
+                                        </span>
+                                    </div>
+
                                     @if (Model.AIInterviewEvaluation != null && (Model.AIInterviewEvaluation.OverallCommunicationScore != 0 || !string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.OverallCommunicationScoreReasoning)))
                                     {
                                         <div class="question" style="margin-top:10px;">
                                             <div class="rb-analysis-header" style="margin:0px">
-                                                <img style="width:26px;left:0px; top:-1px; position:relative;" src="/img/communication-score.png">
-                                                    <span class="rb-analysis-title" style="font-size:17px!important">Overall Communication :</span>
-                                            </div>
-                                            @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
-                                            {
-                                                <div style="margin:0;">
-                                                    <label style="color:#000;font-weight:bold;">Overall Communication Score :</label>
-                                                    <span style="color:#333;margin-left:6px;">@Model.AIInterviewEvaluation.OverallCommunicationScore</span>
+                                                <img style="width:20px;left:-4px;top: 2px;position:relative;" src="/img/communication-score.png">
+                                                    <span class="rb-analysis-title" style="font-size: 16px!important;font-weight: 600;">Overall Communication :</span>
+                                                    @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
+                                                    {
+                                                        <div style="margin:0;">
+                                                           @*  <label style="color:#000;font-weight:bold;">Overall Communication Score :</label> *@
+                                                            <span style="color:#333;font-weight:bold;font-size: 16px;">@Model.AIInterviewEvaluation.OverallCommunicationScore</span>
+                                                        </div>
+                                                    }
+                                                
                                                 </div>
-                                            }
+                                           
                                             @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.OverallCommunicationScoreReasoning))
                                             {
                                                 <div style="margin:0;">
@@ -2098,7 +2107,7 @@
 
                                 <div class="col-lg-8 col-md-7 col-sm-12" style="padding:0px!important;margin:0px!important;float:left">
                                
-                                <div id="question-list" class="rb-analysis-item" style="box-shadow:none">
+                                <div id="question-list" class="rb-analysis-item" style="box-shadow:none;padding-top:0px;">
                                     <div class="rb-analysis-header">
                                         <img style="width:27px;position: relative;left: -4px;top:11px;" src="/img/question-asked.png">
                                         <span class="rb-analysis-title" style="font-size:17px!important">Questions Discussed</span>
@@ -2153,7 +2162,7 @@
                             <!-- Right: Questions Discussed (Question Ratings) -->
                             <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12" style="float:left;padding:0px;margin:0px;">
                                 <!-- Right: Final Verdict & Comment (like Interviewer Comment) -->
-                                <div class="rb-analysis-item ai-interviewer-cmt">
+                                <div class="rb-analysis-item ai-interviewer-cmt" style="padding-top:0px;">
                                     <div class="rb-analysis-header">
                                         <img style="width:27px;position: relative;left: -2px;top:11px;" src="/img/interviewer-comment.png">
                                             <span class="rb-analysis-title" style="font-size:17px!important">AI Interviewer Comment</span>
@@ -2190,16 +2199,9 @@
                                 @if (Model.AIInterviewEvaluation.LlmDetection != null)
                                 {
                                 <div class="row rb-analysis-row" style="margin:0 0 0px 0;">
-                                    <div class="col-md-4 col-sm-12" style="padding: 8px;">
-                                        <div class="rb-section-video rb-video-placeholder">
-                                            <div style="text-align: center; color: #999;">
-                                                <i class="fa fa-video-camera" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
-                                                <p style="margin: 0; font-size: 0.9rem;">Video placeholder</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8 col-sm-12" style="padding: 8px;">
-                                    <div class="rb-analysis-item ai-interviewer-cmt">
+                                  
+                                    <div>
+                                    <div class="rb-analysis-item ai-interviewer-cmt" style="padding:0px;">
                                         <div class="rb-analysis-header">
                                             <img style="width:27px;position: relative;left: -2px;top:3px;" src="/img/lm-detection.png">
 
