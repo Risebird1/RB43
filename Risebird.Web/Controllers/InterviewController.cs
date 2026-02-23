@@ -3211,16 +3211,23 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")// || profileName == "Quality Controller"// //
                         {
-                            var result = await _meetingService.SaveAIInterviewProctorEvaluation(model);
-                            if (result)
+                            try
                             {
-                                TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
+                                var result = await _meetingService.SaveAIInterviewProctorEvaluation(model);
+                                if (result)
+                                {
+                                    TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
 
+                                }
+                                else
+                                {
+                                    TempData["SuccessErrorMessage"] = "Failed to save the report!";
+
+                                }
                             }
-                            else
+                            catch (InvalidOperationException ex)
                             {
-                                TempData["SuccessErrorMessage"] = "Failed to save the report!";
-
+                                TempData["SuccessErrorMessage"] = ex.Message;
                             }
                             return RedirectToAction("MyInterview");
 

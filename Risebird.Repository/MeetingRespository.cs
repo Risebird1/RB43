@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -7820,6 +7820,28 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<int> GetAIInterviewVideoCount(string sessionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "SELECT COUNT(*) FROM BotInterviewQuestionVideos WHERE SessionId = @SessionId AND VideoLink IS NOT NULL AND VideoLink != ''";
+                    var count = await SqlMapper.ExecuteScalarAsync<int>(con, query, new { SessionId = sessionId });
+                    return count;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return 0;
         }
     }
 }

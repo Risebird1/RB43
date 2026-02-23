@@ -1536,8 +1536,12 @@ namespace Risebird.Web.Controllers
                     {
                         aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails.AIInterviewType, isExit: isExit);
                         var list = new List<string>();
-                        list.Add(aiReport.Replies.FirstOrDefault());
-                        aiReport.Replies = list;
+                        list.Add(aiReport?.Replies?.FirstOrDefault());
+                        if(aiReport!=null)
+                        {
+                            aiReport.Replies = list;
+
+                        }
                         if (aiReport != null)
                         {
                             //var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
@@ -1670,8 +1674,12 @@ namespace Risebird.Web.Controllers
                     {
                         aiReport = await _api.GenerateReport(seId, candidatePrompt, isExit:isExit);
                         var list = new List<string>();
-                        list.Add(aiReport.Replies.FirstOrDefault());
-                        aiReport.Replies = list;
+                        list.Add(aiReport?.Replies?.FirstOrDefault());
+                        if (aiReport != null)
+                        {
+                            aiReport.Replies = list;
+
+                        }
                         if (aiReport != null)
                         {
                             //var result = await _aiinterviewerService.SaveReportOfAIInterviewByAssistant(seId, JsonConvert.SerializeObject(aiReport), isExit);
