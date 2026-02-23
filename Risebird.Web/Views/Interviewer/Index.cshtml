@@ -1067,39 +1067,39 @@
 
     var interviewerDataTable = null;
     var searchTimeout = null;
-    function initInterviewerDataTable() {
-        if ($.fn.DataTable.isDataTable('#interviewer')) {
-            $('#interviewer').DataTable().destroy();
-        }
-        interviewerDataTable = $('#interviewer').DataTable({
-            paging: false,
-            searching: true,
-            ordering: true,
-            info: true,
-            order: [[0, 'asc']],
-            columnDefs: [{ orderable: false, targets: 'no-sort' }],
-            autoWidth: false,
-            dom: 'rtip',
-            language: { search: '', searchPlaceholder: 'Search...', info: 'Showing _TOTAL_ entries', infoFiltered: '(filtered from _MAX_ total)' }
-        });
-        var customFilter = $('#txtmeeting_filter');
-        var searchWrap = $('#meeting_filter');
-        function toggleSearchClear() {
-            searchWrap.toggleClass('has-value', (customFilter.val() || '').length > 0);
-        }
-        customFilter.off('keyup.datatable input.datatable').on('keyup.datatable input.datatable', function () {
-            toggleSearchClear();
-            if (searchTimeout) clearTimeout(searchTimeout);
-            var val = this.value;
-            searchTimeout = setTimeout(function () {
-                if (interviewerDataTable) interviewerDataTable.search(val).draw();
-            }, 200);
-        });
-        toggleSearchClear();
-        if (customFilter.val()) {
-            interviewerDataTable.search(customFilter.val()).draw();
-        }
-    }
+    // function initInterviewerDataTable() {
+    //     if ($.fn.DataTable.isDataTable('#interviewer')) {
+    //         $('#interviewer').DataTable().destroy();
+    //     }
+    //     interviewerDataTable = $('#interviewer').DataTable({
+    //         paging: false,
+    //         searching: true,
+    //         ordering: true,
+    //         info: true,
+    //         order: [[0, 'asc']],
+    //         columnDefs: [{ orderable: false, targets: 'no-sort' }],
+    //         autoWidth: false,
+    //         dom: 'rtip',
+    //         language: { search: '', searchPlaceholder: 'Search...', info: 'Showing _TOTAL_ entries', infoFiltered: '(filtered from _MAX_ total)' }
+    //     });
+    //     var customFilter = $('#txtmeeting_filter');
+    //     var searchWrap = $('#meeting_filter');
+    //     function toggleSearchClear() {
+    //         searchWrap.toggleClass('has-value', (customFilter.val() || '').length > 0);
+    //     }
+    //     customFilter.off('keyup.datatable input.datatable').on('keyup.datatable input.datatable', function () {
+    //         toggleSearchClear();
+    //         if (searchTimeout) clearTimeout(searchTimeout);
+    //         var val = this.value;
+    //         searchTimeout = setTimeout(function () {
+    //             if (interviewerDataTable) interviewerDataTable.search(val).draw();
+    //         }, 200);
+    //     });
+    //     toggleSearchClear();
+    //     if (customFilter.val()) {
+    //         interviewerDataTable.search(customFilter.val()).draw();
+    //     }
+    // }
     function applyDataTableSearch() {
         var val = $('#txtmeeting_filter').val();
         if (interviewerDataTable) interviewerDataTable.search(val).draw();
