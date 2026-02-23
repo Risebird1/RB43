@@ -15,5 +15,6 @@ namespace Risebird.Entities.ViewModel
         public string JDTiltle { get; set; }
         public string ChannelOwner { get; set; }
         public string TranscriptLink { get; set; }
+        public string Notes { get; set; }
     }
 }

@@ -297,5 +297,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateIRFInterviewerBillingCycle(int irfId, int billingCycle, string emailid);
         Task<int> FetchIRFInterviewerBillingCycle(int irfId);
         Task<IEnumerable<Users>> GetClientUsersByIRFandAdmin(int irfId);
+        Task<CallibrationCallVM> GetCalibrationMeetingDetailsById(int id);
+        Task<bool> SaveCalibrationMeetingNotesById(int id, string Notes);
     }
 }
