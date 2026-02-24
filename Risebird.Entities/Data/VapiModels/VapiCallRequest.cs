@@ -34,12 +34,18 @@ namespace Risebird.Entities.Data.VapiModels
         [JsonProperty("assistant")]
         public VapiAssistant Assistant { get; set; }
 
-        /// <summary>
-        /// Assistant overrides for this specific call
-        /// </summary>
-        [JsonProperty("assistantOverrides")]
-        public VapiAssistantOverrides AssistantOverrides { get; set; }
-    }
+    /// <summary>
+    /// Assistant overrides for this specific call
+    /// </summary>
+    [JsonProperty("assistantOverrides")]
+    public VapiAssistantOverrides AssistantOverrides { get; set; }
+
+    /// <summary>
+    /// Variable values to pass to the assistant (accessible in webhook callbacks)
+    /// </summary>
+    [JsonProperty("variableValues")]
+    public Dictionary<string, object> VariableValues { get; set; }
+}
 
     /// <summary>
     /// Vapi Assistant configuration
@@ -60,7 +66,7 @@ namespace Risebird.Entities.Data.VapiModels
     public class VapiModel
     {
         public string Provider { get; set; } = "openai";
-        public string Model { get; set; } = "gpt-4o-mini";
+        public string Model { get; set; } = "gpt-5.2-instant";
         public List<VapiMessage> Messages { get; set; }
         public double Temperature { get; set; } = 0.7;
         public int MaxTokens { get; set; } = 250;
@@ -157,6 +163,12 @@ namespace Risebird.Entities.Data.VapiModels
         /// </summary>
         [JsonProperty("firstMessage")]
         public string FirstMessage { get; set; }
+
+        /// <summary>
+        /// Override the tools for this specific call
+        /// </summary>
+        [JsonProperty("toolIds")]
+        public List<string> ToolIds { get; set; }
     }
     
     /// <summary>
@@ -172,10 +184,10 @@ namespace Risebird.Entities.Data.VapiModels
         
         /// <summary>
         /// Model name (required when overriding - must be a valid Vapi model identifier)
-        /// Common options: gpt-4o-mini (cost-effective), gpt-4o (more capable), gpt-3.5-turbo (fastest/cheapest)
+        /// Common options: gpt-5.2-instant (fast & capable), gpt-4o-mini (cost-effective), gpt-4o (premium)
         /// </summary>
         [JsonProperty("model")]
-        public string Model { get; set; } = "gpt-4o-mini";
+        public string Model { get; set; } = "gpt-5.2-instant";
         
         /// <summary>
         /// Override the system messages
