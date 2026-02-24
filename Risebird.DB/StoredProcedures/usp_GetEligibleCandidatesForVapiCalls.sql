@@ -62,7 +62,7 @@ BEGIN
         c.id AS CandidateId,
         c.IRFId,
         irf.IRFId AS IRFName,
-        c.Name AS CandidateName,
+        u.FirstName AS CandidateName,
         u.EmailId AS CandidateEmail,
         c.Phone AS CandidatePhone,
         irf.IRFId AS JobTitle,
@@ -87,7 +87,7 @@ BEGIN
             FROM InterviewMeetings im
             WHERE im.candidateEmail = u.EmailId
             AND im.IRFId = irf.IRFId
-            AND im.comfirmationStatus = '1'
+            AND im.confirmationStatus = '1'
         )
         -- Maximum 2 call attempts OR no successful booking yet
         AND (
