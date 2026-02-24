@@ -1,0 +1,305 @@
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Data.VapiModels;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Risebird.AzureTimerFunctions
+{
+    /// <summary>
+    /// Azure Timer Function for automated Vapi interview scheduling calls
+    /// Runs every 15 minutes between 9 AM and 9 PM to call eligible candidates
+    /// </summary>
+    public class VapiInterviewSchedulingJob
+    {
+        private readonly IConfiguration _configuration;
+        private readonly IVapiService _vapiService;
+        private readonly IVapiCallRepository _vapiCallRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly ILogger _log;
+
+        public VapiInterviewSchedulingJob(
+            ILoggerFactory loggerFactory,
+            IConfiguration configuration,
+            IVapiService vapiService,
+            IVapiCallRepository vapiCallRepository,
+            IApplicationErrorLogger applicationErrorLogger)
+        {
+            _configuration = configuration;
+            _vapiService = vapiService;
+            _vapiCallRepository = vapiCallRepository;
+            _applicationErrorLogger = applicationErrorLogger;
+            _log = loggerFactory.CreateLogger<VapiInterviewSchedulingJob>();
+        }
+
+        /// <summary>
+        /// Timer trigger that runs every 15 minutes
+        /// CRON: "0 */15 * * * *" = every 15 minutes
+        /// </summary>
+        [Function("VapiInterviewSchedulingJob")]
+        public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer)
+        {
+            var currentTime = DateTime.Now;
+            var currentHour = currentTime.Hour;
+
+            _log.LogInformation($"Vapi Interview Scheduling Job triggered at: {currentTime}");
+
+            try
+            {
+                // Only run between 9 AM (9) and 9 PM (21)
+                if (currentHour < 9 || currentHour >= 21)
+                {
+                    _log.LogInformation($"Skipping execution - current time {currentTime:HH:mm} is outside business hours (9 AM - 9 PM)");
+                    return;
+                }
+
+                _log.LogInformation($"Executing within business hours - Current time: {currentTime:HH:mm}");
+
+                // Get eligible candidates for calls (max 10)
+                var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(10);
+
+                if (eligibleCandidates == null || !eligibleCandidates.Any())
+                {
+                    _log.LogInformation("No eligible candidates found for calling");
+                    return;
+                }
+
+                _log.LogInformation($"Found {eligibleCandidates.Count} eligible candidates for calling");
+
+                // Get configuration values
+                var baseUrl = _configuration["HostDetails:baseUrl"];
+                var assistantId = _configuration["Vapi:InterviewBookingAssistantId"];
+
+                if (string.IsNullOrEmpty(assistantId))
+                {
+                    _log.LogError("Vapi Assistant ID is not configured. Please set Vapi:InterviewBookingAssistantId in configuration.");
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                        new Exception("Vapi Assistant ID is not configured for automated interview scheduling"));
+                    return;
+                }
+
+                // Process each candidate
+                int successCount = 0;
+                int failureCount = 0;
+
+                foreach (var candidate in eligibleCandidates)
+                {
+                    try
+                    {
+                        _log.LogInformation($"Processing candidate: {candidate.CandidateName} (Email: {candidate.CandidateEmail}, IRFId: {candidate.IRFId}, Attempts: {candidate.CallAttempts})");
+
+                        // Validate phone number
+                        if (string.IsNullOrWhiteSpace(candidate.CandidatePhone))
+                        {
+                            _log.LogWarning($"Skipping candidate {candidate.CandidateEmail} - No phone number");
+                            continue;
+                        }
+
+                        // Ensure phone number is in E.164 format
+                        var phoneNumber = candidate.CandidatePhone.Trim();
+                        if (!phoneNumber.StartsWith("+"))
+                        {
+                            phoneNumber = "+91" + phoneNumber; // Default to India country code
+                        }
+
+                        // Get webhook URL
+                        var webhookUrl = $"{baseUrl}/VapiInterviewCall/Webhook";
+
+                        // Inject today's date dynamically into system prompt
+                        var systemPromptWithDate = GetSystemPromptWithCurrentDate(
+                            candidate.CandidateName, 
+                            candidate.JobTitle ?? candidate.IRFName, 
+                            candidate.IRFId.ToString(),
+                            candidate.CandidateEmail);
+
+                        // Create call request
+                        var callRequest = new VapiCallRequest
+                        {
+                            PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
+                            Customer = new VapiCustomer
+                            {
+                                Number = phoneNumber,
+                                Name = candidate.CandidateName,
+                                Email = candidate.CandidateEmail
+                            },
+                            AssistantId = assistantId,
+                            AssistantOverrides = new VapiAssistantOverrides
+                            {
+                                Model = new VapiModelOverride
+                                {
+                                    Provider = "openai",
+                                    Model = "gpt-5.2-instant",
+                                    Messages = new List<VapiMessage>
+                                    {
+                                        new VapiMessage
+                                        {
+                                            Role = "system",
+                                            Content = systemPromptWithDate
+                                        }
+                                    }
+                                }
+                            },
+                            VariableValues = new Dictionary<string, object>
+                            {
+                                { "irfId", candidate.IRFId.ToString() },
+                                { "candidateEmail", candidate.CandidateEmail }
+                            }
+                        };
+
+                        // Initiate the call
+                        var callResponse = await _vapiService.InitiateCallAsync(callRequest);
+
+                        _log.LogInformation($"Call initiated successfully for {candidate.CandidateEmail} - CallId: {callResponse.Id}, Status: {callResponse.Status}");
+
+                        // Save call log to database
+                        var callLog = new VapiCallLog
+                        {
+                            VapiCallId = callResponse.Id,
+                            InterviewId = null, // Will be set later if interview is booked
+                            IRFId = candidate.IRFId,
+                            RecipientId = candidate.CandidateId,
+                            RecipientPhone = phoneNumber,
+                            RecipientName = candidate.CandidateName,
+                            RecipientEmail = candidate.CandidateEmail,
+                            CallStatus = callResponse.Status,
+                            ScheduledDateTime = null,
+                            CallStartedAt = callResponse.StartedAt,
+                            AssistantId = assistantId,
+                            CreatedAt = DateTime.UtcNow,
+                            CreatedBy = "VapiTimerFunction"
+                        };
+
+                        await _vapiCallRepository.SaveCallLogAsync(callLog);
+
+                        successCount++;
+
+                        // Add small delay between calls to avoid rate limiting
+                        await Task.Delay(2000); // 2 second delay
+                    }
+                    catch (Exception ex)
+                    {
+                        failureCount++;
+                        _log.LogError($"Failed to initiate call for candidate {candidate.CandidateEmail}: {ex.Message}");
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                            new Exception($"Vapi call failed for candidate {candidate.CandidateEmail} (IRFId: {candidate.IRFId})", ex));
+                    }
+                }
+
+                _log.LogInformation($"Vapi Interview Scheduling Job completed - Success: {successCount}, Failed: {failureCount}, Total: {eligibleCandidates.Count}");
+            }
+            catch (Exception ex)
+            {
+                _log.LogError($"Vapi Interview Scheduling Job failed: {ex.Message}");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
+        /// Generates system prompt with dynamically injected current date
+        /// This mirrors the method in VapiInterviewCallController but is self-contained for the timer function
+        /// </summary>
+        private string GetSystemPromptWithCurrentDate(string candidateName, string jobTitle, string irfId, string candidateEmail)
+        {
+            var today = DateTime.Now.ToString("yyyy-MM-dd");
+            var tomorrow = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
+            var dayAfterTomorrow = DateTime.Now.AddDays(2).ToString("yyyy-MM-dd");
+            var dayOfWeek = DateTime.Now.ToString("dddd, MMMM dd, yyyy");
+            
+            return $@"You are an outbound interview scheduling assistant from Risebird Interviews calling on behalf of SONATA for urgent hiring.
+
+IDENTITY & PURPOSE:
+- You represent Risebird Interviews on behalf of SONATA
+- This is URGENT and time-sensitive hiring - interviews MUST be scheduled within the next TWO days ONLY
+- Your goal: Politely convey urgency and secure a confirmed interview slot within the next two days
+
+CURRENT DATE INFORMATION (CRITICAL):
+- Today is: {dayOfWeek} ({today})
+- Tomorrow is: {tomorrow}
+- Day after tomorrow is: {dayAfterTomorrow}
+- When candidate says ""tomorrow"", use date: {tomorrow}
+- When candidate says ""day after tomorrow"", use date: {dayAfterTomorrow}
+- ONLY these dates are allowed: {tomorrow} OR {dayAfterTomorrow}
+- IRF ID for this interview: {irfId}
+- Candidate email for confirmation: {candidateEmail}
+
+CRITICAL RULES:
+- Interviews MUST be within the next TWO days from today (tomorrow or day after tomorrow ONLY)
+- Do NOT allow scheduling beyond 2 days under any circumstances
+- If candidate requests later dates: ""I apologize, but due to the urgent nature of this hiring process, we can only accommodate slots within the next two days. Would either tomorrow or the day after work for you?""
+- If candidate insists on dates beyond 2 days: Politely explain this is not possible and end call gracefully
+- ALL times must be confirmed in IST (Indian Standard Time)
+- Date format in submitInterviewSlot tool: YYYY-MM-DD (e.g., {tomorrow})
+
+CALL FLOW:
+1. Greet professionally with warmth
+   - ""Hello, this is Risebird Interviews calling. Is this a good time to speak briefly?""
+   - Wait for confirmation
+
+2. State purpose and ask for name
+   - ""I'm calling from Risebird on behalf of SONATA regarding an interview opportunity for the {jobTitle} position.""
+   - ""May I have your full name please?""
+   - Wait for candidate to provide their name
+   - IMPORTANT: Use the EXACT name the candidate provides, NOT any pre-filled information
+
+3. Explain urgency POLITELY but FIRMLY
+   - ""I appreciate your time. This is a time-sensitive opportunity and we're looking to schedule interviews within the next two days. We'd really value the chance to speak with you soon.""
+   - ""Would you be available tomorrow or the day after tomorrow for the interview?""
+   - Wait for response
+
+4. Get specific time
+   - ""What time would work best for you?"" 
+   - If they say just ""morning"" or ""afternoon"", ask: ""What specific time would be most convenient? Please specify with AM or PM.""
+   - Wait for specific time (e.g., ""10:00 AM"", ""02:30 PM"")
+
+5. Confirm details explicitly with appreciation
+   - Repeat EXACT name, date and time back to candidate
+   - ""Thank you! Let me just confirm - [CANDIDATE_NAME], your interview with SONATA is scheduled for [DAY] at [TIME] IST. Is that correct?""
+   - Wait for explicit confirmation (""yes"", ""correct"", ""that's right"")
+
+6. Submit booking (ONLY after explicit confirmation)
+   - Call submitInterviewSlot function with:
+     * candidateName: The EXACT full name the candidate provided in step 2 (NOT the email or pre-filled value)
+     * candidateEmail: The candidate's email address for the interview confirmation
+     * interviewDate: Date in YYYY-MM-DD format (either {tomorrow} or {dayAfterTomorrow})
+     * interviewTime: Time in HH:MM AM/PM format (e.g., ""10:00 AM"", ""02:30 PM"")
+     * timezone: ""IST""
+     * candidateConfirmed: true (ONLY if candidate said yes/confirmed/correct)
+     * irfId: ""{irfId}""
+
+7. End professionally with gratitude
+   - ""Perfect! Your interview is confirmed. You'll receive a confirmation email shortly. We appreciate your time and look forward to speaking with you. Good luck!""
+
+OBJECTION HANDLING (BE POLITE BUT PERSISTENT):
+- If busy now: ""I completely understand. This will only take 2 minutes to find a suitable time. May we proceed?""
+- If asks to call back: ""I appreciate that, and since I have you on the line and this is time-sensitive, could we quickly lock in a time that works for you? It will just take a moment.""
+- If uncertain about job: ""I understand. You had applied for this position, and the company is moving quickly with qualified candidates. Would you like to secure an interview slot?""
+- If wants different date beyond 2 days: ""I appreciate your preference, but unfortunately, due to the urgent hiring timeline, we can only offer slots within the next two days - either tomorrow or the day after. Would either of those work for you?""
+
+VALIDATION RULES:
+- Candidate name MUST be their actual full name (first and last name), NOT an email address or phone number
+- Date MUST be either {tomorrow} or {dayAfterTomorrow} - NO EXCEPTIONS
+- Time MUST include AM or PM (e.g., ""10:00 AM"", not just ""10:00"")
+- Candidate MUST explicitly confirm with ""yes"", ""correct"", ""confirmed"", ""that's right"", or similar
+- If candidate says ""maybe"", ""I think so"", ""probably"" - ask for explicit confirmation: ""I want to make sure we have this right. Can you confirm this time works for you?""
+- Do NOT submit booking without explicit confirmation
+- ALWAYS include the IRF ID ({irfId}) and candidate email ({candidateEmail}) when submitting the slot
+
+NEVER:
+- Use email addresses or phone numbers as the candidate name
+- Accept dates beyond 2 days from today (be firm but polite about this)
+- Submit booking without explicit confirmation
+- Use 24-hour time format (always use AM/PM)
+- Forget to specify timezone as IST
+- Use dates in any format other than YYYY-MM-DD in the tool call
+- Use pre-filled or template values for candidateName - always use what the candidate tells you
+- Forget to include irfId ({irfId}) and candidate email ({candidateEmail}) in the tool call";
+        }
+    }
+}

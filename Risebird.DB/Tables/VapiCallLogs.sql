@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[VapiCallLogs]
     [Id] INT IDENTITY(1,1) PRIMARY KEY,
     [VapiCallId] NVARCHAR(100) NOT NULL UNIQUE,
     [InterviewId] INT NULL,
+    [IRFId] INT NULL,
     [RecipientId] INT NULL,
     [RecipientPhone] NVARCHAR(20) NOT NULL,
     [RecipientName] NVARCHAR(255) NULL,
@@ -35,11 +36,32 @@ CREATE TABLE [dbo].[VapiCallLogs]
     
     INDEX [IX_VapiCallLogs_VapiCallId] NONCLUSTERED ([VapiCallId]),
     INDEX [IX_VapiCallLogs_InterviewId] NONCLUSTERED ([InterviewId]),
+    INDEX [IX_VapiCallLogs_IRFId] NONCLUSTERED ([IRFId]),
     INDEX [IX_VapiCallLogs_RecipientId] NONCLUSTERED ([RecipientId]),
+    INDEX [IX_VapiCallLogs_RecipientEmail_IRFId] NONCLUSTERED ([RecipientEmail], [IRFId]),
     INDEX [IX_VapiCallLogs_CreatedAt] NONCLUSTERED ([CreatedAt] DESC)
 );
 
 End
+ELSE
+BEGIN
+    -- Add IRFId column if it doesn't exist (for existing tables)
+    IF NOT EXISTS(
+        SELECT *
+        FROM sys.columns
+        WHERE Name IN (N'IRFId')
+        AND Object_ID = Object_ID(N'VapiCallLogs'))
+    BEGIN
+        ALTER TABLE VapiCallLogs
+        ADD IRFId INT NULL;
+        
+        -- Add index on IRFId
+        CREATE NONCLUSTERED INDEX [IX_VapiCallLogs_IRFId] ON VapiCallLogs([IRFId]);
+        
+        -- Add composite index on RecipientEmail and IRFId for eligibility queries
+        CREATE NONCLUSTERED INDEX [IX_VapiCallLogs_RecipientEmail_IRFId] ON VapiCallLogs([RecipientEmail], [IRFId]);
+    END
+END
 GO
 
 -- Add description
