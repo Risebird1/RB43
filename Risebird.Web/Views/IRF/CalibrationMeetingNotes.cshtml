@@ -155,7 +155,7 @@
         <h1>Calibration Meeting Notes</h1>
         @if (Model?.Notes != null && !string.IsNullOrWhiteSpace(Model.Notes))
         {
-          <span class="pill"><b>Source:</b> Loaded from database</span>
+          @* <span class="pill"><b>Source:</b> Loaded from database</span> *@
           if (ViewBag.MeetingId != null) { <span class="pill"><b>Meeting ID:</b> @ViewBag.MeetingId</span> }
         }
         else
@@ -163,7 +163,7 @@
           <span class="pill"><b>Mode:</b> Paste JSON in Raw JSON tab</span>
         }
       </div>
-      <div class="row">
+      <div class="row" style="visibility:hidden">
         <button class="btn" id="btnLoadSample">Load sample</button>
         <button class="btn" id="btnCopyOut">Copy output JSON</button>
         <button class="btn primary" id="btnDownloadOut">Download output.json</button>
@@ -177,11 +177,11 @@
   <div class="wrap">
     <section class="card">
       <div class="hd">
-        <div class="title">Calibration meeting notes</div>
+        <div class="title">Calibration meeting notes details</div>
         <div class="status" id="outputStatus"></div>
       </div>
       <div class="bd">
-        <div id="notesFromDbBanner" class="notes-from-db" style="display:none">Notes loaded from database. Edit in Raw JSON tab and switch to Structured view to refresh tables.</div>
+        <div id="notesFromDbBanner" class="notes-from-db" style="display:none">Edit in Raw JSON tab and switch to Structured view to refresh tables.</div>
         <div class="tabs" style="margin-bottom:10px">
           <div class="tab active" data-tab="view">Structured view</div>
           <div class="tab" data-tab="json">Raw JSON</div>
