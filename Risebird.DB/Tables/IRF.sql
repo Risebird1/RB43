@@ -3,7 +3,7 @@ WHERE TABLE_NAME = N'IRF')
 BEGIN  
 CREATE TABLE [dbo].[IRF](					
 			[id] [int] IDENTITY(1,1) NOT NULL,			
-			[Name] [VARCHAR](200) NOT NULL,
+			[IRFId] [VARCHAR](200) NOT NULL,
 			[ClientId] [int] NOT NULL,			
 			[SkillCluster] [VARCHAR](200) NULL,
 			[Location] [VARCHAR](200) NULL,

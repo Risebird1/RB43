@@ -146,6 +146,7 @@ namespace Risebird.Web.Controllers
                 {
                     VapiCallId = callResponse.Id,
                     InterviewId = interviewId,
+                    IRFId = int.TryParse(irfId, out int parsedIrfId) ? parsedIrfId : (int?)null,
                     RecipientId = candidateId,
                     RecipientPhone = candidatePhone,
                     RecipientName = candidateName,
@@ -513,12 +514,14 @@ namespace Risebird.Web.Controllers
                             callLog = new VapiCallLog
                             {
                                 VapiCallId = callId,
+                                IRFId = int.TryParse(irfId, out int parsedIrfId) ? parsedIrfId : (int?)null,
                                 RecipientPhone = callDetails?.Customer?.Number 
                                     ?? message.Message.Call?.Customer?.Number 
                                     ?? "unknown",
                                 RecipientName = candidateName,
                                 RecipientEmail = callDetails?.Customer?.Email 
-                                    ?? message.Message.Call?.Customer?.Email,
+                                    ?? message.Message.Call?.Customer?.Email 
+                                    ?? candidateEmail,
                                 CallStatus = callDetails?.Status 
                                     ?? message.Message.Call?.Status 
                                     ?? "ended",
