@@ -10,6 +10,7 @@ namespace Risebird.Entities.Data
         public int Id { get; set; }
         public string VapiCallId { get; set; }
         public int? InterviewId { get; set; }
+        public int? IRFId { get; set; }
         public int? RecipientId { get; set; }
         public string RecipientPhone { get; set; }
         public string RecipientName { get; set; }

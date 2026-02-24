@@ -51,7 +51,10 @@ namespace Risebird.AzureFunctions
 
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddHttpClient(); // Required for VapiService
             services.AddScoped<INotificationHelper, NotificationHelper>();
+            services.AddScoped<IVapiService, VapiService>();
+            services.AddScoped<IVapiCallRepository, VapiCallRepository>();
             services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProfileService, ProfileService>();
