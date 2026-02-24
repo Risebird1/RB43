@@ -1,4 +1,5 @@
 using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -50,5 +51,11 @@ namespace Risebird.Repository.Interface
         /// </summary>
         Task<bool> UpdateBookingStatusAsync(string vapiCallId, bool isBooked, DateTime? bookedDateTime, string confirmationDetails);
         Task<CandidateDetailsForSchdeule> GetCandidateDetailsForSchedule(int irfid, string CandidateEmail);
+
+        /// <summary>
+        /// Gets eligible candidates for Vapi automated interview calls
+        /// Returns candidates who need interview booking calls (max 2 attempts per candidate)
+        /// </summary>
+        Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForVapiCallsAsync(int count = 10);
     }
 }
