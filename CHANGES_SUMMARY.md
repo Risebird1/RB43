@@ -1,121 +1,105 @@
-# Changes Summary - Comprehensive Vapi Fix
+# Interview Scheduling Changes Summary
 
-## Date: 2026-01-29
+## Changes Made (Feb 24, 2026)
 
----
+### 1. Added irfId and candidateEmail Flow
 
-## Code Changes
+#### **VapiCallRequest.cs** - Data Model Updates
+- Added `VariableValues` property to pass custom data (irfId, candidateEmail) to Vapi
+- Added `ToolIds` property to VapiAssistantOverrides for tool configuration
 
-### File: `Risebird.Entities\Data\VapiModels\VapiCallRequest.cs`
+#### **VapiInterviewCallController.cs** - Controller Updates
+- Added `irfId` parameter to `InitiateInterviewCall()` method
+- Updated `GetSystemPromptWithCurrentDate()` to accept irfId and candidateEmail
+- Added `VariableValues` in call request to pass irfId and candidateEmail
+- Updated webhook handler to extract and log both irfId and candidateEmail
+- Updated `BookingConfirmationDetails` JSON to include both fields
 
-#### Change 1: Added JSON attributes to VapiMessage
-**Lines: ~84-92**
+#### **VapiService.cs** - Service Layer Updates
+- Updated `submitInterviewSlot` tool definition to include:
+  - `candidateEmail` (required)
+  - `irfId` (required)
+- Added validation for both candidateEmail and irfId
+- Updated success response to include both fields
 
-**Before:**
+### 2. Changed Urgency from "12 days" to "2 days"
+
+Updated system prompt in `GetSystemPromptWithCurrentDate()`:
+- Changed all "1-2 days" references to "next TWO days" for clarity
+- Removed any "12 days" references (there weren't any in the code, but ensured 2-day limit)
+- Enhanced polite urgency language:
+  - "time-sensitive opportunity"
+  - "We'd really value the chance to speak with you soon"
+  - More professional objection handling
+- Updated objection responses to be firm but courteous
+
+### 3. Model Configuration
+
+**Current Setup:**
+- Model set to `gpt-5.2-instant` in controller
+- This is explicitly specified in the `AssistantOverrides` when making calls
+- Also updated in VapiService.cs and VapiCallRequest.cs defaults
+
+**Selected Model:** 
+- **gpt-5.2-instant** - Latest model with fast response times
+- Good balance of quality and speed for interview scheduling
+- Can be changed if needed in line ~120 of VapiInterviewCallController.cs
+
+## Files Created
+
+### 1. **VAPI_TOOL_PARAMETERS.json**
+Complete tool parameters schema ready to paste into Vapi dashboard
+- Includes all 7 required fields
+- Includes irfId and candidateEmail
+
+### 2. **VAPI_MODEL_RECOMMENDATION.md**
+Detailed analysis of model options with cost-benefit analysis
+
+### 3. **CHANGES_SUMMARY.md** (this file)
+Summary of all changes made
+
+## How to Use
+
+### When Calling the API:
+
 ```csharp
-public class VapiMessage
+await InitiateInterviewCall(
+    interviewId: 123,
+    candidateId: 456,
+    candidateName: "John Doe",
+    candidateEmail: "john@example.com",  // NOW REQUIRED
+    candidatePhone: "+919876543210",
+    jobTitle: "Software Engineer",
+    irfId: "IRF-2026-001"  // NOW REQUIRED
+);
+```
+
+### What Gets Sent to Your Webhook:
+
+```json
 {
-    public string Role { get; set; }
-    public string Content { get; set; }
+  "candidateName": "John Doe",
+  "candidateEmail": "john@example.com",
+  "interviewDate": "2026-02-25",
+  "interviewTime": "02:30 PM",
+  "timezone": "IST",
+  "irfId": "IRF-2026-001",
+  "confirmedAt": "2026-02-24T10:30:00Z",
+  "toolCallId": "..."
 }
 ```
 
-**After:**
+## Next Steps
+
+1. **Test the changes** - Make a test call with irfId and verify webhook receives it
+2. **Monitor model performance** - Track success rate with gpt-5.2-instant
+3. **Update Vapi Dashboard** - Update your assistant's instructions using VAPI_DASHBOARD_INSTRUCTIONS.txt and tool definition using VAPI_TOOL_PARAMETERS.json
+4. **If needed** - Model can be changed in the controller if different performance is required
+
+## Model Configuration Location
+
+If you want to change the model later, edit this line in `VapiInterviewCallController.cs` (around line 120):
+
 ```csharp
-public class VapiMessage
-{
-    [JsonProperty("role")]
-    public string Role { get; set; }
-    
-    [JsonProperty("content")]
-    public string Content { get; set; }
-}
+Model = "gpt-5.2-instant", // Current model - can change to "gpt-4o", "gpt-4o-mini", etc.
 ```
-
-**Why:** Ensures correct JSON serialization with lowercase property names expected by Vapi API.
-
----
-
-#### Change 2: Added default model value to VapiModelOverride
-**Lines: ~174**
-
-**Before:**
-```csharp
-[JsonProperty("model")]
-public string Model { get; set; }
-```
-
-**After:**
-```csharp
-[JsonProperty("model")]
-public string Model { get; set; } = "gpt-4o-mini";
-```
-
-**Why:** Vapi requires the `model` field when sending `assistantOverrides.model`. Without a default, it was null, causing 400 Bad Request errors.
-
----
-
-## Impact
-
-### ✅ Fixes
-1. **Resolves:** `assistantOverrides.model.model must be one of the following values` error
-2. **Ensures:** Correct JSON serialization for all message objects
-3. **Enables:** Dynamic date injection to work without API errors
-
-### ✅ No Breaking Changes
-- All existing functionality preserved
-- Only added defaults and JSON attributes
-- Backward compatible
-
-### ✅ Build Status
-- **Compilation:** ✅ Success
-- **Warnings:** 0
-- **Errors:** 0
-
----
-
-## Configuration
-
-No configuration changes required. The fix uses code-level defaults.
-
-**Current defaults:**
-- Provider: `"openai"`
-- Model: `"gpt-4o-mini"`
-
----
-
-## Testing Required
-
-1. **Restart application** (required to load new compiled code)
-2. **Initiate call** through API endpoint
-3. **Verify call connects** and assistant speaks
-4. **Confirm data logs** with correct dates in database
-
----
-
-## Rollback Plan
-
-If needed, revert these two changes in `VapiCallRequest.cs`:
-
-1. Remove `= "gpt-4o-mini"` from Model property
-2. Remove `[JsonProperty]` attributes from VapiMessage
-
-Then rebuild and redeploy.
-
----
-
-## Documentation Added
-
-1. `COMPREHENSIVE_VAPI_FIX_COMPLETE.md` - Full technical documentation
-2. `QUICK_START_AFTER_FIX.md` - Quick testing guide
-3. `CHANGES_SUMMARY.md` - This file
-
----
-
-## Key Takeaway
-
-**The fix ensures that when overriding the assistant's model configuration (to inject dynamic dates), both the `provider` and `model` fields are always set to valid values, preventing Vapi API validation errors.**
-
----
-
-**Status: ✅ COMPLETE - Ready for Testing**
