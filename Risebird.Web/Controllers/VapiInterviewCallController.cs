@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using RestSharp;
 
 namespace Risebird.Web.Controllers
 {
@@ -186,42 +187,42 @@ namespace Risebird.Web.Controllers
         {
             VapiWebhookMessage message = null;
             string rawJson = null;
-            
+
             try
             {
                 // Enable buffering so we can read the body multiple times
                 Request.EnableBuffering();
-                
+
                 // Read raw body first for debugging
                 using (var reader = new System.IO.StreamReader(
-                    Request.Body, 
+                    Request.Body,
                     System.Text.Encoding.UTF8,
                     detectEncodingFromByteOrderMarks: false,
                     bufferSize: 1024,
                     leaveOpen: true))
                 {
                     rawJson = await reader.ReadToEndAsync();
-                    
+
                     // Reset the stream position so it can be read again
                     Request.Body.Position = 0;
                 }
-                
+
                 // Log that we received the webhook
                 if (string.IsNullOrWhiteSpace(rawJson))
                 {
                     await LogWebhookDebug("EMPTY BODY", "error", "Request body is empty", null);
                     return BadRequest("Empty request body");
                 }
-                
+
                 await LogWebhookDebug(rawJson, "received", null, null);
-                
+
                 // Try to deserialize
                 message = JsonConvert.DeserializeObject<VapiWebhookMessage>(rawJson);
-                
+
                 if (message?.Message == null)
                 {
-                    await LogWebhookDebug(rawJson, "error", 
-                        $"Invalid webhook message - message is null. Deserialized type: {message?.GetType().Name ?? "null"}", 
+                    await LogWebhookDebug(rawJson, "error",
+                        $"Invalid webhook message - message is null. Deserialized type: {message?.GetType().Name ?? "null"}",
                         null);
                     return BadRequest("Invalid webhook message");
                 }
@@ -244,16 +245,16 @@ namespace Risebird.Web.Controllers
                     case "tool-calls":
                         await LogWebhookDebug(rawJson, "tool-call-received", null, "tool-calls", callId);
                         await LogCheckpoint("WEBHOOK-START", $"Processing tool-calls - Tool count: {message.Message.ToolCalls?.Count ?? 0}", callId);
-                        
+
                         var result = await _vapiService.ProcessToolCallAsync(message);
-                        
+
                         await LogCheckpoint("WEBHOOK-BEFORE-HANDLER", "About to call HandleInterviewSlotSubmission", callId);
-                        
+
                         // Also handle interview slot submissions
                         await HandleInterviewSlotSubmission(message);
-                        
+
                         await LogCheckpoint("WEBHOOK-AFTER-HANDLER", "HandleInterviewSlotSubmission completed", callId);
-                        
+
                         return Json(result);
 
                     case "end-of-call-report":
@@ -290,7 +291,7 @@ namespace Risebird.Web.Controllers
                     var sql = @"INSERT INTO VapiWebhookDebugLogs 
                         (RequestTimestamp, WebhookType, CallId, RawPayload, ProcessingStatus, ErrorMessage)
                         VALUES (@Timestamp, @Type, @CallId, @Payload, @Status, @Error)";
-                    
+
                     await conn.ExecuteAsync(sql, new
                     {
                         Timestamp = DateTime.UtcNow,
@@ -304,7 +305,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
                     new Exception($"Failed to log webhook debug: {ex.Message}"));
             }
         }
@@ -321,7 +322,7 @@ namespace Risebird.Web.Controllers
                     var sql = @"INSERT INTO VapiWebhookCheckpoints 
                         (Timestamp, CheckpointName, Message, CallId, ToolCallName, AdditionalData)
                         VALUES (@Timestamp, @CheckpointName, @Message, @CallId, @ToolCallName, @AdditionalData)";
-                    
+
                     await conn.ExecuteAsync(sql, new
                     {
                         Timestamp = DateTime.UtcNow,
@@ -382,7 +383,7 @@ namespace Risebird.Web.Controllers
         {
             // Extract CallId early with fallback pattern
             string callId = message?.Message?.CallId ?? message?.Message?.Call?.Id;
-            
+
             try
             {
                 await LogCheckpoint("CHECKPOINT-1", $"HandleInterviewSlotSubmission method entry - CallId: {callId ?? "NULL"}", callId);
@@ -429,7 +430,7 @@ namespace Risebird.Web.Controllers
                         var irfId = args.ContainsKey("irfId") ? args["irfId"]?.ToString() : null;
 
                         await LogCheckpoint("CHECKPOINT-7", $"Data extracted - Name: '{candidateName}', Email: '{candidateEmail}', Date: '{interviewDate}', Time: '{interviewTime}', TZ: '{timezone}', Confirmed: {candidateConfirmed}, IrfId: '{irfId}'", callId);
-                        
+
                         // Check for old dates (likely from dashboard-initiated calls)
                         if (!string.IsNullOrEmpty(interviewDate) && DateTime.TryParse(interviewDate, out DateTime parsedDate))
                         {
@@ -437,8 +438,8 @@ namespace Risebird.Web.Controllers
                             {
                                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
                                     new Exception($"⚠️ WARNING: Old date detected ({interviewDate}). This call was likely initiated from Vapi dashboard, not through the application. Dynamic date injection only works when calling through /InitiateInterviewCall endpoint."));
-                                await UpdateWebhookDebugLog(callId, "warning", 
-                                    $"Old date detected: {interviewDate}. Call was likely made from Vapi dashboard. Use application endpoint for current dates.", 
+                                await UpdateWebhookDebugLog(callId, "warning",
+                                    $"Old date detected: {interviewDate}. Call was likely made from Vapi dashboard. Use application endpoint for current dates.",
                                     null, null, false);
                             }
                         }
@@ -447,7 +448,7 @@ namespace Risebird.Web.Controllers
                         var dateTimeString = $"{interviewDate} {interviewTime}";
                         DateTime? parsedDateTime = null;
 
-                        string[] formats = { 
+                        string[] formats = {
                             "yyyy-MM-dd hh:mm tt",
                             "yyyy-MM-dd h:mm tt",
                             "yyyy-MM-dd HH:mm",
@@ -456,8 +457,8 @@ namespace Risebird.Web.Controllers
 
                         foreach (var format in formats)
                         {
-                            if (DateTime.TryParseExact(dateTimeString, format, 
-                                System.Globalization.CultureInfo.InvariantCulture, 
+                            if (DateTime.TryParseExact(dateTimeString, format,
+                                System.Globalization.CultureInfo.InvariantCulture,
                                 System.Globalization.DateTimeStyles.None, out DateTime result))
                             {
                                 parsedDateTime = result;
@@ -465,12 +466,12 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-                    if (!parsedDateTime.HasValue)
-                    {
-                        await LogCheckpoint("CHECKPOINT-8-SKIPPED", $"Failed to parse date/time - Date: {interviewDate}, Time: {interviewTime}", callId);
-                        await UpdateWebhookDebugLog(callId, "skipped", $"Failed to parse date/time: {interviewDate} {interviewTime}", null, null, false);
-                        return;
-                    }
+                        if (!parsedDateTime.HasValue)
+                        {
+                            await LogCheckpoint("CHECKPOINT-8-SKIPPED", $"Failed to parse date/time - Date: {interviewDate}, Time: {interviewTime}", callId);
+                            await UpdateWebhookDebugLog(callId, "skipped", $"Failed to parse date/time: {interviewDate} {interviewTime}", null, null, false);
+                            return;
+                        }
 
                         await LogCheckpoint("CHECKPOINT-8", $"DateTime parsed successfully - {parsedDateTime.Value}", callId);
 
@@ -487,14 +488,14 @@ namespace Risebird.Web.Controllers
 
                         // Try to find existing call log
                         var callLog = await _vapiCallRepository.GetCallLogByVapiCallIdAsync(callId);
-                        
+
                         await LogCheckpoint("CHECKPOINT-11", $"Call log lookup result - Found: {callLog != null}, Will create new: {callLog == null}", callId);
 
                         bool isNewCallLog = false;
                         if (callLog == null)
                         {
                             await LogCheckpoint("CHECKPOINT-12", "Call log not found - likely initiated from Vapi dashboard, not through application", callId);
-                            
+
                             // Try to get call details from Vapi API
                             VapiCallResponse callDetails = null;
                             try
@@ -508,21 +509,21 @@ namespace Risebird.Web.Controllers
                                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
                                     new Exception($"❌ Failed to retrieve call details from Vapi API for CallId: {callId}: {apiEx.Message}"));
                             }
-                            
+
                             isNewCallLog = true;
                             callLog = new VapiCallLog
                             {
                                 VapiCallId = callId,
-                                RecipientPhone = callDetails?.Customer?.Number 
-                                    ?? message.Message.Call?.Customer?.Number 
+                                RecipientPhone = callDetails?.Customer?.Number
+                                    ?? message.Message.Call?.Customer?.Number
                                     ?? "unknown",
                                 RecipientName = candidateName,
-                                RecipientEmail = callDetails?.Customer?.Email 
+                                RecipientEmail = callDetails?.Customer?.Email
                                     ?? message.Message.Call?.Customer?.Email,
-                                CallStatus = callDetails?.Status 
-                                    ?? message.Message.Call?.Status 
+                                CallStatus = callDetails?.Status
+                                    ?? message.Message.Call?.Status
                                     ?? "ended",
-                                AssistantId = callDetails?.AssistantId 
+                                AssistantId = callDetails?.AssistantId
                                     ?? message.Message.Call?.AssistantId,
                                 CallStartedAt = callDetails?.StartedAt,
                                 CallEndedAt = callDetails?.EndedAt,
@@ -531,6 +532,27 @@ namespace Risebird.Web.Controllers
                             };
                         }
                         //Call API with values : IRFId,ClientHr,CandidateResume,CandidateEmail,Interviewdate
+                        try
+                        {
+                            var _candidateDetails = await _vapiCallRepository.GetCandidateDetailsForSchedule(Convert.ToInt32(irfId), candidateEmail);
+                            var _dto = new ScheduleCandidatesRequest();
+                            _dto.skillChannelId = _candidateDetails.IRFId;
+                            _dto.requestedBy = _candidateDetails.ClientHRAttemptContact;
+                            _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = parsedDateTime.Value, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = candidateName });
+                            var apiurl = "https://api.portal.risebird.io/api/Candidates/Schedule";
+                            var client = new RestClient(apiurl);
+                            var request = new RestRequest(apiurl, Method.Post);
+                            request.AddHeader("content-type", "application/json");
+                            request.AddHeader("x-functions-key", "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==");
+                            request.AddHeader("tenant-id", _candidateDetails.tenantId);
+                            var body = JsonConvert.SerializeObject(_dto);
+                            request.AddParameter("application/json", body, ParameterType.RequestBody);
+                            RestResponse response = await client.ExecuteAsync(request);
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        }
                         // Update with booking information
                         callLog.InterviewBooked = true;
                         callLog.BookedInterviewDateTime = parsedDateTime.Value;
@@ -560,7 +582,7 @@ namespace Risebird.Web.Controllers
                                 savedId = await _vapiCallRepository.SaveCallLogAsync(callLog);
 
                                 await LogCheckpoint("CHECKPOINT-15-SUCCESS", $"NEW call log created - ID: {savedId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}", callId);
-                                
+
                                 // Update debug log
                                 await UpdateWebhookDebugLog(callId, "success", null, true, savedId, true);
                             }
@@ -571,7 +593,7 @@ namespace Risebird.Web.Controllers
                                 await _vapiCallRepository.UpdateCallLogAsync(callLog);
 
                                 await LogCheckpoint("CHECKPOINT-17-SUCCESS", $"Interview slot updated - DateTime: {parsedDateTime.Value}, Candidate: {candidateName}", callId);
-                                
+
                                 // Update debug log
                                 await UpdateWebhookDebugLog(callId, "success", null, true, callLog.Id, true);
                             }
@@ -579,10 +601,10 @@ namespace Risebird.Web.Controllers
                         catch (Exception saveEx)
                         {
                             await LogCheckpoint("CHECKPOINT-18-ERROR", $"Database save FAILED - Error: {saveEx.Message}, InnerException: {saveEx.InnerException?.Message}", callId, additionalData: saveEx.StackTrace);
-                            
+
                             // Update debug log with error
-                            await UpdateWebhookDebugLog(callId, "error", 
-                                $"Database save failed: {saveEx.Message}. InnerException: {saveEx.InnerException?.Message}. StackTrace: {saveEx.StackTrace}", 
+                            await UpdateWebhookDebugLog(callId, "error",
+                                $"Database save failed: {saveEx.Message}. InnerException: {saveEx.InnerException?.Message}. StackTrace: {saveEx.StackTrace}",
                                 null, null, false);
                             throw;
                         }
@@ -592,12 +614,12 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await LogCheckpoint("CHECKPOINT-19-EXCEPTION", $"HandleInterviewSlotSubmission method-level exception: {ex.Message}", callId ?? "unknown", additionalData: $"InnerException: {ex.InnerException?.Message}\nStackTrace: {ex.StackTrace}");
-                
+
                 // Try to update debug log even if we failed
                 try
                 {
-                    await UpdateWebhookDebugLog(callId, "error", 
-                        $"HandleInterviewSlotSubmission exception: {ex.Message}. InnerException: {ex.InnerException?.Message}. StackTrace: {ex.StackTrace}", 
+                    await UpdateWebhookDebugLog(callId, "error",
+                        $"HandleInterviewSlotSubmission exception: {ex.Message}. InnerException: {ex.InnerException?.Message}. StackTrace: {ex.StackTrace}",
                         null, null, false);
                 }
                 catch { }
@@ -722,7 +744,7 @@ namespace Risebird.Web.Controllers
             var tomorrow = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
             var dayAfterTomorrow = DateTime.Now.AddDays(2).ToString("yyyy-MM-dd");
             var dayOfWeek = DateTime.Now.ToString("dddd, MMMM dd, yyyy");
-            
+
             return $@"You are an outbound interview scheduling assistant from Risebird Interviews calling on behalf of SONATA for urgent hiring.
 
 IDENTITY & PURPOSE:
@@ -830,7 +852,7 @@ NEVER:
                             DataSaved = @Saved
                         WHERE CallId = @CallId 
                         AND Id = (SELECT MAX(Id) FROM VapiWebhookDebugLogs WHERE CallId = @CallId)";
-                    
+
                     await conn.ExecuteAsync(sql, new
                     {
                         Status = status,
@@ -874,7 +896,7 @@ NEVER:
                     var sql = @"SELECT TOP (@Count) * 
                         FROM VapiWebhookDebugLogs 
                         ORDER BY RequestTimestamp DESC";
-                    
+
                     var logs = await conn.QueryAsync<VapiWebhookDebugLog>(sql, new { Count = count });
                     return Json(new { success = true, logs });
                 }

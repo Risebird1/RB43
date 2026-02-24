@@ -101,6 +101,14 @@ namespace Risebird.Entities.Data
         public string candidateemailId { get; set; }
         public string candidatestatus { get; set; }
     }
+    public class CandidateDetailsForSchdeule
+    {
+        public string IRFId { get; set; }
+        public string tenantId { get; set; }
+        public string Phone { get; set; }
+        public string ResumeLink { get; set; }
+        public string ClientHRAttemptContact { get; set; }
+    }
 }
 
 
