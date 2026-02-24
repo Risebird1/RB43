@@ -15,6 +15,7 @@
                         <th>Created On</th>
                         <th>Video Link</th>
                         <th>Transcript Link</th>
+                        <th>Notes</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,12 +51,25 @@
                                 {
                                     <td></td>
                                 }
+                                @if (!string.IsNullOrWhiteSpace(item.TranscriptLink))
+                                {
+                                     <td class="text-center">
+                                      @{
+                                           var notesUrl = Url.Action("CalibrationMeetingNotes", "IRF", new { id = item.id });
+                                       }
+                                         <a href="@notesUrl" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); window.open(this.href, '_blank'); return false;">Notes</a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
                             </tr>
                         }
                     }
                     else
                     {
-                        <tr><td colspan="5" style="padding:5px;text-align: center;color: #aaaac3;font-size: 16px;">No Record Found</td></tr>
+                        <tr><td colspan="7" style="padding:5px;text-align: center;color: #aaaac3;font-size: 16px;">No Record Found</td></tr>
                     }
                 </tbody>
             </table>

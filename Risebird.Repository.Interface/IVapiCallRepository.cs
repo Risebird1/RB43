@@ -50,6 +50,7 @@ namespace Risebird.Repository.Interface
         /// Updates call booking status
         /// </summary>
         Task<bool> UpdateBookingStatusAsync(string vapiCallId, bool isBooked, DateTime? bookedDateTime, string confirmationDetails);
+        Task<CandidateDetailsForSchdeule> GetCandidateDetailsForSchedule(int irfid, string CandidateEmail);
 
         /// <summary>
         /// Gets eligible candidates for Vapi automated interview calls
