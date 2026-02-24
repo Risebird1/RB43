@@ -44,7 +44,7 @@ namespace Risebird.CommonHelper
                 model = new
                 {
                     provider = "openai",
-                    model = "gpt-4o-mini",
+                    model = "gpt-5.2-instant",
                     temperature = 0.7,
                     maxTokens = 250,
                     messages = new[]
@@ -96,57 +96,52 @@ You have access to tools to:
                         type = "function",
                         function = new
                         {
-                            name = "check_availability",
-                            description = "Check available interview time slots",
+                            name = "submitInterviewSlot",
+                            description = "Submit the confirmed interview slot after candidate explicitly confirms. ONLY call this after receiving explicit confirmation from the candidate.",
                             parameters = new
                             {
                                 type = "object",
                                 properties = new
                                 {
-                                    preferredDate = new
+                                    timezone = new
                                     {
                                         type = "string",
-                                        description = "Preferred date mentioned by candidate (YYYY-MM-DD)"
+                                        description = "Timezone for the interview. Should always be IST (Indian Standard Time).",
+                                        @enum = new[] { "IST" },
+                                        @default = "IST"
                                     },
-                                    preferredTime = new
+                                    candidateName = new
                                     {
                                         type = "string",
-                                        description = "Preferred time mentioned by candidate (HH:MM)"
-                                    }
-                                },
-                                required = new[] { "preferredDate" }
-                            }
-                        },
-                        server = new
-                        {
-                            url = webhookUrl,
-                            timeoutSeconds = 20
-                        }
-                    },
-                    new
-                    {
-                        type = "function",
-                        function = new
-                        {
-                            name = "book_interview",
-                            description = "Book the interview at the confirmed time",
-                            parameters = new
-                            {
-                                type = "object",
-                                properties = new
-                                {
-                                    interviewDateTime = new
+                                        description = "Full name of the candidate as spoken/confirmed by them during the call. Must be their actual name (e.g., 'John Smith'), NOT their email address or phone number. Ask the candidate 'May I have your full name please?' and use their response."
+                                    },
+                                    candidateEmail = new
                                     {
                                         type = "string",
-                                        description = "Confirmed interview date and time (YYYY-MM-DD HH:MM)"
+                                        description = "Email address of the candidate for sending interview confirmation. This will be provided to you."
+                                    },
+                                    interviewDate = new
+                                    {
+                                        type = "string",
+                                        description = "Date of interview in YYYY-MM-DD format. Examples: 2026-01-30, 2026-01-31. Must be within next 2 days from today."
+                                    },
+                                    interviewTime = new
+                                    {
+                                        type = "string",
+                                        description = "Time of interview in HH:MM AM/PM format. Examples: 02:30 PM, 10:00 AM, 04:15 PM. Always include AM or PM."
                                     },
                                     candidateConfirmed = new
                                     {
                                         type = "boolean",
-                                        description = "Whether candidate confirmed the time"
+                                        description = "Set to true ONLY if candidate explicitly confirmed the slot with words like 'yes', 'confirmed', 'okay', 'sure', 'perfect'. Set to false if candidate said 'maybe', 'I think so', or gave no clear confirmation."
+                                    },
+                                    irfId = new
+                                    {
+                                        type = "string",
+                                        description = "The IRF ID for this interview request. This will be provided to you and must be included in every submission."
                                     }
                                 },
-                                required = new[] { "interviewDateTime", "candidateConfirmed" }
+                                required = new[] { "candidateName", "candidateEmail", "interviewDate", "interviewTime", "timezone", "candidateConfirmed", "irfId" }
                             }
                         },
                         server = new
@@ -386,10 +381,12 @@ You have access to tools to:
             {
                 // Extract arguments
                 var candidateName = arguments.ContainsKey("candidateName") ? arguments["candidateName"]?.ToString() : null;
+                var candidateEmail = arguments.ContainsKey("candidateEmail") ? arguments["candidateEmail"]?.ToString() : null;
                 var interviewDate = arguments.ContainsKey("interviewDate") ? arguments["interviewDate"]?.ToString() : null;
                 var interviewTime = arguments.ContainsKey("interviewTime") ? arguments["interviewTime"]?.ToString() : null;
                 var timezone = arguments.ContainsKey("timezone") ? arguments["timezone"]?.ToString() : "IST";
                 var candidateConfirmed = arguments.ContainsKey("candidateConfirmed") && Convert.ToBoolean(arguments["candidateConfirmed"]);
+                var irfId = arguments.ContainsKey("irfId") ? arguments["irfId"]?.ToString() : null;
 
                 // Validate required fields
                 if (string.IsNullOrWhiteSpace(candidateName))
@@ -398,6 +395,24 @@ You have access to tools to:
                     {
                         success = false,
                         message = "Please ask the candidate for their full name before proceeding."
+                    });
+                }
+
+                if (string.IsNullOrWhiteSpace(candidateEmail))
+                {
+                    return JsonConvert.SerializeObject(new
+                    {
+                        success = false,
+                        message = "Internal error: Candidate email is missing. Please contact support."
+                    });
+                }
+
+                if (string.IsNullOrWhiteSpace(irfId))
+                {
+                    return JsonConvert.SerializeObject(new
+                    {
+                        success = false,
+                        message = "Internal error: IRF ID is missing. Please contact support."
                     });
                 }
 
@@ -475,7 +490,9 @@ You have access to tools to:
                             message = $"Perfect! I've confirmed your interview for {interviewDate} at {interviewTime} {timezone}. You'll receive a confirmation email shortly.",
                             interviewDateTime = parsedDateTime.ToString("yyyy-MM-dd HH:mm"),
                             candidateName = candidateName,
-                            timezone = timezone
+                            candidateEmail = candidateEmail,
+                            timezone = timezone,
+                            irfId = irfId
                         });
                     }
                 }
