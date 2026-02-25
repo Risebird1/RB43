@@ -44,7 +44,7 @@ namespace Risebird.CommonHelper
                 model = new
                 {
                     provider = "openai",
-                    model = "gpt-5-mini",
+                    model = "gpt-4.1-mini",
                     temperature = 0.7,
                     maxTokens = 250,
                     messages = new[]

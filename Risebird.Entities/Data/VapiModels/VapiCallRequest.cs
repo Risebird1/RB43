@@ -66,7 +66,7 @@ namespace Risebird.Entities.Data.VapiModels
     public class VapiModel
     {
         public string Provider { get; set; } = "openai";
-        public string Model { get; set; } = "gpt-5-mini";
+        public string Model { get; set; } = "gpt-4.1-mini";
         public List<VapiMessage> Messages { get; set; }
         public double Temperature { get; set; } = 0.7;
         public int MaxTokens { get; set; } = 250;
@@ -184,10 +184,10 @@ namespace Risebird.Entities.Data.VapiModels
         
         /// <summary>
         /// Model name (required when overriding - must be a valid Vapi model identifier)
-        /// Common options: gpt-5-mini (fast & capable), gpt-4o-mini (cost-effective), gpt-4o (premium)
+        /// Common options: gpt-4.1-mini (fast & capable), gpt-4o-mini (cost-effective), gpt-4o (premium)
         /// </summary>
         [JsonProperty("model")]
-        public string Model { get; set; } = "gpt-5-mini";
+        public string Model { get; set; } = "gpt-4.1-mini";
         
         /// <summary>
         /// Override the system messages

@@ -158,7 +158,7 @@ namespace Risebird.Web.Controllers
 
                         //        // Get eligible candidates
                         //        testResults.Add("📋 Fetching eligible candidates...");
-                        //        var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(50);
+                        //        var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(5);
 
                         //        if (eligibleCandidates == null || !eligibleCandidates.Any())
                         //        {
@@ -190,7 +190,7 @@ namespace Risebird.Web.Controllers
                         //        int successCount = 0;
                         //        int failureCount = 0;
 
-                        //        foreach (var candidate in eligibleCandidates.Where(x=>x.CandidateEmail == "ruma.bose86@gmail.com").ToList())
+                        //        foreach (var candidate in eligibleCandidates) //.Where(x => x.CandidateEmail == "ashuseth2050@gmail.com").ToList()
                         //        {
                         //            try
                         //            {
@@ -215,7 +215,7 @@ namespace Risebird.Web.Controllers
                         //                {
                         //                    phoneNumber = "+91" + phoneNumber; // Default to India
                         //                }
-                        //                phoneNumber = "+918888571923";
+                        //                //phoneNumber = "+918105232468";// "+918888571923";
                         //                // Get system prompt with current date and dynamic client name
                         //                var systemPromptWithDate = GetSystemPromptWithCurrentDate(
                         //                    candidate.CandidateName,
@@ -242,7 +242,7 @@ namespace Risebird.Web.Controllers
                         //                        Model = new VapiModelOverride
                         //                        {
                         //                            Provider = "openai",
-                        //                            Model = "gpt-5-mini",
+                        //                            Model = "gpt-4.1-mini",
                         //                            Messages = new List<VapiMessage>
                         //                            {
                         //                                new VapiMessage
@@ -283,7 +283,7 @@ namespace Risebird.Web.Controllers
                         //                    CreatedBy = $"Test-{Emailid}"
                         //                };
 
-                        //                await _vapiCallRepository.SaveCallLogAsync(callLog);
+                        //                //await _vapiCallRepository.SaveCallLogAsync(callLog);
 
                         //                testResults.Add($"   ✅ Call log saved to database");
                         //                successCount++;
@@ -437,6 +437,7 @@ CALL FLOW:
 
 2. State purpose with urgency
    - ""I'm calling on behalf of {clientName} regarding an interview opportunity for the {jobTitle} position.""
+   - ""The scope of this call is limited to scheduling your interview slot. For any further details about the role or process, please check your email.""
    - ""This is time-sensitive and we're looking to schedule interviews within the next two days.""
    - ""Would you be available tomorrow or the day after tomorrow?""
    - Wait for response
@@ -470,6 +471,7 @@ OBJECTION HANDLING (BE POLITE BUT PERSISTENT):
 - If asks to call back: ""I appreciate that, and since I have you on the line and this is time-sensitive, could we quickly lock in a time that works for you? It will just take a moment.""
 - If uncertain about job: ""I understand. You had applied for this position, and the company is moving quickly with qualified candidates. Would you like to secure an interview slot?""
 - If wants different date beyond 2 days: ""I appreciate your preference, but unfortunately, due to the urgent hiring timeline, we can only offer slots within the next two days - either tomorrow or the day after. Would either of those work for you?""
+- If asks for role/process/salary/JD details: ""The scope of this call is limited to scheduling your interview slot. For all further details, please check your email. Now, shall we find a time that works for you?""
 
 VALIDATION RULES:
 - Date MUST be either tomorrow or day after tomorrow - NO EXCEPTIONS

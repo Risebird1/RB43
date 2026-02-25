@@ -44,7 +44,7 @@ namespace Risebird.AzureTimerFunctions
         /// CRON: "0 */15 * * * *" = every 15 minutes
         /// </summary>
         [Function("VapiInterviewSchedulingJob")]
-        public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer)
         {
             var currentTime = DateTime.Now;
             var currentHour = currentTime.Hour;
@@ -63,7 +63,7 @@ namespace Risebird.AzureTimerFunctions
                 _log.LogInformation($"Executing within business hours - Current time: {currentTime:HH:mm}");
 
                 // Get eligible candidates for calls (max 10)
-                var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(10);
+                var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(5);
 
                 if (eligibleCandidates == null || !eligibleCandidates.Any())
                 {
@@ -136,7 +136,7 @@ namespace Risebird.AzureTimerFunctions
                                 Model = new VapiModelOverride
                                 {
                                     Provider = "openai",
-                                    Model = "gpt-5-mini",
+                                    Model = "gpt-4.1-mini",
                                     Messages = new List<VapiMessage>
                                     {
                                         new VapiMessage
@@ -241,6 +241,7 @@ CALL FLOW:
 
 2. State purpose with urgency
    - ""I'm calling on behalf of {clientName} regarding an interview opportunity for the {jobTitle} position.""
+   - ""The scope of this call is limited to scheduling your interview slot. For any further details about the role or process, please check your email.""
    - ""This is time-sensitive and we're looking to schedule interviews within the next two days.""
    - ""Would you be available tomorrow or the day after tomorrow?""
    - Wait for response
@@ -274,6 +275,7 @@ OBJECTION HANDLING (BE POLITE BUT PERSISTENT):
 - If asks to call back: ""I appreciate that, and since I have you on the line and this is time-sensitive, could we quickly lock in a time that works for you? It will just take a moment.""
 - If uncertain about job: ""I understand. You had applied for this position, and the company is moving quickly with qualified candidates. Would you like to secure an interview slot?""
 - If wants different date beyond 2 days: ""I appreciate your preference, but unfortunately, due to the urgent hiring timeline, we can only offer slots within the next two days - either tomorrow or the day after. Would either of those work for you?""
+- If asks for role/process/salary/JD details: ""The scope of this call is limited to scheduling your interview slot. For all further details, please check your email. Now, shall we find a time that works for you?""
 
 VALIDATION RULES:
 - Date MUST be either tomorrow or day after tomorrow - NO EXCEPTIONS
