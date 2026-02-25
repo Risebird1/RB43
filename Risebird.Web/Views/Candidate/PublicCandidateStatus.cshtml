@@ -1040,6 +1040,10 @@
                     background: #fde68a;
                     color: #b45309;
                 }
+                .dataloading [data-tooltip]::after{
+                    border: 0px solid transparent;
+                }
+                .dataloading [data-tooltip]::before{border:none!important;box-shadow:none!important;}
         </style>
 
         <style>
@@ -1355,7 +1359,7 @@
                                     <div class="mobile-view">
                                         <span class="filter">
 
-                                            <span data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top" data-toggle="tooltip" data-placement="top" data-tooltip="Note: To visualize data older and greater than 15 days, please apply filter" data-original-title="Filter">
+                                            <span data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top" data-toggle="tooltip" data-placement="top" data-tooltip="Note: To visualize data older and greater than 15 days, please apply filter">
 
                                                 <span class="mdc-button__label"><span class="fa fa-filter"></span></span>
                                                 <span class="mdc-button__ripple"></span>
@@ -1585,16 +1589,16 @@
                                                             </ul>
                                                             <div class="pcs-tabs-actions">
                                                                     <span class="interview_3">
-                                                                        <button style="border-color:#475569 !important;color:#475569 !important" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" id="status_2" data-bs-toggle="modal" data-bs-target="#filterModal" data-toggle="tooltip" data-placement="top" data-tooltip="Note: To visualize data older and greater than 15 days, please apply filter" title="Filter">
-                                                                            <span class="mdc-button__label"><span class="fa fa-filter"></span><font style="font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span>
+                                                                        <button style="border-color:#475569 !important;color:#475569 !important" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" id="status_2" data-bs-toggle="modal" data-bs-target="#filterModal" data-toggle="tooltip" data-placement="top" data-tooltip="Note: To visualize data older and greater than 15 days, please apply filter">
+                                                                            <span class="mdc-button__label"><span class="fa fa-filter"></span><font style="font-family: Roboto, sans-serif; font-size:10.5px;"> Filter</font></span>
                                                                             <div class="mdc-button__ripple"></div>
                                                                         </button>
                                                                     </span>
                                                                     @if (ViewBag.ClientRole != "Reviewer")
                                                                     {
                                                                     <span class="interview_2">
-                                                                        <button style="border-color:#475569 !important;color:#475569 !important" type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action(" PublicCandidateStatusExporttoExcel", "Candidate" ,new { emailid=ViewBag.emailid})'" title="Export to Excel" aria-label="Export to Excel">
-                                                                            <span class="mdc-button__label"><span class="fa fa-file-excel" style="font-size:12px;"></span><font style="font-family: Roboto, sans-serif; font-size:12px;"> Export</font></span>
+                                                                        <button style="border-color:#475569 !important;color:#475569 !important" type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action(" PublicCandidateStatusExporttoExcel", "Candidate" ,new { emailid=ViewBag.emailid})'"  aria-label="Export to Excel">
+                                                                            <span class="mdc-button__label"><span class="fa fa-file-excel" style="font-size:10.5px;"></span><font style="font-family: Roboto, sans-serif; font-size:12px;"> Export</font></span>
                                                                             <div class="mdc-button__ripple"></div>
                                                                         </button>
                                                                     </span>
