@@ -181,7 +181,7 @@
         <div class="status" id="outputStatus"></div>
       </div>
       <div class="bd">
-        <div id="notesFromDbBanner" class="notes-from-db" style="display:none">Edit in Raw JSON tab and switch to Structured view to refresh tables.</div>
+        <div id="notesFromDbBanner" class="notes-from-db" style="display:none!important">Edit in Raw JSON tab and switch to Structured view to refresh tables.</div>
         <div class="tabs" style="margin-bottom:10px">
           <div class="tab active" data-tab="view">Structured view</div>
           <div class="tab" data-tab="json">Raw JSON</div>
@@ -414,7 +414,8 @@
     const handoff = out?.handoff_pack ?? out?.handoffPack ?? {};
     const openQ = asArr(out?.open_questions ?? out?.openQuestions);
 
-    tab.appendChild(sectionAttendees(attendees));
+    // Attendees table hidden from structured view (data still in JSON / validation unchanged)
+    // tab.appendChild(sectionAttendees(attendees));
     tab.appendChild(sectionScreens("Resume Screen", screens?.resume_screen, {}));
     tab.appendChild(sectionScreens("Skill Screen", screens?.skill_screen, { skill: true }));
     tab.appendChild(sectionScreens("HR Screen", screens?.hr_screen, { hr: true }));
@@ -794,7 +795,6 @@
   var hasNotesFromDb = typeof notesFromDb === "string" && notesFromDb.length > 0;
   if (hasNotesFromDb) {
     $("input").value = notesFromDb;
-    document.getElementById("notesFromDbBanner").style.display = "block";
     setOutputStatus(mkBadge("ok", "Loaded from DB"));
     runTransform({ forceOnce: true }).then(function() {
       setTab("view");
