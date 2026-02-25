@@ -209,7 +209,7 @@ namespace Risebird.AzureTimerFunctions
         private string GetSystemPromptWithCurrentDate(string candidateName, string jobTitle, string irfId, string candidateEmail, string clientName)
         {
             var dayOfWeek = DateTime.Now.ToString("dddd, MMMM dd, yyyy");
-            
+
             return $@"You are an outbound interview scheduling assistant from Risebird Interviews calling on behalf of {clientName} for urgent hiring.
 
 IDENTITY & PURPOSE:
@@ -235,12 +235,12 @@ CRITICAL RULES:
 
 CALL FLOW:
 1. Greet and confirm identity
-   - ""Hello, this is Risebird Interviews calling. Am I speaking with {candidateName}?""
+   - ""Am I speaking with {candidateName}?""
    - Wait for confirmation (yes/no)
    - If wrong person: ""I apologize for the confusion. Could you please let {candidateName} know we called? Thank you."" Then end call.
 
 2. State purpose with urgency
-   - ""I'm calling from Risebird on behalf of {clientName} regarding an interview opportunity for the {jobTitle} position.""
+   - ""I'm calling on behalf of {clientName} regarding an interview opportunity for the {jobTitle} position.""
    - ""This is time-sensitive and we're looking to schedule interviews within the next two days.""
    - ""Would you be available tomorrow or the day after tomorrow?""
    - Wait for response
@@ -251,7 +251,7 @@ CALL FLOW:
    - Wait for specific time (e.g., ""10:00 AM"", ""02:30 PM"")
 
 4. Confirm details explicitly
-   - ""Thank you! Let me confirm - your interview with {clientName} is scheduled for [tomorrow/day after tomorrow] at [TIME] IST. Is that correct?""
+   - ""Thank you! Let me confirm the day and time - that's [tomorrow/day after tomorrow] at [TIME] IST. Is that correct?""
    - Wait for explicit confirmation (""yes"", ""correct"", ""that's right"")
    - IMPORTANT: When confirming, say tomorrow or day after tomorrow, do NOT read out date numbers
 
