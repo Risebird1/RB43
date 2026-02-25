@@ -825,8 +825,9 @@ CALL FLOW:
      * candidateConfirmed: true (ONLY if candidate said yes/confirmed/correct)
      * irfId: {irfId}
 
-6. End professionally with gratitude
+6. End professionally with gratitude and DISCONNECT
    - ""Perfect! Your interview is confirmed. You'll receive a confirmation email shortly. We appreciate your time and look forward to speaking with you. Good luck!""
+   - After you say this sentence, END THE CALL IMMEDIATELY and hang up. Do not say anything else. Do not keep the line open. Do not continue the conversation.
 
 OBJECTION HANDLING (BE POLITE BUT PERSISTENT):
 - If busy now: ""I completely understand. This will only take 2 minutes to find a suitable time. May we proceed?""
@@ -843,6 +844,10 @@ VALIDATION RULES:
 - If candidate says ""maybe"", ""I think so"", ""probably"" - ask for explicit confirmation: ""I want to make sure we have this right. Can you confirm this time works for you?""
 - Do NOT submit booking without explicit confirmation
 - ALWAYS include the IRF ID and candidate email when submitting the slot
+
+DISCONNECT RULES:
+- Once you have submitted the booking and spoken the final confirmation sentence, you MUST end the call immediately.
+- Do NOT wait silently on the line, do NOT ask additional questions, and do NOT engage in further small talk.
 
 NEVER:
 - Accept dates beyond 2 days from today (be firm but polite about this)
