@@ -533,15 +533,15 @@ namespace Risebird.Web.Controllers
                             {
                                 VapiCallId = callId,
                                 IRFId = int.TryParse(irfId, out int parsedIrfId) ? parsedIrfId : (int?)null,
-                                RecipientPhone = callDetails?.Customer?.Number 
-                                    ?? message.Message.Call?.Customer?.Number 
+                                RecipientPhone = callDetails?.Customer?.Number
+                                    ?? message.Message.Call?.Customer?.Number
                                     ?? "unknown",
                                 RecipientName = candidateName,
-                                RecipientEmail = callDetails?.Customer?.Email 
-                                    ?? message.Message.Call?.Customer?.Email 
+                                RecipientEmail = callDetails?.Customer?.Email
+                                    ?? message.Message.Call?.Customer?.Email
                                     ?? candidateEmail,
-                                CallStatus = callDetails?.Status 
-                                    ?? message.Message.Call?.Status 
+                                CallStatus = callDetails?.Status
+                                    ?? message.Message.Call?.Status
                                     ?? "ended",
                                 AssistantId = callDetails?.AssistantId
                                     ?? message.Message.Call?.AssistantId,
@@ -551,36 +551,7 @@ namespace Risebird.Web.Controllers
                                 CreatedBy = "Webhook"
                             };
                         }
-                        //Call API with values : IRFId,ClientHr,CandidateResume,CandidateEmail,Interviewdate
-                        try
-                        {
-                            var _candidateDetails = await _vapiCallRepository.GetCandidateDetailsForSchedule(Convert.ToInt32(irfId), candidateEmail);
-                            var _dto = new ScheduleCandidatesRequest();
-                            _dto.skillChannelId = _candidateDetails.IRFId;
-                            _dto.requestedBy = _candidateDetails.ClientHRAttemptContact;
-                            _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = parsedDateTime.Value, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = candidateName });
-                            var apiurl = "https://api.portal.risebird.io/api/Candidates/Schedule";
-                            var client = new RestClient(apiurl);
-                            var request = new RestRequest(apiurl, Method.Post);
-                            request.AddHeader("content-type", "application/json");
-                            request.AddHeader("x-functions-key", "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==");
-                            request.AddHeader("tenant-id", _candidateDetails.tenantId);
-                            var body = JsonConvert.SerializeObject(_dto);
-                            request.AddParameter("application/json", body, ParameterType.RequestBody);
-                            await LogCheckpoint("CHECKPOINT-ScheduleApiRequestObject", $"{JsonConvert.SerializeObject(request)}", callId);
 
-
-                            RestResponse response = await client.ExecuteAsync(request);
-
-                            await LogCheckpoint("CHECKPOINT-ScheduleApiResponse", $"status code:{response.StatusCode}, response content : {response.Content}", callId);
-
-                        }
-                        catch (Exception ex)
-                        {
-                            await LogCheckpoint("CHECKPOINT-ScheduleApiException", $"Exception encountered: {ex.Message}", callId);
-
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                        }
                         // Update with booking information
                         callLog.InterviewBooked = true;
                         callLog.BookedInterviewDateTime = parsedDateTime.Value;
@@ -608,9 +579,32 @@ namespace Risebird.Web.Controllers
                                 await LogCheckpoint("CHECKPOINT-14", "Calling SaveCallLogAsync for new call log", callId);
 
                                 savedId = await _vapiCallRepository.SaveCallLogAsync(callLog);
-
+                                //Call API with values : IRFId,ClientHr,CandidateResume,CandidateEmail,Interviewdate
+                                try
+                                {
+                                    var _candidateDetails = await _vapiCallRepository.GetCandidateDetailsForSchedule(Convert.ToInt32(irfId), candidateEmail);
+                                    var _dto = new ScheduleCandidatesRequest();
+                                    _dto.skillChannelId = _candidateDetails.IRFId;
+                                    _dto.requestedBy = _candidateDetails.ClientHRAttemptContact;
+                                    _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = parsedDateTime.Value, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = candidateName });
+                                    var apiurl = "https://api.portal.risebird.io/api/Candidates/Schedule";
+                                    var client = new RestClient(apiurl);
+                                    var request = new RestRequest(apiurl, Method.Post);
+                                    request.AddHeader("content-type", "application/json");
+                                    request.AddHeader("x-functions-key", "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==");
+                                    request.AddHeader("tenant-id", _candidateDetails.tenantId);
+                                    var body = JsonConvert.SerializeObject(_dto);
+                                    request.AddParameter("application/json", body, ParameterType.RequestBody);
+                                    await LogCheckpoint("CHECKPOINT-ScheduleApiRequestObject", $"{JsonConvert.SerializeObject(request)}", callId);
+                                    RestResponse response = await client.ExecuteAsync(request);
+                                    await LogCheckpoint("CHECKPOINT-ScheduleApiResponse", $"status code:{response.StatusCode}, response content : {response.Content}", callId);
+                                }
+                                catch (Exception ex)
+                                {
+                                    await LogCheckpoint("CHECKPOINT-ScheduleApiException", $"Exception encountered: {ex.Message}", callId);
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                }
                                 await LogCheckpoint("CHECKPOINT-15-SUCCESS", $"NEW call log created - ID: {savedId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}", callId);
-
                                 // Update debug log
                                 await UpdateWebhookDebugLog(callId, "success", null, true, savedId, true);
                             }
