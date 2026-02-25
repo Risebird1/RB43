@@ -72,6 +72,7 @@ namespace Risebird.Web.Controllers
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IEncryptionHelper _encryptionHelper;
         private readonly IActivityTrackerService _activityTrackerService;
+        private readonly IReportQCOptimizationHelper _reportQCOptimizationHelper;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -89,7 +90,8 @@ namespace Risebird.Web.Controllers
             IInterviewSchedulerRepository interviewSchedulerRepository,
             IIRFService irfService, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor,
-            IConverter converter, IAssistantServiceHelper assistantServiceHelper, IEncryptionHelper encryptionHelper, IActivityTrackerService activityTrackerService)//IConverter converter,
+            IConverter converter, IAssistantServiceHelper assistantServiceHelper, IEncryptionHelper encryptionHelper, IActivityTrackerService activityTrackerService,
+            IReportQCOptimizationHelper reportQCOptimizationHelper)//IConverter converter,
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -120,6 +122,7 @@ namespace Risebird.Web.Controllers
             _assistantServiceHelper = assistantServiceHelper;
             _encryptionHelper = encryptionHelper;
             _activityTrackerService = activityTrackerService;
+            _reportQCOptimizationHelper = reportQCOptimizationHelper;
         }
 
 
@@ -9263,6 +9266,22 @@ namespace Risebird.Web.Controllers
                 //var response = await _assistantServiceHelper.ScreenAsync(request);
 
                 var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
+
+                // OPTIMIZATION: Pre-screen report for validity (saves API calls on corrupted/empty PDF extractions)
+                var (isValid, validationReason) = _reportQCOptimizationHelper.ValidateReportForQC(reportStringContent);
+                if (!isValid)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"PerformQualityCheck: Interview {model.InterviewId} report validation failed: {validationReason}");
+                    return null;
+                }
+
+                // OPTIMIZATION: Reduce token usage by removing PDF artifacts and excessive whitespace
+                var estimatedTokensBefore = _reportQCOptimizationHelper.EstimateTokenCount(reportStringContent);
+                reportStringContent = _reportQCOptimizationHelper.OptimizeReportText(reportStringContent);
+                var estimatedTokensAfter = _reportQCOptimizationHelper.EstimateTokenCount(reportStringContent);
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"PerformQualityCheck: Interview {model.InterviewId} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter})");
+
                 //ReadPdfContentAsync();
                 //var response = await _assistantServiceHelper.ScreenAsync(request);
                 var response = await _assistantServiceHelper.GenerateReportQCAnalysis(reportStringContent);
