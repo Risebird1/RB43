@@ -57,5 +57,12 @@ namespace Risebird.Repository.Interface
         /// Returns candidates who need interview booking calls (max 2 attempts per candidate)
         /// </summary>
         Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForVapiCallsAsync(int count = 10);
+
+        /// <summary>
+        /// Returns true if a confirmed interview already exists in InterviewMeetings
+        /// for the given candidate email and IRF (identified by IRF.id).
+        /// Mirrors the eligibility check in usp_GetEligibleCandidatesForVapiCalls.
+        /// </summary>
+        Task<bool> HasConfirmedInterviewAsync(string candidateEmail, int irfId);
     }
 }
