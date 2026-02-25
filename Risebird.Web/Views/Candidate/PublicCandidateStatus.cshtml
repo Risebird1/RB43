@@ -1401,7 +1401,7 @@
                                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
-                                                        <form action="@Url.Action(" PublicCandidateStatus", "Candidate" ,new { emailid=ViewBag.emailid,id =ViewBag.id, candidateType=ViewBag.CandidateType})" method="post" id="form" onsubmit="return checkfilterDate();">
+                                                        <form action="@Url.Action("PublicCandidateStatus", "Candidate" ,new { emailid=ViewBag.emailid,id =ViewBag.id, candidateType=ViewBag.CandidateType})" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                             <div class="modal-body publicmeeting">
                                                                 <div class="row">
@@ -1969,7 +1969,7 @@
 
                                                                                             <div style="width:100%;float:left;position:relative;top:-30px">
 
-                                                                                                @*<a target="_blank" href="@Url.Action(" PublicAddReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId, isClient=true, actiontype="Candidate" , currentUser=currentUser })" title="Feedback Report">Report</a>*@
+                                                                                                @*<a target="_blank" href="@Url.Action("PublicAddReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId, isClient=true, actiontype="Candidate" , currentUser=currentUser })" title="Feedback Report">Report</a>*@
                                                                                                 @* <a style="text-decoration:none;" target="_blank" href="@Url.Action(" PublicAddReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId, isClient=true, actiontype="Candidate" , currentUser=currentUser })" title="Feedback Report">
                                                                                                     <span class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Feedback Report">
                                                                                                         <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;left:-1.5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
@@ -2197,7 +2197,7 @@
 
                                                                                                 @if (!item.IsColdCandidate)
                                                                                                 {
-                                                                                                @*     <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action(" SendInvite", "Candidate" , new { irfId=item.IRFId,IRFName =item.IRFname,emailId =item.CandidateEmailId,endDate =item.EndDate})" title="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
+                                                                                                @*     <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate" , new { irfId=item.IRFId,IRFName =item.IRFname,emailId =item.CandidateEmailId,endDate =item.EndDate})" title="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
                                                                                                     <span title="Send Invite"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;"></i></span>
 
                                                                                                 </a> *@
