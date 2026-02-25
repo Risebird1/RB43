@@ -579,6 +579,10 @@ namespace Risebird.Web.Controllers
                                 await LogCheckpoint("CHECKPOINT-14", "Calling SaveCallLogAsync for new call log", callId);
 
                                 savedId = await _vapiCallRepository.SaveCallLogAsync(callLog);
+                                // Ensure external scheduling API is only called once per callId,
+                                // even if multiple submitInterviewSlot tool calls are received
+                                // in a single webhook payload.
+                                isNewCallLog = false;
                                 //Call API with values : IRFId,ClientHr,CandidateResume,CandidateEmail,Interviewdate
                                 try
                                 {
