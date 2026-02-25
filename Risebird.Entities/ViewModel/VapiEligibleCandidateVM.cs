@@ -14,6 +14,7 @@ namespace Risebird.Entities.ViewModel
         public string CandidateEmail { get; set; }
         public string CandidatePhone { get; set; }
         public string JobTitle { get; set; }
+        public string ClientName { get; set; }
         public int CallAttempts { get; set; }
         public DateTime? LastCallAttempt { get; set; }
     }
