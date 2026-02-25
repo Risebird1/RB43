@@ -12,6 +12,8 @@
 -- IMPORTANT Schema Note:
 --   - IRF.id (INT) = Primary Key
 --   - IRF.IRFId (VARCHAR) = Business identifier
+--   - IRF.ClientId (INT) → References Client.id
+--   - Client.Name (VARCHAR) = Source of client name
 --   - Candidate.IRFId (INT) → References IRF.id
 --   - Candidate.CandidateMasterId (INT) → References CandidatesMaster.id
 --   - CandidatesMaster.UserId (INT) → References UserList.id
@@ -23,6 +25,10 @@
 --   c.CandidateMasterId = cm.id
 --   cm.UserId = u.id
 --   u.EmailId (final source)
+-- Client name via:
+--   IRF → Client → Name
+--   irf.ClientId = cl.id
+--   cl.Name (client name)
 -- =============================================
 
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetEligibleCandidatesForVapiCalls'))
@@ -62,14 +68,16 @@ BEGIN
         c.id AS CandidateId,
         c.IRFId,
         irf.IRFId AS IRFName,
-        c.Name AS CandidateName,
+        (u.FirstName + ' ' + u.LastName) AS CandidateName,
         u.EmailId AS CandidateEmail,
         c.Phone AS CandidatePhone,
         irf.IRFId AS JobTitle,
+        cl.Name AS ClientName,
         ISNULL(ccc.CallAttempts, 0) AS CallAttempts,
         ccc.LastCallAttempt
     FROM Candidate c
     INNER JOIN IRF irf ON c.IRFId = irf.id
+    INNER JOIN Client cl ON irf.ClientId = cl.id
     INNER JOIN CandidatesMaster cm ON c.CandidateMasterId = cm.id
     INNER JOIN UserList u ON cm.UserId = u.id
     LEFT JOIN CandidateCallCounts ccc ON u.EmailId = ccc.RecipientEmail 
@@ -87,7 +95,7 @@ BEGIN
             FROM InterviewMeetings im
             WHERE im.candidateEmail = u.EmailId
             AND im.IRFId = irf.IRFId
-            AND im.comfirmationStatus = '1'
+            AND im.confirmationStatus = '1'
         )
         -- Maximum 2 call attempts OR no successful booking yet
         AND (

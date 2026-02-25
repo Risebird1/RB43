@@ -119,7 +119,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool testVapiCalls = false)
         {
             try
             {
@@ -132,78 +132,198 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
-
-                        //var callRequest = new VapiCallRequest
+                        // ========================================
+                        // VAPI AUTOMATED CALLS TEST MODE
+                        // Access via: /Dashboard/Index?testVapiCalls=true
+                        // ========================================
+                        //if (testVapiCalls)
                         //{
-                        //    PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
-                        //    Customer = new VapiCustomer
-                        //    {
-                        //        Number = "+918888571923",//8888571923 8105232468
-                        //        Name = "harshit",
-                        //        Email = "harshitjajoo95@gmail.com"
-                        //    },
-                        //    AssistantId = "5a7c4ecb-fcba-4fa6-bcf1-48842d742144"
-                        //};
+                        //    var testResults = new List<string>();
+                        //    var currentTime = DateTime.Now;
+                        //    var currentHour = currentTime.Hour;
 
-                        // Inject today's date dynamically into system prompt
-                        //var systemPromptWithDate = GetSystemPromptWithCurrentDate("harshit", ".net developer");
+                        //    testResults.Add($"🕐 Test initiated at: {currentTime:yyyy-MM-dd HH:mm:ss}");
 
-                        ////Create call request with customer info and date injection
-                        //var callRequest = new VapiCallRequest
-                        //{
-                        //    PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
-                        //    Customer = new VapiCustomer
+                        //    try
                         //    {
-                        //        Number = "+918888571923",//8888571923 8105232468
-                        //        Name = "harshit",
-                        //        Email = "harshitjajoo95@gmail.com"
-                        //    },
-                        //    AssistantId = "5a7c4ecb-fcba-4fa6-bcf1-48842d742144",
-                        //    AssistantOverrides = new VapiAssistantOverrides
-                        //    {
-                        //        Model = new VapiModelOverride
+                        //        // Check business hours (9 AM - 9 PM)
+                        //        if (currentHour < 9 || currentHour >= 21)
                         //        {
-                        //            Messages = new List<VapiMessage>
+                        //            testResults.Add($"⏰ SKIPPED - Current time {currentTime:HH:mm} is outside business hours (9 AM - 9 PM IST)");
+                        //            ViewBag.VapiTestResults = testResults;
+                        //            return View("VapiTestResults");
+                        //        }
+
+                        //        testResults.Add($"✅ Within business hours - Current time: {currentTime:HH:mm}");
+
+                        //        // Get eligible candidates
+                        //        testResults.Add("📋 Fetching eligible candidates...");
+                        //        var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(10);
+
+                        //        if (eligibleCandidates == null || !eligibleCandidates.Any())
+                        //        {
+                        //            testResults.Add("❌ No eligible candidates found for calling");
+                        //            ViewBag.VapiTestResults = testResults;
+                        //            return View("VapiTestResults");
+                        //        }
+
+                        //        testResults.Add($"✅ Found {eligibleCandidates.Count} eligible candidates");
+                        //        testResults.Add("");
+
+                        //        // Get configuration
+                        //        var baseUrl = _configuration["HostDetails:baseUrl"];
+                        //        var assistantId = _configuration["Vapi:InterviewBookingAssistantId"];
+
+                        //        if (string.IsNullOrEmpty(assistantId))
+                        //        {
+                        //            testResults.Add("❌ ERROR: Vapi Assistant ID is not configured");
+                        //            testResults.Add("   Please set Vapi:InterviewBookingAssistantId in configuration");
+                        //            ViewBag.VapiTestResults = testResults;
+                        //            return View("VapiTestResults");
+                        //        }
+
+                        //        testResults.Add($"✅ Using Assistant ID: {assistantId}");
+                        //        testResults.Add($"✅ Webhook URL: {baseUrl}/VapiInterviewCall/Webhook");
+                        //        testResults.Add("");
+
+                        //        // Process each candidate
+                        //        int successCount = 0;
+                        //        int failureCount = 0;
+
+                        //        foreach (var candidate in eligibleCandidates)
+                        //        {
+                        //            try
                         //            {
-                        //                new VapiMessage
+                        //                testResults.Add($"📞 Processing: {candidate.CandidateName}");
+                        //                testResults.Add($"   Client: {candidate.ClientName}");
+                        //                testResults.Add($"   Email: {candidate.CandidateEmail}");
+                        //                testResults.Add($"   Phone: {candidate.CandidatePhone}");
+                        //                testResults.Add($"   IRF ID: {candidate.IRFId} ({candidate.IRFName})");
+                        //                testResults.Add($"   Previous Attempts: {candidate.CallAttempts}");
+
+                        //                // Validate phone
+                        //                if (string.IsNullOrWhiteSpace(candidate.CandidatePhone))
                         //                {
-                        //                    Role = "system",
-                        //                    Content = systemPromptWithDate
+                        //                    testResults.Add("   ⚠️ SKIPPED - No phone number");
+                        //                    testResults.Add("");
+                        //                    continue;
                         //                }
+
+                        //                // Format phone number (E.164 format)
+                        //                var phoneNumber = candidate.CandidatePhone.Trim();
+                        //                if (!phoneNumber.StartsWith("+"))
+                        //                {
+                        //                    phoneNumber = "+91" + phoneNumber; // Default to India
+                        //                }
+                        //                phoneNumber = "+918888571923";
+                        //                // Get system prompt with current date and dynamic client name
+                        //                var systemPromptWithDate = GetSystemPromptWithCurrentDate(
+                        //                    candidate.CandidateName,
+                        //                    candidate.JobTitle ?? candidate.IRFName,
+                        //                    candidate.IRFId.ToString(),
+                        //                    //candidate.CandidateEmail,
+                        //                    "harshit_jajoo@risebird.io",
+                        //                    candidate.ClientName);
+
+                        //                // Create call request
+                        //                var callRequest = new VapiCallRequest
+                        //                {
+                        //                    PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
+                        //                    Customer = new VapiCustomer
+                        //                    {
+                        //                        Number = phoneNumber,
+                        //                        Name = candidate.CandidateName,
+                        //                        //Email = candidate.CandidateEmail
+                        //                        Email = "harshit_jajoo@risebird.io"
+                        //                    },
+                        //                    AssistantId = assistantId,
+                        //                    AssistantOverrides = new VapiAssistantOverrides
+                        //                    {
+                        //                        Model = new VapiModelOverride
+                        //                        {
+                        //                            Provider = "openai",
+                        //                            Model = "gpt-5-mini",
+                        //                            Messages = new List<VapiMessage>
+                        //                            {
+                        //                                new VapiMessage
+                        //                                {
+                        //                                    Role = "system",
+                        //                                    Content = systemPromptWithDate
+                        //                                }
+                        //                            }
+                        //                        }
+                        //                    },
+                        //                    VariableValues = new Dictionary<string, object>
+                        //                    {
+                        //                        { "irfId", candidate.IRFId.ToString() },
+                        //                        { "candidateEmail", candidate.CandidateEmail }
+                        //                    }
+                        //                };
+
+                        //                // Initiate the call
+                        //                var callResponse = await _vapiService.InitiateCallAsync(callRequest);
+
+                        //                testResults.Add($"   ✅ Call initiated - CallId: {callResponse.Id}, Status: {callResponse.Status}");
+
+                        //                // Save call log
+                        //                var callLog = new VapiCallLog
+                        //                {
+                        //                    VapiCallId = callResponse.Id,
+                        //                    InterviewId = null,
+                        //                    IRFId = candidate.IRFId,
+                        //                    RecipientId = candidate.CandidateId,
+                        //                    RecipientPhone = phoneNumber,
+                        //                    RecipientName = candidate.CandidateName,
+                        //                    RecipientEmail = candidate.CandidateEmail,
+                        //                    CallStatus = callResponse.Status,
+                        //                    ScheduledDateTime = null,
+                        //                    CallStartedAt = callResponse.StartedAt,
+                        //                    AssistantId = assistantId,
+                        //                    CreatedAt = DateTime.UtcNow,
+                        //                    CreatedBy = $"Test-{Emailid}"
+                        //                };
+
+                        //                await _vapiCallRepository.SaveCallLogAsync(callLog);
+
+                        //                testResults.Add($"   ✅ Call log saved to database");
+                        //                successCount++;
+
+                        //                // Add delay between calls
+                        //                await Task.Delay(2000); // 2 seconds
+                        //                testResults.Add("");
+                        //            }
+                        //            catch (Exception ex)
+                        //            {
+                        //                failureCount++;
+                        //                testResults.Add($"   ❌ FAILED: {ex.Message}");
+                        //                testResults.Add("");
+                        //                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                        //                    new Exception($"Test Vapi call failed for {candidate.CandidateEmail} (IRFId: {candidate.IRFId})", ex));
                         //            }
                         //        }
+
+                        //        testResults.Add("═══════════════════════════════════");
+                        //        testResults.Add($"📊 SUMMARY:");
+                        //        testResults.Add($"   Total Candidates: {eligibleCandidates.Count}");
+                        //        testResults.Add($"   Successful Calls: {successCount}");
+                        //        testResults.Add($"   Failed Calls: {failureCount}");
+                        //        testResults.Add("═══════════════════════════════════");
+
+                        //        ViewBag.VapiTestResults = testResults;
+                        //        return View("VapiTestResults");
                         //    }
-                        //};
-
-                        //var callResponse = await _vapiService.InitiateCallAsync(callRequest);
-
-                        //// Save call log to database
-                        //var callLog = new VapiCallLog
-                        //{
-                        //    VapiCallId = callResponse.Id,
-                        //    InterviewId = 1,
-                        //    RecipientId = 1,
-                        //    RecipientPhone = "+918888571923",
-                        //    RecipientName = "Harshit",
-                        //    RecipientEmail = "harshitjajoo95@gmail.com",
-                        //    CallStatus = callResponse.Status,
-                        //    ScheduledDateTime = null,
-                        //    CallStartedAt = callResponse.StartedAt,
-                        //    AssistantId = "5a7c4ecb-fcba-4fa6-bcf1-48842d742144",
-                        //    CreatedAt = DateTime.UtcNow,
-                        //    CreatedBy = User.Identity.Name
-                        //};
-
-                        //var logId = await _vapiCallRepository.SaveCallLogAsync(callLog);
-
-                        //return Json(new
-                        //{
-                        //    success = true,
-                        //    callId = callResponse.Id,
-                        //    logId = logId,
-                        //    status = callResponse.Status,
-                        //    message = "Call initiated successfully"
-                        //});
+                        //    catch (Exception ex)
+                        //    {
+                        //        testResults.Add($"❌ CRITICAL ERROR: {ex.Message}");
+                        //        testResults.Add($"   Stack: {ex.StackTrace}");
+                        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //        ViewBag.VapiTestResults = testResults;
+                        //        return View("VapiTestResults");
+                        //    }
+                        //}
+                        // ========================================
+                        // END VAPI TEST MODE
+                        // ========================================
 
                         //await ParseresumeCopy2();
                         //var list = new List<string>();
@@ -282,89 +402,91 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        private string GetSystemPromptWithCurrentDate(string candidateName, string jobTitle)
+        private string GetSystemPromptWithCurrentDate(string candidateName, string jobTitle, string irfId, string candidateEmail, string clientName)
         {
-            var today = DateTime.Now.ToString("yyyy-MM-dd");
-            var tomorrow = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
-            var dayAfterTomorrow = DateTime.Now.AddDays(2).ToString("yyyy-MM-dd");
             var dayOfWeek = DateTime.Now.ToString("dddd, MMMM dd, yyyy");
-
-            return $@"You are an outbound interview scheduling assistant from Risebird Interviews calling on behalf of SONATA for urgent hiring.
+            
+            return $@"You are an outbound interview scheduling assistant from Risebird Interviews calling on behalf of {clientName} for urgent hiring.
 
 IDENTITY & PURPOSE:
-- You represent Risebird Interviews on behalf of SONATA
-- This is URGENT hiring - interviews MUST be within next 1-2 days ONLY
-- Your goal: Get confirmed interview slot and collect it in structured format
+- You represent Risebird Interviews on behalf of {clientName}
+- This is URGENT and time-sensitive hiring - interviews MUST be scheduled within the next TWO days ONLY
+- Your goal: Politely convey urgency and secure a confirmed interview slot within the next two days
 
 CURRENT DATE INFORMATION (CRITICAL):
-- Today is: {dayOfWeek} ({today})
-- Tomorrow is: {tomorrow}
-- Day after tomorrow is: {dayAfterTomorrow}
-- When candidate says ""tomorrow"", use date: {tomorrow}
-- When candidate says ""day after tomorrow"", use date: {dayAfterTomorrow}
-- ONLY these dates are allowed: {tomorrow} OR {dayAfterTomorrow}
+- Today is: {dayOfWeek}
+- You can ONLY offer: TOMORROW or DAY AFTER TOMORROW
+- When speaking to candidate, use the words tomorrow or day after tomorrow ONLY
+- NEVER read out specific dates like numbers
+- IRF ID for this interview: {irfId}
+- Candidate email for confirmation: {candidateEmail}
 
 CRITICAL RULES:
-- Interviews ONLY within next 1-2 days from today
-- Do NOT allow scheduling beyond 2 days
-- If candidate requests later dates: ""This is urgent hiring. Only slots within next 1-2 days are available.""
-- If candidate insists on dates beyond 2 days: Politely end call
+- Interviews MUST be within the next TWO days from today (tomorrow or day after tomorrow ONLY)
+- Do NOT allow scheduling beyond 2 days under any circumstances
+- When speaking dates: Always say tomorrow or day after tomorrow - NEVER read out specific date numbers
+- If candidate requests later dates: ""I apologize, but due to the urgent nature of this hiring process, we can only accommodate slots within the next two days. Would either tomorrow or the day after work for you?""
+- If candidate insists on dates beyond 2 days: Politely explain this is not possible and end call gracefully
 - ALL times must be confirmed in IST (Indian Standard Time)
-- Date format in submitInterviewSlot tool: YYYY-MM-DD (e.g., {tomorrow})
 
 CALL FLOW:
-1. Greet and confirm candidate identity
-   - ""Hello, am I speaking with {candidateName}?""
-   - Wait for confirmation
+1. Greet and confirm identity
+   - ""Hello, this is Risebird Interviews calling. Am I speaking with {candidateName}?""
+   - Wait for confirmation (yes/no)
+   - If wrong person: ""I apologize for the confusion. Could you please let {candidateName} know we called? Thank you."" Then end call.
 
-2. State purpose immediately
-   - ""I'm calling from Risebird on behalf of SONATA regarding an interview opportunity for {jobTitle}.""
-   - ""This is urgent hiring and we need to schedule your interview within the next 1-2 days.""
-
-3. Ask for availability
-   - ""Would you be available tomorrow or day after tomorrow?""
+2. State purpose with urgency
+   - ""I'm calling from Risebird on behalf of {clientName} regarding an interview opportunity for the {jobTitle} position.""
+   - ""This is time-sensitive and we're looking to schedule interviews within the next two days.""
+   - ""Would you be available tomorrow or the day after tomorrow?""
    - Wait for response
 
-4. Get specific time
-   - ""What time would be convenient for you?"" 
-   - If they say just ""morning"" or ""afternoon"", ask: ""What specific time works best? Please specify with AM or PM.""
+3. Get specific time
+   - ""What time would work best for you?"" 
+   - If they say just ""morning"" or ""afternoon"", ask: ""What specific time would be most convenient? Please specify with AM or PM.""
    - Wait for specific time (e.g., ""10:00 AM"", ""02:30 PM"")
 
-5. Confirm details explicitly
-   - Repeat EXACT date and time back to candidate
-   - ""Let me confirm - your interview with SONATA is scheduled for [DAY] at [TIME] IST. Is that correct?""
+4. Confirm details explicitly
+   - ""Thank you! Let me confirm - your interview with {clientName} is scheduled for [tomorrow/day after tomorrow] at [TIME] IST. Is that correct?""
    - Wait for explicit confirmation (""yes"", ""correct"", ""that's right"")
+   - IMPORTANT: When confirming, say tomorrow or day after tomorrow, do NOT read out date numbers
 
-6. Submit booking (ONLY after explicit confirmation)
+5. Submit booking (ONLY after explicit confirmation)
    - Call submitInterviewSlot function with:
-     * candidateName: ""{candidateName}""
-     * interviewDate: Date in YYYY-MM-DD format (either {tomorrow} or {dayAfterTomorrow})
+     * candidateName: {candidateName}
+     * candidateEmail: {candidateEmail}
+     * interviewDate: Use tomorrow or day after tomorrow as the value
      * interviewTime: Time in HH:MM AM/PM format (e.g., ""10:00 AM"", ""02:30 PM"")
      * timezone: ""IST""
      * candidateConfirmed: true (ONLY if candidate said yes/confirmed/correct)
+     * irfId: {irfId}
 
-7. End professionally
-   - ""Perfect! Your interview is confirmed. You'll receive a confirmation email shortly. Good luck!""
+6. End professionally with gratitude
+   - ""Perfect! Your interview is confirmed. You'll receive a confirmation email shortly. We appreciate your time and look forward to speaking with you. Good luck!""
 
-OBJECTION HANDLING:
-- If busy now: ""I understand. This will just take 2 minutes to schedule.""
-- If asks to call back: ""I have you on the line now and this is time-sensitive. Can we quickly find a slot?""
-- If uncertain: ""I can see you applied for this position. The company is moving fast. Shall we lock in a time?""
-- If wants different date: ""Unfortunately only {tomorrow} or {dayAfterTomorrow} are available due to urgent hiring needs. Which works better?""
+OBJECTION HANDLING (BE POLITE BUT PERSISTENT):
+- If busy now: ""I completely understand. This will only take 2 minutes to find a suitable time. May we proceed?""
+- If asks to call back: ""I appreciate that, and since I have you on the line and this is time-sensitive, could we quickly lock in a time that works for you? It will just take a moment.""
+- If uncertain about job: ""I understand. You had applied for this position, and the company is moving quickly with qualified candidates. Would you like to secure an interview slot?""
+- If wants different date beyond 2 days: ""I appreciate your preference, but unfortunately, due to the urgent hiring timeline, we can only offer slots within the next two days - either tomorrow or the day after. Would either of those work for you?""
 
 VALIDATION RULES:
-- Date MUST be either {tomorrow} or {dayAfterTomorrow}
+- Date MUST be either tomorrow or day after tomorrow - NO EXCEPTIONS
+- When SPEAKING to candidate: Use words tomorrow or day after tomorrow ONLY
+- When SUBMITTING to tool: Use tomorrow or day after tomorrow as the interviewDate value
 - Time MUST include AM or PM (e.g., ""10:00 AM"", not just ""10:00"")
-- Candidate MUST explicitly confirm with ""yes"", ""correct"", ""confirmed"", ""that's right"", or similar
-- If candidate says ""maybe"", ""I think so"", ""probably"" - ask for explicit confirmation
+- Candidate MUST explicitly confirm the final details with ""yes"", ""correct"", ""confirmed"", ""that's right"", or similar
+- If candidate says ""maybe"", ""I think so"", ""probably"" - ask for explicit confirmation: ""I want to make sure we have this right. Can you confirm this time works for you?""
 - Do NOT submit booking without explicit confirmation
+- ALWAYS include the IRF ID and candidate email when submitting the slot
 
 NEVER:
-- Accept dates beyond 2 days from today
+- Accept dates beyond 2 days from today (be firm but polite about this)
 - Submit booking without explicit confirmation
 - Use 24-hour time format (always use AM/PM)
 - Forget to specify timezone as IST
-- Use dates in any format other than YYYY-MM-DD in the tool call";
+- Read out specific date numbers when speaking
+- Forget to include irfId and candidate email in the tool call";
         }
 
         private async Task GenerateTranscriptSummary()
