@@ -1394,6 +1394,374 @@
             /* margin-top:100px!important; */
         }
     }
+
+    /* =============================
+       Audio Phone UI Styles
+       ============================= */
+
+    .rb-audio-phone-section {
+        flex: 1.8;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 8px;
+    }
+
+    .rb-phone-card {
+        position: relative;
+        width: 290px;
+        background: #fff;
+        border-radius: 44px;
+        border: 10px solid #1a1a2e;
+        box-shadow: 0 25px 70px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 0 2px #2d2d5e;
+        overflow: hidden;
+        min-height: 530px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .rb-phone-notch {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 26px;
+        background: #1a1a2e;
+        border-radius: 0 0 18px 18px;
+        z-index: 10;
+    }
+
+    .rb-phone-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 18px 0;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: rgba(255,255,255,0.9);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 5;
+    }
+
+    .rb-phone-status-icons {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        font-size: 0.65rem;
+    }
+
+    .rb-phone-avatar-area {
+        position: relative;
+        width: 100%;
+        flex: 1;
+        background: linear-gradient(160deg, #1a1a3e 0%, #2d1b69 40%, #4a1942 70%, #1a1a3e 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 300px;
+        overflow: hidden;
+    }
+
+    .rb-phone-avatar-area::before {
+        content: '';
+        position: absolute;
+        top: 15%;
+        left: 15%;
+        width: 180px;
+        height: 180px;
+        background: radial-gradient(circle, rgba(78,218,146,0.12) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .rb-phone-avatar-area::after {
+        content: '';
+        position: absolute;
+        bottom: 10%;
+        right: 10%;
+        width: 130px;
+        height: 130px;
+        background: radial-gradient(circle, rgba(86,224,203,0.09) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .rb-ai-interviewer-avatar {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4eda92 0%, #56e0cb 50%, #667eea 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.2rem;
+        color: white;
+        border: 4px solid rgba(255,255,255,0.3);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 8px rgba(78,218,146,0.12);
+        position: relative;
+        z-index: 2;
+        transition: box-shadow 0.4s ease;
+    }
+
+    .rb-ai-interviewer-avatar.speaking {
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 10px rgba(78,218,146,0.28), 0 0 0 18px rgba(78,218,146,0.1);
+        animation: avatarPulse 1.5s ease-in-out infinite;
+    }
+
+    @@keyframes avatarPulse {
+        0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 10px rgba(78,218,146,0.28), 0 0 0 18px rgba(78,218,146,0.1); }
+        50% { box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 14px rgba(78,218,146,0.22), 0 0 0 24px rgba(78,218,146,0.07); }
+    }
+
+    .rb-phone-inner-header {
+        position: absolute;
+        top: 34px;
+        left: 12px;
+        right: 12px;
+        z-index: 5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .rb-phone-nav-back {
+        width: 32px;
+        height: 32px;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(8px);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: background 0.2s;
+    }
+
+    .rb-phone-nav-back:hover { background: rgba(255,255,255,0.25); }
+
+    .rb-phone-nav-avatars { display: flex; align-items: center; }
+
+    .rb-phone-nav-avatar-item {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.85);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.75rem;
+        color: white;
+        margin-left: -8px;
+    }
+
+    .rb-phone-nav-avatar-item:first-child { margin-left: 0; background: linear-gradient(135deg, #4eda92, #56e0cb); }
+    .rb-phone-nav-avatar-item:last-child  { background: linear-gradient(135deg, #f093fb, #f5576c); }
+
+    .rb-phone-mini-candidate {
+        position: absolute;
+        bottom: 14px;
+        right: 12px;
+        width: 70px;
+        height: 84px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 14px;
+        border: 2.5px solid rgba(255,255,255,0.75);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.6rem;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        z-index: 3;
+        overflow: hidden;
+    }
+
+    .rb-phone-audio-waves-wrap {
+        position: absolute;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+    }
+
+    .rb-phone-bottom-panel {
+        background: #ffffff;
+        padding: 12px 16px 16px;
+    }
+
+    .rb-phone-interview-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: #1a1a2e;
+        color: white;
+        padding: 5px 13px;
+        border-radius: 24px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+
+    .rb-phone-interview-badge .badge-dot {
+        width: 7px;
+        height: 7px;
+        background: #4eda92;
+        border-radius: 50%;
+        animation: badgeBlink 1.2s ease-in-out infinite;
+    }
+
+    @@keyframes badgeBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.2; }
+    }
+
+    .rb-phone-question-dots {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+        margin: 8px 0;
+    }
+
+    .rb-phone-q-dot {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #aaa;
+        transition: all 0.3s ease;
+        border: 1.5px solid #e0e0e0;
+    }
+
+    .rb-phone-q-dot.rb-q-dot-active {
+        background: #4eda92;
+        color: white;
+        border-color: #4eda92;
+        box-shadow: 0 3px 10px rgba(78,218,146,0.4);
+        transform: scale(1.12);
+    }
+
+    .rb-phone-q-dot.rb-q-dot-done {
+        background: #d0f5e7;
+        color: #2dba74;
+        border-color: #a8edce;
+    }
+
+    .rb-phone-question-preview {
+        font-size: 0.8rem;
+        color: #555;
+        text-align: center;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-height: 1.45;
+        margin-top: 4px;
+    }
+
+    /* Controls below the phone card */
+    .rb-audio-phone-controls {
+        display: flex;
+        gap: 22px;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+
+    .rb-mic-record-btn {
+        width: 66px;
+        height: 66px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ee4343 0%, #ff6b6b 100%);
+        border: none;
+        color: white;
+        font-size: 1.65rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 6px 24px rgba(238,67,67,0.42);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .rb-mic-record-btn:hover {
+        transform: scale(1.08);
+        box-shadow: 0 8px 28px rgba(238,67,67,0.55);
+    }
+
+    .rb-mic-record-btn.rb-mic-active {
+        background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%);
+        box-shadow: 0 6px 24px rgba(78,218,146,0.45);
+        animation: micRecordPulse 1.5s ease-in-out infinite;
+    }
+
+    .rb-mic-record-btn.rb-mic-active:hover {
+        box-shadow: 0 8px 28px rgba(78,218,146,0.55);
+    }
+
+    @@keyframes micRecordPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.06); box-shadow: 0 8px 30px rgba(78,218,146,0.55); }
+    }
+
+    .rb-mic-record-status {
+        font-size: 0.76rem;
+        color: #888;
+        text-align: center;
+        margin-top: 7px;
+        font-weight: 500;
+        transition: color 0.3s ease;
+        min-width: 130px;
+    }
+
+    .rb-mic-record-status.recording {
+        color: #4eda92;
+        font-weight: 600;
+    }
+
+    .rb-audio-util-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #f5f5f5;
+        border: none;
+        color: #666;
+        font-size: 1.15rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .rb-audio-util-btn:hover { background: #e6f9f2; color: #4eda92; }
+
+    @@media (max-width: 768px) {
+        .rb-phone-card { width: 240px; min-height: 450px; }
+        .rb-ai-interviewer-avatar { width: 100px; height: 100px; font-size: 2.5rem; }
+        .rb-phone-mini-candidate { width: 58px; height: 70px; font-size: 1.3rem; }
+        .rb-audio-phone-section { padding-top: 4px; }
+    }
 </style>
 <div class="rb-aiinterview-container">
     <!-- Header -->
@@ -1418,8 +1786,8 @@
 
     <!-- Main Content -->
     <div class="rb-main">
-        <!-- Left: Video -->
-        <div class="rb-video-section">
+        <!-- Left: Video (hidden in audio-only mode, kept in DOM for stream access) -->
+        <div class="rb-video-section" style="@(Model.IsAdaptive == true ? "display:none;" : "")">
             <div class="rb-video-feed">
                 <div class="videoContainer">
                     <video id="video" autoplay muted style="width:100%;height:370px;object-fit:cover;border-radius:16px;background:#000;"></video>
@@ -1438,15 +1806,149 @@
                  <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video">
                     <i id="footerVideoIcon" class="fa fa-video-camera"></i>
                 </button>
-                <button id="recordBtn" class="rb-footer-btn" data-tooltip="Start Recording Your Answer" style="background:#ee4343de;color:#fff;">
-                    <i class="fa fa-circle"></i>
-                </button>
+                @* recordBtn only rendered here for video mode; audio mode renders it inside the phone UI *@
+                @if (Model.IsAdaptive != true)
+                {
+                    <button id="recordBtn" class="rb-footer-btn" data-tooltip="Start Recording Your Answer" style="background:#ee4343de;color:#fff;">
+                        <i class="fa fa-circle"></i>
+                    </button>
+                }
 
                 <button class="rb-footer-btn" data-tooltip="Upload File"><i class="fa fa-upload"></i></button>
             </div>
 
 
         </div>
+
+        @* ============================================================
+           AUDIO INTERVIEW PHONE UI — rendered only when IsAdaptive
+           ============================================================ *@
+        @if (Model.IsAdaptive == true)
+        {
+            int assistantMsgCount = 0;
+            foreach (var cl in Model.ChatLog)
+            {
+                if (cl.Role != null && cl.Role.ToLower() == "assistant") assistantMsgCount++;
+            }
+            int currentQuestionNum = assistantMsgCount + 1;
+            int totalQuestions = 5;
+            string questionPreview = !string.IsNullOrWhiteSpace(Model.CurrentQuestion) ? Model.CurrentQuestion : "Preparing your next question...";
+
+            <div class="rb-audio-phone-section">
+
+                <!-- Phone card -->
+                <div class="rb-phone-card">
+
+                    <!-- Notch -->
+                    <div class="rb-phone-notch"></div>
+
+                    <!-- Status bar -->
+                    <div class="rb-phone-status">
+                        <span>@DateTime.Now.ToString("h:mm")</span>
+                        <div class="rb-phone-status-icons">
+                            <i class="fa fa-signal"></i>
+                            <i class="fa fa-wifi"></i>
+                            <i class="fa fa-battery-three-quarters"></i>
+                        </div>
+                    </div>
+
+                    <!-- Avatar / main area -->
+                    <div class="rb-phone-avatar-area">
+
+                        <!-- Inner header -->
+                        <div class="rb-phone-inner-header">
+                            <button type="button" class="rb-phone-nav-back" onclick="history.back()" title="Back">
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <div class="rb-phone-nav-avatars">
+                                <div class="rb-phone-nav-avatar-item" title="AI Interviewer">AI</div>
+                                <div class="rb-phone-nav-avatar-item" title="@Model.candidateName">
+                                    @(!string.IsNullOrEmpty(Model.candidateName) ? Model.candidateName[0].ToString().ToUpper() : "C")
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Interviewer avatar -->
+                        <div class="rb-ai-interviewer-avatar" id="aiAvatarCircle">
+                            <i class="fa fa-user"></i>
+                        </div>
+
+                        <!-- Mini candidate view -->
+                        <div class="rb-phone-mini-candidate" title="@Model.candidateName">
+                            <i class="fa fa-user"></i>
+                        </div>
+
+                        <!-- Audio waves inside phone (shown when AI is speaking) -->
+                        <div class="rb-phone-audio-waves-wrap">
+                            <div class="rb-audio-waves" id="audioWaves" style="display:none;">
+                                <div class="wave-bar"></div>
+                                <div class="wave-bar"></div>
+                                <div class="wave-bar"></div>
+                                <div class="wave-bar"></div>
+                                <div class="wave-bar" style="animation-delay:0.4s"></div>
+                            </div>
+                        </div>
+
+                    </div><!-- /rb-phone-avatar-area -->
+
+                    <!-- Bottom panel -->
+                    <div class="rb-phone-bottom-panel">
+
+                        <!-- Badge -->
+                        <div>
+                            <span class="rb-phone-interview-badge">
+                                <span class="badge-dot"></span>
+                                Audio Interview
+                            </span>
+                        </div>
+
+                        <!-- Question progress dots -->
+                        <div class="rb-phone-question-dots">
+                            @for (int i = 1; i <= totalQuestions; i++)
+                            {
+                                var dotClass = (i == currentQuestionNum) ? "rb-phone-q-dot rb-q-dot-active" : ((i < currentQuestionNum) ? "rb-phone-q-dot rb-q-dot-done" : "rb-phone-q-dot");
+                                <div class="@dotClass">@i</div>
+                            }
+                        </div>
+
+                        <!-- Question preview -->
+                        <div class="rb-phone-question-preview">
+                            @(questionPreview.Length > 90 ? questionPreview.Substring(0, 90) + "…" : questionPreview)
+                        </div>
+
+                    </div><!-- /rb-phone-bottom-panel -->
+
+                </div><!-- /rb-phone-card -->
+
+                <!-- Controls below the phone card -->
+                <div class="rb-audio-phone-controls">
+
+                    <!-- Upload button -->
+                    <button type="button" class="rb-audio-util-btn" title="Upload File" data-tooltip="Upload File">
+                        <i class="fa fa-upload"></i>
+                    </button>
+
+                    <!-- Mic / Record button (id=recordBtn — wired to existing JS handler) -->
+                    <div style="display:flex;flex-direction:column;align-items:center;">
+                        <button id="recordBtn" type="button" class="rb-mic-record-btn" title="Start Recording Your Answer">
+                            <i class="fa fa-microphone"></i>
+                        </button>
+                        <div class="rb-mic-record-status" id="micStatus">Tap to record answer</div>
+                    </div>
+
+                    <!-- Timer display for audio mode -->
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                        <div class="rb-audio-util-btn" style="cursor:default;font-size:0.7rem;flex-direction:column;height:auto;padding:8px 12px;border-radius:12px;width:auto;gap:2px;">
+                            <span style="font-size:0.65rem;color:#aaa;">Time Left</span>
+                            <span id="audioTimerDisplay" style="font-size:0.85rem;font-weight:700;color:#1a1a2e;">--:--</span>
+                        </div>
+                    </div>
+
+                </div><!-- /rb-audio-phone-controls -->
+
+            </div><!-- /rb-audio-phone-section -->
+        }
+
         <!-- Right: Chat and Interviewer Info -->
         <div class="rb-question-section">
             <!-- Chat Section (now in place of question box) -->
@@ -1583,25 +2085,13 @@
                         <div class="min-vh">
                             @if (Model.IsAdaptive == true)
                             {
-                                <!-- Audio Section -->
-                                <div class="rb-interviewer-info" style="margin-top:0px">
-                                    <span style="font-size:16px;font-weight:600">AI Interviewer</span>
-                                    <div class="rb-interviewer-avatar">
-                                        <span>H</span>
-                                    </div>
-                                    <div class="rb-audio-waves" id="audioWaves" style="display: none;">
-                                        <div class="wave-bar"></div>
-                                        <div class="wave-bar"></div>
-                                        <div class="wave-bar"></div>
-                                        <div class="wave-bar"></div>
-                                    </div>
-                                </div>
+                                @* Audio mode: avatar, waves, and progress are rendered in the phone UI on the left.
+                                   Only the hidden <audio> element is needed here for playback. *@
                                 <audio id="assistantAudio" controls hidden></audio>
-                                @* <input type="hidden" asp-for="AIInterviewerAudioLink" /> *@
                             }
                             else
                             {
-                                <!-- Video Section -->
+                                <!-- Video Section (non-adaptive) -->
                                 @if (Model.SynthesizedVideoUrl != null)
                                 {
                                     <div class="rb-interviewer-info" style="margin-top:0px">
@@ -1724,8 +2214,12 @@
     function updateTimerUI() {
         const minutes = Math.floor(totalSecondsLeft / 60);
         const seconds = totalSecondsLeft % 60;
-        timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        const formatted = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        timerDisplay.textContent = formatted;
         timeField.value = totalSecondsLeft;
+        // Keep audio phone UI timer in sync
+        const audioTimerDisplay = document.getElementById('audioTimerDisplay');
+        if (audioTimerDisplay) audioTimerDisplay.textContent = formatted;
     }
 
     async function postTimeLeftToServer(seconds) {
@@ -1757,7 +2251,6 @@
 
 <script>
     function playAssistantAudio(blob) {
-        debugger;
         const audioElement = document.getElementById("assistantAudio");
         const audioWaves = document.getElementById("audioWaves");
         const audioUrl = URL.createObjectURL(blob);
@@ -1769,6 +2262,9 @@
         if (audioWaves) {
             audioWaves.style.display = 'flex';
         }
+        // Pulse the AI avatar in phone UI when AI is speaking
+        const aiAvatar = document.getElementById('aiAvatarCircle');
+        if (aiAvatar) aiAvatar.classList.add('speaking');
     }
 
     // Chat Log Scrolling Functionality
@@ -1778,18 +2274,30 @@
         const audioElement = document.getElementById('assistantAudio');
         const audioWaves = document.getElementById('audioWaves');
 
-        // Audio event listeners for wave animation
+        // Audio event listeners for wave animation + phone UI avatar
         if (audioElement && audioWaves) {
             audioElement.addEventListener('play', function() {
                 audioWaves.style.display = 'flex';
+                const aiAvatar = document.getElementById('aiAvatarCircle');
+                if (aiAvatar) aiAvatar.classList.add('speaking');
             });
 
             audioElement.addEventListener('pause', function() {
                 audioWaves.style.display = 'none';
+                const aiAvatar = document.getElementById('aiAvatarCircle');
+                if (aiAvatar) aiAvatar.classList.remove('speaking');
             });
 
             audioElement.addEventListener('ended', function() {
                 audioWaves.style.display = 'none';
+                const aiAvatar = document.getElementById('aiAvatarCircle');
+                if (aiAvatar) aiAvatar.classList.remove('speaking');
+
+                // Prompt candidate to record their answer in phone UI
+                const micStatus = document.getElementById('micStatus');
+                if (micStatus && !micStatus.classList.contains('recording')) {
+                    micStatus.textContent = 'Tap to record answer';
+                }
             });
         }
 
@@ -1867,11 +2375,32 @@
     const overlay = document.getElementById("waitOverlay");
     const recordingOverlay = document.getElementById("recordingOverlay");
     const showChatBox = @Json.Serialize(Model.showChatBox);
-    
+
+    // Detect whether the audio phone UI is active (IsAdaptive mode)
+    const isAudioPhoneMode = !!document.querySelector('.rb-audio-phone-section');
+
+    // ---- helpers for phone UI visual state ----
+    function setPhoneUiRecording(isRecording) {
+        if (!isAudioPhoneMode) return;
+        const micStatus = document.getElementById('micStatus');
+        const aiAvatar  = document.getElementById('aiAvatarCircle');
+        if (isRecording) {
+            recordBtn.innerHTML = '<i class="fa fa-stop"></i>';
+            recordBtn.classList.add('rb-mic-active');
+            if (micStatus) { micStatus.textContent = 'Recording… tap to submit'; micStatus.classList.add('recording'); }
+            if (aiAvatar)  { aiAvatar.style.opacity = '0.6'; }
+        } else {
+            recordBtn.innerHTML = '<i class="fa fa-microphone"></i>';
+            recordBtn.classList.remove('rb-mic-active');
+            if (micStatus) { micStatus.textContent = 'Processing…'; micStatus.classList.remove('recording'); }
+            if (aiAvatar)  { aiAvatar.style.opacity = '1'; }
+        }
+    }
+
     function showRecordingOverlay() {
+        if (isAudioPhoneMode) return; // phone UI provides its own visual feedback
         if (recordingOverlay) {
             recordingOverlay.style.display = "flex";
-            // Update message text based on showChatBox
             const recordingMessage = document.getElementById("recordingMessage");
             if (recordingMessage) {
                 if (showChatBox === true) {
@@ -1885,130 +2414,139 @@
     function hideRecordingOverlay() {
         if (recordingOverlay) recordingOverlay.style.display = "none";
     }
-    recordBtn.addEventListener("click", async () => {
-        if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorderAudio = new MediaRecorder(stream);
 
-            mediaRecorderAudio.ondataavailable = e => {
-                audioChunks.push(e.data);
-            };
+    if (recordBtn) {
+        recordBtn.addEventListener("click", async () => {
+            if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorderAudio = new MediaRecorder(stream);
 
-            mediaRecorderAudio.onstop = async () => {
-                timerStopped = true;
-                clearInterval(countdownInterval);
+                mediaRecorderAudio.ondataavailable = e => {
+                    audioChunks.push(e.data);
+                };
 
-                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
+                mediaRecorderAudio.onstop = async () => {
+                    timerStopped = true;
+                    clearInterval(countdownInterval);
 
-                // populate the file input with blob data (check if audioInput exists)
-                if (audioInput) {
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    audioInput.files = dataTransfer.files;
-                } else {
-                    console.error("audioInput element not found. Cannot submit audio recording.");
-                    return;
-                }
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
 
-                audioChunks = [];
-                recordBtn.textContent = "⭕";
-                recordBtn.setAttribute('data-tooltip', 'Record Audio');
-                if (overlay) overlay.style.display = "flex";
-                stopRecording();
-                // Disable CodeMirror editor when audio recording stops (only if it exists)
+                    // populate the file input with blob data (check if audioInput exists)
+                    if (audioInput) {
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+                        audioInput.files = dataTransfer.files;
+                    } else {
+                        console.error("audioInput element not found. Cannot submit audio recording.");
+                        return;
+                    }
+
+                    audioChunks = [];
+
+                    if (isAudioPhoneMode) {
+                        setPhoneUiRecording(false);
+                    } else {
+                        recordBtn.textContent = "⭕";
+                        recordBtn.setAttribute('data-tooltip', 'Record Audio');
+                    }
+
+                    if (overlay) overlay.style.display = "flex";
+                    stopRecording();
+                    // Disable CodeMirror editor when audio recording stops (only if it exists)
+                    if (typeof codeEditor !== 'undefined' && codeEditor) {
+                        codeEditor.setOption('readOnly', true);
+                        codeEditor.setOption('placeholder', 'Start recording to enable code editor...');
+                    }
+                    // Disable language selector when audio recording stops (only if it exists)
+                    const langSelector = document.getElementById('codeLanguage');
+                    if (langSelector) {
+                        langSelector.disabled = true;
+                    }
+                    // Sync popup editor state
+                    if (typeof syncEditorStateToPopup === 'function') {
+                        syncEditorStateToPopup();
+                    }
+                    // Show loading state to indicate response is being submitted
+                    const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
+                    if (sendBtn) {
+                        sendBtn.classList.add('loading');
+                        sendBtn.disabled = true;
+                    }
+                    // Sync editor content to textarea before submitting (if editor exists)
+                    if (typeof codeEditor !== 'undefined' && codeEditor) {
+                        const messageTextarea = document.getElementById('messageTextarea');
+                        if (messageTextarea) {
+                            messageTextarea.value = codeEditor.getValue();
+                        }
+                    }
+                    // 🔥 Submit the form automatically
+                    if (form) {
+                        form.submit();
+                        // Clear editor content after form submission starts
+                        setTimeout(function() {
+                            clearEditorContent();
+                        }, 0);
+                    } else {
+                        console.error("Form element not found. Cannot submit answer.");
+                    }
+                };
+
+                mediaRecorderAudio.start();
+                startRecording();
+                // Enable CodeMirror editor when recording starts
                 if (typeof codeEditor !== 'undefined' && codeEditor) {
-                    codeEditor.setOption('readOnly', true);
-                    codeEditor.setOption('placeholder', 'Start recording to enable code editor...');
+                    codeEditor.setOption('readOnly', false);
+                    codeEditor.setOption('placeholder', 'Write your code here... (Select language or use Plain Text for any language)');
+                    codeEditor.focus();
                 }
-                // Disable language selector when audio recording stops (only if it exists)
+                // Enable language selector when recording starts
                 const langSelector = document.getElementById('codeLanguage');
                 if (langSelector) {
-                    langSelector.disabled = true;
+                    langSelector.disabled = false;
                 }
                 // Sync popup editor state
                 if (typeof syncEditorStateToPopup === 'function') {
                     syncEditorStateToPopup();
                 }
-                // Show loading state to indicate response is being submitted
-                const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
-                if (sendBtn) {
-                    sendBtn.classList.add('loading');
-                    sendBtn.disabled = true;
-                }
-                // Sync editor content to textarea before submitting (if editor exists)
-                if (typeof codeEditor !== 'undefined' && codeEditor) {
-                    const messageTextarea = document.getElementById('messageTextarea');
-                    if (messageTextarea) {
-                        messageTextarea.value = codeEditor.getValue();
-                    }
-                }
-                // 🔥 Submit the form automatically
-                if (form) {
-                    form.submit();
-                    // Clear editor content after form submission starts
-                    setTimeout(function() {
-                        clearEditorContent();
-                    }, 0);
-                } else {
-                    console.error("Form element not found. Cannot submit answer.");
-                }
-            };
 
-            mediaRecorderAudio.start();
-            startRecording();
-            // Enable CodeMirror editor when recording starts
-            if (typeof codeEditor !== 'undefined' && codeEditor) {
-                codeEditor.setOption('readOnly', false);
-                codeEditor.setOption('placeholder', 'Write your code here... (Select language or use Plain Text for any language)');
-                codeEditor.focus();
-            }
-            // Enable language selector when recording starts
-            const langSelector = document.getElementById('codeLanguage');
-            if (langSelector) {
-                langSelector.disabled = false;
-            }
-            // Sync popup editor state
-            if (typeof syncEditorStateToPopup === 'function') {
-                syncEditorStateToPopup();
-            }
-            recordBtn.textContent = "☐";
-            recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
-        }
-        else if (mediaRecorderAudio.state === "recording") {
-            // Show confirmation dialog - recording continues until user decides
-            Swal.fire({
-                title: 'Submit Response?',
-                text: 'Are you sure you want to submit your response?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#4eda92',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Submit Your Response',
-                cancelButtonText: 'Cancel',
-                reverseButtons: false,
-                focusConfirm: true
-            }).then((result) => {
-                // Check for both new and old SweetAlert versions
-                if (result.isConfirmed || result.value === true) {
-                    // User clicked Submit Recording - stop recording
-                    if (mediaRecorderAudio && mediaRecorderAudio.state === "recording") {
-                        console.log("Calling mediaRecorderAudio.stop()");
-                        mediaRecorderAudio.stop();
-                    } else {
-                        console.log("ERROR: MediaRecorder not active or null");
-                    }
-                } else if (result.isDismissed || result.value === false) {
-                    // User clicked Cancel or dismissed - recording continues
-                    console.log("=== CANCEL CLICKED ===");
-                    console.log("User cancelled, recording continues...");
+                if (isAudioPhoneMode) {
+                    setPhoneUiRecording(true);
                 } else {
-                    console.log("=== UNKNOWN RESULT ===");
-                    console.log("Unexpected result:", result);
+                    recordBtn.textContent = "☐";
+                    recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
                 }
-            });
-        }
-    });
+            }
+            else if (mediaRecorderAudio.state === "recording") {
+                // Show confirmation dialog - recording continues until user decides
+                Swal.fire({
+                    title: 'Submit Response?',
+                    text: 'Are you sure you want to submit your response?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4eda92',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Submit Your Response',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: false,
+                    focusConfirm: true
+                }).then((result) => {
+                    if (result.isConfirmed || result.value === true) {
+                        if (mediaRecorderAudio && mediaRecorderAudio.state === "recording") {
+                            console.log("Calling mediaRecorderAudio.stop()");
+                            mediaRecorderAudio.stop();
+                        } else {
+                            console.log("ERROR: MediaRecorder not active or null");
+                        }
+                    } else if (result.isDismissed || result.value === false) {
+                        console.log("User cancelled, recording continues...");
+                    } else {
+                        console.log("Unexpected result:", result);
+                    }
+                });
+            }
+        });
+    }
 </script>
 
 
