@@ -46,6 +46,10 @@ namespace Risebird.Entities.Data
     }
     public class ScheduleCandidatesRequest
     {
+        public ScheduleCandidatesRequest()
+        {
+            CandidateList = new List<ScheduleCandidateList>();
+        }
         public string skillChannelId { get; set; }
         public string requestedBy { get; set; }
         public string RequestId { get; set; }
