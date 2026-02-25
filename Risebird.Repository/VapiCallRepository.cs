@@ -316,6 +316,36 @@ namespace Risebird.Repository
         }
 
         /// <summary>
+        /// Returns true if a confirmed interview already exists in InterviewMeetings
+        /// for the given candidate email and IRF (identified by IRF.id).
+        /// Mirrors the eligibility check in usp_GetEligibleCandidatesForVapiCalls.
+        /// </summary>
+        public async Task<bool> HasConfirmedInterviewAsync(string candidateEmail, int irfId)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@IrfId", irfId);
+                    parameters.Add("@CandidateEmail", candidateEmail);
+
+                    var result = await conn.ExecuteScalarAsync<bool>(
+                        "usp_HasConfirmedInterview",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Gets eligible candidates for Vapi automated interview calls
         /// Returns candidates who:
         /// - Don't have a confirmed interview (confirmationStatus = 1 in InterviewMeetings)
