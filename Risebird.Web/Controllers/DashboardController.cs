@@ -136,191 +136,191 @@ namespace Risebird.Web.Controllers
                         // VAPI AUTOMATED CALLS TEST MODE
                         // Access via: /Dashboard/Index?testVapiCalls=true
                         // ========================================
-                        if (testVapiCalls)
-                        {
-                            var testResults = new List<string>();
-                            var currentTime = DateTime.Now;
-                            var currentHour = currentTime.Hour;
+                        //if (testVapiCalls)
+                        //{
+                        //    var testResults = new List<string>();
+                        //    var currentTime = DateTime.Now;
+                        //    var currentHour = currentTime.Hour;
 
-                            testResults.Add($"🕐 Test initiated at: {currentTime:yyyy-MM-dd HH:mm:ss}");
+                        //    testResults.Add($"🕐 Test initiated at: {currentTime:yyyy-MM-dd HH:mm:ss}");
 
-                            try
-                            {
-                                // Check business hours (9 AM - 9 PM)
-                                if (currentHour < 9 || currentHour >= 21)
-                                {
-                                    testResults.Add($"⏰ SKIPPED - Current time {currentTime:HH:mm} is outside business hours (9 AM - 9 PM IST)");
-                                    ViewBag.VapiTestResults = testResults;
-                                    return View("VapiTestResults");
-                                }
+                        //    try
+                        //    {
+                        //        // Check business hours (9 AM - 9 PM)
+                        //        if (currentHour < 9 || currentHour >= 21)
+                        //        {
+                        //            testResults.Add($"⏰ SKIPPED - Current time {currentTime:HH:mm} is outside business hours (9 AM - 9 PM IST)");
+                        //            ViewBag.VapiTestResults = testResults;
+                        //            return View("VapiTestResults");
+                        //        }
 
-                                testResults.Add($"✅ Within business hours - Current time: {currentTime:HH:mm}");
+                        //        testResults.Add($"✅ Within business hours - Current time: {currentTime:HH:mm}");
 
-                                // Get eligible candidates
-                                testResults.Add("📋 Fetching eligible candidates...");
-                                var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(50);
+                        //        // Get eligible candidates
+                        //        testResults.Add("📋 Fetching eligible candidates...");
+                        //        var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(50);
 
-                                if (eligibleCandidates == null || !eligibleCandidates.Any())
-                                {
-                                    testResults.Add("❌ No eligible candidates found for calling");
-                                    ViewBag.VapiTestResults = testResults;
-                                    return View("VapiTestResults");
-                                }
+                        //        if (eligibleCandidates == null || !eligibleCandidates.Any())
+                        //        {
+                        //            testResults.Add("❌ No eligible candidates found for calling");
+                        //            ViewBag.VapiTestResults = testResults;
+                        //            return View("VapiTestResults");
+                        //        }
 
-                                testResults.Add($"✅ Found {eligibleCandidates.Count} eligible candidates");
-                                testResults.Add("");
+                        //        testResults.Add($"✅ Found {eligibleCandidates.Count} eligible candidates");
+                        //        testResults.Add("");
 
-                                // Get configuration
-                                var baseUrl = _configuration["HostDetails:baseUrl"];
-                                var assistantId = _configuration["Vapi:InterviewBookingAssistantId"];
+                        //        // Get configuration
+                        //        var baseUrl = _configuration["HostDetails:baseUrl"];
+                        //        var assistantId = _configuration["Vapi:InterviewBookingAssistantId"];
 
-                                if (string.IsNullOrEmpty(assistantId))
-                                {
-                                    testResults.Add("❌ ERROR: Vapi Assistant ID is not configured");
-                                    testResults.Add("   Please set Vapi:InterviewBookingAssistantId in configuration");
-                                    ViewBag.VapiTestResults = testResults;
-                                    return View("VapiTestResults");
-                                }
+                        //        if (string.IsNullOrEmpty(assistantId))
+                        //        {
+                        //            testResults.Add("❌ ERROR: Vapi Assistant ID is not configured");
+                        //            testResults.Add("   Please set Vapi:InterviewBookingAssistantId in configuration");
+                        //            ViewBag.VapiTestResults = testResults;
+                        //            return View("VapiTestResults");
+                        //        }
 
-                                testResults.Add($"✅ Using Assistant ID: {assistantId}");
-                                testResults.Add($"✅ Webhook URL: {baseUrl}/VapiInterviewCall/Webhook");
-                                testResults.Add("");
+                        //        testResults.Add($"✅ Using Assistant ID: {assistantId}");
+                        //        testResults.Add($"✅ Webhook URL: {baseUrl}/VapiInterviewCall/Webhook");
+                        //        testResults.Add("");
 
-                                // Process each candidate
-                                int successCount = 0;
-                                int failureCount = 0;
+                        //        // Process each candidate
+                        //        int successCount = 0;
+                        //        int failureCount = 0;
 
-                                foreach (var candidate in eligibleCandidates.Where(x=>x.CandidateEmail == "ruma.bose86@gmail.com").ToList())
-                                {
-                                    try
-                                    {
-                                        testResults.Add($"📞 Processing: {candidate.CandidateName}");
-                                        testResults.Add($"   Client: {candidate.ClientName}");
-                                        testResults.Add($"   Email: {candidate.CandidateEmail}");
-                                        testResults.Add($"   Phone: {candidate.CandidatePhone}");
-                                        testResults.Add($"   IRF ID: {candidate.IRFId} ({candidate.IRFName})");
-                                        testResults.Add($"   Previous Attempts: {candidate.CallAttempts}");
+                        //        foreach (var candidate in eligibleCandidates.Where(x=>x.CandidateEmail == "ruma.bose86@gmail.com").ToList())
+                        //        {
+                        //            try
+                        //            {
+                        //                testResults.Add($"📞 Processing: {candidate.CandidateName}");
+                        //                testResults.Add($"   Client: {candidate.ClientName}");
+                        //                testResults.Add($"   Email: {candidate.CandidateEmail}");
+                        //                testResults.Add($"   Phone: {candidate.CandidatePhone}");
+                        //                testResults.Add($"   IRF ID: {candidate.IRFId} ({candidate.IRFName})");
+                        //                testResults.Add($"   Previous Attempts: {candidate.CallAttempts}");
 
-                                        // Validate phone
-                                        if (string.IsNullOrWhiteSpace(candidate.CandidatePhone))
-                                        {
-                                            testResults.Add("   ⚠️ SKIPPED - No phone number");
-                                            testResults.Add("");
-                                            continue;
-                                        }
+                        //                // Validate phone
+                        //                if (string.IsNullOrWhiteSpace(candidate.CandidatePhone))
+                        //                {
+                        //                    testResults.Add("   ⚠️ SKIPPED - No phone number");
+                        //                    testResults.Add("");
+                        //                    continue;
+                        //                }
 
-                                        // Format phone number (E.164 format)
-                                        var phoneNumber = candidate.CandidatePhone.Trim();
-                                        if (!phoneNumber.StartsWith("+"))
-                                        {
-                                            phoneNumber = "+91" + phoneNumber; // Default to India
-                                        }
-                                        //phoneNumber = "+918888571923";
-                                        // Get system prompt with current date and dynamic client name
-                                        var systemPromptWithDate = GetSystemPromptWithCurrentDate(
-                                            candidate.CandidateName,
-                                            candidate.JobTitle ?? candidate.IRFName,
-                                            candidate.IRFId.ToString(),
-                                            candidate.CandidateEmail,
-                                            //"harshit_jajoo@risebird.io",
-                                            candidate.ClientName);
+                        //                // Format phone number (E.164 format)
+                        //                var phoneNumber = candidate.CandidatePhone.Trim();
+                        //                if (!phoneNumber.StartsWith("+"))
+                        //                {
+                        //                    phoneNumber = "+91" + phoneNumber; // Default to India
+                        //                }
+                        //                phoneNumber = "+918888571923";
+                        //                // Get system prompt with current date and dynamic client name
+                        //                var systemPromptWithDate = GetSystemPromptWithCurrentDate(
+                        //                    candidate.CandidateName,
+                        //                    candidate.JobTitle ?? candidate.IRFName,
+                        //                    candidate.IRFId.ToString(),
+                        //                    candidate.CandidateEmail,
+                        //                    //"harshit_jajoo@risebird.io",
+                        //                    candidate.ClientName);
 
-                                        // Create call request
-                                        var callRequest = new VapiCallRequest
-                                        {
-                                            PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
-                                            Customer = new VapiCustomer
-                                            {
-                                                Number = phoneNumber,
-                                                Name = candidate.CandidateName,
-                                                Email = candidate.CandidateEmail
-                                                //Email = "harshit_jajoo@risebird.io"
-                                            },
-                                            AssistantId = assistantId,
-                                            AssistantOverrides = new VapiAssistantOverrides
-                                            {
-                                                Model = new VapiModelOverride
-                                                {
-                                                    Provider = "openai",
-                                                    Model = "gpt-5-mini",
-                                                    Messages = new List<VapiMessage>
-                                                    {
-                                                        new VapiMessage
-                                                        {
-                                                            Role = "system",
-                                                            Content = systemPromptWithDate
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            VariableValues = new Dictionary<string, object>
-                                            {
-                                                { "irfId", candidate.IRFId.ToString() },
-                                                { "candidateEmail", candidate.CandidateEmail }
-                                            }
-                                        };
+                        //                // Create call request
+                        //                var callRequest = new VapiCallRequest
+                        //                {
+                        //                    PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
+                        //                    Customer = new VapiCustomer
+                        //                    {
+                        //                        Number = phoneNumber,
+                        //                        Name = candidate.CandidateName,
+                        //                        Email = candidate.CandidateEmail
+                        //                        //Email = "harshit_jajoo@risebird.io"
+                        //                    },
+                        //                    AssistantId = assistantId,
+                        //                    AssistantOverrides = new VapiAssistantOverrides
+                        //                    {
+                        //                        Model = new VapiModelOverride
+                        //                        {
+                        //                            Provider = "openai",
+                        //                            Model = "gpt-5-mini",
+                        //                            Messages = new List<VapiMessage>
+                        //                            {
+                        //                                new VapiMessage
+                        //                                {
+                        //                                    Role = "system",
+                        //                                    Content = systemPromptWithDate
+                        //                                }
+                        //                            }
+                        //                        }
+                        //                    },
+                        //                    VariableValues = new Dictionary<string, object>
+                        //                    {
+                        //                        { "irfId", candidate.IRFId.ToString() },
+                        //                        { "candidateEmail", candidate.CandidateEmail }
+                        //                    }
+                        //                };
 
-                                        // Initiate the call
-                                        var callResponse = await _vapiService.InitiateCallAsync(callRequest);
+                        //                // Initiate the call
+                        //                var callResponse = await _vapiService.InitiateCallAsync(callRequest);
 
-                                        testResults.Add($"   ✅ Call initiated - CallId: {callResponse.Id}, Status: {callResponse.Status}");
+                        //                testResults.Add($"   ✅ Call initiated - CallId: {callResponse.Id}, Status: {callResponse.Status}");
 
-                                        // Save call log
-                                        var callLog = new VapiCallLog
-                                        {
-                                            VapiCallId = callResponse.Id,
-                                            InterviewId = null,
-                                            IRFId = candidate.IRFId,
-                                            RecipientId = candidate.CandidateId,
-                                            RecipientPhone = phoneNumber,
-                                            RecipientName = candidate.CandidateName,
-                                            RecipientEmail = candidate.CandidateEmail,
-                                            CallStatus = callResponse.Status,
-                                            ScheduledDateTime = null,
-                                            CallStartedAt = callResponse.StartedAt,
-                                            AssistantId = assistantId,
-                                            CreatedAt = DateTime.UtcNow,
-                                            CreatedBy = $"Test-{Emailid}"
-                                        };
+                        //                // Save call log
+                        //                var callLog = new VapiCallLog
+                        //                {
+                        //                    VapiCallId = callResponse.Id,
+                        //                    InterviewId = null,
+                        //                    IRFId = candidate.IRFId,
+                        //                    RecipientId = candidate.CandidateId,
+                        //                    RecipientPhone = phoneNumber,
+                        //                    RecipientName = candidate.CandidateName,
+                        //                    RecipientEmail = candidate.CandidateEmail,
+                        //                    CallStatus = callResponse.Status,
+                        //                    ScheduledDateTime = null,
+                        //                    CallStartedAt = callResponse.StartedAt,
+                        //                    AssistantId = assistantId,
+                        //                    CreatedAt = DateTime.UtcNow,
+                        //                    CreatedBy = $"Test-{Emailid}"
+                        //                };
 
-                                        await _vapiCallRepository.SaveCallLogAsync(callLog);
+                        //                await _vapiCallRepository.SaveCallLogAsync(callLog);
 
-                                        testResults.Add($"   ✅ Call log saved to database");
-                                        successCount++;
+                        //                testResults.Add($"   ✅ Call log saved to database");
+                        //                successCount++;
 
-                                        // Add delay between calls
-                                        await Task.Delay(2000); // 2 seconds
-                                        testResults.Add("");
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        failureCount++;
-                                        testResults.Add($"   ❌ FAILED: {ex.Message}");
-                                        testResults.Add("");
-                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
-                                            new Exception($"Test Vapi call failed for {candidate.CandidateEmail} (IRFId: {candidate.IRFId})", ex));
-                                    }
-                                }
+                        //                // Add delay between calls
+                        //                await Task.Delay(2000); // 2 seconds
+                        //                testResults.Add("");
+                        //            }
+                        //            catch (Exception ex)
+                        //            {
+                        //                failureCount++;
+                        //                testResults.Add($"   ❌ FAILED: {ex.Message}");
+                        //                testResults.Add("");
+                        //                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                        //                    new Exception($"Test Vapi call failed for {candidate.CandidateEmail} (IRFId: {candidate.IRFId})", ex));
+                        //            }
+                        //        }
 
-                                testResults.Add("═══════════════════════════════════");
-                                testResults.Add($"📊 SUMMARY:");
-                                testResults.Add($"   Total Candidates: {eligibleCandidates.Count}");
-                                testResults.Add($"   Successful Calls: {successCount}");
-                                testResults.Add($"   Failed Calls: {failureCount}");
-                                testResults.Add("═══════════════════════════════════");
+                        //        testResults.Add("═══════════════════════════════════");
+                        //        testResults.Add($"📊 SUMMARY:");
+                        //        testResults.Add($"   Total Candidates: {eligibleCandidates.Count}");
+                        //        testResults.Add($"   Successful Calls: {successCount}");
+                        //        testResults.Add($"   Failed Calls: {failureCount}");
+                        //        testResults.Add("═══════════════════════════════════");
 
-                                ViewBag.VapiTestResults = testResults;
-                                return View("VapiTestResults");
-                            }
-                            catch (Exception ex)
-                            {
-                                testResults.Add($"❌ CRITICAL ERROR: {ex.Message}");
-                                testResults.Add($"   Stack: {ex.StackTrace}");
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                ViewBag.VapiTestResults = testResults;
-                                return View("VapiTestResults");
-                            }
-                        }
+                        //        ViewBag.VapiTestResults = testResults;
+                        //        return View("VapiTestResults");
+                        //    }
+                        //    catch (Exception ex)
+                        //    {
+                        //        testResults.Add($"❌ CRITICAL ERROR: {ex.Message}");
+                        //        testResults.Add($"   Stack: {ex.StackTrace}");
+                        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        //        ViewBag.VapiTestResults = testResults;
+                        //        return View("VapiTestResults");
+                        //    }
+                        //}
                         // ========================================
                         // END VAPI TEST MODE
                         // ========================================
@@ -461,8 +461,9 @@ CALL FLOW:
      * candidateConfirmed: true (ONLY if candidate said yes/confirmed/correct)
      * irfId: {irfId}
 
-6. End professionally with gratitude
+6. End professionally with gratitude and DISCONNECT
    - ""Perfect! Your interview is confirmed. You'll receive a confirmation email shortly. We appreciate your time and look forward to speaking with you. Good luck!""
+   - After you say this sentence, END THE CALL IMMEDIATELY and hang up. Do not say anything else. Do not keep the line open. Do not continue the conversation.
 
 OBJECTION HANDLING (BE POLITE BUT PERSISTENT):
 - If busy now: ""I completely understand. This will only take 2 minutes to find a suitable time. May we proceed?""
@@ -479,6 +480,10 @@ VALIDATION RULES:
 - If candidate says ""maybe"", ""I think so"", ""probably"" - ask for explicit confirmation: ""I want to make sure we have this right. Can you confirm this time works for you?""
 - Do NOT submit booking without explicit confirmation
 - ALWAYS include the IRF ID and candidate email when submitting the slot
+
+DISCONNECT RULES:
+- Once you have submitted the booking and spoken the final confirmation sentence, you MUST end the call immediately.
+- Do NOT wait silently on the line, do NOT ask additional questions, and do NOT engage in further small talk.
 
 NEVER:
 - Accept dates beyond 2 days from today (be firm but polite about this)
