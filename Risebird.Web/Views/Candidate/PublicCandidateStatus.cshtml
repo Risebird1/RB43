@@ -424,7 +424,7 @@
                                     <div class="topheader-link-wrap">
                                         @if (ViewBag.ClientRole == "Reviewer")
                                         {
-                                        <a target="_blank" href="@Url.Action(" TotalInterviewerRiskIRFDetails", "Dashboard" , new { uniqueid=ViewBag.id })" style="margin:5px 0px 5px 3px;text-decoration:none">
+                                        <a target="_blank" href="@Url.Action("TotalInterviewerRiskIRFDetails", "Dashboard" , new { uniqueid=ViewBag.id })" style="margin:5px 0px 5px 3px;text-decoration:none">
                                             <button type="button" data-toggle="tooltip" data-placement="top">
                                                 <span class="topheader-link"><i class="fa fa-users" aria-hidden="true" style="color:#fff"></i></span>
                                                 <div class="d-lg-inline-flex pad3">
@@ -432,7 +432,7 @@
                                                 </div>
                                             </button>
                                         </a>
-                                        @* <a target="_blank" href="@Url.Action(" InterviewerRiskIRFDetails", "Dashboard" , new { uniqueid=ViewBag.id })" style="margin:5px 8px 5px 3px;">
+                                        @* <a target="_blank" href="@Url.Action("InterviewerRiskIRFDetails", "Dashboard" , new { uniqueid=ViewBag.id })" style="margin:5px 8px 5px 3px;">
                                             <button type="button" data-toggle="tooltip" data-placement="top" style="margin:5px 4px 5px 3px;">
                                                 <span class="topheader-link">
                                                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="18" height="18" viewBox="0 0 256 256" xml:space="preserve">
@@ -473,7 +473,7 @@
                                         </button>
 
                                         }
-                                        <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action(" PublicCandidateFeedback", "Survey" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                        <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicCandidateFeedback", "Survey" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })'" style="margin:5px 4px 5px 3px;">
                                             <span class="topheader-link"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size:11px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size:9px;"></i></span>
                                             <div class="d-lg-inline-flex pad3">
                                                 Candidate Feedback
@@ -482,7 +482,7 @@
                                         </button> *@
                                         @if (ViewBag.ClientRole != "Reviewer")
                                         {
-                                        <a target="_blank" href="@Url.Action(" CandidateSearch", "Candidate" , new { emailid=ViewBag.emailid, id=ViewBag.id })" style="margin:5px 0px 5px 3px;text-decoration:none">
+                                        <a target="_blank" href="@Url.Action("CandidateSearch", "Candidate" , new { emailid=ViewBag.emailid, id=ViewBag.id })" style="margin:5px 0px 5px 3px;text-decoration:none">
                                             <button type="button" data-toggle="tooltip" data-placement="top">
                                                 <span class="topheader-link"><i class="fa fa-users" aria-hidden="true" style="color:#fff"></i></span>
                                                 <div class="d-lg-inline-flex pad3">
@@ -499,28 +499,28 @@
                                             @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency")
                                             {
 
-                                            <a target="_blank" href="@Url.Action(" PartnerDetailsStats", "IRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;">
+                                            <a target="_blank" href="@Url.Action("PartnerDetailsStats", "IRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;">
                                                 <button type="button" data-toggle="tooltip" data-placement="top">
                                                     <div class="d-lg-inline-flex pad3">
                                                         Partner Stats
                                                     </div>
                                                 </button>
                                             </a>
-                                            <a target="_blank" href="@Url.Action(" ProjectSkillChannelStats", "IRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
+                                            <a target="_blank" href="@Url.Action("ProjectSkillChannelStats", "IRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
                                                 <button type="button" data-toggle="tooltip" data-placement="top">
                                                     <div class="d-lg-inline-flex pad3">
                                                         Project-Id Stats
                                                     </div>
                                                 </button>
                                             </a>
-                                            <a target="_blank" href="@Url.Action(" PublicSkillChannelDetails", "IRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
+                                            <a target="_blank" href="@Url.Action("PublicSkillChannelDetails", "IRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
                                                 <button type="button" data-toggle="tooltip" data-placement="top">
                                                     <div class="d-lg-inline-flex pad3">
                                                         Interview Channel Stats
                                                     </div>
                                                 </button>
                                             </a>
-                                            <a target="_blank" href="@Url.Action(" PublicMultiStackSkillChannelDetails", "IRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
+                                            <a target="_blank" href="@Url.Action("PublicMultiStackSkillChannelDetails", "IRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })" style="margin:0px 4px 0px 3px;line-height:20px;padding: 3px 10px;">
                                                 <button type="button" data-toggle="tooltip" data-placement="top">
                                                     <div class="d-lg-inline-flex pad3">
                                                         Multi-Stack Stats
@@ -530,7 +530,7 @@
                                             }
                                             else
                                             {
-                                            <a target="_blank" href="@Url.Action(" UserChannelDetailsStats", "IRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })" style="margin:5px 4px 5px 3px;">
+                                            <a target="_blank" href="@Url.Action("UserChannelDetailsStats", "IRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })" style="margin:5px 4px 5px 3px;">
                                                 <button type="button" data-toggle="tooltip" data-placement="top">
                                                     <div class="d-lg-inline-flex pad3">
                                                         Interview Channel Stats
@@ -542,10 +542,10 @@
                                         @if (ViewBag.ClientRole != "Client Admin")
                                         {
                                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
-                                            <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action(" RecommendatedIRFFilter", "RecommendedIRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Templates</font></span>
+                                            <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("RecommendatedIRFFilter", "RecommendedIRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Templates</font></span>
                                         </button>*@
                                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
-                                            <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action(" Index", "RecommendedIRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Your Skill Channels</font></span>
+                                            <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action("Index", "RecommendedIRF" , new { emailid=ViewBag.emailid, uniqueid=ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Your Skill Channels</font></span>
                                         </button>*@
                                         @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                             <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
@@ -626,7 +626,7 @@
                                         </span>
                                         @if (ViewBag.ClientRole != "Reviewer")
                                         {
-                                        <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action(" PublicCandidateStatusExporttoExcel", "Candidate" ,new { emailid=ViewBag.emailid})'"></i></span>
+                                        <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate" ,new { emailid=ViewBag.emailid})'"></i></span>
                                         }
                                     </div>
 
@@ -667,7 +667,7 @@
                                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
-                                                        <form action="@Url.Action(" PublicCandidateStatus", "Candidate" ,new { emailid=ViewBag.emailid,id =ViewBag.id, candidateType=ViewBag.CandidateType})" method="post" id="form" onsubmit="return checkfilterDate();">
+                                                        <form action="@Url.Action("PublicCandidateStatus", "Candidate" ,new { emailid=ViewBag.emailid,id =ViewBag.id, candidateType=ViewBag.CandidateType})" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                             <div class="modal-body publicmeeting">
                                                                 <div class="row">
@@ -1202,7 +1202,7 @@
 
                                                                                             <div style="width:100%;float:left;position:relative;top:-30px">
 
-                                                                                                @*<a target="_blank" href="@Url.Action(" PublicAddReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId, isClient=true, actiontype="Candidate" , currentUser=currentUser })" title="Feedback Report">Report</a>*@
+                                                                                                @*<a target="_blank" href="@Url.Action("PublicAddReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId, isClient=true, actiontype="Candidate" , currentUser=currentUser })" title="Feedback Report">Report</a>*@
                                                                                                 @* <a style="text-decoration:none;" target="_blank" href="@Url.Action(" PublicAddReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId, isClient=true, actiontype="Candidate" , currentUser=currentUser })" title="Feedback Report">
                                                                                                     <span class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Feedback Report">
                                                                                                         <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;left:-1.5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
@@ -1447,7 +1447,7 @@
                                                                                                 @if (!item.IsColdCandidate)
                                                                                                 {
                                                                                                 <span style="margin: 0px 4px 0px 0px;">
-                                                                                                    <a target="_blank" class="btn shadow btn-schedule btn-xs sharp me-1 item4" href="@Url.Action(" CandidateScheduleEvent", "InterviewScheduler" , new { id=item.SchedulerUniqueid, CandidateEmail=item.CandidateEmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;left:3px;">
+                                                                                                    <a target="_blank" class="btn shadow btn-schedule btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler" , new { id=item.SchedulerUniqueid, CandidateEmail=item.CandidateEmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;left:3px;">
                                                                                                         <span title="Schedule Meeting"><i class="fa fa-calendar" style="left:1px; top:-1px;font-size:13px; position: relative;"></i></span>
                                                                                                     </a>
                                                                                                 </span>
@@ -1455,7 +1455,7 @@
 
                                                                                                 @if (!item.IsColdCandidate)
                                                                                                 {
-                                                                                                @*     <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action(" SendInvite", "Candidate" , new { irfId=item.IRFId,IRFName =item.IRFname,emailId =item.CandidateEmailId,endDate =item.EndDate})" title="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
+                                                                                                @*     <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate" , new { irfId=item.IRFId,IRFName =item.IRFname,emailId =item.CandidateEmailId,endDate =item.EndDate})" title="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
                                                                                                     <span title="Send Invite"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;"></i></span>
 
                                                                                                 </a> *@
@@ -1466,7 +1466,7 @@
                                                                                                     <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;background: #4eb14eb8!important;" title="Send Invite Over Whatsapp"><img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" /></span>
                                                                                                 </span>
 
-                                                                                                @* <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action(" EditViaClientPublicUrl", "Candidate" , new { id=item.CandidateMasterId, irfName=item.IRFName, irfId=item.IRFId })" title="Edit" style="top: 0px;left:-8px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
+                                                                                                @* <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("EditViaClientPublicUrl", "Candidate" , new { id=item.CandidateMasterId, irfName=item.IRFName, irfId=item.IRFId })" title="Edit" style="top: 0px;left:-8px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
                                                                                                     <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
                                                                                                 </a> *@
                                                                                                 }
