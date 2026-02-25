@@ -164,6 +164,7 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
             services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
             services.AddScoped<ITranscriptOptimizationHelper, TranscriptOptimizationHelper>();
+            services.AddScoped<IReportQCOptimizationHelper, ReportQCOptimizationHelper>();
             return services;
         }
     }
