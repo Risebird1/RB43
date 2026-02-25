@@ -163,8 +163,8 @@ You have access to tools to:
                         }
                     }
                 },
-                endCallPhrases = new[] { "goodbye", "bye", "thank you bye" },
-                maxDurationSeconds = 300, // 5 minutes max
+                endCallPhrases = new[] { "goodbye", "bye", "thank you bye", "the interview is confirmed", "your interview is confirmed" },
+                maxDurationSeconds = 180, // hard cap ~3 minutes to control cost
                 backgroundSound = "office",
                 server = new
                 {
