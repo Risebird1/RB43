@@ -594,9 +594,10 @@ namespace Risebird.Web.Controllers
                             // usp_GetEligibleCandidatesForVapiCalls (InterviewMeetings.confirmationStatus = '1').
                             var hasConfirmedInterview = await _vapiCallRepository.HasConfirmedInterviewAsync(candidateEmail, Convert.ToInt32(irfId));
                             await LogCheckpoint("CHECKPOINT-ScheduleApiCheck", $"HasConfirmedInterview: {hasConfirmedInterview}, CandidateEmail: {candidateEmail}, IrfId: {irfId}", callId);
-
-                            if (!hasConfirmedInterview)
+                            
+                            if (!hasConfirmedInterview && parsedDateTime.HasValue)
                             {
+                                await Task.Delay(2000);
                                 try
                                 {
                                     var _candidateDetails = await _vapiCallRepository.GetCandidateDetailsForSchedule(Convert.ToInt32(irfId), candidateEmail);
