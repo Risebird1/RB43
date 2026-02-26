@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using RestSharp;
+using Risebird.Web.Extensions;
 
 namespace Risebird.Web.Controllers
 {
@@ -594,7 +595,7 @@ namespace Risebird.Web.Controllers
                             // usp_GetEligibleCandidatesForVapiCalls (InterviewMeetings.confirmationStatus = '1').
                             var hasConfirmedInterview = await _vapiCallRepository.HasConfirmedInterviewAsync(candidateEmail, Convert.ToInt32(irfId));
                             await LogCheckpoint("CHECKPOINT-ScheduleApiCheck", $"HasConfirmedInterview: {hasConfirmedInterview}, CandidateEmail: {candidateEmail}, IrfId: {irfId}", callId);
-                            
+
                             if (!hasConfirmedInterview && parsedDateTime.HasValue)
                             {
                                 await Task.Delay(2000);
@@ -604,7 +605,9 @@ namespace Risebird.Web.Controllers
                                     var _dto = new ScheduleCandidatesRequest();
                                     _dto.skillChannelId = _candidateDetails.IRFId;
                                     _dto.requestedBy = _candidateDetails.ClientHRAttemptContact;
-                                    _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = parsedDateTime.Value, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = _candidateDetails.CandidateName });
+                                    //Round the Time Slot as Required for skill channel Schdeuler slots
+                                    var interviewdate = parsedDateTime.Value.RoundToNearSlot(_candidateDetails.duration);
+                                    _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = interviewdate, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = _candidateDetails.CandidateName });
                                     var apiurl = "https://api.portal.risebird.io/api/Candidates/Schedule";
                                     var client = new RestClient(apiurl);
                                     var request = new RestRequest(apiurl, Method.Post);
