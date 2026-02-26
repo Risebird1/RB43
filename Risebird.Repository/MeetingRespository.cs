@@ -19,7 +19,8 @@ namespace Risebird.Repository
     public class MeetingRespository : IMeetingRespository
     {
         private readonly IConfiguration _configuration;
-        private readonly string connectionString;
+        private string connectionString;
+        private readonly string connectionStringForMCQDb;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
 
@@ -28,6 +29,7 @@ namespace Risebird.Repository
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            connectionStringForMCQDb = _configuration["ConnectionString:EmploymentVerificationConnection"];
             _notificationHelper = notificationHelper;
         }
 
@@ -7461,10 +7463,14 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<PendingVideoMeetingsData>> FetchMeetingPendingVideo()
+        public async Task<IEnumerable<PendingVideoMeetingsData>> FetchMeetingPendingVideo(bool ismcq = false)
         {
             try
             {
+                if (ismcq)
+                {
+                    connectionString = connectionStringForMCQDb;
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
@@ -7485,10 +7491,14 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<bool> UpdateVideoinfo(int interviewId, string videoLink = null, string meetingtype = null,string transcriptSasUrl=null)
+        public async Task<bool> UpdateVideoinfo(int interviewId, string videoLink = null, string meetingtype = null, string transcriptSasUrl = null, bool ismcq = false)
         {
             try
             {
+                if (ismcq)
+                {
+                    connectionString = connectionStringForMCQDb;
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
