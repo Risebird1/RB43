@@ -604,7 +604,7 @@ namespace Risebird.Web.Controllers
                                     var _dto = new ScheduleCandidatesRequest();
                                     _dto.skillChannelId = _candidateDetails.IRFId;
                                     _dto.requestedBy = _candidateDetails.ClientHRAttemptContact;
-                                    _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = parsedDateTime.Value, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = candidateName });
+                                    _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = parsedDateTime.Value, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = _candidateDetails.CandidateName });
                                     var apiurl = "https://api.portal.risebird.io/api/Candidates/Schedule";
                                     var client = new RestClient(apiurl);
                                     var request = new RestRequest(apiurl, Method.Post);
