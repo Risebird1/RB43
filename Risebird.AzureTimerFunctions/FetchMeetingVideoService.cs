@@ -40,12 +40,11 @@ namespace Risebird.AzureTimerFunctions
             {
                 //string videoSasUrl = string.Empty;
                 //int? videoDuration = null;
-                var pendingVideoMeetings = await _meetingRespository.FetchMeetingPendingVideo();
-                var mcqpendingVideoMeetings = await _meetingRespository.FetchMeetingPendingVideo(true);
                 //get oauth token
                 var accesstoken = await _zoho.GetRecordingAccessTokenAsync();
                 try
                 {
+                    var pendingVideoMeetings = await _meetingRespository.FetchMeetingPendingVideo();
                     await UpdateCalibrationVideoDetails(pendingVideoMeetings?.ToList(), false, accesstoken);
                 }
                 catch (Exception ex)
@@ -54,6 +53,7 @@ namespace Risebird.AzureTimerFunctions
                 }
                 try
                 {
+                    var mcqpendingVideoMeetings = await _meetingRespository.FetchMeetingPendingVideo(true);
                     await UpdateCalibrationVideoDetails(mcqpendingVideoMeetings?.ToList(), true, accesstoken);
                 }
                 catch (Exception ex)
