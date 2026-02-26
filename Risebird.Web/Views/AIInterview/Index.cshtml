@@ -1208,6 +1208,12 @@
     .min-vh {
         min-height: 300px;
     }
+    .min-vh.min-vh--audio {
+        min-height: auto;
+    }
+    .min-vh.min-vh--video {
+        min-height: 300px;
+    }
 
     @@media only screen and (max-width: 992px) {
         .rb-chatbox-inputrow {
@@ -1346,6 +1352,9 @@
 
         .min-vh {
             min-height: 0px !important;
+        }
+        .min-vh.min-vh--audio {
+            min-height: auto !important;
         }
     }
 
@@ -1506,17 +1515,19 @@
         box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 8px rgba(78,218,146,0.12);
         position: relative;
         z-index: 2;
-        transition: box-shadow 0.4s ease;
+        transition: box-shadow 0.4s ease, transform 0.3s ease;
     }
 
+    /* Meet-style strong highlight when AI is speaking - clearly visible */
     .rb-ai-interviewer-avatar.speaking {
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 10px rgba(78,218,146,0.28), 0 0 0 18px rgba(78,218,146,0.1);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 4px rgba(78,218,146,0.9), 0 0 0 12px rgba(78,218,146,0.5), 0 0 24px 8px rgba(78,218,146,0.35);
         animation: avatarPulse 1.5s ease-in-out infinite;
+        transform: scale(1.02);
     }
 
     @@keyframes avatarPulse {
-        0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 10px rgba(78,218,146,0.28), 0 0 0 18px rgba(78,218,146,0.1); }
-        50% { box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 14px rgba(78,218,146,0.22), 0 0 0 24px rgba(78,218,146,0.07); }
+        0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 4px rgba(78,218,146,0.9), 0 0 0 12px rgba(78,218,146,0.5), 0 0 24px 8px rgba(78,218,146,0.35); transform: scale(1.02); }
+        50% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 6px rgba(78,218,146,0.85), 0 0 0 18px rgba(78,218,146,0.45), 0 0 32px 12px rgba(78,218,146,0.4); transform: scale(1.03); }
     }
 
     .rb-phone-inner-header {
@@ -1565,7 +1576,7 @@
     }
 
     .rb-phone-nav-avatar-item:first-child { margin-left: 0; background: linear-gradient(135deg, #4eda92, #56e0cb); }
-    .rb-phone-nav-avatar-item:last-child  { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .rb-phone-nav-avatar-item:last-child  {     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
 
     .rb-phone-mini-candidate {
         position: absolute;
@@ -1583,8 +1594,49 @@
         font-size: 1.6rem;
         box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         z-index: 3;
-        overflow: hidden;
+        overflow: visible;
+        transition: box-shadow 0.4s ease, border-color 0.4s ease;
     }
+
+    /* Meet-style highlight when candidate is speaking (recording) */
+    .rb-phone-mini-candidate.speaking {
+        border-color: rgba(255,255,255,0.95);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 0 4px rgba(102,126,234,0.5), 0 0 0 10px rgba(118,75,162,0.25);
+        animation: candidateAvatarPulse 1.5s ease-in-out infinite;
+    }
+
+    @@keyframes candidateAvatarPulse {
+        0%, 100% { box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 0 4px rgba(102,126,234,0.5), 0 0 0 10px rgba(118,75,162,0.25); }
+        50% { box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 0 6px rgba(102,126,234,0.4), 0 0 0 14px rgba(118,75,162,0.2); }
+    }
+
+    /* Candidate audio waves (shown when candidate is recording) */
+    .rb-candidate-audio-waves {
+        position: absolute;
+        bottom: 4px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        z-index: 4;
+        pointer-events: none;
+    }
+
+    .rb-candidate-audio-waves .wave-bar {
+        width: 2px;
+        height: 12px;
+        background: rgba(255,255,255,0.95);
+        border-radius: 1px;
+        animation: waveAnimation 1.2s ease-in-out infinite;
+    }
+
+    .rb-candidate-audio-waves .wave-bar:nth-child(1) { animation-delay: 0s; }
+    .rb-candidate-audio-waves .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+    .rb-candidate-audio-waves .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+    .rb-candidate-audio-waves .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+    .rb-candidate-audio-waves .wave-bar:nth-child(5) { animation-delay: 0.4s; }
 
     .rb-phone-audio-waves-wrap {
         position: absolute;
@@ -1873,9 +1925,16 @@
                             <i class="fa fa-user"></i>
                         </div>
 
-                        <!-- Mini candidate view -->
-                        <div class="rb-phone-mini-candidate" title="@Model.candidateName">
+                        <!-- Mini candidate view (highlighted + waves when candidate is recording) -->
+                        <div class="rb-phone-mini-candidate" id="candidateAvatarCircle" title="@Model.candidateName">
                             <i class="fa fa-user"></i>
+                            <div class="rb-candidate-audio-waves" id="candidateAudioWaves" style="display:none;">
+                                <div class="wave-bar"></div>
+                                <div class="wave-bar"></div>
+                                <div class="wave-bar"></div>
+                                <div class="wave-bar"></div>
+                                <div class="wave-bar"></div>
+                            </div>
                         </div>
 
                         <!-- Audio waves inside phone (shown when AI is speaking) -->
@@ -2082,12 +2141,12 @@
                             </div>
                         }
                         
-                        <div class="min-vh">
+                        <div class="min-vh @(Model.IsAdaptive == true ? "min-vh--audio" : "min-vh--video")">
                             @if (Model.IsAdaptive == true)
                             {
                                 @* Audio mode: avatar, waves, and progress are rendered in the phone UI on the left.
                                    Only the hidden <audio> element is needed here for playback. *@
-                                <audio id="assistantAudio" controls hidden></audio>
+                                <audio autoplay id="assistantAudio" controls hidden></audio>
                             }
                             else
                             {
@@ -2252,19 +2311,11 @@
 <script>
     function playAssistantAudio(blob) {
         const audioElement = document.getElementById("assistantAudio");
-        const audioWaves = document.getElementById("audioWaves");
         const audioUrl = URL.createObjectURL(blob);
         audioElement.src = audioUrl;
         audioElement.hidden = false;
+        // Don't highlight here: waves and aiAvatarCircle.speaking are added only on the audio 'play' event, so they stay in sync with actual playback (like video autoplay)
         audioElement.play();
-
-        // Show audio waves when playing starts
-        if (audioWaves) {
-            audioWaves.style.display = 'flex';
-        }
-        // Pulse the AI avatar in phone UI when AI is speaking
-        const aiAvatar = document.getElementById('aiAvatarCircle');
-        if (aiAvatar) aiAvatar.classList.add('speaking');
     }
 
     // Chat Log Scrolling Functionality
@@ -2274,7 +2325,7 @@
         const audioElement = document.getElementById('assistantAudio');
         const audioWaves = document.getElementById('audioWaves');
 
-        // Audio event listeners for wave animation + phone UI avatar
+        // Audio event listeners for wave animation + phone UI avatar (highlight only when audio actually plays)
         if (audioElement && audioWaves) {
             audioElement.addEventListener('play', function() {
                 audioWaves.style.display = 'flex';
@@ -2299,6 +2350,12 @@
                     micStatus.textContent = 'Tap to record answer';
                 }
             });
+
+            // Autoplay initial assistant audio (like video autoplay); highlight happens at same time via 'play' above
+            if (window._initialAssistantAudioBlob && typeof playAssistantAudio === 'function') {
+                playAssistantAudio(window._initialAssistantAudioBlob);
+                window._initialAssistantAudioBlob = null;
+            }
         }
 
         if (chatLog && scrollToBottomBtn) {
@@ -2356,12 +2413,14 @@
 @if (ViewData["AssistantAudioBase64"] is string base64Audio)
 {
     <script>
-        const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
-        const audioBlob = new Blob([
-            Uint8Array.from(atob(base64), c => c.charCodeAt(0))
-        ], { type: 'audio/mp3' });
-
-        playAssistantAudio(audioBlob);
+        (function() {
+            const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
+            const audioBlob = new Blob([
+                Uint8Array.from(atob(base64), c => c.charCodeAt(0))
+            ], { type: 'audio/mp3' });
+            // Queue for autoplay when DOM is ready (inside DOMContentLoaded, after 'play' listener is attached so highlight and audio start together)
+            window._initialAssistantAudioBlob = audioBlob;
+        })();
     </script>
 }
 
@@ -2383,17 +2442,24 @@
     function setPhoneUiRecording(isRecording) {
         if (!isAudioPhoneMode) return;
         const micStatus = document.getElementById('micStatus');
-        const aiAvatar  = document.getElementById('aiAvatarCircle');
+        const aiAvatar = document.getElementById('aiAvatarCircle');
+        const candidateAvatar = document.getElementById('candidateAvatarCircle');
+        const candidateWaves = document.getElementById('candidateAudioWaves');
         if (isRecording) {
             recordBtn.innerHTML = '<i class="fa fa-stop"></i>';
             recordBtn.classList.add('rb-mic-active');
             if (micStatus) { micStatus.textContent = 'Recording… tap to submit'; micStatus.classList.add('recording'); }
-            if (aiAvatar)  { aiAvatar.style.opacity = '0.6'; }
+            if (aiAvatar) { aiAvatar.style.opacity = '0.6'; }
+            // Meet-style: highlight candidate avatar and show audio waves when candidate is speaking
+            if (candidateAvatar) candidateAvatar.classList.add('speaking');
+            if (candidateWaves) candidateWaves.style.display = 'flex';
         } else {
             recordBtn.innerHTML = '<i class="fa fa-microphone"></i>';
             recordBtn.classList.remove('rb-mic-active');
             if (micStatus) { micStatus.textContent = 'Processing…'; micStatus.classList.remove('recording'); }
-            if (aiAvatar)  { aiAvatar.style.opacity = '1'; }
+            if (aiAvatar) { aiAvatar.style.opacity = '1'; }
+            if (candidateAvatar) candidateAvatar.classList.remove('speaking');
+            if (candidateWaves) candidateWaves.style.display = 'none';
         }
     }
 
