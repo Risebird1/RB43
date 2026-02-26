@@ -1288,6 +1288,9 @@
             width: 100%;
             justify-content: space-between;
         }
+        .rb-header-controls--audio {
+            display: none !important;
+        }
 
         .rb-timer {
             font-size: 0.9rem;
@@ -1335,6 +1338,9 @@
         .rb-header-controls {
             flex-direction: column;
             gap: 8px;
+        }
+        .rb-header-controls--audio {
+            display: none !important;
         }
 
         .rb-timer {
@@ -1821,7 +1827,7 @@
         <div class="rb-logo-title">
             <span class="rb-title">AI Interview</span>
         </div>
-        <div class="rb-header-controls">
+        <div class="rb-header-controls @(Model.IsAdaptive == true ? "rb-header-controls--audio" : "")">
             <span class="rb-timer">
                 <i class="fa fa-clock-o"></i> Interview Time Left <b><span id="timer">--:--</span></b>
                 <div class="rb-timer-bar">
