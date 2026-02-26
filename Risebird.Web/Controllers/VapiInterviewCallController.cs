@@ -122,7 +122,7 @@ namespace Risebird.Web.Controllers
                         Model = new VapiModelOverride
                         {
                             Provider = "openai",
-                            Model = "gpt-5-mini",
+                            Model = "gpt-4.1-mini",
                             Messages = new List<VapiMessage>
                             {
                                 new VapiMessage
@@ -577,20 +577,34 @@ namespace Risebird.Web.Controllers
                             if (isNewCallLog)
                             {
                                 await LogCheckpoint("CHECKPOINT-14", "Calling SaveCallLogAsync for new call log", callId);
-
                                 savedId = await _vapiCallRepository.SaveCallLogAsync(callLog);
-                                // Ensure external scheduling API is only called once per callId,
-                                // even if multiple submitInterviewSlot tool calls are received
-                                // in a single webhook payload.
-                                isNewCallLog = false;
-                                //Call API with values : IRFId,ClientHr,CandidateResume,CandidateEmail,Interviewdate
+                                await LogCheckpoint("CHECKPOINT-15-SUCCESS", $"NEW call log created - ID: {savedId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}", callId);
+                                await UpdateWebhookDebugLog(callId, "success", null, true, savedId, true);
+                            }
+                            else
+                            {
+                                await LogCheckpoint("CHECKPOINT-16", $"Calling UpdateCallLogAsync for existing call log - ID: {callLog.Id}", callId);
+                                await _vapiCallRepository.UpdateCallLogAsync(callLog);
+                                await LogCheckpoint("CHECKPOINT-17-SUCCESS", $"Interview slot updated - DateTime: {parsedDateTime.Value}, Candidate: {candidateName}", callId);
+                                await UpdateWebhookDebugLog(callId, "success", null, true, callLog.Id, true);
+                            }
+
+                            // Call the Schedule API only if no confirmed interview already exists for
+                            // this candidate + IRF combination — mirroring the eligibility condition in
+                            // usp_GetEligibleCandidatesForVapiCalls (InterviewMeetings.confirmationStatus = '1').
+                            var hasConfirmedInterview = await _vapiCallRepository.HasConfirmedInterviewAsync(candidateEmail, Convert.ToInt32(irfId));
+                            await LogCheckpoint("CHECKPOINT-ScheduleApiCheck", $"HasConfirmedInterview: {hasConfirmedInterview}, CandidateEmail: {candidateEmail}, IrfId: {irfId}", callId);
+                            
+                            if (!hasConfirmedInterview && parsedDateTime.HasValue)
+                            {
+                                await Task.Delay(2000);
                                 try
                                 {
                                     var _candidateDetails = await _vapiCallRepository.GetCandidateDetailsForSchedule(Convert.ToInt32(irfId), candidateEmail);
                                     var _dto = new ScheduleCandidatesRequest();
                                     _dto.skillChannelId = _candidateDetails.IRFId;
                                     _dto.requestedBy = _candidateDetails.ClientHRAttemptContact;
-                                    _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = parsedDateTime.Value, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = candidateName });
+                                    _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = parsedDateTime.Value, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = _candidateDetails.CandidateName });
                                     var apiurl = "https://api.portal.risebird.io/api/Candidates/Schedule";
                                     var client = new RestClient(apiurl);
                                     var request = new RestRequest(apiurl, Method.Post);
@@ -608,20 +622,10 @@ namespace Risebird.Web.Controllers
                                     await LogCheckpoint("CHECKPOINT-ScheduleApiException", $"Exception encountered: {ex.Message}", callId);
                                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                 }
-                                await LogCheckpoint("CHECKPOINT-15-SUCCESS", $"NEW call log created - ID: {savedId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}", callId);
-                                // Update debug log
-                                await UpdateWebhookDebugLog(callId, "success", null, true, savedId, true);
                             }
                             else
                             {
-                                await LogCheckpoint("CHECKPOINT-16", $"Calling UpdateCallLogAsync for existing call log - ID: {callLog.Id}", callId);
-
-                                await _vapiCallRepository.UpdateCallLogAsync(callLog);
-
-                                await LogCheckpoint("CHECKPOINT-17-SUCCESS", $"Interview slot updated - DateTime: {parsedDateTime.Value}, Candidate: {candidateName}", callId);
-
-                                // Update debug log
-                                await UpdateWebhookDebugLog(callId, "success", null, true, callLog.Id, true);
+                                await LogCheckpoint("CHECKPOINT-ScheduleApiSkipped", "Confirmed interview already exists in InterviewMeetings - skipping Schedule API call", callId);
                             }
                         }
                         catch (Exception saveEx)
@@ -799,6 +803,7 @@ CALL FLOW:
 
 2. State purpose with urgency
    - ""I'm calling on behalf of {clientName} regarding an interview opportunity for the {jobTitle} position.""
+   - ""The scope of this call is limited to scheduling your interview slot. For any further details about the role or process, please check your email.""
    - ""This is time-sensitive and we're looking to schedule interviews within the next two days.""
    - ""Would you be available tomorrow or the day after tomorrow?""
    - Wait for response
@@ -832,6 +837,7 @@ OBJECTION HANDLING (BE POLITE BUT PERSISTENT):
 - If asks to call back: ""I appreciate that, and since I have you on the line and this is time-sensitive, could we quickly lock in a time that works for you? It will just take a moment.""
 - If uncertain about job: ""I understand. You had applied for this position, and the company is moving quickly with qualified candidates. Would you like to secure an interview slot?""
 - If wants different date beyond 2 days: ""I appreciate your preference, but unfortunately, due to the urgent hiring timeline, we can only offer slots within the next two days - either tomorrow or the day after. Would either of those work for you?""
+- If asks for role/process/salary/JD details: ""The scope of this call is limited to scheduling your interview slot. For all further details, please check your email. Now, shall we find a time that works for you?""
 
 VALIDATION RULES:
 - Date MUST be either tomorrow or day after tomorrow - NO EXCEPTIONS
