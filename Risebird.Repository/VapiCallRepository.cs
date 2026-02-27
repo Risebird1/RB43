@@ -316,6 +316,30 @@ namespace Risebird.Repository
         }
 
         /// <summary>
+        /// Atomically increments Candidate.VapiCallAttempts for the given candidate.
+        /// </summary>
+        public async Task IncrementVapiCallAttemptsAsync(int candidateId)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@CandidateId", candidateId);
+
+                    await conn.ExecuteAsync(
+                        "usp_IncrementCandidateVapiCallAttempts",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
         /// Returns true if a confirmed interview already exists in InterviewMeetings
         /// for the given candidate email and IRF (identified by IRF.id).
         /// Mirrors the eligibility check in usp_GetEligibleCandidatesForVapiCalls.

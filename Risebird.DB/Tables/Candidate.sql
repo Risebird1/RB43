@@ -54,6 +54,7 @@ CREATE TABLE [dbo].[Candidate](
 	[AIResumeScreeningVerdict] [varchar](30) NULL,
 	[AIScreeningResultJsonV2] [varchar](max) NULL,
 	[AIResumeScreeningScore] [int] NULL,
+	[VapiCallAttempts] [int] NOT NULL DEFAULT 0,
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -515,6 +516,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add AIResumeScreeningScore int
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VapiCallAttempts')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add VapiCallAttempts INT NOT NULL DEFAULT 0
 END
 
 End

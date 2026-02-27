@@ -108,6 +108,7 @@ builder.Services.AddScoped<ISurveyRepository, SurveyRepository>();
 builder.Services.AddScoped<ISurveyService, SurveyService>();
 builder.Services.AddScoped<ICodeInviteRequest, CodeInviteRequest>();
 builder.Services.AddScoped<IValidationHelper, ValidationHelper>();
+builder.Services.AddScoped<IPhoneNumberHelper, PhoneNumberHelper>();
 builder.Services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
 builder.Services.AddScoped<IAffIndaResumeParserHelper, AffIndaResumeParserHelper>();
 builder.Services.AddScoped<IEncryptionHelper, EncryptionHelper>();
