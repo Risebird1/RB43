@@ -1,8 +1,38 @@
 using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Risebird.Entities.Data.VapiModels
 {
+    /// <summary>
+    /// Handles Vapi's "cost" field which can be either a plain number (0, before cost accrues)
+    /// or a full breakdown object once the call completes.
+    /// </summary>
+    internal class VapiCostConverter : JsonConverter<VapiCost>
+    {
+        public override VapiCost ReadJson(JsonReader reader, Type objectType, VapiCost existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            var token = JToken.Load(reader);
+
+            // Plain number (e.g. 0) — return a zeroed cost object
+            if (token.Type == JTokenType.Integer || token.Type == JTokenType.Float)
+                return new VapiCost { Total = (double)token };
+
+            // Null — return null
+            if (token.Type == JTokenType.Null)
+                return null;
+
+            // Full object — deserialize normally
+            var cost = new VapiCost();
+            serializer.Populate(token.CreateReader(), cost);
+            return cost;
+        }
+
+        public override void WriteJson(JsonWriter writer, VapiCost value, JsonSerializer serializer)
+            => serializer.Serialize(writer, value);
+    }
+
+
     /// <summary>
     /// Response from Vapi when call is initiated
     /// </summary>
@@ -20,6 +50,7 @@ namespace Risebird.Entities.Data.VapiModels
         public DateTime? StartedAt { get; set; }
         public DateTime? EndedAt { get; set; }
         public string EndedReason { get; set; }
+        [JsonConverter(typeof(VapiCostConverter))]
         public VapiCost Cost { get; set; }
         public VapiArtifact Artifact { get; set; }
         public VapiAnalysis Analysis { get; set; }

@@ -45,6 +45,13 @@ namespace Risebird.Entities.Data.VapiModels
     /// </summary>
     [JsonProperty("variableValues")]
     public Dictionary<string, object> VariableValues { get; set; }
+
+    /// <summary>
+    /// Internal: Candidate.id to increment VapiCallAttempts after a successful call.
+    /// Not sent to the Vapi API.
+    /// </summary>
+    [JsonIgnore]
+    public int? CandidateId { get; set; }
 }
 
     /// <summary>
