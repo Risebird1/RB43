@@ -55,6 +55,7 @@ namespace Risebird.AzureFunctions
             services.AddScoped<INotificationHelper, NotificationHelper>();
             services.AddScoped<IVapiService, VapiService>();
             services.AddScoped<IVapiCallRepository, VapiCallRepository>();
+            services.AddScoped<ICandidateCallTracker>(sp => (ICandidateCallTracker)sp.GetRequiredService<IVapiCallRepository>());
             services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProfileService, ProfileService>();

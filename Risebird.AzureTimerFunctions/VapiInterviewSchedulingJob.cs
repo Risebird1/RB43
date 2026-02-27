@@ -147,10 +147,11 @@ namespace Risebird.AzureTimerFunctions
                             {
                                 { "irfId", candidate.IRFId.ToString() },
                                 { "candidateEmail", candidate.CandidateEmail }
-                            }
+                            },
+                            CandidateId = candidate.CandidateId
                         };
 
-                        // Initiate the call
+                        // Initiate the call — VapiService increments VapiCallAttempts on success
                         var callResponse = await _vapiService.InitiateCallAsync(callRequest);
 
                         _log.LogInformation($"Call initiated successfully for {candidate.CandidateEmail} - CallId: {callResponse.Id}, Status: {callResponse.Status}");
@@ -174,10 +175,6 @@ namespace Risebird.AzureTimerFunctions
                         };
 
                         await _vapiCallRepository.SaveCallLogAsync(callLog);
-
-                        // Track the attempt on the Candidate row so eligibility queries
-                        // can filter directly on Candidate.VapiCallAttempts without touching VapiCallLogs.
-                        await _vapiCallRepository.IncrementVapiCallAttemptsAsync(candidate.CandidateId);
 
                         successCount++;
 
