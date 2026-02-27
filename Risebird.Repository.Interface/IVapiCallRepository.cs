@@ -59,6 +59,12 @@ namespace Risebird.Repository.Interface
         Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForVapiCallsAsync(int count = 10);
 
         /// <summary>
+        /// Atomically increments Candidate.VapiCallAttempts for the given candidate.
+        /// Must be called immediately after every successful Vapi call initiation.
+        /// </summary>
+        Task IncrementVapiCallAttemptsAsync(int candidateId);
+
+        /// <summary>
         /// Returns true if a confirmed interview already exists in InterviewMeetings
         /// for the given candidate email and IRF (identified by IRF.id).
         /// Mirrors the eligibility check in usp_GetEligibleCandidatesForVapiCalls.
