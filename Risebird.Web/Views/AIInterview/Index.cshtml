@@ -1510,20 +1510,32 @@
         pointer-events: none;
     }
 
+    /* AI interviewer block: avatar + waves below, positioned toward top so not hidden by candidate video */
+    .rb-phone-ai-block {
+        position: absolute;
+        top: 72px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        z-index: 2;
+    }
+
     .rb-ai-interviewer-avatar {
-        width: 130px;
-        height: 130px;
+        width: 85px;
+        height: 85px;
         border-radius: 50%;
         background: linear-gradient(135deg, #4eda92 0%, #56e0cb 50%, #667eea 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 3.2rem;
+        font-size: 1.8rem;
         color: white;
-        border: 4px solid rgba(255,255,255,0.3);
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 8px rgba(78,218,146,0.12);
+        border: 3px solid rgba(255,255,255,0.3);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 6px rgba(78,218,146,0.12);
         position: relative;
-        z-index: 2;
         transition: box-shadow 0.4s ease, transform 0.3s ease;
     }
 
@@ -1589,10 +1601,10 @@
 
     .rb-phone-mini-candidate {
         position: absolute;
-        bottom: 14px;
+        bottom: 8px;
         right: 12px;
-        width: 70px;
-        height: 84px;
+        width: 128px;
+        height: 139px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-radius: 14px;
         border: 2.5px solid rgba(255,255,255,0.75);
@@ -1603,8 +1615,27 @@
         font-size: 1.6rem;
         box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         z-index: 3;
-        overflow: visible;
+        overflow: hidden;
         transition: box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+
+    /* Candidate live video (proctoring) - fills the candidate area */
+    .rb-phone-candidate-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px;
+        z-index: 1;
+        background: #1a1a2e;
+    }
+    .rb-phone-mini-candidate .rb-phone-candidate-fallback-icon {
+        position: relative;
+        z-index: 0;
+    }
+    .rb-phone-mini-candidate.has-video .rb-phone-candidate-fallback-icon {
+        display: none;
     }
 
     /* Meet-style highlight when candidate is speaking (recording) */
@@ -1647,6 +1678,29 @@
     .rb-candidate-audio-waves .wave-bar:nth-child(4) { animation-delay: 0.3s; }
     .rb-candidate-audio-waves .wave-bar:nth-child(5) { animation-delay: 0.4s; }
 
+    /* AI waves: just below AI interviewer circle (when inside .rb-phone-ai-block) - visible when AI is speaking */
+    .rb-phone-ai-block .rb-phone-audio-waves-wrap {
+        position: relative;
+        bottom: -15px;
+        left: auto;
+        transform: none;
+        z-index: 3;
+    }
+    .rb-phone-ai-block .rb-audio-waves {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        margin-left: 0;
+    }
+    .rb-phone-ai-block .rb-audio-waves .wave-bar {
+        width: 4px;
+        height: 18px;
+        background: #4eda92;
+        border-radius: 2px;
+        animation: waveAnimation 1.2s ease-in-out infinite;
+        box-shadow: 0 0 8px rgba(78,218,146,0.5);
+    }
     .rb-phone-audio-waves-wrap {
         position: absolute;
         bottom: 22px;
@@ -1656,6 +1710,7 @@
     }
 
     .rb-phone-bottom-panel {
+        position: relative;
         background: #ffffff;
         padding: 12px 16px 16px;
     }
@@ -1737,15 +1792,47 @@
         margin-top: 4px;
     }
 
-    .rb-phone-read-more {
-        color: #4eda92;
-        font-weight: 600;
-        cursor: pointer;
-        text-decoration: none;
-        -webkit-tap-highlight-color: transparent;
+    /* Full question overlay - mobile only: tap preview to show, tap again or tap overlay to hide */
+    .rb-phone-question-full-overlay {
+        display: none;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        background: rgba(26, 26, 46, 0.97);
+        z-index: 10;
+        padding: 16px;
+        border-radius: 14px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
     }
-    .rb-phone-read-more:hover {
-        text-decoration: underline;
+    .rb-phone-question-full-overlay.is-visible {
+        display: flex;
+    }
+    .rb-phone-question-full-content {
+        font-size: 0.9rem;
+        color: #fff;
+        line-height: 1.5;
+        text-align: left;
+        overflow-y: auto;
+        max-height: 80%;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+    }
+    .rb-phone-question-full-hint {
+        font-size: 0.7rem;
+        color: rgba(255,255,255,0.7);
+        margin-top: 10px;
+    }
+
+    @@media (max-width: 992px) {
+        .rb-phone-question-preview {
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(78,218,146,0.2);
+        }
     }
 
     /* Controls below the phone card */
@@ -1830,8 +1917,9 @@
 
     @@media (max-width: 768px) {
         .rb-phone-card { width: 240px; min-height: 450px; }
-        .rb-ai-interviewer-avatar { width: 100px; height: 100px; font-size: 2.5rem; }
-        .rb-phone-mini-candidate { width: 58px; height: 70px; font-size: 1.3rem; }
+        .rb-phone-ai-block { top: 64px; gap: 6px; }
+        .rb-ai-interviewer-avatar { width: 64px; height: 64px; font-size: 1.5rem; }
+        .rb-phone-mini-candidate { width: 100px; height: 125px; font-size: 1.3rem; }
         .rb-audio-phone-section { padding-top: 4px; }
     }
 </style>
@@ -1895,15 +1983,18 @@
         @* ============================================================
            AUDIO INTERVIEW PHONE UI — rendered only when IsAdaptive
            ============================================================ *@
-        @if (Model.IsAdaptive == true)
+        @if (Model.IsAdaptive == false)
         {
-            int assistantMsgCount = 0;
+            int botMsgCount = 0;
             foreach (var cl in Model.ChatLog)
             {
-                if (cl.Role != null && cl.Role.ToLower() == "assistant") assistantMsgCount++;
+                if (cl.Role != null && cl.Role.ToLower() == "bot") botMsgCount++;
             }
-            int currentQuestionNum = assistantMsgCount + 1;
+            // Current question = number of questions AI has asked (ChatLog uses Role "Bot" per question). Active dot = this number.
+            int currentQuestionNum = botMsgCount >= 1 ? botMsgCount : 1;
             int totalQuestions = 5;
+            // Sliding window of 5 dots: Q1-5 show 1..5, Q6-10 show 6..10, Q11-15 show 11..15, etc.
+            int rowStart = ((currentQuestionNum - 1) / 5) * 5 + 1;
             string questionPreview = !string.IsNullOrWhiteSpace(Model.CurrentQuestion) ? Model.CurrentQuestion : "Preparing your next question...";
 
             <div class="rb-audio-phone-section">
@@ -1940,31 +2031,32 @@
                             </div>
                         </div>
 
-                        <!-- AI Interviewer avatar -->
-                        <div class="rb-ai-interviewer-avatar" id="aiAvatarCircle">
-                            <i class="fa fa-user"></i>
+                        <!-- AI Interviewer block: avatar + waves just below (positioned toward top so not hidden by candidate video) -->
+                        <div class="rb-phone-ai-block">
+                            <div class="rb-ai-interviewer-avatar" id="aiAvatarCircle">
+                                <i class="fa fa-user"></i>
+                            </div>
+                            <div class="rb-phone-audio-waves-wrap">
+                                <div class="rb-audio-waves" id="audioWaves" style="display:none;">
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar" style="animation-delay:0.4s"></div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Mini candidate view (highlighted + waves when candidate is recording) -->
+                        <!-- Mini candidate view: live video for proctoring (highlighted + waves when recording) -->
                         <div class="rb-phone-mini-candidate" id="candidateAvatarCircle" title="@Model.candidateName">
-                            <i class="fa fa-user"></i>
+                            <video id="candidateVideoEl" class="rb-phone-candidate-video" autoplay muted playsinline style="display:none;"></video>
+                            <i class="fa fa-user rb-phone-candidate-fallback-icon"></i>
                             <div class="rb-candidate-audio-waves" id="candidateAudioWaves" style="display:none;">
                                 <div class="wave-bar"></div>
                                 <div class="wave-bar"></div>
                                 <div class="wave-bar"></div>
                                 <div class="wave-bar"></div>
                                 <div class="wave-bar"></div>
-                            </div>
-                        </div>
-
-                        <!-- Audio waves inside phone (shown when AI is speaking) -->
-                        <div class="rb-phone-audio-waves-wrap">
-                            <div class="rb-audio-waves" id="audioWaves" style="display:none;">
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar" style="animation-delay:0.4s"></div>
                             </div>
                         </div>
 
@@ -1981,22 +2073,23 @@
                             </span>
                         </div>
 
-                        <!-- Question progress dots -->
+                        <!-- Question progress dots (window of 5: 1-5, then 6-10, then 11-15, etc.) -->
                         <div class="rb-phone-question-dots">
-                            @for (int i = 1; i <= totalQuestions; i++)
+                            @for (int i = 0; i < totalQuestions; i++)
                             {
-                                var dotClass = (i == currentQuestionNum) ? "rb-phone-q-dot rb-q-dot-active" : ((i < currentQuestionNum) ? "rb-phone-q-dot rb-q-dot-done" : "rb-phone-q-dot");
-                                <div class="@dotClass">@i</div>
+                                int qNum = rowStart + i;
+                                var dotClass = (qNum == currentQuestionNum) ? "rb-phone-q-dot rb-q-dot-active" : ((qNum < currentQuestionNum) ? "rb-phone-q-dot rb-q-dot-done" : "rb-phone-q-dot");
+                                <div class="@dotClass">@qNum</div>
                             }
                         </div>
 
-                        <!-- Question preview -->
-                        <div class="rb-phone-question-preview">
-                            @(questionPreview.Length > 90 ? questionPreview.Substring(0, 90) + "… " : questionPreview)
-                            @if (questionPreview.Length > 90)
-                            {
-                                <span class="rb-phone-read-more" role="button" tabindex="0" title="Read full question">Read more</span>
-                            }
+                        <!-- Question preview (mobile: tap to show full question, tap again to hide) -->
+                        <div class="rb-phone-question-preview" id="rbPhoneQuestionPreview" role="button" tabindex="0">
+                            @(questionPreview.Length > 90 ? questionPreview.Substring(0, 90) + "…" : questionPreview)
+                        </div>
+                        <div class="rb-phone-question-full-overlay" id="rbPhoneQuestionFullOverlay" aria-hidden="true">
+                            <div class="rb-phone-question-full-content">@questionPreview</div>
+                            <span class="rb-phone-question-full-hint">Tap to close</span>
                         </div>
 
                     </div><!-- /rb-phone-bottom-panel -->
@@ -2433,17 +2526,54 @@
             });
         }
 
-        // Audio mode: click "Read more" scrolls to chat (message-content-discourageCopyPaste) to read full question
-        const readMoreEl = document.querySelector('.rb-phone-read-more');
-        const chatLogForScroll = document.getElementById('chatLog');
-        if (readMoreEl && chatLogForScroll) {
-            function scrollToFullQuestion() {
-                var chatContainer = document.querySelector('.chat-log-container');
-                if (chatContainer) chatContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                chatLogForScroll.scrollTo({ top: chatLogForScroll.scrollHeight, behavior: 'smooth' });
+        // Audio mode: start candidate camera for proctoring (video on in candidate area); reuse same stream's audio for recording
+        if (document.querySelector('.rb-audio-phone-section')) {
+            const candidateVideoEl = document.getElementById('candidateVideoEl');
+            const candidateAvatarCircle = document.getElementById('candidateAvatarCircle');
+            if (candidateVideoEl && candidateAvatarCircle && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                    .then(function(stream) {
+                        window._audioPhoneCandidateStream = stream;
+                        candidateVideoEl.srcObject = stream;
+                        candidateVideoEl.style.display = 'block';
+                        candidateVideoEl.play().catch(function() {});
+                        candidateAvatarCircle.classList.add('has-video');
+                    })
+                    .catch(function(err) {
+                        console.warn('Candidate camera not available for proctoring:', err);
+                    });
             }
-            readMoreEl.addEventListener('click', scrollToFullQuestion);
-            readMoreEl.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); scrollToFullQuestion(); } });
+        }
+
+        // Mobile only: tap question preview to show full question, tap again or tap overlay to hide
+        var questionPreviewEl = document.getElementById('rbPhoneQuestionPreview');
+        var questionFullOverlay = document.getElementById('rbPhoneQuestionFullOverlay');
+        if (questionPreviewEl && questionFullOverlay) {
+            function isMobileView() { return window.matchMedia('(max-width: 992px)').matches; }
+            function toggleFullQuestion() {
+                if (!isMobileView()) return;
+                questionFullOverlay.classList.toggle('is-visible');
+                questionFullOverlay.setAttribute('aria-hidden', questionFullOverlay.classList.contains('is-visible') ? 'false' : 'true');
+            }
+            function hideFullQuestion() {
+                questionFullOverlay.classList.remove('is-visible');
+                questionFullOverlay.setAttribute('aria-hidden', 'true');
+            }
+            questionPreviewEl.addEventListener('click', function(e) {
+                if (!isMobileView()) return;
+                e.preventDefault();
+                toggleFullQuestion();
+            });
+            questionFullOverlay.addEventListener('click', function(e) {
+                e.stopPropagation();
+                hideFullQuestion();
+            });
+            questionPreviewEl.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (isMobileView()) toggleFullQuestion();
+                }
+            });
         }
     });
 </script>
@@ -2521,7 +2651,16 @@
     if (recordBtn) {
         recordBtn.addEventListener("click", async () => {
             if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                let stream;
+                if (isAudioPhoneMode && window._audioPhoneCandidateStream && window._audioPhoneCandidateStream.active) {
+                    var audioTracks = window._audioPhoneCandidateStream.getAudioTracks();
+                    if (audioTracks.length) {
+                        stream = new MediaStream(audioTracks);
+                    }
+                }
+                if (!stream) {
+                    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                }
                 mediaRecorderAudio = new MediaRecorder(stream);
 
                 mediaRecorderAudio.ondataavailable = e => {
