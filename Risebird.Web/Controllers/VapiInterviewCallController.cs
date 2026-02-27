@@ -136,10 +136,11 @@ namespace Risebird.Web.Controllers
                     {
                         { "irfId", irfId },
                         { "candidateEmail", candidateEmail }
-                    }
+                    },
+                    CandidateId = candidateId > 0 ? candidateId : (int?)null
                 };
 
-                // Initiate the call
+                // Initiate the call — VapiService increments VapiCallAttempts on success
                 var callResponse = await _vapiService.InitiateCallAsync(callRequest);
 
                 // Save call log to database
@@ -161,11 +162,6 @@ namespace Risebird.Web.Controllers
                 };
 
                 var logId = await _vapiCallRepository.SaveCallLogAsync(callLog);
-
-                // Track the attempt on the Candidate row so eligibility queries
-                // can filter directly on Candidate.VapiCallAttempts without touching VapiCallLogs.
-                if (candidateId > 0)
-                    await _vapiCallRepository.IncrementVapiCallAttemptsAsync(candidateId);
 
                 return Json(new
                 {

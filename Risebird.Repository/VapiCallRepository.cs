@@ -24,7 +24,7 @@ namespace Risebird.Repository
     /// <summary>
     /// Repository implementation for Vapi call operations
     /// </summary>
-    public class VapiCallRepository : IVapiCallRepository
+    public class VapiCallRepository : IVapiCallRepository, Risebird.CommonHelper.Interface.ICandidateCallTracker
     {
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
