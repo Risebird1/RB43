@@ -23,6 +23,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IVapiService _vapiService;
         private readonly IVapiCallRepository _vapiCallRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IPhoneNumberHelper _phoneNumberHelper;
         private readonly ILogger _log;
 
         public VapiInterviewSchedulingJob(
@@ -30,12 +31,14 @@ namespace Risebird.AzureTimerFunctions
             IConfiguration configuration,
             IVapiService vapiService,
             IVapiCallRepository vapiCallRepository,
-            IApplicationErrorLogger applicationErrorLogger)
+            IApplicationErrorLogger applicationErrorLogger,
+            IPhoneNumberHelper phoneNumberHelper)
         {
             _configuration = configuration;
             _vapiService = vapiService;
             _vapiCallRepository = vapiCallRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _phoneNumberHelper = phoneNumberHelper;
             _log = loggerFactory.CreateLogger<VapiInterviewSchedulingJob>();
         }
 
@@ -44,7 +47,7 @@ namespace Risebird.AzureTimerFunctions
         /// CRON: "0 */15 * * * *" = every 15 minutes
         /// </summary>
         [Function("VapiInterviewSchedulingJob")]
-        public async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer)
         {
             var currentTime = DateTime.Now;
             var currentHour = currentTime.Hour;
@@ -63,7 +66,7 @@ namespace Risebird.AzureTimerFunctions
                 _log.LogInformation($"Executing within business hours - Current time: {currentTime:HH:mm}");
 
                 // Get eligible candidates for calls (max 10)
-                var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(5);
+                var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(1);
 
                 if (eligibleCandidates == null || !eligibleCandidates.Any())
                 {
@@ -95,18 +98,11 @@ namespace Risebird.AzureTimerFunctions
                     {
                         _log.LogInformation($"Processing candidate: {candidate.CandidateName} (Email: {candidate.CandidateEmail}, IRFId: {candidate.IRFId}, Attempts: {candidate.CallAttempts})");
 
-                        // Validate phone number
-                        if (string.IsNullOrWhiteSpace(candidate.CandidatePhone))
+                        // Validate and sanitize phone number into E.164 format (+91XXXXXXXXXX)
+                        if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(candidate.CandidatePhone, out var phoneNumber, out var phoneError))
                         {
-                            _log.LogWarning($"Skipping candidate {candidate.CandidateEmail} - No phone number");
+                            _log.LogWarning($"Skipping candidate {candidate.CandidateEmail} - Invalid phone number: {phoneError}");
                             continue;
-                        }
-
-                        // Ensure phone number is in E.164 format
-                        var phoneNumber = candidate.CandidatePhone.Trim();
-                        if (!phoneNumber.StartsWith("+"))
-                        {
-                            phoneNumber = "+91" + phoneNumber; // Default to India country code
                         }
 
                         // Get webhook URL
@@ -178,6 +174,10 @@ namespace Risebird.AzureTimerFunctions
                         };
 
                         await _vapiCallRepository.SaveCallLogAsync(callLog);
+
+                        // Track the attempt on the Candidate row so eligibility queries
+                        // can filter directly on Candidate.VapiCallAttempts without touching VapiCallLogs.
+                        await _vapiCallRepository.IncrementVapiCallAttemptsAsync(candidate.CandidateId);
 
                         successCount++;
 
