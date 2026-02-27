@@ -122,7 +122,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Index(bool testVapiCalls = true)
+        public async Task<IActionResult> Index(bool testVapiCalls = false)
         {
             try
             {
