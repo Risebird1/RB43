@@ -228,6 +228,7 @@ builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IVapiService, VapiService>();
 builder.Services.AddScoped<IVapiCallRepository, VapiCallRepository>();
+builder.Services.AddScoped<ICandidateCallTracker>(sp => (ICandidateCallTracker)sp.GetRequiredService<IVapiCallRepository>());
 builder.Services.AddScoped<IVapiInterviewService, VapiInterviewService>();
 // ============================================
 
