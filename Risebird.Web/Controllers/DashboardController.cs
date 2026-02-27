@@ -69,6 +69,7 @@ namespace Risebird.Web.Controllers
         private readonly IResumeOptimizationHelper _resumeOptimizationHelper;
         private readonly IVapiService _vapiService;
         private readonly IVapiCallRepository _vapiCallRepository;
+        private readonly IPhoneNumberHelper _phoneNumberHelper;
 
         //private readonly IIRFService _irfService;
 
@@ -83,7 +84,8 @@ namespace Risebird.Web.Controllers
             IValidationHelper validationHelper, IOpenAIInterviewerAssistantHelper ai,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IAWSRekognitionService aWSRekognitionService,
             IZohoMeetingHelper zoho, IResumeOptimizationHelper resumeOptimizationHelper,
-            IVapiService vapiService, IVapiCallRepository vapiCallRepository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IVapiService vapiService, IVapiCallRepository vapiCallRepository,
+            IPhoneNumberHelper phoneNumberHelper)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -115,6 +117,7 @@ namespace Risebird.Web.Controllers
             _resumeOptimizationHelper = resumeOptimizationHelper;
             _vapiService = vapiService;
             _vapiCallRepository = vapiCallRepository;
+            _phoneNumberHelper = phoneNumberHelper;
         }
 
         [Authorize]
@@ -133,9 +136,9 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
                         // ========================================
-                        // VAPI AUTOMATED CALLS TEST MODE
-                        // Access via: /Dashboard/Index?testVapiCalls=true
-                        // ========================================
+                        //VAPI AUTOMATED CALLS TEST MODE
+                        //Access via: / Dashboard / Index ? testVapiCalls = true
+                        //========================================
                         //if (testVapiCalls)
                         //{
                         //    var testResults = new List<string>();
@@ -158,7 +161,7 @@ namespace Risebird.Web.Controllers
 
                         //        // Get eligible candidates
                         //        testResults.Add("📋 Fetching eligible candidates...");
-                        //        var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(5);
+                        //        var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(1);
 
                         //        if (eligibleCandidates == null || !eligibleCandidates.Any())
                         //        {
@@ -209,13 +212,12 @@ namespace Risebird.Web.Controllers
                         //                    continue;
                         //                }
 
-                        //                // Format phone number (E.164 format)
-                        //                var phoneNumber = candidate.CandidatePhone.Trim();
-                        //                if (!phoneNumber.StartsWith("+"))
+                        //                // Validate and sanitize phone number into E.164 format (+91XXXXXXXXXX)
+                        //                if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(candidate.CandidatePhone, out var phoneNumber, out var phoneError))
                         //                {
-                        //                    phoneNumber = "+91" + phoneNumber; // Default to India
+                        //                    testResults.Add($"Skipped {candidate.CandidateName}: invalid phone - {phoneError}");
+                        //                    continue;
                         //                }
-                        //                //phoneNumber = "+918105232468";// "+918888571923";
                         //                // Get system prompt with current date and dynamic client name
                         //                var systemPromptWithDate = GetSystemPromptWithCurrentDate(
                         //                    candidate.CandidateName,
@@ -264,6 +266,10 @@ namespace Risebird.Web.Controllers
                         //                var callResponse = await _vapiService.InitiateCallAsync(callRequest);
 
                         //                testResults.Add($"   ✅ Call initiated - CallId: {callResponse.Id}, Status: {callResponse.Status}");
+
+                        //                // Track the attempt on the Candidate row so eligibility queries
+                        //                // can filter directly on Candidate.VapiCallAttempts without touching VapiCallLogs.
+                        //                await _vapiCallRepository.IncrementVapiCallAttemptsAsync(candidate.CandidateId);
 
                         //                // Save call log
                         //                var callLog = new VapiCallLog

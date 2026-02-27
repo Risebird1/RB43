@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using RestSharp;
+using Risebird.Web.Extensions;
 
 namespace Risebird.Web.Controllers
 {
@@ -27,17 +28,20 @@ namespace Risebird.Web.Controllers
         private readonly IVapiService _vapiService;
         private readonly IVapiCallRepository _vapiCallRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IPhoneNumberHelper _phoneNumberHelper;
 
         public VapiInterviewCallController(
             IConfiguration configuration,
             IVapiService vapiService,
             IVapiCallRepository vapiCallRepository,
-            IApplicationErrorLogger applicationErrorLogger)
+            IApplicationErrorLogger applicationErrorLogger,
+            IPhoneNumberHelper phoneNumberHelper)
         {
             _configuration = configuration;
             _vapiService = vapiService;
             _vapiCallRepository = vapiCallRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _phoneNumberHelper = phoneNumberHelper;
         }
 
         /// <summary>
@@ -75,17 +79,12 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                // Validate phone number format (E.164)
-                if (string.IsNullOrWhiteSpace(candidatePhone))
+                // Validate and sanitize phone number into E.164 format (+91XXXXXXXXXX)
+                if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(candidatePhone, out var sanitizedPhone, out var phoneError))
                 {
-                    return Json(new { success = false, message = "Phone number is required" });
+                    return Json(new { success = false, message = $"Invalid phone number: {phoneError}" });
                 }
-
-                // Ensure phone number is in E.164 format
-                if (!candidatePhone.StartsWith("+"))
-                {
-                    candidatePhone = "+91" + candidatePhone; // Default to India country code
-                }
+                candidatePhone = sanitizedPhone;
 
                 // Get webhook URL from configuration
                 var baseUrl = _configuration["HostDetails:baseUrl"];
@@ -162,6 +161,11 @@ namespace Risebird.Web.Controllers
                 };
 
                 var logId = await _vapiCallRepository.SaveCallLogAsync(callLog);
+
+                // Track the attempt on the Candidate row so eligibility queries
+                // can filter directly on Candidate.VapiCallAttempts without touching VapiCallLogs.
+                if (candidateId > 0)
+                    await _vapiCallRepository.IncrementVapiCallAttemptsAsync(candidateId);
 
                 return Json(new
                 {
@@ -594,7 +598,7 @@ namespace Risebird.Web.Controllers
                             // usp_GetEligibleCandidatesForVapiCalls (InterviewMeetings.confirmationStatus = '1').
                             var hasConfirmedInterview = await _vapiCallRepository.HasConfirmedInterviewAsync(candidateEmail, Convert.ToInt32(irfId));
                             await LogCheckpoint("CHECKPOINT-ScheduleApiCheck", $"HasConfirmedInterview: {hasConfirmedInterview}, CandidateEmail: {candidateEmail}, IrfId: {irfId}", callId);
-                            
+
                             if (!hasConfirmedInterview && parsedDateTime.HasValue)
                             {
                                 await Task.Delay(2000);
@@ -604,7 +608,9 @@ namespace Risebird.Web.Controllers
                                     var _dto = new ScheduleCandidatesRequest();
                                     _dto.skillChannelId = _candidateDetails.IRFId;
                                     _dto.requestedBy = _candidateDetails.ClientHRAttemptContact;
-                                    _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = parsedDateTime.Value, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = _candidateDetails.CandidateName });
+                                    //Round the Time Slot as Required for skill channel Schdeuler slots
+                                    var interviewdate = parsedDateTime.Value.RoundToNearSlot(_candidateDetails.duration);
+                                    _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = interviewdate, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = _candidateDetails.CandidateName });
                                     var apiurl = "https://api.portal.risebird.io/api/Candidates/Schedule";
                                     var client = new RestClient(apiurl);
                                     var request = new RestRequest(apiurl, Method.Post);

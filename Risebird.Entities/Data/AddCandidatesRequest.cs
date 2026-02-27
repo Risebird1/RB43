@@ -113,6 +113,7 @@ namespace Risebird.Entities.Data
         public string ResumeLink { get; set; }
         public string ClientHRAttemptContact { get; set; }
         public string CandidateName { get; set; }
+        public int duration { get; set; }
     }
 }
 

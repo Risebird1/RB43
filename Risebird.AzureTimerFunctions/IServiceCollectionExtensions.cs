@@ -146,6 +146,7 @@ namespace Risebird.AzureFunctions
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<ICodeInviteRequest, CodeInviteRequest>();
             services.AddScoped<IValidationHelper, ValidationHelper>();
+            services.AddScoped<IPhoneNumberHelper, PhoneNumberHelper>();
             services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
             services.AddScoped<IVmHelper, VmHelper>();
             services.AddScoped<IGoogleEventHelper, GoogleEventHelper>();
