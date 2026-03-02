@@ -149,7 +149,7 @@ namespace Risebird.Web.Controllers
 
                         //    try
                         //    {
-                        //        // Check business hours (9 AM - 9 PM)
+                        //         Check business hours (9 AM - 9 PM)
                         //        if (currentHour < 9 || currentHour >= 21)
                         //        {
                         //            testResults.Add($"⏰ SKIPPED - Current time {currentTime:HH:mm} is outside business hours (9 AM - 9 PM IST)");
@@ -159,7 +159,7 @@ namespace Risebird.Web.Controllers
 
                         //        testResults.Add($"✅ Within business hours - Current time: {currentTime:HH:mm}");
 
-                        //        // Get eligible candidates
+                        //         Get eligible candidates
                         //        testResults.Add("📋 Fetching eligible candidates...");
                         //        var eligibleCandidates = await _vapiCallRepository.GetEligibleCandidatesForVapiCallsAsync(1);
 
@@ -173,7 +173,7 @@ namespace Risebird.Web.Controllers
                         //        testResults.Add($"✅ Found {eligibleCandidates.Count} eligible candidates");
                         //        testResults.Add("");
 
-                        //        // Get configuration
+                        //         Get configuration
                         //        var baseUrl = _configuration["HostDetails:baseUrl"];
                         //        var assistantId = _configuration["Vapi:InterviewBookingAssistantId"];
 
@@ -189,7 +189,7 @@ namespace Risebird.Web.Controllers
                         //        testResults.Add($"✅ Webhook URL: {baseUrl}/VapiInterviewCall/Webhook");
                         //        testResults.Add("");
 
-                        //        // Process each candidate
+                        //         Process each candidate
                         //        int successCount = 0;
                         //        int failureCount = 0;
 
@@ -204,7 +204,7 @@ namespace Risebird.Web.Controllers
                         //                testResults.Add($"   IRF ID: {candidate.IRFId} ({candidate.IRFName})");
                         //                testResults.Add($"   Previous Attempts: {candidate.CallAttempts}");
 
-                        //                // Validate phone
+                        //                 Validate phone
                         //                if (string.IsNullOrWhiteSpace(candidate.CandidatePhone))
                         //                {
                         //                    testResults.Add("   ⚠️ SKIPPED - No phone number");
@@ -212,22 +212,22 @@ namespace Risebird.Web.Controllers
                         //                    continue;
                         //                }
 
-                        //                // Validate and sanitize phone number into E.164 format (+91XXXXXXXXXX)
+                        //                 Validate and sanitize phone number into E.164 format (+91XXXXXXXXXX)
                         //                if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(candidate.CandidatePhone, out var phoneNumber, out var phoneError))
                         //                {
                         //                    testResults.Add($"Skipped {candidate.CandidateName}: invalid phone - {phoneError}");
                         //                    continue;
                         //                }
-                        //                // Get system prompt with current date and dynamic client name
+                        //                 Get system prompt with current date and dynamic client name
                         //                var systemPromptWithDate = GetSystemPromptWithCurrentDate(
                         //                    candidate.CandidateName,
                         //                    candidate.JobTitle ?? candidate.IRFName,
                         //                    candidate.IRFId.ToString(),
                         //                    candidate.CandidateEmail,
-                        //                    //"harshit_jajoo@risebird.io",
+                        //                    "harshit_jajoo@risebird.io",
                         //                    candidate.ClientName);
 
-                        //                // Create call request
+                        //                 Create call request
                         //                var callRequest = new VapiCallRequest
                         //                {
                         //                    PhoneNumberId = _configuration["Vapi:PhoneNumberId"],
@@ -236,7 +236,7 @@ namespace Risebird.Web.Controllers
                         //                        Number = phoneNumber,
                         //                        Name = candidate.CandidateName,
                         //                        Email = candidate.CandidateEmail
-                        //                        //Email = "harshit_jajoo@risebird.io"
+                        //                        Email = "harshit_jajoo@risebird.io"
                         //                    },
                         //                    AssistantId = assistantId,
                         //                    AssistantOverrides = new VapiAssistantOverrides
@@ -263,12 +263,12 @@ namespace Risebird.Web.Controllers
                         //                    CandidateId = candidate.CandidateId
                         //                };
 
-                        //                // Initiate the call — VapiService increments VapiCallAttempts on success
+                        //                 Initiate the call — VapiService increments VapiCallAttempts on success
                         //                var callResponse = await _vapiService.InitiateCallAsync(callRequest);
 
                         //                testResults.Add($"   ✅ Call initiated - CallId: {callResponse.Id}, Status: {callResponse.Status}");
 
-                        //                // Save call log
+                        //                 Save call log
                         //                var callLog = new VapiCallLog
                         //                {
                         //                    VapiCallId = callResponse.Id,
@@ -286,12 +286,12 @@ namespace Risebird.Web.Controllers
                         //                    CreatedBy = $"Test-{Emailid}"
                         //                };
 
-                        //                //await _vapiCallRepository.SaveCallLogAsync(callLog);
+                        //                await _vapiCallRepository.SaveCallLogAsync(callLog);
 
                         //                testResults.Add($"   ✅ Call log saved to database");
                         //                successCount++;
 
-                        //                // Add delay between calls
+                        //                 Add delay between calls
                         //                await Task.Delay(2000); // 2 seconds
                         //                testResults.Add("");
                         //            }
