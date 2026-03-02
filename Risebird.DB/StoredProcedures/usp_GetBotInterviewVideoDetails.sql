@@ -14,11 +14,21 @@ Create Procedure usp_GetBotInterviewVideoDetails
 AS
 BEGIN
 
+-- LEFT JOIN instead of INNER JOIN so that Adaptive/OpenAI rows (DeliveryHeadQuestionId IS NULL)
+-- are not silently dropped. SkillChannelSampleQuestions only applies to the Preset flow (AIInterviewType = 2).
+-- For Adaptive sessions (AIInterviewType = 1) DeliveryHeadQuestionId is always NULL, so sq columns
+-- will be NULL after the left join -- that is expected and correct.
 select biqv.*, sq.IsFlaggedForSentimentAnalysis from BotInterviewQuestionVideos biqv 
-join SkillChannelSampleQuestions sq on sq.id = biqv.DeliveryHeadQuestionId
-where SessionId = @SessionId and (sq.IsTypingSpeedAssessment is null or sq.IsTypingSpeedAssessment = 0)
-and (sq.IsListeningComprehension is null or sq.IsListeningComprehension = 0)
-order by CreatedAt 
+left join SkillChannelSampleQuestions sq on sq.id = biqv.DeliveryHeadQuestionId
+where biqv.SessionId = @SessionId
+and (
+    biqv.DeliveryHeadQuestionId IS NULL  -- Adaptive flow: no preset question, include all rows
+    OR (
+        (sq.IsTypingSpeedAssessment is null or sq.IsTypingSpeedAssessment = 0)
+        and (sq.IsListeningComprehension is null or sq.IsListeningComprehension = 0)
+    )
+)
+order by biqv.CreatedAt 
 
 END
 GO

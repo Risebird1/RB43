@@ -634,7 +634,12 @@ namespace Risebird.Web.Controllers
                                     candidatePrompt = $"Due to some reason, you are required to start over the interview from the top. Please start with the first question. You will interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
 
                                 }
-                                var replies = await _api.SendReply(sid, candidatePrompt, meetingDetails.AssistantId);
+
+                                //var replies = await _api.SendReply(sid, candidatePrompt, meetingDetails.AssistantId);
+
+                                // Use SendSystemPrompt so this internal recovery context is sent to OpenAI
+                                // but is NOT logged to TransCriptsConv as a "user" turn.
+                                var replies = await _api.SendSystemPrompt(sid, candidatePrompt, meetingDetails.AssistantId);
 
                                 model = new ChatMessageViewModel
                                 {
@@ -715,6 +720,7 @@ namespace Risebird.Web.Controllers
                             model.candidateName = meetingDetails.candidateName;
                             model.IsAdaptive = meetingDetails.IsAdaptive;
                             model.AssistantId = meetingDetails.AssistantId;
+                            model.AIInterviewType = meetingDetails.AIInterviewType;
                             model.showChatBox = meetingDetails.showChatBox;
                             model.isMultiLingual = meetingDetails.isMultiLingual;
                             return View(model);
@@ -1429,7 +1435,12 @@ namespace Risebird.Web.Controllers
                 // This allows text/code submissions to be saved successfully
                 
                 // Save in db with question.sessionid,videoLink,Datetime (VideoLink can be empty for text responses)
-                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, model.CurrentQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion);
+                // For the Adaptive/OpenAI flow, CurrentQuestionId is 0 because there are no preset question IDs.
+                // Passing 0 is treated as non-null by the stored proc, which causes it to UPDATE the very first row
+                // (DeliveryHeadQuestionId=0) on every subsequent answer instead of INSERTing a new row.
+                // Passing null tells the stored proc to always INSERT a new row, creating one entry per answered question.
+                int? deliveryHeadQuestionId = model.CurrentQuestionId > 0 ? model.CurrentQuestionId : (int?)null;
+                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, deliveryHeadQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion);
                 return result;
             }
             catch (Exception ex)
