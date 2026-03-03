@@ -33,7 +33,7 @@ namespace Risebird.AzureTimerFunctions
         }
 
         [Function("FetchMeetingVideoService")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             try
