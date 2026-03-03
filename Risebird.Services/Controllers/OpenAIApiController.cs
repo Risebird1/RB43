@@ -1,4 +1,4 @@
-﻿using Google.Apis.Drive.v3.Data;
+using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
 using Microsoft.Graph.Models;
@@ -109,6 +109,31 @@ namespace Risebird.Services.Controllers
             //{
             //    await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", reply);
             //}
+
+            return Ok(new { replies });
+        }
+
+        /// <summary>
+        /// Like Ask, but for internal/system-level prompts sent to OpenAI during recovery or initialisation.
+        /// The system prompt itself is NOT logged to TransCriptsConv; only the assistant's reply is logged.
+        /// This prevents internal restart/context prompts from polluting the candidate transcript.
+        /// </summary>
+        [HttpPost("asksystem")]
+        public async Task<IActionResult> AskSystem([FromBody] InterviewMessageVM input)
+        {
+            var threadId = await _aiInterviewerRepository.GetThreadId(input.SessionId);
+            await _ai.AddMessageAsync(threadId, "user", input.Message);
+            // Intentionally NOT logging the system prompt to TransCriptsConv.
+
+            var runId = await _ai.CreateRunAsync(threadId, input.AssistantId);
+            await _ai.WaitForRunAsync(threadId, runId);
+
+            var replies = await _ai.GetMessagesAsync(threadId);
+
+            if (replies != null && replies.Count() > 0)
+            {
+                await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", replies.FirstOrDefault());
+            }
 
             return Ok(new { replies });
         }

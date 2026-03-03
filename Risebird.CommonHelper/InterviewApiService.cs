@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
@@ -96,6 +96,26 @@ public class InterviewApiService : IInterviewApiService
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Interview API error: {response.StatusCode}");
+        }
+
+        var result = await response.Content.ReadFromJsonAsync<AskResponse>();
+        return result?.Replies ?? new List<string>();
+    }
+
+    public async Task<List<string>> SendSystemPrompt(Guid sessionId, string systemPrompt, string assistantId)
+    {
+        var payload = new InterviewMessageVM
+        {
+            SessionId = sessionId,
+            Message = systemPrompt,
+            AssistantId = assistantId
+        };
+
+        var response = await _http.PostAsJsonAsync("api/OpenAIApi/asksystem", payload);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Interview API error (system prompt): {response.StatusCode}");
         }
 
         var result = await response.Content.ReadFromJsonAsync<AskResponse>();

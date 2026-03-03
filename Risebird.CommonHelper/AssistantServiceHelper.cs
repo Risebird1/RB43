@@ -288,11 +288,15 @@ namespace Risebird.CommonHelper
 
 
 
-                var requestBody = new
-                {
-                    assistant_id = assistantId//(profileType == ProfileNames.Candidate ? candidateScreenerAssistantId : interviewerScreenerAssistantId)
-                    //response_format = new { type = "json_object" }
-                };
+                // response_format: json_object enforces valid JSON output and reduces output tokens
+                // by preventing the model from wrapping JSON in markdown fences.
+                // Only applies to assistants whose system prompts mention "JSON" (OpenAI requirement).
+                // Excluded for TranscriptToNotes which produces free-form prose, not structured JSON.
+                bool useJsonResponseFormat = profileType != ProfileNames.TranscriptToNotesAssistantId;
+
+                object requestBody = useJsonResponseFormat
+                    ? (object)new { assistant_id = assistantId, response_format = new { type = "json_object" } }
+                    : (object)new { assistant_id = assistantId };
 
                 var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/threads/{threadId}/runs")
                 {

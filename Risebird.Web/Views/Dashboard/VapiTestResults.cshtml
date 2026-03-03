@@ -1,0 +1,114 @@
+@{
+    ViewData["Title"] = "Vapi Automated Calls Test Results";
+    var testResults = ViewBag.VapiTestResults as List<string>;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #252526;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #4ec9b0;
+            border-bottom: 2px solid #4ec9b0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .results {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 4px;
+            border: 1px solid #3c3c3c;
+            overflow-x: auto;
+        }
+        .line {
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+        .success { color: #4ec9b0; }
+        .error { color: #f48771; }
+        .warning { color: #dcdcaa; }
+        .info { color: #9cdcfe; }
+        .separator { color: #569cd6; font-weight: bold; margin: 10px 0; }
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #0e639c;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .back-btn:hover {
+            background-color: #1177bb;
+            color: white;
+            text-decoration: none;
+        }
+        pre {
+            margin: 0;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Vapi Automated Interview Scheduling - Test Results</h1>
+        
+        <div class="results">
+            @if (testResults != null && testResults.Any())
+            {
+                foreach (var line in testResults)
+                {
+                    var cssClass = "line";
+                    
+                    if (line.Contains("✅") || line.Contains("SUCCESS") || line.Contains("Successful"))
+                    {
+                        cssClass += " success";
+                    }
+                    else if (line.Contains("❌") || line.Contains("ERROR") || line.Contains("FAILED"))
+                    {
+                        cssClass += " error";
+                    }
+                    else if (line.Contains("⚠️") || line.Contains("SKIPPED") || line.Contains("WARNING"))
+                    {
+                        cssClass += " warning";
+                    }
+                    else if (line.Contains("📋") || line.Contains("📞") || line.Contains("🕐") || line.Contains("⏰"))
+                    {
+                        cssClass += " info";
+                    }
+                    else if (line.Contains("═══") || line.Contains("SUMMARY"))
+                    {
+                        cssClass += " separator";
+                    }
+                    
+                    <pre class="@cssClass">@line</pre>
+                }
+            }
+            else
+            {
+                <pre class="line error">No test results available</pre>
+            }
+        </div>
+        
+        <a href="@Url.Action("Index", "Dashboard")" class="back-btn">← Back to Dashboard</a>
+        <a href="@Url.Action("Index", "Dashboard", new { testVapiCalls = true })" class="back-btn" style="background-color: #4ec9b0;">🔄 Run Test Again</a>
+    </div>
+</body>
+</html>

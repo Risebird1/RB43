@@ -195,6 +195,7 @@ builder.Services.AddScoped<ISurveyRepository, SurveyRepository>();
 builder.Services.AddScoped<ISurveyService, SurveyService>();
 builder.Services.AddScoped<ICodeInviteRequest, CodeInviteRequest>();
 builder.Services.AddScoped<IValidationHelper, ValidationHelper>();
+builder.Services.AddScoped<IPhoneNumberHelper, PhoneNumberHelper>();
 builder.Services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
 builder.Services.AddScoped<IVmHelper, VmHelper>();
 builder.Services.AddScoped<IGoogleEventHelper, GoogleEventHelper>();
@@ -218,6 +219,7 @@ builder.Services.AddScoped<IOpenAIApiLogRepository, OpenAIApiLogRepository>();
 builder.Services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
 builder.Services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
 builder.Services.AddScoped<ITranscriptOptimizationHelper, TranscriptOptimizationHelper>();
+builder.Services.AddScoped<IReportQCOptimizationHelper, ReportQCOptimizationHelper>();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 
 // ============================================
@@ -226,6 +228,7 @@ builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IVapiService, VapiService>();
 builder.Services.AddScoped<IVapiCallRepository, VapiCallRepository>();
+builder.Services.AddScoped<ICandidateCallTracker>(sp => (ICandidateCallTracker)sp.GetRequiredService<IVapiCallRepository>());
 builder.Services.AddScoped<IVapiInterviewService, VapiInterviewService>();
 // ============================================
 

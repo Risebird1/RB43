@@ -5,11 +5,8 @@ BEGIN
 CREATE TABLE [dbo].[Candidate](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[IRFId] [int] NOT NULL,
-	[Name] [varchar](200) NULL,
-	[EmailId] [varchar](200) NULL,
 	[ResumeLink] [varchar](500) NULL,
-	[TotalInvites] INT NOT NULL DEFAULT 0,
-	[InviteDate] datetime NULL,
+	[TotalInvites] [int] NULL,
 	[Type] [varchar](100) NULL,
 	[Location] [varchar](100) NULL,
 	[Skill] [varchar](500) NULL,
@@ -31,35 +28,47 @@ CREATE TABLE [dbo].[Candidate](
 	[SkillGeneralScore] [decimal](10, 2) NULL,
 	[AddedByUserId] [int] NULL,
 	[VoiceItUserId] [nvarchar](max) NULL,
+	[InviteDate] [datetime] NULL,
 	[Status] [int] NULL,
-    [CostEstimate] [nvarchar](200) NULL,
-    [EncodedResumeLink] [varchar](500) NULL,
-    [Heuristicsscore] int NULL,
-    [AvailableFullTime] [bit] NULL,
+	[CandidateMasterId] [int] NULL,
+	[CostEstimate] [nvarchar](200) NULL,
+	[EncodedResumeLink] [varchar](500) NULL,
+	[Heuristicsscore] [int] NULL,
+	[AvailableFullTime] [bit] NULL,
 	[AvailableFreeLancing] [bit] NULL,
-    [ClientHRAttemptContact] [varchar](100) NULL,
-    [ProfileSource] [varchar](200) NULL,
-    [FitmentStatus] [int] NULL,
+	[ClientHRAttemptContact] [varchar](100) NULL,
+	[ProfileSource] [varchar](200) NULL,
+	[FitmentStatus] [int] NULL,
 	[PriorityStatus] [int] NULL,
 	[CompletionStatus] [int] NULL,
 	[IsProctor] [bit] NULL,
 	[AffindaResumeIdentifier] [varchar](75) NULL,
-    [CodedResumeLink] [varchar](2000) NULL,
-    [PreReportLink] [varchar](500) NULL,
-    [PreReportUsername] [varchar](50) NULL,
-    [PreReportPassword] [varchar](50) NULL,
-    [OpenAIScreeningResponseJson] [varchar](max) NULL,
-    [ResumeSummary] [varchar](max) NULL,
-    [AIResumeScreeningVerdict] [varchar](30) NULL,
-    [AIResumeScreeningScore] [int] NULL,
-    [AIScreeningResultJsonV2] [varchar](max) NULL,
-	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
-	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
+	[CodedResumeLink] [varchar](2000) NULL,
+	[IsResumeRedactAttempted] [bit] NULL,
+	[IsResumeRedactFailed] [bit] NULL,
+	[PreReportLink] [varchar](500) NULL,
+	[PreReportUsername] [varchar](50) NULL,
+	[PreReportPassword] [varchar](50) NULL,
+	[OpenAIScreeningResponseJson] [varchar](max) NULL,
+	[ResumeSummary] [varchar](max) NULL,
+	[AIResumeScreeningVerdict] [varchar](30) NULL,
+	[AIScreeningResultJsonV2] [varchar](max) NULL,
+	[AIResumeScreeningScore] [int] NULL,
+	[VapiCallAttempts] [int] NOT NULL DEFAULT 0,
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
-)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+ALTER TABLE [dbo].[Candidate] ADD  DEFAULT ((0)) FOR [TotalInvites]
+
+
+ALTER TABLE [dbo].[Candidate]  WITH CHECK ADD FOREIGN KEY([CandidateMasterId])
+REFERENCES [dbo].[CandidatesMaster] ([id])
+
+ALTER TABLE [dbo].[Candidate]  WITH CHECK ADD FOREIGN KEY([IRFId])
+REFERENCES [dbo].[IRF] ([id])
 End
 ELSE
 BEGIN
@@ -507,6 +516,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add AIResumeScreeningScore int
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VapiCallAttempts')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add VapiCallAttempts INT NOT NULL DEFAULT 0
 END
 
 End

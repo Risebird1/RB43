@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using RestSharp;
+using Risebird.Web.Extensions;
 
 namespace Risebird.Web.Controllers
 {
@@ -27,17 +28,20 @@ namespace Risebird.Web.Controllers
         private readonly IVapiService _vapiService;
         private readonly IVapiCallRepository _vapiCallRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IPhoneNumberHelper _phoneNumberHelper;
 
         public VapiInterviewCallController(
             IConfiguration configuration,
             IVapiService vapiService,
             IVapiCallRepository vapiCallRepository,
-            IApplicationErrorLogger applicationErrorLogger)
+            IApplicationErrorLogger applicationErrorLogger,
+            IPhoneNumberHelper phoneNumberHelper)
         {
             _configuration = configuration;
             _vapiService = vapiService;
             _vapiCallRepository = vapiCallRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _phoneNumberHelper = phoneNumberHelper;
         }
 
         /// <summary>
@@ -70,21 +74,17 @@ namespace Risebird.Web.Controllers
             string candidatePhone,
             string jobTitle,
             string irfId,
+            string clientName = null,
             DateTime? preferredDateTime = null)
         {
             try
             {
-                // Validate phone number format (E.164)
-                if (string.IsNullOrWhiteSpace(candidatePhone))
+                // Validate and sanitize phone number into E.164 format (+91XXXXXXXXXX)
+                if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(candidatePhone, out var sanitizedPhone, out var phoneError))
                 {
-                    return Json(new { success = false, message = "Phone number is required" });
+                    return Json(new { success = false, message = $"Invalid phone number: {phoneError}" });
                 }
-
-                // Ensure phone number is in E.164 format
-                if (!candidatePhone.StartsWith("+"))
-                {
-                    candidatePhone = "+91" + candidatePhone; // Default to India country code
-                }
+                candidatePhone = sanitizedPhone;
 
                 // Get webhook URL from configuration
                 var baseUrl = _configuration["HostDetails:baseUrl"];
@@ -103,7 +103,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 // Inject today's date dynamically into system prompt
-                var systemPromptWithDate = GetSystemPromptWithCurrentDate(candidateName, jobTitle, irfId, candidateEmail);
+                var systemPromptWithDate = GetSystemPromptWithCurrentDate(candidateName, jobTitle, irfId, candidateEmail, clientName ?? "the client");
 
                 // Create call request with customer info and date injection
                 var callRequest = new VapiCallRequest
@@ -121,7 +121,7 @@ namespace Risebird.Web.Controllers
                         Model = new VapiModelOverride
                         {
                             Provider = "openai",
-                            Model = "gpt-5.2-instant",
+                            Model = "gpt-4.1-mini",
                             Messages = new List<VapiMessage>
                             {
                                 new VapiMessage
@@ -136,10 +136,11 @@ namespace Risebird.Web.Controllers
                     {
                         { "irfId", irfId },
                         { "candidateEmail", candidateEmail }
-                    }
+                    },
+                    CandidateId = candidateId > 0 ? candidateId : (int?)null
                 };
 
-                // Initiate the call
+                // Initiate the call — VapiService increments VapiCallAttempts on success
                 var callResponse = await _vapiService.InitiateCallAsync(callRequest);
 
                 // Save call log to database
@@ -147,6 +148,7 @@ namespace Risebird.Web.Controllers
                 {
                     VapiCallId = callResponse.Id,
                     InterviewId = interviewId,
+                    IRFId = int.TryParse(irfId, out int parsedIrfId) ? parsedIrfId : (int?)null,
                     RecipientId = candidateId,
                     RecipientPhone = candidatePhone,
                     RecipientName = candidateName,
@@ -431,6 +433,22 @@ namespace Risebird.Web.Controllers
 
                         await LogCheckpoint("CHECKPOINT-7", $"Data extracted - Name: '{candidateName}', Email: '{candidateEmail}', Date: '{interviewDate}', Time: '{interviewTime}', TZ: '{timezone}', Confirmed: {candidateConfirmed}, IrfId: '{irfId}'", callId);
 
+                        // Convert natural date references to actual dates
+                        if (!string.IsNullOrEmpty(interviewDate))
+                        {
+                            var dateLower = interviewDate.ToLower().Trim();
+                            if (dateLower == "tomorrow")
+                            {
+                                interviewDate = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
+                                await LogCheckpoint("CHECKPOINT-7a", $"Converted 'tomorrow' to: {interviewDate}", callId);
+                            }
+                            else if (dateLower == "day after tomorrow" || dateLower == "dayaftertomorrow")
+                            {
+                                interviewDate = DateTime.Now.AddDays(2).ToString("yyyy-MM-dd");
+                                await LogCheckpoint("CHECKPOINT-7b", $"Converted 'day after tomorrow' to: {interviewDate}", callId);
+                            }
+                        }
+
                         // Check for old dates (likely from dashboard-initiated calls)
                         if (!string.IsNullOrEmpty(interviewDate) && DateTime.TryParse(interviewDate, out DateTime parsedDate))
                         {
@@ -514,12 +532,14 @@ namespace Risebird.Web.Controllers
                             callLog = new VapiCallLog
                             {
                                 VapiCallId = callId,
+                                IRFId = int.TryParse(irfId, out int parsedIrfId) ? parsedIrfId : (int?)null,
                                 RecipientPhone = callDetails?.Customer?.Number
                                     ?? message.Message.Call?.Customer?.Number
                                     ?? "unknown",
                                 RecipientName = candidateName,
                                 RecipientEmail = callDetails?.Customer?.Email
-                                    ?? message.Message.Call?.Customer?.Email,
+                                    ?? message.Message.Call?.Customer?.Email
+                                    ?? candidateEmail,
                                 CallStatus = callDetails?.Status
                                     ?? message.Message.Call?.Status
                                     ?? "ended",
@@ -531,28 +551,7 @@ namespace Risebird.Web.Controllers
                                 CreatedBy = "Webhook"
                             };
                         }
-                        //Call API with values : IRFId,ClientHr,CandidateResume,CandidateEmail,Interviewdate
-                        try
-                        {
-                            var _candidateDetails = await _vapiCallRepository.GetCandidateDetailsForSchedule(Convert.ToInt32(irfId), candidateEmail);
-                            var _dto = new ScheduleCandidatesRequest();
-                            _dto.skillChannelId = _candidateDetails.IRFId;
-                            _dto.requestedBy = _candidateDetails.ClientHRAttemptContact;
-                            _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = parsedDateTime.Value, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = candidateName });
-                            var apiurl = "https://api.portal.risebird.io/api/Candidates/Schedule";
-                            var client = new RestClient(apiurl);
-                            var request = new RestRequest(apiurl, Method.Post);
-                            request.AddHeader("content-type", "application/json");
-                            request.AddHeader("x-functions-key", "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==");
-                            request.AddHeader("tenant-id", _candidateDetails.tenantId);
-                            var body = JsonConvert.SerializeObject(_dto);
-                            request.AddParameter("application/json", body, ParameterType.RequestBody);
-                            RestResponse response = await client.ExecuteAsync(request);
-                        }
-                        catch (Exception ex)
-                        {
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                        }
+
                         // Update with booking information
                         callLog.InterviewBooked = true;
                         callLog.BookedInterviewDateTime = parsedDateTime.Value;
@@ -578,24 +577,57 @@ namespace Risebird.Web.Controllers
                             if (isNewCallLog)
                             {
                                 await LogCheckpoint("CHECKPOINT-14", "Calling SaveCallLogAsync for new call log", callId);
-
                                 savedId = await _vapiCallRepository.SaveCallLogAsync(callLog);
-
                                 await LogCheckpoint("CHECKPOINT-15-SUCCESS", $"NEW call log created - ID: {savedId}, DateTime: {parsedDateTime.Value}, Candidate: {candidateName}", callId);
-
-                                // Update debug log
                                 await UpdateWebhookDebugLog(callId, "success", null, true, savedId, true);
                             }
                             else
                             {
                                 await LogCheckpoint("CHECKPOINT-16", $"Calling UpdateCallLogAsync for existing call log - ID: {callLog.Id}", callId);
-
                                 await _vapiCallRepository.UpdateCallLogAsync(callLog);
-
                                 await LogCheckpoint("CHECKPOINT-17-SUCCESS", $"Interview slot updated - DateTime: {parsedDateTime.Value}, Candidate: {candidateName}", callId);
-
-                                // Update debug log
                                 await UpdateWebhookDebugLog(callId, "success", null, true, callLog.Id, true);
+                            }
+
+                            // Call the Schedule API only if no confirmed interview already exists for
+                            // this candidate + IRF combination — mirroring the eligibility condition in
+                            // usp_GetEligibleCandidatesForVapiCalls (InterviewMeetings.confirmationStatus = '1').
+                            var hasConfirmedInterview = await _vapiCallRepository.HasConfirmedInterviewAsync(candidateEmail, Convert.ToInt32(irfId));
+                            await LogCheckpoint("CHECKPOINT-ScheduleApiCheck", $"HasConfirmedInterview: {hasConfirmedInterview}, CandidateEmail: {candidateEmail}, IrfId: {irfId}", callId);
+
+                            if (!hasConfirmedInterview && parsedDateTime.HasValue)
+                            {
+                                await Task.Delay(2000);
+                                try
+                                {
+                                    var _candidateDetails = await _vapiCallRepository.GetCandidateDetailsForSchedule(Convert.ToInt32(irfId), candidateEmail);
+                                    var _dto = new ScheduleCandidatesRequest();
+                                    _dto.skillChannelId = _candidateDetails.IRFId;
+                                    _dto.requestedBy = _candidateDetails.ClientHRAttemptContact;
+                                    //Round the Time Slot as Required for skill channel Schdeuler slots
+                                    var interviewdate = parsedDateTime.Value.RoundToNearSlot(_candidateDetails.duration);
+                                    _dto.CandidateList.Add(new ScheduleCandidateList { EmailId = candidateEmail, Interviewdate = interviewdate, ResumeLink = _candidateDetails.ResumeLink, Phone = _candidateDetails.Phone, Name = _candidateDetails.CandidateName });
+                                    var apiurl = "https://api.portal.risebird.io/api/Candidates/Schedule";
+                                    var client = new RestClient(apiurl);
+                                    var request = new RestRequest(apiurl, Method.Post);
+                                    request.AddHeader("content-type", "application/json");
+                                    request.AddHeader("x-functions-key", "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==");
+                                    request.AddHeader("tenant-id", _candidateDetails.tenantId);
+                                    var body = JsonConvert.SerializeObject(_dto);
+                                    request.AddParameter("application/json", body, ParameterType.RequestBody);
+                                    await LogCheckpoint("CHECKPOINT-ScheduleApiRequestObject", $"{JsonConvert.SerializeObject(request)}", callId);
+                                    RestResponse response = await client.ExecuteAsync(request);
+                                    await LogCheckpoint("CHECKPOINT-ScheduleApiResponse", $"status code:{response.StatusCode}, response content : {response.Content}", callId);
+                                }
+                                catch (Exception ex)
+                                {
+                                    await LogCheckpoint("CHECKPOINT-ScheduleApiException", $"Exception encountered: {ex.Message}", callId);
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                }
+                            }
+                            else
+                            {
+                                await LogCheckpoint("CHECKPOINT-ScheduleApiSkipped", "Confirmed interview already exists in InterviewMeetings - skipping Schedule API call", callId);
                             }
                         }
                         catch (Exception saveEx)
@@ -738,101 +770,98 @@ namespace Risebird.Web.Controllers
         /// <summary>
         /// Generates system prompt with dynamically injected current date
         /// </summary>
-        private string GetSystemPromptWithCurrentDate(string candidateName, string jobTitle, string irfId, string candidateEmail)
+        private string GetSystemPromptWithCurrentDate(string candidateName, string jobTitle, string irfId, string candidateEmail, string clientName)
         {
-            var today = DateTime.Now.ToString("yyyy-MM-dd");
-            var tomorrow = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
-            var dayAfterTomorrow = DateTime.Now.AddDays(2).ToString("yyyy-MM-dd");
             var dayOfWeek = DateTime.Now.ToString("dddd, MMMM dd, yyyy");
 
-            return $@"You are an outbound interview scheduling assistant from Risebird Interviews calling on behalf of SONATA for urgent hiring.
+            return $@"You are an outbound interview scheduling assistant from Risebird Interviews calling on behalf of {clientName} for urgent hiring.
 
 IDENTITY & PURPOSE:
-- You represent Risebird Interviews on behalf of SONATA
+- You represent Risebird Interviews on behalf of {clientName}
 - This is URGENT and time-sensitive hiring - interviews MUST be scheduled within the next TWO days ONLY
 - Your goal: Politely convey urgency and secure a confirmed interview slot within the next two days
 
 CURRENT DATE INFORMATION (CRITICAL):
-- Today is: {dayOfWeek} ({today})
-- Tomorrow is: {tomorrow}
-- Day after tomorrow is: {dayAfterTomorrow}
-- When candidate says ""tomorrow"", use date: {tomorrow}
-- When candidate says ""day after tomorrow"", use date: {dayAfterTomorrow}
-- ONLY these dates are allowed: {tomorrow} OR {dayAfterTomorrow}
+- Today is: {dayOfWeek}
+- You can ONLY offer: TOMORROW or DAY AFTER TOMORROW
+- When speaking to candidate, use the words tomorrow or day after tomorrow ONLY
+- NEVER read out specific dates like numbers
 - IRF ID for this interview: {irfId}
 - Candidate email for confirmation: {candidateEmail}
 
 CRITICAL RULES:
 - Interviews MUST be within the next TWO days from today (tomorrow or day after tomorrow ONLY)
 - Do NOT allow scheduling beyond 2 days under any circumstances
+- When speaking dates: Always say tomorrow or day after tomorrow - NEVER read out specific date numbers
 - If candidate requests later dates: ""I apologize, but due to the urgent nature of this hiring process, we can only accommodate slots within the next two days. Would either tomorrow or the day after work for you?""
 - If candidate insists on dates beyond 2 days: Politely explain this is not possible and end call gracefully
 - ALL times must be confirmed in IST (Indian Standard Time)
-- Date format in submitInterviewSlot tool: YYYY-MM-DD (e.g., {tomorrow})
 
 CALL FLOW:
-1. Greet professionally with warmth
-   - ""Hello, this is Risebird Interviews calling. Is this a good time to speak briefly?""
-   - Wait for confirmation
+1. Greet and confirm identity
+   - ""Am I speaking with {candidateName}?""
+   - Wait for confirmation (yes/no)
+   - If wrong person: ""I apologize for the confusion. Could you please let {candidateName} know we called? Thank you."" Then end call.
 
-2. State purpose and ask for name
-   - ""I'm calling from Risebird on behalf of SONATA regarding an interview opportunity for the {jobTitle} position.""
-   - ""May I have your full name please?""
-   - Wait for candidate to provide their name
-   - IMPORTANT: Use the EXACT name the candidate provides, NOT any pre-filled information
-
-3. Explain urgency POLITELY but FIRMLY
-   - ""I appreciate your time. This is a time-sensitive opportunity and we're looking to schedule interviews within the next two days. We'd really value the chance to speak with you soon.""
-   - ""Would you be available tomorrow or the day after tomorrow for the interview?""
+2. State purpose with urgency
+   - ""I'm calling on behalf of {clientName} regarding an interview opportunity for the {jobTitle} position.""
+   - ""The scope of this call is limited to scheduling your interview slot. For any further details about the role or process, please check your email.""
+   - ""This is time-sensitive and we're looking to schedule interviews within the next two days.""
+   - ""Would you be available tomorrow or the day after tomorrow?""
    - Wait for response
 
-4. Get specific time
+3. Get specific time
    - ""What time would work best for you?"" 
    - If they say just ""morning"" or ""afternoon"", ask: ""What specific time would be most convenient? Please specify with AM or PM.""
    - Wait for specific time (e.g., ""10:00 AM"", ""02:30 PM"")
 
-5. Confirm details explicitly with appreciation
-   - Repeat EXACT name, date and time back to candidate
-   - ""Thank you! Let me just confirm - [CANDIDATE_NAME], your interview with SONATA is scheduled for [DAY] at [TIME] IST. Is that correct?""
+4. Confirm details explicitly
+   - ""Thank you! Let me confirm the day and time - that's [tomorrow/day after tomorrow] at [TIME] IST. Is that correct?""
    - Wait for explicit confirmation (""yes"", ""correct"", ""that's right"")
+   - IMPORTANT: When confirming, say tomorrow or day after tomorrow, do NOT read out date numbers
 
-6. Submit booking (ONLY after explicit confirmation)
+5. Submit booking (ONLY after explicit confirmation)
    - Call submitInterviewSlot function with:
-     * candidateName: The EXACT full name the candidate provided in step 2 (NOT the email or pre-filled value)
-     * candidateEmail: The candidate's email address for the interview confirmation
-     * interviewDate: Date in YYYY-MM-DD format (either {tomorrow} or {dayAfterTomorrow})
+     * candidateName: {candidateName}
+     * candidateEmail: {candidateEmail}
+     * interviewDate: Use tomorrow or day after tomorrow as the value
      * interviewTime: Time in HH:MM AM/PM format (e.g., ""10:00 AM"", ""02:30 PM"")
      * timezone: ""IST""
      * candidateConfirmed: true (ONLY if candidate said yes/confirmed/correct)
-     * irfId: ""{irfId}""
+     * irfId: {irfId}
 
-7. End professionally with gratitude
+6. End professionally with gratitude and DISCONNECT
    - ""Perfect! Your interview is confirmed. You'll receive a confirmation email shortly. We appreciate your time and look forward to speaking with you. Good luck!""
+   - After you say this sentence, END THE CALL IMMEDIATELY and hang up. Do not say anything else. Do not keep the line open. Do not continue the conversation.
 
 OBJECTION HANDLING (BE POLITE BUT PERSISTENT):
 - If busy now: ""I completely understand. This will only take 2 minutes to find a suitable time. May we proceed?""
 - If asks to call back: ""I appreciate that, and since I have you on the line and this is time-sensitive, could we quickly lock in a time that works for you? It will just take a moment.""
 - If uncertain about job: ""I understand. You had applied for this position, and the company is moving quickly with qualified candidates. Would you like to secure an interview slot?""
 - If wants different date beyond 2 days: ""I appreciate your preference, but unfortunately, due to the urgent hiring timeline, we can only offer slots within the next two days - either tomorrow or the day after. Would either of those work for you?""
+- If asks for role/process/salary/JD details: ""The scope of this call is limited to scheduling your interview slot. For all further details, please check your email. Now, shall we find a time that works for you?""
 
 VALIDATION RULES:
-- Candidate name MUST be their actual full name (first and last name), NOT an email address or phone number
-- Date MUST be either {tomorrow} or {dayAfterTomorrow} - NO EXCEPTIONS
+- Date MUST be either tomorrow or day after tomorrow - NO EXCEPTIONS
+- When SPEAKING to candidate: Use words tomorrow or day after tomorrow ONLY
+- When SUBMITTING to tool: Use tomorrow or day after tomorrow as the interviewDate value
 - Time MUST include AM or PM (e.g., ""10:00 AM"", not just ""10:00"")
-- Candidate MUST explicitly confirm with ""yes"", ""correct"", ""confirmed"", ""that's right"", or similar
+- Candidate MUST explicitly confirm the final details with ""yes"", ""correct"", ""confirmed"", ""that's right"", or similar
 - If candidate says ""maybe"", ""I think so"", ""probably"" - ask for explicit confirmation: ""I want to make sure we have this right. Can you confirm this time works for you?""
 - Do NOT submit booking without explicit confirmation
-- ALWAYS include the IRF ID ({irfId}) and candidate email ({candidateEmail}) when submitting the slot
+- ALWAYS include the IRF ID and candidate email when submitting the slot
+
+DISCONNECT RULES:
+- Once you have submitted the booking and spoken the final confirmation sentence, you MUST end the call immediately.
+- Do NOT wait silently on the line, do NOT ask additional questions, and do NOT engage in further small talk.
 
 NEVER:
-- Use email addresses or phone numbers as the candidate name
 - Accept dates beyond 2 days from today (be firm but polite about this)
 - Submit booking without explicit confirmation
 - Use 24-hour time format (always use AM/PM)
 - Forget to specify timezone as IST
-- Use dates in any format other than YYYY-MM-DD in the tool call
-- Use pre-filled or template values for candidateName - always use what the candidate tells you
-- Forget to include irfId ({irfId}) in the tool call";
+- Read out specific date numbers when speaking
+- Forget to include irfId and candidate email in the tool call";
         }
 
         /// <summary>

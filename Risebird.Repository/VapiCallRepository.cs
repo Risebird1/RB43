@@ -1,3 +1,10 @@
+using Dapper;
+using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,7 +24,7 @@ namespace Risebird.Repository
     /// <summary>
     /// Repository implementation for Vapi call operations
     /// </summary>
-    public class VapiCallRepository : IVapiCallRepository
+    public class VapiCallRepository : IVapiCallRepository, Risebird.CommonHelper.Interface.ICandidateCallTracker
     {
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
@@ -45,13 +52,13 @@ namespace Risebird.Repository
 
                     var sql = @"
                         INSERT INTO VapiCallLogs (
-                            VapiCallId, InterviewId, RecipientId, RecipientPhone, RecipientName, RecipientEmail,
+                            VapiCallId, InterviewId, IRFId, RecipientId, RecipientPhone, RecipientName, RecipientEmail,
                             CallStatus, ScheduledDateTime, CallStartedAt, CallEndedAt, EndedReason, DurationSeconds,
                             Transcript, RecordingUrl, InterviewBooked, BookedInterviewDateTime, BookingConfirmationDetails,
                             CallCost, AssistantId, Summary, StructuredData, CreatedAt, CreatedBy
                         )
                         VALUES (
-                            @VapiCallId, @InterviewId, @RecipientId, @RecipientPhone, @RecipientName, @RecipientEmail,
+                            @VapiCallId, @InterviewId, @IRFId, @RecipientId, @RecipientPhone, @RecipientName, @RecipientEmail,
                             @CallStatus, @ScheduledDateTime, @CallStartedAt, @CallEndedAt, @EndedReason, @DurationSeconds,
                             @Transcript, @RecordingUrl, @InterviewBooked, @BookedInterviewDateTime, @BookingConfirmationDetails,
                             @CallCost, @AssistantId, @Summary, @StructuredData, @CreatedAt, @CreatedBy
@@ -113,7 +120,8 @@ namespace Risebird.Repository
                 {
                     var sql = @"
                         UPDATE VapiCallLogs
-                        SET CallStatus = @CallStatus,
+                        SET IRFId = @IRFId,
+                            CallStatus = @CallStatus,
                             CallStartedAt = @CallStartedAt,
                             CallEndedAt = @CallEndedAt,
                             EndedReason = @EndedReason,
@@ -304,6 +312,88 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Atomically increments Candidate.VapiCallAttempts for the given candidate.
+        /// </summary>
+        public async Task IncrementVapiCallAttemptsAsync(int candidateId)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@CandidateId", candidateId);
+
+                    await conn.ExecuteAsync(
+                        "usp_IncrementCandidateVapiCallAttempts",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if a confirmed interview already exists in InterviewMeetings
+        /// for the given candidate email and IRF (identified by IRF.id).
+        /// Mirrors the eligibility check in usp_GetEligibleCandidatesForVapiCalls.
+        /// </summary>
+        public async Task<bool> HasConfirmedInterviewAsync(string candidateEmail, int irfId)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@IrfId", irfId);
+                    parameters.Add("@CandidateEmail", candidateEmail);
+
+                    var result = await conn.ExecuteScalarAsync<bool>(
+                        "usp_HasConfirmedInterview",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets eligible candidates for Vapi automated interview calls
+        /// Returns candidates who:
+        /// - Don't have a confirmed interview (confirmationStatus = 1 in InterviewMeetings)
+        /// - Haven't been called more than 2 times
+        /// - Have valid contact information
+        /// </summary>
+        public async Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForVapiCallsAsync(int count = 10)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_connectionString))
+                {
+                    var results = await conn.QueryAsync<VapiEligibleCandidateVM>(
+                        "usp_GetEligibleCandidatesForVapiCalls",
+                        new { Count = count },
+                        commandType: CommandType.StoredProcedure);
+
+                    return results.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<VapiEligibleCandidateVM>();
             }
         }
     }

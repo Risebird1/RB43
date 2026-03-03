@@ -51,7 +51,11 @@ namespace Risebird.AzureFunctions
 
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddHttpClient(); // Required for VapiService
             services.AddScoped<INotificationHelper, NotificationHelper>();
+            services.AddScoped<IVapiService, VapiService>();
+            services.AddScoped<IVapiCallRepository, VapiCallRepository>();
+            services.AddScoped<ICandidateCallTracker>(sp => (ICandidateCallTracker)sp.GetRequiredService<IVapiCallRepository>());
             services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProfileService, ProfileService>();
@@ -143,6 +147,7 @@ namespace Risebird.AzureFunctions
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<ICodeInviteRequest, CodeInviteRequest>();
             services.AddScoped<IValidationHelper, ValidationHelper>();
+            services.AddScoped<IPhoneNumberHelper, PhoneNumberHelper>();
             services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
             services.AddScoped<IVmHelper, VmHelper>();
             services.AddScoped<IGoogleEventHelper, GoogleEventHelper>();
@@ -160,6 +165,7 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
             services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
             services.AddScoped<ITranscriptOptimizationHelper, TranscriptOptimizationHelper>();
+            services.AddScoped<IReportQCOptimizationHelper, ReportQCOptimizationHelper>();
             return services;
         }
     }

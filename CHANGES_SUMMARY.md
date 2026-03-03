@@ -45,6 +45,45 @@ Updated system prompt in `GetSystemPromptWithCurrentDate()`:
 - Good balance of quality and speed for interview scheduling
 - Can be changed if needed in line ~120 of VapiInterviewCallController.cs
 
+### 4. IRFId Column Addition to VapiCallLogs
+
+**Problem**: Call attempts were tracked globally per email, preventing candidates from being called for multiple IRFs
+
+**Solution**: Track call attempts per candidate per IRFId combination
+
+**Changes Made:**
+
+1. **VapiCallLogs.sql** - Added IRFId column and indexes
+   - Added `IRFId INT NULL` column
+   - Created `IX_VapiCallLogs_IRFId` index
+   - Created composite `IX_VapiCallLogs_RecipientEmail_IRFId` index
+
+2. **VapiCallLog.cs** - Entity Model Update
+   - Added `public int? IRFId { get; set; }` property
+
+3. **VapiCallRepository.cs** - Repository Updates
+   - Updated `SaveCallLogAsync` INSERT to include IRFId
+   - Updated `UpdateCallLogAsync` UPDATE to include IRFId
+
+4. **VapiInterviewCallController.cs** - Controller Updates
+   - Parse irfId parameter and save to call log (manual calls)
+   - Extract irfId from tool arguments and save to call log (webhook calls)
+
+5. **VapiInterviewSchedulingJob.cs** - Timer Function Updates
+   - Set IRFId from candidate.IRFId when creating call logs
+
+6. **usp_GetEligibleCandidatesForVapiCalls.sql** - Stored Procedure Updates
+   - Changed CTE to `GROUP BY RecipientEmail, IRFId` (was just RecipientEmail)
+   - Updated JOIN to match both email AND IRFId
+   - Updated booking check to filter by IRFId
+
+**Impact**: 
+- Same candidate can now be called up to 2 times per IRF
+- Example: alice@example.com can be called 2x for Java job AND 2x for Python job
+- Call attempts tracked separately per IRF
+
+**Migration Required**: YES - Run `Risebird.DB/Migrations/Add_IRFId_To_VapiCallLogs.sql` before deploying code
+
 ## Files Created
 
 ### 1. **VAPI_TOOL_PARAMETERS.json**

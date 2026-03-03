@@ -21,14 +21,16 @@ namespace Risebird.CommonHelper
         private readonly string _vapiApiKey;
         private readonly string _vapiBaseUrl;
         private readonly string _phoneNumberId;
+        private readonly ICandidateCallTracker _candidateCallTracker;
 
-        public VapiService(IConfiguration configuration, IHttpClientFactory httpClientFactory)
+        public VapiService(IConfiguration configuration, IHttpClientFactory httpClientFactory, ICandidateCallTracker candidateCallTracker)
         {
             _configuration = configuration;
             _httpClient = httpClientFactory.CreateClient();
             _vapiApiKey = _configuration["Vapi:ApiKey"];
             _vapiBaseUrl = _configuration["Vapi:BaseUrl"] ?? "https://api.vapi.ai";
             _phoneNumberId = _configuration["Vapi:PhoneNumberId"];
+            _candidateCallTracker = candidateCallTracker;
 
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_vapiApiKey}");
         }
@@ -44,7 +46,7 @@ namespace Risebird.CommonHelper
                 model = new
                 {
                     provider = "openai",
-                    model = "gpt-5.2-instant",
+                    model = "gpt-4.1-mini",
                     temperature = 0.7,
                     maxTokens = 250,
                     messages = new[]
@@ -163,8 +165,8 @@ You have access to tools to:
                         }
                     }
                 },
-                endCallPhrases = new[] { "goodbye", "bye", "thank you bye" },
-                maxDurationSeconds = 300, // 5 minutes max
+                endCallPhrases = new[] { "goodbye", "bye", "thank you bye", "the interview is confirmed", "your interview is confirmed" },
+                maxDurationSeconds = 180, // hard cap ~3 minutes to control cost
                 backgroundSound = "office",
                 server = new
                 {
@@ -215,8 +217,13 @@ You have access to tools to:
             {
                 throw new Exception($"Failed to initiate call: {responseContent}");
             }
+            if (request.CandidateId.HasValue)
+                await _candidateCallTracker.IncrementVapiCallAttemptsAsync(request.CandidateId.Value);
 
-            return JsonConvert.DeserializeObject<VapiCallResponse>(responseContent);
+            var callResponse = JsonConvert.DeserializeObject<VapiCallResponse>(responseContent);
+
+            
+            return callResponse;
         }
 
         /// <summary>

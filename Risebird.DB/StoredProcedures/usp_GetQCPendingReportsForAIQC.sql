@@ -19,7 +19,7 @@ Begin
 ----------
 
 
-Select distinct top 2 im.id, IRF.id as irfIntId
+Select distinct top 7 im.id, IRF.id as irfIntId
 into #TempTable from 
 InterviewMeetings im join IRF on im.IRFId=irf.IRFId 
 join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id 
