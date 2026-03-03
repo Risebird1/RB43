@@ -1919,7 +1919,7 @@
         .rb-phone-card { width: 240px; min-height: 450px; }
         .rb-phone-ai-block { top: 64px; gap: 6px; }
         .rb-ai-interviewer-avatar { width: 64px; height: 64px; font-size: 1.5rem; }
-        .rb-phone-mini-candidate { width: 100px; height: 125px; font-size: 1.3rem; }
+        .rb-phone-mini-candidate { width: 133px; height: 130px; font-size: 1.3rem; }
         .rb-audio-phone-section { padding-top: 4px; }
     }
 </style>
@@ -2023,12 +2023,12 @@
                             <button type="button" class="rb-phone-nav-back" onclick="history.back()" title="Back">
                                 <i class="fa fa-chevron-left"></i>
                             </button>
-                            <div class="rb-phone-nav-avatars">
+                            @* <div class="rb-phone-nav-avatars">
                                 <div class="rb-phone-nav-avatar-item" title="AI Interviewer">AI</div>
                                 <div class="rb-phone-nav-avatar-item" title="@Model.candidateName">
                                     @(!string.IsNullOrEmpty(Model.candidateName) ? Model.candidateName[0].ToString().ToUpper() : "C")
                                 </div>
-                            </div>
+                            </div> *@
                         </div>
 
                         <!-- AI Interviewer block: avatar + waves just below (positioned toward top so not hidden by candidate video) -->
@@ -2065,14 +2065,7 @@
                     <!-- Bottom panel -->
                     <div class="rb-phone-bottom-panel">
 
-                        <!-- Badge -->
-                        <div>
-                            <span class="rb-phone-interview-badge">
-                                <span class="badge-dot"></span>
-                                Audio Interview
-                            </span>
-                        </div>
-
+                       
                         <!-- Question progress dots (window of 5: 1-5, then 6-10, then 11-15, etc.) -->
                         <div class="rb-phone-question-dots">
                             @for (int i = 0; i < totalQuestions; i++)
