@@ -624,31 +624,53 @@ namespace Risebird.Web.Controllers
                                     techSkillsJson = meetingDetails.TechSkillsInJson;
                                 }
                                 string candidatePrompt;
+                                //if (!string.IsNullOrEmpty(resumeStringContent))
+                                //{
+                                //    candidatePrompt = $"Due to some reason, you are required to start over the interview from the top. Please start with the first question. You will interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
+
+                                //}
+                                //else
+                                //{
+                                //    candidatePrompt = $"Due to some reason, you are required to start over the interview from the top. Please start with the first question. You will interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
+
+                                //}
+
+                                ////var replies = await _api.SendReply(sid, candidatePrompt, meetingDetails.AssistantId);
+
+                                //// Use SendSystemPrompt so this internal recovery context is sent to OpenAI
+                                //// but is NOT logged to TransCriptsConv as a "user" turn.
+                                //var replies = await _api.SendSystemPrompt(sid, candidatePrompt, meetingDetails.AssistantId);
+
+                                //model = new ChatMessageViewModel
+                                //{
+                                //    SessionId = sid,
+                                //    ChatLog = replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList(),
+                                //};
+
+                                ////
                                 if (!string.IsNullOrEmpty(resumeStringContent))
                                 {
-                                    candidatePrompt = $"Due to some reason, you are required to start over the interview from the top. Please start with the first question. You will interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
+                                    candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
 
                                 }
                                 else
                                 {
-                                    candidatePrompt = $"Due to some reason, you are required to start over the interview from the top. Please start with the first question. You will interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
+                                    candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
 
                                 }
-
-                                //var replies = await _api.SendReply(sid, candidatePrompt, meetingDetails.AssistantId);
-
-                                // Use SendSystemPrompt so this internal recovery context is sent to OpenAI
-                                // but is NOT logged to TransCriptsConv as a "user" turn.
-                                var replies = await _api.SendSystemPrompt(sid, candidatePrompt, meetingDetails.AssistantId);
+                                var result = await _api.StartConversation(sid, candidatePrompt, meetingDetails.AssistantId);
 
                                 model = new ChatMessageViewModel
                                 {
                                     SessionId = sid,
-                                    ChatLog = replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList(),
+                                    ChatLog = result.Replies.Select(r => new ChatLine { Role = "Bot", Message = CleanMessage(r) }).ToList(),
+
                                 };
 
+                                ////
 
-                                var latestReply = CleanMessage(replies.FirstOrDefault());
+                                //var latestReply = CleanMessage(replies.FirstOrDefault());
+                                var latestReply = CleanMessage(result.Replies.FirstOrDefault());
 
                                 if (!string.IsNullOrEmpty(latestReply))
                                 {
@@ -747,6 +769,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _aiinterviewerService.LogAIInterviewException(sid.ToString(), "GET", ex);
                 var exitModelError = new AIInterviewExitModalViewModel
                 {
                     Title = "Error",
@@ -1309,8 +1332,8 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _aiinterviewerService.LogAIInterviewException(model.SessionId.ToString(), "POST", ex);
                 var exitModelError = new AIInterviewExitModalViewModel
                 {
                     Title = "Interview Not Found",
