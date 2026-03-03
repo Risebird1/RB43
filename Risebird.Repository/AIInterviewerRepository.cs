@@ -833,5 +833,30 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task LogAIInterviewException(string sessionId, string httpMethod, Exception ex, LogLevelInfo logLevel = LogLevelInfo.Exception)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", string.IsNullOrWhiteSpace(sessionId) ? (object)DBNull.Value : sessionId);
+                    parameters.Add("@HttpMethod", httpMethod ?? "UNKNOWN");
+                    parameters.Add("@ExceptionMessage", ex?.Message);
+                    parameters.Add("@InnerExceptionMessage", ex?.InnerException?.Message);
+                    parameters.Add("@StackTrace", ex?.StackTrace);
+                    parameters.Add("@LogLevel", (int)logLevel);
+                    parameters.Add("@OccurredAt", DateTime.UtcNow);
+                    await SqlMapper.QueryAsync(con, "usp_LogAIInterviewException", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception innerEx)
+            {
+                // Silently fail — DB logging must never cascade into the interview flow
+                Console.WriteLine($"[AIInterviewExceptionLog] Failed to persist exception to DB: {innerEx.Message}");
+            }
+        }
+
     }
 }
