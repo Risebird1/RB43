@@ -1,4 +1,5 @@
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -31,5 +32,6 @@ namespace Risebird.Repository.Interface
         Task<List<TypingSpeedAssessment>> GetTypingSpeedAssessmentBySessionId(string sessionId);
         Task<bool> SaveListeningComprehensionAssessment(ListeningComprehensionAssessment obj);
         Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText();
+        Task LogAIInterviewException(string sessionId, string httpMethod, Exception ex, LogLevelInfo logLevel = LogLevelInfo.Exception);
     }
 }

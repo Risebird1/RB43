@@ -326,5 +326,10 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task LogAIInterviewException(string sessionId, string httpMethod, Exception ex, LogLevelInfo logLevel = LogLevelInfo.Exception)
+        {
+            await _aiInterviewerRepository.LogAIInterviewException(sessionId, httpMethod, ex, logLevel);
+        }
     }
 }
