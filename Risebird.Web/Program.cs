@@ -232,6 +232,15 @@ builder.Services.AddScoped<ICandidateCallTracker>(sp => (ICandidateCallTracker)s
 builder.Services.AddScoped<IVapiInterviewService, VapiInterviewService>();
 // ============================================
 
+// Plivo + OpenAI Realtime Voice AI Integration Services
+// ============================================
+builder.Services.AddScoped<IPlivoService, PlivoService>();
+builder.Services.AddScoped<IPlivoCallRepository, PlivoCallRepository>();
+builder.Services.AddScoped<IPlivoInterviewService, PlivoInterviewService>();
+builder.Services.AddScoped<IPlivoCXService, PlivoCXService>();
+builder.Services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
+// ============================================
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -244,6 +253,12 @@ else
     app.UseExceptionHandler("/Home/Index");
     app.UseHsts();
 }
+// WebSocket support required for Plivo bidirectional audio streaming
+app.UseWebSockets(new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromSeconds(30)
+});
+
 // Configure the HTTP request pipeline.
 
 //app.UseCsp(builder =>

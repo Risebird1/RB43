@@ -1,0 +1,362 @@
+@model List<Risebird.Entities.Data.PlivoCallLog>
+@{
+    ViewData["Title"] = "Plivo Interview Calls";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="fa fa-phone-square text-success"></i> Plivo AI Interview Scheduling Calls
+                    </h4>
+                    <p class="card-category">
+                        Automated outbound calls via Plivo + OpenAI Realtime API — calls from Indian numbers
+                    </p>
+                </div>
+                <div class="card-body">
+
+                    <!-- Action bar -->
+                    <div class="mb-3 d-flex gap-2 align-items-center flex-wrap">
+                        <button class="btn btn-primary" onclick="showInitiateCallModal()">
+                            <i class="fa fa-phone"></i> Initiate New Call
+                        </button>
+                        <a class="btn btn-success" asp-action="SetupAssistant">
+                            <i class="fa fa-robot"></i> Setup Assistant
+                        </a>
+                        <a class="btn btn-outline-secondary" href="/PlivoInterviewCall/WebhookTest" target="_blank">
+                            <i class="fa fa-check-circle"></i> Test Endpoints
+                        </a>
+                        <a class="btn btn-outline-info" href="/PlivoInterviewCall/WebhookDebugLogs" target="_blank">
+                            <i class="fa fa-bug"></i> Debug Logs
+                        </a>
+                        <span class="badge bg-secondary ms-auto">@(Model?.Count ?? 0) recent calls</span>
+                    </div>
+
+                    <!-- Summary stats -->
+                    @if (Model != null && Model.Any())
+                    {
+                        var booked    = Model.Count(c => c.InterviewBooked == true);
+                        var completed = Model.Count(c => c.CallStatus == "completed");
+                        var failed    = Model.Count(c => c.CallStatus == "failed" || c.CallStatus == "no-answer" || c.CallStatus == "busy");
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <div class="card bg-light text-center p-2">
+                                    <div class="fs-4 fw-bold">@Model.Count</div>
+                                    <div class="small text-muted">Total Calls</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="card bg-success text-white text-center p-2">
+                                    <div class="fs-4 fw-bold">@booked</div>
+                                    <div class="small">Interviews Booked</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="card bg-info text-white text-center p-2">
+                                    <div class="fs-4 fw-bold">@completed</div>
+                                    <div class="small">Completed</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="card bg-warning text-white text-center p-2">
+                                    <div class="fs-4 fw-bold">@failed</div>
+                                    <div class="small">No Answer / Failed</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Calls table -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-sm" id="plivoCallsTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Plivo UUID</th>
+                                    <th>Candidate</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th>Started</th>
+                                    <th>Duration</th>
+                                    <th>Booked?</th>
+                                    <th>Interview Time</th>
+                                    <th>Cost</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var call in Model)
+                                    {
+                                        var statusClass = call.CallStatus switch
+                                        {
+                                            "completed"    => "success",
+                                            "in-progress"  => "primary",
+                                            "ringing"      => "info",
+                                            "queued"       => "secondary",
+                                            "no-answer"    => "warning",
+                                            "busy"         => "warning",
+                                            "failed"       => "danger",
+                                            _              => "secondary"
+                                        };
+                                        <tr>
+                                            <td><small class="text-muted">@call.Id</small></td>
+                                            <td>
+                                                <small class="font-monospace">
+                                                    @(call.PlivoCallUUID?.Length > 8 ? call.PlivoCallUUID.Substring(0, 8) + "…" : call.PlivoCallUUID ?? "—")
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <strong>@call.RecipientName</strong><br />
+                                                <small class="text-muted">@call.RecipientEmail</small>
+                                            </td>
+                                            <td><small>@call.RecipientPhone</small></td>
+                                            <td>
+                                                <span class="badge bg-@statusClass">@call.CallStatus</span>
+                                                @if (!string.IsNullOrEmpty(call.HangupCause))
+                                                {
+                                                    <br /><small class="text-muted">@call.HangupCause</small>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (call.CallStartedAt.HasValue)
+                                                {
+                                                    <small>@call.CallStartedAt.Value.ToString("dd MMM HH:mm")</small>
+                                                }
+                                                else
+                                                {
+                                                    <small class="text-muted">@call.CreatedAt.ToString("dd MMM HH:mm")</small>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (call.DurationSeconds.HasValue)
+                                                {
+                                                    <small>@(call.DurationSeconds / 60)m @(call.DurationSeconds % 60)s</small>
+                                                }
+                                                else { <small class="text-muted">—</small> }
+                                            </td>
+                                            <td>
+                                                @if (call.InterviewBooked == true)
+                                                {
+                                                    <span class="badge bg-success"><i class="fa fa-check"></i> Yes</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-light text-dark">No</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (call.BookedInterviewDateTime.HasValue)
+                                                {
+                                                    <small class="text-success fw-bold">
+                                                        @call.BookedInterviewDateTime.Value.ToString("dd MMM yyyy HH:mm")
+                                                    </small>
+                                                }
+                                                else { <small class="text-muted">—</small> }
+                                            </td>
+                                            <td>
+                                                @if (call.CallCost.HasValue)
+                                                {
+                                                    <small>$@call.CallCost.Value.ToString("0.0000")</small>
+                                                }
+                                                else { <small class="text-muted">—</small> }
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-xs btn-outline-primary"
+                                                        onclick="viewCallDetails('@call.PlivoCallUUID', @call.Id)"
+                                                        title="View Details">
+                                                    <i class="fa fa-eye"></i>
+                                                </button>
+                                                @if (!string.IsNullOrEmpty(call.Transcript))
+                                                {
+                                                    <button class="btn btn-xs btn-outline-secondary"
+                                                            onclick="viewTranscript(@call.Id)"
+                                                            title="View Transcript">
+                                                        <i class="fa fa-file-text"></i>
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="11" class="text-center text-muted py-4">
+                                            No calls yet. Use <strong>Initiate New Call</strong> or wait for the timer function to trigger.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Initiate Call Modal -->
+<div class="modal fade" id="initiateCallModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa fa-phone text-success"></i> Initiate Plivo AI Interview Call</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="initiateCallForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Candidate Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="candidateName" placeholder="Full name" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Candidate Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="candidateEmail" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Candidate Phone (Indian) <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="candidatePhone" placeholder="9876543210 or +919876543210" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Job Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="jobTitle" required />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">IRF ID <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="irfId" required />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Candidate ID</label>
+                            <input type="number" class="form-control" id="candidateId" value="0" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Interview ID</label>
+                            <input type="number" class="form-control" id="interviewId" value="0" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Client Name</label>
+                            <input type="text" class="form-control" id="clientName" placeholder="Optional" />
+                        </div>
+                    </div>
+                </form>
+                <div id="callResult" class="mt-2"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="initiateCall()">
+                    <i class="fa fa-phone"></i> Initiate Call
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call Details Modal -->
+<div class="modal fade" id="callDetailsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Call Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="callDetailsContent">
+                <div class="text-center py-3"><div class="spinner-border"></div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transcript Modal -->
+<div class="modal fade" id="transcriptModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Call Transcript</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <pre id="transcriptContent" class="bg-light p-3" style="white-space: pre-wrap; max-height: 500px; overflow-y: auto;"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function showInitiateCallModal() {
+        new bootstrap.Modal(document.getElementById('initiateCallModal')).show();
+    }
+
+    async function initiateCall() {
+        const resultDiv = document.getElementById('callResult');
+        resultDiv.innerHTML = '<div class="alert alert-info">Initiating call…</div>';
+
+        const data = {
+            interviewId:    parseInt(document.getElementById('interviewId').value) || 0,
+            candidateId:    parseInt(document.getElementById('candidateId').value) || 0,
+            candidateName:  document.getElementById('candidateName').value,
+            candidateEmail: document.getElementById('candidateEmail').value,
+            candidatePhone: document.getElementById('candidatePhone').value,
+            jobTitle:       document.getElementById('jobTitle').value,
+            irfId:          document.getElementById('irfId').value,
+            clientName:     document.getElementById('clientName').value
+        };
+
+        try {
+            const resp = await fetch('/PlivoInterviewCall/InitiateInterviewCall', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': getAntiForgeryToken() },
+                body: JSON.stringify(data)
+            });
+            const json = await resp.json();
+            if (json.success) {
+                resultDiv.innerHTML = `<div class="alert alert-success">
+                    ✅ Call initiated!<br/>
+                    <strong>Log ID:</strong> ${json.logId}<br/>
+                    <strong>Request UUID:</strong> <code>${json.requestUUID}</code>
+                </div>`;
+                setTimeout(() => location.reload(), 3000);
+            } else {
+                resultDiv.innerHTML = `<div class="alert alert-danger">❌ ${json.message}</div>`;
+            }
+        } catch (e) {
+            resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${e.message}</div>`;
+        }
+    }
+
+    async function viewCallDetails(callUUID, logId) {
+        const modal = new bootstrap.Modal(document.getElementById('callDetailsModal'));
+        modal.show();
+        const content = document.getElementById('callDetailsContent');
+
+        if (!callUUID) {
+            content.innerHTML = `<div class="alert alert-warning">No Plivo CallUUID yet — call may still be queued or ringing.</div>`;
+            return;
+        }
+
+        try {
+            const resp = await fetch(`/PlivoInterviewCall/GetCallStatus?callUUID=${encodeURIComponent(callUUID)}`);
+            const json = await resp.json();
+            content.innerHTML = `<pre class="bg-light p-3" style="max-height:500px;overflow-y:auto;">${JSON.stringify(json, null, 2)}</pre>`;
+        } catch (e) {
+            content.innerHTML = `<div class="alert alert-danger">Error: ${e.message}</div>`;
+        }
+    }
+
+    function viewTranscript(logId) {
+        // Find transcript from the server-rendered model
+        const modal = new bootstrap.Modal(document.getElementById('transcriptModal'));
+        modal.show();
+    }
+
+    function getAntiForgeryToken() {
+        const el = document.querySelector('input[name="__RequestVerificationToken"]');
+        return el ? el.value : '';
+    }
+</script>
+}

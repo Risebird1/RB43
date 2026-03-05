@@ -1,6 +1,12 @@
 @{
-    ViewData["Title"] = "Vapi Automated Calls Test Results";
-    var testResults = ViewBag.VapiTestResults as List<string>;
+    // Works for both Vapi and Plivo test runs
+    var isPlivoRun   = ViewBag.PlivoTestResults != null;
+    var testResults  = isPlivoRun
+        ? ViewBag.PlivoTestResults as List<string>
+        : ViewBag.VapiTestResults  as List<string>;
+    var title        = isPlivoRun ? "Plivo AI Calls Test Results" : "Vapi Automated Calls Test Results";
+    var headingLabel = isPlivoRun ? "Plivo + OpenAI Realtime" : "Vapi.ai";
+    ViewData["Title"] = title;
 }
 
 <!DOCTYPE html>
@@ -68,7 +74,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🤖 Vapi Automated Interview Scheduling - Test Results</h1>
+        <h1>🤖 @headingLabel — Automated Interview Scheduling Results</h1>
         
         <div class="results">
             @if (testResults != null && testResults.Any())
@@ -108,7 +114,16 @@
         </div>
         
         <a href="@Url.Action("Index", "Dashboard")" class="back-btn">← Back to Dashboard</a>
-        <a href="@Url.Action("Index", "Dashboard", new { testVapiCalls = true })" class="back-btn" style="background-color: #4ec9b0;">🔄 Run Test Again</a>
+        @if (isPlivoRun)
+        {
+            <a href="@Url.Action("Index", "Dashboard", new { testPlivoCalls = true })" class="back-btn" style="background-color: #2ecc71;">🔄 Run Plivo Again</a>
+            <a href="@Url.Action("Index", "PlivoInterviewCall")" class="back-btn" style="background-color: #3498db;">📋 View Plivo Call Logs</a>
+        }
+        else
+        {
+            <a href="@Url.Action("Index", "Dashboard", new { testVapiCalls = true })" class="back-btn" style="background-color: #4ec9b0;">🔄 Run Vapi Again</a>
+            <a href="@Url.Action("Index", "VapiInterviewCall")" class="back-btn" style="background-color: #3498db;">📋 View Vapi Call Logs</a>
+        }
     </div>
 </body>
 </html>
