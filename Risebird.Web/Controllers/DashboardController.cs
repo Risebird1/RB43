@@ -32,6 +32,8 @@ using System.IO;
 using System.Net.Http;
 using Azure.Core;
 using Risebird.Entities.Data.VapiModels;
+using Risebird.Entities.Data.PlivoModels;
+using Risebird.Entities.Data.PlivoCXModels;
 //using System.Web.WebPages;
 //using UglyToad.PdfPig.Logging;
 //using Risebird.Entities.Data.AffIndaModels;
@@ -70,6 +72,10 @@ namespace Risebird.Web.Controllers
         private readonly IVapiService _vapiService;
         private readonly IVapiCallRepository _vapiCallRepository;
         private readonly IPhoneNumberHelper _phoneNumberHelper;
+        private readonly IPlivoService _plivoService;
+        private readonly IPlivoCallRepository _plivoCallRepository;
+        private readonly IPlivoCXService _plivoCXService;
+        private readonly IPlivoCXCallRepository _plivoCXCallRepository;
 
         //private readonly IIRFService _irfService;
 
@@ -85,7 +91,9 @@ namespace Risebird.Web.Controllers
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IAWSRekognitionService aWSRekognitionService,
             IZohoMeetingHelper zoho, IResumeOptimizationHelper resumeOptimizationHelper,
             IVapiService vapiService, IVapiCallRepository vapiCallRepository,
-            IPhoneNumberHelper phoneNumberHelper)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IPhoneNumberHelper phoneNumberHelper,
+            IPlivoService plivoService, IPlivoCallRepository plivoCallRepository,
+            IPlivoCXService plivoCXService, IPlivoCXCallRepository plivoCXCallRepository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -118,11 +126,15 @@ namespace Risebird.Web.Controllers
             _vapiService = vapiService;
             _vapiCallRepository = vapiCallRepository;
             _phoneNumberHelper = phoneNumberHelper;
+            _plivoService = plivoService;
+            _plivoCallRepository = plivoCallRepository;
+            _plivoCXService = plivoCXService;
+            _plivoCXCallRepository = plivoCXCallRepository;
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Index(bool testVapiCalls = false)
+        public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false)
         {
             try
             {
@@ -135,6 +147,18 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+                        // ========================================
+                        // PLIVO + OPENAI REALTIME AUTOMATED CALLS — TEST/TRIGGER MODE
+                        // Access via: /Dashboard/Index?testPlivoCalls=true
+                        // ========================================
+                        if (testPlivoCalls)
+                        {
+                            return await RunPlivoCallsAsync(Emailid);
+                        }
+                        // ========================================
+                        // END PLIVO TEST MODE
+                        // ========================================
+
                         // ========================================
                         //VAPI AUTOMATED CALLS TEST MODE
                         //Access via: / Dashboard / Index ? testVapiCalls = true
@@ -404,6 +428,177 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        // ─── Plivo call trigger ───────────────────────────────────────────────────
+
+        /// <summary>
+        /// Fetches one eligible candidate and fires a Plivo + OpenAI Realtime AI call.
+        /// Access via GET /Dashboard/Index?testPlivoCalls=true
+        /// Triggers a Plivo CX outbound AI call for one eligible candidate.
+        /// Results are returned as the PlivoTestResults view (reuses VapiTestResults layout).
+        /// </summary>
+        private async Task<IActionResult> RunPlivoCallsAsync(string triggeredByEmail)
+        {
+            var testResults = new List<string>();
+            var currentTime = DateTime.Now;
+            var currentHour = currentTime.Hour;
+
+            testResults.Add($"[Plivo CX] Test initiated at: {currentTime:yyyy-MM-dd HH:mm:ss}");
+
+            var triggerUrl = _configuration["PlivoCX:TriggerEndpointUrl"];
+            if (string.IsNullOrEmpty(triggerUrl))
+            {
+                testResults.Add("⚠ PlivoCX:TriggerEndpointUrl is not set in appsettings.json.");
+                testResults.Add("  Steps:");
+                testResults.Add("  1. Go to cx.plivo.com → AI Studio → your interview flow");
+                testResults.Add("  2. Click the Trigger node → copy the API URL");
+                testResults.Add("  3. Paste it into appsettings.json → PlivoCX:TriggerEndpointUrl");
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+
+            try
+            {
+                if (currentHour < 9 || currentHour >= 21)
+                {
+                    testResults.Add($"SKIPPED — {currentTime:HH:mm} is outside business hours (9 AM – 9 PM IST)");
+                    ViewBag.PlivoTestResults = testResults;
+                    return View("VapiTestResults");
+                }
+
+                testResults.Add($"Within business hours — {currentTime:HH:mm}");
+                testResults.Add("Fetching eligible candidates...");
+
+                var eligibleCandidates = await _plivoCXCallRepository.GetEligibleCandidatesForCallsAsync(1);
+
+                if (eligibleCandidates == null || !eligibleCandidates.Any())
+                {
+                    testResults.Add("No eligible candidates found.");
+                    ViewBag.PlivoTestResults = testResults;
+                    return View("VapiTestResults");
+                }
+
+                testResults.Add($"Found {eligibleCandidates.Count} eligible candidate(s)");
+                testResults.Add("");
+
+                int successCount = 0;
+                int failureCount = 0;
+
+                foreach (var candidate in eligibleCandidates)
+                {
+                    try
+                    {
+                        testResults.Add($"Processing: {candidate.CandidateName}");
+                        testResults.Add($"   Client:   {candidate.ClientName}");
+                        testResults.Add($"   Email:    {candidate.CandidateEmail}");
+                        testResults.Add($"   Phone:    {candidate.CandidatePhone}");
+                        testResults.Add($"   IRF ID:   {candidate.IRFId} ({candidate.IRFName})");
+                        testResults.Add($"   Attempts: {candidate.CallAttempts}");
+
+                        if (string.IsNullOrWhiteSpace(candidate.CandidatePhone))
+                        {
+                            testResults.Add("   SKIPPED — no phone number");
+                            testResults.Add("");
+                            continue;
+                        }
+
+                        if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(candidate.CandidatePhone, out var phoneNumber, out var phoneError))
+                        {
+                            testResults.Add($"   SKIPPED — invalid phone: {phoneError}");
+                            testResults.Add("");
+                            continue;
+                        }
+
+                        testResults.Add($"   Sanitised phone: {phoneNumber}");
+
+                        // 1. Save call log to get a DB Id
+                        var callLog = new Risebird.Entities.Data.PlivoCXModels.PlivoCXCallLog
+                        {
+                            RecipientPhone = phoneNumber,
+                            RecipientName  = candidate.CandidateName,
+                            RecipientEmail = candidate.CandidateEmail,
+                            IRFId          = candidate.IRFId,
+                            CandidateId    = candidate.CandidateId,
+                            JobTitle       = candidate.IRFName,
+                            ClientName     = candidate.ClientName,
+                            CallStatus     = "initiated",
+                            InterviewBooked = false,
+                            TriggeredBy    = $"Dashboard-{triggeredByEmail}"
+                        };
+                        int logId = await _plivoCXCallRepository.SaveCallLogAsync(callLog);
+                        testResults.Add($"   Call log saved — DB Id: {logId}");
+
+                        // 2. Trigger Plivo CX outbound call
+                        var triggerReq = new Risebird.Entities.Data.PlivoCXModels.PlivoCXTriggerRequest
+                        {
+                            PhoneNumber    = phoneNumber,
+                            CandidateName  = candidate.CandidateName,
+                            CandidateEmail = candidate.CandidateEmail,
+                            IrfId          = candidate.IRFId.ToString(),
+                            JobTitle       = candidate.IRFName,
+                            ClientName     = candidate.ClientName,
+                            LogId          = logId.ToString()
+                        };
+
+                        var response = await _plivoCXService.TriggerOutboundCallAsync(triggerReq);
+
+                        if (!string.IsNullOrEmpty(response?.Error))
+                        {
+                            testResults.Add($"   TRIGGER FAILED: {response.Error}");
+                            callLog.Id         = logId;
+                            callLog.CallStatus = "trigger-failed";
+                            callLog.UpdatedAt  = DateTime.UtcNow;
+                            await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
+                            failureCount++;
+                        }
+                        else
+                        {
+                            testResults.Add($"   Triggered — ConversationId: {response?.ConversationId}");
+                            callLog.Id                    = logId;
+                            callLog.PlivoCXConversationId = response?.ConversationId;
+                            callLog.PlivoCXRequestId      = response?.ApiId;
+                            callLog.CallStatus            = "triggered";
+                            callLog.UpdatedAt             = DateTime.UtcNow;
+                            await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
+
+                            await _plivoCXCallRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
+                            successCount++;
+                        }
+
+                        await Task.Delay(2000);
+                        testResults.Add("");
+                    }
+                    catch (Exception ex)
+                    {
+                        failureCount++;
+                        testResults.Add($"   FAILED: {ex.Message}");
+                        testResults.Add("");
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                            new Exception($"PlivoCX call failed for {candidate.CandidateEmail}", ex));
+                    }
+                }
+
+                testResults.Add("═══════════════════════════════════");
+                testResults.Add($"SUMMARY:");
+                testResults.Add($"   Total Candidates: {eligibleCandidates.Count}");
+                testResults.Add($"   Successful:       {successCount}");
+                testResults.Add($"   Failed:           {failureCount}");
+                testResults.Add("═══════════════════════════════════");
+                testResults.Add("View call logs at: /PlivoCXInterviewCall/Index");
+
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+            catch (Exception ex)
+            {
+                testResults.Add($"CRITICAL ERROR: {ex.Message}");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+        }
+
+        // ─── Vapi prompt helper (existing) ───────────────────────────────────────
 
         private string GetSystemPromptWithCurrentDate(string candidateName, string jobTitle, string irfId, string candidateEmail, string clientName)
         {

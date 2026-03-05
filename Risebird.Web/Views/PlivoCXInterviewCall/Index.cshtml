@@ -1,0 +1,266 @@
+@model List<Risebird.Entities.Data.PlivoCXModels.PlivoCXCallLog>
+@{
+    ViewData["Title"] = "Plivo CX AI Interview Calls";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- Header -->
+    <div class="row mb-3 align-items-center">
+        <div class="col">
+            <h4 class="fw-bold mb-0">
+                <i class="fas fa-robot text-success me-2"></i>Plivo CX AI Interview Calls
+            </h4>
+            <p class="text-muted mb-0 mt-1">
+                Outbound calls via <strong>Plivo CX AI Agent platform</strong> —
+                AI conversation is handled entirely by Plivo CX (no WebSocket bridge).
+                Configure your agent instructions at
+                <a href="https://cx.plivo.com" target="_blank">cx.plivo.com</a>.
+            </p>
+        </div>
+        <div class="col-auto d-flex gap-2 flex-wrap">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#initiateCallModal">
+                <i class="fas fa-phone me-1"></i>Initiate Call
+            </button>
+            <a asp-action="WebhookTest" class="btn btn-outline-info" target="_blank">
+                <i class="fas fa-stethoscope me-1"></i>Config Check
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Setup reminder banner -->
+    <div class="alert alert-warning border-warning mb-4" role="alert">
+        <div class="d-flex align-items-start gap-2">
+            <i class="fas fa-wrench mt-1"></i>
+            <div>
+                <strong>First time? Complete these 3 steps in Plivo CX dashboard:</strong>
+                <ol class="mb-0 mt-1">
+                    <li>Create your agent flow at <a href="https://cx.plivo.com" target="_blank">cx.plivo.com</a> with an <strong>API Request trigger</strong> and an <strong>AI Conversation node</strong></li>
+                    <li>Copy the trigger URL → paste into <code>appsettings.json</code> under <code>PlivoCX:TriggerEndpointUrl</code></li>
+                    <li>In Agent Config → Events, set <strong>Hangup URL</strong> to <code>@($"{Context.Request.Scheme}://{Context.Request.Host}/PlivoCXInterviewCall/HangupCallback")</code></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold text-primary">@Model.Count</div>
+                <div class="text-muted small">Total Calls</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold text-success">@Model.Count(c => c.InterviewBooked)</div>
+                <div class="text-muted small">Booked</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold text-info">@Model.Count(c => c.CallStatus == "triggered" || c.CallStatus == "initiated")</div>
+                <div class="text-muted small">In Progress</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="fs-3 fw-bold text-warning">@Model.Count(c => c.CallStatus == "no-answer" || c.CallStatus == "failed")</div>
+                <div class="text-muted small">No Answer / Failed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call log table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <span><i class="fas fa-list me-2"></i>Recent Calls</span>
+            <span class="badge bg-secondary">@Model.Count records</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Phone</th>
+                            <th>IRF</th>
+                            <th>Status</th>
+                            <th>Booked</th>
+                            <th>Duration</th>
+                            <th>Triggered</th>
+                            <th>Conversation ID</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var call in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">@call.RecipientName</div>
+                                    <small class="text-muted">@call.RecipientEmail</small>
+                                </td>
+                                <td>@call.RecipientPhone</td>
+                                <td>@(call.IRFId?.ToString() ?? "—")</td>
+                                <td>
+                                    @{
+                                        var badgeClass = call.CallStatus switch
+                                        {
+                                            "triggered"  => "bg-info",
+                                            "answered"   => "bg-primary",
+                                            "completed"  => "bg-success",
+                                            "no-answer"  => "bg-warning",
+                                            "failed" or "trigger-failed" => "bg-danger",
+                                            _            => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass">@(call.CallStatus ?? "—")</span>
+                                </td>
+                                <td>
+                                    @if (call.InterviewBooked)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>
+                                            @(call.BookedInterviewDateTime?.ToString("dd MMM HH:mm") ?? "Yes")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>@(call.DurationSeconds.HasValue ? $"{call.DurationSeconds}s" : "—")</td>
+                                <td>
+                                    <small>@call.CreatedAt.ToString("dd MMM HH:mm")</small><br />
+                                    <small class="text-muted">@call.TriggeredBy</small>
+                                </td>
+                                <td>
+                                    <small class="font-monospace text-muted">
+                                        @(call.PlivoCXConversationId?.Substring(0, Math.Min(12, call.PlivoCXConversationId?.Length ?? 0)) ?? "—")
+                                    </small>
+                                </td>
+                                <td>
+                                    <button class="btn btn-outline-secondary btn-sm"
+                                            onclick="showTranscript(@call.Id)"
+                                            title="View transcript">
+                                        <i class="fas fa-file-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">
+                                    No calls yet. Initiate your first call above.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Initiate Call Modal -->
+<div class="modal fade" id="initiateCallModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-phone me-2 text-primary"></i>Initiate Interview Call</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="InitiateInterviewCall" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Candidate Name <span class="text-danger">*</span></label>
+                        <input type="text" name="recipientName" class="form-control" required placeholder="Full name" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
+                        <input type="text" name="recipientPhone" class="form-control" required
+                               placeholder="+91XXXXXXXXXX" />
+                        <div class="form-text">Include country code, e.g. +919876543210</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" name="recipientEmail" class="form-control" placeholder="candidate@email.com" />
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">IRF ID</label>
+                            <input type="number" name="irfId" class="form-control" placeholder="12345" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Candidate ID</label>
+                            <input type="number" name="candidateId" class="form-control" placeholder="optional" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-phone me-1"></i>Trigger Call
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Transcript Modal -->
+<div class="modal fade" id="transcriptModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Call Transcript</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <pre id="transcriptContent" class="bg-light p-3 rounded"
+                     style="white-space:pre-wrap; font-size:0.85rem; max-height:500px; overflow-y:auto;">
+                    Loading...
+                </pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showTranscript(logId) {
+            document.getElementById('transcriptContent').textContent = 'Loading...';
+            var modal = new bootstrap.Modal(document.getElementById('transcriptModal'));
+            modal.show();
+            fetch('/PlivoCXInterviewCall/GetCallLog?id=' + logId)
+                .then(r => r.json())
+                .then(data => {
+                    var content = '';
+                    if (data.conversationSummary) content += '── Summary ──\n' + data.conversationSummary + '\n\n';
+                    if (data.callTranscript)       content += '── Transcript ──\n' + data.callTranscript;
+                    document.getElementById('transcriptContent').textContent = content || 'No transcript available yet.';
+                })
+                .catch(() => {
+                    document.getElementById('transcriptContent').textContent = 'Error loading transcript.';
+                });
+        }
+    </script>
+}
