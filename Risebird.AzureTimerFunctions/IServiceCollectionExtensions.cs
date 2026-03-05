@@ -51,11 +51,18 @@ namespace Risebird.AzureFunctions
 
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddHttpClient(); // Required for VapiService
+            services.AddHttpClient(); // Required for VapiService and PlivoService
             services.AddScoped<INotificationHelper, NotificationHelper>();
+            // Vapi
             services.AddScoped<IVapiService, VapiService>();
             services.AddScoped<IVapiCallRepository, VapiCallRepository>();
             services.AddScoped<ICandidateCallTracker>(sp => (ICandidateCallTracker)sp.GetRequiredService<IVapiCallRepository>());
+            // Plivo + OpenAI Realtime
+            services.AddScoped<IPlivoService, PlivoService>();
+            services.AddScoped<IPlivoCallRepository, PlivoCallRepository>();
+            services.AddScoped<IPlivoCXService, PlivoCXService>();
+            services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
+            services.AddScoped<IPlivoInterviewService, PlivoInterviewService>();
             services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProfileService, ProfileService>();
