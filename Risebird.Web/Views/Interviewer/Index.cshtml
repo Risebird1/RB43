@@ -386,11 +386,11 @@
                                                             </div>
                                                             <div class="pd-meta">
                                                                
-                                                                @if (ViewBag.profile == "Admin" && item.EmailId != null && item.EmailId != "")
+                                                                @if (ViewBag.profile == "Admin" && ViewBag.profile == "Finance" && item.EmailId != null && item.EmailId != "")
                                                                 {
                                                                     <span class="pd-email" data-tooltip="@item.EmailId">@item.EmailId</span>
                                                                 }
-                                                                @if (ViewBag.profile == "Admin" && item.MobileNumber != null && item.MobileNumber != "")
+                                                                @if (ViewBag.profile == "Admin" && ViewBag.profile == "Finance" && item.MobileNumber != null && item.MobileNumber != "")
                                                                 {
                                                                     <span class="pd-mobile">@item.MobileNumber</span>
                                                                 }
