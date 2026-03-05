@@ -67,9 +67,24 @@ namespace Risebird.Repository
 
         public async Task CreateSession(InterviewSession session)
         {
-            var sql = "INSERT INTO InterviewSessions (SessionId, ThreadId, AssistantId, CandidateEmail, CreatedAt) VALUES (@SessionId, @ThreadId, @AssistantId, @CandidateEmail, @CreatedAt)";
-            using var conn = new SqlConnection(connectionString);
-            await conn.ExecuteAsync(sql, session);
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", session.SessionId);
+                    parameters.Add("@ThreadId", session.ThreadId);
+                    parameters.Add("@AssistantId", session.AssistantId);
+                    parameters.Add("@CandidateEmail", session.CandidateEmail);
+                    parameters.Add("@CreatedAt", session.CreatedAt == default ? DateTime.UtcNow : session.CreatedAt);
+                    await SqlMapper.QueryAsync(con, "usp_CreateOrUpdateInterviewSession", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
         }
 
         public async Task<string> GetThreadId(Guid sessionId)
@@ -831,6 +846,31 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task LogAIInterviewException(string sessionId, string httpMethod, Exception ex, LogLevelInfo logLevel = LogLevelInfo.Exception)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", string.IsNullOrWhiteSpace(sessionId) ? (object)DBNull.Value : sessionId);
+                    parameters.Add("@HttpMethod", httpMethod ?? "UNKNOWN");
+                    parameters.Add("@ExceptionMessage", ex?.Message);
+                    parameters.Add("@InnerExceptionMessage", ex?.InnerException?.Message);
+                    parameters.Add("@StackTrace", ex?.StackTrace);
+                    parameters.Add("@LogLevel", (int)logLevel);
+                    parameters.Add("@OccurredAt", DateTime.UtcNow);
+                    await SqlMapper.QueryAsync(con, "usp_LogAIInterviewException", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception innerEx)
+            {
+                // Silently fail — DB logging must never cascade into the interview flow
+                Console.WriteLine($"[AIInterviewExceptionLog] Failed to persist exception to DB: {innerEx.Message}");
+            }
         }
 
     }
