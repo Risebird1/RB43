@@ -252,59 +252,112 @@ namespace Risebird.Web.Controllers
                 await Cp(CheckpointNames.HangupBodyRead, $"Body read FAILED: {ex.Message}");
             }
 
-            // ── Step 2: Parse — try JSON first, then form-encoded ────────────────────
+            // ── Step 2: Parse — Plivo CX sends a NESTED JSON envelope ───────────────
+            //
+            //  {
+            //    "created_at": "...",
+            //    "data": {
+            //      "object": {
+            //        "conversation_id": "1651-...",
+            //        "call_uuid": "...",
+            //        "event_data": {
+            //          "Initiate Interview Call.call_status": "completed",
+            //          "AI Conversation.interview_date":      "tomorrow",
+            //          "API Request.log_id":                  "6",
+            //          ...
+            //        }
+            //      }
+            //    }
+            //  }
+            //
+            // We parse the envelope, then flatten event_data into PlivoCXHangupPayload
+            // by stripping the "NodeName." prefix from each key.
+
             PlivoCXHangupPayload payload = null;
-            bool parsedAsJson = false;
 
             try
             {
-                payload = JsonConvert.DeserializeObject<PlivoCXHangupPayload>(rawBody);
-                if (payload != null &&
-                    (!string.IsNullOrEmpty(payload.ConversationId) || !string.IsNullOrEmpty(payload.LogId)))
-                {
-                    parsedAsJson = true;
-                    await Cp(CheckpointNames.HangupJsonParsed,
-                        $"Parsed as JSON — conv_id: {payload.ConversationId}, log_id: {payload.LogId}",
-                        convId: payload.ConversationId);
-                }
-            }
-            catch { }
+                var envelope = JsonConvert.DeserializeObject<PlivoCXHangupEvent>(rawBody);
+                var obj      = envelope?.Data?.Object;
 
-            if (!parsedAsJson)
-            {
-                // Fallback: form-urlencoded
-                try
+                if (obj != null)
                 {
-                    var form = await Request.ReadFormAsync();
+                    var ed = obj.EventData ?? new System.Collections.Generic.Dictionary<string, string>();
+
                     payload = new PlivoCXHangupPayload
                     {
-                        ConversationId         = form["conversation_id"],
-                        CallUUID               = form["call_uuid"],
-                        CallStatus             = form["call_status"],
-                        Duration               = form["duration"],
-                        HangupCause            = form["hangup_cause"],
-                        Transcript             = form["transcript"],
-                        Summary                = form["summary"],
-                        PhoneNumber            = form["phone_number"],
-                        CandidateName          = form["candidate_name"],
-                        CandidateEmail         = form["candidate_email"],
-                        IrfId                  = form["irf_id"],
-                        JobTitle               = form["job_title"],
-                        ClientName             = form["client_name"],
-                        LogId                  = form["log_id"],
-                        InterviewDate          = form["interview_date"],
-                        InterviewTime          = form["interview_time"],
-                        CandidateConfirmed     = form["candidate_confirmed"],
-                        ConfirmedCandidateName = form["confirmed_candidate_name"]
+                        ConversationId         = obj.ConversationId,
+                        CallUUID               = obj.CallUuid,
+                        CallStatus             = GetEventDataValue(ed, "call_status"),
+                        Duration               = GetEventDataValue(ed, "duration"),
+                        HangupCause            = GetEventDataValue(ed, "hangup_cause"),
+                        Transcript             = GetEventDataValue(ed, "transcript"),
+                        Summary                = GetEventDataValue(ed, "summary"),
+                        PhoneNumber            = GetEventDataValue(ed, "phone_number"),
+                        CandidateName          = GetEventDataValue(ed, "candidate_name"),
+                        CandidateEmail         = GetEventDataValue(ed, "candidate_email"),
+                        IrfId                  = GetEventDataValue(ed, "irf_id"),
+                        JobTitle               = GetEventDataValue(ed, "job_title"),
+                        ClientName             = GetEventDataValue(ed, "client_name"),
+                        LogId                  = GetEventDataValue(ed, "log_id"),
+                        InterviewDate          = GetEventDataValue(ed, "interview_date"),
+                        InterviewTime          = GetEventDataValue(ed, "interview_time"),
+                        CandidateConfirmed     = GetEventDataValue(ed, "candidate_confirmed"),
+                        ConfirmedCandidateName = GetEventDataValue(ed, "confirmed_candidate_name")
                     };
-                    await Cp(CheckpointNames.HangupFormParsed,
-                        $"Parsed as form-encoded — conv_id: {payload.ConversationId}, log_id: {payload.LogId}",
+
+                    await Cp(CheckpointNames.HangupJsonParsed,
+                        $"Parsed nested envelope — conv_id: {payload.ConversationId}, log_id: {payload.LogId}, " +
+                        $"call_status: {payload.CallStatus}, interview_date: {payload.InterviewDate}, " +
+                        $"interview_time: {payload.InterviewTime}, confirmed: {payload.CandidateConfirmed}",
                         convId: payload.ConversationId,
-                        extra: $"keys: {string.Join(", ", form.Keys)}");
+                        extra: $"event_data keys: {string.Join(", ", ed.Keys)}");
                 }
-                catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                await Cp(CheckpointNames.HangupParseFailed, $"Nested JSON parse FAILED: {ex.Message}");
+            }
+
+            // ── Fallback: flat form-urlencoded (keep for safety) ─────────────────────
+            if (payload == null ||
+                (string.IsNullOrEmpty(payload.ConversationId) && string.IsNullOrEmpty(payload.LogId)))
+            {
+                if (!Request.ContentType?.Contains("application/json") == true)
                 {
-                    await Cp(CheckpointNames.HangupParseFailed, $"Form parse FAILED: {ex.Message}");
+                    try
+                    {
+                        var form = await Request.ReadFormAsync();
+                        payload = new PlivoCXHangupPayload
+                        {
+                            ConversationId         = form["conversation_id"],
+                            CallUUID               = form["call_uuid"],
+                            CallStatus             = form["call_status"],
+                            Duration               = form["duration"],
+                            HangupCause            = form["hangup_cause"],
+                            Transcript             = form["transcript"],
+                            Summary                = form["summary"],
+                            PhoneNumber            = form["phone_number"],
+                            CandidateName          = form["candidate_name"],
+                            CandidateEmail         = form["candidate_email"],
+                            IrfId                  = form["irf_id"],
+                            JobTitle               = form["job_title"],
+                            ClientName             = form["client_name"],
+                            LogId                  = form["log_id"],
+                            InterviewDate          = form["interview_date"],
+                            InterviewTime          = form["interview_time"],
+                            CandidateConfirmed     = form["candidate_confirmed"],
+                            ConfirmedCandidateName = form["confirmed_candidate_name"]
+                        };
+                        await Cp(CheckpointNames.HangupFormParsed,
+                            $"Parsed as form-encoded — conv_id: {payload.ConversationId}, log_id: {payload.LogId}",
+                            convId: payload.ConversationId,
+                            extra: $"keys: {string.Join(", ", form.Keys)}");
+                    }
+                    catch (Exception ex)
+                    {
+                        await Cp(CheckpointNames.HangupParseFailed, $"Form parse FAILED: {ex.Message}");
+                    }
                 }
             }
 
@@ -332,8 +385,8 @@ namespace Risebird.Web.Controllers
                 (string.IsNullOrEmpty(payload.ConversationId) && string.IsNullOrEmpty(payload.LogId)))
             {
                 await Cp(CheckpointNames.HangupParseFailed,
-                    "No conv_id or log_id — dropping webhook",
-                    extra: $"raw (first 200): {rawBody?.Substring(0, Math.Min(200, rawBody?.Length ?? 0))}");
+                    "No conv_id or log_id after all parse attempts — dropping webhook",
+                    extra: $"raw (first 300): {rawBody?.Substring(0, Math.Min(300, rawBody?.Length ?? 0))}");
                 return Ok();
             }
 
@@ -346,17 +399,17 @@ namespace Risebird.Web.Controllers
 
                 if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int logId))
                 {
-                    callLog     = await _repository.GetCallLogByIdAsync(logId);
+                    callLog      = await _repository.GetCallLogByIdAsync(logId);
                     lookupMethod = $"log_id={logId}";
                 }
                 if (callLog == null && !string.IsNullOrEmpty(payload.ConversationId))
                 {
-                    callLog     = await _repository.GetCallLogByConversationIdAsync(payload.ConversationId);
+                    callLog      = await _repository.GetCallLogByConversationIdAsync(payload.ConversationId);
                     lookupMethod = $"conversation_id={payload.ConversationId}";
                 }
                 if (callLog == null && !string.IsNullOrEmpty(payload.ConversationId))
                 {
-                    callLog     = await _repository.GetCallLogByRequestIdAsync(payload.ConversationId);
+                    callLog      = await _repository.GetCallLogByRequestIdAsync(payload.ConversationId);
                     lookupMethod = $"request_id={payload.ConversationId}";
                 }
 
@@ -431,6 +484,30 @@ namespace Risebird.Web.Controllers
                     extra: ex.ToString());
                 return Ok(); // Always 200 to Plivo CX
             }
+        }
+
+        /// <summary>
+        /// Looks up a variable in the Plivo CX event_data dictionary.
+        /// Keys are "NodeName.variable_name" — we match by the variable_name suffix,
+        /// falling back to an exact match if needed.
+        /// </summary>
+        private static string GetEventDataValue(
+            System.Collections.Generic.Dictionary<string, string> eventData, string key)
+        {
+            if (eventData == null || string.IsNullOrEmpty(key)) return null;
+
+            // Exact match first
+            if (eventData.TryGetValue(key, out var exact)) return exact;
+
+            // Suffix match: "SomeNode.key" → key
+            var suffix = "." + key;
+            foreach (var kvp in eventData)
+            {
+                if (kvp.Key.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+                    return kvp.Value;
+            }
+
+            return null;
         }
 
         /// <summary>
