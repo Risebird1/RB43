@@ -509,6 +509,8 @@ namespace Risebird.Web.Controllers
                             continue;
                         }
 
+                        //phoneNumber = "+918888571923";
+
                         testResults.Add($"   Sanitised phone: {phoneNumber}");
 
                         // 1. Save call log to get a DB Id
@@ -542,6 +544,34 @@ namespace Risebird.Web.Controllers
 
                         var response = await _plivoCXService.TriggerOutboundCallAsync(triggerReq);
 
+                        // Checkpoint — log trigger request + response
+                        try
+                        {
+                            await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
+                                new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
+                                {
+                                    LogType          = "trigger-request",
+                                    HttpStatusCode   = response?.HttpStatusCode,
+                                    PlivoCXId        = response?.ApiId,
+                                    CallLogId        = logId,
+                                    RawPayload       = Newtonsoft.Json.JsonConvert.SerializeObject(triggerReq),
+                                    ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                                    ErrorMessage     = response?.Error
+                                });
+                            await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
+                                new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
+                                {
+                                    LogType          = "trigger-response",
+                                    HttpStatusCode   = response?.HttpStatusCode,
+                                    PlivoCXId        = response?.ApiId,
+                                    CallLogId        = logId,
+                                    RawPayload       = response?.RawResponseBody,
+                                    ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                                    ErrorMessage     = response?.Error
+                                });
+                        }
+                        catch { }
+
                         if (!string.IsNullOrEmpty(response?.Error))
                         {
                             testResults.Add($"   TRIGGER FAILED: {response.Error}");
@@ -553,7 +583,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            testResults.Add($"   Triggered — ConversationId: {response?.ConversationId}");
+                            testResults.Add($"   Triggered — ApiId: {response?.ApiId} | Http: {response?.HttpStatusCode}");
                             callLog.Id                    = logId;
                             callLog.PlivoCXConversationId = response?.ConversationId;
                             callLog.PlivoCXRequestId      = response?.ApiId;

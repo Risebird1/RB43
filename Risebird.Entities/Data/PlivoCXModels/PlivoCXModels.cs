@@ -51,6 +51,14 @@ namespace Risebird.Entities.Data.PlivoCXModels
 
         [JsonProperty("error")]
         public string Error           { get; set; }
+
+        /// <summary>Full raw JSON body returned by Plivo CX — for debug logging</summary>
+        [JsonIgnore]
+        public string RawResponseBody { get; set; }
+
+        /// <summary>HTTP status code from the trigger POST</summary>
+        [JsonIgnore]
+        public int HttpStatusCode     { get; set; }
     }
 
     // ─── Hangup webhook (Plivo CX → our server) ─────────────────────────────────
