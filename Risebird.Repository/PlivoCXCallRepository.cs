@@ -317,5 +317,26 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<string> GetCandidateEmailByIdAsync(int candidateId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                // Candidate.id → CandidatesMaster → UserList.EmailId
+                const string sql = @"
+                    SELECT TOP 1 ul.EmailId
+                    FROM   Candidate        ca
+                    JOIN   CandidatesMaster cm ON cm.id    = ca.CandidateMasterId
+                    JOIN   UserList         ul ON ul.id    = cm.UserId
+                    WHERE  ca.id = @CandidateId";
+                return await conn.ExecuteScalarAsync<string>(sql, new { CandidateId = candidateId });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
