@@ -29,5 +29,12 @@ namespace Risebird.Repository.Interface
         Task IncrementCallAttemptsAsync(int candidateId);
         Task<bool> HasConfirmedInterviewAsync(string candidateEmail, int irfId);
         Task<CandidateDetailsForSchdeule> GetCandidateDetailsForScheduleAsync(int irfId, string candidateEmail);
+
+        /// <summary>
+        /// Fallback: look up a candidate's email from UserList using the Candidate.id
+        /// (the id stored in PlivoCXCallLogs.CandidateId).
+        /// Used when candidate_email is missing from the Plivo CX hangup payload.
+        /// </summary>
+        Task<string> GetCandidateEmailByIdAsync(int candidateId);
     }
 }
