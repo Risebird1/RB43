@@ -307,7 +307,7 @@ namespace Risebird.Repository
             {
                 using var conn = new SqlConnection(_connectionString);
                 return await conn.QueryFirstOrDefaultAsync<CandidateDetailsForSchdeule>(
-                    "usp_GetCandidateDetailsForVapiSchedule",
+                    "usp_GetCandidateDetailsForPlivoCXSchedule",
                     new { IRFId = irfId, CandidateEmail = candidateEmail },
                     commandType: CommandType.StoredProcedure);
             }
