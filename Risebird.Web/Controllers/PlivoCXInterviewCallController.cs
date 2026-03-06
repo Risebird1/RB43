@@ -130,13 +130,16 @@ namespace Risebird.Web.Controllers
                 // 3. POST to Plivo CX trigger
                 var triggerRequest = new PlivoCXTriggerRequest
                 {
-                    PhoneNumber    = recipientPhone,
-                    CandidateName  = recipientName ?? "Candidate",
-                    CandidateEmail = recipientEmail,
-                    IrfId          = irfId?.ToString(),
-                    JobTitle       = jobTitle,
-                    ClientName     = clientName,
-                    LogId          = logId.ToString()
+                    PhoneNumber           = recipientPhone,
+                    CandidateName         = recipientName ?? "Candidate",
+                    CandidateEmail        = recipientEmail,
+                    IrfId                 = irfId?.ToString(),
+                    JobTitle              = jobTitle,
+                    ClientName            = clientName,
+                    LogId                 = logId.ToString(),
+                    TodayDate             = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                    TomorrowDate          = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
+                    DayAfterTomorrowDate  = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
                 };
 
                 var response = await _plivoCXService.TriggerOutboundCallAsync(triggerRequest);
@@ -433,7 +436,7 @@ namespace Risebird.Web.Controllers
                 callLog.HangupCause           = payload.HangupCause;
                 callLog.CallTranscript        = payload.Transcript;
                 callLog.ConversationSummary   = payload.Summary;
-                callLog.BookedInterviewDate   = payload.InterviewDate;
+                callLog.BookedInterviewDate   = ResolveRelativeDate(payload.InterviewDate);
                 callLog.BookedInterviewTime   = payload.InterviewTime;
                 callLog.CallEndedAt           = DateTime.UtcNow;
                 callLog.UpdatedAt             = DateTime.UtcNow;
@@ -508,6 +511,26 @@ namespace Risebird.Web.Controllers
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Converts relative date words to a real date string (yyyy-MM-dd).
+        /// If the AI returns an actual date, it passes through unchanged.
+        /// </summary>
+        private static string ResolveRelativeDate(string rawDate)
+        {
+            if (string.IsNullOrWhiteSpace(rawDate)) return rawDate;
+
+            switch (rawDate.ToLowerInvariant().Trim())
+            {
+                case "tomorrow":
+                    return DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
+                case "day after tomorrow":
+                case "dayaftertomorrow":
+                    return DateTime.Now.AddDays(2).ToString("yyyy-MM-dd");
+                default:
+                    return rawDate; // already a real date string
+            }
         }
 
         /// <summary>

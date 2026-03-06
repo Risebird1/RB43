@@ -93,6 +93,23 @@ namespace Risebird.Entities.Data.PlivoCXModels
         /// <summary>Our internal DB log id — returned in the hangup webhook so we can match the row</summary>
         [JsonProperty("log_id")]
         public string LogId           { get; set; }
+
+        // ── Date context variables ─────────────────────────────────────────────
+        // Injected so the AI agent uses real calendar dates instead of relative
+        // words. Reference these in the AI Conversation node instructions as
+        // {{today_date}}, {{tomorrow_date}}, {{day_after_tomorrow_date}}.
+
+        /// <summary>e.g. "Friday, 06 March 2026"</summary>
+        [JsonProperty("today_date")]
+        public string TodayDate           { get; set; }
+
+        /// <summary>e.g. "Saturday, 07 March 2026"</summary>
+        [JsonProperty("tomorrow_date")]
+        public string TomorrowDate        { get; set; }
+
+        /// <summary>e.g. "Sunday, 08 March 2026"</summary>
+        [JsonProperty("day_after_tomorrow_date")]
+        public string DayAfterTomorrowDate { get; set; }
     }
 
     /// <summary>
