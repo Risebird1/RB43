@@ -200,6 +200,47 @@ namespace Risebird.Repository
             }
         }
 
+        // ── Webhook checkpoints ───────────────────────────────────────────────────
+
+        public async Task<int> SaveCheckpointAsync(PlivoCXWebhookCheckpoint checkpoint)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                const string sql = @"
+                    INSERT INTO PlivoCXWebhookCheckpoints
+                        (Timestamp, CheckpointName, Message, ConversationId, CallLogId, AdditionalData)
+                    VALUES
+                        (@Timestamp, @CheckpointName, @Message, @ConversationId, @CallLogId, @AdditionalData);
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+                checkpoint.Timestamp = DateTime.UtcNow;
+                return await conn.ExecuteScalarAsync<int>(sql, checkpoint);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<List<PlivoCXWebhookCheckpoint>> GetRecentCheckpointsAsync(int count = 100)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<PlivoCXWebhookCheckpoint>(
+                    "SELECT TOP (@Count) * FROM PlivoCXWebhookCheckpoints ORDER BY Timestamp DESC",
+                    new { Count = count });
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<PlivoCXWebhookCheckpoint>();
+            }
+        }
+
         // ── Candidate helpers — reuse existing Vapi stored procedures ────────────
 
         public async Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForCallsAsync(int count = 10)
