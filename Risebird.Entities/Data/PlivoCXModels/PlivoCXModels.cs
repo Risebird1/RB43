@@ -3,6 +3,66 @@ using System.Collections.Generic;
 
 namespace Risebird.Entities.Data.PlivoCXModels
 {
+    // ─── Nested hangup event (actual Plivo CX webhook shape) ────────────────────
+    //
+    // Plivo CX POSTs application/json with this structure:
+    //
+    //  {
+    //    "created_at": "2026-03-06T08:31:20Z",
+    //    "data": {
+    //      "object": {
+    //        "call_uuid": "...",
+    //        "conversation_id": "1651-2261780595",
+    //        "conversation_url": "https://cx.plivo.com/...",
+    //        "event_data": {
+    //          "Initiate Interview Call.call_status": "completed",
+    //          "AI Conversation.interview_date":      "tomorrow",
+    //          "AI Conversation.interview_time":      "10:00 AM",
+    //          "API Request.log_id":                  "6",
+    //          ...
+    //        }
+    //      }
+    //    }
+    //  }
+    //
+    // The event_data keys are prefixed with the node name ("NodeName.variable").
+    // Use GetEventDataValue() in the controller to look up by suffix.
+
+    public class PlivoCXHangupEvent
+    {
+        [JsonProperty("created_at")]
+        public string CreatedAt { get; set; }
+
+        [JsonProperty("data")]
+        public PlivoCXHangupEventData Data { get; set; }
+    }
+
+    public class PlivoCXHangupEventData
+    {
+        [JsonProperty("object")]
+        public PlivoCXHangupEventObject Object { get; set; }
+    }
+
+    public class PlivoCXHangupEventObject
+    {
+        [JsonProperty("call_uuid")]
+        public string CallUuid { get; set; }
+
+        [JsonProperty("conversation_id")]
+        public string ConversationId { get; set; }
+
+        [JsonProperty("conversation_url")]
+        public string ConversationUrl { get; set; }
+
+        /// <summary>
+        /// All node-scoped variables, keyed as "NodeName.variable_name".
+        /// Use GetEventDataValue() to retrieve by variable name ignoring the node prefix.
+        /// </summary>
+        [JsonProperty("event_data")]
+        public Dictionary<string, string> EventData { get; set; }
+    }
+
+
     // ─── Trigger request (our server → Plivo CX) ────────────────────────────────
 
     /// <summary>
