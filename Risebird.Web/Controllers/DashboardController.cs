@@ -510,6 +510,7 @@ namespace Risebird.Web.Controllers
                         }
 
                         //phoneNumber = "+918888571923";
+                        phoneNumber = "+918105232468";
 
                         testResults.Add($"   Sanitised phone: {phoneNumber}");
 
@@ -534,7 +535,7 @@ namespace Risebird.Web.Controllers
                         var triggerReq = new Risebird.Entities.Data.PlivoCXModels.PlivoCXTriggerRequest
                         {
                             PhoneNumber    = phoneNumber,
-                            CandidateName  = candidate.CandidateName,
+                            CandidateName  = candidate.CandidateName ?? "Candidate",
                             CandidateEmail = candidate.CandidateEmail,
                             IrfId          = candidate.IRFId.ToString(),
                             JobTitle       = candidate.IRFName,
