@@ -134,7 +134,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = true)
+        public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false)
         {
             try
             {
@@ -509,7 +509,8 @@ namespace Risebird.Web.Controllers
                             continue;
                         }
 
-                        phoneNumber = "+918888571923";
+                        //phoneNumber = "+918888571923";
+                        phoneNumber = "+918105232468";
 
                         testResults.Add($"   Sanitised phone: {phoneNumber}");
 
