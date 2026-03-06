@@ -69,12 +69,17 @@ namespace Risebird.CommonHelper
             if (!response.IsSuccessStatusCode)
                 return new PlivoCXTriggerResponse
                 {
-                    Error   = $"HTTP {(int)response.StatusCode}: {body}",
-                    Message = "Plivo CX trigger failed"
+                    Error           = $"HTTP {(int)response.StatusCode}: {body}",
+                    Message         = "Plivo CX trigger failed",
+                    RawResponseBody = body,
+                    HttpStatusCode  = (int)response.StatusCode
                 };
 
-            return JsonConvert.DeserializeObject<PlivoCXTriggerResponse>(body)
-                   ?? new PlivoCXTriggerResponse { Message = body };
+            var result = JsonConvert.DeserializeObject<PlivoCXTriggerResponse>(body)
+                         ?? new PlivoCXTriggerResponse { Message = body };
+            result.RawResponseBody = body;
+            result.HttpStatusCode  = (int)response.StatusCode;
+            return result;
         }
     }
 }
