@@ -218,24 +218,7 @@ namespace Risebird.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> HangupCallback()
         {
-            // Helper to fire-and-forget a checkpoint without ever throwing
-            async Task Cp(string name, string msg, string convId = null, int? callLogId = null, string extra = null)
-            {
-                try
-                {
-                    await _repository.SaveCheckpointAsync(new PlivoCXWebhookCheckpoint
-                    {
-                        CheckpointName = name,
-                        Message        = msg,
-                        ConversationId = convId,
-                        CallLogId      = callLogId,
-                        AdditionalData = extra
-                    });
-                }
-                catch { }
-            }
-
-            await Cp(CheckpointNames.HangupReceived, $"HangupCallback hit — Content-Type: {Request.ContentType}");
+            await SaveCpAsync(CheckpointNames.HangupReceived, $"HangupCallback hit — Content-Type: {Request.ContentType}");
 
             // ── Step 1: Read raw body ────────────────────────────────────────────────
             string rawBody = string.Empty;
@@ -246,13 +229,13 @@ namespace Risebird.Web.Controllers
                     Request.Body, System.Text.Encoding.UTF8, leaveOpen: true);
                 rawBody = await reader.ReadToEndAsync();
                 Request.Body.Position = 0;
-                await Cp(CheckpointNames.HangupBodyRead,
+                await SaveCpAsync(CheckpointNames.HangupBodyRead,
                     $"Raw body read — length: {rawBody.Length}",
                     extra: rawBody.Length > 500 ? rawBody.Substring(0, 500) + "…" : rawBody);
             }
             catch (Exception ex)
             {
-                await Cp(CheckpointNames.HangupBodyRead, $"Body read FAILED: {ex.Message}");
+                await SaveCpAsync(CheckpointNames.HangupBodyRead, $"Body read FAILED: {ex.Message}");
             }
 
             // ── Step 2: Parse — Plivo CX sends a NESTED JSON envelope ───────────────
@@ -309,7 +292,7 @@ namespace Risebird.Web.Controllers
                         ConfirmedCandidateName = GetEventDataValue(ed, "confirmed_candidate_name")
                     };
 
-                    await Cp(CheckpointNames.HangupJsonParsed,
+                    await SaveCpAsync(CheckpointNames.HangupJsonParsed,
                         $"Parsed nested envelope — conv_id: {payload.ConversationId}, log_id: {payload.LogId}, " +
                         $"call_status: {payload.CallStatus}, interview_date: {payload.InterviewDate}, " +
                         $"interview_time: {payload.InterviewTime}, confirmed: {payload.CandidateConfirmed}",
@@ -319,7 +302,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                await Cp(CheckpointNames.HangupParseFailed, $"Nested JSON parse FAILED: {ex.Message}");
+                await SaveCpAsync(CheckpointNames.HangupParseFailed, $"Nested JSON parse FAILED: {ex.Message}");
             }
 
             // ── Fallback: flat form-urlencoded (keep for safety) ─────────────────────
@@ -352,14 +335,14 @@ namespace Risebird.Web.Controllers
                             CandidateConfirmed     = form["candidate_confirmed"],
                             ConfirmedCandidateName = form["confirmed_candidate_name"]
                         };
-                        await Cp(CheckpointNames.HangupFormParsed,
+                        await SaveCpAsync(CheckpointNames.HangupFormParsed,
                             $"Parsed as form-encoded — conv_id: {payload.ConversationId}, log_id: {payload.LogId}",
                             convId: payload.ConversationId,
                             extra: $"keys: {string.Join(", ", form.Keys)}");
                     }
                     catch (Exception ex)
                     {
-                        await Cp(CheckpointNames.HangupParseFailed, $"Form parse FAILED: {ex.Message}");
+                        await SaveCpAsync(CheckpointNames.HangupParseFailed, $"Form parse FAILED: {ex.Message}");
                     }
                 }
             }
@@ -387,7 +370,7 @@ namespace Risebird.Web.Controllers
             if (payload == null ||
                 (string.IsNullOrEmpty(payload.ConversationId) && string.IsNullOrEmpty(payload.LogId)))
             {
-                await Cp(CheckpointNames.HangupParseFailed,
+                await SaveCpAsync(CheckpointNames.HangupParseFailed,
                     "No conv_id or log_id after all parse attempts — dropping webhook",
                     extra: $"raw (first 300): {rawBody?.Substring(0, Math.Min(300, rawBody?.Length ?? 0))}");
                 return Ok();
@@ -418,13 +401,13 @@ namespace Risebird.Web.Controllers
 
                 if (callLog == null)
                 {
-                    await Cp(CheckpointNames.HangupLogNotFound,
+                    await SaveCpAsync(CheckpointNames.HangupLogNotFound,
                         $"No call log matched — tried: {lookupMethod}",
                         convId: payload.ConversationId);
                     return Ok();
                 }
 
-                await Cp(CheckpointNames.HangupLogFound,
+                await SaveCpAsync(CheckpointNames.HangupLogFound,
                     $"Call log #{callLog.Id} found via {lookupMethod}",
                     convId: payload.ConversationId,
                     callLogId: callLog.Id,
@@ -454,26 +437,26 @@ namespace Risebird.Web.Controllers
                     !string.IsNullOrWhiteSpace(payload.InterviewDate) &&
                     !string.IsNullOrWhiteSpace(payload.InterviewTime))
                 {
-                    await Cp(CheckpointNames.HangupBookingStarted,
+                    await SaveCpAsync(CheckpointNames.HangupBookingStarted,
                         $"Booking — date: {payload.InterviewDate}, time: {payload.InterviewTime}",
                         convId: payload.ConversationId, callLogId: callLog.Id);
 
-                    await ProcessBookingAsync(callLog, payload);
+                    await ProcessBookingAsync(callLog, payload, payload.ConversationId);
 
-                    await Cp(CheckpointNames.HangupBookingDone,
+                    await SaveCpAsync(CheckpointNames.HangupBookingDone,
                         $"Booking result — success: {callLog.BookingApiSuccess}, response: {callLog.BookingApiResponse?.Substring(0, Math.Min(200, callLog.BookingApiResponse?.Length ?? 0))}",
                         convId: payload.ConversationId, callLogId: callLog.Id);
                 }
                 else
                 {
-                    await Cp(CheckpointNames.HangupBookingSkipped,
+                    await SaveCpAsync(CheckpointNames.HangupBookingSkipped,
                         $"Booking skipped — confirmed: {payload.CandidateConfirmed}, date: {payload.InterviewDate}, time: {payload.InterviewTime}",
                         convId: payload.ConversationId, callLogId: callLog.Id);
                 }
 
                 await _repository.UpdateCallLogAsync(callLog);
 
-                await Cp(CheckpointNames.HangupComplete,
+                await SaveCpAsync(CheckpointNames.HangupComplete,
                     $"Call log #{callLog.Id} updated — final status: {callLog.CallStatus}",
                     convId: payload.ConversationId, callLogId: callLog.Id);
 
@@ -482,7 +465,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                await Cp("hangup_exception", $"Unhandled exception: {ex.Message}",
+                await SaveCpAsync("hangup_exception", $"Unhandled exception: {ex.Message}",
                     convId: payload?.ConversationId,
                     extra: ex.ToString());
                 return Ok(); // Always 200 to Plivo CX
@@ -568,37 +551,57 @@ namespace Risebird.Web.Controllers
 
         // ─── Booking logic ────────────────────────────────────────────────────────
 
-        private async Task ProcessBookingAsync(PlivoCXCallLog callLog, PlivoCXHangupPayload payload)
+        private async Task ProcessBookingAsync(
+            PlivoCXCallLog callLog, PlivoCXHangupPayload payload, string convId = null)
         {
             try
             {
-                var irfIdStr       = payload.IrfId ?? callLog.IRFId?.ToString();
+                var irfIdStr = payload.IrfId ?? callLog.IRFId?.ToString();
+
+                // ── Resolve candidate email ──────────────────────────────────────────
+                // Priority: payload → call log → DB lookup by CandidateId (same pattern as Vapi)
                 var candidateEmail = payload.CandidateEmail ?? callLog.RecipientEmail;
+                if (string.IsNullOrEmpty(candidateEmail) && callLog.CandidateId.HasValue)
+                {
+                    candidateEmail = await _repository.GetCandidateEmailByIdAsync(callLog.CandidateId.Value);
+                    await SaveCpAsync("booking_email_from_db",
+                        $"Email resolved from CandidateId {callLog.CandidateId}: {candidateEmail}",
+                        convId: convId, callLogId: callLog.Id);
+                }
 
                 if (string.IsNullOrEmpty(candidateEmail) ||
                     string.IsNullOrEmpty(irfIdStr) ||
                     !int.TryParse(irfIdStr, out int irfId))
                 {
-                    callLog.BookingApiResponse = "Missing irfId or candidateEmail — booking skipped.";
+                    var missing = string.IsNullOrEmpty(candidateEmail) ? "candidateEmail" : "irfId";
+                    callLog.BookingApiResponse = $"Missing {missing} — booking skipped.";
+                    await SaveCpAsync("booking_missing_data",
+                        callLog.BookingApiResponse, convId: convId, callLogId: callLog.Id);
                     return;
                 }
 
-                // Parse and normalise date+time
-                var dateTimeString = $"{payload.InterviewDate} {payload.InterviewTime}";
-                string[] formats   =
-                {
-                    "yyyy-MM-dd hh:mm tt", "yyyy-MM-dd h:mm tt",
-                    "yyyy-MM-dd HH:mm",    "yyyy-MM-dd H:mm",
-                    "dd/MM/yyyy hh:mm tt", "dd/MM/yyyy HH:mm",
-                    "tomorrow hh:mm tt",   "tomorrow h:mm tt"
-                };
+                // ── Parse and normalise date+time ────────────────────────────────────
+                // interview_date should already be a real date (e.g. "2026-03-07") thanks to
+                // the AI instructions using {{tomorrow_date}}. ResolveRelativeDate handles any
+                // edge case where the AI still returns a relative word.
+                var resolvedDate   = ResolveRelativeDate(payload.InterviewDate);
+                var dateTimeString = $"{resolvedDate} {payload.InterviewTime}";
 
-                // Resolve "tomorrow" / "day after tomorrow" to actual dates
-                var dateLower = payload.InterviewDate?.ToLower().Trim() ?? "";
-                if (dateLower == "tomorrow")
-                    dateTimeString = $"{DateTime.Now.AddDays(1):yyyy-MM-dd} {payload.InterviewTime}";
-                else if (dateLower is "day after tomorrow" or "dayaftertomorrow")
-                    dateTimeString = $"{DateTime.Now.AddDays(2):yyyy-MM-dd} {payload.InterviewTime}";
+                string[] formats =
+                {
+                    // ISO date (what the AI should return after our instruction fix)
+                    "yyyy-MM-dd hh:mm tt",  "yyyy-MM-dd h:mm tt",
+                    "yyyy-MM-dd HH:mm",     "yyyy-MM-dd H:mm",
+                    // Full long date — "Saturday, 07 March 2026 10:00 AM"
+                    // (what the AI returns when it echoes back {{tomorrow_date}})
+                    "dddd, dd MMMM yyyy hh:mm tt", "dddd, dd MMMM yyyy h:mm tt",
+                    "dddd, dd MMMM yyyy HH:mm",    "dddd, dd MMMM yyyy H:mm",
+                    // Short date variants
+                    "dd MMMM yyyy hh:mm tt", "dd MMMM yyyy h:mm tt",
+                    "dd MMMM yyyy HH:mm",    "dd MMMM yyyy H:mm",
+                    "MMMM dd yyyy hh:mm tt", "MMMM dd yyyy HH:mm",
+                    "dd/MM/yyyy hh:mm tt",   "dd/MM/yyyy HH:mm"
+                };
 
                 DateTime? parsedDateTime = null;
                 foreach (var fmt in formats)
@@ -611,40 +614,57 @@ namespace Risebird.Web.Controllers
                         break;
                     }
                 }
+                // Last-resort: let the runtime try (handles locale-specific variations)
+                if (!parsedDateTime.HasValue && DateTime.TryParse(dateTimeString, out var dtFallback))
+                    parsedDateTime = dtFallback;
 
                 if (!parsedDateTime.HasValue)
                 {
-                    // Fallback: try general parse
-                    if (DateTime.TryParse(dateTimeString, out var dtFallback))
-                        parsedDateTime = dtFallback;
-                    else
-                    {
-                        callLog.BookingApiResponse = $"Could not parse datetime: {dateTimeString}";
-                        return;
-                    }
+                    callLog.BookingApiResponse = $"Could not parse datetime: '{dateTimeString}'";
+                    await SaveCpAsync("booking_datetime_parse_failed",
+                        callLog.BookingApiResponse, convId: convId, callLogId: callLog.Id,
+                        extra: $"raw date: {payload.InterviewDate}, raw time: {payload.InterviewTime}");
+                    return;
                 }
 
+                // Normalise BookedInterviewDate to yyyy-MM-dd regardless of what
+                // the AI returned (e.g. "Saturday, 07 March 2026" → "2026-03-07")
+                callLog.BookedInterviewDate     = parsedDateTime.Value.ToString("yyyy-MM-dd");
                 callLog.BookedInterviewDateTime = parsedDateTime.Value;
                 callLog.InterviewBooked         = true;
 
-                // Guard: don't double-book
+                await SaveCpAsync("booking_datetime_parsed",
+                    $"Parsed datetime: {parsedDateTime.Value:yyyy-MM-dd HH:mm} from '{dateTimeString}' — stored date: {callLog.BookedInterviewDate}",
+                    convId: convId, callLogId: callLog.Id);
+
+                // ── Guard: don't double-book ─────────────────────────────────────────
                 var hasConfirmed = await _repository.HasConfirmedInterviewAsync(candidateEmail, irfId);
                 if (hasConfirmed)
                 {
                     callLog.BookingApiResponse = "Already has a confirmed interview — skipped duplicate booking.";
                     callLog.BookingApiSuccess  = false;
+                    await SaveCpAsync("booking_duplicate_skipped",
+                        callLog.BookingApiResponse, convId: convId, callLogId: callLog.Id);
                     return;
                 }
 
                 await Task.Delay(2000); // brief wait for DB consistency
 
+                // ── Fetch full candidate details (same SP as Vapi) ───────────────────
                 var candidateDetails = await _repository.GetCandidateDetailsForScheduleAsync(irfId, candidateEmail);
                 if (candidateDetails == null)
                 {
-                    callLog.BookingApiResponse = "Candidate details not found in DB.";
+                    callLog.BookingApiResponse = $"Candidate details not found in DB — irfId: {irfId}, email: {candidateEmail}";
+                    await SaveCpAsync("booking_candidate_not_found",
+                        callLog.BookingApiResponse, convId: convId, callLogId: callLog.Id);
                     return;
                 }
 
+                await SaveCpAsync("booking_candidate_found",
+                    $"Candidate: {candidateDetails.CandidateName}, tenantId: {candidateDetails.tenantId}, duration: {candidateDetails.duration}",
+                    convId: convId, callLogId: callLog.Id);
+
+                // ── Build Schedule API request ────────────────────────────────────────
                 var dto = new ScheduleCandidatesRequest
                 {
                     skillChannelId = candidateDetails.IRFId,
@@ -660,8 +680,15 @@ namespace Risebird.Web.Controllers
                     Name          = candidateDetails.CandidateName
                 });
 
-                var restClient  = new RestClient("https://api.portal.risebird.io/api/Candidates/Schedule");
-                var restRequest = new RestRequest("https://api.portal.risebird.io/api/Candidates/Schedule", Method.Post);
+                await SaveCpAsync("booking_api_request",
+                    $"Calling Schedule API — slot: {roundedDate:yyyy-MM-dd HH:mm}, tenant: {candidateDetails.tenantId}",
+                    convId: convId, callLogId: callLog.Id,
+                    extra: JsonConvert.SerializeObject(dto));
+
+                // ── Call the Schedule API ─────────────────────────────────────────────
+                const string apiUrl = "https://api.portal.risebird.io/api/Candidates/Schedule";
+                var restClient  = new RestClient(apiUrl);
+                var restRequest = new RestRequest(apiUrl, Method.Post);
                 restRequest.AddHeader("content-type", "application/json");
                 restRequest.AddHeader("x-functions-key", "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==");
                 restRequest.AddHeader("tenant-id", candidateDetails.tenantId);
@@ -671,12 +698,39 @@ namespace Risebird.Web.Controllers
 
                 callLog.BookingApiResponse = apiResponse.Content;
                 callLog.BookingApiSuccess  = apiResponse.IsSuccessful;
+
+                await SaveCpAsync("booking_api_response",
+                    $"Schedule API — status: {apiResponse.StatusCode}, success: {apiResponse.IsSuccessful}",
+                    convId: convId, callLogId: callLog.Id,
+                    extra: $"response: {apiResponse.Content?.Substring(0, Math.Min(500, apiResponse.Content?.Length ?? 0))}");
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 callLog.BookingApiResponse = $"Exception: {ex.Message}";
+                await SaveCpAsync("booking_exception",
+                    $"Exception: {ex.Message}", convId: convId, callLogId: callLog.Id,
+                    extra: ex.ToString());
             }
+        }
+
+        // ─── Shared checkpoint helper ─────────────────────────────────────────────
+
+        private async Task SaveCpAsync(
+            string name, string msg, string convId = null, int? callLogId = null, string extra = null)
+        {
+            try
+            {
+                await _repository.SaveCheckpointAsync(new PlivoCXWebhookCheckpoint
+                {
+                    CheckpointName = name,
+                    Message        = msg,
+                    ConversationId = convId,
+                    CallLogId      = callLogId,
+                    AdditionalData = extra
+                });
+            }
+            catch { }
         }
 
         // ─── Management / test endpoints ─────────────────────────────────────────
