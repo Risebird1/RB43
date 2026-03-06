@@ -131,7 +131,7 @@ namespace Risebird.Web.Controllers
                 var triggerRequest = new PlivoCXTriggerRequest
                 {
                     PhoneNumber    = recipientPhone,
-                    CandidateName  = recipientName,
+                    CandidateName  = recipientName ?? "Candidate",
                     CandidateEmail = recipientEmail,
                     IrfId          = irfId?.ToString(),
                     JobTitle       = jobTitle,
@@ -215,9 +215,26 @@ namespace Risebird.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> HangupCallback()
         {
-            // ── Step 1: Read the raw body first (before any model binding attempt) ──
-            // Plivo CX sends webhooks as application/x-www-form-urlencoded, NOT JSON.
-            // We read the raw body so the debug log always captures something useful.
+            // Helper to fire-and-forget a checkpoint without ever throwing
+            async Task Cp(string name, string msg, string convId = null, int? callLogId = null, string extra = null)
+            {
+                try
+                {
+                    await _repository.SaveCheckpointAsync(new PlivoCXWebhookCheckpoint
+                    {
+                        CheckpointName = name,
+                        Message        = msg,
+                        ConversationId = convId,
+                        CallLogId      = callLogId,
+                        AdditionalData = extra
+                    });
+                }
+                catch { }
+            }
+
+            await Cp(CheckpointNames.HangupReceived, $"HangupCallback hit — Content-Type: {Request.ContentType}");
+
+            // ── Step 1: Read raw body ────────────────────────────────────────────────
             string rawBody = string.Empty;
             try
             {
@@ -226,17 +243,36 @@ namespace Risebird.Web.Controllers
                     Request.Body, System.Text.Encoding.UTF8, leaveOpen: true);
                 rawBody = await reader.ReadToEndAsync();
                 Request.Body.Position = 0;
+                await Cp(CheckpointNames.HangupBodyRead,
+                    $"Raw body read — length: {rawBody.Length}",
+                    extra: rawBody.Length > 500 ? rawBody.Substring(0, 500) + "…" : rawBody);
+            }
+            catch (Exception ex)
+            {
+                await Cp(CheckpointNames.HangupBodyRead, $"Body read FAILED: {ex.Message}");
+            }
+
+            // ── Step 2: Parse — try JSON first, then form-encoded ────────────────────
+            PlivoCXHangupPayload payload = null;
+            bool parsedAsJson = false;
+
+            try
+            {
+                payload = JsonConvert.DeserializeObject<PlivoCXHangupPayload>(rawBody);
+                if (payload != null &&
+                    (!string.IsNullOrEmpty(payload.ConversationId) || !string.IsNullOrEmpty(payload.LogId)))
+                {
+                    parsedAsJson = true;
+                    await Cp(CheckpointNames.HangupJsonParsed,
+                        $"Parsed as JSON — conv_id: {payload.ConversationId}, log_id: {payload.LogId}",
+                        convId: payload.ConversationId);
+                }
             }
             catch { }
 
-            // ── Step 2: Parse the payload — try JSON first, then form-encoded ──────
-            PlivoCXHangupPayload payload = null;
-            try { payload = JsonConvert.DeserializeObject<PlivoCXHangupPayload>(rawBody); }
-            catch { }
-
-            if (payload == null || (string.IsNullOrEmpty(payload.ConversationId) && string.IsNullOrEmpty(payload.LogId)))
+            if (!parsedAsJson)
             {
-                // Fallback: form-encoded (application/x-www-form-urlencoded)
+                // Fallback: form-urlencoded
                 try
                 {
                     var form = await Request.ReadFormAsync();
@@ -261,11 +297,18 @@ namespace Risebird.Web.Controllers
                         CandidateConfirmed     = form["candidate_confirmed"],
                         ConfirmedCandidateName = form["confirmed_candidate_name"]
                     };
+                    await Cp(CheckpointNames.HangupFormParsed,
+                        $"Parsed as form-encoded — conv_id: {payload.ConversationId}, log_id: {payload.LogId}",
+                        convId: payload.ConversationId,
+                        extra: $"keys: {string.Join(", ", form.Keys)}");
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    await Cp(CheckpointNames.HangupParseFailed, $"Form parse FAILED: {ex.Message}");
+                }
             }
 
-            // ── Step 3: Checkpoint — log raw body and parsed identifiers ─────────
+            // ── Step 3: Always write the raw debug log ───────────────────────────────
             try
             {
                 int? logIdHint = null;
@@ -283,28 +326,55 @@ namespace Risebird.Web.Controllers
                 });
             }
             catch { }
-            // ── End checkpoint ────────────────────────────────────────────────────
+
+            // ── Step 4: Validate we got usable identifiers ────────────────────────────
+            if (payload == null ||
+                (string.IsNullOrEmpty(payload.ConversationId) && string.IsNullOrEmpty(payload.LogId)))
+            {
+                await Cp(CheckpointNames.HangupParseFailed,
+                    "No conv_id or log_id — dropping webhook",
+                    extra: $"raw (first 200): {rawBody?.Substring(0, Math.Min(200, rawBody?.Length ?? 0))}");
+                return Ok();
+            }
 
             try
             {
-                if (payload == null)
-                    return Ok();
-
-                // Find the call log:
-                //   1st: by log_id (our DB id passed as trigger variable — most reliable)
-                //   2nd: by conversation_id (Plivo CX run id, set after call end)
-                //   3rd: by PlivoCXRequestId (trigger api_id — stored on initiation)
+                // ── Step 5: Find matching call log ───────────────────────────────────
+                // Priority: log_id (our DB PK) → conversation_id → fallback to request_id
                 PlivoCXCallLog callLog = null;
-                if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int logId))
-                    callLog = await _repository.GetCallLogByIdAsync(logId);
-                if (callLog == null && !string.IsNullOrEmpty(payload.ConversationId))
-                    callLog = await _repository.GetCallLogByConversationIdAsync(payload.ConversationId);
-                if (callLog == null && !string.IsNullOrEmpty(payload.ConversationId))
-                    callLog = await _repository.GetCallLogByRequestIdAsync(payload.ConversationId);
-                if (callLog == null)
-                    return Ok();
+                string lookupMethod    = null;
 
-                // Update call outcome fields
+                if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int logId))
+                {
+                    callLog     = await _repository.GetCallLogByIdAsync(logId);
+                    lookupMethod = $"log_id={logId}";
+                }
+                if (callLog == null && !string.IsNullOrEmpty(payload.ConversationId))
+                {
+                    callLog     = await _repository.GetCallLogByConversationIdAsync(payload.ConversationId);
+                    lookupMethod = $"conversation_id={payload.ConversationId}";
+                }
+                if (callLog == null && !string.IsNullOrEmpty(payload.ConversationId))
+                {
+                    callLog     = await _repository.GetCallLogByRequestIdAsync(payload.ConversationId);
+                    lookupMethod = $"request_id={payload.ConversationId}";
+                }
+
+                if (callLog == null)
+                {
+                    await Cp(CheckpointNames.HangupLogNotFound,
+                        $"No call log matched — tried: {lookupMethod}",
+                        convId: payload.ConversationId);
+                    return Ok();
+                }
+
+                await Cp(CheckpointNames.HangupLogFound,
+                    $"Call log #{callLog.Id} found via {lookupMethod}",
+                    convId: payload.ConversationId,
+                    callLogId: callLog.Id,
+                    extra: $"phone: {callLog.RecipientPhone}, status_was: {callLog.CallStatus}");
+
+                // ── Step 6: Apply call outcome fields ────────────────────────────────
                 callLog.PlivoCXConversationId = payload.ConversationId ?? callLog.PlivoCXConversationId;
                 callLog.CallStatus            = payload.CallStatus     ?? callLog.CallStatus;
                 callLog.HangupCause           = payload.HangupCause;
@@ -319,7 +389,7 @@ namespace Risebird.Web.Controllers
                     int.TryParse(payload.Duration, out int dur))
                     callLog.DurationSeconds = dur;
 
-                // ── Attempt interview booking if candidate confirmed ──────────────
+                // ── Step 7: Attempt booking if candidate confirmed ────────────────────
                 bool candidateConfirmed = string.Equals(
                     payload.CandidateConfirmed, "true",
                     StringComparison.OrdinalIgnoreCase);
@@ -328,15 +398,37 @@ namespace Risebird.Web.Controllers
                     !string.IsNullOrWhiteSpace(payload.InterviewDate) &&
                     !string.IsNullOrWhiteSpace(payload.InterviewTime))
                 {
+                    await Cp(CheckpointNames.HangupBookingStarted,
+                        $"Booking — date: {payload.InterviewDate}, time: {payload.InterviewTime}",
+                        convId: payload.ConversationId, callLogId: callLog.Id);
+
                     await ProcessBookingAsync(callLog, payload);
+
+                    await Cp(CheckpointNames.HangupBookingDone,
+                        $"Booking result — success: {callLog.BookingApiSuccess}, response: {callLog.BookingApiResponse?.Substring(0, Math.Min(200, callLog.BookingApiResponse?.Length ?? 0))}",
+                        convId: payload.ConversationId, callLogId: callLog.Id);
+                }
+                else
+                {
+                    await Cp(CheckpointNames.HangupBookingSkipped,
+                        $"Booking skipped — confirmed: {payload.CandidateConfirmed}, date: {payload.InterviewDate}, time: {payload.InterviewTime}",
+                        convId: payload.ConversationId, callLogId: callLog.Id);
                 }
 
                 await _repository.UpdateCallLogAsync(callLog);
+
+                await Cp(CheckpointNames.HangupComplete,
+                    $"Call log #{callLog.Id} updated — final status: {callLog.CallStatus}",
+                    convId: payload.ConversationId, callLogId: callLog.Id);
+
                 return Ok();
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                await Cp("hangup_exception", $"Unhandled exception: {ex.Message}",
+                    convId: payload?.ConversationId,
+                    extra: ex.ToString());
                 return Ok(); // Always 200 to Plivo CX
             }
         }
@@ -504,7 +596,7 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
-        /// View recent trigger + hangup debug logs.
+        /// View recent trigger + hangup debug logs (raw payloads).
         /// Access: /PlivoCXInterviewCall/DebugLogs?count=50
         /// </summary>
         [HttpGet]
@@ -514,6 +606,25 @@ namespace Risebird.Web.Controllers
             {
                 var logs = await _repository.GetRecentDebugLogsAsync(count);
                 return Json(logs);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// View recent granular processing checkpoints for HangupCallback.
+        /// Access: /PlivoCXInterviewCall/Checkpoints?count=100
+        /// Each row is a named step — use to trace exactly where processing stopped.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Checkpoints(int count = 100)
+        {
+            try
+            {
+                var checkpoints = await _repository.GetRecentCheckpointsAsync(count);
+                return Json(checkpoints);
             }
             catch (Exception ex)
             {

@@ -114,7 +114,7 @@ namespace Risebird.AzureTimerFunctions
                         var triggerReq = new PlivoCXTriggerRequest
                         {
                             PhoneNumber    = phoneNumber,
-                            CandidateName  = candidate.CandidateName,
+                            CandidateName  = candidate.CandidateName ?? "Candidate",
                             CandidateEmail = candidate.CandidateEmail,
                             IrfId          = candidate.IRFId.ToString(),
                             JobTitle       = jobTitle,
