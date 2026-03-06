@@ -510,7 +510,7 @@ namespace Risebird.Web.Controllers
                         }
 
                         //phoneNumber = "+918888571923";
-                        phoneNumber = "+918105232468";
+                        //phoneNumber = "+918105232468";
 
                         testResults.Add($"   Sanitised phone: {phoneNumber}");
 
