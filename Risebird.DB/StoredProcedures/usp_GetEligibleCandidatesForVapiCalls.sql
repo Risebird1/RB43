@@ -46,7 +46,7 @@ BEGIN
         c.id                                    AS CandidateId,
         c.IRFId,
         irf.IRFId                               AS IRFName,
-        (u.FirstName + ' ' + u.LastName)        AS CandidateName,
+        (u.FirstName)        AS CandidateName,
         u.EmailId                               AS CandidateEmail,
         c.Phone                                 AS CandidatePhone,
         irf.JDTiltle                               AS JobTitle,
