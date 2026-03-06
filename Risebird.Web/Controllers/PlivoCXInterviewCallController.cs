@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -140,6 +141,28 @@ namespace Risebird.Web.Controllers
 
                 var response = await _plivoCXService.TriggerOutboundCallAsync(triggerRequest);
 
+                // 3b. Checkpoint — log the raw trigger request + response
+                await _repository.SaveWebhookDebugLogAsync(new PlivoCXWebhookDebugLog
+                {
+                    LogType          = "trigger-request",
+                    HttpStatusCode   = response?.HttpStatusCode,
+                    PlivoCXId        = response?.ApiId,
+                    CallLogId        = logId,
+                    RawPayload       = JsonConvert.SerializeObject(triggerRequest),
+                    ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                    ErrorMessage     = response?.Error
+                });
+                await _repository.SaveWebhookDebugLogAsync(new PlivoCXWebhookDebugLog
+                {
+                    LogType          = "trigger-response",
+                    HttpStatusCode   = response?.HttpStatusCode,
+                    PlivoCXId        = response?.ApiId,
+                    CallLogId        = logId,
+                    RawPayload       = response?.RawResponseBody,
+                    ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                    ErrorMessage     = response?.Error
+                });
+
                 // 4. Update log with conversation id returned by Plivo CX
                 if (!string.IsNullOrEmpty(response?.ConversationId))
                 {
@@ -190,21 +213,96 @@ namespace Risebird.Web.Controllers
         /// </summary>
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> HangupCallback([FromBody] PlivoCXHangupPayload payload)
+        public async Task<IActionResult> HangupCallback()
         {
+            // ── Step 1: Read the raw body first (before any model binding attempt) ──
+            // Plivo CX sends webhooks as application/x-www-form-urlencoded, NOT JSON.
+            // We read the raw body so the debug log always captures something useful.
+            string rawBody = string.Empty;
+            try
+            {
+                Request.EnableBuffering();
+                using var reader = new System.IO.StreamReader(
+                    Request.Body, System.Text.Encoding.UTF8, leaveOpen: true);
+                rawBody = await reader.ReadToEndAsync();
+                Request.Body.Position = 0;
+            }
+            catch { }
+
+            // ── Step 2: Parse the payload — try JSON first, then form-encoded ──────
+            PlivoCXHangupPayload payload = null;
+            try { payload = JsonConvert.DeserializeObject<PlivoCXHangupPayload>(rawBody); }
+            catch { }
+
+            if (payload == null || (string.IsNullOrEmpty(payload.ConversationId) && string.IsNullOrEmpty(payload.LogId)))
+            {
+                // Fallback: form-encoded (application/x-www-form-urlencoded)
+                try
+                {
+                    var form = await Request.ReadFormAsync();
+                    payload = new PlivoCXHangupPayload
+                    {
+                        ConversationId         = form["conversation_id"],
+                        CallUUID               = form["call_uuid"],
+                        CallStatus             = form["call_status"],
+                        Duration               = form["duration"],
+                        HangupCause            = form["hangup_cause"],
+                        Transcript             = form["transcript"],
+                        Summary                = form["summary"],
+                        PhoneNumber            = form["phone_number"],
+                        CandidateName          = form["candidate_name"],
+                        CandidateEmail         = form["candidate_email"],
+                        IrfId                  = form["irf_id"],
+                        JobTitle               = form["job_title"],
+                        ClientName             = form["client_name"],
+                        LogId                  = form["log_id"],
+                        InterviewDate          = form["interview_date"],
+                        InterviewTime          = form["interview_time"],
+                        CandidateConfirmed     = form["candidate_confirmed"],
+                        ConfirmedCandidateName = form["confirmed_candidate_name"]
+                    };
+                }
+                catch { }
+            }
+
+            // ── Step 3: Checkpoint — log raw body and parsed identifiers ─────────
+            try
+            {
+                int? logIdHint = null;
+                if (!string.IsNullOrEmpty(payload?.LogId) && int.TryParse(payload.LogId, out int parsedId))
+                    logIdHint = parsedId;
+
+                await _repository.SaveWebhookDebugLogAsync(new PlivoCXWebhookDebugLog
+                {
+                    LogType          = "hangup-callback",
+                    HttpStatusCode   = 0,
+                    PlivoCXId        = payload?.ConversationId ?? payload?.LogId,
+                    CallLogId        = logIdHint,
+                    RawPayload       = rawBody,
+                    ProcessingStatus = "received"
+                });
+            }
+            catch { }
+            // ── End checkpoint ────────────────────────────────────────────────────
+
             try
             {
                 if (payload == null)
-                    return Ok(); // Always return 200 to Plivo CX
+                    return Ok();
 
-                // Find the call log — prefer log_id (most reliable), fallback to conversation_id
+                // Find the call log:
+                //   1st: by log_id (our DB id passed as trigger variable — most reliable)
+                //   2nd: by conversation_id (Plivo CX run id, set after call end)
+                //   3rd: by PlivoCXRequestId (trigger api_id — stored on initiation)
                 PlivoCXCallLog callLog = null;
                 if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int logId))
                     callLog = await _repository.GetCallLogByIdAsync(logId);
                 if (callLog == null && !string.IsNullOrEmpty(payload.ConversationId))
                     callLog = await _repository.GetCallLogByConversationIdAsync(payload.ConversationId);
+                if (callLog == null && !string.IsNullOrEmpty(payload.ConversationId))
+                    callLog = await _repository.GetCallLogByRequestIdAsync(payload.ConversationId);
                 if (callLog == null)
-                    return Ok(); // No matching record; still return 200
+                    return Ok();
 
                 // Update call outcome fields
                 callLog.PlivoCXConversationId = payload.ConversationId ?? callLog.PlivoCXConversationId;
@@ -249,15 +347,31 @@ namespace Risebird.Web.Controllers
         /// </summary>
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> RecordingCallback([FromBody] object payload)
+        public async Task<IActionResult> RecordingCallback()
         {
+            // Read raw body — Plivo CX posts form-encoded, not JSON
+            string rawBody = string.Empty;
             try
             {
-                await _logger.LogMessage(LogLevelInfo.Info,
-                    $"[PlivoCX] Recording callback: {JsonConvert.SerializeObject(payload)}");
-                return Ok();
+                Request.EnableBuffering();
+                using var reader = new System.IO.StreamReader(
+                    Request.Body, System.Text.Encoding.UTF8, leaveOpen: true);
+                rawBody = await reader.ReadToEndAsync();
             }
-            catch { return Ok(); }
+            catch { }
+
+            try
+            {
+                await _repository.SaveWebhookDebugLogAsync(new PlivoCXWebhookDebugLog
+                {
+                    LogType          = "recording-callback",
+                    RawPayload       = rawBody,
+                    ProcessingStatus = "received"
+                });
+                await _logger.LogMessage(LogLevelInfo.Info, $"[PlivoCX] Recording callback: {rawBody}");
+            }
+            catch { }
+            return Ok();
         }
 
         // ─── Booking logic ────────────────────────────────────────────────────────
@@ -387,6 +501,24 @@ namespace Risebird.Web.Controllers
         {
             var log = await _repository.GetCallLogByIdAsync(id);
             return log != null ? Json(log) : NotFound();
+        }
+
+        /// <summary>
+        /// View recent trigger + hangup debug logs.
+        /// Access: /PlivoCXInterviewCall/DebugLogs?count=50
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> DebugLogs(int count = 50)
+        {
+            try
+            {
+                var logs = await _repository.GetRecentDebugLogsAsync(count);
+                return Json(logs);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
         }
 
         /// <summary>

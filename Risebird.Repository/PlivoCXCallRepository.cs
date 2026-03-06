@@ -126,6 +126,22 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<PlivoCXCallLog> GetCallLogByRequestIdAsync(string requestId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                return await conn.QueryFirstOrDefaultAsync<PlivoCXCallLog>(
+                    "SELECT * FROM PlivoCXCallLogs WHERE PlivoCXRequestId = @RequestId",
+                    new { RequestId = requestId });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<List<PlivoCXCallLog>> GetRecentCallLogsAsync(int count = 50)
         {
             try
@@ -140,6 +156,47 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return new List<PlivoCXCallLog>();
+            }
+        }
+
+        // ── Debug / checkpoint logs ───────────────────────────────────────────────
+
+        public async Task<int> SaveWebhookDebugLogAsync(PlivoCXWebhookDebugLog log)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                const string sql = @"
+                    INSERT INTO PlivoCXWebhookDebugLogs
+                        (CreatedAt, LogType, HttpStatusCode, PlivoCXId, CallLogId, RawPayload, ProcessingStatus, ErrorMessage)
+                    VALUES
+                        (@CreatedAt, @LogType, @HttpStatusCode, @PlivoCXId, @CallLogId, @RawPayload, @ProcessingStatus, @ErrorMessage);
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+                log.CreatedAt = DateTime.UtcNow;
+                return await conn.ExecuteScalarAsync<int>(sql, log);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<List<PlivoCXWebhookDebugLog>> GetRecentDebugLogsAsync(int count = 50)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<PlivoCXWebhookDebugLog>(
+                    "SELECT TOP (@Count) * FROM PlivoCXWebhookDebugLogs ORDER BY CreatedAt DESC",
+                    new { Count = count });
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<PlivoCXWebhookDebugLog>();
             }
         }
 
