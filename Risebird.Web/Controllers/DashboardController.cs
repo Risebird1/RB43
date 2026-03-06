@@ -134,7 +134,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false)
+        public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = true)
         {
             try
             {
@@ -509,7 +509,7 @@ namespace Risebird.Web.Controllers
                             continue;
                         }
 
-                        //phoneNumber = "+918888571923";
+                        phoneNumber = "+918888571923";
 
                         testResults.Add($"   Sanitised phone: {phoneNumber}");
 
@@ -534,7 +534,7 @@ namespace Risebird.Web.Controllers
                         var triggerReq = new Risebird.Entities.Data.PlivoCXModels.PlivoCXTriggerRequest
                         {
                             PhoneNumber    = phoneNumber,
-                            CandidateName  = candidate.CandidateName,
+                            CandidateName  = candidate.CandidateName ?? "Candidate",
                             CandidateEmail = candidate.CandidateEmail,
                             IrfId          = candidate.IRFId.ToString(),
                             JobTitle       = candidate.IRFName,

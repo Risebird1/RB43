@@ -16,9 +16,13 @@ namespace Risebird.Repository.Interface
         Task<PlivoCXCallLog>   GetCallLogByRequestIdAsync(string requestId);
         Task<List<PlivoCXCallLog>> GetRecentCallLogsAsync(int count = 50);
 
-        // ── Debug / checkpoint logs ──────────────────────────────────────────────
+        // ── Debug logs (raw payload captures) ───────────────────────────────────
         Task<int>                         SaveWebhookDebugLogAsync(PlivoCXWebhookDebugLog log);
         Task<List<PlivoCXWebhookDebugLog>> GetRecentDebugLogsAsync(int count = 50);
+
+        // ── Webhook checkpoints (named processing steps) ─────────────────────────
+        Task<int>                              SaveCheckpointAsync(PlivoCXWebhookCheckpoint checkpoint);
+        Task<List<PlivoCXWebhookCheckpoint>>   GetRecentCheckpointsAsync(int count = 100);
 
         // ── Candidate helpers (reuse existing SPs) ───────────────────────────────
         Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForCallsAsync(int count = 10);
