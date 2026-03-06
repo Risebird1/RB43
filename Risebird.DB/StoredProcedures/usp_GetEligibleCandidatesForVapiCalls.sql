@@ -49,7 +49,7 @@ BEGIN
         (u.FirstName + ' ' + u.LastName)        AS CandidateName,
         u.EmailId                               AS CandidateEmail,
         c.Phone                                 AS CandidatePhone,
-        irf.IRFId                               AS JobTitle,
+        irf.JDTiltle                               AS JobTitle,
         cl.Name                                 AS ClientName,
         c.VapiCallAttempts                      AS CallAttempts
     FROM Candidate c

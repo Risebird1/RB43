@@ -534,13 +534,16 @@ namespace Risebird.Web.Controllers
                         // 2. Trigger Plivo CX outbound call
                         var triggerReq = new Risebird.Entities.Data.PlivoCXModels.PlivoCXTriggerRequest
                         {
-                            PhoneNumber    = phoneNumber,
-                            CandidateName  = candidate.CandidateName ?? "Candidate",
-                            CandidateEmail = candidate.CandidateEmail,
-                            IrfId          = candidate.IRFId.ToString(),
-                            JobTitle       = candidate.IRFName,
-                            ClientName     = candidate.ClientName,
-                            LogId          = logId.ToString()
+                            PhoneNumber          = phoneNumber,
+                            CandidateName        = candidate.CandidateName ?? "Candidate",
+                            CandidateEmail       = candidate.CandidateEmail,
+                            IrfId                = candidate.IRFId.ToString(),
+                            JobTitle             = candidate.IRFName,
+                            ClientName           = candidate.ClientName,
+                            LogId                = logId.ToString(),
+                            TodayDate            = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            TomorrowDate         = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
+                            DayAfterTomorrowDate = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
                         };
 
                         var response = await _plivoCXService.TriggerOutboundCallAsync(triggerReq);

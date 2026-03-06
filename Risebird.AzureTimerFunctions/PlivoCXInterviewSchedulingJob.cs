@@ -113,13 +113,16 @@ namespace Risebird.AzureTimerFunctions
                         // 2. Trigger the Plivo CX call
                         var triggerReq = new PlivoCXTriggerRequest
                         {
-                            PhoneNumber    = phoneNumber,
-                            CandidateName  = candidate.CandidateName ?? "Candidate",
-                            CandidateEmail = candidate.CandidateEmail,
-                            IrfId          = candidate.IRFId.ToString(),
-                            JobTitle       = jobTitle,
-                            ClientName     = clientName,
-                            LogId          = logId.ToString()
+                            PhoneNumber          = phoneNumber,
+                            CandidateName        = candidate.CandidateName ?? "Candidate",
+                            CandidateEmail       = candidate.CandidateEmail,
+                            IrfId                = candidate.IRFId.ToString(),
+                            JobTitle             = jobTitle,
+                            ClientName           = clientName,
+                            LogId                = logId.ToString(),
+                            TodayDate            = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            TomorrowDate         = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
+                            DayAfterTomorrowDate = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
                         };
 
                         var triggerResponse = await _plivoCXService.TriggerOutboundCallAsync(triggerReq);
