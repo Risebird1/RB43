@@ -64,7 +64,7 @@ namespace Risebird.AzureTimerFunctions
                     return;
                 }
 
-                var candidates = await _repository.GetEligibleCandidatesForCallsAsync(1);
+                var candidates = await _repository.GetEligibleCandidatesForCallsAsync(2);
                 if (candidates == null || !candidates.Any())
                 {
                     _log.LogInformation("[PlivoCX] No eligible candidates for calling");
