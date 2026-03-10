@@ -79,6 +79,7 @@ namespace Risebird.Repository
                         BookedInterviewDateTime  = @BookedInterviewDateTime,
                         BookingApiResponse       = @BookingApiResponse,
                         BookingApiSuccess        = @BookingApiSuccess,
+                        CandidateDisposition     = @CandidateDisposition,
                         CallStartedAt            = @CallStartedAt,
                         CallEndedAt              = @CallEndedAt,
                         UpdatedAt                = @UpdatedAt
@@ -241,7 +242,7 @@ namespace Risebird.Repository
             }
         }
 
-        // ── Candidate helpers — reuse existing Vapi stored procedures ────────────
+        // ── Candidate helpers ─────────────────────────────────────────────────────
 
         public async Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForCallsAsync(int count = 10)
         {
@@ -249,7 +250,7 @@ namespace Risebird.Repository
             {
                 using var conn = new SqlConnection(_connectionString);
                 var results = await conn.QueryAsync<VapiEligibleCandidateVM>(
-                    "usp_GetEligibleCandidatesForVapiCalls",
+                    "usp_GetEligibleCandidatesForPlivoCXCalls",
                     new { Count = count },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
@@ -315,6 +316,21 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        public async Task UpdateCandidateDispositionAsync(int candidateId, string disposition)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                await conn.ExecuteAsync(
+                    "UPDATE Candidate SET PlivoCXDisposition = @Disposition WHERE id = @CandidateId",
+                    new { CandidateId = candidateId, Disposition = disposition });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
 
