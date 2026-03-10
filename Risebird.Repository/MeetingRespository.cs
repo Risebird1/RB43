@@ -4302,7 +4302,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<string> InsertPaymentHistoryWithGateway(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string payoutReferenceId, string paymentGateway, string gatewayStatus)
+        public async Task<string> InsertPaymentHistoryWithGateway(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string payoutReferenceId, string paymentGateway, string gatewayStatus, int? fees = null)
         {
             try
             {
@@ -4342,6 +4342,7 @@ namespace Risebird.Repository
                     parameters.Add("@PayoutReferenceId", payoutReferenceId ?? (object)DBNull.Value);
                     parameters.Add("@PaymentGateway", paymentGateway ?? (object)DBNull.Value);
                     parameters.Add("@GatewayStatus", gatewayStatus ?? (object)DBNull.Value);
+                    parameters.Add("@Fees", fees ?? (object)DBNull.Value);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_InsertPaymentHistory", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();

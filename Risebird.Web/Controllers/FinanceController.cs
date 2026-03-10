@@ -57,7 +57,6 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<JsonResult> GetPayoutStatus(string payoutId)
         {
-            payoutId = "pout_SPTgiPPkp3bZcu";
             if (string.IsNullOrWhiteSpace(payoutId))
                 return Json(new { success = false, message = "Payout ID is required." });
 

@@ -2978,11 +2978,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<string> InsertPaymentHistoryWithGateway(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string payoutReferenceId, string paymentGateway, string gatewayStatus)
+        public async Task<string> InsertPaymentHistoryWithGateway(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string payoutReferenceId, string paymentGateway, string gatewayStatus, int? fees = null)
         {
             try
             {
-                var result = await _meetingRespository.InsertPaymentHistoryWithGateway(Interviewer, Amount, TotalAmount, actionvalue, Comment, payoutReferenceId, paymentGateway, gatewayStatus);
+                var result = await _meetingRespository.InsertPaymentHistoryWithGateway(Interviewer, Amount, TotalAmount, actionvalue, Comment, payoutReferenceId, paymentGateway, gatewayStatus, fees);
                 return result;
             }
             catch (Exception e)
@@ -3037,7 +3037,7 @@ namespace Risebird.Business
 
             var commentvalue = st.ToString("yyyy-MM-dd") + " to " + se.ToString("yyyy-MM-dd");
             var paymenthistoryId = await InsertPaymentHistoryWithGateway(email, payableAmount, totalAmount, "Done", commentvalue,
-                payoutResult.PayoutId, "Razorpay", payoutResult.Status ?? "created");
+                payoutResult.PayoutId, "Razorpay", payoutResult.Status ?? "created", payoutResult.Fees.HasValue ? (int?)payoutResult.Fees.Value : null);
             if (string.IsNullOrEmpty(paymenthistoryId) || paymenthistoryId == "Failed")
                 return Tuple.Create(false, "Payment was initiated with Razorpay but failed to save payment record. Reference: " + payoutResult.PayoutId);
 
