@@ -17,5 +17,9 @@ namespace Risebird.Entities.ViewModel
         public string ClientName { get; set; }
         public int CallAttempts { get; set; }
         public DateTime? LastCallAttempt { get; set; }
+
+        // Plivo CX-specific fields (populated by usp_GetEligibleCandidatesForPlivoCXCalls)
+        public string PlivoCXDisposition { get; set; }
+        public int CompletedCallCount { get; set; }
     }
 }

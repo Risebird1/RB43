@@ -242,7 +242,7 @@ namespace Risebird.Repository
             }
         }
 
-        // ── Candidate helpers — reuse existing Vapi stored procedures ────────────
+        // ── Candidate helpers ─────────────────────────────────────────────────────
 
         public async Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForCallsAsync(int count = 10)
         {
@@ -250,7 +250,7 @@ namespace Risebird.Repository
             {
                 using var conn = new SqlConnection(_connectionString);
                 var results = await conn.QueryAsync<VapiEligibleCandidateVM>(
-                    "usp_GetEligibleCandidatesForVapiCalls",
+                    "usp_GetEligibleCandidatesForPlivoCXCalls",
                     new { Count = count },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
