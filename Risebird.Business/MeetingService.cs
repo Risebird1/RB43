@@ -34,8 +34,9 @@ namespace Risebird.Business
         private readonly ICandidateService _candidateService;
         private readonly IZoomHelper _zoomHelper;
         private readonly IZohoMeetingHelper _zoho;
+        private readonly IRazorpayPayoutService _razorpayPayoutService;
 
-        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService, IZohoMeetingHelper zoho)
+        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService, IZohoMeetingHelper zoho, IRazorpayPayoutService razorpayPayoutService)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -53,6 +54,7 @@ namespace Risebird.Business
             _candidateService = candidateService;
             _zoomHelper = zoomHelper;
             _zoho = zoho;
+            _razorpayPayoutService = razorpayPayoutService;
         }
 
         public async Task<List<MeetingVM>> GetMeetingList()
@@ -2962,6 +2964,77 @@ namespace Risebird.Business
                 return "";
             }
         }
+
+        public async Task<string> InsertPaymentHistoryWithGateway(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string payoutReferenceId, string paymentGateway, string gatewayStatus)
+        {
+            try
+            {
+                var result = await _meetingRespository.InsertPaymentHistoryWithGateway(Interviewer, Amount, TotalAmount, actionvalue, Comment, payoutReferenceId, paymentGateway, gatewayStatus);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+
+        /// <summary>
+        /// Confirm interviewer payment via Razorpay payout (bank transfer). Stores payout reference and status in PaymentHistory.
+        /// </summary>
+        public async Task<Tuple<bool, string>> ConfirmPaymentViaRazorpay(int id, int index, string email, string amount, DateTime st, DateTime se)
+        {
+            var resultset = await RBInterviewerDetails(id, index);
+            if (resultset == null || resultset.Count == 0)
+                return Tuple.Create(false, "No payment details found for this interviewer.");
+
+            if (index == 2)
+            {
+                var model1 = resultset.Where(x => x.Status == "Advance").ToList();
+                resultset = resultset.Where(x => x.Date >= st && x.Date <= se.AddDays(1)).ToList();
+                resultset = resultset.Union(model1).ToList();
+            }
+
+            var totalAmount = resultset.Where(x => x.Status != "Advance").Sum(x => x.Points) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points);
+            var payableAmount = Convert.ToInt32(resultset.Where(x => x.Status != "Advance").Sum(x => x.Points * .9) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points));
+            if (payableAmount < 1)
+                return Tuple.Create(false, "Payable amount must be at least ₹1.");
+
+            var allPayouts = await _meetingRespository.FetchAllPayoutDetails();
+            var payoutDetail = allPayouts?.FirstOrDefault(x => x.Userid == id);
+            if (payoutDetail == null || string.IsNullOrWhiteSpace(payoutDetail.AccountNumber) || string.IsNullOrWhiteSpace(payoutDetail.IFSCCode))
+                return Tuple.Create(false, "Interviewer bank account details (Account number, IFSC) are missing. Please ask the interviewer to update profile.");
+
+            var amountInPaise = (long)payableAmount * 100;
+            var referenceId = $"RB_{id}_{DateTime.UtcNow:yyyyMMddHHmmss}";
+            var narration = "Risebird interviewer payout";
+
+            var payoutResult = await _razorpayPayoutService.CreatePayoutToBankAsync(
+                beneficiaryName: payoutDetail.AccountName ?? payoutDetail.FirstName ?? "Interviewer",
+                beneficiaryAccountNumber: payoutDetail.AccountNumber.Trim().Replace(" ", ""),
+                ifscCode: payoutDetail.IFSCCode.Trim(),
+                contactEmail: payoutDetail.InterviewerEmailid ?? email,
+                amountInPaise: amountInPaise,
+                referenceId: referenceId,
+                narration: narration,
+                contactPhone: null);
+
+            if (!payoutResult.Success)
+                return Tuple.Create(false, payoutResult.ErrorMessage ?? "Razorpay payout failed.");
+
+            var commentvalue = st.ToString("yyyy-MM-dd") + " to " + se.ToString("yyyy-MM-dd");
+            var paymenthistoryId = await InsertPaymentHistoryWithGateway(email, payableAmount, totalAmount, "Done", commentvalue,
+                payoutResult.PayoutId, "Razorpay", payoutResult.Status ?? "created");
+            if (string.IsNullOrEmpty(paymenthistoryId) || paymenthistoryId == "Failed")
+                return Tuple.Create(false, "Payment was initiated with Razorpay but failed to save payment record. Reference: " + payoutResult.PayoutId);
+
+            var confirmResult = await _meetingRespository.RBConfirmPayment(id, index, st, se.AddDays(1), Convert.ToInt32(paymenthistoryId));
+            if (confirmResult != "Success")
+                return Tuple.Create(false, "Razorpay payout succeeded but updating interview points failed. Ref: " + payoutResult.PayoutId);
+
+            return Tuple.Create(true, "Payment done via Razorpay. Reference: " + payoutResult.PayoutId);
+        }
+
         public async Task<List<RBInterviewDetails>> FetchFNPaymentHistory()
         {
             try

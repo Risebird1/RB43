@@ -4301,6 +4301,59 @@ namespace Risebird.Repository
                 return "";
             }
         }
+
+        public async Task<string> InsertPaymentHistoryWithGateway(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string payoutReferenceId, string paymentGateway, string gatewayStatus)
+        {
+            try
+            {
+                int userid = 0;
+                int Interviewerpresent = 0;
+                var query = "Select id from UserList where Emailid=@Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", Interviewer);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
+                    userid = results.FirstOrDefault();
+                }
+                var querycheck = "Select idProfile from UserList where id=@Userid";
+                var dynamicParameterscheck = new DynamicParameters();
+                dynamicParameterscheck.Add("@Userid", userid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(querycheck, dynamicParameterscheck);
+                    Interviewerpresent = results.FirstOrDefault();
+                }
+                if (Interviewerpresent != 3)
+                {
+                    return "Failed";
+                }
+                string status = actionvalue;
+                var PaymentDate = DateTime.Now;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@userid", userid);
+                    parameters.Add("@PaymentDate", PaymentDate);
+                    parameters.Add("@Amount", Amount);
+                    parameters.Add("@status", status);
+                    parameters.Add("@Comment", Comment);
+                    parameters.Add("@TotalAmount", TotalAmount);
+                    parameters.Add("@PayoutReferenceId", payoutReferenceId ?? (object)DBNull.Value);
+                    parameters.Add("@PaymentGateway", paymentGateway ?? (object)DBNull.Value);
+                    parameters.Add("@GatewayStatus", gatewayStatus ?? (object)DBNull.Value);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_InsertPaymentHistory", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+
         public async Task<List<RBInterviewDetails>> FetchFNPaymentHistory()
         {
             try

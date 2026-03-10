@@ -14,11 +14,14 @@ Create Procedure usp_InsertPaymentHistory
 @Amount int,
 @status varchar(10),
 @Comment varchar(100),
-@TotalAmount int
+@TotalAmount int,
+@PayoutReferenceId nvarchar(100) = NULL,
+@PaymentGateway varchar(50) = NULL,
+@GatewayStatus varchar(50) = NULL
 AS
 BEGIN
-Insert Into PaymentHistory (userid, PaymentDate,Amount,Status,Comment,TotalAmount) Values 
-(@userid, @PaymentDate, @Amount, @status,@Comment,@TotalAmount)
+Insert Into PaymentHistory (userid, PaymentDate,Amount,Status,Comment,TotalAmount,PayoutReferenceId,PaymentGateway,GatewayStatus) 
+Values (@userid, @PaymentDate, @Amount, @status,@Comment,@TotalAmount,@PayoutReferenceId,@PaymentGateway,@GatewayStatus)
 
 Select SCOPE_IDENTITY()
 END

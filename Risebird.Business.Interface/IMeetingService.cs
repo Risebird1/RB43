@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
@@ -135,6 +135,7 @@ namespace Risebird.Business.Interface
         IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst);
 
         Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment);
+        Task<Tuple<bool, string>> ConfirmPaymentViaRazorpay(int id, int index, string email, string amount, DateTime st, DateTime se);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<Meeting>> FetchOpenMeetingById(string id);

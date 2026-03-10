@@ -156,6 +156,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst);
 
         Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment);
+        Task<string> InsertPaymentHistoryWithGateway(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string payoutReferenceId, string paymentGateway, string gatewayStatus);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailID, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoMeetings();

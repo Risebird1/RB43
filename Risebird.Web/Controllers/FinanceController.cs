@@ -649,6 +649,48 @@ namespace Risebird.Web.Controllers
 
             //return RedirectToAction("FNPayment");
         }
+
+        /// <summary>
+        /// Finance Team confirms payment via Razorpay payout (bank transfer). Stores payout reference and status in DB.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> ConfirmPaymentViaRazorpay(int id, int index, string email, string amount, DateTime st, DateTime se)
+        {
+            var (success, message) = await _meetingService.ConfirmPaymentViaRazorpay(id, index, email, amount, st, se);
+            if (!success)
+                return Json(message);
+
+            //var resultset = await _meetingService.RBInterviewerDetails(id, index);
+            //if (index == 2 && resultset != null)
+            //{
+            //    var model1 = resultset.Where(x => x.Status == "Advance").ToList();
+            //    resultset = resultset.Where(x => x.Date >= st && x.Date <= se.AddDays(1)).ToList();
+            //    resultset = resultset.Union(model1).ToList();
+            //}
+            //if (resultset != null && resultset.Count > 0)
+            //{
+            //    StringBuilder sb = new StringBuilder();
+            //    sb.Append("<table cellspacing='0' width='100%'><thead><tr><th>Date</th><th>Payment for</th><th>Type</th><th>Status</th><th>Total Amount</th><th>Payable Amount</th></tr></thead><tbody>");
+            //    foreach (var item in resultset)
+            //    {
+            //        sb.Append("<tr>");
+            //        sb.Append("<td>" + item.Date.ToString() + "</td>");
+            //        sb.Append("<td>" + item.Comment + "</td>");
+            //        sb.Append("<td>" + item.Type + "</td>");
+            //        sb.Append("<td>Paid</td>");
+            //        sb.Append("<td>" + item.Points + "</td>");
+            //        sb.Append("<td>" + (item.Status != "Advance" ? Math.Round(item.Points - item.Points * .1) : item.Points) + "</td>");
+            //        sb.Append("</tr>");
+            //    }
+            //    sb.Append("<tbody></table>");
+            //    var _Amount = Convert.ToInt32(resultset.Where(x => x.Status != "Advance").Sum(x => x.Points * .9) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points));
+            //    Mail _mail = new Mail { TO = email, CC = "finance@risebird.io", Subject = "RiseBird: Finance Team has done payment (Razorpay)" };
+            //    await _notificationHelper.RBFNPaymentConfirmationNotification(_mail, _Amount.ToString(), sb);
+            //    //WhatsAppVM _whatsApp = new WhatsAppVM { Emailid = email, InterviewDate = _Amount.ToString(), Event = "Payment Notification" };
+            //    //_whatsAppHelper.WhatsAppSendOnAssignation(_whatsApp);
+            //}
+            return Json(message);
+        }
         /// <summary>
         /// Search functionlity implement
         /// </summary>

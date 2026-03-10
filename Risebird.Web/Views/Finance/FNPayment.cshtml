@@ -184,6 +184,11 @@
                                                                                 </svg>
                                                                             </span>
                                                                         </button>
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Pay via Razorpay" style="margin-left:2px;">
+                                                                            <span title="Pay via Razorpay" onclick="confirmpaymentRazorpay(@item.id)" class="mdc-fab__icon material-icons">
+                                                                                <svg style="top: 3px; position: relative; left: 3px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+                                                                            </span>
+                                                                        </button>
                                                                     }
                                                                 </td>
                                                             </tr>
@@ -470,6 +475,11 @@
                 html += '  </svg>';
                 html += ' </span>';
                 html += ' </button>';
+                html += ' <button class="mdc-fab app-fab--absolute" aria-label="Pay via Razorpay" style="margin-left:2px;">';
+                html += ' <span title="Pay via Razorpay" onclick="confirmpaymentRazorpay(' + data[i].id + ')" class="mdc-fab__icon material-icons">';
+                html += '   <svg style="top: 3px; position: relative; left: 3px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>';
+                html += ' </span>';
+                html += ' </button>';
             }
             html += '</td>';
             html += ' </tr>';
@@ -512,12 +522,12 @@
                 }
             } else if (i == nextset) {
                 if (Generateinvoiceflag == 2) {
-                    html += '<li class="disabled PagedList-ellipses"><a>Ö</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
                     html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(' + next + ')" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
                 }
                 else {
-                    html += '<li class="disabled PagedList-ellipses"><a>Ö</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
                     html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=' + next + '&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
                 }
@@ -526,11 +536,11 @@
             }
             if (pagecount <= 10 && i == pagecount && i != 1) {
                 if (Generateinvoiceflag == 2) {
-                    html += '<li class="disabled PagedList-ellipses"><a>Ö</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
                     html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(' + next + ')" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
                 } else {
-                    html += '<li class="disabled PagedList-ellipses"><a>Ö</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
                     html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=' + next + '&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
                 }
@@ -737,6 +747,36 @@
                     //window.location.href = "/Finance/ConfirmPayment?id=" + interviewerid + "&index=" + Generateinvoiceflag + "&email=" + $("#hidcomment_" + interviewerid).val() + "&amount=" + $("#hidpoint_" + interviewerid).val() + "&st=" + St_date + "&se=" + Se_date;
                 }
             })
+            confirmationpayment = 0;
+        }
+    }
+    function confirmpaymentRazorpay(interviewerid) {
+        if (confirmationpayment == 0) {
+            confirmationpayment = 1;
+            var paymentamount = $("#hidpoint_" + interviewerid).val();
+            Swal.fire({
+                title: 'Pay via Razorpay?',
+                text: 'This will transfer ' + paymentamount + ' (after TDS) to interviewer bank account via Razorpay. Continue?',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Pay via Razorpay',
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: "/Finance/ConfirmPaymentViaRazorpay",
+                        type: "POST",
+                        data: { id: interviewerid, index: Generateinvoiceflag, email: $("#hidcomment_" + interviewerid).val(), amount: $("#hidpoint_" + interviewerid).val(), st: St_date, se: Se_date },
+                        dataType: 'json',
+                        success: function (data) {
+                            Swal.fire(data);
+                            FinacneChangePage(_Currentpage);
+                        },
+                        error: function (xhr) {
+                            Swal.fire(xhr.responseText || 'Request failed.');
+                        }
+                    });
+                }
+            });
             confirmationpayment = 0;
         }
     }

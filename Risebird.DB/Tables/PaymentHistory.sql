@@ -9,7 +9,10 @@ CREATE TABLE [dbo].[PaymentHistory](
 	[Amount] [int] NULL,
 	[Status] [varchar](10) NULL,
 	[Comment] [varchar](100) Null,
-	[TotalAmount] [int] NULL
+	[TotalAmount] [int] NULL,
+	[PayoutReferenceId] [varchar](100) Null,
+	[PaymentGateway] [varchar](50) Null,
+	[GatewayStatus] [varchar](50) Null
  CONSTRAINT [PK_PaymentHistory] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -34,7 +37,35 @@ BEGIN
     ALTER TABLE PaymentHistory
     Add TotalAmount  int
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PayoutReferenceId')
+      AND Object_ID = Object_ID(N'PaymentHistory'))
+BEGIN
+    ALTER TABLE PaymentHistory
+    Add PayoutReferenceId  varchar(100) NULL
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PaymentGateway')
+      AND Object_ID = Object_ID(N'PaymentHistory'))
+BEGIN
+    ALTER TABLE PaymentHistory
+    Add PaymentGateway varchar(50) NULL
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'GatewayStatus')
+      AND Object_ID = Object_ID(N'PaymentHistory'))
+BEGIN
+    ALTER TABLE PaymentHistory
+    Add GatewayStatus varchar(50) NULL
+END
 END
 GO
+
 
 
