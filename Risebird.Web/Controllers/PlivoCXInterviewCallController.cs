@@ -289,7 +289,8 @@ namespace Risebird.Web.Controllers
                         InterviewDate          = GetEventDataValue(ed, "interview_date"),
                         InterviewTime          = GetEventDataValue(ed, "interview_time"),
                         CandidateConfirmed     = GetEventDataValue(ed, "candidate_confirmed"),
-                        ConfirmedCandidateName = GetEventDataValue(ed, "confirmed_candidate_name")
+                        ConfirmedCandidateName = GetEventDataValue(ed, "confirmed_candidate_name"),
+                        CandidateDisposition   = GetEventDataValue(ed, "candidate_disposition")
                     };
 
                     await SaveCpAsync(CheckpointNames.HangupJsonParsed,
@@ -330,10 +331,11 @@ namespace Risebird.Web.Controllers
                             JobTitle               = form["job_title"],
                             ClientName             = form["client_name"],
                             LogId                  = form["log_id"],
-                            InterviewDate          = form["interview_date"],
-                            InterviewTime          = form["interview_time"],
-                            CandidateConfirmed     = form["candidate_confirmed"],
-                            ConfirmedCandidateName = form["confirmed_candidate_name"]
+                        InterviewDate          = form["interview_date"],
+                        InterviewTime          = form["interview_time"],
+                        CandidateConfirmed     = form["candidate_confirmed"],
+                        ConfirmedCandidateName = form["confirmed_candidate_name"],
+                        CandidateDisposition   = form["candidate_disposition"]
                         };
                         await SaveCpAsync(CheckpointNames.HangupFormParsed,
                             $"Parsed as form-encoded — conv_id: {payload.ConversationId}, log_id: {payload.LogId}",
@@ -414,15 +416,20 @@ namespace Risebird.Web.Controllers
                     extra: $"phone: {callLog.RecipientPhone}, status_was: {callLog.CallStatus}");
 
                 // ── Step 6: Apply call outcome fields ────────────────────────────────
-                callLog.PlivoCXConversationId = payload.ConversationId ?? callLog.PlivoCXConversationId;
-                callLog.CallStatus            = payload.CallStatus     ?? callLog.CallStatus;
+                callLog.PlivoCXConversationId = payload.ConversationId  ?? callLog.PlivoCXConversationId;
+                callLog.CallStatus            = payload.CallStatus      ?? callLog.CallStatus;
                 callLog.HangupCause           = payload.HangupCause;
                 callLog.CallTranscript        = payload.Transcript;
                 callLog.ConversationSummary   = payload.Summary;
                 callLog.BookedInterviewDate   = ResolveRelativeDate(payload.InterviewDate);
                 callLog.BookedInterviewTime   = payload.InterviewTime;
+                callLog.CandidateDisposition  = NormaliseDisposition(payload.CandidateDisposition);
                 callLog.CallEndedAt           = DateTime.UtcNow;
                 callLog.UpdatedAt             = DateTime.UtcNow;
+
+                await SaveCpAsync("disposition_extracted",
+                    $"Disposition: {callLog.CandidateDisposition ?? "(none)"} — raw: {payload.CandidateDisposition}",
+                    convId: payload.ConversationId, callLogId: callLog.Id);
 
                 if (!string.IsNullOrEmpty(payload.Duration) &&
                     int.TryParse(payload.Duration, out int dur))
@@ -456,8 +463,18 @@ namespace Risebird.Web.Controllers
 
                 await _repository.UpdateCallLogAsync(callLog);
 
+                // Write disposition back to Candidate table so it's visible across the platform
+                if (callLog.CandidateId.HasValue && !string.IsNullOrEmpty(callLog.CandidateDisposition))
+                {
+                    await _repository.UpdateCandidateDispositionAsync(
+                        callLog.CandidateId.Value, callLog.CandidateDisposition);
+                    await SaveCpAsync("disposition_saved",
+                        $"Candidate #{callLog.CandidateId} disposition set to '{callLog.CandidateDisposition}'",
+                        convId: payload.ConversationId, callLogId: callLog.Id);
+                }
+
                 await SaveCpAsync(CheckpointNames.HangupComplete,
-                    $"Call log #{callLog.Id} updated — final status: {callLog.CallStatus}",
+                    $"Call log #{callLog.Id} updated — final status: {callLog.CallStatus}, disposition: {callLog.CandidateDisposition}",
                     convId: payload.ConversationId, callLogId: callLog.Id);
 
                 return Ok();
@@ -494,6 +511,26 @@ namespace Risebird.Web.Controllers
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Normalises the AI-returned disposition string to one of the three
+        /// accepted values: "interested" | "uninterested" | "cant_say".
+        /// Any unrecognised value defaults to "cant_say".
+        /// </summary>
+        private static string NormaliseDisposition(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return null;
+            return raw.ToLowerInvariant().Trim() switch
+            {
+                "interested"                         => "interested",
+                "uninterested" or "not interested"
+                    or "disinterested"               => "uninterested",
+                "cant_say" or "cant say"
+                    or "can't say" or "unsure"
+                    or "unclear" or "unknown"        => "cant_say",
+                _                                    => "cant_say"
+            };
         }
 
         /// <summary>

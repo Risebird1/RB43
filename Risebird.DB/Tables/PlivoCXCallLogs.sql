@@ -38,6 +38,10 @@ CREATE TABLE [dbo].[PlivoCXCallLogs] (
     [BookingApiResponse]     NVARCHAR(MAX)       NULL,
     [BookingApiSuccess]      BIT                 NOT NULL DEFAULT 0,
 
+    -- Candidate disposition (extracted by AI Conversation node)
+    -- Values: 'interested' | 'uninterested' | 'cant_say'
+    [CandidateDisposition]   NVARCHAR(20)        NULL,
+
     -- Timestamps
     [CreatedAt]              DATETIME            NOT NULL DEFAULT GETUTCDATE(),
     [UpdatedAt]              DATETIME            NULL,
