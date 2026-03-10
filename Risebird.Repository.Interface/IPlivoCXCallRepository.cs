@@ -36,5 +36,11 @@ namespace Risebird.Repository.Interface
         /// Used when candidate_email is missing from the Plivo CX hangup payload.
         /// </summary>
         Task<string> GetCandidateEmailByIdAsync(int candidateId);
+
+        /// <summary>
+        /// Writes the AI-assessed disposition back to Candidate.PlivoCXDisposition.
+        /// Called after every completed Plivo CX call.
+        /// </summary>
+        Task UpdateCandidateDispositionAsync(int candidateId, string disposition);
     }
 }

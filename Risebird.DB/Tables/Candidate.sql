@@ -528,6 +528,19 @@ BEGIN
     Add VapiCallAttempts INT NOT NULL DEFAULT 0
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PlivoCXDisposition')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    -- Disposition captured by the Plivo CX AI agent during outbound scheduling calls.
+    -- Values: 'interested' | 'uninterested' | 'cant_say'
+    -- Updated automatically each time a Plivo CX call completes for this candidate.
+    ALTER TABLE Candidate
+    ADD PlivoCXDisposition VARCHAR(20) NULL
+END
+
 End
 
 GO
