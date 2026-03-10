@@ -203,6 +203,13 @@ namespace Risebird.Entities.Data.PlivoCXModels
 
         [JsonProperty("confirmed_candidate_name")]
         public string ConfirmedCandidateName { get; set; }
+
+        /// <summary>
+        /// AI-assessed candidate disposition based on the conversation.
+        /// Values: "interested" | "uninterested" | "cant_say"
+        /// </summary>
+        [JsonProperty("candidate_disposition")]
+        public string CandidateDisposition { get; set; }
     }
 
     /// <summary>
