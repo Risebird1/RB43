@@ -2965,6 +2965,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> UpdatePaymentHistoryGatewayStatus(string payoutReferenceId, string gatewayStatus)
+        {
+            try
+            {
+                return await _meetingRespository.UpdatePaymentHistoryGatewayStatus(payoutReferenceId, gatewayStatus);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<string> InsertPaymentHistoryWithGateway(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string payoutReferenceId, string paymentGateway, string gatewayStatus)
         {
             try

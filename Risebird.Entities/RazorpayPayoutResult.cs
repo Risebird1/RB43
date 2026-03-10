@@ -9,6 +9,7 @@ namespace Risebird.Entities.ViewModel
         public string PayoutId { get; set; }
         public string Status { get; set; }
         public long? Amount { get; set; }
+        public long? Fees { get; set; }
         public string Utr { get; set; }
         public string ErrorMessage { get; set; }
         public string ErrorCode { get; set; }

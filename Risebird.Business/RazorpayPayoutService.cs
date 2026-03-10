@@ -155,6 +155,7 @@ namespace Risebird.Business
                     result.Success = true;
                     result.PayoutId = jobj["id"]?.ToString();
                     result.Status = jobj["status"]?.ToString();
+                    result.Fees = jobj["fees"]?.Value<long>();
                     return result;
                 }
 

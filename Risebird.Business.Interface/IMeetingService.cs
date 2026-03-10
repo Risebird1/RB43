@@ -135,6 +135,7 @@ namespace Risebird.Business.Interface
         IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst);
 
         Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment);
+        Task<bool> UpdatePaymentHistoryGatewayStatus(string payoutReferenceId, string gatewayStatus);
         Task<Tuple<bool, string>> ConfirmPaymentViaRazorpay(int id, int index, string email, string amount, DateTime st, DateTime se);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);

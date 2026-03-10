@@ -33,8 +33,9 @@ namespace Risebird.Web.Controllers
         private readonly IProjectService _projectService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IClientService _clientService;
+        private readonly IRazorpayPayoutService _razorpayPayoutService;
 
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService)
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService, IRazorpayPayoutService razorpayPayoutService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -46,6 +47,27 @@ namespace Risebird.Web.Controllers
             _projectService = projectService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _clientService = clientService;
+            _razorpayPayoutService = razorpayPayoutService;
+        }
+
+        /// <summary>
+        /// Fetch Razorpay payout status by payout ID.
+        /// </summary>
+        /// <param name="payoutId">Razorpay payout ID (e.g. pout_xxx).</param>
+        [HttpGet]
+        public async Task<JsonResult> GetPayoutStatus(string payoutId)
+        {
+            payoutId = "pout_SPTgiPPkp3bZcu";
+            if (string.IsNullOrWhiteSpace(payoutId))
+                return Json(new { success = false, message = "Payout ID is required." });
+
+            var result = await _razorpayPayoutService.GetPayoutStatusAsync(payoutId.Trim());
+            if (result.Success)
+            {
+                await _meetingService.UpdatePaymentHistoryGatewayStatus(payoutId.Trim(), result.Status);
+                return Json(new { success = true, payoutId = result.PayoutId, status = result.Status, amount = result.Amount, utr = result.Utr, updated = true });
+            }
+            return Json(new { success = false, message = result.ErrorMessage ?? "Failed to fetch payout status." });
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details

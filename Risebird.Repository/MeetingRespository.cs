@@ -4354,6 +4354,28 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> UpdatePaymentHistoryGatewayStatus(string payoutReferenceId, string gatewayStatus)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(payoutReferenceId)) return false;
+                var query = "UPDATE PaymentHistory SET GatewayStatus = @GatewayStatus WHERE PayoutReferenceId = @PayoutReferenceId";
+                var parameters = new DynamicParameters();
+                parameters.Add("@PayoutReferenceId", payoutReferenceId.Trim());
+                parameters.Add("@GatewayStatus", gatewayStatus ?? (object)DBNull.Value);
+                using (var con = new SqlConnection(connectionString))
+                {
+                    var affected = await con.ExecuteAsync(query, parameters);
+                    return affected > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<List<RBInterviewDetails>> FetchFNPaymentHistory()
         {
             try
