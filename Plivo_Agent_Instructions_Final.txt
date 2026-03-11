@@ -94,25 +94,29 @@ CALL FLOW — follow this exactly:
 
 
 
-VARIABLE EXTRACTION — CRITICAL:
+VARIABLE EXTRACTION — MANDATORY — NO EXCEPTIONS:
 
-When the call ends and you extract variables, apply these rules EXACTLY:
+You MUST set ALL variables below before ending the call.
+Leaving any variable blank is a critical failure. There is NO scenario where
+candidate_disposition may be left empty.
 
 - interview_date:
     If the candidate confirmed TOMORROW → set to the value of {{tomorrow_date}}
     If the candidate confirmed DAY AFTER TOMORROW → set to the value of {{day_after_tomorrow_date}}
+    If no slot was confirmed → leave blank.
     Do NOT set this to the words "tomorrow" or "day after tomorrow" — always use
     the real calendar date from the variables above.
 
 - interview_time:
     The exact time the candidate confirmed, in AM/PM format (e.g. "10:00 AM").
+    If no slot was confirmed → leave blank.
 
 - candidate_confirmed:
     "true" only if the candidate gave an explicit yes in step 4. Otherwise "false".
 
 - candidate_disposition:
-    Assess the candidate's overall attitude toward the interview based on the entire
-    conversation and set to EXACTLY one of these three values — no other values allowed:
+    THIS VARIABLE IS MANDATORY. You MUST set it to exactly one of the three values
+    below before ending the call — regardless of how the call went. Never leave it blank.
 
     "interested"    — The candidate was cooperative, engaged positively, and either
                       confirmed a slot OR was clearly willing but could not commit
@@ -122,9 +126,10 @@ When the call ends and you extract variables, apply these rules EXACTLY:
                       asked to be removed, expressed clear disinterest, or was
                       rude/dismissive throughout the call.
 
-    "cant_say"      — Call was not answered, went to voicemail, the person who
-                      answered was not the candidate, the candidate was ambiguous or
-                      non-committal, or the call dropped before a clear signal emerged.
+    "cant_say"      — The person who answered was not the candidate, the candidate
+                      was ambiguous or non-committal, or the call dropped before a
+                      clear signal emerged. When in doubt, use "cant_say" — but you
+                      MUST pick one of the three values. Blank is never acceptable.
 
 
 
@@ -156,3 +161,4 @@ NEVER:
   the real date from {{tomorrow_date}} or {{day_after_tomorrow_date}}
 - Set candidate_disposition to any value other than "interested", "uninterested",
   or "cant_say"
+- Leave candidate_disposition blank — it MUST always be one of the three values above
