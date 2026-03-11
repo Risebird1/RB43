@@ -29,12 +29,14 @@ namespace Risebird.CommonHelper
     {
         private readonly HttpClient _httpClient;
         private readonly string     _triggerEndpointUrl;
+        private readonly string     _rescheduleTriggerEndpointUrl;
 
         public PlivoCXService(IConfiguration configuration)
         {
             var authId    = configuration["PlivoCX:ApiAuthId"]    ?? string.Empty;
             var authToken = configuration["PlivoCX:ApiAuthToken"]  ?? string.Empty;
-            _triggerEndpointUrl = configuration["PlivoCX:TriggerEndpointUrl"] ?? string.Empty;
+            _triggerEndpointUrl           = configuration["PlivoCX:TriggerEndpointUrl"]           ?? string.Empty;
+            _rescheduleTriggerEndpointUrl = configuration["PlivoCX:RescheduleTriggerEndpointUrl"] ?? string.Empty;
 
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Authorization =
@@ -45,25 +47,24 @@ namespace Risebird.CommonHelper
                 new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        /// <summary>
-        /// POSTs candidate context variables to the Plivo CX API trigger endpoint.
-        /// The Plivo CX flow then:
-        ///   1. Initiates an outbound call to candidate's phone number
-        ///   2. When answered, runs the AI Conversation node with injected variables
-        ///   3. On end, POSTs extracted variables to our Hangup URL
-        /// </summary>
-        public async Task<PlivoCXTriggerResponse> TriggerOutboundCallAsync(PlivoCXTriggerRequest request)
+        public Task<PlivoCXTriggerResponse> TriggerOutboundCallAsync(PlivoCXTriggerRequest request)
+            => PostTriggerAsync(_triggerEndpointUrl, request, "PlivoCX:TriggerEndpointUrl");
+
+        public Task<PlivoCXTriggerResponse> TriggerRescheduleCallAsync(PlivoCXTriggerRequest request)
+            => PostTriggerAsync(_rescheduleTriggerEndpointUrl, request, "PlivoCX:RescheduleTriggerEndpointUrl");
+
+        private async Task<PlivoCXTriggerResponse> PostTriggerAsync(
+            string triggerUrl, PlivoCXTriggerRequest request, string configKeyName)
         {
-            if (string.IsNullOrEmpty(_triggerEndpointUrl))
+            if (string.IsNullOrEmpty(triggerUrl))
                 throw new InvalidOperationException(
-                    "PlivoCX:TriggerEndpointUrl is not configured. " +
-                    "Copy the trigger URL from your Plivo CX flow (AI Studio → Select flow → Trigger node → API URL) " +
+                    $"{configKeyName} is not configured. " +
+                    "Copy the trigger URL from the Plivo CX flow (AI Studio → Select flow → Trigger node → API URL) " +
                     "and set it in appsettings.json.");
 
-            var json    = JsonConvert.SerializeObject(request);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync(_triggerEndpointUrl, content);
+            var json     = JsonConvert.SerializeObject(request);
+            var content  = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync(triggerUrl, content);
             var body     = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)

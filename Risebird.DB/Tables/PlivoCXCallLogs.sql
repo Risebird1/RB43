@@ -42,6 +42,10 @@ CREATE TABLE [dbo].[PlivoCXCallLogs] (
     -- Values: 'interested' | 'uninterested' | 'cant_say'
     [CandidateDisposition]   NVARCHAR(20)        NULL,
 
+    -- Purpose of the call
+    -- Values: 'schedule' (first-time scheduling) | 'reschedule' (booking replacement for a missed/cancelled interview)
+    [CallPurpose]            NVARCHAR(20)        NOT NULL DEFAULT 'schedule',
+
     -- Timestamps
     [CreatedAt]              DATETIME            NOT NULL DEFAULT GETUTCDATE(),
     [UpdatedAt]              DATETIME            NULL,
