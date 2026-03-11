@@ -134,7 +134,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false)
+        public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false, bool testPlivoRescheduleCalls = false)
         {
             try
             {
@@ -147,6 +147,18 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+                        // ========================================
+                        // PLIVO CX RESCHEDULE CALLS — TEST/TRIGGER MODE
+                        // Access via: /Dashboard/Index?testPlivoRescheduleCalls=true
+                        // ========================================
+                        if (testPlivoRescheduleCalls)
+                        {
+                            return await RunPlivoRescheduleCallsAsync(Emailid);
+                        }
+                        // ========================================
+                        // END PLIVO CX RESCHEDULE TEST MODE
+                        // ========================================
+
                         // ========================================
                         // PLIVO + OPENAI REALTIME AUTOMATED CALLS — TEST/TRIGGER MODE
                         // Access via: /Dashboard/Index?testPlivoCalls=true
@@ -609,6 +621,204 @@ namespace Risebird.Web.Controllers
                         testResults.Add("");
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
                             new Exception($"PlivoCX call failed for {candidate.CandidateEmail}", ex));
+                    }
+                }
+
+                testResults.Add("═══════════════════════════════════");
+                testResults.Add($"SUMMARY:");
+                testResults.Add($"   Total Candidates: {eligibleCandidates.Count}");
+                testResults.Add($"   Successful:       {successCount}");
+                testResults.Add($"   Failed:           {failureCount}");
+                testResults.Add("═══════════════════════════════════");
+                testResults.Add("View call logs at: /PlivoCXInterviewCall/Index");
+
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+            catch (Exception ex)
+            {
+                testResults.Add($"CRITICAL ERROR: {ex.Message}");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+        }
+
+        private async Task<IActionResult> RunPlivoRescheduleCallsAsync(string triggeredByEmail)
+        {
+            var testResults = new List<string>();
+            var currentTime = DateTime.Now;
+            var currentHour = currentTime.Hour;
+
+            testResults.Add($"[Plivo CX Reschedule] Test initiated at: {currentTime:yyyy-MM-dd HH:mm:ss}");
+
+            var rescheduleUrl = _configuration["PlivoCX:RescheduleTriggerEndpointUrl"];
+            if (string.IsNullOrEmpty(rescheduleUrl))
+            {
+                testResults.Add("⚠ PlivoCX:RescheduleTriggerEndpointUrl is not set in appsettings.json.");
+                testResults.Add("  Steps:");
+                testResults.Add("  1. Go to cx.plivo.com → AI Studio → your RESCHEDULE agent flow");
+                testResults.Add("  2. Click the Trigger node → copy the API URL");
+                testResults.Add("  3. Paste it into appsettings.json → PlivoCX:RescheduleTriggerEndpointUrl");
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+
+            try
+            {
+                if (currentHour < 9 || currentHour >= 21)
+                {
+                    testResults.Add($"SKIPPED — {currentTime:HH:mm} is outside business hours (9 AM – 9 PM IST)");
+                    ViewBag.PlivoTestResults = testResults;
+                    return View("VapiTestResults");
+                }
+
+                testResults.Add($"Within business hours — {currentTime:HH:mm}");
+                testResults.Add("Fetching eligible reschedule candidates...");
+
+                var eligibleCandidates = await _plivoCXCallRepository.GetEligibleCandidatesForRescheduleAsync(1);
+
+                if (eligibleCandidates == null || !eligibleCandidates.Any())
+                {
+                    testResults.Add("No eligible candidates found for rescheduling.");
+                    ViewBag.PlivoTestResults = testResults;
+                    return View("VapiTestResults");
+                }
+
+                testResults.Add($"Found {eligibleCandidates.Count} eligible candidate(s) for rescheduling");
+                testResults.Add("");
+
+                int successCount = 0;
+                int failureCount = 0;
+
+                foreach (var candidate in eligibleCandidates)
+                {
+                    try
+                    {
+                        testResults.Add($"Processing: {candidate.CandidateName}");
+                        testResults.Add($"   Client:            {candidate.ClientName}");
+                        testResults.Add($"   Email:             {candidate.CandidateEmail}");
+                        testResults.Add($"   Phone:             {candidate.CandidatePhone}");
+                        testResults.Add($"   IRF ID:            {candidate.IRFId} ({candidate.IRFName})");
+                        testResults.Add($"   Original Date:     {candidate.OriginalInterviewDate ?? "(none)"}");
+                        testResults.Add($"   Completed Calls:   {candidate.CompletedCallCount}");
+
+                        if (string.IsNullOrWhiteSpace(candidate.CandidatePhone))
+                        {
+                            testResults.Add("   SKIPPED — no phone number");
+                            testResults.Add("");
+                            continue;
+                        }
+
+                        if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(candidate.CandidatePhone, out var phoneNumber, out var phoneError))
+                        {
+                            testResults.Add($"   SKIPPED — invalid phone: {phoneError}");
+                            testResults.Add("");
+                            continue;
+                        }
+
+                        phoneNumber = "+918888571923";
+
+                        testResults.Add($"   Sanitised phone: {phoneNumber}");
+
+                        // 1. Save call log (CallPurpose = "reschedule")
+                        var callLog = new Risebird.Entities.Data.PlivoCXModels.PlivoCXCallLog
+                        {
+                            RecipientPhone   = phoneNumber,
+                            RecipientName    = candidate.CandidateName,
+                            RecipientEmail   = candidate.CandidateEmail,
+                            IRFId            = candidate.IRFId,
+                            CandidateId      = candidate.CandidateId,
+                            JobTitle         = candidate.JobTitle,
+                            ClientName       = candidate.ClientName,
+                            CallStatus       = "initiated",
+                            InterviewBooked  = false,
+                            CallPurpose      = "reschedule",
+                            TriggeredBy      = $"Dashboard-{triggeredByEmail}"
+                        };
+                        int logId = await _plivoCXCallRepository.SaveCallLogAsync(callLog);
+                        testResults.Add($"   Call log saved — DB Id: {logId}");
+
+                        // 2. Trigger the reschedule agent
+                        var triggerReq = new Risebird.Entities.Data.PlivoCXModels.PlivoCXTriggerRequest
+                        {
+                            PhoneNumber           = phoneNumber,
+                            CandidateName         = candidate.CandidateName ?? "Candidate",
+                            CandidateEmail        = candidate.CandidateEmail,
+                            IrfId                 = candidate.IRFId.ToString(),
+                            JobTitle              = candidate.JobTitle,
+                            ClientName            = candidate.ClientName,
+                            LogId                 = logId.ToString(),
+                            CallPurpose           = "reschedule",
+                            OriginalInterviewDate = candidate.OriginalInterviewDate,
+                            TodayDate             = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            TomorrowDate          = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
+                            DayAfterTomorrowDate  = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
+                        };
+
+                        var response = await _plivoCXService.TriggerRescheduleCallAsync(triggerReq);
+
+                        // Log trigger request + response
+                        try
+                        {
+                            await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
+                                new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
+                                {
+                                    LogType          = "reschedule-trigger-request",
+                                    HttpStatusCode   = response?.HttpStatusCode,
+                                    PlivoCXId        = response?.ApiId,
+                                    CallLogId        = logId,
+                                    RawPayload       = Newtonsoft.Json.JsonConvert.SerializeObject(triggerReq),
+                                    ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                                    ErrorMessage     = response?.Error
+                                });
+                            await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
+                                new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
+                                {
+                                    LogType          = "reschedule-trigger-response",
+                                    HttpStatusCode   = response?.HttpStatusCode,
+                                    PlivoCXId        = response?.ApiId,
+                                    CallLogId        = logId,
+                                    RawPayload       = response?.RawResponseBody,
+                                    ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                                    ErrorMessage     = response?.Error
+                                });
+                        }
+                        catch { }
+
+                        if (!string.IsNullOrEmpty(response?.Error))
+                        {
+                            testResults.Add($"   TRIGGER FAILED: {response.Error}");
+                            callLog.Id         = logId;
+                            callLog.CallStatus = "trigger-failed";
+                            callLog.UpdatedAt  = DateTime.UtcNow;
+                            await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
+                            failureCount++;
+                        }
+                        else
+                        {
+                            testResults.Add($"   Triggered — ApiId: {response?.ApiId} | Http: {response?.HttpStatusCode}");
+                            callLog.Id                    = logId;
+                            callLog.PlivoCXConversationId = response?.ConversationId;
+                            callLog.PlivoCXRequestId      = response?.ApiId;
+                            callLog.CallStatus            = "triggered";
+                            callLog.UpdatedAt             = DateTime.UtcNow;
+                            await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
+
+                            await _plivoCXCallRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
+                            successCount++;
+                        }
+
+                        await Task.Delay(2000);
+                        testResults.Add("");
+                    }
+                    catch (Exception ex)
+                    {
+                        failureCount++;
+                        testResults.Add($"   FAILED: {ex.Message}");
+                        testResults.Add("");
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                            new Exception($"PlivoCX reschedule call failed for {candidate.CandidateEmail}", ex));
                     }
                 }
 

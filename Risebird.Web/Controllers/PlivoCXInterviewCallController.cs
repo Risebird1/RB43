@@ -64,13 +64,13 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var calls = await _repository.GetRecentCallLogsAsync(100);
+                var calls = await _repository.GetCallLogDetailsAsync(300);
                 return View(calls);
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return View(new System.Collections.Generic.List<PlivoCXCallLog>());
+                return View(new System.Collections.Generic.List<Risebird.Entities.ViewModel.PlivoCXCallLogDetailVM>());
             }
         }
 
@@ -187,6 +187,114 @@ namespace Risebird.Web.Controllers
                 }
 
                 TempData["Success"] = $"Call initiated for {recipientName} ({recipientPhone}). Conversation ID: {response?.ConversationId}";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["Error"] = $"Error: {ex.Message}";
+                return RedirectToAction("Index");
+            }
+        }
+
+        // ─── Reschedule call trigger ─────────────────────────────────────────────
+
+        /// <summary>
+        /// Initiate a reschedule call for a candidate whose previous interview was missed or cancelled.
+        /// Uses the separate Plivo CX reschedule agent (PlivoCX:RescheduleTriggerEndpointUrl).
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InitiateRescheduleCall(
+            string recipientName,
+            string recipientPhone,
+            string recipientEmail,
+            int?   irfId,
+            int?   candidateId,
+            string jobTitle              = null,
+            string clientName            = null,
+            string originalInterviewDate = null)
+        {
+            try
+            {
+                var userEmail = User.Identity?.Name ?? "Unknown";
+
+                var callLog = new PlivoCXCallLog
+                {
+                    RecipientName    = recipientName,
+                    RecipientPhone   = recipientPhone,
+                    RecipientEmail   = recipientEmail,
+                    IRFId            = irfId,
+                    CandidateId      = candidateId,
+                    JobTitle         = jobTitle,
+                    ClientName       = clientName,
+                    CallStatus       = "initiated",
+                    InterviewBooked  = false,
+                    CallPurpose      = "reschedule",
+                    TriggeredBy      = userEmail
+                };
+                int logId = await _repository.SaveCallLogAsync(callLog);
+                callLog.Id = logId;
+
+                var triggerRequest = new PlivoCXTriggerRequest
+                {
+                    PhoneNumber           = recipientPhone,
+                    CandidateName         = recipientName ?? "Candidate",
+                    CandidateEmail        = recipientEmail,
+                    IrfId                 = irfId?.ToString(),
+                    JobTitle              = jobTitle,
+                    ClientName            = clientName,
+                    LogId                 = logId.ToString(),
+                    CallPurpose           = "reschedule",
+                    OriginalInterviewDate = originalInterviewDate,
+                    TodayDate             = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                    TomorrowDate          = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
+                    DayAfterTomorrowDate  = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
+                };
+
+                var response = await _plivoCXService.TriggerRescheduleCallAsync(triggerRequest);
+
+                await _repository.SaveWebhookDebugLogAsync(new PlivoCXWebhookDebugLog
+                {
+                    LogType          = "reschedule-trigger-request",
+                    HttpStatusCode   = response?.HttpStatusCode,
+                    PlivoCXId        = response?.ApiId,
+                    CallLogId        = logId,
+                    RawPayload       = JsonConvert.SerializeObject(triggerRequest),
+                    ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                    ErrorMessage     = response?.Error
+                });
+                await _repository.SaveWebhookDebugLogAsync(new PlivoCXWebhookDebugLog
+                {
+                    LogType          = "reschedule-trigger-response",
+                    HttpStatusCode   = response?.HttpStatusCode,
+                    PlivoCXId        = response?.ApiId,
+                    CallLogId        = logId,
+                    RawPayload       = response?.RawResponseBody,
+                    ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                    ErrorMessage     = response?.Error
+                });
+
+                if (!string.IsNullOrEmpty(response?.ConversationId))
+                {
+                    callLog.PlivoCXConversationId = response.ConversationId;
+                    callLog.PlivoCXRequestId      = response.ApiId;
+                    callLog.CallStatus            = "triggered";
+                    callLog.UpdatedAt             = DateTime.UtcNow;
+                    await _repository.UpdateCallLogAsync(callLog);
+                }
+                else if (!string.IsNullOrEmpty(response?.Error))
+                {
+                    callLog.CallStatus  = "trigger-failed";
+                    callLog.HangupCause = response.Error;
+                    callLog.UpdatedAt   = DateTime.UtcNow;
+                    await _repository.UpdateCallLogAsync(callLog);
+
+                    TempData["Error"] = $"Reschedule trigger failed: {response.Error}";
+                    return RedirectToAction("Index");
+                }
+
+                TempData["Success"] = $"Reschedule call initiated for {recipientName} ({recipientPhone}).";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
