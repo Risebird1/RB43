@@ -15,5 +15,11 @@ namespace Risebird.CommonHelper.Interface
         /// Returns the trigger response including a conversation_id.
         /// </summary>
         Task<PlivoCXTriggerResponse> TriggerOutboundCallAsync(PlivoCXTriggerRequest request);
+
+        /// <summary>
+        /// Same as TriggerOutboundCallAsync but targets the separate reschedule agent
+        /// (configured via PlivoCX:RescheduleTriggerEndpointUrl in appsettings.json).
+        /// </summary>
+        Task<PlivoCXTriggerResponse> TriggerRescheduleCallAsync(PlivoCXTriggerRequest request);
     }
 }
