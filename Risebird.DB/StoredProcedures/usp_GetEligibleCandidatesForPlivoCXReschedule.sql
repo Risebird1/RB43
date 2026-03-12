@@ -12,8 +12,10 @@
 --   5. Has at least one interview meeting that requires rescheduling:
 --        MeetingStatus IN (1, 3, 5, 9)  OR  confirmationStatus = '2' (Cancelled)
 --        OR RedoInterview = 1
---   6. No new confirmed FUTURE interview already exists for this candidate + IRF
---      (guards against calling someone we've already successfully rescheduled)
+--   6a. No future non-cancelled interview already exists in InterviewMeetings
+--       (confirmationStatus <> '2' covers pending AND confirmed).
+--   6b. No prior Plivo reschedule call already successfully posted a future slot
+--       (BookingApiSuccess = 1 AND BookedInterviewDateTime > now).
 --   7. Fewer than 2 completed reschedule calls (CallPurpose = 'reschedule') in
 --      PlivoCXCallLogs, unless disposition is NULL (never conclusively reached)
 --   8. Hard daily cap: no more than 4 reschedule calls (any status) made today
@@ -123,14 +125,27 @@ BEGIN
                    )
         )
 
-        -- 6. No new confirmed FUTURE interview already booked
+        -- 6a. No future non-cancelled interview meeting already exists.
+        --     confirmationStatus = '2' = Cancelled; pending and confirmed both block.
         AND NOT EXISTS (
             SELECT 1
             FROM   InterviewMeetings im
             WHERE  im.candidateEmail     = u.EmailId
               AND  im.IRFId             = irf.IRFId
-              AND  im.confirmationStatus = '1'
+              AND  im.confirmationStatus <> '2'
               AND  im.interviewDate      > GETDATE()
+        )
+
+        -- 6b. No prior Plivo reschedule call already successfully posted a future
+        --     booking to the Schedule API.  Covers the lag before the meeting appears.
+        AND NOT EXISTS (
+            SELECT 1
+            FROM   PlivoCXCallLogs pcl2
+            WHERE  pcl2.RecipientEmail         = u.EmailId
+              AND  pcl2.IRFId                  = c.IRFId
+              AND  pcl2.CallPurpose             = 'reschedule'
+              AND  pcl2.BookingApiSuccess        = 1
+              AND  pcl2.BookedInterviewDateTime  > GETDATE()
         )
 
         -- 7. Stop after 2 completed reschedule calls (unless disposition is NULL,

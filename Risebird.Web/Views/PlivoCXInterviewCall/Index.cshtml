@@ -2,11 +2,23 @@
 @{
     ViewData["Title"] = "Plivo CX Call Logs";
 
-    int totalCalls      = Model.Count;
-    int booked          = Model.Count(c => c.AIReportedBooked);
-    int meetingCreated  = Model.Count(c => c.MeetingCreated == "YES");
-    int completed       = Model.Count(c => c.CallStatus == "completed");
-    int noAnswer        = Model.Count(c => c.CallStatus == "no-answer" || c.CallStatus == "failed" || c.CallStatus == "trigger-failed");
+    // Overall stats come from window functions in the SP — read from the first row.
+    var first = Model.FirstOrDefault();
+    int totalCalls     = ViewBag.TotalCount  != null ? (int)ViewBag.TotalCount  : 0;
+    int completed      = first?.OverallCompleted      ?? 0;
+    int meetingCreated = first?.OverallMeetingCreated ?? 0;
+    int noAnswer       = first?.OverallNoAnswer       ?? 0;
+    double rate        = totalCalls > 0 ? Math.Round((double)meetingCreated / totalCalls * 100, 1) : 0;
+
+    int currentPage = ViewBag.Page       != null ? (int)ViewBag.Page       : 1;
+    int pageSize    = ViewBag.PageSize   != null ? (int)ViewBag.PageSize   : 50;
+    int totalPages  = ViewBag.TotalPages != null ? (int)ViewBag.TotalPages : 1;
+
+    int rangeStart  = totalCalls > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+    int rangeEnd    = Math.Min(currentPage * pageSize, totalCalls);
+
+    // Pre-build URL for the page-size selector (avoids double-quote conflicts in onchange attribute)
+    string indexUrl = Url.Action("Index");
 }
 
 <div class="container-fluid py-4">
@@ -50,7 +62,7 @@
         </div>
     }
 
-    <!-- Stats -->
+    <!-- Stats (overall, from window-function aggregates across all pages) -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-sm-4 col-md-2">
             <div class="card border-0 shadow-sm text-center py-3">
@@ -66,7 +78,7 @@
         </div>
         <div class="col-6 col-sm-4 col-md-2">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div class="fs-3 fw-bold text-info">@booked</div>
+                <div class="fs-3 fw-bold text-info">@meetingCreated</div>
                 <div class="text-muted small">AI Reported Booked</div>
             </div>
         </div>
@@ -84,9 +96,6 @@
         </div>
         <div class="col-6 col-sm-4 col-md-2">
             <div class="card border-0 shadow-sm text-center py-3">
-                @{
-                    double rate = totalCalls > 0 ? Math.Round((double)meetingCreated / totalCalls * 100, 1) : 0;
-                }
                 <div class="fs-3 fw-bold text-warning">@rate%</div>
                 <div class="text-muted small">Conversion Rate</div>
             </div>
@@ -135,7 +144,9 @@
                     </select>
                 </div>
                 <div class="col-auto ms-auto">
-                    <span class="text-muted small" id="rowCount">@totalCalls rows</span>
+                    <span class="text-muted small" id="rowCount">
+                        Showing @rangeStart–@rangeEnd of @totalCalls
+                    </span>
                 </div>
             </div>
         </div>
@@ -169,43 +180,45 @@
                     <tbody id="callTableBody">
                         @foreach (var r in Model)
                         {
-                            var statusBadge = r.CallStatus switch
-                            {
-                                "completed"      => "bg-success",
-                                "triggered"      => "bg-info",
-                                "initiated"      => "bg-secondary",
-                                "no-answer"      => "bg-warning text-dark",
-                                "failed"         => "bg-danger",
-                                "trigger-failed" => "bg-danger",
-                                _                => "bg-secondary"
-                            };
-
-                            var dispositionBadge = r.CandidateDisposition switch
-                            {
-                                "interested"   => "bg-success",
-                                "uninterested" => "bg-danger",
-                                "cant_say"     => "bg-secondary",
-                                _              => "bg-light text-dark border"
-                            };
-
-                            var meetingBadge  = r.MeetingCreated == "YES" ? "bg-success" : "bg-light text-dark border";
-                            var bookingBadge  = r.BookingApiSuccess ? "bg-success" : (r.AIReportedBooked ? "bg-danger" : "bg-light text-dark border");
-                            var purposeBadge  = r.CallPurpose == "reschedule" ? "bg-warning text-dark" : "bg-primary";
-
-                            var confirmLabel = r.MeetingConfirmationStatus switch
-                            {
-                                "1" => "Confirmed",
-                                "2" => "Cancelled",
-                                "0" => "Pending",
-                                _   => r.MeetingConfirmationStatus ?? "—"
-                            };
-
                             <tr class="call-row"
                                 data-search="@(r.CandidateName?.ToLower()) @(r.CandidateEmail?.ToLower()) @(r.IRFId?.ToLower()) @(r.JDTiltle?.ToLower())"
                                 data-status="@r.CallStatus"
                                 data-purpose="@r.CallPurpose"
                                 data-meeting="@r.MeetingCreated"
                                 data-disposition="@r.CandidateDisposition">
+                            @{
+                                // Per-row display variables declared inside the <tr> so the Razor
+                                // parser is unambiguously in HTML mode for all @if constructs below.
+                                string statusBadge;
+                                if      (r.CallStatus == "completed")      statusBadge = "bg-success";
+                                else if (r.CallStatus == "triggered")      statusBadge = "bg-info";
+                                else if (r.CallStatus == "initiated")      statusBadge = "bg-secondary";
+                                else if (r.CallStatus == "no-answer")      statusBadge = "bg-warning text-dark";
+                                else if (r.CallStatus == "failed")         statusBadge = "bg-danger";
+                                else if (r.CallStatus == "trigger-failed") statusBadge = "bg-danger";
+                                else                                       statusBadge = "bg-secondary";
+
+                                string dispositionBadge;
+                                if      (r.CandidateDisposition == "interested")   dispositionBadge = "bg-success";
+                                else if (r.CandidateDisposition == "uninterested") dispositionBadge = "bg-danger";
+                                else if (r.CandidateDisposition == "cant_say")     dispositionBadge = "bg-secondary";
+                                else                                               dispositionBadge = "bg-light text-dark border";
+
+                                var meetingBadge     = r.MeetingCreated == "YES" ? "bg-success" : "bg-light text-dark border";
+                                var bookingBadge     = r.BookingApiSuccess ? "bg-success" : (r.AIReportedBooked ? "bg-danger" : "bg-light text-dark border");
+                                var purposeBadge     = r.CallPurpose == "reschedule" ? "bg-warning text-dark" : "bg-primary";
+
+                                string confirmLabel;
+                                if      (r.MeetingConfirmationStatus == "1") confirmLabel = "Confirmed";
+                                else if (r.MeetingConfirmationStatus == "2") confirmLabel = "Cancelled";
+                                else if (r.MeetingConfirmationStatus == "0") confirmLabel = "Pending";
+                                else                                         confirmLabel = r.MeetingConfirmationStatus ?? "—";
+
+                                string confirmBadgeClass;
+                                if      (r.MeetingConfirmationStatus == "1") confirmBadgeClass = "bg-success";
+                                else if (r.MeetingConfirmationStatus == "2") confirmBadgeClass = "bg-danger";
+                                else                                         confirmBadgeClass = "bg-warning text-dark";
+                            }
 
                                 <td class="ps-3 text-muted small">@r.CallLogId</td>
 
@@ -289,7 +302,7 @@
                                 <td class="small">
                                     @if (r.MeetingId.HasValue)
                                     {
-                                        <span class="badge @(r.MeetingConfirmationStatus == "1" ? "bg-success" : r.MeetingConfirmationStatus == "2" ? "bg-danger" : "bg-warning text-dark")">
+                                        <span class="badge @confirmBadgeClass">
                                             @confirmLabel
                                         </span>
                                         @if (r.IsAutoCancelled == true)
@@ -333,6 +346,98 @@
                 </table>
             </div>
         </div>
+
+        <!-- Pagination footer -->
+        @if (totalPages > 1)
+        {
+            <div class="card-footer d-flex align-items-center justify-content-between bg-white border-top py-2">
+                <small class="text-muted">
+                    Showing <strong>@rangeStart–@rangeEnd</strong> of <strong>@totalCalls</strong> calls
+                </small>
+
+                <nav aria-label="Call log pages">
+                    <ul class="pagination pagination-sm mb-0">
+
+                        <!-- Previous -->
+                        @{ var prevDisabled = currentPage <= 1 ? "disabled" : ""; }
+                        <li class="page-item @prevDisabled">
+                            <a class="page-link"
+                               href="@Url.Action("Index", new { page = currentPage - 1, pageSize })"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        @{
+                            // Show at most 7 page buttons around the current page.
+                            int windowHalf = 3;
+                            int pageStart  = Math.Max(1, currentPage - windowHalf);
+                            int pageEnd    = Math.Min(totalPages, currentPage + windowHalf);
+
+                            if (pageStart > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = 1, pageSize })">1</a>
+                                </li>
+                                if (pageStart > 2)
+                                {
+                                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                                }
+                            }
+
+                            for (int p = pageStart; p <= pageEnd; p++)
+                            {
+                                var isActive = p == currentPage ? "active" : "";
+                                <li class="page-item @isActive">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = p, pageSize })">@p</a>
+                                </li>
+                            }
+
+                            if (pageEnd < totalPages)
+                            {
+                                if (pageEnd < totalPages - 1)
+                                {
+                                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                                }
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = totalPages, pageSize })">@totalPages</a>
+                                </li>
+                            }
+                        }
+
+                        <!-- Next -->
+                        @{ var nextDisabled = currentPage >= totalPages ? "disabled" : ""; }
+                        <li class="page-item @nextDisabled">
+                            <a class="page-link"
+                               href="@Url.Action("Index", new { page = currentPage + 1, pageSize })"
+                               aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+
+                <!-- Page size selector -->
+                <div class="d-flex align-items-center gap-2">
+                    <small class="text-muted">Per page:</small>
+                    <select class="form-select form-select-sm" style="width:80px"
+                            onchange="window.location='@indexUrl' + '?page=1&pageSize=' + this.value">
+                        @foreach (var ps in new[] { 25, 50, 100, 200 })
+                        {
+                            if (pageSize == ps)
+                            {
+                                <option value="@ps" selected>@ps</option>
+                            }
+                            else
+                            {
+                                <option value="@ps">@ps</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        }
     </div>
 </div>
 
@@ -441,7 +546,7 @@
     </div>
 </div>
 
-<!-- Hidden data store for JS -->
+<!-- Hidden data store for the detail modal (current page rows only) -->
 @{
     var jsonData = System.Text.Json.JsonSerializer.Serialize(Model.Select(r => new {
         r.CallLogId,
@@ -457,8 +562,8 @@
         r.CallStatus,
         r.DurationSeconds,
         r.HangupCause,
-        CallInitiatedAt   = r.CallInitiatedAt.ToString("dd MMM yyyy HH:mm"),
-        CallEndedAt       = r.CallEndedAt?.ToString("dd MMM yyyy HH:mm"),
+        CallInitiatedAt         = r.CallInitiatedAt.ToString("dd MMM yyyy HH:mm"),
+        CallEndedAt             = r.CallEndedAt?.ToString("dd MMM yyyy HH:mm"),
         r.CandidateDisposition,
         r.AIReportedBooked,
         r.BookedInterviewDate,
@@ -470,7 +575,7 @@
         r.ConversationSummary,
         r.MeetingCreated,
         r.MeetingId,
-        MeetingScheduledAt = r.MeetingScheduledAt?.ToString("dd MMM yyyy HH:mm"),
+        MeetingScheduledAt      = r.MeetingScheduledAt?.ToString("dd MMM yyyy HH:mm"),
         r.InterviewSlot,
         r.InterviewDuration,
         r.MeetingConfirmationStatus,
@@ -481,7 +586,7 @@
         r.CancellationReason,
         r.IsCandidateResponsed,
         r.CandidateResponse,
-        MeetingCreatedOn  = r.MeetingCreatedOn?.ToString("dd MMM yyyy HH:mm")
+        MeetingCreatedOn        = r.MeetingCreatedOn?.ToString("dd MMM yyyy HH:mm")
     }));
 }
 
@@ -489,7 +594,7 @@
 <script>
     var allRows = @Html.Raw(jsonData);
 
-    // ── Filters ──────────────────────────────────────────────────────────────
+    // ── Client-side filters (operate on the current page's rows) ─────────────
     function applyFilters() {
         var search  = document.getElementById('searchInput').value.toLowerCase();
         var status  = document.getElementById('statusFilter').value;
@@ -509,7 +614,8 @@
             row.style.display = show ? '' : 'none';
             if (show) visible++;
         });
-        document.getElementById('rowCount').textContent = visible + ' rows';
+        document.getElementById('rowCount').textContent =
+            'Showing ' + visible + ' of ' + rows.length + ' on this page';
     }
 
     ['searchInput','statusFilter','purposeFilter','meetingFilter','dispositionFilter']

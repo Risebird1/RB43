@@ -28,80 +28,15 @@ namespace Risebird.Repository
 
         // ── Rich call log view (for the Index page) ───────────────────────────────
 
-        public async Task<List<PlivoCXCallLogDetailVM>> GetCallLogDetailsAsync(int count = 200)
+        public async Task<List<PlivoCXCallLogDetailVM>> GetCallLogDetailsAsync(int page = 1, int pageSize = 50)
         {
             try
             {
                 using var conn = new SqlConnection(_connectionString);
-                // The LEFT JOIN uses BookedInterviewDateTime (the date the AI extracted and
-                // posted to the Schedule API) rather than CreatedAt.  This ensures that only
-                // a meeting whose interviewDate falls on the same calendar day as the slot the
-                // Plivo agent actually booked is considered "created by this call".
-                // Meetings that exist for unrelated reasons are excluded.
-                // AIReportedBooked is also derived from whether that matched meeting row exists,
-                // replacing the stored pcl.InterviewBooked flag which may lag or be inaccurate.
-                const string sql = @"
-                    SELECT TOP (@Count)
-                        pcl.Id                          AS CallLogId,
-                        pcl.RecipientEmail              AS CandidateEmail,
-                        pcl.RecipientName               AS CandidateName,
-                        pcl.RecipientPhone,
-                        irf.IRFId,
-                        irf.JDTiltle,
-                        pcl.ClientName,
-                        pcl.TriggeredBy,
-                        pcl.PlivoCXConversationId,
-                        pcl.CallPurpose,
-                        pcl.CandidateDisposition,
-
-                        pcl.CallStatus,
-                        pcl.DurationSeconds,
-                        pcl.HangupCause,
-                        pcl.CreatedAt                   AS CallInitiatedAt,
-                        pcl.CallEndedAt,
-
-                        -- Derived from meeting existence (not the stored flag)
-                        CASE WHEN im.id IS NOT NULL THEN CAST(1 AS BIT)
-                             ELSE CAST(0 AS BIT) END    AS AIReportedBooked,
-                        pcl.BookedInterviewDate,
-                        pcl.BookedInterviewTime,
-                        pcl.BookedInterviewDateTime,
-                        pcl.BookingApiSuccess,
-                        pcl.BookingApiResponse,
-                        pcl.CallTranscript,
-                        pcl.ConversationSummary,
-
-                        CASE WHEN im.id IS NOT NULL THEN 'YES' ELSE 'NO' END
-                                                        AS MeetingCreated,
-                        im.id                           AS MeetingId,
-                        im.interviewDate                AS MeetingScheduledAt,
-                        im.interviewSlot,
-                        im.interviewDuration,
-                        im.confirmationStatus           AS MeetingConfirmationStatus,
-                        im.interviewer,
-                        im.risebirdHR,
-                        im.ClientHrContact,
-                        im.isAutoCancelled,
-                        im.CancellationReason,
-                        im.IsCandidateResponsed,
-                        im.CandidateResponse,
-                        im.dtCreatedOn                  AS MeetingCreatedOn
-
-                    FROM      PlivoCXCallLogs   pcl
-                    JOIN      IRF               irf ON irf.id            = pcl.IRFId
-                    LEFT JOIN InterviewMeetings  im
-                           ON im.candidateEmail    = pcl.RecipientEmail
-                          AND im.IRFId             = irf.IRFId
-                          -- Only match a meeting whose date+time equals the slot the AI booked.
-                          -- SMALLDATETIME truncates to the minute, matching the slot boundary
-                          -- without being tripped by sub-second storage differences.
-                          -- Requires BookedInterviewDateTime to be non-NULL (i.e. booking happened).
-                          AND pcl.BookedInterviewDateTime IS NOT NULL
-                          AND CAST(im.interviewDate AS SMALLDATETIME)
-                            = CAST(pcl.BookedInterviewDateTime AS SMALLDATETIME)
-                    ORDER BY pcl.CreatedAt DESC";
-
-                var results = await conn.QueryAsync<PlivoCXCallLogDetailVM>(sql, new { Count = count });
+                var results = await conn.QueryAsync<PlivoCXCallLogDetailVM>(
+                    "usp_GetPlivoCXCallLogDetails",
+                    new { Page = page, PageSize = pageSize },
+                    commandType: CommandType.StoredProcedure);
                 return results.ToList();
             }
             catch (Exception ex)

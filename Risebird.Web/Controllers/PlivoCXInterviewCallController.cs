@@ -11,6 +11,7 @@ using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using Risebird.Web.Extensions;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
@@ -60,16 +61,30 @@ namespace Risebird.Web.Controllers
         // ─── Dashboard ───────────────────────────────────────────────────────────
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 50)
         {
             try
             {
-                var calls = await _repository.GetCallLogDetailsAsync(300);
+                if (page    < 1)  page     = 1;
+                if (pageSize < 10) pageSize = 10;
+                if (pageSize > 200) pageSize = 200;
+
+                var calls  = await _repository.GetCallLogDetailsAsync(page, pageSize);
+                var first  = calls.FirstOrDefault();
+                int total  = first?.TotalCount ?? 0;
+                int pages  = total > 0 ? (int)Math.Ceiling((double)total / pageSize) : 1;
+
+                ViewBag.Page       = page;
+                ViewBag.PageSize   = pageSize;
+                ViewBag.TotalCount = total;
+                ViewBag.TotalPages = pages;
+
                 return View(calls);
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
                 return View(new System.Collections.Generic.List<Risebird.Entities.ViewModel.PlivoCXCallLogDetailVM>());
             }
         }

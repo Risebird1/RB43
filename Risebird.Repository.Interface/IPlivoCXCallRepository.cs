@@ -10,7 +10,7 @@ namespace Risebird.Repository.Interface
     public interface IPlivoCXCallRepository
     {
         // ── Rich call log view (for the Index page) ──────────────────────────────
-        Task<List<PlivoCXCallLogDetailVM>> GetCallLogDetailsAsync(int count = 200);
+        Task<List<PlivoCXCallLogDetailVM>> GetCallLogDetailsAsync(int page = 1, int pageSize = 50);
 
         // ── Call logs ────────────────────────────────────────────────────────────
         Task<int>              SaveCallLogAsync(PlivoCXCallLog callLog);

@@ -8,8 +8,12 @@
 --   2. Candidate is NOT marked cold (Candidate.Status != 9)
 --   3. Candidate disposition is NOT 'uninterested'
 --      (NULL / 'interested' / 'cant_say' are all eligible)
---   4. No confirmed interview already exists for this candidate + IRF
---      (InterviewMeetings.confirmationStatus = '1')
+--   4a. No future non-cancelled interview already exists in InterviewMeetings
+--       (confirmationStatus <> '2' covers pending AND confirmed — blocks re-calls
+--        even before the scheduler marks the meeting as fully confirmed)
+--   4b. No prior Plivo schedule call already successfully posted a future slot
+--       to the Schedule API (BookingApiSuccess = 1 AND BookedInterviewDateTime > now)
+--       Covers the gap between the API call and the meeting appearing in InterviewMeetings.
 --   5. Completed call count in PlivoCXCallLogs is < 2, UNLESS disposition is NULL
 --      (disposition NULL = never been reached; always worth attempting)
 --   6. Hard daily cap: no more than 4 schedule calls (any status) made today
@@ -83,13 +87,28 @@ BEGIN
         -- 3. Disposition is not 'uninterested'
         AND (c.PlivoCXDisposition IS NULL OR c.PlivoCXDisposition <> 'uninterested')
 
-        -- 4. No confirmed interview already booked for this candidate + IRF
+        -- 4a. No future non-cancelled interview meeting already exists.
+        --     confirmationStatus = '2' = Cancelled; everything else (pending, confirmed)
+        --     is enough to block another call.
         AND NOT EXISTS (
             SELECT 1
             FROM   InterviewMeetings im
             WHERE  im.candidateEmail     = u.EmailId
               AND  im.IRFId              = irf.IRFId
-              AND  im.confirmationStatus = '1'
+              AND  im.confirmationStatus <> '2'
+              AND  im.interviewDate       > GETDATE()
+        )
+
+        -- 4b. No prior Plivo call already successfully posted a future booking to
+        --     the Schedule API.  Covers the lag before the meeting row appears.
+        AND NOT EXISTS (
+            SELECT 1
+            FROM   PlivoCXCallLogs pcl2
+            WHERE  pcl2.RecipientEmail         = u.EmailId
+              AND  pcl2.IRFId                  = c.IRFId
+              AND  ISNULL(pcl2.CallPurpose, 'schedule') = 'schedule'
+              AND  pcl2.BookingApiSuccess       = 1
+              AND  pcl2.BookedInterviewDateTime > GETDATE()
         )
 
         -- 5. Stop after 2 completed calls (unless disposition is NULL, meaning
