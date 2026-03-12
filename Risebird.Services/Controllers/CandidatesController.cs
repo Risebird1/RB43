@@ -277,7 +277,7 @@ namespace Risebird.Services.Controllers
                                             string textreminder = string.Empty;
                                             textreminder = item.Phone;
                                             int interviewId = 0;
-                                            var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.EmailId, item.ResumeLink, zoomLink.join_url, reqData.skillChannelId, zoomLink.meetingid, interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, "Zoom", out interviewId, zoomLink.accountemail);
+                                            var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.EmailId, item.ResumeLink, zoomLink.join_url, reqData.skillChannelId, zoomLink.meetingid, interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, "Zoho", out interviewId, zoomLink.accountemail);
                                             if (result)
                                             {
                                                 _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(Uniqueid);

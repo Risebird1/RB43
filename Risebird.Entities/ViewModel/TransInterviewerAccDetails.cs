@@ -1,4 +1,4 @@
-﻿namespace Risebird.Entities.ViewModel
+namespace Risebird.Entities.ViewModel
 {
     public class TransInterviewerAccDetails
     {
@@ -10,6 +10,7 @@
         public string UPIId { get; set; }
         public string PAN { get; set; }
         public string AccountLocation { get; set; }
-
+        public bool? IsVerified { get; set; }
+        public string RazorpayValidationId { get; set; }
     }
 }

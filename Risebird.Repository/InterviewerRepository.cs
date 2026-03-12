@@ -2137,6 +2137,32 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> UpdateAccDetailsVerification(int accDetailId, bool isVerified, string razorpayValidationId = null)
+        {
+            try
+            {
+                var query = "UPDATE TransInterviewerAccDetails SET IsVerified = @IsVerified, RazorpayValidationId = @RazorpayValidationId WHERE Id = @Id;";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Id", accDetailId);
+                    parameters.Add("@IsVerified", isVerified);
+                    parameters.Add("@RazorpayValidationId", string.IsNullOrEmpty(razorpayValidationId) ? (object)DBNull.Value : razorpayValidationId);
+                    await con.ExecuteAsync(query, parameters);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
         public async Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid)
         {

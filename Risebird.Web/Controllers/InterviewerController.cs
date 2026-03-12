@@ -553,6 +553,35 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Verify interviewer bank account via Razorpay and update TransInterviewerAccDetails (IsVerified, RazorpayValidationId).
+        /// Admin/HR/Finance only.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> VerifyBankAccount(int interviewerProfileId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return RedirectToAction("SignOut", "Session");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName != "Admin" && profileName != "HR" && profileName != "Finance")
+                    return RedirectToAction("SignOut", "Session");
+
+                var (success, message) = await _interviewerService.VerifyBankAccountViaRazorpay(interviewerProfileId);
+                TempData["MessageInterviewer"] = message;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["MessageInterviewer"] = "Bank account verification failed.";
+                return RedirectToAction("Index");
+            }
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditInterviewerProfile(InterviewerProfileVM interviewerProfile)

@@ -37,5 +37,12 @@ namespace Risebird.Business.Interface
         /// <param name="payoutId">Razorpay payout ID (e.g. pout_xxx).</param>
         /// <returns>Payout result with PayoutId, Status, Amount, Utr (if processed) on success.</returns>
         Task<RazorpayPayoutResult> GetPayoutStatusAsync(string payoutId);
+
+        Task<RazorpayValidationResult> ValidateBankAccountAsync(
+            string beneficiaryName,
+            string beneficiaryAccountNumber,
+            string ifscCode,
+            string contactEmail,
+            string contactPhone = null);
     }
 }

@@ -211,6 +211,120 @@ namespace Risebird.Business
             return result;
         }
 
+        /// <summary>
+        /// Validate bank account: Create Contact → Create Fund Account → POST /v1/fund_accounts/validations.
+        /// </summary>
+        public async Task<RazorpayValidationResult> ValidateBankAccountAsync(
+            string beneficiaryName,
+            string beneficiaryAccountNumber,
+            string ifscCode,
+            string contactEmail,
+            string contactPhone = null)
+        {
+            var result = new RazorpayValidationResult { Success = false };
+            var accountNumber = _configuration["Razorpay:PayoutAccountNumber"];
+            if (string.IsNullOrWhiteSpace(accountNumber))
+            {
+                result.ErrorMessage = "Razorpay PayoutAccountNumber is not configured.";
+                return result;
+            }
+            var trimmedAccount = (beneficiaryAccountNumber ?? "").Trim().Replace(" ", "");
+            var trimmedIfsc = (ifscCode ?? "").Trim().Replace(" ", "");
+            if (string.IsNullOrEmpty(trimmedAccount) || string.IsNullOrEmpty(trimmedIfsc))
+            {
+                result.ErrorMessage = "Bank account number and IFSC are required.";
+                return result;
+            }
+
+            try
+            {
+                var refId = $"RB_V_{DateTime.UtcNow:yyyyMMddHHmmss}";
+                var name = (beneficiaryName ?? "Interviewer").Length > 50 ? (beneficiaryName ?? "Interviewer").Substring(0, 50) : (beneficiaryName ?? "Interviewer");
+
+                var contactPayload = new
+                {
+                    name,
+                    email = contactEmail ?? "noreply@risebird.io",
+                    contact = (contactPhone ?? "0000000000").Replace(" ", "").Length >= 10 ? (contactPhone ?? "0000000000").Replace(" ", "").Substring(0, 10) : "0000000000",
+                    type = "vendor",
+                    reference_id = refId
+                };
+                var contactResponse = await PostAsync("contacts", contactPayload, null).ConfigureAwait(false);
+                if (!contactResponse.IsSuccessStatusCode)
+                {
+                    result.ErrorMessage = await ParseErrorAsync(contactResponse, "Contact");
+                    return result;
+                }
+                var contactBody = await contactResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var contactId = JObject.Parse(contactBody)["id"]?.ToString();
+                if (string.IsNullOrEmpty(contactId))
+                {
+                    result.ErrorMessage = "Razorpay did not return contact id.";
+                    return result;
+                }
+
+                var fundAccountPayload = new
+                {
+                    contact_id = contactId,
+                    account_type = "bank_account",
+                    bank_account = new
+                    {
+                        name,
+                        ifsc = trimmedIfsc.Length >= 11 ? trimmedIfsc.Substring(0, 11) : trimmedIfsc,
+                        account_number = trimmedAccount
+                    }
+                };
+                var fundResponse = await PostAsync("fund_accounts", fundAccountPayload, null).ConfigureAwait(false);
+                if (!fundResponse.IsSuccessStatusCode)
+                {
+                    result.ErrorMessage = await ParseErrorAsync(fundResponse, "Fund Account");
+                    return result;
+                }
+                var fundBody = await fundResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var fundAccountId = JObject.Parse(fundBody)["id"]?.ToString();
+                if (string.IsNullOrEmpty(fundAccountId))
+                {
+                    result.ErrorMessage = "Razorpay did not return fund_account id.";
+                    return result;
+                }
+
+                var validationPayload = new
+                {
+                    account_number = accountNumber.Trim(),
+                    fund_account = new { id = fundAccountId },
+                    amount = 100,
+                    currency = "INR",
+                    notes = new { source = "risebird_bank_verification" }
+                };
+                var validationResponse = await PostAsync("fund_accounts/validations", validationPayload, null).ConfigureAwait(false);
+                var validationBody = await validationResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (!validationResponse.IsSuccessStatusCode)
+                {
+                    result.ErrorMessage = await ParseErrorAsync(validationResponse, "Validation", validationBody);
+                    return result;
+                }
+
+                var jobj = JObject.Parse(validationBody);
+                result.Success = true;
+                result.ValidationId = jobj["id"]?.ToString();
+                result.Status = jobj["status"]?.ToString();
+                var resultsObj = jobj["results"];
+                if (resultsObj != null)
+                {
+                    result.RegisteredName = resultsObj["registered_name"]?.ToString();
+                    result.AccountStatus = resultsObj["account_status"]?.ToString();
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMessage = ex.Message;
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return result;
+        }
+
         private async Task<HttpResponseMessage> PostAsync(string path, object payload, string idempotencyKey)
         {
             var json = JsonConvert.SerializeObject(payload);

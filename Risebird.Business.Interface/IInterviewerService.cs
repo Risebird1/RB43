@@ -49,6 +49,7 @@ namespace Risebird.Business.Interface
         Task<InterviewReport> GetInterviewerRecommendationDetails(int Userid);
         Task<bool> InterviewerRecommendation(InterviewReport reportModel);
         Task<TransInterviewerAccDetails> fetchBankDetails(int interviewerid);
+        Task<(bool Success, string Message)> VerifyBankAccountViaRazorpay(int interviewerProfileId);
         Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid);
         string GetUserRolebyEmailid(string Emailid);
         Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid, string type);

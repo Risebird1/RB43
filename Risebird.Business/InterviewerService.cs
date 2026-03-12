@@ -23,11 +23,13 @@ namespace Risebird.Business
         private readonly IIRFRepository _irfRepository;
         private readonly IActivityTrackerRepository _activityTrackerRepository;
         private readonly IEncryptionHelper _encryptionHelper;
+        private readonly IRazorpayPayoutService _razorpayPayoutService;
 
         public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger,
             IUserService userService, IMeetingRespository meetingRespository,
             INotificationHelper notificationHelper, IPasswordHelper passwordHelper,
-            IIRFRepository irfRepository, IActivityTrackerRepository activityTrackerRepository, IEncryptionHelper encryptionHelper)
+            IIRFRepository irfRepository, IActivityTrackerRepository activityTrackerRepository, IEncryptionHelper encryptionHelper,
+            IRazorpayPayoutService razorpayPayoutService)
         {
             _interviewerRepository = interviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -38,6 +40,7 @@ namespace Risebird.Business
             _irfRepository = irfRepository;
             _activityTrackerRepository = activityTrackerRepository;
             _encryptionHelper = encryptionHelper;
+            _razorpayPayoutService = razorpayPayoutService;
         }
 
         #region Interviewer Profile Service Functions
@@ -1039,6 +1042,39 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<(bool Success, string Message)> VerifyBankAccountViaRazorpay(int interviewerProfileId)
+        {
+            var accDetails = await _interviewerRepository.fetchBankDetails(interviewerProfileId);
+            if (accDetails == null)
+                return (false, "Bank account details not found for this interviewer.");
+            var accountNumber = (accDetails.AccountNumber ?? "").Trim().Replace(" ", "");
+            var ifsc = (accDetails.IFSCCode ?? "").Trim().Replace(" ", "");
+            if (string.IsNullOrEmpty(accountNumber) || string.IsNullOrEmpty(ifsc))
+                return (false, "Account number and IFSC code are required for verification.");
+
+            var accountName = string.IsNullOrWhiteSpace(accDetails.AccountName) ? "Interviewer" : accDetails.AccountName;
+            var contactEmail = "noreply@risebird.io";
+
+            var result = await _razorpayPayoutService.ValidateBankAccountAsync(accountName, accountNumber, ifsc, contactEmail, null);
+            if (!result.Success)
+                return (false, result.ErrorMessage ?? "Razorpay validation failed.");
+
+            if (string.Equals(result.Status, "completed", StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.Equals(result.AccountStatus, "invalid", StringComparison.OrdinalIgnoreCase))
+                    return (false, "Bank account validation failed: account is invalid.");
+                await _interviewerRepository.UpdateAccDetailsVerification(accDetails.id, true, result.ValidationId);
+                return (true, "Bank account verified successfully. Registered name: " + (result.RegisteredName ?? "N/A"));
+            }
+
+            if (string.Equals(result.Status, "created", StringComparison.OrdinalIgnoreCase))
+            {
+                await _interviewerRepository.UpdateAccDetailsVerification(accDetails.id, false, result.ValidationId);
+                return (true, "Verification initiated (pending). Validation ID: " + result.ValidationId);
+            }
+
+            return (false, "Razorpay validation failed. Status: " + (result.Status ?? "unknown"));
+        }
 
         public async Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid)
         {
