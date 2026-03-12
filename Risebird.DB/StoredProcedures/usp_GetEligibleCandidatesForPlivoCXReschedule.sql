@@ -16,6 +16,8 @@
 --      (guards against calling someone we've already successfully rescheduled)
 --   7. Fewer than 2 completed reschedule calls (CallPurpose = 'reschedule') in
 --      PlivoCXCallLogs, unless disposition is NULL (never conclusively reached)
+--   8. Hard daily cap: no more than 4 reschedule calls (any status) made today
+--      for this candidate + IRF.
 --
 -- The SP also returns OriginalInterviewDate (most recent meeting needing reschedule)
 -- so the AI agent can reference it in conversation.
@@ -144,6 +146,17 @@ BEGIN
                   AND  pcl.CallPurpose    = 'reschedule'
             ) < 2
         )
+
+        -- 8. Hard daily cap: at most 4 reschedule calls per candidate + IRF today
+        --    (any call status counts — prevents looping on busy/no-answer)
+        AND (
+            SELECT COUNT(*)
+            FROM   PlivoCXCallLogs pcl
+            WHERE  pcl.RecipientEmail = u.EmailId
+              AND  pcl.IRFId          = c.IRFId
+              AND  pcl.CallPurpose    = 'reschedule'
+              AND  CAST(pcl.CreatedAt AS DATE) = CAST(GETUTCDATE() AS DATE)
+        ) < 4
 
     ORDER BY
         -- Never-reached candidates first

@@ -12,6 +12,8 @@
 --      (InterviewMeetings.confirmationStatus = '1')
 --   5. Completed call count in PlivoCXCallLogs is < 2, UNLESS disposition is NULL
 --      (disposition NULL = never been reached; always worth attempting)
+--   6. Hard daily cap: no more than 4 schedule calls (any status) made today
+--      for this candidate + IRF.  Prevents unbounded retries on busy/no-answer days.
 --
 -- Attempt tracking:
 --   VapiCallAttempts on Candidate is still incremented per attempt (via
@@ -102,6 +104,17 @@ BEGIN
                   AND  pcl.CallStatus     = 'completed'
             ) < 2
         )
+
+        -- 6. Hard daily cap: at most 4 schedule calls per candidate + IRF today
+        --    (any call status counts — prevents looping on busy/no-answer)
+        AND (
+            SELECT COUNT(*)
+            FROM   PlivoCXCallLogs pcl
+            WHERE  pcl.RecipientEmail = u.EmailId
+              AND  pcl.IRFId          = c.IRFId
+              AND  ISNULL(pcl.CallPurpose, 'schedule') = 'schedule'
+              AND  CAST(pcl.CreatedAt AS DATE) = CAST(GETUTCDATE() AS DATE)
+        ) < 4
 
     ORDER BY
         -- Never-reached candidates first (NULL disposition = no conclusive call yet)
