@@ -8,6 +8,16 @@ namespace Risebird.Entities.ViewModel
     /// </summary>
     public class PlivoCXCallLogDetailVM
     {
+        // ── Pagination / aggregate metadata (populated by window functions) ───
+        /// <summary>Total rows across all pages — read from the first row to drive pagination.</summary>
+        public int TotalCount            { get; set; }
+        /// <summary>Overall count of "completed" calls across all pages.</summary>
+        public int OverallCompleted      { get; set; }
+        /// <summary>Overall count of calls that produced an InterviewMeeting across all pages.</summary>
+        public int OverallMeetingCreated { get; set; }
+        /// <summary>Overall count of failed / no-answer calls across all pages.</summary>
+        public int OverallNoAnswer       { get; set; }
+
         // ── Call identity ─────────────────────────────────────────────────────
         public int     CallLogId         { get; set; }
         public string  CandidateEmail    { get; set; }
