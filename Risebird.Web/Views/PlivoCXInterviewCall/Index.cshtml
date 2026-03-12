@@ -1,6 +1,7 @@
 @model List<Risebird.Entities.ViewModel.PlivoCXCallLogDetailVM>
 @{
     ViewData["Title"] = "Plivo CX Call Logs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 
     int totalCalls      = Model.Count;
     int booked          = Model.Count(c => c.AIReportedBooked);
@@ -8,8 +9,126 @@
     int completed       = Model.Count(c => c.CallStatus == "completed");
     int noAnswer        = Model.Count(c => c.CallStatus == "no-answer" || c.CallStatus == "failed" || c.CallStatus == "trigger-failed");
 }
+<style>
+    /* Filter row: same font-size and height for search input and all selects */
+    #searchInput.cx-filter-control,
+    .cx-filter-control.form-select {
+        min-height: 30px;
+            color: grey;
+    font-weight: 500;
+    font-size: 12.7px !important;
+        padding: 0.375rem 0.75rem;
+        line-height: 1.5;
+    }
+    .cx-filter-control.form-select {
+        min-width: 160px;
+    }
+    /* Stats: clearer purpose, status, meeting created labels and values */
+    .plivo-cx-stat .stat-value { font-size: 1.5rem; font-weight: 700; }
+    .plivo-cx-stat .stat-label { font-size: 13px; font-weight: 500; color: #495057; }
+    /* Table: purpose, status, meeting created columns more readable */
+    #callTable .badge.cx-badge {width:auto; font-size: 11px!important; padding: 0.35em 0.65em; font-weight: 500; }
+    #callTable td .cx-meeting-created { font-weight: 600; }
+    .badge{width:auto;}
+    .btn.btn-sm {
+    font-size: 11px;
+    padding: 3px 5px;
+    background: #d4cece85;
+}
+.bg-success {
+    --bs-bg-opacity: 1;
+    background-color: rgb(31 160 100 / 85%) !important;
+    font-size: 10px !important;
+    line-height: 13px;
+}
+    .table > thead > tr > th {
+        font-size: 13px;
+    }
+    .bg-secondary {
+        --bs-bg-opacity: 1;
+        background-color: rgb(112 118 124 / 83%) !important;
+    }
+    .bg-warning {
+        --bs-bg-opacity: 1;
+        background-color: rgb(241 198 70 / 66%) !important;
+        border: 0px;
+        font-size: 11px !important;
+    }
 
-<div class="container-fluid py-4">
+    #callTable .badge.cx-status-completed {
+        background: linear-gradient(135deg, #127132bd 0%, #15c952 100%) !important;
+        color: #fff !important;
+        padding: 2px 8px;
+        line-height: 16px;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, .25);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+        font-size: 10px !important;
+    }
+    /* Disposition "interested" – icon + text only, no bg */
+    #callTable .cx-disposition-interested {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #198754;
+        background: none !important;
+        padding: 0;
+        border: none;
+    }
+    #callTable .cx-disposition-interested i {
+        font-size: 14px;
+    }
+    /* Meeting status "Confirmed" – simple light green bg */
+    #callTable .badge.cx-meeting-confirmed {
+        background: #d4edda !important;
+        color: #155724;
+        padding: 0.35em 0.65em;
+        font-weight: 500;
+        border: 1px solid #c3e6cb;
+        font-size: 12px;
+    }
+    /* Yes: green tick icon + green text, no bg */
+    #callTable .cx-value-yes {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #198754;
+        background: none !important;
+        padding: 0;
+        border: none;
+    }
+    #callTable .cx-value-yes i {
+        font-size: 14px;
+    }
+    /* No: red cross icon + red text, no bg – no blink/animation */
+    #callTable .cx-value-no {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #dc3545;
+        background: none !important;
+        padding: 0;
+        border: none;
+        animation: none !important;
+        transition: none !important;
+    }
+    #callTable .cx-value-no i {
+        font-size: 14px;
+        animation: none !important;
+        transition: none !important;
+    }
+
+</style>
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="content client">
+            <div class="container-fluid py-4">
 
     <!-- Header -->
     <div class="row mb-3 align-items-center">
@@ -53,42 +172,42 @@
     <!-- Stats -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-sm-4 col-md-2">
-            <div class="card border-0 shadow-sm text-center py-3">
-                <div class="fs-3 fw-bold text-primary">@totalCalls</div>
-                <div class="text-muted small">Total Calls</div>
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
+                <div class="stat-value text-primary">@totalCalls</div>
+                <div class="stat-label">Total Calls</div>
             </div>
         </div>
         <div class="col-6 col-sm-4 col-md-2">
-            <div class="card border-0 shadow-sm text-center py-3">
-                <div class="fs-3 fw-bold text-success">@completed</div>
-                <div class="text-muted small">Completed</div>
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
+                <div class="stat-value text-success">@completed</div>
+                <div class="stat-label">Completed</div>
             </div>
         </div>
         <div class="col-6 col-sm-4 col-md-2">
-            <div class="card border-0 shadow-sm text-center py-3">
-                <div class="fs-3 fw-bold text-info">@booked</div>
-                <div class="text-muted small">AI Reported Booked</div>
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
+                <div class="stat-value text-info">@booked</div>
+                <div class="stat-label">AI Reported Booked</div>
             </div>
         </div>
         <div class="col-6 col-sm-4 col-md-2">
-            <div class="card border-0 shadow-sm text-center py-3">
-                <div class="fs-3 fw-bold text-success">@meetingCreated</div>
-                <div class="text-muted small">Meeting Created</div>
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
+                <div class="stat-value text-success">@meetingCreated</div>
+                <div class="stat-label">Meeting Created</div>
             </div>
         </div>
         <div class="col-6 col-sm-4 col-md-2">
-            <div class="card border-0 shadow-sm text-center py-3">
-                <div class="fs-3 fw-bold text-danger">@noAnswer</div>
-                <div class="text-muted small">Failed / No Answer</div>
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
+                <div class="stat-value text-danger">@noAnswer</div>
+                <div class="stat-label">Failed / No Answer</div>
             </div>
         </div>
         <div class="col-6 col-sm-4 col-md-2">
-            <div class="card border-0 shadow-sm text-center py-3">
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
                 @{
                     double rate = totalCalls > 0 ? Math.Round((double)meetingCreated / totalCalls * 100, 1) : 0;
                 }
-                <div class="fs-3 fw-bold text-warning">@rate%</div>
-                <div class="text-muted small">Conversion Rate</div>
+                <div class="stat-value text-warning">@rate%</div>
+                <div class="stat-label">Conversion Rate</div>
             </div>
         </div>
     </div>
@@ -98,11 +217,11 @@
         <div class="card-body py-2">
             <div class="row g-2 align-items-center">
                 <div class="col-auto">
-                    <input type="text" id="searchInput" class="form-control form-control-sm"
-                           placeholder="Search name / email / IRF…" style="min-width:220px" />
+                    <input type="text" id="searchInput" class="form-control cx-filter-control"
+                           placeholder="Search name / email / IRF…" style="min-width:220px;height:30px;" />
                 </div>
                 <div class="col-auto">
-                    <select id="statusFilter" class="form-select form-select-sm">
+                    <select id="statusFilter" class="form-select cx-filter-control">
                         <option value="">All statuses</option>
                         <option value="completed">Completed</option>
                         <option value="triggered">Triggered</option>
@@ -113,21 +232,21 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select id="purposeFilter" class="form-select form-select-sm">
+                    <select id="purposeFilter" class="form-select cx-filter-control">
                         <option value="">All purposes</option>
                         <option value="schedule">Schedule</option>
                         <option value="reschedule">Reschedule</option>
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select id="meetingFilter" class="form-select form-select-sm">
+                    <select id="meetingFilter" class="form-select cx-filter-control">
                         <option value="">All meetings</option>
                         <option value="YES">Meeting Created</option>
                         <option value="NO">No Meeting</option>
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select id="dispositionFilter" class="form-select form-select-sm">
+                    <select id="dispositionFilter" class="form-select cx-filter-control">
                         <option value="">All dispositions</option>
                         <option value="interested">Interested</option>
                         <option value="uninterested">Uninterested</option>
@@ -224,11 +343,11 @@
                                 </td>
 
                                 <td>
-                                    <span class="badge @purposeBadge">@(r.CallPurpose ?? "schedule")</span>
+                                    <span class="badge @purposeBadge cx-badge">@(r.CallPurpose ?? "schedule")</span>
                                 </td>
 
                                 <td>
-                                    <span class="badge @statusBadge">@(r.CallStatus ?? "—")</span>
+                                    <span class="badge @statusBadge cx-badge @(r.CallStatus == "completed" ? "cx-status-completed" : "")">@(r.CallStatus ?? "—")</span>
                                     @if (!string.IsNullOrEmpty(r.HangupCause))
                                     {
                                         <br /><small class="text-muted">@r.HangupCause</small>
@@ -240,7 +359,14 @@
                                 <td>
                                     @if (!string.IsNullOrEmpty(r.CandidateDisposition))
                                     {
-                                        <span class="badge @dispositionBadge">@r.CandidateDisposition</span>
+                                        @if (r.CandidateDisposition == "interested")
+                                        {
+                                            <span class="cx-disposition-interested"><i class="fas fa-thumbs-up"></i> Interested</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge @dispositionBadge">@r.CandidateDisposition</span>
+                                        }
                                     }
                                     else
                                     {
@@ -251,7 +377,7 @@
                                 <td>
                                     @if (r.AIReportedBooked)
                                     {
-                                        <span class="badge bg-success"><i class="fas fa-check me-1"></i>Yes</span>
+                                        <span class="cx-value-yes"><i class="fas fa-check"></i> Yes</span>
                                         <br /><small class="text-muted">@r.BookedInterviewDate @r.BookedInterviewTime</small>
                                     }
                                     else
@@ -272,7 +398,18 @@
                                 </td>
 
                                 <td class="text-center">
-                                    <span class="badge @meetingBadge">@r.MeetingCreated</span>
+                                    @if (r.MeetingCreated == "YES")
+                                    {
+                                        <span class="cx-value-yes"><i class="fas fa-check"></i> Yes</span>
+                                    }
+                                    else if (r.MeetingCreated == "NO")
+                                    {
+                                        <span class="cx-value-no"><i class="fas fa-times"></i> No</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
                                 </td>
 
                                 <td class="small">
@@ -289,7 +426,7 @@
                                 <td class="small">
                                     @if (r.MeetingId.HasValue)
                                     {
-                                        <span class="badge @(r.MeetingConfirmationStatus == "1" ? "bg-success" : r.MeetingConfirmationStatus == "2" ? "bg-danger" : "bg-warning text-dark")">
+                                        <span class="badge @(r.MeetingConfirmationStatus == "1" ? "cx-meeting-confirmed" : r.MeetingConfirmationStatus == "2" ? "bg-danger" : "bg-warning text-dark")">
                                             @confirmLabel
                                         </span>
                                         @if (r.IsAutoCancelled == true)
@@ -331,6 +468,9 @@
                         }
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
             </div>
         </div>
     </div>
