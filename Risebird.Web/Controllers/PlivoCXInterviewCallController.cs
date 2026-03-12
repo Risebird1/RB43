@@ -61,23 +61,35 @@ namespace Risebird.Web.Controllers
         // ─── Dashboard ───────────────────────────────────────────────────────────
 
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 50)
+        public async Task<IActionResult> Index(
+            int    page        = 1,
+            int    pageSize    = 50,
+            string status      = null,
+            string purpose     = null,
+            string meeting     = null,
+            string disposition = null)
         {
             try
             {
-                if (page    < 1)  page     = 1;
-                if (pageSize < 10) pageSize = 10;
+                if (page     < 1)   page     = 1;
+                if (pageSize < 10)  pageSize = 10;
                 if (pageSize > 200) pageSize = 200;
 
-                var calls  = await _repository.GetCallLogDetailsAsync(page, pageSize);
-                var first  = calls.FirstOrDefault();
-                int total  = first?.TotalCount ?? 0;
-                int pages  = total > 0 ? (int)Math.Ceiling((double)total / pageSize) : 1;
+                var calls = await _repository.GetCallLogDetailsAsync(
+                    page, pageSize, status, purpose, meeting, disposition);
 
-                ViewBag.Page       = page;
-                ViewBag.PageSize   = pageSize;
-                ViewBag.TotalCount = total;
-                ViewBag.TotalPages = pages;
+                var first = calls.FirstOrDefault();
+                int total = first?.TotalCount ?? 0;
+                int pages = total > 0 ? (int)Math.Ceiling((double)total / pageSize) : 1;
+
+                ViewBag.Page        = page;
+                ViewBag.PageSize    = pageSize;
+                ViewBag.TotalCount  = total;
+                ViewBag.TotalPages  = pages;
+                ViewBag.Status      = status;
+                ViewBag.Purpose     = purpose;
+                ViewBag.Meeting     = meeting;
+                ViewBag.Disposition = disposition;
 
                 return View(calls);
             }
@@ -85,6 +97,8 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
+                ViewBag.Status = status; ViewBag.Purpose = purpose;
+                ViewBag.Meeting = meeting; ViewBag.Disposition = disposition;
                 return View(new System.Collections.Generic.List<Risebird.Entities.ViewModel.PlivoCXCallLogDetailVM>());
             }
         }

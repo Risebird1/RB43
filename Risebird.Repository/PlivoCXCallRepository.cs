@@ -28,14 +28,25 @@ namespace Risebird.Repository
 
         // ── Rich call log view (for the Index page) ───────────────────────────────
 
-        public async Task<List<PlivoCXCallLogDetailVM>> GetCallLogDetailsAsync(int page = 1, int pageSize = 50)
+        public async Task<List<PlivoCXCallLogDetailVM>> GetCallLogDetailsAsync(
+            int page = 1, int pageSize = 50,
+            string status = null, string purpose = null,
+            string meeting = null, string disposition = null)
         {
             try
             {
                 using var conn = new SqlConnection(_connectionString);
                 var results = await conn.QueryAsync<PlivoCXCallLogDetailVM>(
                     "usp_GetPlivoCXCallLogDetails",
-                    new { Page = page, PageSize = pageSize },
+                    new
+                    {
+                        Page        = page,
+                        PageSize    = pageSize,
+                        Status      = string.IsNullOrWhiteSpace(status)      ? null : status,
+                        Purpose     = string.IsNullOrWhiteSpace(purpose)     ? null : purpose,
+                        Meeting     = string.IsNullOrWhiteSpace(meeting)     ? null : meeting,
+                        Disposition = string.IsNullOrWhiteSpace(disposition) ? null : disposition
+                    },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
             }
