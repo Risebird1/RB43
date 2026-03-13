@@ -44,7 +44,7 @@ namespace Risebird.Repository
             _irfService = irfService;
         }
         public bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
-            string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact, int TimeZoneoffset, string TimeZonesValue, string MeetingPlatForm, out int interviewIdOut, string zoomAccountEmail = null)
+            string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact, int TimeZoneoffset, string TimeZonesValue, string MeetingPlatForm, out int interviewIdOut, string zoomAccountEmail = null, string requestType = null)
         {
             var str = connectionString;
             //string eventType = string.Empty;
@@ -132,6 +132,11 @@ namespace Risebird.Repository
                 cmd.Parameters.Add(new SqlParameter("@TimeZonesValue", TimeZonesValue));
                 cmd.Parameters.Add(new SqlParameter("@assistantId", OpenAIInterviewerAssistants.GetRandomValue()));
                 cmd.Parameters.Add(new SqlParameter("@MeetingPlatForm", MeetingPlatForm));
+                if (string.IsNullOrWhiteSpace(requestType))
+                {
+                    requestType = "";
+                }
+                cmd.Parameters.Add(new SqlParameter("@requestType", requestType));
                 SqlParameter outPutVal = new SqlParameter("@interviewIdOutput", SqlDbType.Int);
                 outPutVal.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(outPutVal);
