@@ -53,6 +53,7 @@ namespace Risebird.Entities.Data
         public string skillChannelId { get; set; }
         public string requestedBy { get; set; }
         public string RequestId { get; set; }
+        public string requestType { get; set; }
         public List<ScheduleCandidateList> CandidateList { get; set; }
     }
     public class ScheduleCandidateList
