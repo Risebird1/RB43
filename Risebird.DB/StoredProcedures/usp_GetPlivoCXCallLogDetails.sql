@@ -85,13 +85,23 @@ BEGIN
             im.CancellationReason,
             im.IsCandidateResponsed,
             im.CandidateResponse,
-            im.dtCreatedOn                  AS MeetingCreatedOn
+            im.dtCreatedOn                  AS MeetingCreatedOn,
+            im.RequestType                  AS MeetingRequestType
 
         FROM      PlivoCXCallLogs   pcl
         JOIN      IRF               irf ON irf.id = pcl.IRFId
         LEFT JOIN InterviewMeetings  im
                ON im.candidateEmail    = pcl.RecipientEmail
               AND im.IRFId             = irf.IRFId
+              -- Only match a meeting that was created by the voice agent for the same purpose.
+              -- RequestType is NULL for all non-voice-agent meetings, so this eliminates
+              -- spurious matches that happened to share the same booked date/time.
+              AND im.RequestType       = CASE ISNULL(pcl.CallPurpose, 'schedule')
+                                             WHEN 'reschedule' THEN 'reschedule_voiceAgent'
+                                             ELSE                   'schedule_voiceAgent'
+                                        END
+              -- Datetime guard: pcl must have attempted a booking, and the meeting slot
+              -- must match the exact minute the AI booked.
               AND pcl.BookedInterviewDateTime IS NOT NULL
               AND CAST(im.interviewDate          AS SMALLDATETIME)
                 = CAST(pcl.BookedInterviewDateTime AS SMALLDATETIME)

@@ -143,6 +143,7 @@
                                 @Html.HiddenFor(m => m.DOB)
                                 @Html.HiddenFor(m => m.ResumeLink)
                                 @Html.HiddenFor(m => m.PrimarySpecializationForAcknowledgement)
+                                @Html.HiddenFor(m => m.PreOnboardingVerdictId)
                                 @Html.HiddenFor(m => m.AIResponse)
 
                                 <!-- Add Interviewer personal Details Start-->
@@ -1172,6 +1173,7 @@
         document.getElementById("divEVverified").style.display = "block";
         $("#ResumeLink").val(data.resumeLink);
         $("#PrimarySpecializationForAcknowledgement").val(primarySpecialization);
+        $("#PreOnboardingVerdictId").val(data.preOnboardingVerdictId || 0);
         
         if (data.aiResponseHref) {
             document.getElementById("id_aiResponseUrl").style.display = "block";

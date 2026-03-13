@@ -842,7 +842,10 @@ namespace Risebird.Web.Controllers
                 var dto = new ScheduleCandidatesRequest
                 {
                     skillChannelId = candidateDetails.IRFId,
-                    requestedBy    = candidateDetails.ClientHRAttemptContact
+                    requestedBy    = candidateDetails.ClientHRAttemptContact,
+                    requestType    = callLog.CallPurpose == "reschedule"
+                                        ? "reschedule_voiceAgent"
+                                        : "schedule_voiceAgent"
                 };
                 var roundedDate = parsedDateTime.Value.RoundToNearSlot(candidateDetails.duration);
                 dto.CandidateList.Add(new ScheduleCandidateList
