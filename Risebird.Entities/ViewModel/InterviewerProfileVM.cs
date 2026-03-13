@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -237,6 +237,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Primary Specialization")]
         public string PrimarySpecializationForAIVerdict { get; set; }
+        public int PreOnboardingVerdictId { get; set; }
         public string PrimarySpecializationForAcknowledgement { get; set; }
         public bool ShowAddToSkillChannelOption { get; set; }
         public SelectList SkillChannelList { get; set; }

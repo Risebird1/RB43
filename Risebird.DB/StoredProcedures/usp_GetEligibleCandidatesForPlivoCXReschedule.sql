@@ -20,6 +20,10 @@
 --      PlivoCXCallLogs, unless disposition is NULL (never conclusively reached)
 --   8. Hard daily cap: no more than 4 reschedule calls (any status) made today
 --      for this candidate + IRF.
+--   9. Minimum 2-hour cooldown between consecutive calls.
+--      The most recent reschedule call must have been made at least 2 hours ago.
+--  10. 4-day retry window from the very first reschedule call attempt.
+--      If the earliest reschedule call to this candidate+IRF is older than 4 days, stop.
 --
 -- The SP also returns OriginalInterviewDate (most recent meeting needing reschedule)
 -- so the AI agent can reference it in conversation.
@@ -172,6 +176,37 @@ BEGIN
               AND  pcl.CallPurpose    = 'reschedule'
               AND  CAST(pcl.CreatedAt AS DATE) = CAST(GETUTCDATE() AS DATE)
         ) < 4
+
+        -- 9. Minimum 2-hour cooldown between consecutive calls.
+        --    Block if ANY reschedule call to this candidate+IRF was made in the last 2 hours.
+        AND NOT EXISTS (
+            SELECT 1
+            FROM   PlivoCXCallLogs pcl
+            WHERE  pcl.RecipientEmail = u.EmailId
+              AND  pcl.IRFId          = c.IRFId
+              AND  pcl.CallPurpose    = 'reschedule'
+              AND  pcl.CreatedAt      > DATEADD(HOUR, -2, GETUTCDATE())
+        )
+
+        -- 10. Stop retrying after 4 days from the very first reschedule call attempt.
+        --     Passes if: no reschedule call has ever been made (fresh candidate), OR the
+        --     earliest call is within the last 4 days (still inside the retry window).
+        AND (
+            NOT EXISTS (
+                SELECT 1
+                FROM   PlivoCXCallLogs pcl
+                WHERE  pcl.RecipientEmail = u.EmailId
+                  AND  pcl.IRFId          = c.IRFId
+                  AND  pcl.CallPurpose    = 'reschedule'
+            )
+            OR (
+                SELECT MIN(pcl.CreatedAt)
+                FROM   PlivoCXCallLogs pcl
+                WHERE  pcl.RecipientEmail = u.EmailId
+                  AND  pcl.IRFId          = c.IRFId
+                  AND  pcl.CallPurpose    = 'reschedule'
+            ) >= DATEADD(DAY, -4, GETUTCDATE())
+        )
 
     ORDER BY
         -- Never-reached candidates first

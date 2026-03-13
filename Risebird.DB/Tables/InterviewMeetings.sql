@@ -61,6 +61,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [SessionId][varchar] (200),
     [TimeLeftInSeconds][int] NULL,
     [MeetingPlatForm][varchar](25),
+    [RequestType][varchar](30) NULL,
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -472,6 +473,17 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add MeetingPlatForm varchar(25)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'RequestType')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    -- 'schedule_voiceAgent' | 'reschedule_voiceAgent' | NULL (all non-voice-agent meetings)
+    ALTER TABLE InterviewMeetings
+    Add RequestType VARCHAR(30) NULL
 END
 
 END
