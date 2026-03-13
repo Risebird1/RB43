@@ -65,5 +65,10 @@ namespace Risebird.Entities.ViewModel
         public bool?    IsCandidateResponsed  { get; set; }
         public string   CandidateResponse     { get; set; }
         public DateTime? MeetingCreatedOn     { get; set; }
+        /// <summary>
+        /// Matches InterviewMeetings.RequestType — 'schedule_voiceAgent' | 'reschedule_voiceAgent' | null.
+        /// Only populated when the meeting was created via the Plivo CX voice agent.
+        /// </summary>
+        public string   MeetingRequestType    { get; set; }
     }
 }

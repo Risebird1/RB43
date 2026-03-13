@@ -17,13 +17,16 @@ Create PROCEDURE [dbo].[usp_SaveInterviewerPreOnboardingVerdictV2]
 @verdict varchar(25) = null,
 @PerformedBy varchar(200),
 @timeNow datetime,
-@result bit out
+@result bit out,
+@savedId int out
 As
 Begin
 	SET NOCOUNT ON;
 	
 	DECLARE @RowsAffected INT = 0
 	DECLARE @RecordExists BIT = 0
+
+	select @savedId = 0
 	
 	BEGIN TRY
 		select @result = 0
@@ -41,7 +44,12 @@ Begin
 			SET @RowsAffected = @@ROWCOUNT
 			
 			IF @RowsAffected > 0
+			Begin
 				select @result = 1
+				-- Retrieve the id of the existing (updated) record
+				SELECT @savedId = id FROM PreOnboardingInterviewerAIVerdict
+				WHERE EmailId = @EmailId AND PrimarySpecialization = @PrimarySpecialization
+			End
 			ELSE
 				-- Debug: Update attempted but no rows affected
 				RAISERROR('UPDATE executed but @@ROWCOUNT = 0', 16, 1)
@@ -65,7 +73,11 @@ Begin
 			SET @RowsAffected = @@ROWCOUNT
 			
 			IF @RowsAffected > 0
+			Begin
 				select @result = 1
+				-- Capture the identity of the newly inserted row
+				SET @savedId = SCOPE_IDENTITY()
+			End
 			ELSE
 				-- Debug: Insert attempted but no rows affected
 				RAISERROR('INSERT executed but @@ROWCOUNT = 0', 16, 1)

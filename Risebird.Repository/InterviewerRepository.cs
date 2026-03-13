@@ -225,15 +225,14 @@ namespace Risebird.Repository
         //    }
         //}
 
-        public bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, out string uniqueid, out bool isInsertOperation)
+        public bool AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, out string uniqueid, out bool isInsertOperation, out int interviewerProfileId)
         {
             assessmentGroupList = string.Empty;
             uniqueid = string.Empty;
             isInsertOperation = false;
+            interviewerProfileId = 0;
             try
             {
-                int ProfileId;
-
                 DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
                 parameters.Add("@loggedInUser", loggedInUser);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -242,9 +241,8 @@ namespace Risebird.Repository
                     _ = SqlMapper.Query<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    //ProfileId = parameters.Get<int?>("@InterviewerProfileId");
                     int? profileOut = (int?)parameters.Get<int?>("@InterviewerProfileId");
-                    ProfileId = profileOut.HasValue ? profileOut.Value : 0;
+                    interviewerProfileId = profileOut.HasValue ? profileOut.Value : 0;
                     assessmentGroupList = parameters.Get<string>("@assessmentGroupList");
                     userId = parameters.Get<int>("@outputUserId");
                     uniqueid = parameters.Get<string>("@uniqueid");
@@ -379,7 +377,7 @@ namespace Risebird.Repository
                 if (interviewerProfile.InterviewerAccDetails != null && !string.IsNullOrEmpty(interviewerProfile.InterviewerAccDetails.AccountName))
                 {
                     DynamicParameters paramsAccount = new DynamicParameters();
-                    paramsAccount.Add("@InterviewerProfileId", ProfileId);
+                    paramsAccount.Add("@InterviewerProfileId", interviewerProfileId);
                     paramsAccount.Add("@AccountName", interviewerProfile.InterviewerAccDetails.AccountName);
                     paramsAccount.Add("@AccountNumber", interviewerProfile.InterviewerAccDetails.AccountNumber);
                     paramsAccount.Add("@IFSCCode", interviewerProfile.InterviewerAccDetails.IFSCCode);
@@ -3456,12 +3454,14 @@ namespace Risebird.Repository
                     parameters.Add("@fitmentScore", model != null ? model.fitmentScore : null);
                     parameters.Add("@verdict", model != null ? model.verdict : null);
                     parameters.Add("@result", dbType: DbType.Boolean, direction: ParameterDirection.Output, size: 5215585);
+                    parameters.Add("@savedId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_SaveInterviewerPreOnboardingVerdictV2", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
 
                     var queryPerformed = parameters.Get<Boolean>("@result");
-                    return queryPerformed ? SaveOperationResult.SuccessResult() : SaveOperationResult.FailureResult("Operation failed. Please try again.");
+                    var savedId = parameters.Get<int?>("@savedId");
+                    return queryPerformed ? SaveOperationResult.SuccessResult(savedId) : SaveOperationResult.FailureResult("Operation failed. Please try again.");
                 }
 
             }
@@ -3477,6 +3477,28 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return SaveOperationResult.FailureResult("An unexpected error occurred. Please try again.");
+            }
+        }
+
+        public async Task UpdatePreOnboardingVerdictInterviewerProfileId(int preOnboardingVerdictId, int interviewerProfileId, string modifiedBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", preOnboardingVerdictId);
+                    parameters.Add("@InterviewerProfileId", interviewerProfileId);
+                    parameters.Add("@ModifiedBy", modifiedBy);
+                    parameters.Add("@timeNow", DateTime.Now);
+
+                    await SqlMapper.ExecuteAsync(con, "usp_UpdatePreOnboardingVerdictInterviewerProfileId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
 

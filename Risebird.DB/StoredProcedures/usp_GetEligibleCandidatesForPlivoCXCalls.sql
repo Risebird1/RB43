@@ -18,6 +18,10 @@
 --      (disposition NULL = never been reached; always worth attempting)
 --   6. Hard daily cap: no more than 4 schedule calls (any status) made today
 --      for this candidate + IRF.  Prevents unbounded retries on busy/no-answer days.
+--   7. Minimum 2-hour cooldown between consecutive calls.
+--      The most recent schedule call must have been made at least 2 hours ago.
+--   8. 4-day retry window from the very first call attempt.
+--      If the earliest schedule call to this candidate+IRF is older than 4 days, stop.
 --
 -- Attempt tracking:
 --   VapiCallAttempts on Candidate is still incremented per attempt (via
@@ -134,6 +138,37 @@ BEGIN
               AND  ISNULL(pcl.CallPurpose, 'schedule') = 'schedule'
               AND  CAST(pcl.CreatedAt AS DATE) = CAST(GETUTCDATE() AS DATE)
         ) < 4
+
+        -- 7. Minimum 2-hour cooldown between consecutive calls.
+        --    Block if ANY schedule call to this candidate+IRF was made in the last 2 hours.
+        AND NOT EXISTS (
+            SELECT 1
+            FROM   PlivoCXCallLogs pcl
+            WHERE  pcl.RecipientEmail = u.EmailId
+              AND  pcl.IRFId          = c.IRFId
+              AND  ISNULL(pcl.CallPurpose, 'schedule') = 'schedule'
+              AND  pcl.CreatedAt      > DATEADD(HOUR, -2, GETUTCDATE())
+        )
+
+        -- 8. Stop retrying after 4 days from the very first call attempt.
+        --    Passes if: no call has ever been made (fresh candidate), OR the earliest
+        --    call is within the last 4 days (still inside the retry window).
+        AND (
+            NOT EXISTS (
+                SELECT 1
+                FROM   PlivoCXCallLogs pcl
+                WHERE  pcl.RecipientEmail = u.EmailId
+                  AND  pcl.IRFId          = c.IRFId
+                  AND  ISNULL(pcl.CallPurpose, 'schedule') = 'schedule'
+            )
+            OR (
+                SELECT MIN(pcl.CreatedAt)
+                FROM   PlivoCXCallLogs pcl
+                WHERE  pcl.RecipientEmail = u.EmailId
+                  AND  pcl.IRFId          = c.IRFId
+                  AND  ISNULL(pcl.CallPurpose, 'schedule') = 'schedule'
+            ) >= DATEADD(DAY, -4, GETUTCDATE())
+        )
 
     ORDER BY
         -- Never-reached candidates first (NULL disposition = no conclusive call yet)
