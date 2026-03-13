@@ -281,7 +281,7 @@ namespace Risebird.Services.Controllers
                                             {
                                                 reqData.requestType = "API";
                                             }
-                                            var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.EmailId, item.ResumeLink, zoomLink.join_url, reqData.skillChannelId, zoomLink.meetingid, interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, "Zoom", out interviewId, zoomLink.accountemail, reqData.requestType);
+                                            var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.EmailId, item.ResumeLink, zoomLink.join_url, reqData.skillChannelId, zoomLink.meetingid, interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, "Zoho", out interviewId, zoomLink.accountemail, reqData.requestType);
                                             if (result)
                                             {
                                                 _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(Uniqueid);
