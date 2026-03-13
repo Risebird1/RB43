@@ -110,6 +110,19 @@ namespace Risebird.Entities.Data.PlivoCXModels
         /// <summary>e.g. "Sunday, 08 March 2026"</summary>
         [JsonProperty("day_after_tomorrow_date")]
         public string DayAfterTomorrowDate { get; set; }
+
+        /// <summary>
+        /// "schedule" or "reschedule" — injected so the AI agent can tailor its opening line.
+        /// </summary>
+        [JsonProperty("call_purpose")]
+        public string CallPurpose { get; set; } = "schedule";
+
+        /// <summary>
+        /// For reschedule calls: the date of the original interview that was missed/cancelled
+        /// (e.g. "07 Mar 2026"). Injected so the AI can reference it in conversation.
+        /// </summary>
+        [JsonProperty("original_interview_date")]
+        public string OriginalInterviewDate { get; set; }
     }
 
     /// <summary>
@@ -203,6 +216,13 @@ namespace Risebird.Entities.Data.PlivoCXModels
 
         [JsonProperty("confirmed_candidate_name")]
         public string ConfirmedCandidateName { get; set; }
+
+        /// <summary>
+        /// AI-assessed candidate disposition based on the conversation.
+        /// Values: "interested" | "uninterested" | "cant_say"
+        /// </summary>
+        [JsonProperty("candidate_disposition")]
+        public string CandidateDisposition { get; set; }
     }
 
     /// <summary>

@@ -58,13 +58,13 @@ namespace Risebird.AzureTimerFunctions
             try
             {
                 // Only run between 9 AM and 9 PM IST
-                if (currentTime.Hour < 9 || currentTime.Hour >= 21)
+                if (currentTime.Hour < 4 || currentTime.Hour >= 17)
                 {
                     _log.LogInformation($"[PlivoCX] Skipping — {currentTime:HH:mm} is outside business hours (9 AM – 9 PM)");
                     return;
                 }
 
-                var candidates = await _repository.GetEligibleCandidatesForCallsAsync(1);
+                var candidates = await _repository.GetEligibleCandidatesForCallsAsync(2);
                 if (candidates == null || !candidates.Any())
                 {
                     _log.LogInformation("[PlivoCX] No eligible candidates for calling");

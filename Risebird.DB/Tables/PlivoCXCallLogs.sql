@@ -38,6 +38,14 @@ CREATE TABLE [dbo].[PlivoCXCallLogs] (
     [BookingApiResponse]     NVARCHAR(MAX)       NULL,
     [BookingApiSuccess]      BIT                 NOT NULL DEFAULT 0,
 
+    -- Candidate disposition (extracted by AI Conversation node)
+    -- Values: 'interested' | 'uninterested' | 'cant_say'
+    [CandidateDisposition]   NVARCHAR(20)        NULL,
+
+    -- Purpose of the call
+    -- Values: 'schedule' (first-time scheduling) | 'reschedule' (booking replacement for a missed/cancelled interview)
+    [CallPurpose]            NVARCHAR(20)        NOT NULL DEFAULT 'schedule',
+
     -- Timestamps
     [CreatedAt]              DATETIME            NOT NULL DEFAULT GETUTCDATE(),
     [UpdatedAt]              DATETIME            NULL,

@@ -695,6 +695,8 @@ namespace Risebird.Web.Controllers
                     return Json(new { isfavourableVerdict = false, resumeLink = uploadedFileURL, errorMessage = saveOperationResult.ErrorMessage });
                 }
 
+                int preOnboardingVerdictId = saveOperationResult.Id ?? 0;
+
                 // 10. Generate response URL
                 var aiResponseUrl = Url.Action("PreOnboardingAIVerdictDetails", "AIScreener",
                     new { emailId = emailId, primarySpecialization = primarySpecialization, resumeLink = uploadedFileURL },
@@ -714,7 +716,7 @@ namespace Risebird.Web.Controllers
 
                 if (isFavorable)
                 {
-                    return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, errorMessage = string.Empty });
+                    return Json(new { isfavourableVerdict = true, ResumeLink = uploadedFileURL, aiResponseHref = aiResponseUrl, preOnboardingVerdictId = preOnboardingVerdictId, errorMessage = string.Empty });
                 }
                 else if (isUnfavorable)
                 {

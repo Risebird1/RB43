@@ -41,6 +41,21 @@ namespace Risebird.Entities.Data.PlivoCXModels
         public string BookingApiResponse         { get; set; }   // raw response from Schedule API
         public bool   BookingApiSuccess          { get; set; }
 
+        // ── Candidate disposition (extracted by AI Conversation node) ────────────
+        /// <summary>
+        /// AI-assessed likelihood the candidate will show up for the interview.
+        /// Values: "interested" | "uninterested" | "cant_say"
+        /// Written back to Candidate.PlivoCXDisposition after each call.
+        /// </summary>
+        public string CandidateDisposition       { get; set; }
+
+        // ── Call purpose ─────────────────────────────────────────────────────────
+        /// <summary>
+        /// Whether this call was for first-time scheduling or rescheduling a missed/cancelled interview.
+        /// Values: "schedule" | "reschedule"
+        /// </summary>
+        public string CallPurpose                { get; set; } = "schedule";
+
         // ── Timestamps ───────────────────────────────────────────────────────────
         public DateTime  CreatedAt               { get; set; }
         public DateTime? UpdatedAt               { get; set; }

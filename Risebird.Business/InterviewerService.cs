@@ -144,7 +144,8 @@ namespace Risebird.Business
                 
                 // Call repository and get operation type from stored procedure
                 bool isInsertOperation;
-                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId, out uniqueid, out isInsertOperation);
+                int interviewerProfileId;
+                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId, out uniqueid, out isInsertOperation, out interviewerProfileId);
                 interviewerProfile.uniqueid = uniqueid;
                 
                 if (result)
@@ -180,6 +181,25 @@ namespace Risebird.Business
                             // Log email sending failure but don't fail the entire operation
                             _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
                                 new Exception($"Failed to send acknowledgement email to {interviewerProfile.EmailId}", emailEx));
+                        }
+
+                        // Link the pre-onboarding AI verdict record that caused this hire back to the
+                        // InterviewerProfile that was just created, so we can attribute the conversion
+                        // to the freelancer/sourcing channel that submitted the candidate.
+                        if (interviewerProfileId > 0 && interviewerProfile.PreOnboardingVerdictId > 0)
+                        {
+                            try
+                            {
+                                _interviewerRepository.UpdatePreOnboardingVerdictInterviewerProfileId(
+                                    interviewerProfile.PreOnboardingVerdictId,
+                                    interviewerProfileId,
+                                    loggedInUser).Wait();
+                            }
+                            catch (Exception linkEx)
+                            {
+                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                                    new Exception($"Failed to link PreOnboardingInterviewerAIVerdict {interviewerProfile.PreOnboardingVerdictId} to InterviewerProfile {interviewerProfileId} for {interviewerProfile.EmailId}", linkEx));
+                            }
                         }
                     }
 
@@ -262,7 +282,8 @@ namespace Risebird.Business
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
                 int userId;
                 bool isInsertOperation;
-                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId, out uniqueid, out isInsertOperation);
+                int editProfileId;
+                var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId, out uniqueid, out isInsertOperation, out editProfileId);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();

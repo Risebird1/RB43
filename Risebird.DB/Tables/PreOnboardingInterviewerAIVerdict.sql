@@ -60,6 +60,16 @@ BEGIN
     Add AIScreeningScore int null
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewerProfileId')
+      AND Object_ID = Object_ID(N'PreOnboardingInterviewerAIVerdict'))
+BEGIN
+    ALTER TABLE PreOnboardingInterviewerAIVerdict
+    ADD InterviewerProfileId int NULL
+END
+
 GO
 
 

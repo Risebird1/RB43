@@ -11,6 +11,7 @@ using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using Risebird.Web.Extensions;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
@@ -60,17 +61,45 @@ namespace Risebird.Web.Controllers
         // ─── Dashboard ───────────────────────────────────────────────────────────
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            int    page        = 1,
+            int    pageSize    = 50,
+            string status      = null,
+            string purpose     = null,
+            string meeting     = null,
+            string disposition = null)
         {
             try
             {
-                var calls = await _repository.GetRecentCallLogsAsync(100);
+                if (page     < 1)   page     = 1;
+                if (pageSize < 10)  pageSize = 10;
+                if (pageSize > 200) pageSize = 200;
+
+                var calls = await _repository.GetCallLogDetailsAsync(
+                    page, pageSize, status, purpose, meeting, disposition);
+
+                var first = calls.FirstOrDefault();
+                int total = first?.TotalCount ?? 0;
+                int pages = total > 0 ? (int)Math.Ceiling((double)total / pageSize) : 1;
+
+                ViewBag.Page        = page;
+                ViewBag.PageSize    = pageSize;
+                ViewBag.TotalCount  = total;
+                ViewBag.TotalPages  = pages;
+                ViewBag.Status      = status;
+                ViewBag.Purpose     = purpose;
+                ViewBag.Meeting     = meeting;
+                ViewBag.Disposition = disposition;
+
                 return View(calls);
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return View(new System.Collections.Generic.List<PlivoCXCallLog>());
+                ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
+                ViewBag.Status = status; ViewBag.Purpose = purpose;
+                ViewBag.Meeting = meeting; ViewBag.Disposition = disposition;
+                return View(new System.Collections.Generic.List<Risebird.Entities.ViewModel.PlivoCXCallLogDetailVM>());
             }
         }
 
@@ -197,6 +226,114 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ─── Reschedule call trigger ─────────────────────────────────────────────
+
+        /// <summary>
+        /// Initiate a reschedule call for a candidate whose previous interview was missed or cancelled.
+        /// Uses the separate Plivo CX reschedule agent (PlivoCX:RescheduleTriggerEndpointUrl).
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InitiateRescheduleCall(
+            string recipientName,
+            string recipientPhone,
+            string recipientEmail,
+            int?   irfId,
+            int?   candidateId,
+            string jobTitle              = null,
+            string clientName            = null,
+            string originalInterviewDate = null)
+        {
+            try
+            {
+                var userEmail = User.Identity?.Name ?? "Unknown";
+
+                var callLog = new PlivoCXCallLog
+                {
+                    RecipientName    = recipientName,
+                    RecipientPhone   = recipientPhone,
+                    RecipientEmail   = recipientEmail,
+                    IRFId            = irfId,
+                    CandidateId      = candidateId,
+                    JobTitle         = jobTitle,
+                    ClientName       = clientName,
+                    CallStatus       = "initiated",
+                    InterviewBooked  = false,
+                    CallPurpose      = "reschedule",
+                    TriggeredBy      = userEmail
+                };
+                int logId = await _repository.SaveCallLogAsync(callLog);
+                callLog.Id = logId;
+
+                var triggerRequest = new PlivoCXTriggerRequest
+                {
+                    PhoneNumber           = recipientPhone,
+                    CandidateName         = recipientName ?? "Candidate",
+                    CandidateEmail        = recipientEmail,
+                    IrfId                 = irfId?.ToString(),
+                    JobTitle              = jobTitle,
+                    ClientName            = clientName,
+                    LogId                 = logId.ToString(),
+                    CallPurpose           = "reschedule",
+                    OriginalInterviewDate = originalInterviewDate,
+                    TodayDate             = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                    TomorrowDate          = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
+                    DayAfterTomorrowDate  = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
+                };
+
+                var response = await _plivoCXService.TriggerRescheduleCallAsync(triggerRequest);
+
+                await _repository.SaveWebhookDebugLogAsync(new PlivoCXWebhookDebugLog
+                {
+                    LogType          = "reschedule-trigger-request",
+                    HttpStatusCode   = response?.HttpStatusCode,
+                    PlivoCXId        = response?.ApiId,
+                    CallLogId        = logId,
+                    RawPayload       = JsonConvert.SerializeObject(triggerRequest),
+                    ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                    ErrorMessage     = response?.Error
+                });
+                await _repository.SaveWebhookDebugLogAsync(new PlivoCXWebhookDebugLog
+                {
+                    LogType          = "reschedule-trigger-response",
+                    HttpStatusCode   = response?.HttpStatusCode,
+                    PlivoCXId        = response?.ApiId,
+                    CallLogId        = logId,
+                    RawPayload       = response?.RawResponseBody,
+                    ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                    ErrorMessage     = response?.Error
+                });
+
+                if (!string.IsNullOrEmpty(response?.ConversationId))
+                {
+                    callLog.PlivoCXConversationId = response.ConversationId;
+                    callLog.PlivoCXRequestId      = response.ApiId;
+                    callLog.CallStatus            = "triggered";
+                    callLog.UpdatedAt             = DateTime.UtcNow;
+                    await _repository.UpdateCallLogAsync(callLog);
+                }
+                else if (!string.IsNullOrEmpty(response?.Error))
+                {
+                    callLog.CallStatus  = "trigger-failed";
+                    callLog.HangupCause = response.Error;
+                    callLog.UpdatedAt   = DateTime.UtcNow;
+                    await _repository.UpdateCallLogAsync(callLog);
+
+                    TempData["Error"] = $"Reschedule trigger failed: {response.Error}";
+                    return RedirectToAction("Index");
+                }
+
+                TempData["Success"] = $"Reschedule call initiated for {recipientName} ({recipientPhone}).";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["Error"] = $"Error: {ex.Message}";
+                return RedirectToAction("Index");
+            }
+        }
+
         // ─── Plivo CX webhooks ────────────────────────────────────────────────────
 
         /// <summary>
@@ -289,7 +426,8 @@ namespace Risebird.Web.Controllers
                         InterviewDate          = GetEventDataValue(ed, "interview_date"),
                         InterviewTime          = GetEventDataValue(ed, "interview_time"),
                         CandidateConfirmed     = GetEventDataValue(ed, "candidate_confirmed"),
-                        ConfirmedCandidateName = GetEventDataValue(ed, "confirmed_candidate_name")
+                        ConfirmedCandidateName = GetEventDataValue(ed, "confirmed_candidate_name"),
+                        CandidateDisposition   = GetEventDataValue(ed, "candidate_disposition")
                     };
 
                     await SaveCpAsync(CheckpointNames.HangupJsonParsed,
@@ -330,10 +468,11 @@ namespace Risebird.Web.Controllers
                             JobTitle               = form["job_title"],
                             ClientName             = form["client_name"],
                             LogId                  = form["log_id"],
-                            InterviewDate          = form["interview_date"],
-                            InterviewTime          = form["interview_time"],
-                            CandidateConfirmed     = form["candidate_confirmed"],
-                            ConfirmedCandidateName = form["confirmed_candidate_name"]
+                        InterviewDate          = form["interview_date"],
+                        InterviewTime          = form["interview_time"],
+                        CandidateConfirmed     = form["candidate_confirmed"],
+                        ConfirmedCandidateName = form["confirmed_candidate_name"],
+                        CandidateDisposition   = form["candidate_disposition"]
                         };
                         await SaveCpAsync(CheckpointNames.HangupFormParsed,
                             $"Parsed as form-encoded — conv_id: {payload.ConversationId}, log_id: {payload.LogId}",
@@ -414,15 +553,20 @@ namespace Risebird.Web.Controllers
                     extra: $"phone: {callLog.RecipientPhone}, status_was: {callLog.CallStatus}");
 
                 // ── Step 6: Apply call outcome fields ────────────────────────────────
-                callLog.PlivoCXConversationId = payload.ConversationId ?? callLog.PlivoCXConversationId;
-                callLog.CallStatus            = payload.CallStatus     ?? callLog.CallStatus;
+                callLog.PlivoCXConversationId = payload.ConversationId  ?? callLog.PlivoCXConversationId;
+                callLog.CallStatus            = payload.CallStatus      ?? callLog.CallStatus;
                 callLog.HangupCause           = payload.HangupCause;
                 callLog.CallTranscript        = payload.Transcript;
                 callLog.ConversationSummary   = payload.Summary;
                 callLog.BookedInterviewDate   = ResolveRelativeDate(payload.InterviewDate);
                 callLog.BookedInterviewTime   = payload.InterviewTime;
+                callLog.CandidateDisposition  = NormaliseDisposition(payload.CandidateDisposition);
                 callLog.CallEndedAt           = DateTime.UtcNow;
                 callLog.UpdatedAt             = DateTime.UtcNow;
+
+                await SaveCpAsync("disposition_extracted",
+                    $"Disposition: {callLog.CandidateDisposition ?? "(none)"} — raw: {payload.CandidateDisposition}",
+                    convId: payload.ConversationId, callLogId: callLog.Id);
 
                 if (!string.IsNullOrEmpty(payload.Duration) &&
                     int.TryParse(payload.Duration, out int dur))
@@ -456,8 +600,18 @@ namespace Risebird.Web.Controllers
 
                 await _repository.UpdateCallLogAsync(callLog);
 
+                // Write disposition back to Candidate table so it's visible across the platform
+                if (callLog.CandidateId.HasValue && !string.IsNullOrEmpty(callLog.CandidateDisposition))
+                {
+                    await _repository.UpdateCandidateDispositionAsync(
+                        callLog.CandidateId.Value, callLog.CandidateDisposition);
+                    await SaveCpAsync("disposition_saved",
+                        $"Candidate #{callLog.CandidateId} disposition set to '{callLog.CandidateDisposition}'",
+                        convId: payload.ConversationId, callLogId: callLog.Id);
+                }
+
                 await SaveCpAsync(CheckpointNames.HangupComplete,
-                    $"Call log #{callLog.Id} updated — final status: {callLog.CallStatus}",
+                    $"Call log #{callLog.Id} updated — final status: {callLog.CallStatus}, disposition: {callLog.CandidateDisposition}",
                     convId: payload.ConversationId, callLogId: callLog.Id);
 
                 return Ok();
@@ -494,6 +648,26 @@ namespace Risebird.Web.Controllers
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Normalises the AI-returned disposition string to one of the three
+        /// accepted values: "interested" | "uninterested" | "cant_say".
+        /// Any unrecognised value defaults to "cant_say".
+        /// </summary>
+        private static string NormaliseDisposition(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return null;
+            return raw.ToLowerInvariant().Trim() switch
+            {
+                "interested"                         => "interested",
+                "uninterested" or "not interested"
+                    or "disinterested"               => "uninterested",
+                "cant_say" or "cant say"
+                    or "can't say" or "unsure"
+                    or "unclear" or "unknown"        => "cant_say",
+                _                                    => "cant_say"
+            };
         }
 
         /// <summary>
@@ -668,7 +842,10 @@ namespace Risebird.Web.Controllers
                 var dto = new ScheduleCandidatesRequest
                 {
                     skillChannelId = candidateDetails.IRFId,
-                    requestedBy    = candidateDetails.ClientHRAttemptContact
+                    requestedBy    = candidateDetails.ClientHRAttemptContact,
+                    requestType    = callLog.CallPurpose == "reschedule"
+                                        ? "reschedule_voiceAgent"
+                                        : "schedule_voiceAgent"
                 };
                 var roundedDate = parsedDateTime.Value.RoundToNearSlot(candidateDetails.duration);
                 dto.CandidateList.Add(new ScheduleCandidateList

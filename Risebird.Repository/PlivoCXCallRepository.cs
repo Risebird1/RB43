@@ -26,6 +26,37 @@ namespace Risebird.Repository
             _logger           = logger;
         }
 
+        // ── Rich call log view (for the Index page) ───────────────────────────────
+
+        public async Task<List<PlivoCXCallLogDetailVM>> GetCallLogDetailsAsync(
+            int page = 1, int pageSize = 50,
+            string status = null, string purpose = null,
+            string meeting = null, string disposition = null)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<PlivoCXCallLogDetailVM>(
+                    "usp_GetPlivoCXCallLogDetails",
+                    new
+                    {
+                        Page        = page,
+                        PageSize    = pageSize,
+                        Status      = string.IsNullOrWhiteSpace(status)      ? null : status,
+                        Purpose     = string.IsNullOrWhiteSpace(purpose)     ? null : purpose,
+                        Meeting     = string.IsNullOrWhiteSpace(meeting)     ? null : meeting,
+                        Disposition = string.IsNullOrWhiteSpace(disposition) ? null : disposition
+                    },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<PlivoCXCallLogDetailVM>();
+            }
+        }
+
         // ── Call logs ─────────────────────────────────────────────────────────────
 
         public async Task<int> SaveCallLogAsync(PlivoCXCallLog callLog)
@@ -38,13 +69,13 @@ namespace Risebird.Repository
                         PlivoCXConversationId, PlivoCXRequestId,
                         RecipientName, RecipientPhone, RecipientEmail,
                         IRFId, CandidateId, JobTitle, ClientName,
-                        CallStatus, InterviewBooked,
+                        CallStatus, InterviewBooked, CallPurpose,
                         CreatedAt, TriggeredBy
                     ) VALUES (
                         @PlivoCXConversationId, @PlivoCXRequestId,
                         @RecipientName, @RecipientPhone, @RecipientEmail,
                         @IRFId, @CandidateId, @JobTitle, @ClientName,
-                        @CallStatus, @InterviewBooked,
+                        @CallStatus, @InterviewBooked, @CallPurpose,
                         @CreatedAt, @TriggeredBy
                     );
                     SELECT CAST(SCOPE_IDENTITY() AS INT);";
@@ -79,6 +110,8 @@ namespace Risebird.Repository
                         BookedInterviewDateTime  = @BookedInterviewDateTime,
                         BookingApiResponse       = @BookingApiResponse,
                         BookingApiSuccess        = @BookingApiSuccess,
+                        CandidateDisposition     = @CandidateDisposition,
+                        CallPurpose              = @CallPurpose,
                         CallStartedAt            = @CallStartedAt,
                         CallEndedAt              = @CallEndedAt,
                         UpdatedAt                = @UpdatedAt
@@ -241,7 +274,25 @@ namespace Risebird.Repository
             }
         }
 
-        // ── Candidate helpers — reuse existing Vapi stored procedures ────────────
+        // ── Candidate helpers ─────────────────────────────────────────────────────
+
+        public async Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForRescheduleAsync(int count = 10)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<VapiEligibleCandidateVM>(
+                    "usp_GetEligibleCandidatesForPlivoCXReschedule",
+                    new { Count = count },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<VapiEligibleCandidateVM>();
+            }
+        }
 
         public async Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForCallsAsync(int count = 10)
         {
@@ -249,7 +300,7 @@ namespace Risebird.Repository
             {
                 using var conn = new SqlConnection(_connectionString);
                 var results = await conn.QueryAsync<VapiEligibleCandidateVM>(
-                    "usp_GetEligibleCandidatesForVapiCalls",
+                    "usp_GetEligibleCandidatesForPlivoCXCalls",
                     new { Count = count },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
@@ -315,6 +366,21 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        public async Task UpdateCandidateDispositionAsync(int candidateId, string disposition)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                await conn.ExecuteAsync(
+                    "UPDATE Candidate SET PlivoCXDisposition = @Disposition WHERE id = @CandidateId",
+                    new { CandidateId = candidateId, Disposition = disposition });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
 

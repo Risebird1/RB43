@@ -1,29 +1,131 @@
-@model List<Risebird.Entities.Data.PlivoCXModels.PlivoCXCallLog>
+@model List<Risebird.Entities.ViewModel.PlivoCXCallLogDetailVM>
 @{
-    ViewData["Title"] = "Plivo CX AI Interview Calls";
-}
+    ViewData["Title"] = "Plivo CX Call Logs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 
-<div class="container-fluid py-4">
+    var first = Model.FirstOrDefault();
+    int totalCalls     = ViewBag.TotalCount  != null ? (int)ViewBag.TotalCount  : 0;
+    int completed      = first?.OverallCompleted      ?? 0;
+    int meetingCreated = first?.OverallMeetingCreated ?? 0;
+    int noAnswer       = first?.OverallNoAnswer       ?? 0;
+    double rate        = totalCalls > 0 ? Math.Round((double)meetingCreated / totalCalls * 100, 1) : 0;
+
+    int currentPage = ViewBag.Page       != null ? (int)ViewBag.Page       : 1;
+    int pageSize    = ViewBag.PageSize   != null ? (int)ViewBag.PageSize   : 50;
+    int totalPages  = ViewBag.TotalPages != null ? (int)ViewBag.TotalPages : 1;
+
+    int rangeStart  = totalCalls > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+    int rangeEnd    = Math.Min(currentPage * pageSize, totalCalls);
+
+    // Active filter values (null = no filter)
+    string fStatus      = ViewBag.Status      as string;
+    string fPurpose     = ViewBag.Purpose     as string;
+    string fMeeting     = ViewBag.Meeting     as string;
+    string fDisposition = ViewBag.Disposition as string;
+
+    // Helper: build a page URL carrying all current filters
+    Func<int, int, string> pageUrl = (p, ps) =>
+        Url.Action("Index", new {
+            page        = p,
+            pageSize    = ps,
+            status      = fStatus,
+            purpose     = fPurpose,
+            meeting     = fMeeting,
+            disposition = fDisposition
+        }) ?? string.Empty;
+}
+<style>
+    #searchInput.cx-filter-control,
+    .cx-filter-control.form-select {
+        min-height: 30px;
+        color: grey;
+        font-weight: 500;
+        font-size: 12.7px !important;
+        padding: 0.375rem 0.75rem;
+        line-height: 1.5;
+    }
+    .cx-filter-control.form-select { min-width: 160px; }
+    .plivo-cx-stat .stat-value { font-size: 1.5rem; font-weight: 700; }
+    .plivo-cx-stat .stat-label { font-size: 13px; font-weight: 500; color: #495057; }
+    #callTable .badge.cx-badge { width: auto; font-size: 11px !important; padding: 0.35em 0.65em; font-weight: 500; }
+    #callTable td .cx-meeting-created { font-weight: 600; }
+    .badge { width: auto; }
+    .btn.btn-sm { font-size: 11px; padding: 3px 5px; background: #d4cece85; }
+    .bg-success {
+        --bs-bg-opacity: 1;
+        background-color: rgb(31 160 100 / 85%) !important;
+        font-size: 10px !important;
+        line-height: 13px;
+    }
+    .table > thead > tr > th { font-size: 13px; }
+    .bg-secondary { --bs-bg-opacity: 1; background-color: rgb(112 118 124 / 83%) !important; }
+    .bg-warning {
+        --bs-bg-opacity: 1;
+        background-color: rgb(241 198 70 / 66%) !important;
+        border: 0px;
+        font-size: 11px !important;
+    }
+    #callTable .badge.cx-status-completed {
+        background: linear-gradient(135deg, #127132bd 0%, #15c952 100%) !important;
+        color: #fff !important;
+        padding: 2px 8px;
+        line-height: 16px;
+        font-weight: 500;
+        border: 1px solid rgba(255,255,255,.25);
+        box-shadow: 0 1px 3px rgba(0,0,0,.12);
+        font-size: 10px !important;
+    }
+    #callTable .cx-disposition-interested {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 13px; font-weight: 500; color: #198754;
+        background: none !important; padding: 0; border: none;
+    }
+    #callTable .cx-disposition-interested i { font-size: 14px; }
+    #callTable .badge.cx-meeting-confirmed {
+        background: #d4edda !important; color: #155724;
+        padding: 0.35em 0.65em; font-weight: 500;
+        border: 1px solid #c3e6cb; font-size: 12px;
+    }
+    #callTable .cx-value-yes {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 13px; font-weight: 500; color: #198754;
+        background: none !important; padding: 0; border: none;
+    }
+    #callTable .cx-value-yes i { font-size: 14px; }
+    #callTable .cx-value-no {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 13px; font-weight: 500; color: #dc3545;
+        background: none !important; padding: 0; border: none;
+        animation: none !important; transition: none !important;
+    }
+    #callTable .cx-value-no i { font-size: 14px; animation: none !important; transition: none !important; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="content client">
+            <div class="container-fluid py-4">
 
     <!-- Header -->
     <div class="row mb-3 align-items-center">
         <div class="col">
             <h4 class="fw-bold mb-0">
-                <i class="fas fa-robot text-success me-2"></i>Plivo CX AI Interview Calls
+                <i class="fas fa-robot text-success me-2"></i>Plivo CX AI Call Logs
             </h4>
             <p class="text-muted mb-0 mt-1">
-                Outbound calls via <strong>Plivo CX AI Agent platform</strong> —
-                AI conversation is handled entirely by Plivo CX (no WebSocket bridge).
-                Configure your agent instructions at
-                <a href="https://cx.plivo.com" target="_blank">cx.plivo.com</a>.
+                Outbound scheduling & rescheduling calls — AI conversation managed by
+                <a href="https://cx.plivo.com" target="_blank">Plivo CX</a>.
             </p>
         </div>
         <div class="col-auto d-flex gap-2 flex-wrap">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#initiateCallModal">
-                <i class="fas fa-phone me-1"></i>Initiate Call
+                <i class="fas fa-calendar-plus me-1"></i>New Schedule Call
+            </button>
+            <button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#initiateRescheduleModal">
+                <i class="fas fa-calendar-alt me-1"></i>New Reschedule Call
             </button>
             <a asp-action="WebhookTest" class="btn btn-outline-info" target="_blank">
-                <i class="fas fa-stethoscope me-1"></i>Config Check
+                <i class="fas fa-stethoscope me-1"></i>Config
             </a>
         </div>
     </div>
@@ -43,123 +145,325 @@
         </div>
     }
 
-    <!-- Setup reminder banner -->
-    <div class="alert alert-warning border-warning mb-4" role="alert">
-        <div class="d-flex align-items-start gap-2">
-            <i class="fas fa-wrench mt-1"></i>
-            <div>
-                <strong>First time? Complete these 3 steps in Plivo CX dashboard:</strong>
-                <ol class="mb-0 mt-1">
-                    <li>Create your agent flow at <a href="https://cx.plivo.com" target="_blank">cx.plivo.com</a> with an <strong>API Request trigger</strong> and an <strong>AI Conversation node</strong></li>
-                    <li>Copy the trigger URL → paste into <code>appsettings.json</code> under <code>PlivoCX:TriggerEndpointUrl</code></li>
-                    <li>In Agent Config → Events, set <strong>Hangup URL</strong> to <code>@($"{Context.Request.Scheme}://{Context.Request.Host}/PlivoCXInterviewCall/HangupCallback")</code></li>
-                </ol>
-            </div>
-        </div>
-    </div>
-
-    <!-- Stats row -->
+    <!-- Stats -->
     <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm text-center py-3">
-                <div class="fs-3 fw-bold text-primary">@Model.Count</div>
-                <div class="text-muted small">Total Calls</div>
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
+                <div class="stat-value text-primary">@totalCalls</div>
+                <div class="stat-label">Total Calls</div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm text-center py-3">
-                <div class="fs-3 fw-bold text-success">@Model.Count(c => c.InterviewBooked)</div>
-                <div class="text-muted small">Booked</div>
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
+                <div class="stat-value text-success">@completed</div>
+                <div class="stat-label">Completed</div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm text-center py-3">
-                <div class="fs-3 fw-bold text-info">@Model.Count(c => c.CallStatus == "triggered" || c.CallStatus == "initiated")</div>
-                <div class="text-muted small">In Progress</div>
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
+                <div class="stat-value text-info">@meetingCreated</div>
+                <div class="stat-label">AI Reported Booked</div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm text-center py-3">
-                <div class="fs-3 fw-bold text-warning">@Model.Count(c => c.CallStatus == "no-answer" || c.CallStatus == "failed")</div>
-                <div class="text-muted small">No Answer / Failed</div>
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
+                <div class="stat-value text-success">@meetingCreated</div>
+                <div class="stat-label">Meeting Created</div>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
+                <div class="stat-value text-danger">@noAnswer</div>
+                <div class="stat-label">Failed / No Answer</div>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="card border-0 shadow-sm text-center py-3 plivo-cx-stat">
+                <div class="stat-value text-warning">@rate%</div>
+                <div class="stat-label">Conversion Rate</div>
             </div>
         </div>
     </div>
 
-    <!-- Call log table -->
-    <div class="card shadow-sm border-0">
-        <div class="card-header d-flex align-items-center justify-content-between">
-            <span><i class="fas fa-list me-2"></i>Recent Calls</span>
-            <span class="badge bg-secondary">@Model.Count records</span>
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body py-2">
+            <div class="row g-2 align-items-center">
+                <div class="col-auto">
+                    <input type="text" id="searchInput" class="form-control cx-filter-control"
+                           placeholder="Search name / email / IRF…" style="min-width:220px;height:30px;" />
+                </div>
+                @{
+                    // Pre-compute selected flags to avoid string-literal ternaries inside HTML tag context.
+                    bool sSel_completed     = fStatus == "completed";
+                    bool sSel_triggered     = fStatus == "triggered";
+                    bool sSel_initiated     = fStatus == "initiated";
+                    bool sSel_noAnswer      = fStatus == "no-answer";
+                    bool sSel_failed        = fStatus == "failed";
+                    bool sSel_trigFailed    = fStatus == "trigger-failed";
+                    bool pSel_schedule      = fPurpose == "schedule";
+                    bool pSel_reschedule    = fPurpose == "reschedule";
+                    bool mSel_yes           = fMeeting == "YES";
+                    bool mSel_no            = fMeeting == "NO";
+                    bool dSel_interested    = fDisposition == "interested";
+                    bool dSel_uninterested  = fDisposition == "uninterested";
+                    bool dSel_cantSay       = fDisposition == "cant_say";
+                }
+                <div class="col-auto">
+                    <select id="statusFilter" class="form-select cx-filter-control" onchange="applyServerFilter('status', this.value)">
+                        <option value="">All statuses</option>
+                        @if (sSel_completed)   { <option value="completed"      selected>Completed</option>     } else { <option value="completed">Completed</option>     }
+                        @if (sSel_triggered)   { <option value="triggered"      selected>Triggered</option>     } else { <option value="triggered">Triggered</option>     }
+                        @if (sSel_initiated)   { <option value="initiated"      selected>Initiated</option>     } else { <option value="initiated">Initiated</option>     }
+                        @if (sSel_noAnswer)    { <option value="no-answer"      selected>No Answer</option>     } else { <option value="no-answer">No Answer</option>     }
+                        @if (sSel_failed)      { <option value="failed"         selected>Failed</option>        } else { <option value="failed">Failed</option>        }
+                        @if (sSel_trigFailed)  { <option value="trigger-failed" selected>Trigger Failed</option>} else { <option value="trigger-failed">Trigger Failed</option>}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <select id="purposeFilter" class="form-select cx-filter-control" onchange="applyServerFilter('purpose', this.value)">
+                        <option value="">All purposes</option>
+                        @if (pSel_schedule)   { <option value="schedule"   selected>Schedule</option>   } else { <option value="schedule">Schedule</option>   }
+                        @if (pSel_reschedule) { <option value="reschedule" selected>Reschedule</option> } else { <option value="reschedule">Reschedule</option> }
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <select id="meetingFilter" class="form-select cx-filter-control" onchange="applyServerFilter('meeting', this.value)">
+                        <option value="">All meetings</option>
+                        @if (mSel_yes) { <option value="YES" selected>Meeting Created</option> } else { <option value="YES">Meeting Created</option> }
+                        @if (mSel_no)  { <option value="NO"  selected>No Meeting</option>      } else { <option value="NO">No Meeting</option>      }
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <select id="dispositionFilter" class="form-select cx-filter-control" onchange="applyServerFilter('disposition', this.value)">
+                        <option value="">All dispositions</option>
+                        @if (dSel_interested)   { <option value="interested"   selected>Interested</option>   } else { <option value="interested">Interested</option>   }
+                        @if (dSel_uninterested) { <option value="uninterested" selected>Uninterested</option> } else { <option value="uninterested">Uninterested</option> }
+                        @if (dSel_cantSay)      { <option value="cant_say"     selected>Can't Say</option>    } else { <option value="cant_say">Can't Say</option>    }
+                    </select>
+                </div>
+                @{
+                    bool anyFilterActive = !string.IsNullOrEmpty(fStatus) || !string.IsNullOrEmpty(fPurpose)
+                                       || !string.IsNullOrEmpty(fMeeting) || !string.IsNullOrEmpty(fDisposition);
+                    string clearUrl = Url.Action("Index", new { page = 1, pageSize }) ?? string.Empty;
+                }
+                @if (anyFilterActive)
+                {
+                    <div class="col-auto">
+                        <a href="@clearUrl" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i>Clear filters
+                        </a>
+                    </div>
+                }
+                <div class="col-auto ms-auto">
+                    <span class="text-muted small" id="rowCount">
+                        Showing @rangeStart–@rangeEnd of @totalCalls
+                    </span>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <!-- Main table -->
+    <div class="card shadow-sm border-0">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover mb-0 align-middle">
+                <table class="table table-hover table-sm mb-0 align-middle" id="callTable">
                     <thead class="table-light">
                         <tr>
+                            <th class="ps-3">#</th>
                             <th>Candidate</th>
                             <th>Phone</th>
-                            <th>IRF</th>
+                            <th>IRF / Role</th>
+                            <th>Purpose</th>
                             <th>Status</th>
-                            <th>Booked</th>
                             <th>Duration</th>
-                            <th>Triggered</th>
-                            <th>Conversation ID</th>
+                            <th>Disposition</th>
+                            <th>AI Booked</th>
+                            <th>Booking API</th>
+                            <th>Meeting Created</th>
+                            <th>Meeting Date</th>
+                            <th>Meeting Status</th>
+                            <th>Initiated</th>
+                            <th>Triggered By</th>
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach (var call in Model)
+                    <tbody id="callTableBody">
+                        @foreach (var r in Model)
                         {
-                            <tr>
+                            <tr class="call-row"
+                                data-search="@(r.CandidateName?.ToLower()) @(r.CandidateEmail?.ToLower()) @(r.IRFId?.ToLower()) @(r.JDTiltle?.ToLower())"
+                                data-status="@r.CallStatus"
+                                data-purpose="@r.CallPurpose"
+                                data-meeting="@r.MeetingCreated"
+                                data-disposition="@r.CandidateDisposition">
+                            @{
+                                string statusBadge;
+                                if      (r.CallStatus == "completed")      statusBadge = "bg-success";
+                                else if (r.CallStatus == "triggered")      statusBadge = "bg-info";
+                                else if (r.CallStatus == "initiated")      statusBadge = "bg-secondary";
+                                else if (r.CallStatus == "no-answer")      statusBadge = "bg-warning text-dark";
+                                else if (r.CallStatus == "failed")         statusBadge = "bg-danger";
+                                else if (r.CallStatus == "trigger-failed") statusBadge = "bg-danger";
+                                else                                       statusBadge = "bg-secondary";
+
+                                var statusExtraClass = r.CallStatus == "completed" ? "cx-status-completed" : "";
+
+                                string dispositionBadge;
+                                if      (r.CandidateDisposition == "interested")   dispositionBadge = "bg-success";
+                                else if (r.CandidateDisposition == "uninterested") dispositionBadge = "bg-danger";
+                                else if (r.CandidateDisposition == "cant_say")     dispositionBadge = "bg-secondary";
+                                else                                               dispositionBadge = "bg-light text-dark border";
+
+                                var meetingBadge = r.MeetingCreated == "YES" ? "bg-success" : "bg-light text-dark border";
+                                var bookingBadge = r.BookingApiSuccess ? "bg-success" : (r.AIReportedBooked ? "bg-danger" : "bg-light text-dark border");
+                                var purposeBadge = r.CallPurpose == "reschedule" ? "bg-warning text-dark" : "bg-primary";
+
+                                string confirmLabel;
+                                if      (r.MeetingConfirmationStatus == "1") confirmLabel = "Confirmed";
+                                else if (r.MeetingConfirmationStatus == "2") confirmLabel = "Cancelled";
+                                else if (r.MeetingConfirmationStatus == "0") confirmLabel = "Pending";
+                                else                                         confirmLabel = r.MeetingConfirmationStatus ?? "—";
+
+                                string confirmBadgeClass;
+                                if      (r.MeetingConfirmationStatus == "1") confirmBadgeClass = "cx-meeting-confirmed";
+                                else if (r.MeetingConfirmationStatus == "2") confirmBadgeClass = "bg-danger";
+                                else                                         confirmBadgeClass = "bg-warning text-dark";
+                            }
+
+                                <td class="ps-3 text-muted small">@r.CallLogId</td>
+
                                 <td>
-                                    <div class="fw-semibold">@call.RecipientName</div>
-                                    <small class="text-muted">@call.RecipientEmail</small>
+                                    <div class="fw-semibold">@(r.CandidateName ?? "—")</div>
+                                    <small class="text-muted">@(r.CandidateEmail ?? "—")</small>
                                 </td>
-                                <td>@call.RecipientPhone</td>
-                                <td>@(call.IRFId?.ToString() ?? "—")</td>
+
+                                <td class="small">@(r.RecipientPhone ?? "—")</td>
+
                                 <td>
-                                    @{
-                                        var badgeClass = call.CallStatus switch
-                                        {
-                                            "triggered"  => "bg-info",
-                                            "answered"   => "bg-primary",
-                                            "completed"  => "bg-success",
-                                            "no-answer"  => "bg-warning",
-                                            "failed" or "trigger-failed" => "bg-danger",
-                                            _            => "bg-secondary"
-                                        };
-                                    }
-                                    <span class="badge @badgeClass">@(call.CallStatus ?? "—")</span>
+                                    <div class="small fw-semibold">@(r.IRFId ?? "—")</div>
+                                    <small class="text-muted" title="@r.JDTiltle">
+                                        @(r.JDTiltle?.Length > 22 ? r.JDTiltle.Substring(0, 22) + "..." : r.JDTiltle ?? "—")
+                                    </small>
                                 </td>
+
                                 <td>
-                                    @if (call.InterviewBooked)
+                                    <span class="badge @purposeBadge cx-badge">@(r.CallPurpose ?? "schedule")</span>
+                                </td>
+
+                                <td>
+                                    <span class="badge @statusBadge cx-badge @statusExtraClass">@(r.CallStatus ?? "—")</span>
+                                    @if (!string.IsNullOrEmpty(r.HangupCause))
                                     {
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-check me-1"></i>
-                                            @(call.BookedInterviewDateTime?.ToString("dd MMM HH:mm") ?? "Yes")
-                                        </span>
+                                        <br /><small class="text-muted">@r.HangupCause</small>
+                                    }
+                                </td>
+
+                                <td class="small">@(r.DurationSeconds.HasValue ? r.DurationSeconds + "s" : "—")</td>
+
+                                <td>
+                                    @if (!string.IsNullOrEmpty(r.CandidateDisposition))
+                                    {
+                                        if (r.CandidateDisposition == "interested")
+                                        {
+                                            <span class="cx-disposition-interested"><i class="fas fa-thumbs-up"></i> Interested</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge @dispositionBadge">@r.CandidateDisposition</span>
+                                        }
                                     }
                                     else
                                     {
                                         <span class="text-muted">—</span>
                                     }
                                 </td>
-                                <td>@(call.DurationSeconds.HasValue ? $"{call.DurationSeconds}s" : "—")</td>
+
                                 <td>
-                                    <small>@call.CreatedAt.ToString("dd MMM HH:mm")</small><br />
-                                    <small class="text-muted">@call.TriggeredBy</small>
+                                    @if (r.AIReportedBooked)
+                                    {
+                                        <span class="cx-value-yes"><i class="fas fa-check"></i> Yes</span>
+                                        <br /><small class="text-muted">@r.BookedInterviewDate @r.BookedInterviewTime</small>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
                                 </td>
+
                                 <td>
-                                    <small class="font-monospace text-muted">
-                                        @(call.PlivoCXConversationId?.Substring(0, Math.Min(12, call.PlivoCXConversationId?.Length ?? 0)) ?? "—")
-                                    </small>
+                                    @if (r.AIReportedBooked)
+                                    {
+                                        if (r.BookingApiSuccess)
+                                        {
+                                            <span class="badge @bookingBadge">OK</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge @bookingBadge">Failed</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
                                 </td>
+
+                                <td class="text-center">
+                                    @if (r.MeetingCreated == "YES")
+                                    {
+                                        <span class="cx-value-yes"><i class="fas fa-check"></i> Yes</span>
+                                    }
+                                    else if (r.MeetingCreated == "NO")
+                                    {
+                                        <span class="cx-value-no"><i class="fas fa-times"></i> No</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+
+                                <td class="small">
+                                    @if (r.MeetingScheduledAt.HasValue)
+                                    {
+                                        @r.MeetingScheduledAt.Value.ToString("dd MMM yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+
+                                <td class="small">
+                                    @if (r.MeetingId.HasValue)
+                                    {
+                                        <span class="badge @confirmBadgeClass">@confirmLabel</span>
+                                        @if (r.IsAutoCancelled == true)
+                                        {
+                                            <br /><small class="text-danger">Auto-cancelled</small>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+
+                                <td class="small">
+                                    @r.CallInitiatedAt.ToString("dd MMM HH:mm")
+                                </td>
+
+                                <td class="small text-muted">
+                                    @(r.TriggeredBy?.Replace("Dashboard-", ""))
+                                </td>
+
                                 <td>
                                     <button class="btn btn-outline-secondary btn-sm"
-                                            onclick="showTranscript(@call.Id)"
-                                            title="View transcript">
-                                        <i class="fas fa-file-alt"></i>
+                                            onclick="showDetail(@r.CallLogId)"
+                                            title="View details">
+                                        <i class="fas fa-search"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -167,8 +471,9 @@
                         @if (!Model.Any())
                         {
                             <tr>
-                                <td colspan="9" class="text-center text-muted py-4">
-                                    No calls yet. Initiate your first call above.
+                                <td colspan="16" class="text-center text-muted py-5">
+                                    <i class="fas fa-phone-slash fa-2x mb-2 d-block"></i>
+                                    No call logs yet.
                                 </td>
                             </tr>
                         }
@@ -176,29 +481,121 @@
                 </table>
             </div>
         </div>
+
+        <!-- Pagination footer -->
+        @if (totalPages > 1 || totalCalls > 0)
+        {
+            <div class="card-footer d-flex align-items-center justify-content-between bg-white border-top py-2">
+                <small class="text-muted">
+                    Showing <strong>@rangeStart–@rangeEnd</strong> of <strong>@totalCalls</strong> calls
+                </small>
+
+                @if (totalPages > 1)
+                {
+                    <nav aria-label="Call log pages">
+                        <ul class="pagination pagination-sm mb-0">
+
+                            @{ var prevDisabled = currentPage <= 1 ? "disabled" : ""; }
+                            <li class="page-item @prevDisabled">
+                                <a class="page-link" href="@pageUrl(currentPage - 1, pageSize)" aria-label="Previous">
+                                    <span aria-hidden="true">«</span>
+                                </a>
+                            </li>
+
+                            @{
+                                int windowHalf = 3;
+                                int pageStart  = Math.Max(1, currentPage - windowHalf);
+                                int pageEnd    = Math.Min(totalPages, currentPage + windowHalf);
+
+                                if (pageStart > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="@pageUrl(1, pageSize)">1</a>
+                                    </li>
+                                    if (pageStart > 2)
+                                    {
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    }
+                                }
+
+                                for (int p = pageStart; p <= pageEnd; p++)
+                                {
+                                    var isActive = p == currentPage ? "active" : "";
+                                    <li class="page-item @isActive">
+                                        <a class="page-link" href="@pageUrl(p, pageSize)">@p</a>
+                                    </li>
+                                }
+
+                                if (pageEnd < totalPages)
+                                {
+                                    if (pageEnd < totalPages - 1)
+                                    {
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    }
+                                    <li class="page-item">
+                                        <a class="page-link" href="@pageUrl(totalPages, pageSize)">@totalPages</a>
+                                    </li>
+                                }
+                            }
+
+                            @{ var nextDisabled = currentPage >= totalPages ? "disabled" : ""; }
+                            <li class="page-item @nextDisabled">
+                                <a class="page-link" href="@pageUrl(currentPage + 1, pageSize)" aria-label="Next">
+                                    <span aria-hidden="true">»</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </nav>
+                }
+
+                <div class="d-flex align-items-center gap-2">
+                    <small class="text-muted">Per page:</small>
+                    <select class="form-select form-select-sm" style="width:80px"
+                            onchange="applyServerFilter('pageSize', this.value, 1)">
+                        @foreach (var ps in new[] { 25, 50, 100, 200 })
+                        {
+                            if (pageSize == ps)
+                            {
+                                <option value="@ps" selected>@ps</option>
+                            }
+                            else
+                            {
+                                <option value="@ps">@ps</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        }
+    </div>
+
+            </div>
+        </div>
+    </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Initiate Call Modal -->
+<!-- Schedule Call Modal -->
 <div class="modal fade" id="initiateCallModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-phone me-2 text-primary"></i>Initiate Interview Call</h5>
+                <h5 class="modal-title"><i class="fas fa-calendar-plus me-2 text-primary"></i>Initiate Schedule Call</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form asp-action="InitiateInterviewCall" method="post">
                 @Html.AntiForgeryToken()
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Candidate Name <span class="text-danger">*</span></label>
-                        <input type="text" name="recipientName" class="form-control" required placeholder="Full name" />
+                        <label class="form-label fw-semibold">Candidate Name</label>
+                        <input type="text" name="recipientName" class="form-control" placeholder="Full name" />
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
-                        <input type="text" name="recipientPhone" class="form-control" required
-                               placeholder="+91XXXXXXXXXX" />
-                        <div class="form-text">Include country code, e.g. +919876543210</div>
+                        <label class="form-label fw-semibold">Phone <span class="text-danger">*</span></label>
+                        <input type="text" name="recipientPhone" class="form-control" required placeholder="+91XXXXXXXXXX" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Email</label>
@@ -217,50 +614,261 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-phone me-1"></i>Trigger Call
-                    </button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-phone me-1"></i>Trigger Call</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Transcript Modal -->
-<div class="modal fade" id="transcriptModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<!-- Reschedule Call Modal -->
+<div class="modal fade" id="initiateRescheduleModal" tabindex="-1">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Call Transcript</h5>
+                <h5 class="modal-title"><i class="fas fa-calendar-alt me-2 text-warning"></i>Initiate Reschedule Call</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <pre id="transcriptContent" class="bg-light p-3 rounded"
-                     style="white-space:pre-wrap; font-size:0.85rem; max-height:500px; overflow-y:auto;">
-                    Loading...
-                </pre>
+            <form asp-action="InitiateRescheduleCall" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Candidate Name</label>
+                        <input type="text" name="recipientName" class="form-control" placeholder="Full name" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Phone <span class="text-danger">*</span></label>
+                        <input type="text" name="recipientPhone" class="form-control" required placeholder="+91XXXXXXXXXX" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" name="recipientEmail" class="form-control" placeholder="candidate@email.com" />
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">IRF ID</label>
+                            <input type="number" name="irfId" class="form-control" placeholder="12345" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Candidate ID</label>
+                            <input type="number" name="candidateId" class="form-control" placeholder="optional" />
+                        </div>
+                    </div>
+                    <div class="mb-3 mt-2">
+                        <label class="form-label fw-semibold">Original Interview Date <small class="text-muted">(for AI context)</small></label>
+                        <input type="text" name="originalInterviewDate" class="form-control" placeholder="e.g. 07 Mar 2026" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning"><i class="fas fa-phone me-1"></i>Trigger Reschedule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-search me-2"></i>Call Detail — <span id="detailTitle"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detailBody">
+                <div class="text-center py-4"><div class="spinner-border text-primary"></div></div>
             </div>
         </div>
     </div>
 </div>
 
+@{
+    var jsonData = System.Text.Json.JsonSerializer.Serialize(Model.Select(r => new {
+        r.CallLogId,
+        r.CandidateName,
+        r.CandidateEmail,
+        r.RecipientPhone,
+        r.IRFId,
+        r.JDTiltle,
+        r.ClientName,
+        r.TriggeredBy,
+        r.PlivoCXConversationId,
+        r.CallPurpose,
+        r.CallStatus,
+        r.DurationSeconds,
+        r.HangupCause,
+        CallInitiatedAt         = r.CallInitiatedAt.ToString("dd MMM yyyy HH:mm"),
+        CallEndedAt             = r.CallEndedAt?.ToString("dd MMM yyyy HH:mm"),
+        r.CandidateDisposition,
+        r.AIReportedBooked,
+        r.BookedInterviewDate,
+        r.BookedInterviewTime,
+        BookedInterviewDateTime = r.BookedInterviewDateTime?.ToString("dd MMM yyyy HH:mm"),
+        r.BookingApiSuccess,
+        r.BookingApiResponse,
+        r.CallTranscript,
+        r.ConversationSummary,
+        r.MeetingCreated,
+        r.MeetingId,
+        MeetingScheduledAt      = r.MeetingScheduledAt?.ToString("dd MMM yyyy HH:mm"),
+        r.InterviewSlot,
+        r.InterviewDuration,
+        r.MeetingConfirmationStatus,
+        r.Interviewer,
+        r.RisebirdHR,
+        r.ClientHrContact,
+        r.IsAutoCancelled,
+        r.CancellationReason,
+        r.IsCandidateResponsed,
+        r.CandidateResponse,
+        MeetingCreatedOn        = r.MeetingCreatedOn?.ToString("dd MMM yyyy HH:mm")
+    }));
+}
+
 @section Scripts {
-    <script>
-        function showTranscript(logId) {
-            document.getElementById('transcriptContent').textContent = 'Loading...';
-            var modal = new bootstrap.Modal(document.getElementById('transcriptModal'));
-            modal.show();
-            fetch('/PlivoCXInterviewCall/GetCallLog?id=' + logId)
-                .then(r => r.json())
-                .then(data => {
-                    var content = '';
-                    if (data.conversationSummary) content += '── Summary ──\n' + data.conversationSummary + '\n\n';
-                    if (data.callTranscript)       content += '── Transcript ──\n' + data.callTranscript;
-                    document.getElementById('transcriptContent').textContent = content || 'No transcript available yet.';
-                })
-                .catch(() => {
-                    document.getElementById('transcriptContent').textContent = 'Error loading transcript.';
-                });
+<script>
+    var allRows = @Html.Raw(jsonData);
+
+    // ── Current filter state from server ─────────────────────────────────────
+    var serverFilters = {
+        status:      '@(fStatus      ?? "")',
+        purpose:     '@(fPurpose     ?? "")',
+        meeting:     '@(fMeeting     ?? "")',
+        disposition: '@(fDisposition ?? "")',
+        pageSize:    '@pageSize',
+        page:        '1'
+    };
+
+    // Navigate to page 1 with an updated filter, keeping all other active filters.
+    // filterName = 'status' | 'purpose' | 'meeting' | 'disposition' | 'pageSize'
+    // forcePage  = override page number (optional, default 1)
+    function applyServerFilter(filterName, value, forcePage) {
+        var params = Object.assign({}, serverFilters);
+        params[filterName] = value;
+        params['page']     = forcePage != null ? String(forcePage) : '1';
+
+        var qs = Object.keys(params)
+            .filter(function(k) { return params[k] !== '' && params[k] != null; })
+            .map(function(k)    { return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); })
+            .join('&');
+
+        window.location = '@Url.Action("Index")' + (qs ? '?' + qs : '');
+    }
+
+    // ── Client-side search (filters within the current page only) ────────────
+    document.getElementById('searchInput').addEventListener('input', function() {
+        var search  = this.value.toLowerCase();
+        var rows    = document.querySelectorAll('.call-row');
+        var visible = 0;
+        rows.forEach(function(row) {
+            var show = !search || row.dataset.search.includes(search);
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        document.getElementById('rowCount').textContent =
+            'Showing ' + visible + ' of ' + rows.length + ' on this page';
+    });
+
+    function showDetail(id) {
+        var r = allRows.find(function(x) { return x.callLogId === id; });
+        if (!r) return;
+
+        document.getElementById('detailTitle').textContent =
+            (r.candidateName || '—') + ' (' + (r.candidateEmail || '—') + ')';
+
+        var conf = { '1':'Confirmed','2':'Cancelled','0':'Pending' };
+        var html = '<div class="row g-3">';
+
+        html += '<div class="col-md-6"><div class="card border-0 bg-light h-100"><div class="card-body">';
+        html += '<h6 class="fw-bold mb-3"><i class="fas fa-phone me-2 text-primary"></i>Call Info</h6>';
+        html += row('Log ID',         r.callLogId);
+        html += row('Purpose',        badge(r.callPurpose, r.callPurpose === 'reschedule' ? 'warning' : 'primary'));
+        html += row('Status',         badge(r.callStatus,  statusColour(r.callStatus)));
+        html += row('Duration',       r.durationSeconds ? r.durationSeconds + 's' : '—');
+        html += row('Hangup Cause',   r.hangupCause || '—');
+        html += row('Initiated At',   r.callInitiatedAt || '—');
+        html += row('Ended At',       r.callEndedAt || '—');
+        html += row('Triggered By',   r.triggeredBy || '—');
+        html += row('Conversation ID',r.plivoCXConversationId || '—');
+        html += '</div></div></div>';
+
+        html += '<div class="col-md-6"><div class="card border-0 bg-light h-100"><div class="card-body">';
+        html += '<h6 class="fw-bold mb-3"><i class="fas fa-user me-2 text-info"></i>Candidate</h6>';
+        html += row('Name',        r.candidateName || '—');
+        html += row('Email',       r.candidateEmail || '—');
+        html += row('Phone',       r.recipientPhone || '—');
+        html += row('IRF',         (r.irfId || '—') + ' — ' + (r.jdTiltle || ''));
+        html += row('Client',      r.clientName || '—');
+        html += row('Disposition', badge(r.candidateDisposition || '—', dispColour(r.candidateDisposition)));
+        html += '</div></div></div>';
+
+        html += '<div class="col-md-6"><div class="card border-0 bg-light h-100"><div class="card-body">';
+        html += '<h6 class="fw-bold mb-3"><i class="fas fa-calendar-check me-2 text-success"></i>Booking</h6>';
+        html += row('AI Reported Booked', badge(r.aIReportedBooked ? 'YES' : 'NO', r.aIReportedBooked ? 'success' : 'secondary'));
+        html += row('Interview Date',     r.bookedInterviewDate || '—');
+        html += row('Interview Time',     r.bookedInterviewTime || '—');
+        html += row('DateTime (parsed)',  r.bookedInterviewDateTime || '—');
+        html += row('API Success',        badge(r.bookingApiSuccess ? 'YES' : 'NO', r.bookingApiSuccess ? 'success' : 'danger'));
+        html += row('API Response',       '<small class="text-muted font-monospace" style="word-break:break-all">' + (r.bookingApiResponse || '—') + '</small>');
+        html += '</div></div></div>';
+
+        html += '<div class="col-md-6"><div class="card border-0 bg-light h-100"><div class="card-body">';
+        html += '<h6 class="fw-bold mb-3"><i class="fas fa-calendar me-2 text-warning"></i>Interview Meeting</h6>';
+        html += row('Meeting Created', badge(r.meetingCreated, r.meetingCreated === 'YES' ? 'success' : 'secondary'));
+        html += row('Meeting ID',      r.meetingId || '—');
+        html += row('Scheduled At',    r.meetingScheduledAt || '—');
+        html += row('Slot',            r.interviewSlot || '—');
+        html += row('Duration',        r.interviewDuration ? r.interviewDuration + ' min' : '—');
+        html += row('Confirmation',    badge(conf[r.meetingConfirmationStatus] || r.meetingConfirmationStatus || '—',
+                                            r.meetingConfirmationStatus === '1' ? 'success' : r.meetingConfirmationStatus === '2' ? 'danger' : 'warning'));
+        html += row('Interviewer',     r.interviewer || '—');
+        html += row('Risebird HR',     r.risebirdHR || '—');
+        html += row('Client HR',       r.clientHrContact || '—');
+        html += row('Auto-Cancelled',  r.isAutoCancelled ? badge('YES','danger') : 'No');
+        html += row('Cancel Reason',   r.cancellationReason || '—');
+        html += row('Candidate Responded', r.isCandidateResponsed ? 'Yes' : 'No');
+        html += row('Candidate Response',  r.candidateResponse || '—');
+        html += row('Meeting Created On',  r.meetingCreatedOn || '—');
+        html += '</div></div></div>';
+
+        if (r.conversationSummary) {
+            html += '<div class="col-12"><div class="card border-0 bg-light"><div class="card-body">';
+            html += '<h6 class="fw-bold mb-2"><i class="fas fa-align-left me-2 text-secondary"></i>Conversation Summary</h6>';
+            html += '<pre class="mb-0" style="white-space:pre-wrap;font-size:0.85rem;max-height:200px;overflow-y:auto">' + escHtml(r.conversationSummary) + '</pre>';
+            html += '</div></div></div>';
         }
-    </script>
+
+        if (r.callTranscript) {
+            html += '<div class="col-12"><div class="card border-0 bg-light"><div class="card-body">';
+            html += '<h6 class="fw-bold mb-2"><i class="fas fa-file-alt me-2 text-secondary"></i>Call Transcript</h6>';
+            html += '<pre class="mb-0" style="white-space:pre-wrap;font-size:0.82rem;max-height:300px;overflow-y:auto">' + escHtml(r.callTranscript) + '</pre>';
+            html += '</div></div></div>';
+        }
+
+        html += '</div>';
+        document.getElementById('detailBody').innerHTML = html;
+        new bootstrap.Modal(document.getElementById('detailModal')).show();
+    }
+
+    function row(label, value) {
+        return '<div class="d-flex justify-content-between mb-1 small">' +
+               '<span class="text-muted">' + label + '</span>' +
+               '<span class="text-end" style="max-width:60%">' + (value ?? '—') + '</span></div>';
+    }
+    function badge(text, colour) {
+        return '<span class="badge bg-' + colour + '">' + text + '</span>';
+    }
+    function statusColour(s) {
+        var m = {completed:'success',triggered:'info',initiated:'secondary',
+                 'no-answer':'warning','failed':'danger','trigger-failed':'danger'};
+        return m[s] || 'secondary';
+    }
+    function dispColour(d) {
+        return d === 'interested' ? 'success' : d === 'uninterested' ? 'danger' : 'secondary';
+    }
+    function escHtml(t) {
+        return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+</script>
 }
