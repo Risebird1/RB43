@@ -673,7 +673,7 @@ else
                 if ($filter.length) $filter.addClass('d-none');
                 var $searchWrap = $('#reschedule_search_wrap');
                 var $searchInp = $('#txtreschedule_filter');
-                if ($searchInp.length && table) {
+                if ($searchInp.length) {
                     $searchInp.off('input keyup').on('input keyup', function () {
                         var v = $(this).val();
                         if (v && v.length) $searchWrap.addClass('has-value'); else $searchWrap.removeClass('has-value');
