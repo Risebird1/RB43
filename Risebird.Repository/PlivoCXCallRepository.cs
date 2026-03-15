@@ -283,7 +283,7 @@ namespace Risebird.Repository
                 using var conn = new SqlConnection(_connectionString);
                 var results = await conn.QueryAsync<VapiEligibleCandidateVM>(
                     "usp_GetEligibleCandidatesForPlivoCXReschedule",
-                    new { Count = count },
+                    new { Count = count, NowIST = DateTime.Now },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
             }
@@ -301,7 +301,7 @@ namespace Risebird.Repository
                 using var conn = new SqlConnection(_connectionString);
                 var results = await conn.QueryAsync<VapiEligibleCandidateVM>(
                     "usp_GetEligibleCandidatesForPlivoCXCalls",
-                    new { Count = count },
+                    new { Count = count, NowIST = DateTime.Now },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
             }
