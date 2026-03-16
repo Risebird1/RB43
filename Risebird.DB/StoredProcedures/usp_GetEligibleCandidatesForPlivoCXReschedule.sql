@@ -41,10 +41,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_GetEligibleCandidatesForPlivoCXReschedule]
-    @Count INT = 10
+    @Count  INT      = 10,
+    @NowIST DATETIME = NULL   -- caller passes DateTime.Now (IST); falls back to GETDATE() if omitted
 AS
 BEGIN
     SET NOCOUNT ON;
+
+    -- InterviewMeetings.interviewDate is stored in Indian Standard Time (IST).
+    -- @NowIST is supplied by the repository as DateTime.Now so no timezone math is needed here.
+    SET @NowIST = ISNULL(@NowIST, GETDATE());
 
     SELECT TOP (@Count)
         c.id                                                         AS CandidateId,
@@ -137,7 +142,7 @@ BEGIN
             WHERE  im.candidateEmail     = u.EmailId
               AND  im.IRFId             = irf.IRFId
               AND  im.confirmationStatus <> '2'
-              AND  im.interviewDate      > GETDATE()
+              AND  im.interviewDate      > @NowIST
         )
 
         -- 6b. No prior Plivo reschedule call already successfully posted a future

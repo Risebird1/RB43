@@ -14,6 +14,10 @@
 --   4b. No prior Plivo schedule call already successfully posted a future slot
 --       to the Schedule API (BookingApiSuccess = 1 AND BookedInterviewDateTime > now)
 --       Covers the gap between the API call and the meeting appearing in InterviewMeetings.
+--   4c. No confirmed interview (confirmationStatus = '1') within the last 15 days
+--       where MeetingStatus is NULL (not yet evaluated), or is not a reschedule-needed
+--       status (reschedule-needed: 1, 3, 5, 9). Prevents re-scheduling a candidate who
+--       recently had or is currently scheduled for a valid interview.
 --   5. Completed call count in PlivoCXCallLogs is < 2, UNLESS disposition is NULL
 --      (disposition NULL = never been reached; always worth attempting)
 --   6. Hard daily cap: no more than 4 schedule calls (any status) made today
@@ -47,10 +51,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_GetEligibleCandidatesForPlivoCXCalls]
-    @Count INT = 10
+    @Count  INT      = 10,
+    @NowIST DATETIME = NULL   -- caller passes DateTime.Now (IST); falls back to GETDATE() if omitted
 AS
 BEGIN
     SET NOCOUNT ON;
+
+    -- InterviewMeetings.interviewDate is stored in Indian Standard Time (IST).
+    -- @NowIST is supplied by the repository as DateTime.Now so no timezone math is needed here.
+    SET @NowIST = ISNULL(@NowIST, GETDATE());
 
     SELECT TOP (@Count)
         c.id                                                        AS CandidateId,
@@ -100,7 +109,7 @@ BEGIN
             WHERE  im.candidateEmail     = u.EmailId
               AND  im.IRFId              = irf.IRFId
               AND  im.confirmationStatus <> '2'
-              AND  im.interviewDate       > GETDATE()
+              AND  im.interviewDate       > @NowIST
         )
 
         -- 4b. No prior Plivo call already successfully posted a future booking to
@@ -113,6 +122,25 @@ BEGIN
               AND  ISNULL(pcl2.CallPurpose, 'schedule') = 'schedule'
               AND  pcl2.BookingApiSuccess       = 1
               AND  pcl2.BookedInterviewDateTime > GETDATE()
+        )
+
+        -- 4c. No confirmed interview in the last 15 days whose outcome is still valid
+        --     (i.e., MeetingStatus is NULL = not yet evaluated, or is not one of the
+        --     reschedule-needed statuses: 1=No Show, 3=Candidate Absent, 5=Tech Issue, 9=Redo).
+        --     Blocks re-scheduling a candidate who recently had or is currently scheduled
+        --     for a legitimate interview.
+        AND NOT EXISTS (
+            SELECT 1
+            FROM   InterviewMeetings im
+            JOIN   InterviewComments ic ON ic.InterviewId = im.id
+            WHERE  im.candidateEmail     = u.EmailId
+              AND  im.IRFId              = irf.IRFId
+              AND  im.confirmationStatus = '1'                              -- confirmed (not pending/cancelled)
+              AND  im.interviewDate      >= DATEADD(DAY, -15, @NowIST)       -- within the last 15 days (IST)
+              AND  (
+                       ic.MeetingStatus IS NULL                             -- scheduled / not yet evaluated
+                    OR ic.MeetingStatus NOT IN (1, 3, 5, 9)                 -- not a reschedule-needed status
+                   )
         )
 
         -- 5. Stop after 2 completed calls (unless disposition is NULL, meaning

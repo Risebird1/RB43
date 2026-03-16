@@ -711,7 +711,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 // Use more precise matching - check for exact words not substrings
-                bool isFavorable = aiVerdict == "yes" || aiVerdict.StartsWith("yes,") || aiVerdict.StartsWith("yes.");
+                bool isFavorable = aiVerdict != null && aiVerdict.ToLower().Contains("yes");
                 bool isUnfavorable = aiVerdict == "no" || aiVerdict.StartsWith("no,") || aiVerdict.StartsWith("no.");
 
                 if (isFavorable)
