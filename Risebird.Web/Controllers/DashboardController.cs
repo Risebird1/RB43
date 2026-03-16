@@ -34,6 +34,7 @@ using Azure.Core;
 using Risebird.Entities.Data.VapiModels;
 using Risebird.Entities.Data.PlivoModels;
 using Risebird.Entities.Data.PlivoCXModels;
+using Risebird.Entities.Data.PlivoWhatsAppModels;
 //using System.Web.WebPages;
 //using UglyToad.PdfPig.Logging;
 //using Risebird.Entities.Data.AffIndaModels;
@@ -76,6 +77,8 @@ namespace Risebird.Web.Controllers
         private readonly IPlivoCallRepository _plivoCallRepository;
         private readonly IPlivoCXService _plivoCXService;
         private readonly IPlivoCXCallRepository _plivoCXCallRepository;
+        private readonly IPlivoWhatsAppService _plivoWhatsAppService;
+        private readonly IPlivoWhatsAppRepository _plivoWhatsAppRepository;
 
         //private readonly IIRFService _irfService;
 
@@ -93,7 +96,8 @@ namespace Risebird.Web.Controllers
             IVapiService vapiService, IVapiCallRepository vapiCallRepository,
             IPhoneNumberHelper phoneNumberHelper,
             IPlivoService plivoService, IPlivoCallRepository plivoCallRepository,
-            IPlivoCXService plivoCXService, IPlivoCXCallRepository plivoCXCallRepository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IPlivoCXService plivoCXService, IPlivoCXCallRepository plivoCXCallRepository,
+            IPlivoWhatsAppService plivoWhatsAppService, IPlivoWhatsAppRepository plivoWhatsAppRepository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -130,11 +134,14 @@ namespace Risebird.Web.Controllers
             _plivoCallRepository = plivoCallRepository;
             _plivoCXService = plivoCXService;
             _plivoCXCallRepository = plivoCXCallRepository;
+            _plivoWhatsAppService = plivoWhatsAppService;
+            _plivoWhatsAppRepository = plivoWhatsAppRepository;
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false, bool testPlivoRescheduleCalls = false)
+        public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false, bool testPlivoRescheduleCalls = false,
+            bool testPlivoWhatsAppSchedule = false, bool testPlivoWhatsAppReschedule = false)
         {
             try
             {
@@ -147,6 +154,24 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+                        // ========================================
+                        // PLIVO WHATSAPP RESCHEDULE — TEST/TRIGGER MODE
+                        // Access via: /Dashboard/Index?testPlivoWhatsAppReschedule=true
+                        // ========================================
+                        if (testPlivoWhatsAppReschedule)
+                        {
+                            return await RunPlivoWhatsAppRescheduleAsync(Emailid);
+                        }
+
+                        // ========================================
+                        // PLIVO WHATSAPP SCHEDULE — TEST/TRIGGER MODE
+                        // Access via: /Dashboard/Index?testPlivoWhatsAppSchedule=true
+                        // ========================================
+                        if (testPlivoWhatsAppSchedule)
+                        {
+                            return await RunPlivoWhatsAppScheduleAsync(Emailid);
+                        }
+
                         // ========================================
                         // PLIVO CX RESCHEDULE CALLS — TEST/TRIGGER MODE
                         // Access via: /Dashboard/Index?testPlivoRescheduleCalls=true
@@ -829,6 +854,355 @@ namespace Risebird.Web.Controllers
                 testResults.Add($"   Failed:           {failureCount}");
                 testResults.Add("═══════════════════════════════════");
                 testResults.Add("View call logs at: /PlivoCXInterviewCall/Index");
+
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+            catch (Exception ex)
+            {
+                testResults.Add($"CRITICAL ERROR: {ex.Message}");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+        }
+
+        // ─── Plivo WhatsApp Schedule trigger ─────────────────────────────────────
+
+        /// <summary>
+        /// Fetches one eligible candidate and triggers a Plivo CX WhatsApp scheduling conversation.
+        /// Access via GET /Dashboard/Index?testPlivoWhatsAppSchedule=true
+        /// </summary>
+        private async Task<IActionResult> RunPlivoWhatsAppScheduleAsync(string triggeredByEmail)
+        {
+            var testResults = new List<string>();
+            var currentTime = DateTime.Now;
+
+            testResults.Add($"[Plivo WA Schedule] Test initiated at: {currentTime:yyyy-MM-dd HH:mm:ss}");
+
+            var triggerUrl = _configuration["PlivoWhatsApp:ScheduleTriggerEndpointUrl"];
+            if (string.IsNullOrEmpty(triggerUrl))
+            {
+                testResults.Add("⚠ PlivoWhatsApp:ScheduleTriggerEndpointUrl is not set in appsettings.json.");
+                testResults.Add("  Steps:");
+                testResults.Add("  1. Publish your WhatsApp Schedule agent in cx.plivo.com");
+                testResults.Add("  2. Click the API Request trigger node → copy the URL");
+                testResults.Add("  3. Paste it into appsettings.json → PlivoWhatsApp:ScheduleTriggerEndpointUrl");
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+
+            try
+            {
+                if (currentTime.Hour < 9 || currentTime.Hour >= 21)
+                {
+                    testResults.Add($"SKIPPED — {currentTime:HH:mm} is outside business hours (9 AM – 9 PM IST)");
+                    ViewBag.PlivoTestResults = testResults;
+                    return View("VapiTestResults");
+                }
+
+                testResults.Add($"Within business hours — {currentTime:HH:mm}");
+                testResults.Add("Fetching eligible candidates...");
+
+                var eligibleCandidates = await _plivoWhatsAppRepository.GetEligibleCandidatesForScheduleAsync(1);
+
+                if (eligibleCandidates == null || !eligibleCandidates.Any())
+                {
+                    testResults.Add("No eligible candidates found.");
+                    ViewBag.PlivoTestResults = testResults;
+                    return View("VapiTestResults");
+                }
+
+                testResults.Add($"Found {eligibleCandidates.Count} eligible candidate(s)");
+                testResults.Add("");
+
+                int successCount = 0, failureCount = 0;
+
+                foreach (var candidate in eligibleCandidates)
+                {
+                    try
+                    {
+                        testResults.Add($"Processing: {candidate.CandidateName}");
+                        testResults.Add($"   Client:   {candidate.ClientName}");
+                        testResults.Add($"   Email:    {candidate.CandidateEmail}");
+                        testResults.Add($"   Phone:    {candidate.CandidatePhone}");
+                        testResults.Add($"   IRF ID:   {candidate.IRFId} ({candidate.IRFName})");
+
+                        if (string.IsNullOrWhiteSpace(candidate.CandidatePhone))
+                        {
+                            testResults.Add("   SKIPPED — no phone number");
+                            testResults.Add("");
+                            continue;
+                        }
+
+                        if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(candidate.CandidatePhone, out var phoneNumber, out var phoneError))
+                        {
+                            testResults.Add($"   SKIPPED — invalid phone: {phoneError}");
+                            testResults.Add("");
+                            continue;
+                        }
+
+                        testResults.Add($"   Sanitised phone: {phoneNumber}");
+
+                        var tomorrow = DateTime.Now.AddDays(1);
+                        var dayAfter = DateTime.Now.AddDays(2);
+
+                        // 1. Save log to get DB Id
+                        var log = new PlivoWhatsAppLog
+                        {
+                            RecipientName  = candidate.CandidateName,
+                            RecipientPhone = phoneNumber,
+                            RecipientEmail = candidate.CandidateEmail,
+                            IRFId          = candidate.IRFId,
+                            CandidateId    = candidate.CandidateId,
+                            JobTitle       = candidate.IRFName,
+                            ClientName     = candidate.ClientName,
+                            MessagePurpose = "schedule",
+                            Status         = "initiated",
+                            MessageStatus  = "initiated",
+                            TriggeredBy    = $"Dashboard-{triggeredByEmail}"
+                        };
+                        int logId = await _plivoWhatsAppRepository.SaveLogAsync(log);
+                        log.Id = logId;
+                        testResults.Add($"   Log saved — DB Id: {logId}");
+
+                        // 2. Build trigger context and send
+                        var context = new PlivoWhatsAppTriggerContext
+                        {
+                            CandidateName     = candidate.CandidateName,
+                            CandidatePhone    = phoneNumber,
+                            CandidateEmail    = candidate.CandidateEmail,
+                            IrfId             = candidate.IRFId,
+                            CandidateId       = candidate.CandidateId,
+                            JobTitle          = candidate.IRFName,
+                            ClientName        = candidate.ClientName,
+                            MessagePurpose    = "schedule",
+                            LogId             = logId.ToString(),
+                            TodayDate         = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            TomorrowDateLabel = tomorrow.ToString("dddd, dd MMMM yyyy"),
+                            DayAfterDateLabel = dayAfter.ToString("dddd, dd MMMM yyyy"),
+                            TriggeredBy       = $"Dashboard-{triggeredByEmail}"
+                        };
+
+                        var response = await _plivoWhatsAppService.SendScheduleMessageAsync(context);
+
+                        if (!string.IsNullOrEmpty(response?.Error))
+                        {
+                            testResults.Add($"   TRIGGER FAILED: {response.Error}");
+                            log.Status             = "trigger-failed";
+                            log.MessageStatus      = "trigger-failed";
+                            log.BookingApiResponse = response.Error;
+                            await _plivoWhatsAppRepository.UpdateLogAsync(log);
+                            failureCount++;
+                        }
+                        else
+                        {
+                            testResults.Add($"   Triggered — ConversationId: {response?.ConversationId} | ApiId: {response?.ApiId}");
+                            log.PlivoCXConversationId = response?.ConversationId;
+                            log.PlivoCXRequestId      = response?.ApiId;
+                            log.MessageStatus         = "triggered";
+                            log.Status                = "triggered";
+                            await _plivoWhatsAppRepository.UpdateLogAsync(log);
+                            await _plivoWhatsAppRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
+                            successCount++;
+                        }
+
+                        await Task.Delay(2000);
+                        testResults.Add("");
+                    }
+                    catch (Exception ex)
+                    {
+                        failureCount++;
+                        testResults.Add($"   FAILED: {ex.Message}");
+                        testResults.Add("");
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                            new Exception($"WA schedule trigger failed for {candidate.CandidateEmail}", ex));
+                    }
+                }
+
+                testResults.Add("═══════════════════════════════════");
+                testResults.Add($"SUMMARY:");
+                testResults.Add($"   Total Candidates: {eligibleCandidates.Count}");
+                testResults.Add($"   Successful:       {successCount}");
+                testResults.Add($"   Failed:           {failureCount}");
+                testResults.Add("═══════════════════════════════════");
+                testResults.Add("View WhatsApp logs at: /PlivoWhatsAppInterview/Index");
+
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+            catch (Exception ex)
+            {
+                testResults.Add($"CRITICAL ERROR: {ex.Message}");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+        }
+
+        // ─── Plivo WhatsApp Reschedule trigger ────────────────────────────────────
+
+        /// <summary>
+        /// Fetches one eligible reschedule candidate and triggers a Plivo CX WhatsApp rescheduling conversation.
+        /// Access via GET /Dashboard/Index?testPlivoWhatsAppReschedule=true
+        /// </summary>
+        private async Task<IActionResult> RunPlivoWhatsAppRescheduleAsync(string triggeredByEmail)
+        {
+            var testResults = new List<string>();
+            var currentTime = DateTime.Now;
+
+            testResults.Add($"[Plivo WA Reschedule] Test initiated at: {currentTime:yyyy-MM-dd HH:mm:ss}");
+
+            var triggerUrl = _configuration["PlivoWhatsApp:RescheduleTriggerEndpointUrl"];
+            if (string.IsNullOrEmpty(triggerUrl))
+            {
+                testResults.Add("⚠ PlivoWhatsApp:RescheduleTriggerEndpointUrl is not set in appsettings.json.");
+                testResults.Add("  Steps:");
+                testResults.Add("  1. Publish your WhatsApp Reschedule agent in cx.plivo.com");
+                testResults.Add("  2. Click the API Request trigger node → copy the URL");
+                testResults.Add("  3. Paste it into appsettings.json → PlivoWhatsApp:RescheduleTriggerEndpointUrl");
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+
+            try
+            {
+                if (currentTime.Hour < 9 || currentTime.Hour >= 21)
+                {
+                    testResults.Add($"SKIPPED — {currentTime:HH:mm} is outside business hours (9 AM – 9 PM IST)");
+                    ViewBag.PlivoTestResults = testResults;
+                    return View("VapiTestResults");
+                }
+
+                testResults.Add($"Within business hours — {currentTime:HH:mm}");
+                testResults.Add("Fetching eligible reschedule candidates...");
+
+                var eligibleCandidates = await _plivoWhatsAppRepository.GetEligibleCandidatesForRescheduleAsync(1);
+
+                if (eligibleCandidates == null || !eligibleCandidates.Any())
+                {
+                    testResults.Add("No eligible reschedule candidates found.");
+                    ViewBag.PlivoTestResults = testResults;
+                    return View("VapiTestResults");
+                }
+
+                testResults.Add($"Found {eligibleCandidates.Count} eligible candidate(s)");
+                testResults.Add("");
+
+                int successCount = 0, failureCount = 0;
+
+                foreach (var candidate in eligibleCandidates)
+                {
+                    try
+                    {
+                        testResults.Add($"Processing: {candidate.CandidateName}");
+                        testResults.Add($"   Client:        {candidate.ClientName}");
+                        testResults.Add($"   Email:         {candidate.CandidateEmail}");
+                        testResults.Add($"   Phone:         {candidate.CandidatePhone}");
+                        testResults.Add($"   IRF ID:        {candidate.IRFId} ({candidate.IRFName})");
+                        testResults.Add($"   Original Date: {candidate.OriginalInterviewDate}");
+
+                        if (string.IsNullOrWhiteSpace(candidate.CandidatePhone))
+                        {
+                            testResults.Add("   SKIPPED — no phone number");
+                            testResults.Add("");
+                            continue;
+                        }
+
+                        if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(candidate.CandidatePhone, out var phoneNumber, out var phoneError))
+                        {
+                            testResults.Add($"   SKIPPED — invalid phone: {phoneError}");
+                            testResults.Add("");
+                            continue;
+                        }
+
+                        testResults.Add($"   Sanitised phone: {phoneNumber}");
+
+                        var tomorrow = DateTime.Now.AddDays(1);
+                        var dayAfter = DateTime.Now.AddDays(2);
+
+                        // 1. Save log to get DB Id
+                        var log = new PlivoWhatsAppLog
+                        {
+                            RecipientName         = candidate.CandidateName,
+                            RecipientPhone        = phoneNumber,
+                            RecipientEmail        = candidate.CandidateEmail,
+                            IRFId                 = candidate.IRFId,
+                            CandidateId           = candidate.CandidateId,
+                            JobTitle              = candidate.IRFName,
+                            ClientName            = candidate.ClientName,
+                            MessagePurpose        = "reschedule",
+                            OriginalInterviewDate = candidate.OriginalInterviewDate,
+                            Status                = "initiated",
+                            MessageStatus         = "initiated",
+                            TriggeredBy           = $"Dashboard-{triggeredByEmail}"
+                        };
+                        int logId = await _plivoWhatsAppRepository.SaveLogAsync(log);
+                        log.Id = logId;
+                        testResults.Add($"   Log saved — DB Id: {logId}");
+
+                        // 2. Build trigger context and send
+                        var context = new PlivoWhatsAppTriggerContext
+                        {
+                            CandidateName         = candidate.CandidateName,
+                            CandidatePhone        = phoneNumber,
+                            CandidateEmail        = candidate.CandidateEmail,
+                            IrfId                 = candidate.IRFId,
+                            CandidateId           = candidate.CandidateId,
+                            JobTitle              = candidate.IRFName,
+                            ClientName            = candidate.ClientName,
+                            MessagePurpose        = "reschedule",
+                            OriginalInterviewDate = candidate.OriginalInterviewDate,
+                            LogId                 = logId.ToString(),
+                            TodayDate             = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            TomorrowDateLabel     = tomorrow.ToString("dddd, dd MMMM yyyy"),
+                            DayAfterDateLabel     = dayAfter.ToString("dddd, dd MMMM yyyy"),
+                            TriggeredBy           = $"Dashboard-{triggeredByEmail}"
+                        };
+
+                        var response = await _plivoWhatsAppService.SendRescheduleMessageAsync(context);
+
+                        if (!string.IsNullOrEmpty(response?.Error))
+                        {
+                            testResults.Add($"   TRIGGER FAILED: {response.Error}");
+                            log.Status             = "trigger-failed";
+                            log.MessageStatus      = "trigger-failed";
+                            log.BookingApiResponse = response.Error;
+                            await _plivoWhatsAppRepository.UpdateLogAsync(log);
+                            failureCount++;
+                        }
+                        else
+                        {
+                            testResults.Add($"   Triggered — ConversationId: {response?.ConversationId} | ApiId: {response?.ApiId}");
+                            log.PlivoCXConversationId = response?.ConversationId;
+                            log.PlivoCXRequestId      = response?.ApiId;
+                            log.MessageStatus         = "triggered";
+                            log.Status                = "triggered";
+                            await _plivoWhatsAppRepository.UpdateLogAsync(log);
+                            await _plivoWhatsAppRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
+                            successCount++;
+                        }
+
+                        await Task.Delay(2000);
+                        testResults.Add("");
+                    }
+                    catch (Exception ex)
+                    {
+                        failureCount++;
+                        testResults.Add($"   FAILED: {ex.Message}");
+                        testResults.Add("");
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                            new Exception($"WA reschedule trigger failed for {candidate.CandidateEmail}", ex));
+                    }
+                }
+
+                testResults.Add("═══════════════════════════════════");
+                testResults.Add($"SUMMARY:");
+                testResults.Add($"   Total Candidates: {eligibleCandidates.Count}");
+                testResults.Add($"   Successful:       {successCount}");
+                testResults.Add($"   Failed:           {failureCount}");
+                testResults.Add("═══════════════════════════════════");
+                testResults.Add("View WhatsApp logs at: /PlivoWhatsAppInterview/Index");
 
                 ViewBag.PlivoTestResults = testResults;
                 return View("VapiTestResults");

@@ -239,6 +239,8 @@ builder.Services.AddScoped<IPlivoCallRepository, PlivoCallRepository>();
 builder.Services.AddScoped<IPlivoInterviewService, PlivoInterviewService>();
 builder.Services.AddScoped<IPlivoCXService, PlivoCXService>();
 builder.Services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
+builder.Services.AddScoped<IPlivoWhatsAppService, PlivoWhatsAppService>();
+builder.Services.AddScoped<IPlivoWhatsAppRepository, PlivoWhatsAppRepository>();
 // ============================================
 
 var app = builder.Build();
