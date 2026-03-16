@@ -5,7 +5,6 @@ using Risebird.Entities.Data.PlivoWhatsAppModels;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.AzureTimerFunctions
@@ -115,35 +114,38 @@ namespace Risebird.AzureTimerFunctions
                             ClientName            = context.ClientName,
                             MessagePurpose        = "reschedule",
                             OriginalInterviewDate = context.OriginalInterviewDate,
-                            Option1DateTime       = context.Option1DateTime,
-                            Option2DateTime       = context.Option2DateTime,
-                            Status                = "sent",
-                            MessageStatus         = "queued",
+                            Status                = "initiated",
+                            MessageStatus         = "initiated",
                             TriggeredBy           = context.TriggeredBy
                         };
                         int logId = await _repository.SaveLogAsync(log);
                         log.Id = logId;
+
+                        context.LogId = logId.ToString();
 
                         var response = await _whatsAppService.SendRescheduleMessageAsync(context);
 
                         if (!string.IsNullOrEmpty(response?.Error))
                         {
                             _log.LogWarning($"[WA-Reschedule] Send failed for {candidate.CandidateEmail}: {response.Error}");
-                            log.Status             = "failed";
-                            log.MessageStatus      = "failed";
+                            log.Status             = "trigger-failed";
+                            log.MessageStatus      = "trigger-failed";
                             log.BookingApiResponse = response.Error;
                             await _repository.UpdateLogAsync(log);
                             failureCount++;
                             continue;
                         }
 
-                        log.OutboundMessageUUID = response?.MessageUuid?.FirstOrDefault();
+                        log.PlivoCXConversationId = response?.ConversationId;
+                        log.PlivoCXRequestId      = response?.ApiId;
+                        log.MessageStatus         = "triggered";
+                        log.Status                = "triggered";
                         await _repository.UpdateLogAsync(log);
 
                         if (candidate.CandidateId > 0)
                             await _repository.IncrementCallAttemptsAsync(candidate.CandidateId);
 
-                        _log.LogInformation($"[WA-Reschedule] Message sent for {candidate.CandidateEmail} — UUID: {log.OutboundMessageUUID}");
+                        _log.LogInformation($"[WA-Reschedule] Triggered for {candidate.CandidateEmail} — ConversationId: {log.PlivoCXConversationId}");
                         successCount++;
                         await Task.Delay(2000);
                     }
