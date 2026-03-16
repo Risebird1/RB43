@@ -1942,33 +1942,35 @@
                                                                                             @if (!item.IsReportBlocked && ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1)))
                                                                                             {
                                                                                             @*Turing*@
-                                                                                            @if (!item.IsQCDone)
+                                                                                            @if(ViewBag.ClientId!=246)
                                                                                             {
-                                                                                            <div style="height:40px;"></div>
-                                                                                            <div class="report-tooltip" style="border:0px;display:block!important">
-                                                                                                <span style="position:relative;left:0px;top: -30px;">
+                                                                                                @if (!item.IsQCDone)
+                                                                                                {
+                                                                                                <div style="height:40px;"></div>
+                                                                                                <div class="report-tooltip" style="border:0px;display:block!important">
+                                                                                                    <span style="position:relative;left:0px;top: -30px;">
 
-                                                                                                    <i class="fa fa-clock pull-left blink" style="color:#f13333;position:relative;left:55px;top:0px;"></i><span style="padding-left: 24px;position: relative;top: -4px;color:#f13333">QC Pending</span>
-                                                                                                    <div class="report-tooltiptext" style="bottom: -100px;left: 30%;">
-                                                                                                        <p style="font-weight:500;line-height:20px;color:grey;white-space: break-spaces;">"<b>Viewer Discretion Notice:</b> The candidate's report is currently undergoing quality checks. You may review the report based on your assessment, or await approval from the quality check team. Thank you for your patience."</p>
-                                                                                                    </div>
-                                                                                                </span>
-                                                                                            </div>
+                                                                                                        <i class="fa fa-clock pull-left blink" style="color:#f13333;position:relative;left:55px;top:0px;"></i><span style="padding-left: 24px;position: relative;top: -4px;color:#f13333">QC Pending</span>
+                                                                                                        <div class="report-tooltiptext" style="bottom: -100px;left: 30%;">
+                                                                                                            <p style="font-weight:500;line-height:20px;color:grey;white-space: break-spaces;">"<b>Viewer Discretion Notice:</b> The candidate's report is currently undergoing quality checks. You may review the report based on your assessment, or await approval from the quality check team. Thank you for your patience."</p>
+                                                                                                        </div>
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                <div style="height:40px;"></div>
+                                                                                                <div class="report-tooltip" style="border:0px;display:block!important">
+                                                                                                    <span style="position:relative;left:0px;top: -30px;">
+
+                                                                                                        <i class="fa fa-check-circle pull-left" style="color: green;position:relative;left:55px;top:0px;"></i><span style="padding: 0px 3px;position: relative;top: -4px;color:darkgreen;font-weight:600;">QC Pass</span>
+                                                                                                        <div class="report-tooltiptext" style="bottom: -100px;left: 30%;">
+                                                                                                            <p style="font-weight:500;line-height:20px;color:grey;white-space: break-spaces;">"<b>Quality Check Complete:</b> The candidate's report has successfully passed all quality checks and is approved for review."</p>
+                                                                                                        </div>
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                                }
                                                                                             }
-                                                                                            else
-                                                                                            {
-                                                                                            <div style="height:40px;"></div>
-                                                                                            <div class="report-tooltip" style="border:0px;display:block!important">
-                                                                                                <span style="position:relative;left:0px;top: -30px;">
-
-                                                                                                    <i class="fa fa-check-circle pull-left" style="color: green;position:relative;left:55px;top:0px;"></i><span style="padding: 0px 3px;position: relative;top: -4px;color:darkgreen;font-weight:600;">QC Pass</span>
-                                                                                                    <div class="report-tooltiptext" style="bottom: -100px;left: 30%;">
-                                                                                                        <p style="font-weight:500;line-height:20px;color:grey;white-space: break-spaces;">"<b>Quality Check Complete:</b> The candidate's report has successfully passed all quality checks and is approved for review."</p>
-                                                                                                    </div>
-                                                                                                </span>
-                                                                                            </div>
-                                                                                            }
-
                                                                                             @*Turing*@
 
                                                                                             <div style="width:100%;float:left;position:relative;top:-30px">
