@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[PreOnboardingInterviewerAIVerdict](
 	[CreatedBy][varchar](100) NOT NULL,
 	[ModifiedBy][varchar](100) NULL,
 	[AIScreeningScore][int] NULL,
+	[InterviewerProfileId] [int] NULL,
  CONSTRAINT [PK_PreOnboardingInterviewerAIVerdict] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
