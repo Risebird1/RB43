@@ -13,6 +13,7 @@ using Risebird.Web.Extensions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using WaCp = Risebird.Entities.Data.PlivoWhatsAppModels.WaCheckpointNames;
 
 namespace Risebird.Web.Controllers
 {
@@ -137,6 +138,32 @@ namespace Risebird.Web.Controllers
                 var context = BuildTriggerContext(log, logId, null);
                 var response = await _whatsAppService.SendScheduleMessageAsync(context);
 
+                // Checkpoint — log raw trigger request + response
+                try
+                {
+                    await _repository.SaveDebugLogAsync(new PlivoWhatsAppDebugLog
+                    {
+                        LogType          = "trigger-request",
+                        HttpStatusCode   = response?.HttpStatusCode,
+                        PlivoCXId        = response?.ApiId,
+                        LogId            = logId,
+                        RawPayload       = JsonConvert.SerializeObject(context),
+                        ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                        ErrorMessage     = response?.Error
+                    });
+                    await _repository.SaveDebugLogAsync(new PlivoWhatsAppDebugLog
+                    {
+                        LogType          = "trigger-response",
+                        HttpStatusCode   = response?.HttpStatusCode,
+                        PlivoCXId        = response?.ApiId,
+                        LogId            = logId,
+                        RawPayload       = response?.RawResponseBody,
+                        ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                        ErrorMessage     = response?.Error
+                    });
+                }
+                catch { }
+
                 if (!string.IsNullOrEmpty(response?.ConversationId))
                 {
                     log.PlivoCXConversationId = response.ConversationId;
@@ -202,6 +229,32 @@ namespace Risebird.Web.Controllers
                 var context  = BuildTriggerContext(log, logId, originalInterviewDate);
                 var response = await _whatsAppService.SendRescheduleMessageAsync(context);
 
+                // Checkpoint — log raw reschedule trigger request + response
+                try
+                {
+                    await _repository.SaveDebugLogAsync(new PlivoWhatsAppDebugLog
+                    {
+                        LogType          = "reschedule-trigger-request",
+                        HttpStatusCode   = response?.HttpStatusCode,
+                        PlivoCXId        = response?.ApiId,
+                        LogId            = logId,
+                        RawPayload       = JsonConvert.SerializeObject(context),
+                        ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                        ErrorMessage     = response?.Error
+                    });
+                    await _repository.SaveDebugLogAsync(new PlivoWhatsAppDebugLog
+                    {
+                        LogType          = "reschedule-trigger-response",
+                        HttpStatusCode   = response?.HttpStatusCode,
+                        PlivoCXId        = response?.ApiId,
+                        LogId            = logId,
+                        RawPayload       = response?.RawResponseBody,
+                        ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                        ErrorMessage     = response?.Error
+                    });
+                }
+                catch { }
+
                 if (!string.IsNullOrEmpty(response?.ConversationId))
                 {
                     log.PlivoCXConversationId = response.ConversationId;
@@ -237,13 +290,17 @@ namespace Risebird.Web.Controllers
         /// The payload is identical in shape to the voice HangupCallback envelope —
         /// same nested JSON with event_data containing AI-extracted variables.
         ///
-        /// Configure in cx.plivo.com → AI Studio → Your WhatsApp Flow → Agent Config → Events → Hangup URL:
+        /// Configure in cx.plivo.com → Agents → Your WhatsApp Flow → Agent Config → Events → Hangup URL:
         ///   https://your-domain.com/PlivoWhatsAppInterview/ConversationEndCallback
         /// </summary>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> ConversationEndCallback()
         {
+            // ── Step 1: Record that the webhook arrived ──────────────────────────
+            await SaveCpAsync(WaCp.CallbackReceived, "ConversationEndCallback HTTP POST received");
+
+            // ── Step 2: Read raw body ────────────────────────────────────────────
             string rawBody = string.Empty;
             try
             {
@@ -252,10 +309,29 @@ namespace Risebird.Web.Controllers
                     Request.Body, System.Text.Encoding.UTF8, leaveOpen: true);
                 rawBody = await reader.ReadToEndAsync();
                 Request.Body.Position = 0;
+                await SaveCpAsync(WaCp.CallbackBodyRead,
+                    $"Body read — {rawBody?.Length ?? 0} chars",
+                    extra: rawBody?.Substring(0, Math.Min(500, rawBody?.Length ?? 0)));
+            }
+            catch (Exception ex)
+            {
+                await SaveCpAsync(WaCp.CallbackParseFailed, $"Body read FAILED: {ex.Message}");
+            }
+
+            // ── Step 3: Always persist the raw callback payload ──────────────────
+            try
+            {
+                await _repository.SaveDebugLogAsync(new PlivoWhatsAppDebugLog
+                {
+                    LogType          = "wa-callback",
+                    HttpStatusCode   = 0,
+                    RawPayload       = rawBody,
+                    ProcessingStatus = "received"
+                });
             }
             catch { }
 
-            // ── Parse the same nested Plivo CX envelope as voice HangupCallback ───
+            // ── Step 4: Parse the nested Plivo CX envelope ───────────────────────
             // { "data": { "object": { "conversation_id": "...", "event_data": { "NodeName.variable": "value" } } } }
             PlivoCXWhatsAppPayload payload = null;
 
@@ -286,10 +362,17 @@ namespace Risebird.Web.Controllers
                     CandidateConfirmed   = GetEdValue(ed, "candidate_confirmed"),
                     CandidateDisposition = GetEdValue(ed, "candidate_disposition")
                 };
+                await SaveCpAsync(WaCp.CallbackJsonParsed,
+                    $"Parsed as JSON — conv_id: {payload.ConversationId}, log_id: {payload.LogId}",
+                    convId: payload.ConversationId,
+                    extra: $"confirmed: {payload.CandidateConfirmed}, date: {payload.InterviewDate}, time: {payload.InterviewTime}");
             }
-            catch { }
+            catch (Exception ex)
+            {
+                await SaveCpAsync(WaCp.CallbackParseFailed, $"JSON parse FAILED: {ex.Message}");
+            }
 
-            // Fall back to form-encoded
+            // ── Step 5: Fallback to form-encoded ─────────────────────────────────
             if (payload == null || (string.IsNullOrEmpty(payload.ConversationId) && string.IsNullOrEmpty(payload.LogId)))
             {
                 try
@@ -310,24 +393,59 @@ namespace Risebird.Web.Controllers
                         CandidateConfirmed   = form["candidate_confirmed"],
                         CandidateDisposition = form["candidate_disposition"]
                     };
+                    await SaveCpAsync(WaCp.CallbackFormParsed,
+                        $"Parsed as form-encoded — conv_id: {payload.ConversationId}, log_id: {payload.LogId}",
+                        convId: payload.ConversationId,
+                        extra: $"keys: {string.Join(", ", form.Keys)}");
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    await SaveCpAsync(WaCp.CallbackParseFailed, $"Form parse FAILED: {ex.Message}");
+                }
             }
 
-            if (payload == null || (string.IsNullOrEmpty(payload.ConversationId) && string.IsNullOrEmpty(payload.LogId)))
+            // ── Step 6: Validate we have usable identifiers ───────────────────────
+            if (payload == null ||
+                (string.IsNullOrEmpty(payload.ConversationId) && string.IsNullOrEmpty(payload.LogId)))
+            {
+                await SaveCpAsync(WaCp.CallbackParseFailed,
+                    "No conv_id or log_id after all parse attempts — dropping webhook",
+                    extra: $"raw (first 300): {rawBody?.Substring(0, Math.Min(300, rawBody?.Length ?? 0))}");
                 return Ok();
+            }
 
             try
             {
-                // Find the matching log
-                PlivoWhatsAppLog log = null;
-                if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int logId))
-                    log = await _repository.GetLogByIdAsync(logId);
-                if (log == null && !string.IsNullOrEmpty(payload.ConversationId))
-                    log = await _repository.GetLogByConversationIdAsync(payload.ConversationId);
-                if (log == null) return Ok();
+                // ── Step 7: Find matching log ────────────────────────────────────
+                PlivoWhatsAppLog log  = null;
+                string           how  = null;
 
-                // Apply conversation outcome
+                if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int parsedLogId))
+                {
+                    log = await _repository.GetLogByIdAsync(parsedLogId);
+                    how = $"log_id={parsedLogId}";
+                }
+                if (log == null && !string.IsNullOrEmpty(payload.ConversationId))
+                {
+                    log = await _repository.GetLogByConversationIdAsync(payload.ConversationId);
+                    how = $"conversation_id={payload.ConversationId}";
+                }
+
+                if (log == null)
+                {
+                    await SaveCpAsync(WaCp.LogNotFound,
+                        $"No WhatsApp log matched — tried: {how}",
+                        convId: payload.ConversationId);
+                    return Ok();
+                }
+
+                await SaveCpAsync(WaCp.LogFound,
+                    $"WhatsApp log #{log.Id} found via {how}",
+                    convId: payload.ConversationId,
+                    logId: log.Id,
+                    extra: $"phone: {log.RecipientPhone}, status_was: {log.Status}");
+
+                // ── Step 8: Apply conversation outcome ───────────────────────────
                 log.PlivoCXConversationId   = payload.ConversationId ?? log.PlivoCXConversationId;
                 log.MessageStatus           = "completed";
                 log.Status                  = "completed";
@@ -339,9 +457,12 @@ namespace Risebird.Web.Controllers
                 log.ConversationEndedAt     = DateTime.UtcNow;
                 log.UpdatedAt               = DateTime.UtcNow;
 
+                await SaveCpAsync(WaCp.DispositionExtracted,
+                    $"Disposition: {log.CandidateDisposition ?? "(none)"} — raw: {payload.CandidateDisposition}",
+                    convId: payload.ConversationId, logId: log.Id);
+
                 bool candidateConfirmed = string.Equals(
                     payload.CandidateConfirmed, "true", StringComparison.OrdinalIgnoreCase);
-
                 log.AIReportedBooked = candidateConfirmed;
 
                 if (candidateConfirmed &&
@@ -350,24 +471,41 @@ namespace Risebird.Web.Controllers
                 {
                     await ProcessBookingAsync(log, payload);
                 }
+                else
+                {
+                    await SaveCpAsync(WaCp.BookingSkipped,
+                        $"Booking skipped — confirmed: {candidateConfirmed}, " +
+                        $"date: '{payload.InterviewDate}', time: '{payload.InterviewTime}'",
+                        convId: payload.ConversationId, logId: log.Id);
+                }
 
                 await _repository.UpdateLogAsync(log);
 
                 if (log.CandidateId.HasValue && !string.IsNullOrEmpty(log.CandidateDisposition))
                     await _repository.UpdateCandidateDispositionAsync(log.CandidateId.Value, log.CandidateDisposition);
+
+                await SaveCpAsync(WaCp.CallbackComplete,
+                    $"WhatsApp log #{log.Id} updated — booked: {log.InterviewBooked}, " +
+                    $"booking_success: {log.BookingApiSuccess}",
+                    convId: payload.ConversationId, logId: log.Id);
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                await SaveCpAsync(WaCp.CallbackParseFailed,
+                    $"Unhandled exception in ConversationEndCallback: {ex.Message}",
+                    convId: payload?.ConversationId,
+                    extra: ex.ToString());
             }
 
             return Ok();
         }
 
-        // ─── Booking logic (identical to voice controller) ────────────────────────
+        // ─── Booking logic (identical to voice controller, with checkpoints) ─────
 
         private async Task ProcessBookingAsync(PlivoWhatsAppLog log, PlivoCXWhatsAppPayload payload)
         {
+            var convId = payload.ConversationId;
             try
             {
                 var irfIdStr       = payload.IrfId ?? log.IRFId?.ToString();
@@ -381,6 +519,9 @@ namespace Risebird.Web.Controllers
                     !int.TryParse(irfIdStr, out int irfId))
                 {
                     log.BookingApiResponse = "Missing candidateEmail or irfId — booking skipped.";
+                    await SaveCpAsync(WaCp.BookingSkipped,
+                        $"Missing fields — email: '{candidateEmail}', irfId: '{irfIdStr}'",
+                        convId: convId, logId: log.Id);
                     return;
                 }
 
@@ -410,6 +551,9 @@ namespace Risebird.Web.Controllers
                 if (!parsedDateTime.HasValue)
                 {
                     log.BookingApiResponse = $"Could not parse datetime: '{dateTimeString}'";
+                    await SaveCpAsync(WaCp.BookingSkipped,
+                        $"DateTime parse failed: '{dateTimeString}'",
+                        convId: convId, logId: log.Id);
                     return;
                 }
 
@@ -418,17 +562,30 @@ namespace Risebird.Web.Controllers
                 log.InterviewBooked         = true;
 
                 var hasConfirmed = await _repository.HasConfirmedInterviewAsync(candidateEmail, irfId);
-                if (hasConfirmed) { log.BookingApiResponse = "Already confirmed — duplicate skipped."; return; }
+                if (hasConfirmed)
+                {
+                    log.BookingApiResponse = "Already confirmed — duplicate skipped.";
+                    await SaveCpAsync(WaCp.BookingSkipped,
+                        "Duplicate booking skipped — interview already confirmed",
+                        convId: convId, logId: log.Id);
+                    return;
+                }
 
                 await Task.Delay(2000);
 
                 var candidateDetails = await _repository.GetCandidateDetailsForScheduleAsync(irfId, candidateEmail);
                 if (candidateDetails == null)
-                { log.BookingApiResponse = "Candidate details not found in DB."; return; }
+                {
+                    log.BookingApiResponse = "Candidate details not found in DB.";
+                    await SaveCpAsync(WaCp.BookingSkipped,
+                        $"Candidate details not found — irfId: {irfId}, email: {candidateEmail}",
+                        convId: convId, logId: log.Id);
+                    return;
+                }
 
                 var roundedDate = parsedDateTime.Value.RoundToNearSlot(candidateDetails.duration);
-                log.BookedInterviewDate = roundedDate.ToString("yyyy-MM-dd");
-                log.BookedInterviewTime = roundedDate.ToString("HH:mm");
+                log.BookedInterviewDate     = roundedDate.ToString("yyyy-MM-dd");
+                log.BookedInterviewTime     = roundedDate.ToString("HH:mm");
                 log.BookedInterviewDateTime = roundedDate;
 
                 var dto = new ScheduleCandidatesRequest
@@ -448,6 +605,11 @@ namespace Risebird.Web.Controllers
                     Name          = candidateDetails.CandidateName
                 });
 
+                await SaveCpAsync(WaCp.BookingStarted,
+                    $"Calling Schedule API — irfId: {irfId}, email: {candidateEmail}, " +
+                    $"slot: {roundedDate:yyyy-MM-dd HH:mm}",
+                    convId: convId, logId: log.Id);
+
                 const string apiUrl = "https://api.portal.risebird.io/api/Candidates/Schedule";
                 var restClient  = new RestClient(apiUrl);
                 var restRequest = new RestRequest(apiUrl, Method.Post);
@@ -459,11 +621,19 @@ namespace Risebird.Web.Controllers
                 var apiResponse = await restClient.ExecuteAsync(restRequest);
                 log.BookingApiResponse = apiResponse.Content;
                 log.BookingApiSuccess  = apiResponse.IsSuccessful;
+
+                await SaveCpAsync(WaCp.BookingDone,
+                    $"Schedule API — status: {apiResponse.StatusCode}, success: {apiResponse.IsSuccessful}",
+                    convId: convId, logId: log.Id,
+                    extra: $"response: {apiResponse.Content?.Substring(0, Math.Min(500, apiResponse.Content?.Length ?? 0))}");
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 log.BookingApiResponse = $"Exception: {ex.Message}";
+                await SaveCpAsync(WaCp.BookingException,
+                    $"Exception: {ex.Message}", convId: convId, logId: log.Id,
+                    extra: ex.ToString());
             }
         }
 
@@ -525,6 +695,26 @@ namespace Risebird.Web.Controllers
             };
         }
 
+        // ─── Shared checkpoint helper ─────────────────────────────────────────────
+
+        private async Task SaveCpAsync(
+            string name, string msg,
+            string convId = null, int? logId = null, string extra = null)
+        {
+            try
+            {
+                await _repository.SaveCheckpointAsync(new PlivoWhatsAppCheckpoint
+                {
+                    CheckpointName = name,
+                    Message        = msg,
+                    ConversationId = convId,
+                    LogId          = logId,
+                    AdditionalData = extra
+                });
+            }
+            catch { }
+        }
+
         // ─── Management endpoints ─────────────────────────────────────────────────
 
         [HttpGet]
@@ -536,6 +726,43 @@ namespace Risebird.Web.Controllers
         {
             var log = await _repository.GetLogByIdAsync(id);
             return log != null ? Json(log) : NotFound();
+        }
+
+        /// <summary>
+        /// View recent raw trigger request/response + callback payloads.
+        /// Access: /PlivoWhatsAppInterview/DebugLogs?count=50
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> DebugLogs(int count = 50)
+        {
+            try
+            {
+                var logs = await _repository.GetRecentDebugLogsAsync(count);
+                return Json(logs);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// View recent granular processing checkpoints for ConversationEndCallback.
+        /// Access: /PlivoWhatsAppInterview/Checkpoints?count=100
+        /// Each row is a named step — use to trace exactly where processing stopped.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Checkpoints(int count = 100)
+        {
+            try
+            {
+                var checkpoints = await _repository.GetRecentCheckpointsAsync(count);
+                return Json(checkpoints);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
         }
 
         [HttpGet]

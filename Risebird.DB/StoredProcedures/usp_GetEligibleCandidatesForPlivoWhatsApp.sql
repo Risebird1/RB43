@@ -11,6 +11,10 @@
 --   4b. No prior WhatsApp schedule message already booked a future slot
 --   4c. No confirmed interview in the last 15 days with MeetingStatus NULL or not a
 --       reschedule-needed status (1,3,5,9) — prevents re-scheduling duplicates
+--   4d. Candidate does NOT have any interview meeting requiring rescheduling
+--       (MeetingStatus IN (1,3,5,9), confirmationStatus='2', or RedoInterview=1).
+--       Mirrors rule in usp_GetEligibleCandidatesForPlivoWhatsAppReschedule so the
+--       two SPs are mutually exclusive — a reschedule candidate never gets a schedule message.
 --   5. Replied-message count < 2 (unless disposition is NULL = never reached)
 --   6. Hard daily cap: no more than 4 schedule WhatsApp messages today per candidate+IRF
 --   7. Minimum 2-hour cooldown between consecutive messages
@@ -108,6 +112,26 @@ BEGIN
               AND  (
                        ic.MeetingStatus IS NULL
                     OR ic.MeetingStatus NOT IN (1, 3, 5, 9)
+                   )
+        )
+
+        -- 4d. Exclude candidates who already need RESCHEDULING.
+        --     If a candidate has any interview meeting flagged as reschedule-needed
+        --     (No Show, Candidate Absent, Tech Issue, Redo, or Cancelled), they belong
+        --     to the reschedule flow — not the initial schedule flow.
+        --     Mirrors the EXISTS rule in usp_GetEligibleCandidatesForPlivoWhatsAppReschedule
+        --     so the two SPs are mutually exclusive.
+        AND NOT EXISTS (
+            SELECT 1
+            FROM   InterviewMeetings im
+            JOIN   InterviewComments ic ON ic.InterviewId = im.id
+            WHERE  im.candidateEmail       = u.EmailId
+              AND  im.IRFId               = irf.IRFId
+              AND  ISNULL(im.IsDeleted, 0) = 0
+              AND  (
+                       ic.MeetingStatus IN (1, 3, 5, 9)   -- No Show / Candidate Absent / Tech Issue / Redo
+                    OR im.confirmationStatus = '2'          -- Cancelled
+                    OR im.RedoInterview      = 1            -- Explicit redo flag
                    )
         )
 
