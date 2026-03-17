@@ -38,16 +38,12 @@ namespace Risebird.Repository
                         RecipientName, RecipientPhone, RecipientEmail,
                         IRFId, CandidateId, JobTitle, ClientName,
                         MessagePurpose, OriginalInterviewDate,
-                        OutboundMessageUUID, MessageStatus,
-                        Option1DateTime, Option2DateTime,
-                        Status, TriggeredBy, CreatedAt
+                        MessageStatus, Status, TriggeredBy, CreatedAt
                     ) VALUES (
                         @RecipientName, @RecipientPhone, @RecipientEmail,
                         @IRFId, @CandidateId, @JobTitle, @ClientName,
                         @MessagePurpose, @OriginalInterviewDate,
-                        @OutboundMessageUUID, @MessageStatus,
-                        @Option1DateTime, @Option2DateTime,
-                        @Status, @TriggeredBy, @CreatedAt
+                        @MessageStatus, @Status, @TriggeredBy, @CreatedAt
                     );
                     SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
@@ -216,6 +212,86 @@ namespace Risebird.Repository
             }
         }
 
+        // ── Debug logs ───────────────────────────────────────────────────────
+
+        public async Task<int> SaveDebugLogAsync(PlivoWhatsAppDebugLog log)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                const string sql = @"
+                    INSERT INTO PlivoWhatsAppDebugLogs
+                        (CreatedAt, LogType, HttpStatusCode, PlivoCXId, LogId, RawPayload, ProcessingStatus, ErrorMessage)
+                    VALUES
+                        (@CreatedAt, @LogType, @HttpStatusCode, @PlivoCXId, @LogId, @RawPayload, @ProcessingStatus, @ErrorMessage);
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
+                log.CreatedAt = DateTime.UtcNow;
+                return await conn.ExecuteScalarAsync<int>(sql, log);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<List<PlivoWhatsAppDebugLog>> GetRecentDebugLogsAsync(int count = 50)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<PlivoWhatsAppDebugLog>(
+                    "SELECT TOP (@Count) * FROM PlivoWhatsAppDebugLogs ORDER BY CreatedAt DESC",
+                    new { Count = count });
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<PlivoWhatsAppDebugLog>();
+            }
+        }
+
+        // ── Processing checkpoints ────────────────────────────────────────────
+
+        public async Task<int> SaveCheckpointAsync(PlivoWhatsAppCheckpoint checkpoint)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                const string sql = @"
+                    INSERT INTO PlivoWhatsAppCheckpoints
+                        (Timestamp, CheckpointName, Message, ConversationId, LogId, AdditionalData)
+                    VALUES
+                        (@Timestamp, @CheckpointName, @Message, @ConversationId, @LogId, @AdditionalData);
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
+                checkpoint.Timestamp = DateTime.UtcNow;
+                return await conn.ExecuteScalarAsync<int>(sql, checkpoint);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<List<PlivoWhatsAppCheckpoint>> GetRecentCheckpointsAsync(int count = 100)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<PlivoWhatsAppCheckpoint>(
+                    "SELECT TOP (@Count) * FROM PlivoWhatsAppCheckpoints ORDER BY Timestamp DESC",
+                    new { Count = count });
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<PlivoWhatsAppCheckpoint>();
+            }
+        }
+
         // ── Shared helpers (delegate to existing SPs used by voice channel) ───
 
         public async Task<CandidateDetailsForSchdeule> GetCandidateDetailsForScheduleAsync(int irfId, string candidateEmail)
@@ -297,7 +373,7 @@ namespace Risebird.Repository
                 var parameters = new DynamicParameters();
                 parameters.Add("@CandidateId", candidateId, DbType.Int32);
                 await conn.ExecuteAsync(
-                    "usp_IncrementCandidateVapiCallAttempts", parameters,
+                    "usp_IncrementCandidatePlivoWhatsAppAttempts", parameters,
                     commandType: CommandType.StoredProcedure);
             }
             catch (Exception ex)

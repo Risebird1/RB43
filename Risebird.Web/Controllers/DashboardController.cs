@@ -941,7 +941,7 @@ namespace Risebird.Web.Controllers
                             testResults.Add("");
                             continue;
                         }
-
+                        phoneNumber = "+918888571923";
                         testResults.Add($"   Sanitised phone: {phoneNumber}");
 
                         var tomorrow = DateTime.Now.AddDays(1);

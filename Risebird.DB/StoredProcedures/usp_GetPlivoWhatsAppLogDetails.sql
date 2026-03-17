@@ -91,9 +91,9 @@ BEGIN
     )
     SELECT
         COUNT(*)                                                                              OVER () AS TotalCount,
-        SUM(CASE WHEN Status IN ('replied','booked')                                   THEN 1 ELSE 0 END) OVER () AS OverallReplied,
+        SUM(CASE WHEN Status = 'completed'                                             THEN 1 ELSE 0 END) OVER () AS OverallReplied,
         SUM(CASE WHEN MeetingCreated = 'YES'                                           THEN 1 ELSE 0 END) OVER () AS OverallMeetingCreated,
-        SUM(CASE WHEN Status IN ('failed','undelivered','expired')                     THEN 1 ELSE 0 END) OVER () AS OverallFailed,
+        SUM(CASE WHEN Status = 'trigger-failed'                                        THEN 1 ELSE 0 END) OVER () AS OverallFailed,
 
         *
 
