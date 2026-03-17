@@ -4340,6 +4340,10 @@ namespace Risebird.Business
                 return 0;
             }
         }
+        public async Task<bool> IsInterviewerForInterview(string emailId, int interviewId)
+        {
+            return await _meetingRespository.IsInterviewerForInterview(emailId, interviewId);
+        }
         public async Task<bool> ConfirmInterviewavailability(string emailId, int id, string type)
         {
             try

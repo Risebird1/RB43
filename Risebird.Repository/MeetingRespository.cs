@@ -7324,6 +7324,28 @@ namespace Risebird.Repository
                 return 0;
             }
         }
+        public async Task<bool> IsInterviewerForInterview(string emailId, int interviewId)
+        {
+            try
+            {
+                var normalizedEmail = string.IsNullOrWhiteSpace(emailId) ? "" : emailId.Trim().Replace("\"", "");
+                if (string.IsNullOrEmpty(normalizedEmail)) return false;
+                var query = "SELECT 1 FROM InterviewMeetings WHERE id = @interviewId AND LTRIM(RTRIM(REPLACE(ISNULL(interviewer,''), '\"', ''))) = @emailId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewId", interviewId);
+                dynamicParameters.Add("@emailId", normalizedEmail);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryFirstOrDefaultAsync<int?>(query, dynamicParameters);
+                    return result.HasValue && result.Value == 1;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public async Task<bool> ConfirmInterviewavailability(string emailId, int id, string type)
         {
             try
