@@ -541,6 +541,20 @@ BEGIN
     ADD PlivoCXDisposition VARCHAR(20) NULL
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PlivoWhatsAppAttempts')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    -- Tracks the number of outbound Plivo WhatsApp messages (schedule + reschedule)
+    -- initiated for this candidate. Incremented by usp_IncrementCandidatePlivoWhatsAppAttempts
+    -- immediately after each successful trigger. Kept separate from VapiCallAttempts
+    -- (voice) so the two channels can be monitored and capped independently.
+    ALTER TABLE Candidate
+    ADD PlivoWhatsAppAttempts INT NOT NULL DEFAULT 0
+END
+
 End
 
 GO
