@@ -8643,17 +8643,52 @@ namespace Risebird.Web.Controllers
         }
         public async Task<IActionResult> InterviewDetails(int id, int interviewId)
         {
-            var emailid = HttpContext.Session.GetString("email")?.Trim();
             ViewBag.id = id;
             ViewBag.InterviewId = interviewId;
-            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                            select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
-            var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
             if (!string.IsNullOrEmpty(emailid))
-                result.interviewer = emailid.Replace("\"", "");
+                emailid = emailid.Replace("\"", "");
+            bool sessionRequired = string.IsNullOrEmpty(emailid);
+            if (!sessionRequired)
+            {
+                var isInterviewer = await _meetingService.IsInterviewerForInterview(emailid, interviewId);
+                if (!isInterviewer)
+                {
+                    sessionRequired = true;
+                    ViewBag.SessionInvalidMessage = "This email is not assigned as the interviewer for this interview.";
+                }
+            }
+            if (sessionRequired)
+            {
+                ViewBag.SessionRequired = true;
+                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+                return View(new Risebird.Entities.Data.Meeting());
+            }
+            var jobLevelsList = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.JobLevelList = new SelectList(jobLevelsList, "ID", "Name");
+            var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
+            if (result != null)
+                result.interviewer = emailid;
+            if (result == null)
+                result = new Risebird.Entities.Data.Meeting();
             result.AudioComment = _irfService.FetchIRFAudioLink(id);
             return View(result);
+        }
+        [HttpPost]
+        public async Task<JsonResult> VerifyInterviewerForInterviewDetails(int id, int interviewId, string Emailid)
+        {
+            if (string.IsNullOrWhiteSpace(Emailid))
+                return Json("Please enter your email.");
+            var normalizedEmail = Emailid.Trim().Replace("\"", "");
+            var isInterviewer = await _meetingService.IsInterviewerForInterview(normalizedEmail, interviewId);
+            if (!isInterviewer)
+                return Json("This email is not assigned as the interviewer for this interview.");
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(normalizedEmail));
+            HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Interviewer"));
+            return Json("success");
         }
 
         [HttpPost]
