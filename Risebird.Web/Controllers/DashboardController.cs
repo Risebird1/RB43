@@ -141,7 +141,7 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false, bool testPlivoRescheduleCalls = false,
-            bool testPlivoWhatsAppSchedule = false, bool testPlivoWhatsAppReschedule = false)
+            bool testPlivoWhatsAppSchedule = true, bool testPlivoWhatsAppReschedule = false)
         {
             try
             {
@@ -941,7 +941,7 @@ namespace Risebird.Web.Controllers
                             testResults.Add("");
                             continue;
                         }
-
+                        phoneNumber = "+918888571923";
                         testResults.Add($"   Sanitised phone: {phoneNumber}");
 
                         var tomorrow = DateTime.Now.AddDays(1);

@@ -14,6 +14,14 @@ namespace Risebird.Repository.Interface
         Task<PlivoWhatsAppLog>          GetLogByConversationIdAsync(string conversationId);
         Task<List<PlivoWhatsAppLog>>    GetRecentLogsAsync(int count = 50);
 
+        // ── Debug logs (raw trigger request/response + callback payloads) ────
+        Task<int>                           SaveDebugLogAsync(PlivoWhatsAppDebugLog log);
+        Task<List<PlivoWhatsAppDebugLog>>   GetRecentDebugLogsAsync(int count = 50);
+
+        // ── Processing checkpoints ────────────────────────────────────────────
+        Task<int>                               SaveCheckpointAsync(PlivoWhatsAppCheckpoint checkpoint);
+        Task<List<PlivoWhatsAppCheckpoint>>     GetRecentCheckpointsAsync(int count = 100);
+
         // ── Dashboard view ────────────────────────────────────────────────────
         Task<List<PlivoWhatsAppLogDetailVM>> GetLogDetailsAsync(
             int page = 1, int pageSize = 50,

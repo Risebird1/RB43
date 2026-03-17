@@ -125,6 +125,32 @@ namespace Risebird.AzureTimerFunctions
 
                         var response = await _whatsAppService.SendRescheduleMessageAsync(context);
 
+                        // Debug log — persist raw trigger request + response for diagnostics
+                        try
+                        {
+                            await _repository.SaveDebugLogAsync(new PlivoWhatsAppDebugLog
+                            {
+                                LogType          = "timer-reschedule-request",
+                                HttpStatusCode   = response?.HttpStatusCode,
+                                PlivoCXId        = response?.ApiId,
+                                LogId            = logId,
+                                RawPayload       = Newtonsoft.Json.JsonConvert.SerializeObject(context),
+                                ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                                ErrorMessage     = response?.Error
+                            });
+                            await _repository.SaveDebugLogAsync(new PlivoWhatsAppDebugLog
+                            {
+                                LogType          = "timer-reschedule-response",
+                                HttpStatusCode   = response?.HttpStatusCode,
+                                PlivoCXId        = response?.ApiId,
+                                LogId            = logId,
+                                RawPayload       = response?.RawResponseBody,
+                                ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
+                                ErrorMessage     = response?.Error
+                            });
+                        }
+                        catch { }
+
                         if (!string.IsNullOrEmpty(response?.Error))
                         {
                             _log.LogWarning($"[WA-Reschedule] Send failed for {candidate.CandidateEmail}: {response.Error}");
