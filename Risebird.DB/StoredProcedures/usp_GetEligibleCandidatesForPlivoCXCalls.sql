@@ -18,6 +18,10 @@
 --       where MeetingStatus is NULL (not yet evaluated), or is not a reschedule-needed
 --       status (reschedule-needed: 1, 3, 5, 9). Prevents re-scheduling a candidate who
 --       recently had or is currently scheduled for a valid interview.
+--   4d. Candidate does NOT have any interview meeting requiring rescheduling
+--       (MeetingStatus IN (1,3,5,9), confirmationStatus='2', or RedoInterview=1).
+--       Mirrors rule 5 of usp_GetEligibleCandidatesForPlivoCXReschedule so the two
+--       SPs are mutually exclusive — a reschedule candidate never gets a schedule call.
 --   5. Completed call count in PlivoCXCallLogs is < 2, UNLESS disposition is NULL
 --      (disposition NULL = never been reached; always worth attempting)
 --   6. Hard daily cap: no more than 4 schedule calls (any status) made today
@@ -140,6 +144,26 @@ BEGIN
               AND  (
                        ic.MeetingStatus IS NULL                             -- scheduled / not yet evaluated
                     OR ic.MeetingStatus NOT IN (1, 3, 5, 9)                 -- not a reschedule-needed status
+                   )
+        )
+
+        -- 4d. Exclude candidates who already need RESCHEDULING.
+        --     If a candidate has any interview meeting flagged as reschedule-needed
+        --     (No Show, Candidate Absent, Tech Issue, Redo, or Cancelled), they belong
+        --     to the reschedule flow — not the initial schedule flow.
+        --     This is the mirror of rule 5 in usp_GetEligibleCandidatesForPlivoCXReschedule,
+        --     ensuring the two SPs are mutually exclusive.
+        AND NOT EXISTS (
+            SELECT 1
+            FROM   InterviewMeetings im
+            JOIN   InterviewComments ic ON ic.InterviewId = im.id
+            WHERE  im.candidateEmail       = u.EmailId
+              AND  im.IRFId               = irf.IRFId
+              AND  ISNULL(im.IsDeleted, 0) = 0
+              AND  (
+                       ic.MeetingStatus IN (1, 3, 5, 9)   -- No Show / Candidate Absent / Tech Issue / Redo
+                    OR im.confirmationStatus = '2'          -- Cancelled
+                    OR im.RedoInterview      = 1            -- Explicit redo flag
                    )
         )
 
