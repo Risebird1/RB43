@@ -141,7 +141,7 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false, bool testPlivoRescheduleCalls = false,
-            bool testPlivoWhatsAppSchedule = true, bool testPlivoWhatsAppReschedule = false)
+            bool testPlivoWhatsAppSchedule = false, bool testPlivoWhatsAppReschedule = false)
         {
             try
             {
