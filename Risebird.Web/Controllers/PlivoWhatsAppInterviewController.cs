@@ -31,13 +31,14 @@ namespace Risebird.Web.Controllers
     ///        • AI Conversation node drives the scheduling dialogue over WhatsApp
     ///        • Extracts variables: interview_date, interview_time, candidate_confirmed, candidate_disposition
     ///
-    ///   3. ConversationEndCallback (Plivo CX → our server, configured as "Hangup URL" in Events tab)
+    ///   3. ConversationEndCallback (Plivo CX → our server, configured as "WhatsApp Status URL" in Event Callbacks tab)
     ///        → receives all extracted variables + transcript
     ///        → if candidate_confirmed=true → calls the Schedule API
     ///        → updates PlivoWhatsAppLog
     ///
-    /// Configure in cx.plivo.com → AI Studio → Your WhatsApp Flow → Agent Config → Events:
-    ///   Hangup URL: https://your-domain.com/PlivoWhatsAppInterview/ConversationEndCallback
+    /// Configure in cx.plivo.com → AI Studio → Your WhatsApp Flow → Settings → Event Callbacks:
+    ///   WhatsApp Status URL: https://your-domain.com/PlivoWhatsAppInterview/ConversationEndCallback
+    ///   (NOT "Hangup URL" — that is voice-only; for WhatsApp agents it is "WhatsApp Status URL")
     /// </summary>
     [Authorize]
     public class PlivoWhatsAppInterviewController : Controller
@@ -290,7 +291,8 @@ namespace Risebird.Web.Controllers
         /// The payload is identical in shape to the voice HangupCallback envelope —
         /// same nested JSON with event_data containing AI-extracted variables.
         ///
-        /// Configure in cx.plivo.com → Agents → Your WhatsApp Flow → Agent Config → Events → Hangup URL:
+        /// Configure in cx.plivo.com → AI Studio → Your WhatsApp Flow → Settings → Event Callbacks
+        ///   → WhatsApp Status URL (NOT "Hangup URL" — that is voice-only):
         ///   https://your-domain.com/PlivoWhatsAppInterview/ConversationEndCallback
         /// </summary>
         [HttpPost]
@@ -775,11 +777,142 @@ namespace Risebird.Web.Controllers
                 instructions = new[]
                 {
                     "1. Go to cx.plivo.com → AI Studio → your WhatsApp flow",
-                    "2. Click Agent Config → Events → set Hangup URL to the conversationEndUrl above",
+                    "2. Click Settings → Event Callbacks → set 'WhatsApp Status URL' (NOT Hangup URL — that is voice-only) to the conversationEndUrl above",
                     "3. Copy the WhatsApp flow's API Trigger URL → set as PlivoWhatsApp:ScheduleTriggerEndpointUrl in appsettings.json",
                     "4. Create a separate reschedule flow → copy its trigger URL → set as PlivoWhatsApp:RescheduleTriggerEndpointUrl",
                     "5. Ensure the AI Conversation node extracts: interview_date, interview_time, candidate_confirmed, candidate_disposition"
                 }
+            });
+        }
+
+        /// <summary>
+        /// Diagnostic endpoint — fetches two things in parallel:
+        ///   1. Recent outbound WhatsApp messages from the Plivo Messaging API
+        ///      (shows delivery status + WhatsApp error codes for each message)
+        ///   2. Agent run details from the Plivo CX agentflow API
+        ///      (shows node-level execution result for the given run ID)
+        ///
+        /// Access:
+        ///   /PlivoWhatsAppInterview/Diagnose
+        ///   /PlivoWhatsAppInterview/Diagnose?runId=b49f5a19-3e45-4d37-8fde-58e8b2ceb734
+        ///   /PlivoWhatsAppInterview/Diagnose?runId=XXX&amp;flowId=5d91b207-15d7-4e7a-a698-0683026f5a5f&amp;limit=5
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Diagnose(
+            string runId  = null,
+            string flowId = null,
+            int    limit  = 10)
+        {
+            var authId    = _configuration["PlivoWhatsApp:ApiAuthId"]    ?? string.Empty;
+            var authToken = _configuration["PlivoWhatsApp:ApiAuthToken"]  ?? string.Empty;
+            var fromNumber = _configuration["PlivoWhatsApp:FromNumber"]   ?? "+919667032088";
+
+            // Strip leading + for Plivo Messaging API src filter
+            var srcFilter = fromNumber.TrimStart('+');
+
+            var credentials = Convert.ToBase64String(
+                System.Text.Encoding.ASCII.GetBytes($"{authId}:{authToken}"));
+
+            using var http = new System.Net.Http.HttpClient();
+            http.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
+
+            var result = new System.Collections.Generic.Dictionary<string, object>();
+
+            // ── 1. Plivo Messaging API — recent outbound WhatsApp messages ────────────
+            // Shows per-message status (queued/sent/delivered/failed) + error code
+            // GET https://api.plivo.com/v1/Account/{auth_id}/Message/?message_type=whatsapp&src={number}&limit=N
+            try
+            {
+                var msgUrl = $"https://api.plivo.com/v1/Account/{authId}/Message/" +
+                             $"?message_type=whatsapp&src={srcFilter}&limit={limit}&sort=-created_on";
+                var msgResp = await http.GetAsync(msgUrl);
+                var msgBody = await msgResp.Content.ReadAsStringAsync();
+                result["messaging_api"] = new
+                {
+                    url        = msgUrl,
+                    httpStatus = (int)msgResp.StatusCode,
+                    response   = JsonConvert.DeserializeObject(msgBody)
+                };
+            }
+            catch (Exception ex)
+            {
+                result["messaging_api"] = new { error = ex.Message };
+            }
+
+            // ── 2. Plivo CX agentflow API — run detail ────────────────────────────────
+            // Tries two probable endpoint patterns for the run detail:
+            //   a) /v1/account/{auth_id}/flow/{flow_id}/runs/{run_id}
+            //   b) /v1/account/{auth_id}/runs/{run_id}
+            // (Plivo CX does not publish this in their docs but the endpoints exist)
+            if (!string.IsNullOrEmpty(runId))
+            {
+                // Pattern A — scoped to a specific flow
+                if (!string.IsNullOrEmpty(flowId))
+                {
+                    try
+                    {
+                        var urlA = $"https://agentflow.plivo.com/v1/account/{authId}/flow/{flowId}/runs/{runId}";
+                        var respA = await http.GetAsync(urlA);
+                        var bodyA = await respA.Content.ReadAsStringAsync();
+                        result["agentflow_run_scoped"] = new
+                        {
+                            url        = urlA,
+                            httpStatus = (int)respA.StatusCode,
+                            response   = JsonConvert.DeserializeObject(bodyA)
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        result["agentflow_run_scoped"] = new { error = ex.Message };
+                    }
+                }
+
+                // Pattern B — global run lookup
+                try
+                {
+                    var urlB = $"https://agentflow.plivo.com/v1/account/{authId}/runs/{runId}";
+                    var respB = await http.GetAsync(urlB);
+                    var bodyB = await respB.Content.ReadAsStringAsync();
+                    result["agentflow_run_global"] = new
+                    {
+                        url        = urlB,
+                        httpStatus = (int)respB.StatusCode,
+                        response   = JsonConvert.DeserializeObject(bodyB)
+                    };
+                }
+                catch (Exception ex)
+                {
+                    result["agentflow_run_global"] = new { error = ex.Message };
+                }
+
+                // Pattern C — cx.plivo.com API (alternative base)
+                try
+                {
+                    var urlC = $"https://cx.plivo.com/api/v1/account/{authId}/runs/{runId}";
+                    var respC = await http.GetAsync(urlC);
+                    var bodyC = await respC.Content.ReadAsStringAsync();
+                    result["cx_api_run"] = new
+                    {
+                        url        = urlC,
+                        httpStatus = (int)respC.StatusCode,
+                        response   = JsonConvert.DeserializeObject(bodyC)
+                    };
+                }
+                catch (Exception ex)
+                {
+                    result["cx_api_run"] = new { error = ex.Message };
+                }
+            }
+            else
+            {
+                result["agentflow_run_note"] = "Pass ?runId=YOUR_RUN_ID to also query agentflow run detail. " +
+                    "Copy the run ID from the cx.plivo.com URL when viewing an agent run.";
+            }
+
+            return Json(result, new Newtonsoft.Json.JsonSerializerSettings
+            {
+                Formatting = Newtonsoft.Json.Formatting.Indented
             });
         }
     }
