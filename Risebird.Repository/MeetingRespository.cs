@@ -7715,6 +7715,7 @@ namespace Risebird.Repository
                     return true;
                 }
 
+                    parameters.Add("@redFlagsJson", redFlagsJson);
             }
             catch (SqlException ex)
             {
