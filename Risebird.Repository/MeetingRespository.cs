@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -7712,10 +7713,62 @@ namespace Risebird.Repository
                     parameters.Add("@score", model.score);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveAITranscriptAnalysis", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
+                    // Persist red-flag data (parameter name + verdict only) to QC analysis tables
+                    await SaveQcInterviewAIevaluation(interviewId, model);
                     return true;
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Saves transcript AI evaluation into QcInterviewAIevaluation and QcInterviewAIevaluationDetails. Full JSON response is stored in TranscritAiDetails; red-flag rows in details.
+        /// </summary>
+        /// <param name="jsonResponse">Optional. Full transcript analysis JSON response to store in TranscritAiDetails. If null, model is serialized to JSON.</param>
+        public async Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null)
+        {
+            try
+            {
+                if (model == null) return false;
+
+                var redFlagDetails = new List<QcInterviewAIevaluationDetailItem>();
+                if (model.redFlags != null)
+                {
+                    foreach (var kv in model.redFlags)
+                    {
+                        redFlagDetails.Add(new QcInterviewAIevaluationDetailItem
+                        {
+                            FlagName = kv.Key,
+                            Verdict = kv.Value?.redFlagVerdict,
+                            Remark = kv.Value?.observation
+                        });
+                    }
+                }
+
+                var redFlagsJson = redFlagDetails.Count > 0
+                    ? JsonConvert.SerializeObject(redFlagDetails)
+                    : (string)null;
+
+                // Store full JSON response in TranscritAiDetails; use provided jsonResponse or serialize model
+                var transcritAiDetails = jsonResponse;
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@score", model.score);
+                    parameters.Add("@verdict", model.verdict ?? (string)null);
+                    parameters.Add("@transcritAiDetails", transcritAiDetails);
                     parameters.Add("@redFlagsJson", redFlagsJson);
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIevaluation", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
             }
             catch (SqlException ex)
             {

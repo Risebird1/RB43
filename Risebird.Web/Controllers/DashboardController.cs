@@ -555,15 +555,15 @@ namespace Risebird.Web.Controllers
                         var callLog = new Risebird.Entities.Data.PlivoCXModels.PlivoCXCallLog
                         {
                             RecipientPhone = phoneNumber,
-                            RecipientName  = candidate.CandidateName,
+                            RecipientName = candidate.CandidateName,
                             RecipientEmail = candidate.CandidateEmail,
-                            IRFId          = candidate.IRFId,
-                            CandidateId    = candidate.CandidateId,
-                            JobTitle       = candidate.IRFName,
-                            ClientName     = candidate.ClientName,
-                            CallStatus     = "initiated",
+                            IRFId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
+                            CallStatus = "initiated",
                             InterviewBooked = false,
-                            TriggeredBy    = $"Dashboard-{triggeredByEmail}"
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
                         int logId = await _plivoCXCallRepository.SaveCallLogAsync(callLog);
                         testResults.Add($"   Call log saved — DB Id: {logId}");
@@ -571,15 +571,15 @@ namespace Risebird.Web.Controllers
                         // 2. Trigger Plivo CX outbound call
                         var triggerReq = new Risebird.Entities.Data.PlivoCXModels.PlivoCXTriggerRequest
                         {
-                            PhoneNumber          = phoneNumber,
-                            CandidateName        = candidate.CandidateName ?? "Candidate",
-                            CandidateEmail       = candidate.CandidateEmail,
-                            IrfId                = candidate.IRFId.ToString(),
-                            JobTitle             = candidate.IRFName,
-                            ClientName           = candidate.ClientName,
-                            LogId                = logId.ToString(),
-                            TodayDate            = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
-                            TomorrowDate         = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
+                            PhoneNumber = phoneNumber,
+                            CandidateName = candidate.CandidateName ?? "Candidate",
+                            CandidateEmail = candidate.CandidateEmail,
+                            IrfId = candidate.IRFId.ToString(),
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
+                            LogId = logId.ToString(),
+                            TodayDate = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            TomorrowDate = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
                             DayAfterTomorrowDate = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
                         };
 
@@ -591,24 +591,24 @@ namespace Risebird.Web.Controllers
                             await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
                                 new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
                                 {
-                                    LogType          = "trigger-request",
-                                    HttpStatusCode   = response?.HttpStatusCode,
-                                    PlivoCXId        = response?.ApiId,
-                                    CallLogId        = logId,
-                                    RawPayload       = Newtonsoft.Json.JsonConvert.SerializeObject(triggerReq),
+                                    LogType = "trigger-request",
+                                    HttpStatusCode = response?.HttpStatusCode,
+                                    PlivoCXId = response?.ApiId,
+                                    CallLogId = logId,
+                                    RawPayload = Newtonsoft.Json.JsonConvert.SerializeObject(triggerReq),
                                     ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
-                                    ErrorMessage     = response?.Error
+                                    ErrorMessage = response?.Error
                                 });
                             await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
                                 new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
                                 {
-                                    LogType          = "trigger-response",
-                                    HttpStatusCode   = response?.HttpStatusCode,
-                                    PlivoCXId        = response?.ApiId,
-                                    CallLogId        = logId,
-                                    RawPayload       = response?.RawResponseBody,
+                                    LogType = "trigger-response",
+                                    HttpStatusCode = response?.HttpStatusCode,
+                                    PlivoCXId = response?.ApiId,
+                                    CallLogId = logId,
+                                    RawPayload = response?.RawResponseBody,
                                     ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
-                                    ErrorMessage     = response?.Error
+                                    ErrorMessage = response?.Error
                                 });
                         }
                         catch { }
@@ -616,20 +616,20 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrEmpty(response?.Error))
                         {
                             testResults.Add($"   TRIGGER FAILED: {response.Error}");
-                            callLog.Id         = logId;
+                            callLog.Id = logId;
                             callLog.CallStatus = "trigger-failed";
-                            callLog.UpdatedAt  = DateTime.UtcNow;
+                            callLog.UpdatedAt = DateTime.UtcNow;
                             await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
                             failureCount++;
                         }
                         else
                         {
                             testResults.Add($"   Triggered — ApiId: {response?.ApiId} | Http: {response?.HttpStatusCode}");
-                            callLog.Id                    = logId;
+                            callLog.Id = logId;
                             callLog.PlivoCXConversationId = response?.ConversationId;
-                            callLog.PlivoCXRequestId      = response?.ApiId;
-                            callLog.CallStatus            = "triggered";
-                            callLog.UpdatedAt             = DateTime.UtcNow;
+                            callLog.PlivoCXRequestId = response?.ApiId;
+                            callLog.CallStatus = "triggered";
+                            callLog.UpdatedAt = DateTime.UtcNow;
                             await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
 
                             await _plivoCXCallRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
@@ -749,17 +749,17 @@ namespace Risebird.Web.Controllers
                         // 1. Save call log (CallPurpose = "reschedule")
                         var callLog = new Risebird.Entities.Data.PlivoCXModels.PlivoCXCallLog
                         {
-                            RecipientPhone   = phoneNumber,
-                            RecipientName    = candidate.CandidateName,
-                            RecipientEmail   = candidate.CandidateEmail,
-                            IRFId            = candidate.IRFId,
-                            CandidateId      = candidate.CandidateId,
-                            JobTitle         = candidate.JobTitle,
-                            ClientName       = candidate.ClientName,
-                            CallStatus       = "initiated",
-                            InterviewBooked  = false,
-                            CallPurpose      = "reschedule",
-                            TriggeredBy      = $"Dashboard-{triggeredByEmail}"
+                            RecipientPhone = phoneNumber,
+                            RecipientName = candidate.CandidateName,
+                            RecipientEmail = candidate.CandidateEmail,
+                            IRFId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.JobTitle,
+                            ClientName = candidate.ClientName,
+                            CallStatus = "initiated",
+                            InterviewBooked = false,
+                            CallPurpose = "reschedule",
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
                         int logId = await _plivoCXCallRepository.SaveCallLogAsync(callLog);
                         testResults.Add($"   Call log saved — DB Id: {logId}");
@@ -767,18 +767,18 @@ namespace Risebird.Web.Controllers
                         // 2. Trigger the reschedule agent
                         var triggerReq = new Risebird.Entities.Data.PlivoCXModels.PlivoCXTriggerRequest
                         {
-                            PhoneNumber           = phoneNumber,
-                            CandidateName         = candidate.CandidateName ?? "Candidate",
-                            CandidateEmail        = candidate.CandidateEmail,
-                            IrfId                 = candidate.IRFId.ToString(),
-                            JobTitle              = candidate.JobTitle,
-                            ClientName            = candidate.ClientName,
-                            LogId                 = logId.ToString(),
-                            CallPurpose           = "reschedule",
+                            PhoneNumber = phoneNumber,
+                            CandidateName = candidate.CandidateName ?? "Candidate",
+                            CandidateEmail = candidate.CandidateEmail,
+                            IrfId = candidate.IRFId.ToString(),
+                            JobTitle = candidate.JobTitle,
+                            ClientName = candidate.ClientName,
+                            LogId = logId.ToString(),
+                            CallPurpose = "reschedule",
                             OriginalInterviewDate = candidate.OriginalInterviewDate,
-                            TodayDate             = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
-                            TomorrowDate          = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
-                            DayAfterTomorrowDate  = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
+                            TodayDate = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            TomorrowDate = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
+                            DayAfterTomorrowDate = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
                         };
 
                         var response = await _plivoCXService.TriggerRescheduleCallAsync(triggerReq);
@@ -789,24 +789,24 @@ namespace Risebird.Web.Controllers
                             await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
                                 new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
                                 {
-                                    LogType          = "reschedule-trigger-request",
-                                    HttpStatusCode   = response?.HttpStatusCode,
-                                    PlivoCXId        = response?.ApiId,
-                                    CallLogId        = logId,
-                                    RawPayload       = Newtonsoft.Json.JsonConvert.SerializeObject(triggerReq),
+                                    LogType = "reschedule-trigger-request",
+                                    HttpStatusCode = response?.HttpStatusCode,
+                                    PlivoCXId = response?.ApiId,
+                                    CallLogId = logId,
+                                    RawPayload = Newtonsoft.Json.JsonConvert.SerializeObject(triggerReq),
                                     ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
-                                    ErrorMessage     = response?.Error
+                                    ErrorMessage = response?.Error
                                 });
                             await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
                                 new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
                                 {
-                                    LogType          = "reschedule-trigger-response",
-                                    HttpStatusCode   = response?.HttpStatusCode,
-                                    PlivoCXId        = response?.ApiId,
-                                    CallLogId        = logId,
-                                    RawPayload       = response?.RawResponseBody,
+                                    LogType = "reschedule-trigger-response",
+                                    HttpStatusCode = response?.HttpStatusCode,
+                                    PlivoCXId = response?.ApiId,
+                                    CallLogId = logId,
+                                    RawPayload = response?.RawResponseBody,
                                     ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
-                                    ErrorMessage     = response?.Error
+                                    ErrorMessage = response?.Error
                                 });
                         }
                         catch { }
@@ -814,20 +814,20 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrEmpty(response?.Error))
                         {
                             testResults.Add($"   TRIGGER FAILED: {response.Error}");
-                            callLog.Id         = logId;
+                            callLog.Id = logId;
                             callLog.CallStatus = "trigger-failed";
-                            callLog.UpdatedAt  = DateTime.UtcNow;
+                            callLog.UpdatedAt = DateTime.UtcNow;
                             await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
                             failureCount++;
                         }
                         else
                         {
                             testResults.Add($"   Triggered — ApiId: {response?.ApiId} | Http: {response?.HttpStatusCode}");
-                            callLog.Id                    = logId;
+                            callLog.Id = logId;
                             callLog.PlivoCXConversationId = response?.ConversationId;
-                            callLog.PlivoCXRequestId      = response?.ApiId;
-                            callLog.CallStatus            = "triggered";
-                            callLog.UpdatedAt             = DateTime.UtcNow;
+                            callLog.PlivoCXRequestId = response?.ApiId;
+                            callLog.CallStatus = "triggered";
+                            callLog.UpdatedAt = DateTime.UtcNow;
                             await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
 
                             await _plivoCXCallRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
@@ -950,17 +950,17 @@ namespace Risebird.Web.Controllers
                         // 1. Save log to get DB Id
                         var log = new PlivoWhatsAppLog
                         {
-                            RecipientName  = candidate.CandidateName,
+                            RecipientName = candidate.CandidateName,
                             RecipientPhone = phoneNumber,
                             RecipientEmail = candidate.CandidateEmail,
-                            IRFId          = candidate.IRFId,
-                            CandidateId    = candidate.CandidateId,
-                            JobTitle       = candidate.IRFName,
-                            ClientName     = candidate.ClientName,
+                            IRFId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
                             MessagePurpose = "schedule",
-                            Status         = "initiated",
-                            MessageStatus  = "initiated",
-                            TriggeredBy    = $"Dashboard-{triggeredByEmail}"
+                            Status = "initiated",
+                            MessageStatus = "initiated",
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
                         int logId = await _plivoWhatsAppRepository.SaveLogAsync(log);
                         log.Id = logId;
@@ -969,19 +969,19 @@ namespace Risebird.Web.Controllers
                         // 2. Build trigger context and send
                         var context = new PlivoWhatsAppTriggerContext
                         {
-                            CandidateName     = candidate.CandidateName,
-                            CandidatePhone    = phoneNumber,
-                            CandidateEmail    = candidate.CandidateEmail,
-                            IrfId             = candidate.IRFId,
-                            CandidateId       = candidate.CandidateId,
-                            JobTitle          = candidate.IRFName,
-                            ClientName        = candidate.ClientName,
-                            MessagePurpose    = "schedule",
-                            LogId             = logId.ToString(),
-                            TodayDate         = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            CandidateName = candidate.CandidateName,
+                            CandidatePhone = phoneNumber,
+                            CandidateEmail = candidate.CandidateEmail,
+                            IrfId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
+                            MessagePurpose = "schedule",
+                            LogId = logId.ToString(),
+                            TodayDate = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
                             TomorrowDateLabel = tomorrow.ToString("dddd, dd MMMM yyyy"),
                             DayAfterDateLabel = dayAfter.ToString("dddd, dd MMMM yyyy"),
-                            TriggeredBy       = $"Dashboard-{triggeredByEmail}"
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
 
                         var response = await _plivoWhatsAppService.SendScheduleMessageAsync(context);
@@ -989,8 +989,8 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrEmpty(response?.Error))
                         {
                             testResults.Add($"   TRIGGER FAILED: {response.Error}");
-                            log.Status             = "trigger-failed";
-                            log.MessageStatus      = "trigger-failed";
+                            log.Status = "trigger-failed";
+                            log.MessageStatus = "trigger-failed";
                             log.BookingApiResponse = response.Error;
                             await _plivoWhatsAppRepository.UpdateLogAsync(log);
                             failureCount++;
@@ -999,9 +999,9 @@ namespace Risebird.Web.Controllers
                         {
                             testResults.Add($"   Triggered — ConversationId: {response?.ConversationId} | ApiId: {response?.ApiId}");
                             log.PlivoCXConversationId = response?.ConversationId;
-                            log.PlivoCXRequestId      = response?.ApiId;
-                            log.MessageStatus         = "triggered";
-                            log.Status                = "triggered";
+                            log.PlivoCXRequestId = response?.ApiId;
+                            log.MessageStatus = "triggered";
+                            log.Status = "triggered";
                             await _plivoWhatsAppRepository.UpdateLogAsync(log);
                             await _plivoWhatsAppRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
                             successCount++;
@@ -1124,18 +1124,18 @@ namespace Risebird.Web.Controllers
                         // 1. Save log to get DB Id
                         var log = new PlivoWhatsAppLog
                         {
-                            RecipientName         = candidate.CandidateName,
-                            RecipientPhone        = phoneNumber,
-                            RecipientEmail        = candidate.CandidateEmail,
-                            IRFId                 = candidate.IRFId,
-                            CandidateId           = candidate.CandidateId,
-                            JobTitle              = candidate.IRFName,
-                            ClientName            = candidate.ClientName,
-                            MessagePurpose        = "reschedule",
+                            RecipientName = candidate.CandidateName,
+                            RecipientPhone = phoneNumber,
+                            RecipientEmail = candidate.CandidateEmail,
+                            IRFId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
+                            MessagePurpose = "reschedule",
                             OriginalInterviewDate = candidate.OriginalInterviewDate,
-                            Status                = "initiated",
-                            MessageStatus         = "initiated",
-                            TriggeredBy           = $"Dashboard-{triggeredByEmail}"
+                            Status = "initiated",
+                            MessageStatus = "initiated",
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
                         int logId = await _plivoWhatsAppRepository.SaveLogAsync(log);
                         log.Id = logId;
@@ -1144,20 +1144,20 @@ namespace Risebird.Web.Controllers
                         // 2. Build trigger context and send
                         var context = new PlivoWhatsAppTriggerContext
                         {
-                            CandidateName         = candidate.CandidateName,
-                            CandidatePhone        = phoneNumber,
-                            CandidateEmail        = candidate.CandidateEmail,
-                            IrfId                 = candidate.IRFId,
-                            CandidateId           = candidate.CandidateId,
-                            JobTitle              = candidate.IRFName,
-                            ClientName            = candidate.ClientName,
-                            MessagePurpose        = "reschedule",
+                            CandidateName = candidate.CandidateName,
+                            CandidatePhone = phoneNumber,
+                            CandidateEmail = candidate.CandidateEmail,
+                            IrfId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
+                            MessagePurpose = "reschedule",
                             OriginalInterviewDate = candidate.OriginalInterviewDate,
-                            LogId                 = logId.ToString(),
-                            TodayDate             = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
-                            TomorrowDateLabel     = tomorrow.ToString("dddd, dd MMMM yyyy"),
-                            DayAfterDateLabel     = dayAfter.ToString("dddd, dd MMMM yyyy"),
-                            TriggeredBy           = $"Dashboard-{triggeredByEmail}"
+                            LogId = logId.ToString(),
+                            TodayDate = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            TomorrowDateLabel = tomorrow.ToString("dddd, dd MMMM yyyy"),
+                            DayAfterDateLabel = dayAfter.ToString("dddd, dd MMMM yyyy"),
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
 
                         var response = await _plivoWhatsAppService.SendRescheduleMessageAsync(context);
@@ -1165,8 +1165,8 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrEmpty(response?.Error))
                         {
                             testResults.Add($"   TRIGGER FAILED: {response.Error}");
-                            log.Status             = "trigger-failed";
-                            log.MessageStatus      = "trigger-failed";
+                            log.Status = "trigger-failed";
+                            log.MessageStatus = "trigger-failed";
                             log.BookingApiResponse = response.Error;
                             await _plivoWhatsAppRepository.UpdateLogAsync(log);
                             failureCount++;
@@ -1175,9 +1175,9 @@ namespace Risebird.Web.Controllers
                         {
                             testResults.Add($"   Triggered — ConversationId: {response?.ConversationId} | ApiId: {response?.ApiId}");
                             log.PlivoCXConversationId = response?.ConversationId;
-                            log.PlivoCXRequestId      = response?.ApiId;
-                            log.MessageStatus         = "triggered";
-                            log.Status                = "triggered";
+                            log.PlivoCXRequestId = response?.ApiId;
+                            log.MessageStatus = "triggered";
+                            log.Status = "triggered";
                             await _plivoWhatsAppRepository.UpdateLogAsync(log);
                             await _plivoWhatsAppRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
                             successCount++;
@@ -7292,6 +7292,63 @@ NEVER:
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        /// <summary>
+        /// GET: Test with hardcoded JSON or optional short jsonResponse in query. Persists red-flag data into QC tables.
+        /// </summary>
+        public async Task<IActionResult> TestSaveQcInterviewAIevaluationPost(int interviewId, string jsonResponse)
+        {
+            try
+            {
+                if (interviewId <= 0)
+                    return Json(new { success = false, message = "Provide a valid interviewId." });
+
+                // Use hardcoded JSON for testing when jsonResponse is not provided
+                string jsonToProcess = !string.IsNullOrWhiteSpace(jsonResponse)
+                    ? jsonResponse
+                    : GetHardcodedTranscriptAnalysisJson();
+
+                TranscriptAnalysisSchema model;
+                try
+                {
+                    model = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(jsonToProcess);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = "Invalid JSON. " + ex.Message });
+                }
+
+                if (model == null)
+                    return Json(new { success = false, message = "Deserialization returned null." });
+
+                // Pass full JSON so it is saved to TranscritAiDetails
+                // Service call (internally uses repository)
+                bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(interviewId, model, jsonToProcess);
+                // Direct repository call to exercise both layers
+                bool repositoryResult = await _meetingRespository.SaveQcInterviewAIevaluation(interviewId, model, jsonToProcess);
+
+                return Json(new
+                {
+                    success = serviceResult && repositoryResult,
+                    message = "SaveQcInterviewAIevaluation test completed (service + repository both called).",
+                    serviceResult,
+                    repositoryResult
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Hardcoded transcript analysis API response for testing SaveQcInterviewAIevaluation (red flags: verdict and observation/Remark are persisted).
+        /// </summary>
+        private static string GetHardcodedTranscriptAnalysisJson()
+        {
+            return "{\r\n  \"completeAnalysis\": \"• Interviewer Identification: Inferred as the person asking questions\\n• Interviewee Identification: Inferred as the person answering questions\\n• Role Identification Confidence: Inferred from question-answer pattern\\n\\n• Question Summary Overview:\\n  • [timestamp unavailable] Can you hear me?\\n    - Question Quality: Setup check; acceptable.\\n  • [timestamp unavailable] You can start with your past experience and the current products which you are working on and its architecture.\\n    - Question Quality: Open-ended; allows for detailed response.\\n  • [timestamp unavailable] Let's say you have to design an entire CICD pipeline for an application which has high user traffic. What will be your pipeline? What is the tool stack which you will be using?\\n    - Question Quality: Relevant and technical; good for evaluation.\\n  • [timestamp unavailable] How are you planning to secure this entire build pipeline?\\n    - Question Quality: Relevant follow-up; good depth.\\n  • [timestamp unavailable] What kind of Git workflow would you suggest if there is a large DevOps team present in your organization?\\n    - Question Quality: Relevant; explores candidate's knowledge.\\n  • [timestamp unavailable] What are the services you use in AWS?\\n    - Question Quality: Relevant; checks familiarity with AWS.\\n  • [timestamp unavailable] Let's say you have an RDS and it has connectivity issues. How do you rectify it?\\n    - Question Quality: Technical troubleshooting; relevant.\\n  • [timestamp unavailable] In what terms is Amazon Aurora different from normal RDS?\\n    - Question Quality: Relevant; checks understanding of AWS services.\\n  • [timestamp unavailable] How are you planning to monitor this RDS?\\n    - Question Quality: Relevant; checks monitoring skills.\\n  • [timestamp unavailable] What is Terraform taint command?\\n    - Question Quality: Technical; checks specific knowledge.\\n  • [timestamp unavailable] Let's say you have a Terraform file and it has indentation issues. How do you fix those with the command?\\n    - Question Quality: Technical; checks practical skills.\\n  • [timestamp unavailable] What is the Terraform backend?\\n    - Question Quality: Technical; checks understanding of infrastructure management.\\n  • [timestamp unavailable] How do you manage this Terraform state file having conflicts?\\n    - Question Quality: Relevant; checks conflict resolution skills.\\n  • [timestamp unavailable] What are the differences between Terraform and CloudFormation?\\n    - Question Quality: Comparative; checks understanding of tools.\\n  • [timestamp unavailable] Let's say your organization is using a multi-cloud environment. How would you structure your Terraform file?\\n    - Question Quality: Relevant; checks multi-cloud strategy.\\n  • [timestamp unavailable] Are you familiar with AWS CLI?\\n    - Question Quality: Relevant; checks command-line skills.\\n  • [timestamp unavailable] How do you manage or troubleshoot AWS resource issues from AWS CLI?\\n    - Question Quality: Technical; checks troubleshooting skills.\\n  • [timestamp unavailable] Let's say we are getting logs stored in an S3 bucket. How would you write a Python script to delete logs older than 30 days?\\n    - Question Quality: Technical; checks scripting skills.\\n  • [timestamp unavailable] How do you manage secrets in your Python script?\\n    - Question Quality: Relevant; checks security practices.\\n  • [timestamp unavailable] How do you prefer monitoring the application?\\n    - Question Quality: Relevant; checks monitoring preferences.\\n  • [timestamp unavailable] What are the key differences between CloudWatch and CloudTrail?\\n    - Question Quality: Comparative; checks understanding of AWS services.\\n  • [timestamp unavailable] What are the different types of deployment strategies you know?\\n    - Question Quality: Relevant; checks deployment knowledge.\\n  • [timestamp unavailable] Let's say you have an application with high user traffic. What deployment strategy would you implement?\\n    - Question Quality: Relevant; checks strategic decision-making.\\n  • [timestamp unavailable] What are the different cloud migration strategies you know?\\n    - Question Quality: Relevant; checks migration knowledge.\\n  • [timestamp unavailable] Let's say you have your Jenkins running on a Linux server. How do you migrate it to a different server without data loss?\\n    - Question Quality: Technical; checks migration skills.\\n  • [timestamp unavailable] What was a critical issue you faced in your career and how did you resolve it?\\n    - Question Quality: Behavioral; checks problem-solving skills.\\n\\n• Red Flag Summary:\\n  • Disengaged or Absent Interviewer\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: No evidence found for this red flag in the transcript.\\n  • Scripted, Robotic, or Low-Effort\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: The interviewer asked relevant and varied questions.\\n  • Unethical or Unprofessional Behavior\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: No evidence found for this red flag in the transcript.\\n  • Poor Communication and Lack of Clarity\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: No evidence found for this red flag in the transcript.\\n  • Time-Wasting and Inefficient Interview\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: The interview focused on relevant technical topics.\\n  • Fake or Weak Evaluation Methods\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: The questions were relevant and technical.\\n  • Personal Identifiable or Contact Information Discussed\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: No evidence found for this red flag in the transcript.\\n  • Unproductive Time Due to Setup or Connectivity Issues\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: No evidence found for this red flag in the transcript.\\n  • Interviewer or Interviewee Absent or Session Incomplete\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: No evidence found for interviewer/interviewee absence or invalid completion in the transcript.\\n\\n• Interview Validity Assessment:\\n  - Observation: The interview appears validly conducted with no significant disruptions or evidence of fake completion.\\n\\n• Overall Score Calculation:\\n  - Starting Score: 10\\n  - Total Deductions: 0\\n  - Final Score: 10\\n\\n• Overall Observation:\\n  - The interviewer conducted a professional and relevant technical interview with no signs of disengagement or unprofessional behavior.\\n\\n• Final Verdict Explanation:\\n  - The verdict is 'no' because the interviewer appears professional and the interview was validly conducted based on the transcript evidence.\",\r\n  \"score\": 10,\r\n  \"verdict\": \"no\",\r\n  \"questionSummary\": [\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"Can you hear me?\",\r\n      \"questionQualityComment\": \"Setup check; acceptable.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"You can start with your past experience and the current products which you are working on and its architecture.\",\r\n      \"questionQualityComment\": \"Open-ended; allows for detailed response.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"Let's say you have to design an entire CICD pipeline for an application which has high user traffic. What will be your pipeline? What is the tool stack which you will be using?\",\r\n      \"questionQualityComment\": \"Relevant and technical; good for evaluation.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"How are you planning to secure this entire build pipeline?\",\r\n      \"questionQualityComment\": \"Relevant follow-up; good depth.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"What kind of Git workflow would you suggest if there is a large DevOps team present in your organization?\",\r\n      \"questionQualityComment\": \"Relevant; explores candidate's knowledge.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"What are the services you use in AWS?\",\r\n      \"questionQualityComment\": \"Relevant; checks familiarity with AWS.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"Let's say you have an RDS and it has connectivity issues. How do you rectify it?\",\r\n      \"questionQualityComment\": \"Technical troubleshooting; relevant.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"In what terms is Amazon Aurora different from normal RDS?\",\r\n      \"questionQualityComment\": \"Relevant; checks understanding of AWS services.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"How are you planning to monitor this RDS?\",\r\n      \"questionQualityComment\": \"Relevant; checks monitoring skills.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"What is Terraform taint command?\",\r\n      \"questionQualityComment\": \"Technical; checks specific knowledge.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"Let's say you have a Terraform file and it has indentation issues. How do you fix those with the command?\",\r\n      \"questionQualityComment\": \"Technical; checks practical skills.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"What is the Terraform backend?\",\r\n      \"questionQualityComment\": \"Technical; checks understanding of infrastructure management.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"How do you manage this Terraform state file having conflicts?\",\r\n      \"questionQualityComment\": \"Relevant; checks conflict resolution skills.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"What are the differences between Terraform and CloudFormation?\",\r\n      \"questionQualityComment\": \"Comparative; checks understanding of tools.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"Let's say your organization is using a multi-cloud environment. How would you structure your Terraform file?\",\r\n      \"questionQualityComment\": \"Relevant; checks multi-cloud strategy.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"Are you familiar with AWS CLI?\",\r\n      \"questionQualityComment\": \"Relevant; checks command-line skills.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"How do you manage or troubleshoot AWS resource issues from AWS CLI?\",\r\n      \"questionQualityComment\": \"Technical; checks troubleshooting skills.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"Let's say we are getting logs stored in an S3 bucket. How would you write a Python script to delete logs older than 30 days?\",\r\n      \"questionQualityComment\": \"Technical; checks scripting skills.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"How do you manage secrets in your Python script?\",\r\n      \"questionQualityComment\": \"Relevant; checks security practices.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"How do you prefer monitoring the application?\",\r\n      \"questionQualityComment\": \"Relevant; checks monitoring preferences.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"What are the key differences between CloudWatch and CloudTrail?\",\r\n      \"questionQualityComment\": \"Comparative; checks understanding of AWS services.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"What are the different types of deployment strategies you know?\",\r\n      \"questionQualityComment\": \"Relevant; checks deployment knowledge.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"Let's say you have an application with high user traffic. What deployment strategy would you implement?\",\r\n      \"questionQualityComment\": \"Relevant; checks strategic decision-making.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"What are the different cloud migration strategies you know?\",\r\n      \"questionQualityComment\": \"Relevant; checks migration knowledge.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"Let's say you have your Jenkins running on a Linux server. How do you migrate it to a different server without data loss?\",\r\n      \"questionQualityComment\": \"Technical; checks migration skills.\"\r\n    },\r\n    {\r\n      \"timestamp\": \"timestamp unavailable\",\r\n      \"question\": \"What was a critical issue you faced in your career and how did you resolve it?\",\r\n      \"questionQualityComment\": \"Behavioral; checks problem-solving skills.\"\r\n    }\r\n  ],\r\n  \"redFlags\": {\r\n    \"disengagedOrAbsentInterviewer\": {\r\n      \"redFlagVerdict\": \"no\",\r\n      \"scoreImpact\": 0,\r\n      \"observation\": \"No evidence found for this red flag in the transcript.\",\r\n      \"evidence\": []\r\n    },\r\n    \"scriptedRoboticOrLowEffort\": {\r\n      \"redFlagVerdict\": \"no\",\r\n      \"scoreImpact\": 0,\r\n      \"observation\": \"The interviewer asked relevant and varied questions.\",\r\n      \"evidence\": []\r\n    },\r\n    \"unethicalOrUnprofessionalBehavior\": {\r\n      \"redFlagVerdict\": \"no\",\r\n      \"scoreImpact\": 0,\r\n      \"observation\": \"No evidence found for this red flag in the transcript.\",\r\n      \"evidence\": []\r\n    },\r\n    \"poorCommunicationAndLackOfClarity\": {\r\n      \"redFlagVerdict\": \"no\",\r\n      \"scoreImpact\": 0,\r\n      \"observation\": \"No evidence found for this red flag in the transcript.\",\r\n      \"evidence\": []\r\n    },\r\n    \"timeWastingAndInefficientInterview\": {\r\n      \"redFlagVerdict\": \"no\",\r\n      \"scoreImpact\": 0,\r\n      \"observation\": \"The interview focused on relevant technical topics.\",\r\n      \"evidence\": []\r\n    },\r\n    \"fakeOrWeakEvaluationMethods\": {\r\n      \"redFlagVerdict\": \"no\",\r\n      \"scoreImpact\": 0,\r\n      \"observation\": \"The questions were relevant and technical.\",\r\n      \"evidence\": []\r\n    },\r\n    \"personalIdentifiableOrContactInformationDiscussed\": {\r\n      \"redFlagVerdict\": \"no\",\r\n      \"scoreImpact\": 0,\r\n      \"observation\": \"No evidence found for this red flag in the transcript.\",\r\n      \"evidence\": []\r\n    },\r\n    \"unproductiveTimeDueToSetupOrConnectivityIssues\": {\r\n      \"redFlagVerdict\": \"no\",\r\n      \"scoreImpact\": 0,\r\n      \"observation\": \"No evidence found for this red flag in the transcript.\",\r\n      \"evidence\": []\r\n    },\r\n    \"interviewerOrIntervieweeAbsentOrSessionIncomplete\": {\r\n      \"redFlagVerdict\": \"no\",\r\n      \"scoreImpact\": 0,\r\n      \"observation\": \"No evidence found for interviewer/interviewee absence or invalid completion in the transcript.\",\r\n      \"evidence\": []\r\n    }\r\n  }\r\n}";
         }
     }
 }
