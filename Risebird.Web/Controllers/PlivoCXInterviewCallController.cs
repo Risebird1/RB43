@@ -67,7 +67,9 @@ namespace Risebird.Web.Controllers
             string status      = null,
             string purpose     = null,
             string meeting     = null,
-            string disposition = null)
+            string disposition = null,
+            string dateFrom    = null,
+            string dateTo      = null)
         {
             try
             {
@@ -75,8 +77,12 @@ namespace Risebird.Web.Controllers
                 if (pageSize < 10)  pageSize = 10;
                 if (pageSize > 200) pageSize = 200;
 
+                DateTime? parsedDateFrom = DateTime.TryParse(dateFrom, out var df) ? df : (DateTime?)null;
+                DateTime? parsedDateTo   = DateTime.TryParse(dateTo,   out var dt) ? dt : (DateTime?)null;
+
                 var calls = await _repository.GetCallLogDetailsAsync(
-                    page, pageSize, status, purpose, meeting, disposition);
+                    page, pageSize, status, purpose, meeting, disposition,
+                    parsedDateFrom, parsedDateTo);
 
                 var first = calls.FirstOrDefault();
                 int total = first?.TotalCount ?? 0;
@@ -90,6 +96,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.Purpose     = purpose;
                 ViewBag.Meeting     = meeting;
                 ViewBag.Disposition = disposition;
+                ViewBag.DateFrom    = parsedDateFrom.HasValue ? parsedDateFrom.Value.ToString("yyyy-MM-dd") : null;
+                ViewBag.DateTo      = parsedDateTo.HasValue   ? parsedDateTo.Value.ToString("yyyy-MM-dd")   : null;
 
                 return View(calls);
             }
@@ -99,6 +107,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
                 ViewBag.Status = status; ViewBag.Purpose = purpose;
                 ViewBag.Meeting = meeting; ViewBag.Disposition = disposition;
+                ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 return View(new System.Collections.Generic.List<Risebird.Entities.ViewModel.PlivoCXCallLogDetailVM>());
             }
         }
