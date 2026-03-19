@@ -7730,7 +7730,8 @@ namespace Risebird.Repository
         /// Saves transcript AI evaluation into QcInterviewAIevaluation and QcInterviewAIevaluationDetails. Full JSON response is stored in TranscritAiDetails; red-flag rows in details.
         /// </summary>
         /// <param name="jsonResponse">Optional. Full transcript analysis JSON response to store in TranscritAiDetails. If null, model is serialized to JSON.</param>
-        public async Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null)
+        /// <param name="transcritAi">True = transcript AI evaluation (default); used to match/update the correct row and set SourceType in details.</param>
+        public async Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null, bool transcritAi = false)
         {
             try
             {
@@ -7763,6 +7764,7 @@ namespace Risebird.Repository
                     parameters.Add("@interviewId", interviewId);
                     parameters.Add("@score", model.score);
                     parameters.Add("@verdict", model.verdict ?? (string)null);
+                    parameters.Add("@transcritAi", transcritAi);
                     parameters.Add("@transcritAiDetails", transcritAiDetails);
                     parameters.Add("@redFlagsJson", redFlagsJson);
                     await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIevaluation", parameters, commandTimeout: 120,

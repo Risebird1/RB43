@@ -4521,11 +4521,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null)
+        public async Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null, bool transcritAi = false)
         {
             try
             {
-                return await _meetingRespository.SaveQcInterviewAIevaluation(interviewId, model, jsonResponse);
+                return await _meetingRespository.SaveQcInterviewAIevaluation(interviewId, model, jsonResponse, transcritAi);
             }
             catch (Exception ex)
             {

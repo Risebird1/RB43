@@ -7324,9 +7324,9 @@ NEVER:
 
                 // Pass full JSON so it is saved to TranscritAiDetails
                 // Service call (internally uses repository)
-                bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(interviewId, model, jsonToProcess);
+                bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(interviewId, model, jsonToProcess, true);
                 // Direct repository call to exercise both layers
-                bool repositoryResult = await _meetingRespository.SaveQcInterviewAIevaluation(interviewId, model, jsonToProcess);
+                bool repositoryResult = await _meetingRespository.SaveQcInterviewAIevaluation(interviewId, model, jsonToProcess, true);
 
                 return Json(new
                 {
