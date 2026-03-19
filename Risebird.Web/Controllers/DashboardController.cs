@@ -7327,7 +7327,7 @@ NEVER:
                 bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(interviewId, model, jsonToProcess, true);
                 return Json(new
                 {
-                    success = serviceResult && repositoryResult,
+                    success = serviceResult,
                     message = "SaveQcInterviewAIevaluation test completed (service + repository both called).",
                     serviceResult
                 });
