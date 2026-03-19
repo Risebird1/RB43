@@ -298,6 +298,7 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteQuestionsDiscussedFromReport(int interviewId);
         Task<string> GetInterviewCancellationSource(int interviewid);
         Task<bool> SaveAITranscriptAnalysis(int interviewId, TranscriptAnalysisSchema model);
+        Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null, bool transcritAi = true, string reportAIJsonResponse = null);
         Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);
         Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model);
         Task<IEnumerable<PendingVideoMeetingsData>> GetPendingTranscriptMeetings();

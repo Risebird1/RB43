@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -7712,9 +7713,67 @@ namespace Risebird.Repository
                     parameters.Add("@score", model.score);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveAITranscriptAnalysis", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
+                    // Persist red-flag data (parameter name + verdict only) to QC analysis tables
+                    await SaveQcInterviewAIevaluation(interviewId, model);
                     return true;
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Saves transcript AI or report AI evaluation into QcInterviewAIevaluation and QcInterviewAIevaluationDetails.
+        /// When transcritAi=true stores in TranscritAiDetails; when false stores in ReportAIDetails. Red-flag rows use SourceType.
+        /// </summary>
+        /// <param name="jsonResponse">Optional. Full transcript AI JSON for TranscritAiDetails (used when transcritAi=true). If null, model is serialized.</param>
+        /// <param name="reportAIJsonResponse">Optional. Full report AI JSON for ReportAIDetails (used when transcritAi=false). If null, model is serialized.</param>
+        /// <param name="transcritAi">True = transcript AI (default); false = report AI.</param>
+        public async Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null, bool transcritAi = true, string reportAIJsonResponse = null)
+        {
+            try
+            {
+                if (model == null) return false;
+
+                var redFlagDetails = new List<QcInterviewAIevaluationDetailItem>();
+                if (model.redFlags != null)
+                {
+                    foreach (var kv in model.redFlags)
+                    {
+                        redFlagDetails.Add(new QcInterviewAIevaluationDetailItem
+                        {
+                            FlagName = kv.Key,
+                            Verdict = kv.Value?.redFlagVerdict,
+                            Remark = kv.Value?.observation
+                        });
+                    }
+                }
+
+                var redFlagsJson = redFlagDetails.Count > 0
+                    ? JsonConvert.SerializeObject(redFlagDetails)
+                    : (string)null;
+
+                var transcritAiDetailsParam = transcritAi ? jsonResponse : null;
+                var reportAIDetailsParam = !transcritAi ? reportAIJsonResponse : null;
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@score", model.score);
+                    parameters.Add("@verdict", model.verdict ?? (string)null);
+                    parameters.Add("@transcritAi", transcritAi);
+                    parameters.Add("@transcritAiDetails", transcritAiDetailsParam);
+                    parameters.Add("@reportAIDetails", reportAIDetailsParam);
+                    parameters.Add("@redFlagsJson", redFlagsJson);
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIevaluation", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
             }
             catch (SqlException ex)
             {
