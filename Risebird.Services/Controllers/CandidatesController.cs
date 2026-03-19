@@ -269,18 +269,26 @@ namespace Risebird.Services.Controllers
                                                 var interviewdatetime = item.Interviewdate;
                                                 var zoomLink = new InstaZoomMeetingResponse();
                                                 //zoomLink = await CreateZoomMeeting(item.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration);
-                                                var rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(item.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration));
-                                                if (rbMeetingLinkResponse == null)
+                                                if (string.IsNullOrEmpty(jdDetails.MeetingPlatform) || jdDetails.MeetingPlatform == MeetingPlatforms.Zoho)
                                                 {
-                                                    _ScheduleCandidateStatus.onboardingStatus = "Apologies, the selected slot for the meeting is currently unavailable. Please open this Scheduling link again and choose another time slot to schedule the interview, Please contact Client HR if any issues.";
+                                                    var rbMeetingLinkResponse = await _zoho.CreateMeetingAsync(new ZohoCreateMeetingRequest(item.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration));
+                                                    if (rbMeetingLinkResponse == null)
+                                                    {
+                                                        _ScheduleCandidateStatus.onboardingStatus = "Apologies, the selected slot for the meeting is currently unavailable. Please open this Scheduling link again and choose another time slot to schedule the interview, Please contact Client HR if any issues.";
+                                                    }
+                                                    else
+                                                    {
+                                                        zoomLink.meetingid = rbMeetingLinkResponse.meetingKey;
+                                                        zoomLink.join_url = rbMeetingLinkResponse.joinLink;
+                                                        zoomLink.accountemail = rbMeetingLinkResponse.accountEmail;
+                                                    }
                                                 }
-                                                else
+                                                else if (jdDetails.MeetingPlatform == MeetingPlatforms.AIInterview)
                                                 {
-                                                    zoomLink.meetingid = rbMeetingLinkResponse.meetingKey;
-                                                    zoomLink.join_url = rbMeetingLinkResponse.joinLink;
-                                                    zoomLink.accountemail = rbMeetingLinkResponse.accountEmail;
+                                                    zoomLink.meetingid = "";
+                                                    zoomLink.join_url = "";
+                                                    zoomLink.accountemail = "AI";
                                                 }
-
                                                 string textreminder = string.Empty;
                                                 textreminder = item.Phone;
                                                 int interviewId = 0;

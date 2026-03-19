@@ -281,6 +281,7 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveProctoringReport(ProctoringReport model, string emailId);
         Task<IEnumerable<ZoomVideoQOSVM>> GetZoomQOSDataByMeetingId(int interviewId);
         Task<int> GetUniqueUserByEmailId(string emailId, string id);
+        Task<bool> IsInterviewerForInterview(string emailId, int interviewId);
         Task<bool> ConfirmInterviewavailability(string emailId, int id, string type);
         Task<bool> UpdateInterviewerAvailbilityStatusCampaignLevel(bool status, string uniqueId, int campaignId, string rsc = null);
         Task<bool> MoveInterviewForTechQC(string Emailid, int interviewid, bool activestatus);
