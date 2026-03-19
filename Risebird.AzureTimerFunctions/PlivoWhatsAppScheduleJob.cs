@@ -97,6 +97,7 @@ namespace Risebird.AzureTimerFunctions
                             ClientName        = candidate.ClientName,
                             MessagePurpose    = "schedule",
                             TriggeredBy       = "PlivoWhatsAppScheduleTimerFunction",
+                            TodayDate         = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
                             TomorrowDateLabel = tomorrow.ToString("dddd, dd MMMM yyyy"),
                             DayAfterDateLabel = dayAfter.ToString("dddd, dd MMMM yyyy"),
                             Option1DateTime   = tomorrow.Date + DefaultInterviewTime,

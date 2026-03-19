@@ -13,7 +13,8 @@ namespace Risebird.Repository.Interface
         Task<List<PlivoCXCallLogDetailVM>> GetCallLogDetailsAsync(
             int page = 1, int pageSize = 50,
             string status = null, string purpose = null,
-            string meeting = null, string disposition = null);
+            string meeting = null, string disposition = null,
+            System.DateTime? dateFrom = null, System.DateTime? dateTo = null);
 
         // ── Call logs ────────────────────────────────────────────────────────────
         Task<int>              SaveCallLogAsync(PlivoCXCallLog callLog);

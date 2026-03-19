@@ -18,6 +18,8 @@
 --   @Purpose     – filter by CallPurpose (NULL = all)
 --   @Meeting     – filter by MeetingCreated: 'YES' | 'NO' (NULL = all)
 --   @Disposition – filter by CandidateDisposition (NULL = all)
+--   @DateFrom    – filter calls on or after this date (NULL = no lower bound)
+--   @DateTo      – filter calls on or before this date (NULL = no upper bound)
 --
 -- Run to deploy:
 --   Execute this script against productProdDB in SSMS.
@@ -29,7 +31,9 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_GetPlivoCXCallLogDetails]
     @Status      NVARCHAR(50)  = NULL,
     @Purpose     NVARCHAR(20)  = NULL,
     @Meeting     NVARCHAR(3)   = NULL,
-    @Disposition NVARCHAR(50)  = NULL
+    @Disposition NVARCHAR(50)  = NULL,
+    @DateFrom    DATE          = NULL,
+    @DateTo      DATE          = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -107,9 +111,11 @@ BEGIN
                 = CAST(pcl.BookedInterviewDateTime AS SMALLDATETIME)
 
         WHERE
-            (@Status      IS NULL OR pcl.CallStatus          = @Status)
-            AND (@Purpose     IS NULL OR pcl.CallPurpose         = @Purpose)
-            AND (@Disposition IS NULL OR pcl.CandidateDisposition = @Disposition)
+            (@Status      IS NULL OR pcl.CallStatus           = @Status)
+            AND (@Purpose     IS NULL OR pcl.CallPurpose          = @Purpose)
+            AND (@Disposition IS NULL OR pcl.CandidateDisposition  = @Disposition)
+            AND (@DateFrom    IS NULL OR CAST(pcl.CreatedAt AS DATE) >= @DateFrom)
+            AND (@DateTo      IS NULL OR CAST(pcl.CreatedAt AS DATE) <= @DateTo)
     )
     SELECT
         -- ── Pagination / aggregate metadata (window functions over filtered set) ──
