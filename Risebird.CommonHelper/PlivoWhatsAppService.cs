@@ -81,7 +81,7 @@ namespace Risebird.CommonHelper
                 client_name               = context.ClientName,
                 log_id                    = context.LogId,
                 call_purpose              = context.MessagePurpose,
-                original_interview_date   = context.OriginalInterviewDate,
+                original_interview_date   = DateTime.Now.AddDays(-3),
                 today_date                = context.TodayDate,
                 tomorrow_date             = context.TomorrowDateLabel,
                 day_after_tomorrow_date   = context.DayAfterDateLabel

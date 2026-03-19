@@ -31,7 +31,8 @@ namespace Risebird.Repository
         public async Task<List<PlivoCXCallLogDetailVM>> GetCallLogDetailsAsync(
             int page = 1, int pageSize = 50,
             string status = null, string purpose = null,
-            string meeting = null, string disposition = null)
+            string meeting = null, string disposition = null,
+            DateTime? dateFrom = null, DateTime? dateTo = null)
         {
             try
             {
@@ -45,7 +46,9 @@ namespace Risebird.Repository
                         Status      = string.IsNullOrWhiteSpace(status)      ? null : status,
                         Purpose     = string.IsNullOrWhiteSpace(purpose)     ? null : purpose,
                         Meeting     = string.IsNullOrWhiteSpace(meeting)     ? null : meeting,
-                        Disposition = string.IsNullOrWhiteSpace(disposition) ? null : disposition
+                        Disposition = string.IsNullOrWhiteSpace(disposition) ? null : disposition,
+                        DateFrom    = dateFrom,
+                        DateTo      = dateTo
                     },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
