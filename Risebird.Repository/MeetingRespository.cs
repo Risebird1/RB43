@@ -7727,11 +7727,13 @@ namespace Risebird.Repository
         }
 
         /// <summary>
-        /// Saves transcript AI evaluation into QcInterviewAIevaluation and QcInterviewAIevaluationDetails. Full JSON response is stored in TranscritAiDetails; red-flag rows in details.
+        /// Saves transcript AI or report AI evaluation into QcInterviewAIevaluation and QcInterviewAIevaluationDetails.
+        /// When transcritAi=true stores in TranscritAiDetails; when false stores in ReportAIDetails. Red-flag rows use SourceType.
         /// </summary>
-        /// <param name="jsonResponse">Optional. Full transcript analysis JSON response to store in TranscritAiDetails. If null, model is serialized to JSON.</param>
-        /// <param name="transcritAi">True = transcript AI evaluation (default); used to match/update the correct row and set SourceType in details.</param>
-        public async Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null, bool transcritAi = false)
+        /// <param name="jsonResponse">Optional. Full transcript AI JSON for TranscritAiDetails (used when transcritAi=true). If null, model is serialized.</param>
+        /// <param name="reportAIJsonResponse">Optional. Full report AI JSON for ReportAIDetails (used when transcritAi=false). If null, model is serialized.</param>
+        /// <param name="transcritAi">True = transcript AI (default); false = report AI.</param>
+        public async Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null, bool transcritAi = true, string reportAIJsonResponse = null)
         {
             try
             {
@@ -7755,8 +7757,8 @@ namespace Risebird.Repository
                     ? JsonConvert.SerializeObject(redFlagDetails)
                     : (string)null;
 
-                // Store full JSON response in TranscritAiDetails; use provided jsonResponse or serialize model
-                var transcritAiDetails = jsonResponse;
+                var transcritAiDetailsParam = transcritAi ? jsonResponse : null;
+                var reportAIDetailsParam = !transcritAi ? reportAIJsonResponse : null;
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -7765,7 +7767,8 @@ namespace Risebird.Repository
                     parameters.Add("@score", model.score);
                     parameters.Add("@verdict", model.verdict ?? (string)null);
                     parameters.Add("@transcritAi", transcritAi);
-                    parameters.Add("@transcritAiDetails", transcritAiDetails);
+                    parameters.Add("@transcritAiDetails", transcritAiDetailsParam);
+                    parameters.Add("@reportAIDetails", reportAIDetailsParam);
                     parameters.Add("@redFlagsJson", redFlagsJson);
                     await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIevaluation", parameters, commandTimeout: 120,
                         commandType: CommandType.StoredProcedure);

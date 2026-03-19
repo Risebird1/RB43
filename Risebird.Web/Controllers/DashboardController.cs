@@ -7325,15 +7325,11 @@ NEVER:
                 // Pass full JSON so it is saved to TranscritAiDetails
                 // Service call (internally uses repository)
                 bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(interviewId, model, jsonToProcess, true);
-                // Direct repository call to exercise both layers
-                bool repositoryResult = await _meetingRespository.SaveQcInterviewAIevaluation(interviewId, model, jsonToProcess, true);
-
                 return Json(new
                 {
                     success = serviceResult && repositoryResult,
                     message = "SaveQcInterviewAIevaluation test completed (service + repository both called).",
-                    serviceResult,
-                    repositoryResult
+                    serviceResult
                 });
             }
             catch (Exception ex)
