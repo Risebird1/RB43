@@ -744,7 +744,7 @@
                                                                     var TechSkill_Score = 0.0;
                                                                     if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                                     {
-                                                                        TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
+                                                                       TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
                                                                     }
                                                                 }
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
