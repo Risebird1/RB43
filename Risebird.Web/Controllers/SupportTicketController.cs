@@ -14,22 +14,8 @@ using System.Threading.Tasks;
 namespace Risebird.Web.Controllers
 {
     /// <summary>
-    /// Handles:
-    ///   GET  /SupportTicket            → dashboard listing all tickets
-    ///   POST /SupportTicket/Webhook    → receives JSON payload from Relay.app,
-    ///                                    inserts a new SupportTickets row
-    ///
-    /// Relay.app sends this JSON structure:
-    /// {
-    ///   "sender_email":  "customer@example.com",
-    ///   "subject":       "Unable to login",
-    ///   "mail_content":  "Hi team, I have been unable to login...",
-    ///   "received_at":   "2026-03-19T10:30:00Z",
-    ///   "intent":        "Login Issue"
-    /// }
-    ///
-    /// Webhook security: validate the X-Relay-Secret header against the
-    /// value stored in appsettings.json under RelayWebhook:Secret.
+    /// GET  /SupportTicket            → paginated, filtered dashboard
+    /// POST /SupportTicket/Webhook    → receives JSON payload from Relay.app
     /// </summary>
     [Authorize]
     public class SupportTicketController : Controller
@@ -51,11 +37,48 @@ namespace Risebird.Web.Controllers
         // ── Dashboard ─────────────────────────────────────────────────────────
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string status      = null,
+            string intent      = null,
+            string senderEmail = null,
+            string dateFrom    = null,
+            string dateTo      = null,
+            int    page        = 1,
+            int    pageSize    = 25)
         {
             try
             {
-                var tickets = await _repository.GetAllTicketsAsync();
+                if (page     < 1)   page     = 1;
+                if (pageSize < 10)  pageSize = 10;
+                if (pageSize > 200) pageSize = 200;
+
+                DateTime? dtFrom = null;
+                DateTime? dtTo   = null;
+
+                if (!string.IsNullOrWhiteSpace(dateFrom) &&
+                    DateTime.TryParse(dateFrom, out var pFrom))
+                    dtFrom = pFrom;
+
+                if (!string.IsNullOrWhiteSpace(dateTo) &&
+                    DateTime.TryParse(dateTo, out var pTo))
+                    dtTo = pTo;
+
+                var tickets = await _repository.GetTicketsAsync(
+                    status, intent, senderEmail, dtFrom, dtTo, page, pageSize);
+
+                int totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
+                int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+                ViewBag.Page        = page;
+                ViewBag.PageSize    = pageSize;
+                ViewBag.TotalCount  = totalCount;
+                ViewBag.TotalPages  = totalPages;
+                ViewBag.Status      = status      ?? string.Empty;
+                ViewBag.Intent      = intent      ?? string.Empty;
+                ViewBag.SenderEmail = senderEmail ?? string.Empty;
+                ViewBag.DateFrom    = dateFrom    ?? string.Empty;
+                ViewBag.DateTo      = dateTo      ?? string.Empty;
+
                 return View(tickets);
             }
             catch (Exception ex)
@@ -74,7 +97,6 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                // Optional shared-secret validation
                 var expectedSecret = _configuration["RelayWebhook:Secret"];
                 if (!string.IsNullOrWhiteSpace(expectedSecret))
                 {
@@ -83,7 +105,6 @@ namespace Risebird.Web.Controllers
                         return Unauthorized(new { error = "Invalid secret." });
                 }
 
-                // Read raw body (Relay sends JSON)
                 string rawBody;
                 using (var reader = new StreamReader(Request.Body))
                     rawBody = await reader.ReadToEndAsync();
@@ -91,14 +112,12 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(rawBody))
                     return BadRequest(new { error = "Empty request body." });
 
-                // Relay field names use snake_case
                 var payload = JsonConvert.DeserializeObject<RelayEmailWebhookPayload>(rawBody,
                     new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore });
 
                 if (payload == null || string.IsNullOrWhiteSpace(payload.SenderEmail))
                     return BadRequest(new { error = "Missing required field: sender_email." });
 
-                // Parse received_at; fall back to now if absent or unparseable
                 DateTime? receivedAt = null;
                 if (!string.IsNullOrWhiteSpace(payload.ReceivedAt) &&
                     DateTime.TryParse(payload.ReceivedAt, null,

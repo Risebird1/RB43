@@ -2,20 +2,96 @@
 @{
     ViewData["Title"] = "Customer Support Tickets";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int    page        = ViewBag.Page        != null ? (int)ViewBag.Page        : 1;
+    int    pageSize    = ViewBag.PageSize     != null ? (int)ViewBag.PageSize    : 25;
+    int    totalCount  = ViewBag.TotalCount   != null ? (int)ViewBag.TotalCount  : 0;
+    int    totalPages  = ViewBag.TotalPages   != null ? (int)ViewBag.TotalPages  : 1;
+    string selStatus   = ViewBag.Status      as string ?? string.Empty;
+    string selIntent   = ViewBag.Intent      as string ?? string.Empty;
+    string selEmail    = ViewBag.SenderEmail as string ?? string.Empty;
+    string selDateFrom = ViewBag.DateFrom    as string ?? string.Empty;
+    string selDateTo   = ViewBag.DateTo      as string ?? string.Empty;
+
+    bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selIntent)
+                   || !string.IsNullOrEmpty(selEmail)  || !string.IsNullOrEmpty(selDateFrom)
+                   || !string.IsNullOrEmpty(selDateTo);
+
+    // Pre-compute status selected flags
+    bool sSel_open   = selStatus == "Open";
+    bool sSel_ip     = selStatus == "InProgress";
+    bool sSel_closed = selStatus == "Closed";
+
+    // Pre-compute intent selected flags
+    bool iSel_01 = selIntent == "Interview Scheduling Issue";
+    bool iSel_02 = selIntent == "Interview Rescheduling Request";
+    bool iSel_03 = selIntent == "Interview Cancellation Request";
+    bool iSel_04 = selIntent == "Login / Access Issue";
+    bool iSel_05 = selIntent == "Platform Technical Issue";
+    bool iSel_06 = selIntent == "Report / Feedback Query";
+    bool iSel_07 = selIntent == "Billing / Payment Issue";
+    bool iSel_08 = selIntent == "Candidate Status Enquiry";
+    bool iSel_09 = selIntent == "Interview Feedback Request";
+    bool iSel_10 = selIntent == "Account Setup / Onboarding";
+    bool iSel_11 = selIntent == "Job Role / IRF Enquiry";
+    bool iSel_12 = selIntent == "Compliance / Legal Query";
+    bool iSel_13 = selIntent == "General Enquiry";
+    bool iSel_14 = selIntent == "Spam / Irrelevant";
+
+    // Pre-compute pageSize selected flags
+    bool ps10  = pageSize == 10;
+    bool ps25  = pageSize == 25;
+    bool ps50  = pageSize == 50;
+    bool ps100 = pageSize == 100;
+
+    // Pagination helpers
+    int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
+    int last  = Math.Min(page * pageSize, totalCount);
+
+    string pageUrl(int p) {
+        var q = $"?page={p}&pageSize={pageSize}";
+        if (!string.IsNullOrEmpty(selStatus))   q += $"&status={Uri.EscapeDataString(selStatus)}";
+        if (!string.IsNullOrEmpty(selIntent))   q += $"&intent={Uri.EscapeDataString(selIntent)}";
+        if (!string.IsNullOrEmpty(selEmail))    q += $"&senderEmail={Uri.EscapeDataString(selEmail)}";
+        if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
+        if (!string.IsNullOrEmpty(selDateTo))   q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
+        return Url.Action("Index", "SupportTicket") + q;
+    }
 }
 
 <style>
+    /* ── table ──────────────────────────────────────── */
     #ticketsTable th               { font-size: 13px; white-space: nowrap; }
     #ticketsTable td               { font-size: 13px; vertical-align: middle; }
+    .col-subject                   { min-width: 160px; max-width: 240px; word-break: break-word; white-space: normal; line-height: 1.4; }
+    .mail-preview-text             { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+                                     overflow: hidden; color: #555; font-size: 12.5px; line-height: 1.45;
+                                     min-width: 200px; max-width: 320px; word-break: break-word; }
+    .btn-view-mail                 { font-size: 11px; padding: 2px 8px; margin-top: 5px; white-space: nowrap; }
     .intent-badge                  { font-size: 11px; padding: 0.35em 0.7em; border-radius: 20px; font-weight: 500; }
     .status-open                   { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
     .status-closed                 { background: #d1e7dd; color: #0a3622; border: 1px solid #198754; }
     .status-inprogress             { background: #cfe2ff; color: #0a3278; border: 1px solid #0d6efd; }
-    .mail-preview                  { max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #555; }
-    .stat-card .stat-val           { font-size: 1.6rem; font-weight: 700; }
-    .stat-card .stat-lbl           { font-size: 12px; color: #6c757d; }
     .ticket-row:hover              { background: #f8f9ff !important; cursor: default; }
     .col-actions                   { width: 80px; text-align: center; }
+    /* ── stat cards ─────────────────────────────────── */
+    .stat-card .stat-val           { font-size: 1.6rem; font-weight: 700; }
+    .stat-card .stat-lbl           { font-size: 12px; color: #6c757d; }
+    /* ── filter bar ─────────────────────────────────── */
+    .filter-bar                    { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; }
+    .filter-bar .form-label        { font-size: 12px; font-weight: 600; color: #495057; margin-bottom: 3px; }
+    .filter-bar .form-control,
+    .filter-bar .form-select       { font-size: 13px; }
+    /* ── modal ──────────────────────────────────────── */
+    .mail-modal-meta span          { font-size: 12.5px; color: #6c757d; }
+    .mail-modal-meta strong        { color: #212529; }
+    .mail-modal-body-text          { white-space: pre-wrap; word-break: break-word; font-size: 13.5px;
+                                     line-height: 1.75; background: #f8f9fa; border-radius: 6px;
+                                     padding: 16px 20px; border: 1px solid #e9ecef;
+                                     max-height: 55vh; overflow-y: auto; font-family: inherit; }
+    .mail-modal-subject            { font-size: 1.05rem; font-weight: 600; color: #212529; line-height: 1.4; }
+    /* ── pagination ─────────────────────────────────── */
+    .page-info                     { font-size: 13px; color: #6c757d; }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -29,9 +105,7 @@
             <h4 class="fw-bold mb-0">
                 <i class="fas fa-headset text-primary me-2"></i>Customer Support Tickets
             </h4>
-            <p class="text-muted mb-0 mt-1">
-                Inbound support requests identified and routed by Relay.app
-            </p>
+            <p class="text-muted mb-0 mt-1">Inbound support requests identified and routed by Relay.app</p>
         </div>
         <div class="col-auto">
             <button class="btn btn-outline-secondary btn-sm" onclick="location.reload()">
@@ -57,38 +131,121 @@
 
     <!-- Summary cards -->
     @{
-        int total      = Model.Count;
-        int open       = Model.Count(t => string.Equals(t.Status, "Open",       StringComparison.OrdinalIgnoreCase));
-        int inProgress = Model.Count(t => string.Equals(t.Status, "InProgress", StringComparison.OrdinalIgnoreCase));
-        int closed     = Model.Count(t => string.Equals(t.Status, "Closed",     StringComparison.OrdinalIgnoreCase));
-        int unresolved = Model.Count(t => t.ClientId == null);
+        int cardOpen  = Model.Count(t => string.Equals(t.Status, "Open",       StringComparison.OrdinalIgnoreCase));
+        int cardIP    = Model.Count(t => string.Equals(t.Status, "InProgress", StringComparison.OrdinalIgnoreCase));
+        int cardClose = Model.Count(t => string.Equals(t.Status, "Closed",     StringComparison.OrdinalIgnoreCase));
     }
-    <div class="row g-3 mb-4">
+    <div class="row g-3 mb-3">
         <div class="col-6 col-sm-3">
             <div class="card border-0 shadow-sm text-center py-3 stat-card">
-                <div class="stat-val text-primary">@total</div>
-                <div class="stat-lbl">Total Tickets</div>
+                <div class="stat-val text-primary">@totalCount</div>
+                <div class="stat-lbl">@(hasFilters ? "Matched" : "Total") Tickets</div>
             </div>
         </div>
         <div class="col-6 col-sm-3">
             <div class="card border-0 shadow-sm text-center py-3 stat-card">
-                <div class="stat-val text-warning">@open</div>
-                <div class="stat-lbl">Open</div>
+                <div class="stat-val text-warning">@cardOpen</div>
+                <div class="stat-lbl">Open (this page)</div>
             </div>
         </div>
         <div class="col-6 col-sm-3">
             <div class="card border-0 shadow-sm text-center py-3 stat-card">
-                <div class="stat-val text-info">@inProgress</div>
-                <div class="stat-lbl">In Progress</div>
+                <div class="stat-val text-info">@cardIP</div>
+                <div class="stat-lbl">In Progress (this page)</div>
             </div>
         </div>
         <div class="col-6 col-sm-3">
             <div class="card border-0 shadow-sm text-center py-3 stat-card">
-                <div class="stat-val text-success">@closed</div>
-                <div class="stat-lbl">Closed</div>
+                <div class="stat-val text-success">@cardClose</div>
+                <div class="stat-lbl">Closed (this page)</div>
             </div>
         </div>
     </div>
+
+    <!-- Filter bar -->
+    <form asp-action="Index" asp-controller="SupportTicket" method="get" id="filterForm">
+        <input type="hidden" name="page"     value="1" />
+        <input type="hidden" name="pageSize" value="@pageSize" />
+
+        <div class="filter-bar">
+            <div class="row g-2 align-items-end">
+
+                <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select form-select-sm">
+                        <option value="">All statuses</option>
+                        @if (sSel_open)   { <option value="Open"       selected>Open</option>        } else { <option value="Open">Open</option>               }
+                        @if (sSel_ip)     { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option>  }
+                        @if (sSel_closed) { <option value="Closed"     selected>Closed</option>      } else { <option value="Closed">Closed</option>           }
+                    </select>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <label class="form-label">Intent</label>
+                    <select name="intent" class="form-select form-select-sm">
+                        <option value="">All intents</option>
+                        @if (iSel_01) { <option value="Interview Scheduling Issue"      selected>Interview Scheduling Issue</option>      } else { <option value="Interview Scheduling Issue">Interview Scheduling Issue</option>           }
+                        @if (iSel_02) { <option value="Interview Rescheduling Request"  selected>Interview Rescheduling Request</option>  } else { <option value="Interview Rescheduling Request">Interview Rescheduling Request</option>   }
+                        @if (iSel_03) { <option value="Interview Cancellation Request"  selected>Interview Cancellation Request</option>  } else { <option value="Interview Cancellation Request">Interview Cancellation Request</option>   }
+                        @if (iSel_04) { <option value="Login / Access Issue"            selected>Login / Access Issue</option>            } else { <option value="Login / Access Issue">Login / Access Issue</option>                     }
+                        @if (iSel_05) { <option value="Platform Technical Issue"        selected>Platform Technical Issue</option>        } else { <option value="Platform Technical Issue">Platform Technical Issue</option>               }
+                        @if (iSel_06) { <option value="Report / Feedback Query"         selected>Report / Feedback Query</option>         } else { <option value="Report / Feedback Query">Report / Feedback Query</option>               }
+                        @if (iSel_07) { <option value="Billing / Payment Issue"         selected>Billing / Payment Issue</option>         } else { <option value="Billing / Payment Issue">Billing / Payment Issue</option>               }
+                        @if (iSel_08) { <option value="Candidate Status Enquiry"        selected>Candidate Status Enquiry</option>        } else { <option value="Candidate Status Enquiry">Candidate Status Enquiry</option>             }
+                        @if (iSel_09) { <option value="Interview Feedback Request"      selected>Interview Feedback Request</option>      } else { <option value="Interview Feedback Request">Interview Feedback Request</option>         }
+                        @if (iSel_10) { <option value="Account Setup / Onboarding"      selected>Account Setup / Onboarding</option>      } else { <option value="Account Setup / Onboarding">Account Setup / Onboarding</option>         }
+                        @if (iSel_11) { <option value="Job Role / IRF Enquiry"          selected>Job Role / IRF Enquiry</option>          } else { <option value="Job Role / IRF Enquiry">Job Role / IRF Enquiry</option>                 }
+                        @if (iSel_12) { <option value="Compliance / Legal Query"        selected>Compliance / Legal Query</option>        } else { <option value="Compliance / Legal Query">Compliance / Legal Query</option>             }
+                        @if (iSel_13) { <option value="General Enquiry"                 selected>General Enquiry</option>                 } else { <option value="General Enquiry">General Enquiry</option>                               }
+                        @if (iSel_14) { <option value="Spam / Irrelevant"               selected>Spam / Irrelevant</option>               } else { <option value="Spam / Irrelevant">Spam / Irrelevant</option>                           }
+                    </select>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                    <label class="form-label">Sender Email</label>
+                    <input type="text" name="senderEmail" class="form-control form-control-sm"
+                           placeholder="Search email…" value="@selEmail" />
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                    <label class="form-label">Received From</label>
+                    <input type="date" name="dateFrom" class="form-control form-control-sm" value="@selDateFrom" />
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                    <label class="form-label">Received To</label>
+                    <input type="date" name="dateTo" class="form-control form-control-sm" value="@selDateTo" />
+                </div>
+
+                <div class="col-6 col-sm-3 col-md-2 col-lg-1">
+                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                        <i class="fas fa-filter me-1"></i>Apply
+                    </button>
+                </div>
+
+                @if (hasFilters)
+                {
+                    <div class="col-6 col-sm-3 col-md-2 col-lg-1">
+                        <a asp-action="Index" asp-controller="SupportTicket" class="btn btn-outline-secondary btn-sm w-100">
+                            <i class="fas fa-times me-1"></i>Clear
+                        </a>
+                    </div>
+                }
+            </div>
+
+            @if (hasFilters)
+            {
+                <div class="mt-2 d-flex flex-wrap gap-2 align-items-center">
+                    <small class="text-muted">Active filters:</small>
+                    @if (!string.IsNullOrEmpty(selStatus))   { <span class="badge bg-primary"   style="font-size:11px">Status: @selStatus</span>     }
+                    @if (!string.IsNullOrEmpty(selIntent))   { <span class="badge bg-info text-dark" style="font-size:11px">Intent: @selIntent</span> }
+                    @if (!string.IsNullOrEmpty(selEmail))    { <span class="badge bg-secondary"  style="font-size:11px">Email: @selEmail</span>       }
+                    @if (!string.IsNullOrEmpty(selDateFrom)) { <span class="badge bg-dark"       style="font-size:11px">From: @selDateFrom</span>     }
+                    @if (!string.IsNullOrEmpty(selDateTo))   { <span class="badge bg-dark"       style="font-size:11px">To: @selDateTo</span>         }
+                </div>
+            }
+        </div>
+    </form>
 
     <!-- Tickets table -->
     <div class="card border-0 shadow-sm">
@@ -97,7 +254,10 @@
             {
                 <div class="text-center py-5 text-muted">
                     <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
-                    No support tickets yet. Once Relay.app routes an email, it will appear here.
+                    @if (hasFilters)
+                    { <span>No tickets match the selected filters.</span> }
+                    else
+                    { <span>No support tickets yet. Once Relay.app routes an email, it will appear here.</span> }
                 </div>
             }
             else
@@ -123,45 +283,44 @@
                                 <tr class="ticket-row">
                                     <td>@t.Id</td>
                                     <td style="white-space:nowrap">
-                                        @(t.ReceivedAt.HasValue
-                                            ? t.ReceivedAt.Value.ToString("dd MMM yyyy, HH:mm")
-                                            : "—")
+                                        @(t.ReceivedAt.HasValue ? t.ReceivedAt.Value.ToString("dd MMM yyyy, HH:mm") : "—")
                                     </td>
-                                    <td>
-                                        <a href="mailto:@t.SenderEmail" class="text-decoration-none">
-                                            @t.SenderEmail
-                                        </a>
+                                    <td style="white-space:nowrap">
+                                        <a href="mailto:@t.SenderEmail" class="text-decoration-none">@t.SenderEmail</a>
                                     </td>
-                                    <td>
+                                    <td style="white-space:nowrap">
                                         @if (!string.IsNullOrEmpty(t.ClientName))
-                                        {
-                                            <span class="fw-semibold">@t.ClientName</span>
-                                        }
+                                        { <span class="fw-semibold">@t.ClientName</span> }
                                         else
-                                        {
-                                            <span class="text-muted fst-italic">Unknown</span>
-                                        }
+                                        { <span class="text-muted fst-italic">Unknown</span> }
                                     </td>
-                                    <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
-                                        title="@t.Subject">
-                                        @t.Subject
-                                    </td>
-                                    <td>
+                                    <td class="col-subject">@t.Subject</td>
+                                    <td style="white-space:nowrap">
                                         @if (!string.IsNullOrEmpty(t.Intent))
+                                        { <span class="intent-badge bg-light border">@t.Intent</span> }
+                                        else
+                                        { <span class="text-muted">—</span> }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrWhiteSpace(t.MailContent))
                                         {
-                                            <span class="intent-badge bg-light border">@t.Intent</span>
+                                            <div class="mail-preview-text">@t.MailContent</div>
+                                            <button type="button"
+                                                    class="btn btn-outline-secondary btn-sm btn-view-mail"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#mailDetailModal"
+                                                    data-sender="@t.SenderEmail"
+                                                    data-subject="@t.Subject"
+                                                    data-intent="@(t.Intent ?? "—")"
+                                                    data-received="@(t.ReceivedAt.HasValue ? t.ReceivedAt.Value.ToString("dd MMM yyyy, HH:mm") : "—")"
+                                                    data-body="@t.MailContent">
+                                                <i class="fas fa-expand-alt me-1"></i>View full
+                                            </button>
                                         }
                                         else
-                                        {
-                                            <span class="text-muted">—</span>
-                                        }
+                                        { <span class="text-muted">—</span> }
                                     </td>
-                                    <td>
-                                        <div class="mail-preview" title="@t.MailContent">
-                                            @t.MailContent
-                                        </div>
-                                    </td>
-                                    <td>
+                                    <td style="white-space:nowrap">
                                         @{
                                             string statusCss = t.Status?.ToLower() switch
                                             {
@@ -174,12 +333,54 @@
                                         <span class="intent-badge @statusCss">@(t.Status ?? "Open")</span>
                                     </td>
                                     <td class="col-actions">
-                                        @* Action buttons — will be wired up in a future sprint *@
+                                        @* Action buttons — future sprint *@
                                     </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Pagination footer -->
+                <div class="d-flex align-items-center justify-content-between px-3 py-3 border-top flex-wrap gap-2">
+                    <div class="page-info">
+                        Showing <strong>@first</strong>–<strong>@last</strong>
+                        of <strong>@totalCount</strong> ticket@(totalCount == 1 ? "" : "s")
+                        @if (hasFilters) { <span class="text-muted">(filtered)</span> }
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <select class="form-select form-select-sm" style="width:auto" onchange="changePageSize(this.value)">
+                            @if (ps10)  { <option value="10"  selected>10 / page</option>  } else { <option value="10">10 / page</option>   }
+                            @if (ps25)  { <option value="25"  selected>25 / page</option>  } else { <option value="25">25 / page</option>   }
+                            @if (ps50)  { <option value="50"  selected>50 / page</option>  } else { <option value="50">50 / page</option>   }
+                            @if (ps100) { <option value="100" selected>100 / page</option> } else { <option value="100">100 / page</option> }
+                        </select>
+                        @if (totalPages > 1)
+                        {
+                            <nav aria-label="Ticket pagination">
+                                <ul class="pagination pagination-sm mb-0">
+                                    <li class="page-item @(page <= 1 ? "disabled" : "")">
+                                        <a class="page-link" href="@pageUrl(page - 1)">‹</a>
+                                    </li>
+                                    @{
+                                        int startP = Math.Max(1, page - 2);
+                                        int endP   = Math.Min(totalPages, page + 2);
+                                        if (startP > 1) { <li class="page-item disabled"><span class="page-link">…</span></li> }
+                                        for (int p = startP; p <= endP; p++)
+                                        {
+                                            <li class="page-item @(p == page ? "active" : "")">
+                                                <a class="page-link" href="@pageUrl(p)">@p</a>
+                                            </li>
+                                        }
+                                        if (endP < totalPages) { <li class="page-item disabled"><span class="page-link">…</span></li> }
+                                    }
+                                    <li class="page-item @(page >= totalPages ? "disabled" : "")">
+                                        <a class="page-link" href="@pageUrl(page + 1)">›</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        }
+                    </div>
                 </div>
             }
         </div>
@@ -190,23 +391,59 @@
 </div>
 </div>
 
+<!-- Mail Detail Modal -->
+<div class="modal fade" id="mailDetailModal" tabindex="-1" aria-labelledby="mailDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header pb-2">
+                <div class="flex-grow-1 me-3">
+                    <div class="mail-modal-subject" id="modalSubject"></div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <div class="mail-modal-meta d-flex flex-wrap gap-3 mb-3 pb-3 border-bottom">
+                    <div><span>From &nbsp;</span><strong id="modalSender"></strong></div>
+                    <div><span>Received &nbsp;</span><strong id="modalReceived"></strong></div>
+                    <div><span>Intent &nbsp;</span><strong id="modalIntent"></strong></div>
+                </div>
+                <div class="mail-modal-body-text" id="modalBody"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
-        // Wire up DataTables for search / sort
+        // Decodes HTML entities (&#xD;&#xA; → newline, &#x2019; → ' etc.)
+        function decodeHtml(str) {
+            if (!str) return '';
+            var doc = new DOMParser().parseFromString(str, 'text/html');
+            return doc.documentElement.textContent;
+        }
+
         $(document).ready(function () {
-            if ($('#ticketsTable tbody tr').length > 0) {
-                $('#ticketsTable').DataTable({
-                    order:      [[1, 'desc']],
-                    pageLength: 25,
-                    language: {
-                        search:     'Search tickets:',
-                        lengthMenu: 'Show _MENU_ tickets'
-                    },
-                    columnDefs: [
-                        { orderable: false, targets: [8] }  // Actions column
-                    ]
-                });
-            }
+            $('#mailDetailModal').on('show.bs.modal', function (e) {
+                var btn = $(e.relatedTarget);
+                $('#modalSubject').text(decodeHtml(btn.data('subject')) || '(no subject)');
+                $('#modalSender').text(decodeHtml(btn.data('sender')));
+                $('#modalReceived').text(btn.data('received'));
+                $('#modalIntent').text(btn.data('intent'));
+                $('#modalBody').text(decodeHtml(btn.data('body')));
+            });
+            $('#mailDetailModal').on('hidden.bs.modal', function () {
+                $('#modalSubject, #modalSender, #modalReceived, #modalIntent, #modalBody').text('');
+            });
         });
+
+        function changePageSize(size) {
+            var form = document.getElementById('filterForm');
+            form.querySelector('[name="pageSize"]').value = size;
+            form.querySelector('[name="page"]').value     = 1;
+            form.submit();
+        }
     </script>
 }
