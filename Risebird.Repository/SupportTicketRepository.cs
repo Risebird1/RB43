@@ -50,13 +50,30 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<List<SupportTicketVM>> GetAllTicketsAsync()
+        public async Task<List<SupportTicketVM>> GetTicketsAsync(
+            string    status      = null,
+            string    intent      = null,
+            string    senderEmail = null,
+            DateTime? dateFrom    = null,
+            DateTime? dateTo      = null,
+            int       page        = 1,
+            int       pageSize    = 25)
         {
             try
             {
                 using var conn = new SqlConnection(_connectionString);
                 var results = await conn.QueryAsync<SupportTicketVM>(
                     "usp_GetSupportTickets",
+                    new
+                    {
+                        Status      = string.IsNullOrWhiteSpace(status)      ? null : status,
+                        Intent      = string.IsNullOrWhiteSpace(intent)      ? null : intent,
+                        SenderEmail = string.IsNullOrWhiteSpace(senderEmail) ? null : senderEmail,
+                        DateFrom    = dateFrom,
+                        DateTo      = dateTo,
+                        Page        = page,
+                        PageSize    = pageSize
+                    },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
             }
