@@ -20,7 +20,7 @@ namespace Risebird.AzureTimerFunctions
     public class AITranscriptAnalysisJob
     {
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        
+
         private readonly IConfiguration _configuration;
         private readonly IDashboarRepository _dashboardRepository;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
@@ -28,7 +28,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly ITranscriptOptimizationHelper _transcriptOptimizationHelper;
         private readonly ILogger log;
 
-        public AITranscriptAnalysisJob(ILoggerFactory loggerFactory, 
+        public AITranscriptAnalysisJob(ILoggerFactory loggerFactory,
             IApplicationErrorLogger applicationErrorLogger, IDashboarRepository dashboardRepository,
             IConfiguration configuration, IAssistantServiceHelper assistantServiceHelper,
             IMeetingService meetingService,
@@ -70,7 +70,7 @@ namespace Risebird.AzureTimerFunctions
                             string transcriptText;
                             using (HttpClient client = new HttpClient())
                             {
-                                transcriptText =  await client.GetStringAsync(item.AudioTranscriptFileLink);
+                                transcriptText = await client.GetStringAsync(item.AudioTranscriptFileLink);
                             }
 
                             // OPTIMIZATION: Pre-screen transcript for validity (saves API calls on corrupted/empty transcripts)
@@ -88,7 +88,7 @@ namespace Risebird.AzureTimerFunctions
                                 var estimatedTokensBefore = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
                                 transcriptText = _transcriptOptimizationHelper.OptimizeTranscriptText(transcriptText);
                                 var estimatedTokensAfter = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
-                                
+
                                 log.LogInformation($"AITranscriptAnalysisJob: Transcript {item.id} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter})");
                             }
                             else
@@ -98,18 +98,28 @@ namespace Risebird.AzureTimerFunctions
                             }
 
                             var aiAnalysis = await _assistantServiceHelper.GenerateTranscriptAnalysis(transcriptText);
-                            if(aiAnalysis != null)
+                            if (aiAnalysis != null)
                             {
                                 var model = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
                                 //bool saveOperationResult = true;
                                 if (model != null)
                                 {
                                     await _meetingService.SaveAITranscriptAnalysis(item.id, model);
+                                }
+                                try
+                                {
+                                    var jsonToProcess = aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
+                                    var modelset = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(jsonToProcess);
+                                    //TransScript Analysis save to db
+                                    bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(item.id, modelset, jsonToProcess, true);
+                                }
+                                catch (Exception ex)
+                                {
 
                                 }
                             }
                             //save the ai analysis into db;
-                            
+
                             //save the response in db
                             //bool saveOperationResult = true;
                             //if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
