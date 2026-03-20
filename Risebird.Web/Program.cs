@@ -243,6 +243,12 @@ builder.Services.AddScoped<IPlivoWhatsAppService, PlivoWhatsAppService>();
 builder.Services.AddScoped<IPlivoWhatsAppRepository, PlivoWhatsAppRepository>();
 // ============================================
 
+// ============================================
+// Relay.app Customer Support Tickets
+// ============================================
+builder.Services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
+// ============================================
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
