@@ -749,6 +749,7 @@
                                                                 }
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
                                                                 <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                              <br/>  <span class="rqlevel">Actual level: <b>@Model.TechSkillReportCollection[i].ActualLevel</b></span>
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
@@ -1009,6 +1010,7 @@
                                                                         }
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].RequiredLevelId)
                                                                         <span class="rqlevel">Evaluated at <b>@Model.TechSkillTwoReportCollection[i].RequiredLevel</b></span>
+                                                                        <span class="rqlevel">Actual level: <b>@Model.TechSkillTwoReportCollection[i].ActualLevel</b></span>
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId)
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired)
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageActual)
