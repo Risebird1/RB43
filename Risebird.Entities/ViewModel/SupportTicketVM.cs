@@ -6,6 +6,8 @@ namespace Risebird.Entities.ViewModel
     /// <summary>
     /// View model used by the Support Tickets dashboard.
     /// Combines SupportTickets row data with the resolved Client.Name.
+    /// TotalCount is populated by the window function in usp_GetSupportTickets
+    /// so pagination can be built without a second DB round-trip.
     /// </summary>
     public class SupportTicketVM
     {
@@ -20,6 +22,7 @@ namespace Risebird.Entities.ViewModel
         public string    Status       { get; set; }
         public DateTime  CreatedAt    { get; set; }
         public string    ClientName   { get; set; }
+        public int       TotalCount   { get; set; }
     }
 
     /// <summary>
