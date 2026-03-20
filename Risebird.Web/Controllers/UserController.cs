@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -382,7 +382,7 @@ namespace Risebird.Web.Controllers
 
         #region Client User Functions
         [HttpGet]
-        public async Task<IActionResult> ClientUsers()
+        public async Task<IActionResult> ClientUsers(int page = 1, int pageSize = 50, string search = null)
         {
             try
             {
@@ -392,14 +392,41 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageClientUser"].ToString();
                         TempData.Remove("SuccessErrorMessageClientUser");
-
                     }
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    return View(await _userService.GetClientUsers(emailid));
+
+                    var allUsers = (await _userService.GetClientUsers(emailid)) ?? new List<ClientUserVM>();
+
+                    if (!string.IsNullOrWhiteSpace(search))
+                    {
+                        var q = search.Trim().ToLower();
+                        allUsers = allUsers.Where(u =>
+                            (u.FirstName?.ToLower().Contains(q) ?? false) ||
+                            (u.LastName?.ToLower().Contains(q) ?? false) ||
+                            (u.EmailId?.ToLower().Contains(q) ?? false) ||
+                            (u.ClientName?.ToLower().Contains(q) ?? false) ||
+                            (u.Role?.ToLower().Contains(q) ?? false) ||
+                            (u.MobileNumber?.ToLower().Contains(q) ?? false)
+                        ).ToList();
+                    }
+
+                    int totalCount = allUsers.Count;
+                    int totalPages = Math.Max(1, (int)Math.Ceiling((double)totalCount / pageSize));
+                    page = Math.Max(1, Math.Min(page, totalPages));
+
+                    var pagedUsers = allUsers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                    ViewBag.Page       = page;
+                    ViewBag.PageSize   = pageSize;
+                    ViewBag.TotalCount = totalCount;
+                    ViewBag.TotalPages = totalPages;
+                    ViewBag.Search     = search;
+
+                    return View(pagedUsers);
                 }
                 else
                 {
