@@ -13,10 +13,6 @@ using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
-    /// <summary>
-    /// GET  /SupportTicket            → paginated, filtered dashboard
-    /// POST /SupportTicket/Webhook    → receives JSON payload from Relay.app
-    /// </summary>
     [Authorize]
     public class SupportTicketController : Controller
     {
@@ -56,12 +52,9 @@ namespace Risebird.Web.Controllers
                 DateTime? dtTo   = null;
 
                 if (!string.IsNullOrWhiteSpace(dateFrom) &&
-                    DateTime.TryParse(dateFrom, out var pFrom))
-                    dtFrom = pFrom;
-
+                    DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo) &&
-                    DateTime.TryParse(dateTo, out var pTo))
-                    dtTo = pTo;
+                    DateTime.TryParse(dateTo,   out var pTo))   dtTo   = pTo;
 
                 var tickets = await _repository.GetTicketsAsync(
                     status, intent, senderEmail, dtFrom, dtTo, page, pageSize);
@@ -97,11 +90,12 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                // Shared-secret validation
                 var expectedSecret = _configuration["RelayWebhook:Secret"];
                 if (!string.IsNullOrWhiteSpace(expectedSecret))
                 {
-                    var incomingSecret = Request.Headers["X-Relay-Secret"].ToString();
-                    if (incomingSecret != expectedSecret)
+                    var incoming = Request.Headers["X-Relay-Secret"].ToString();
+                    if (incoming != expectedSecret)
                         return Unauthorized(new { error = "Invalid secret." });
                 }
 
@@ -126,15 +120,23 @@ namespace Risebird.Web.Controllers
 
                 var ticket = new SupportTicket
                 {
-                    SenderEmail = payload.SenderEmail?.Trim(),
-                    Subject     = payload.Subject?.Trim(),
-                    MailContent = payload.MailContent?.Trim(),
-                    ReceivedAt  = receivedAt ?? DateTime.UtcNow,
-                    Intent      = payload.Intent?.Trim()
+                    SenderEmail              = payload.SenderEmail?.Trim(),
+                    Subject                  = payload.Subject?.Trim(),
+                    MailContent              = payload.MailContent?.Trim(),
+                    ReceivedAt               = receivedAt ?? DateTime.UtcNow,
+                    Intent                   = payload.WebhookIntent?.Trim(),
+                    PrimarySpecialization    = payload.PrimarySpecialization?.Trim(),
+                    MailBodyIntent           = payload.MailBodyIntent?.Trim(),
+                    AttachmentJobDescription = payload.AttachmentJobDescription,
+                    AttachmentPdf            = payload.AttachmentPdf,
+                    AttachmentResumes        = payload.AttachmentResumes,
+                    DriveFolderLink          = payload.DriveFolderLink?.Trim(),
+                    SummaryMail              = payload.SummaryMail?.Trim(),
+                    SummaryCandidates        = payload.SummaryCandidates?.Trim(),
+                    SummaryInterviewScores   = payload.SummaryInterviewScores?.Trim()
                 };
 
                 var newId = await _repository.InsertTicketAsync(ticket);
-
                 return Ok(new { success = true, ticketId = newId });
             }
             catch (Exception ex)
