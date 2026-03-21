@@ -38,7 +38,16 @@ namespace Risebird.Repository
                         ticket.Subject,
                         ticket.MailContent,
                         ticket.ReceivedAt,
-                        ticket.Intent
+                        ticket.Intent,
+                        ticket.PrimarySpecialization,
+                        ticket.MailBodyIntent,
+                        ticket.AttachmentJobDescription,
+                        ticket.AttachmentPdf,
+                        ticket.AttachmentResumes,
+                        ticket.DriveFolderLink,
+                        ticket.SummaryMail,
+                        ticket.SummaryCandidates,
+                        ticket.SummaryInterviewScores
                     },
                     commandType: CommandType.StoredProcedure);
                 return result;

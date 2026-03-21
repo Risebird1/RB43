@@ -17,34 +17,39 @@
                    || !string.IsNullOrEmpty(selEmail)  || !string.IsNullOrEmpty(selDateFrom)
                    || !string.IsNullOrEmpty(selDateTo);
 
-    // Pre-compute status selected flags
+    // ── Status selected flags ────────────────────────────────────────────────
     bool sSel_open   = selStatus == "Open";
     bool sSel_ip     = selStatus == "InProgress";
     bool sSel_closed = selStatus == "Closed";
 
-    // Pre-compute intent selected flags
-    bool iSel_01 = selIntent == "Interview Scheduling Issue";
-    bool iSel_02 = selIntent == "Interview Rescheduling Request";
-    bool iSel_03 = selIntent == "Interview Cancellation Request";
-    bool iSel_04 = selIntent == "Login / Access Issue";
-    bool iSel_05 = selIntent == "Platform Technical Issue";
-    bool iSel_06 = selIntent == "Report / Feedback Query";
-    bool iSel_07 = selIntent == "Billing / Payment Issue";
-    bool iSel_08 = selIntent == "Candidate Status Enquiry";
-    bool iSel_09 = selIntent == "Interview Feedback Request";
-    bool iSel_10 = selIntent == "Account Setup / Onboarding";
-    bool iSel_11 = selIntent == "Job Role / IRF Enquiry";
-    bool iSel_12 = selIntent == "Compliance / Legal Query";
-    bool iSel_13 = selIntent == "General Enquiry";
-    bool iSel_14 = selIntent == "Spam / Irrelevant";
+    // ── Intent selected flags (20 categories) ───────────────────────────────
+    bool iSel_01 = selIntent == "New interview request";
+    bool iSel_02 = selIntent == "New candidate submission";
+    bool iSel_03 = selIntent == "Candidate status update";
+    bool iSel_04 = selIntent == "Candidate reports";
+    bool iSel_05 = selIntent == "Stop interviews";
+    bool iSel_06 = selIntent == "Cold candidate";
+    bool iSel_07 = selIntent == "Interviewer misalignment";
+    bool iSel_08 = selIntent == "Interviewer replacement";
+    bool iSel_09 = selIntent == "Interviewer false negative";
+    bool iSel_10 = selIntent == "Interviewer false positive";
+    bool iSel_11 = selIntent == "Score rubric concerns";
+    bool iSel_12 = selIntent == "Candidate bad experience with Risebird";
+    bool iSel_13 = selIntent == "Candidate bad experience with interviewer";
+    bool iSel_14 = selIntent == "Delay in scheduling";
+    bool iSel_15 = selIntent == "Delay in getting interviews started";
+    bool iSel_16 = selIntent == "Delay in report sharing";
+    bool iSel_17 = selIntent == "Good experience with Risebird";
+    bool iSel_18 = selIntent == "Poor experience with Risebird support team";
+    bool iSel_19 = selIntent == "Interviewer no-show";
+    bool iSel_20 = selIntent == "Quality control issues";
 
-    // Pre-compute pageSize selected flags
+    // ── PageSize selected flags ──────────────────────────────────────────────
     bool ps10  = pageSize == 10;
     bool ps25  = pageSize == 25;
     bool ps50  = pageSize == 50;
     bool ps100 = pageSize == 100;
 
-    // Pagination helpers
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
     int last  = Math.Min(page * pageSize, totalCount);
 
@@ -60,38 +65,44 @@
 }
 
 <style>
-    /* ── table ──────────────────────────────────────── */
-    #ticketsTable th               { font-size: 13px; white-space: nowrap; }
-    #ticketsTable td               { font-size: 13px; vertical-align: middle; }
-    .col-subject                   { min-width: 160px; max-width: 240px; word-break: break-word; white-space: normal; line-height: 1.4; }
-    .mail-preview-text             { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-                                     overflow: hidden; color: #555; font-size: 12.5px; line-height: 1.45;
-                                     min-width: 200px; max-width: 320px; word-break: break-word; }
-    .btn-view-mail                 { font-size: 11px; padding: 2px 8px; margin-top: 5px; white-space: nowrap; }
-    .intent-badge                  { font-size: 11px; padding: 0.35em 0.7em; border-radius: 20px; font-weight: 500; }
-    .status-open                   { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
-    .status-closed                 { background: #d1e7dd; color: #0a3622; border: 1px solid #198754; }
-    .status-inprogress             { background: #cfe2ff; color: #0a3278; border: 1px solid #0d6efd; }
-    .ticket-row:hover              { background: #f8f9ff !important; cursor: default; }
-    .col-actions                   { width: 80px; text-align: center; }
-    /* ── stat cards ─────────────────────────────────── */
-    .stat-card .stat-val           { font-size: 1.6rem; font-weight: 700; }
-    .stat-card .stat-lbl           { font-size: 12px; color: #6c757d; }
-    /* ── filter bar ─────────────────────────────────── */
-    .filter-bar                    { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; }
-    .filter-bar .form-label        { font-size: 12px; font-weight: 600; color: #495057; margin-bottom: 3px; }
+    #ticketsTable th                { font-size: 12.5px; white-space: nowrap; }
+    #ticketsTable td                { font-size: 12.5px; vertical-align: middle; }
+    .col-subject                    { min-width: 150px; max-width: 220px; word-break: break-word; white-space: normal; line-height: 1.4; }
+    .col-spec                       { min-width: 100px; max-width: 160px; word-break: break-word; white-space: normal; }
+    .mail-preview-text              { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+                                      overflow: hidden; color: #555; font-size: 12px; line-height: 1.45;
+                                      min-width: 180px; max-width: 280px; word-break: break-word; }
+    .btn-view-mail                  { font-size: 11px; padding: 2px 8px; margin-top: 5px; white-space: nowrap; }
+    .intent-badge                   { font-size: 11px; padding: 0.3em 0.65em; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+    .status-open                    { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+    .status-closed                  { background: #d1e7dd; color: #0a3622; border: 1px solid #198754; }
+    .status-inprogress              { background: #cfe2ff; color: #0a3278; border: 1px solid #0d6efd; }
+    .ticket-row:hover               { background: #f8f9ff !important; cursor: default; }
+    .col-actions                    { width: 60px; text-align: center; }
+    .col-attach                     { text-align: center; min-width: 80px; }
+    .attach-icon                    { font-size: 14px; }
+    .attach-icon.yes                { color: #198754; }
+    .attach-icon.no                 { color: #dee2e6; }
+    .stat-card .stat-val            { font-size: 1.5rem; font-weight: 700; }
+    .stat-card .stat-lbl            { font-size: 11.5px; color: #6c757d; }
+    .filter-bar                     { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; }
+    .filter-bar .form-label         { font-size: 12px; font-weight: 600; color: #495057; margin-bottom: 3px; }
     .filter-bar .form-control,
-    .filter-bar .form-select       { font-size: 13px; }
-    /* ── modal ──────────────────────────────────────── */
-    .mail-modal-meta span          { font-size: 12.5px; color: #6c757d; }
-    .mail-modal-meta strong        { color: #212529; }
-    .mail-modal-body-text          { white-space: pre-wrap; word-break: break-word; font-size: 13.5px;
-                                     line-height: 1.75; background: #f8f9fa; border-radius: 6px;
-                                     padding: 16px 20px; border: 1px solid #e9ecef;
-                                     max-height: 55vh; overflow-y: auto; font-family: inherit; }
-    .mail-modal-subject            { font-size: 1.05rem; font-weight: 600; color: #212529; line-height: 1.4; }
-    /* ── pagination ─────────────────────────────────── */
-    .page-info                     { font-size: 13px; color: #6c757d; }
+    .filter-bar .form-select        { font-size: 12.5px; }
+    .page-info                      { font-size: 13px; color: #6c757d; }
+    /* modal */
+    .mail-modal-meta span           { font-size: 12.5px; color: #6c757d; }
+    .mail-modal-meta strong         { color: #212529; }
+    .mail-modal-body-text           { white-space: pre-wrap; word-break: break-word; font-size: 13px;
+                                      line-height: 1.75; background: #f8f9fa; border-radius: 6px;
+                                      padding: 14px 18px; border: 1px solid #e9ecef;
+                                      max-height: 40vh; overflow-y: auto; font-family: inherit; }
+    .mail-modal-subject             { font-size: 1.05rem; font-weight: 600; color: #212529; line-height: 1.4; }
+    .summary-block                  { background: #f8f9fa; border-radius: 6px; border: 1px solid #e9ecef;
+                                      padding: 10px 14px; font-size: 13px; line-height: 1.6; white-space: pre-wrap;
+                                      word-break: break-word; }
+    .summary-label                  { font-size: 11px; font-weight: 700; text-transform: uppercase;
+                                      letter-spacing: .5px; color: #6c757d; margin-bottom: 4px; }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -105,7 +116,7 @@
             <h4 class="fw-bold mb-0">
                 <i class="fas fa-headset text-primary me-2"></i>Customer Support Tickets
             </h4>
-            <p class="text-muted mb-0 mt-1">Inbound support requests identified and routed by Relay.app</p>
+            <p class="text-muted mb-0 mt-1">Inbound support requests identified and enriched by Relay.app</p>
         </div>
         <div class="col-auto">
             <button class="btn btn-outline-secondary btn-sm" onclick="location.reload()">
@@ -145,19 +156,19 @@
         <div class="col-6 col-sm-3">
             <div class="card border-0 shadow-sm text-center py-3 stat-card">
                 <div class="stat-val text-warning">@cardOpen</div>
-                <div class="stat-lbl">Open (this page)</div>
+                <div class="stat-lbl">Open (page)</div>
             </div>
         </div>
         <div class="col-6 col-sm-3">
             <div class="card border-0 shadow-sm text-center py-3 stat-card">
                 <div class="stat-val text-info">@cardIP</div>
-                <div class="stat-lbl">In Progress (this page)</div>
+                <div class="stat-lbl">In Progress (page)</div>
             </div>
         </div>
         <div class="col-6 col-sm-3">
             <div class="card border-0 shadow-sm text-center py-3 stat-card">
                 <div class="stat-val text-success">@cardClose</div>
-                <div class="stat-lbl">Closed (this page)</div>
+                <div class="stat-lbl">Closed (page)</div>
             </div>
         </div>
     </div>
@@ -166,11 +177,10 @@
     <form asp-action="Index" asp-controller="SupportTicket" method="get" id="filterForm">
         <input type="hidden" name="page"     value="1" />
         <input type="hidden" name="pageSize" value="@pageSize" />
-
         <div class="filter-bar">
             <div class="row g-2 align-items-end">
 
-                <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select form-select-sm">
                         <option value="">All statuses</option>
@@ -180,39 +190,45 @@
                     </select>
                 </div>
 
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-4">
                     <label class="form-label">Intent</label>
                     <select name="intent" class="form-select form-select-sm">
                         <option value="">All intents</option>
-                        @if (iSel_01) { <option value="Interview Scheduling Issue"      selected>Interview Scheduling Issue</option>      } else { <option value="Interview Scheduling Issue">Interview Scheduling Issue</option>           }
-                        @if (iSel_02) { <option value="Interview Rescheduling Request"  selected>Interview Rescheduling Request</option>  } else { <option value="Interview Rescheduling Request">Interview Rescheduling Request</option>   }
-                        @if (iSel_03) { <option value="Interview Cancellation Request"  selected>Interview Cancellation Request</option>  } else { <option value="Interview Cancellation Request">Interview Cancellation Request</option>   }
-                        @if (iSel_04) { <option value="Login / Access Issue"            selected>Login / Access Issue</option>            } else { <option value="Login / Access Issue">Login / Access Issue</option>                     }
-                        @if (iSel_05) { <option value="Platform Technical Issue"        selected>Platform Technical Issue</option>        } else { <option value="Platform Technical Issue">Platform Technical Issue</option>               }
-                        @if (iSel_06) { <option value="Report / Feedback Query"         selected>Report / Feedback Query</option>         } else { <option value="Report / Feedback Query">Report / Feedback Query</option>               }
-                        @if (iSel_07) { <option value="Billing / Payment Issue"         selected>Billing / Payment Issue</option>         } else { <option value="Billing / Payment Issue">Billing / Payment Issue</option>               }
-                        @if (iSel_08) { <option value="Candidate Status Enquiry"        selected>Candidate Status Enquiry</option>        } else { <option value="Candidate Status Enquiry">Candidate Status Enquiry</option>             }
-                        @if (iSel_09) { <option value="Interview Feedback Request"      selected>Interview Feedback Request</option>      } else { <option value="Interview Feedback Request">Interview Feedback Request</option>         }
-                        @if (iSel_10) { <option value="Account Setup / Onboarding"      selected>Account Setup / Onboarding</option>      } else { <option value="Account Setup / Onboarding">Account Setup / Onboarding</option>         }
-                        @if (iSel_11) { <option value="Job Role / IRF Enquiry"          selected>Job Role / IRF Enquiry</option>          } else { <option value="Job Role / IRF Enquiry">Job Role / IRF Enquiry</option>                 }
-                        @if (iSel_12) { <option value="Compliance / Legal Query"        selected>Compliance / Legal Query</option>        } else { <option value="Compliance / Legal Query">Compliance / Legal Query</option>             }
-                        @if (iSel_13) { <option value="General Enquiry"                 selected>General Enquiry</option>                 } else { <option value="General Enquiry">General Enquiry</option>                               }
-                        @if (iSel_14) { <option value="Spam / Irrelevant"               selected>Spam / Irrelevant</option>               } else { <option value="Spam / Irrelevant">Spam / Irrelevant</option>                           }
+                        @if (iSel_01) { <option value="New interview request"                        selected>New interview request</option>                        } else { <option value="New interview request">New interview request</option>                                       }
+                        @if (iSel_02) { <option value="New candidate submission"                     selected>New candidate submission</option>                     } else { <option value="New candidate submission">New candidate submission</option>                               }
+                        @if (iSel_03) { <option value="Candidate status update"                      selected>Candidate status update</option>                      } else { <option value="Candidate status update">Candidate status update</option>                               }
+                        @if (iSel_04) { <option value="Candidate reports"                            selected>Candidate reports</option>                            } else { <option value="Candidate reports">Candidate reports</option>                                           }
+                        @if (iSel_05) { <option value="Stop interviews"                              selected>Stop interviews</option>                              } else { <option value="Stop interviews">Stop interviews</option>                                               }
+                        @if (iSel_06) { <option value="Cold candidate"                               selected>Cold candidate</option>                               } else { <option value="Cold candidate">Cold candidate</option>                                                 }
+                        @if (iSel_07) { <option value="Interviewer misalignment"                     selected>Interviewer misalignment</option>                     } else { <option value="Interviewer misalignment">Interviewer misalignment</option>                           }
+                        @if (iSel_08) { <option value="Interviewer replacement"                      selected>Interviewer replacement</option>                      } else { <option value="Interviewer replacement">Interviewer replacement</option>                             }
+                        @if (iSel_09) { <option value="Interviewer false negative"                   selected>Interviewer false negative</option>                   } else { <option value="Interviewer false negative">Interviewer false negative</option>                       }
+                        @if (iSel_10) { <option value="Interviewer false positive"                   selected>Interviewer false positive</option>                   } else { <option value="Interviewer false positive">Interviewer false positive</option>                       }
+                        @if (iSel_11) { <option value="Score rubric concerns"                        selected>Score rubric concerns</option>                        } else { <option value="Score rubric concerns">Score rubric concerns</option>                                 }
+                        @if (iSel_12) { <option value="Candidate bad experience with Risebird"       selected>Candidate bad experience with Risebird</option>       } else { <option value="Candidate bad experience with Risebird">Candidate bad experience with Risebird</option> }
+                        @if (iSel_13) { <option value="Candidate bad experience with interviewer"    selected>Candidate bad experience with interviewer</option>    } else { <option value="Candidate bad experience with interviewer">Candidate bad experience with interviewer</option> }
+                        @if (iSel_14) { <option value="Delay in scheduling"                          selected>Delay in scheduling</option>                          } else { <option value="Delay in scheduling">Delay in scheduling</option>                                     }
+                        @if (iSel_15) { <option value="Delay in getting interviews started"          selected>Delay in getting interviews started</option>          } else { <option value="Delay in getting interviews started">Delay in getting interviews started</option>     }
+                        @if (iSel_16) { <option value="Delay in report sharing"                      selected>Delay in report sharing</option>                      } else { <option value="Delay in report sharing">Delay in report sharing</option>                           }
+                        @if (iSel_17) { <option value="Good experience with Risebird"                selected>Good experience with Risebird</option>                } else { <option value="Good experience with Risebird">Good experience with Risebird</option>                 }
+                        @if (iSel_18) { <option value="Poor experience with Risebird support team"   selected>Poor experience with Risebird support team</option>   } else { <option value="Poor experience with Risebird support team">Poor experience with Risebird support team</option> }
+                        @if (iSel_19) { <option value="Interviewer no-show"                          selected>Interviewer no-show</option>                          } else { <option value="Interviewer no-show">Interviewer no-show</option>                                     }
+                        @if (iSel_20) { <option value="Quality control issues"                       selected>Quality control issues</option>                       } else { <option value="Quality control issues">Quality control issues</option>                               }
                     </select>
                 </div>
 
-                <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2">
                     <label class="form-label">Sender Email</label>
                     <input type="text" name="senderEmail" class="form-control form-control-sm"
                            placeholder="Search email…" value="@selEmail" />
                 </div>
 
-                <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2">
                     <label class="form-label">Received From</label>
                     <input type="date" name="dateFrom" class="form-control form-control-sm" value="@selDateFrom" />
                 </div>
 
-                <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-2">
                     <label class="form-label">Received To</label>
                     <input type="date" name="dateTo" class="form-control form-control-sm" value="@selDateTo" />
                 </div>
@@ -222,7 +238,6 @@
                         <i class="fas fa-filter me-1"></i>Apply
                     </button>
                 </div>
-
                 @if (hasFilters)
                 {
                     <div class="col-6 col-sm-3 col-md-2 col-lg-1">
@@ -237,17 +252,17 @@
             {
                 <div class="mt-2 d-flex flex-wrap gap-2 align-items-center">
                     <small class="text-muted">Active filters:</small>
-                    @if (!string.IsNullOrEmpty(selStatus))   { <span class="badge bg-primary"   style="font-size:11px">Status: @selStatus</span>     }
-                    @if (!string.IsNullOrEmpty(selIntent))   { <span class="badge bg-info text-dark" style="font-size:11px">Intent: @selIntent</span> }
-                    @if (!string.IsNullOrEmpty(selEmail))    { <span class="badge bg-secondary"  style="font-size:11px">Email: @selEmail</span>       }
-                    @if (!string.IsNullOrEmpty(selDateFrom)) { <span class="badge bg-dark"       style="font-size:11px">From: @selDateFrom</span>     }
-                    @if (!string.IsNullOrEmpty(selDateTo))   { <span class="badge bg-dark"       style="font-size:11px">To: @selDateTo</span>         }
+                    @if (!string.IsNullOrEmpty(selStatus))   { <span class="badge bg-primary"        style="font-size:11px">Status: @selStatus</span>   }
+                    @if (!string.IsNullOrEmpty(selIntent))   { <span class="badge bg-info text-dark" style="font-size:11px">Intent: @selIntent</span>   }
+                    @if (!string.IsNullOrEmpty(selEmail))    { <span class="badge bg-secondary"      style="font-size:11px">Email: @selEmail</span>     }
+                    @if (!string.IsNullOrEmpty(selDateFrom)) { <span class="badge bg-dark"           style="font-size:11px">From: @selDateFrom</span>   }
+                    @if (!string.IsNullOrEmpty(selDateTo))   { <span class="badge bg-dark"           style="font-size:11px">To: @selDateTo</span>       }
                 </div>
             }
         </div>
     </form>
 
-    <!-- Tickets table -->
+    <!-- Table -->
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             @if (!Model.Any())
@@ -272,6 +287,8 @@
                                 <th>Client</th>
                                 <th>Subject</th>
                                 <th>Intent</th>
+                                <th>Specialization</th>
+                                <th class="col-attach" title="Attachments: JD / PDF / Resume">Attach.</th>
                                 <th>Mail Content</th>
                                 <th>Status</th>
                                 <th class="col-actions">Actions</th>
@@ -295,11 +312,35 @@
                                         { <span class="text-muted fst-italic">Unknown</span> }
                                     </td>
                                     <td class="col-subject">@t.Subject</td>
-                                    <td style="white-space:nowrap">
+                                    <td>
                                         @if (!string.IsNullOrEmpty(t.Intent))
                                         { <span class="intent-badge bg-light border">@t.Intent</span> }
                                         else
                                         { <span class="text-muted">—</span> }
+                                    </td>
+                                    <td class="col-spec">
+                                        @if (!string.IsNullOrEmpty(t.PrimarySpecialization))
+                                        { <span class="badge bg-light text-dark border" style="font-size:11.5px;font-weight:500">@t.PrimarySpecialization</span> }
+                                        else
+                                        { <span class="text-muted">—</span> }
+                                    </td>
+                                    <td class="col-attach">
+                                        @{
+                                            string driveLink = t.DriveFolderLink;
+                                        }
+                                        <div class="d-flex flex-column align-items-center gap-1">
+                                            <div class="d-flex gap-2">
+                                                <i class="fas fa-file-alt attach-icon @(t.AttachmentJobDescription ? "yes" : "no")" title="@(t.AttachmentJobDescription ? "JD attached" : "No JD")"></i>
+                                                <i class="fas fa-file-pdf attach-icon @(t.AttachmentPdf ? "yes" : "no")" title="@(t.AttachmentPdf ? "PDF attached" : "No PDF")"></i>
+                                                <i class="fas fa-user attach-icon @(t.AttachmentResumes ? "yes" : "no")" title="@(t.AttachmentResumes ? "Resume(s) attached" : "No resumes")"></i>
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(driveLink))
+                                            {
+                                                <a href="@driveLink" target="_blank" class="text-decoration-none" title="Open Drive folder" style="font-size:11px">
+                                                    <i class="fab fa-google-drive text-warning"></i>
+                                                </a>
+                                            }
+                                        </div>
                                     </td>
                                     <td>
                                         @if (!string.IsNullOrWhiteSpace(t.MailContent))
@@ -312,8 +353,13 @@
                                                     data-sender="@t.SenderEmail"
                                                     data-subject="@t.Subject"
                                                     data-intent="@(t.Intent ?? "—")"
+                                                    data-specialization="@(t.PrimarySpecialization ?? "—")"
+                                                    data-mailbodyintent="@(t.MailBodyIntent ?? "—")"
                                                     data-received="@(t.ReceivedAt.HasValue ? t.ReceivedAt.Value.ToString("dd MMM yyyy, HH:mm") : "—")"
-                                                    data-body="@t.MailContent">
+                                                    data-body="@t.MailContent"
+                                                    data-summarymail="@(t.SummaryMail ?? "")"
+                                                    data-summarycandidates="@(t.SummaryCandidates ?? "")"
+                                                    data-summaryinterviews="@(t.SummaryInterviewScores ?? "")">
                                                 <i class="fas fa-expand-alt me-1"></i>View full
                                             </button>
                                         }
@@ -392,21 +438,44 @@
 </div>
 
 <!-- Mail Detail Modal -->
-<div class="modal fade" id="mailDetailModal" tabindex="-1" aria-labelledby="mailDetailModalLabel" aria-hidden="true">
+<div class="modal fade" id="mailDetailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header pb-2">
                 <div class="flex-grow-1 me-3">
                     <div class="mail-modal-subject" id="modalSubject"></div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body pt-2">
-                <div class="mail-modal-meta d-flex flex-wrap gap-3 mb-3 pb-3 border-bottom">
+
+                <!-- Meta -->
+                <div class="mail-modal-meta d-flex flex-wrap gap-3 mb-3 pb-2 border-bottom">
                     <div><span>From &nbsp;</span><strong id="modalSender"></strong></div>
                     <div><span>Received &nbsp;</span><strong id="modalReceived"></strong></div>
                     <div><span>Intent &nbsp;</span><strong id="modalIntent"></strong></div>
+                    <div><span>Specialization &nbsp;</span><strong id="modalSpec"></strong></div>
+                    <div><span>Body Intent &nbsp;</span><strong id="modalBodyIntent"></strong></div>
                 </div>
+
+                <!-- Summaries -->
+                <div class="row g-2 mb-3" id="summarySection">
+                    <div class="col-12" id="summaryMailWrap" style="display:none">
+                        <div class="summary-label">Summary</div>
+                        <div class="summary-block" id="summaryMail"></div>
+                    </div>
+                    <div class="col-md-6" id="summaryCandidatesWrap" style="display:none">
+                        <div class="summary-label">Candidates</div>
+                        <div class="summary-block" id="summaryCandidates"></div>
+                    </div>
+                    <div class="col-md-6" id="summaryInterviewsWrap" style="display:none">
+                        <div class="summary-label">Interview Scores</div>
+                        <div class="summary-block" id="summaryInterviews"></div>
+                    </div>
+                </div>
+
+                <!-- Full mail body -->
+                <div class="summary-label">Full Email</div>
                 <div class="mail-modal-body-text" id="modalBody"></div>
             </div>
             <div class="modal-footer">
@@ -418,24 +487,42 @@
 
 @section Scripts {
     <script>
-        // Decodes HTML entities (&#xD;&#xA; → newline, &#x2019; → ' etc.)
         function decodeHtml(str) {
             if (!str) return '';
             var doc = new DOMParser().parseFromString(str, 'text/html');
             return doc.documentElement.textContent;
         }
 
+        function showSummary(wrapperId, elId, value) {
+            var decoded = decodeHtml(value);
+            if (decoded && decoded.trim() !== '' && decoded.trim() !== '—') {
+                $('#' + elId).text(decoded);
+                $('#' + wrapperId).show();
+            } else {
+                $('#' + wrapperId).hide();
+            }
+        }
+
         $(document).ready(function () {
             $('#mailDetailModal').on('show.bs.modal', function (e) {
                 var btn = $(e.relatedTarget);
-                $('#modalSubject').text(decodeHtml(btn.data('subject')) || '(no subject)');
+                $('#modalSubject').text(decodeHtml(btn.data('subject'))        || '(no subject)');
                 $('#modalSender').text(decodeHtml(btn.data('sender')));
                 $('#modalReceived').text(btn.data('received'));
                 $('#modalIntent').text(btn.data('intent'));
+                $('#modalSpec').text(decodeHtml(btn.data('specialization')));
+                $('#modalBodyIntent').text(decodeHtml(btn.data('mailbodyintent')));
                 $('#modalBody').text(decodeHtml(btn.data('body')));
+
+                showSummary('summaryMailWrap',        'summaryMail',      btn.data('summarymail'));
+                showSummary('summaryCandidatesWrap',  'summaryCandidates', btn.data('summarycandidates'));
+                showSummary('summaryInterviewsWrap',  'summaryInterviews', btn.data('summaryinterviews'));
             });
+
             $('#mailDetailModal').on('hidden.bs.modal', function () {
-                $('#modalSubject, #modalSender, #modalReceived, #modalIntent, #modalBody').text('');
+                $('#modalSubject,#modalSender,#modalReceived,#modalIntent,#modalSpec,#modalBodyIntent,#modalBody').text('');
+                $('#summaryMail,#summaryCandidates,#summaryInterviews').text('');
+                $('#summaryMailWrap,#summaryCandidatesWrap,#summaryInterviewsWrap').hide();
             });
         });
 
