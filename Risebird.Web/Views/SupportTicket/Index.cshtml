@@ -110,6 +110,10 @@
     .filter-bar .form-control,
     .filter-bar .form-select        { font-size: 12.5px; }
 
+    /* ── Action buttons ─────────────────────────────────────────────────────── */
+    .col-actions                    { width: 80px; text-align: center; white-space: nowrap; }
+    .status-change-btn              { font-size: 11px; padding: 2px 6px; line-height: 1.4; }
+
     /* ── Pagination ─────────────────────────────────────────────────────────── */
     .page-info                      { font-size: 13px; color: #6c757d; }
 
@@ -398,7 +402,45 @@
                                         <span class="intent-badge @statusCss">@(t.Status ?? "Open")</span>
                                     </td>
                                     <td class="col-actions">
-                                        @* Action buttons — future sprint *@
+                                        @{
+                                            string tStatus = t.Status?.ToLower();
+                                        }
+                                        <div class="d-flex gap-1 justify-content-center">
+                                        @if (tStatus == "open")
+                                        {
+                                            <button type="button" title="Mark In Progress"
+                                                    class="btn btn-outline-primary btn-sm status-change-btn"
+                                                    data-ticket-id="@t.Id" data-new-status="InProgress">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                            <button type="button" title="Close Ticket"
+                                                    class="btn btn-outline-success btn-sm status-change-btn"
+                                                    data-ticket-id="@t.Id" data-new-status="Closed">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        }
+                                        else if (tStatus == "inprogress")
+                                        {
+                                            <button type="button" title="Mark Open"
+                                                    class="btn btn-outline-warning btn-sm status-change-btn"
+                                                    data-ticket-id="@t.Id" data-new-status="Open">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                            <button type="button" title="Close Ticket"
+                                                    class="btn btn-outline-success btn-sm status-change-btn"
+                                                    data-ticket-id="@t.Id" data-new-status="Closed">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" title="Reopen Ticket"
+                                                    class="btn btn-outline-warning btn-sm status-change-btn"
+                                                    data-ticket-id="@t.Id" data-new-status="Open">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        }
+                                        </div>
                                     </td>
                                 </tr>
                             }
@@ -456,6 +498,12 @@
 </div>
 </div>
 
+<!-- Toast container (bottom-right) -->
+<div id="toastContainer"
+     class="toast-container position-fixed bottom-0 end-0 p-3"
+     style="z-index:1100">
+</div>
+
 <!-- Mail Detail Modal -->
 <div class="modal fade" id="mailDetailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -505,7 +553,9 @@
 </div>
 
 @section Scripts {
+    @Html.AntiForgeryToken()
     <script>
+        /* ── Helpers ─────────────────────────────────────────────────────── */
         function decodeHtml(str) {
             if (!str) return '';
             var doc = new DOMParser().parseFromString(str, 'text/html');
@@ -522,6 +572,100 @@
             }
         }
 
+        /* ── Status badge CSS map ────────────────────────────────────────── */
+        var statusCssMap = {
+            'open':       'status-open',
+            'inprogress': 'status-inprogress',
+            'closed':     'status-closed'
+        };
+
+        /* ── Status-change AJAX ──────────────────────────────────────────── */
+        $(document).on('click', '.status-change-btn', function () {
+            var btn       = $(this);
+            var ticketId  = btn.data('ticket-id');
+            var newStatus = btn.data('new-status');
+            var token     = $('input[name="__RequestVerificationToken"]').val();
+            var row       = btn.closest('tr');
+
+            // Show spinner on the clicked button, disable all row action buttons
+            btn.find('i').removeClass().addClass('fas fa-spinner fa-spin');
+            row.find('.status-change-btn').prop('disabled', true);
+
+            $.ajax({
+                url:  '@Url.Action("UpdateStatus", "SupportTicket")',
+                type: 'POST',
+                data: {
+                    __RequestVerificationToken: token,
+                    id:                ticketId,
+                    status:            newStatus,
+                    returnStatus:      '@selStatus',
+                    returnIntent:      '@selIntent',
+                    returnSenderEmail: '@selEmail',
+                    returnDateFrom:    '@selDateFrom',
+                    returnDateTo:      '@selDateTo',
+                    returnPage:        @(page),
+                    returnPageSize:    @(pageSize)
+                },
+                success: function () {
+                    var statusKey = newStatus.toLowerCase();
+
+                    /* Update the status badge in-place */
+                    var badgeCss = statusCssMap[statusKey] || 'bg-light border';
+                    row.find('.intent-badge.status-open, .intent-badge.status-inprogress, .intent-badge.status-closed')
+                       .removeClass('status-open status-inprogress status-closed')
+                       .addClass(badgeCss)
+                       .text(newStatus);
+
+                    /* Rebuild action buttons for new status */
+                    var $cell = row.find('.col-actions .d-flex').empty();
+                    if (statusKey === 'open') {
+                        $cell.append(makeBtn(ticketId, 'InProgress', 'btn-outline-primary', 'fa-play',  'Mark In Progress'));
+                        $cell.append(makeBtn(ticketId, 'Closed',     'btn-outline-success', 'fa-check', 'Close Ticket'));
+                    } else if (statusKey === 'inprogress') {
+                        $cell.append(makeBtn(ticketId, 'Open',   'btn-outline-warning', 'fa-undo',  'Mark Open'));
+                        $cell.append(makeBtn(ticketId, 'Closed', 'btn-outline-success', 'fa-check', 'Close Ticket'));
+                    } else {
+                        $cell.append(makeBtn(ticketId, 'Open', 'btn-outline-warning', 'fa-undo', 'Reopen Ticket'));
+                    }
+
+                    showToast('Ticket #' + ticketId + ' marked as ' + newStatus + '.', 'success');
+                },
+                error: function () {
+                    // Restore spinner back to original icon and re-enable buttons
+                    var iconMap = { 'InProgress': 'fa-play', 'Closed': 'fa-check', 'Open': 'fa-undo' };
+                    btn.find('i').removeClass().addClass('fas ' + (iconMap[newStatus] || 'fa-circle'));
+                    row.find('.status-change-btn').prop('disabled', false);
+                    showToast('Failed to update ticket #' + ticketId + '. Please try again.', 'danger');
+                }
+            });
+        });
+
+        function makeBtn(id, status, btnCss, icon, tip) {
+            return $('<button>')
+                .attr({ type: 'button', title: tip })
+                .addClass('btn btn-sm status-change-btn ' + btnCss)
+                .attr('data-ticket-id', id)
+                .attr('data-new-status', status)
+                .html('<i class="fas ' + icon + '"></i>');
+        }
+
+        /* ── Toast helper ────────────────────────────────────────────────── */
+        function showToast(message, type) {
+            var id   = 'toast-' + Date.now();
+            var html = '<div id="' + id + '" class="toast align-items-center text-bg-' + type + ' border-0 mb-2" '
+                     + 'role="alert" aria-live="assertive" style="min-width:280px">'
+                     + '<div class="d-flex"><div class="toast-body">' + message + '</div>'
+                     + '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>'
+                     + '</div></div>';
+            $('#toastContainer').append(html);
+            var toastEl = new bootstrap.Toast(document.getElementById(id), { delay: 3500 });
+            toastEl.show();
+            document.getElementById(id).addEventListener('hidden.bs.toast', function () {
+                $(this).remove();
+            });
+        }
+
+        /* ── Mail modal ──────────────────────────────────────────────────── */
         $(document).ready(function () {
             $('#mailDetailModal').on('show.bs.modal', function (e) {
                 var btn = $(e.relatedTarget);
@@ -533,7 +677,7 @@
                 $('#modalBodyIntent').text(decodeHtml(btn.data('mailbodyintent')));
                 $('#modalBody').text(decodeHtml(btn.data('body')));
 
-                showSummary('summaryMailWrap',        'summaryMail',      btn.data('summarymail'));
+                showSummary('summaryMailWrap',        'summaryMail',       btn.data('summarymail'));
                 showSummary('summaryCandidatesWrap',  'summaryCandidates', btn.data('summarycandidates'));
                 showSummary('summaryInterviewsWrap',  'summaryInterviews', btn.data('summaryinterviews'));
             });
@@ -545,6 +689,7 @@
             });
         });
 
+        /* ── Page-size change ────────────────────────────────────────────── */
         function changePageSize(size) {
             var form = document.getElementById('filterForm');
             form.querySelector('[name="pageSize"]').value = size;

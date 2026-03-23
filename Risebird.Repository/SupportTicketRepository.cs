@@ -59,6 +59,24 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> UpdateTicketStatusAsync(int id, string status)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var rows = await conn.QuerySingleAsync<int>(
+                    "usp_UpdateSupportTicketStatus",
+                    new { Id = id, Status = status },
+                    commandType: CommandType.StoredProcedure);
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<List<SupportTicketVM>> GetTicketsAsync(
             string    status      = null,
             string    intent      = null,

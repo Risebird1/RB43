@@ -81,6 +81,47 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ── Status update ─────────────────────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStatus(
+            int    id,
+            string status,
+            // return-to parameters (pass current filter state back from the form)
+            string returnStatus      = null,
+            string returnIntent      = null,
+            string returnSenderEmail = null,
+            string returnDateFrom    = null,
+            string returnDateTo      = null,
+            int    returnPage        = 1,
+            int    returnPageSize    = 25)
+        {
+            var allowed = new[] { "Open", "InProgress", "Closed" };
+            if (id <= 0 || !Array.Exists(allowed, s => s == status))
+            {
+                TempData["Error"] = "Invalid status update request.";
+            }
+            else
+            {
+                var ok = await _repository.UpdateTicketStatusAsync(id, status);
+                TempData[ok ? "Success" : "Error"] = ok
+                    ? $"Ticket #{id} status updated to '{status}'."
+                    : $"Could not update ticket #{id}. Please try again.";
+            }
+
+            return RedirectToAction("Index", new
+            {
+                status      = returnStatus,
+                intent      = returnIntent,
+                senderEmail = returnSenderEmail,
+                dateFrom    = returnDateFrom,
+                dateTo      = returnDateTo,
+                page        = returnPage,
+                pageSize    = returnPageSize
+            });
+        }
+
         // ── Relay webhook ─────────────────────────────────────────────────────
 
         [AllowAnonymous]
