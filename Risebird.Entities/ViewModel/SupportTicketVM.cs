@@ -31,7 +31,6 @@ namespace Risebird.Entities.ViewModel
         public string   Status                      { get; set; }
         public DateTime CreatedAt                   { get; set; }
         public string   ClientName                  { get; set; }
-        public string   AssignedTo                  { get; set; }
         public int      TotalCount                  { get; set; }
     }
 
