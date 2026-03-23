@@ -18,5 +18,9 @@ namespace Risebird.Repository.Interface
             DateTime? dateTo     = null,
             int      page        = 1,
             int      pageSize    = 25);
+
+        Task<bool> UpdateTicketStatusAsync(int id, string status, string changedBy);
+
+        Task<List<SupportTicketHistory>> GetTicketHistoryAsync(int ticketId);
     }
 }

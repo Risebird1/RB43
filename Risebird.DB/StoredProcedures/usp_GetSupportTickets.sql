@@ -35,6 +35,7 @@ BEGIN
         st.SummaryInterviewScores,
         st.UserId,
         st.ClientId,
+        st.AssignedTo,
         st.Status,
         st.CreatedAt,
         c.[Name]        AS ClientName,
