@@ -1415,7 +1415,10 @@ namespace Risebird.Repository
                     //parametersPoints.Add("@Type", "Interview");
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
-                    if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x => x.ActualLevelId == 0))
+
+                    //if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x => x.ActualLevelId == 0))
+
+                        if (reportDetails.TechSkillReportCollection != null && reportDetails.TechSkillReportCollection.Any())
                     {
                         DataTable techReportDt = new DataTable();
                         techReportDt.Columns.Add("InterviewId", typeof(int));
