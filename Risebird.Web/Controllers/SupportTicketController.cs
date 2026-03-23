@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -9,14 +10,11 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
-    /// <summary>
-    /// GET  /SupportTicket            → paginated, filtered dashboard
-    /// POST /SupportTicket/Webhook    → receives JSON payload from Relay.app
-    /// </summary>
     [Authorize]
     public class SupportTicketController : Controller
     {
@@ -56,12 +54,9 @@ namespace Risebird.Web.Controllers
                 DateTime? dtTo   = null;
 
                 if (!string.IsNullOrWhiteSpace(dateFrom) &&
-                    DateTime.TryParse(dateFrom, out var pFrom))
-                    dtFrom = pFrom;
-
+                    DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo) &&
-                    DateTime.TryParse(dateTo, out var pTo))
-                    dtTo = pTo;
+                    DateTime.TryParse(dateTo,   out var pTo))   dtTo   = pTo;
 
                 var tickets = await _repository.GetTicketsAsync(
                     status, intent, senderEmail, dtFrom, dtTo, page, pageSize);
@@ -88,6 +83,76 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ── Status update ─────────────────────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStatus(
+            int    id,
+            string status,
+            string returnStatus      = null,
+            string returnIntent      = null,
+            string returnSenderEmail = null,
+            string returnDateFrom    = null,
+            string returnDateTo      = null,
+            int    returnPage        = 1,
+            int    returnPageSize    = 25)
+        {
+            var allowed = new[] { "Open", "InProgress", "Closed" };
+            if (id <= 0 || !Array.Exists(allowed, s => s == status))
+            {
+                TempData["Error"] = "Invalid status update request.";
+            }
+            else
+            {
+
+                var changedBy = HttpContext.Session.GetString("email")?.Trim('"')
+                                ?? User.Identity?.Name
+                                ?? "Unknown";
+
+                var ok = await _repository.UpdateTicketStatusAsync(id, status, changedBy);
+                TempData[ok ? "Success" : "Error"] = ok
+                    ? $"Ticket #{id} status updated to '{status}'."
+                    : $"Could not update ticket #{id}. Please try again.";
+            }
+
+            return RedirectToAction("Index", new
+            {
+                status      = returnStatus,
+                intent      = returnIntent,
+                senderEmail = returnSenderEmail,
+                dateFrom    = returnDateFrom,
+                dateTo      = returnDateTo,
+                page        = returnPage,
+                pageSize    = returnPageSize
+            });
+        }
+
+        // ── Ticket history (JSON) ──────────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetHistory(int id)
+        {
+            try
+            {
+                var history = await _repository.GetTicketHistoryAsync(id);
+                return Json(history.Select(h => new
+                {
+                    h.Id,
+                    h.TicketId,
+                    fromStatus = h.FromStatus ?? "—",
+                    toStatus   = h.ToStatus,
+                    changedBy  = h.ChangedBy,
+                    changedAt  = h.ChangedAt.ToString("dd MMM yyyy, HH:mm") + " UTC"
+                }));
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new object[0]);
+            }
+        }
+
         // ── Relay webhook ─────────────────────────────────────────────────────
 
         [AllowAnonymous]
@@ -97,11 +162,12 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                // Shared-secret validation
                 var expectedSecret = _configuration["RelayWebhook:Secret"];
                 if (!string.IsNullOrWhiteSpace(expectedSecret))
                 {
-                    var incomingSecret = Request.Headers["X-Relay-Secret"].ToString();
-                    if (incomingSecret != expectedSecret)
+                    var incoming = Request.Headers["X-Relay-Secret"].ToString();
+                    if (incoming != expectedSecret)
                         return Unauthorized(new { error = "Invalid secret." });
                 }
 
@@ -126,15 +192,23 @@ namespace Risebird.Web.Controllers
 
                 var ticket = new SupportTicket
                 {
-                    SenderEmail = payload.SenderEmail?.Trim(),
-                    Subject     = payload.Subject?.Trim(),
-                    MailContent = payload.MailContent?.Trim(),
-                    ReceivedAt  = receivedAt ?? DateTime.UtcNow,
-                    Intent      = payload.Intent?.Trim()
+                    SenderEmail              = payload.SenderEmail?.Trim(),
+                    Subject                  = payload.Subject?.Trim(),
+                    MailContent              = payload.MailContent?.Trim(),
+                    ReceivedAt               = receivedAt ?? DateTime.UtcNow,
+                    Intent                   = payload.WebhookIntent?.Trim(),
+                    PrimarySpecialization    = payload.PrimarySpecialization?.Trim(),
+                    MailBodyIntent           = payload.MailBodyIntent?.Trim(),
+                    AttachmentJobDescription = payload.AttachmentJobDescription,
+                    AttachmentPdf            = payload.AttachmentPdf,
+                    AttachmentResumes        = payload.AttachmentResumes,
+                    DriveFolderLink          = payload.DriveFolderLink?.Trim(),
+                    SummaryMail              = payload.SummaryMail?.Trim(),
+                    SummaryCandidates        = payload.SummaryCandidates?.Trim(),
+                    SummaryInterviewScores   = payload.SummaryInterviewScores?.Trim()
                 };
 
                 var newId = await _repository.InsertTicketAsync(ticket);
-
                 return Ok(new { success = true, ticketId = newId });
             }
             catch (Exception ex)
