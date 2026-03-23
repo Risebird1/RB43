@@ -18,6 +18,7 @@ BEGIN
         [SummaryInterviewScores]    NVARCHAR(MAX)  NULL,
         [UserId]                    INT            NULL,
         [ClientId]                  INT            NULL,
+        [AssignedTo]                VARCHAR(150)   NULL,
         [Status]                    VARCHAR(50)    NOT NULL CONSTRAINT [DF_SupportTickets_Status]    DEFAULT ('Open'),
         [CreatedAt]                 DATETIME       NOT NULL CONSTRAINT [DF_SupportTickets_CreatedAt] DEFAULT (GETUTCDATE()),
         [UpdatedAt]                 DATETIME       NULL,
@@ -49,5 +50,7 @@ BEGIN
         ALTER TABLE dbo.SupportTickets ADD [SummaryInterviewScores] NVARCHAR(MAX)  NULL;
     IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'UpdatedAt'                AND Object_ID = Object_ID(N'SupportTickets'))
         ALTER TABLE dbo.SupportTickets ADD [UpdatedAt]              DATETIME       NULL;
+    IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'AssignedTo'               AND Object_ID = Object_ID(N'SupportTickets'))
+        ALTER TABLE dbo.SupportTickets ADD [AssignedTo]             VARCHAR(150)   NULL;
 END
 GO

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -9,6 +10,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
@@ -88,7 +90,6 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> UpdateStatus(
             int    id,
             string status,
-            // return-to parameters (pass current filter state back from the form)
             string returnStatus      = null,
             string returnIntent      = null,
             string returnSenderEmail = null,
@@ -104,7 +105,12 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                var ok = await _repository.UpdateTicketStatusAsync(id, status);
+
+                var changedBy = HttpContext.Session.GetString("email")?.Trim('"')
+                                ?? User.Identity?.Name
+                                ?? "Unknown";
+
+                var ok = await _repository.UpdateTicketStatusAsync(id, status, changedBy);
                 TempData[ok ? "Success" : "Error"] = ok
                     ? $"Ticket #{id} status updated to '{status}'."
                     : $"Could not update ticket #{id}. Please try again.";
@@ -120,6 +126,31 @@ namespace Risebird.Web.Controllers
                 page        = returnPage,
                 pageSize    = returnPageSize
             });
+        }
+
+        // ── Ticket history (JSON) ──────────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetHistory(int id)
+        {
+            try
+            {
+                var history = await _repository.GetTicketHistoryAsync(id);
+                return Json(history.Select(h => new
+                {
+                    h.Id,
+                    h.TicketId,
+                    fromStatus = h.FromStatus ?? "—",
+                    toStatus   = h.ToStatus,
+                    changedBy  = h.ChangedBy,
+                    changedAt  = h.ChangedAt.ToString("dd MMM yyyy, HH:mm") + " UTC"
+                }));
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new object[0]);
+            }
         }
 
         // ── Relay webhook ─────────────────────────────────────────────────────

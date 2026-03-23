@@ -111,8 +111,23 @@
     .filter-bar .form-select        { font-size: 12.5px; }
 
     /* ── Action buttons ─────────────────────────────────────────────────────── */
-    .col-actions                    { width: 80px; text-align: center; white-space: nowrap; }
+    .col-actions                    { width: 90px; text-align: center; white-space: nowrap; }
     .status-change-btn              { font-size: 11px; padding: 2px 6px; line-height: 1.4; }
+    .btn-history                    { font-size: 11px; padding: 2px 6px; line-height: 1.4; }
+
+    /* ── History modal timeline ──────────────────────────────────────────────── */
+    .history-timeline               { list-style: none; padding: 0; margin: 0; }
+    .history-timeline li            { display: flex; gap: 12px; padding: 10px 0;
+                                      border-bottom: 1px solid #f0f0f0; align-items: flex-start; }
+    .history-timeline li:last-child { border-bottom: none; }
+    .ht-dot                         { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+                                      margin-top: 4px; }
+    .ht-dot.open                    { background: #ffc107; }
+    .ht-dot.inprogress              { background: #0d6efd; }
+    .ht-dot.closed                  { background: #198754; }
+    .ht-body                        { flex: 1; }
+    .ht-transition                  { font-size: 13px; font-weight: 600; color: #212529; }
+    .ht-meta                        { font-size: 11.5px; color: #6c757d; margin-top: 2px; }
 
     /* ── Pagination ─────────────────────────────────────────────────────────── */
     .page-info                      { font-size: 13px; color: #6c757d; }
@@ -310,6 +325,7 @@
                                 <th style="width:130px">Received At</th>
                                 <th>Sender Email</th>
                                 <th>Client</th>
+                                <th>Assigned To</th>
                                 <th>Subject</th>
                                 <th>Intent</th>
                                 <th>Specialization</th>
@@ -335,6 +351,17 @@
                                         { <span class="fw-semibold">@t.ClientName</span> }
                                         else
                                         { <span class="text-muted fst-italic">Unknown</span> }
+                                    </td>
+                                    <td style="max-width:160px">
+                                        @if (!string.IsNullOrEmpty(t.AssignedTo))
+                                        {
+                                            <a href="mailto:@t.AssignedTo"
+                                               class="text-decoration-none text-truncate d-block"
+                                               style="font-size:12px;max-width:150px"
+                                               title="@t.AssignedTo">@t.AssignedTo</a>
+                                        }
+                                        else
+                                        { <span class="text-muted fst-italic" style="font-size:12px">Unassigned</span> }
                                     </td>
                                     <td class="col-subject">@t.Subject</td>
                                     <td>
@@ -405,7 +432,7 @@
                                         @{
                                             string tStatus = t.Status?.ToLower();
                                         }
-                                        <div class="d-flex gap-1 justify-content-center">
+                                        <div class="d-flex gap-1 justify-content-center flex-wrap">
                                         @if (tStatus == "open")
                                         {
                                             <button type="button" title="Mark In Progress"
@@ -440,6 +467,12 @@
                                                 <i class="fas fa-undo"></i>
                                             </button>
                                         }
+                                        <button type="button" title="View History"
+                                                class="btn btn-outline-secondary btn-sm btn-history"
+                                                data-ticket-id="@t.Id"
+                                                data-ticket-subject="@t.Subject">
+                                            <i class="fas fa-history"></i>
+                                        </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -496,6 +529,35 @@
 </div>
 </div>
 </div>
+</div>
+
+<!-- Ticket History Modal -->
+<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header pb-2">
+                <div>
+                    <h6 class="modal-title fw-bold mb-0">
+                        <i class="fas fa-history text-secondary me-2"></i>Status History
+                    </h6>
+                    <small class="text-muted" id="historyModalSubject"></small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-2" id="historyModalBody">
+                <div class="text-center py-4 text-muted" id="historyLoading">
+                    <i class="fas fa-spinner fa-spin me-2"></i>Loading history…
+                </div>
+                <ul class="history-timeline" id="historyList" style="display:none"></ul>
+                <div class="text-center py-4 text-muted" id="historyEmpty" style="display:none">
+                    <i class="fas fa-inbox me-2"></i>No status changes recorded yet.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Toast container (bottom-right) -->
@@ -617,6 +679,7 @@
                        .text(newStatus);
 
                     /* Rebuild action buttons for new status */
+                    var ticketSubject = row.find('.col-subject').text().trim();
                     var $cell = row.find('.col-actions .d-flex').empty();
                     if (statusKey === 'open') {
                         $cell.append(makeBtn(ticketId, 'InProgress', 'btn-outline-primary', 'fa-play',  'Mark In Progress'));
@@ -627,6 +690,7 @@
                     } else {
                         $cell.append(makeBtn(ticketId, 'Open', 'btn-outline-warning', 'fa-undo', 'Reopen Ticket'));
                     }
+                    $cell.append(makeHistoryBtn(ticketId, ticketSubject));
 
                     showToast('Ticket #' + ticketId + ' marked as ' + newStatus + '.', 'success');
                 },
@@ -649,6 +713,15 @@
                 .html('<i class="fas ' + icon + '"></i>');
         }
 
+        function makeHistoryBtn(id, subject) {
+            return $('<button>')
+                .attr({ type: 'button', title: 'View History' })
+                .addClass('btn btn-sm btn-outline-secondary btn-history')
+                .attr('data-ticket-id', id)
+                .attr('data-ticket-subject', subject || '')
+                .html('<i class="fas fa-history"></i>');
+        }
+
         /* ── Toast helper ────────────────────────────────────────────────── */
         function showToast(message, type) {
             var id   = 'toast-' + Date.now();
@@ -664,6 +737,65 @@
                 $(this).remove();
             });
         }
+
+        /* ── History button ──────────────────────────────────────────────────── */
+        var dotClass = { 'open': 'open', 'inprogress': 'inprogress', 'closed': 'closed' };
+
+        $(document).on('click', '.btn-history', function () {
+            var ticketId = $(this).data('ticket-id');
+            var subject  = $(this).data('ticket-subject') || ('Ticket #' + ticketId);
+
+            $('#historyModalSubject').text(subject);
+            $('#historyLoading').show();
+            $('#historyList').hide().empty();
+            $('#historyEmpty').hide();
+
+            // Open modal manually (avoids Bootstrap data-bs-toggle dependency)
+            var modalEl = document.getElementById('historyModal');
+            var modal   = (typeof bootstrap !== 'undefined' && bootstrap.Modal)
+                          ? (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl))
+                          : null;
+            if (modal) { modal.show(); }
+            else       { $(modalEl).modal('show'); }
+
+            $.ajax({
+                url:  '@Url.Action("GetHistory", "SupportTicket")',
+                type: 'GET',
+                data: { id: ticketId },
+                success: function (data) {
+                    $('#historyLoading').hide();
+                    if (!data || data.length === 0) {
+                        $('#historyEmpty').show();
+                        return;
+                    }
+                    var $ul = $('#historyList');
+                    $.each(data, function (_, h) {
+                        var dc    = dotClass[h.toStatus.toLowerCase()] || 'open';
+                        var arrow = h.fromStatus === '—'
+                            ? '<span class="text-muted">Created as</span> <strong>' + h.toStatus + '</strong>'
+                            : '<strong>' + h.fromStatus + '</strong>'
+                              + ' <i class="fas fa-arrow-right mx-1 text-muted" style="font-size:10px"></i> '
+                              + '<strong>' + h.toStatus + '</strong>';
+                        $ul.append(
+                            '<li>'
+                          + '<span class="ht-dot ' + dc + '"></span>'
+                          + '<div class="ht-body">'
+                          + '<div class="ht-transition">' + arrow + '</div>'
+                          + '<div class="ht-meta">'
+                          + '<i class="fas fa-user me-1"></i>' + h.changedBy
+                          + ' &nbsp;&middot;&nbsp; '
+                          + '<i class="fas fa-clock me-1"></i>' + h.changedAt
+                          + '</div></div></li>'
+                        );
+                    });
+                    $ul.show();
+                },
+                error: function () {
+                    $('#historyLoading').hide();
+                    $('#historyEmpty').text('Could not load history. Please try again.').show();
+                }
+            });
+        });
 
         /* ── Mail modal ──────────────────────────────────────────────────── */
         $(document).ready(function () {

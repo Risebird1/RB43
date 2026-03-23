@@ -59,14 +59,14 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateTicketStatusAsync(int id, string status)
+        public async Task<bool> UpdateTicketStatusAsync(int id, string status, string changedBy)
         {
             try
             {
                 using var conn = new SqlConnection(_connectionString);
                 var rows = await conn.QuerySingleAsync<int>(
                     "usp_UpdateSupportTicketStatus",
-                    new { Id = id, Status = status },
+                    new { Id = id, Status = status, ChangedBy = changedBy ?? "System" },
                     commandType: CommandType.StoredProcedure);
                 return rows > 0;
             }
@@ -74,6 +74,24 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        public async Task<List<SupportTicketHistory>> GetTicketHistoryAsync(int ticketId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<SupportTicketHistory>(
+                    "usp_GetSupportTicketHistory",
+                    new { TicketId = ticketId },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<SupportTicketHistory>();
             }
         }
 

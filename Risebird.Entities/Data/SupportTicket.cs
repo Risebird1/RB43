@@ -21,6 +21,7 @@ namespace Risebird.Entities.Data
         public string   SummaryInterviewScores      { get; set; }
         public int?     UserId                      { get; set; }
         public int?     ClientId                    { get; set; }
+        public string   AssignedTo                  { get; set; }
         public string   Status                      { get; set; }
         public DateTime CreatedAt                   { get; set; }
     }
