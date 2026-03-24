@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.InterviewReport
+@model Risebird.Entities.ViewModel.InterviewReport
 @using System.Text.RegularExpressions
 @using Risebird.CommonHelper;
 @using Risebird.Entities.Enum
@@ -93,7 +93,7 @@
     </script>
 }
 
-<link href="~/newassets/css/report.css" rel="stylesheet" />
+<link href="~/newassets/css/report.css?v=2025" rel="stylesheet" />
 <div id="main-panel" style="display:none;">
 
 
@@ -292,6 +292,7 @@
                                                             }
                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
                                                                                                                                                      <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                                                                                                     <br/>  <span class="rqlevel">Actual level: <b>@(string.IsNullOrEmpty(Model.TechSkillReportCollection[i].ActualLevel) ? "Not Evaluated" : Model.TechSkillReportCollection[i].ActualLevel)</b></span>
                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
@@ -306,7 +307,7 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                                                                             <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+                                                                                                                             <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired (@((int)Math.Round(TechSkill_Score))%)</span></div>
 
                                                                 }
                                                                                                             </div>
@@ -479,7 +480,7 @@
                                                                     }
                                                                     else
                                                                     {
-                                            <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@Model.TechSkillTwoReportCollection[i].WeightageActual  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
+                                            <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@Model.TechSkillTwoReportCollection[i].WeightageActual  / @Model.TechSkillTwoReportCollection[i].WeightageRequired (@((int)Math.Round(TechSkill_Score))%)</span></div>
 
                                                                     }
                                     </div>
