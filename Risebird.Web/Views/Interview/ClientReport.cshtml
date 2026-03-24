@@ -744,28 +744,48 @@
                                                                     var TechSkill_Score = 0.0;
                                                                     if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                                     {
-                                                                        TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
+                                                                       TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
                                                                     }
                                                                 }
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
                                                                 <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                              <br/>  <span class="rqlevel">Actual level: <b>@(string.IsNullOrEmpty(Model.TechSkillReportCollection[i].ActualLevel) ? "Not Evaluated" : Model.TechSkillReportCollection[i].ActualLevel)</b></span>
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
+                                                                @{
+                                                                    int pct1 = 0;
+                                                                    if (Model.TechSkillReportCollection[i].WeightageRequired > 0)
+                                                                    {
+                                                                        pct1 = (int)Math.Round((double)Model.TechSkillReportCollection[i].WeightageActual / Model.TechSkillReportCollection[i].WeightageRequired * 100);
+                                                                    }
+                                                                }
                                                                 <div class="skillBackground skill-round-xlarge skill-small">
                                                                     @if (Model.TechSkillReportCollection[i].ActualLevelId == 7)
                                                                     {
-                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">Not Tested</span></div>
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"></div>
                                                                     }
                                                                     else if (@Model.TechSkillReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillReportCollection[i].WeightageActual)
                                                                     {
-                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"></div>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
-
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"></div>
                                                                     }
+                                                                </div>
+                                                                @if (Model.TechSkillReportCollection[i].ActualLevelId == 7)
+                                                                {
+                                                                    <span style="font-weight:bold; font-size:12px; color:#000; display:block; margin-top:5px;">Not Tested</span>
+                                                                }
+                                                                else if (@Model.TechSkillReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillReportCollection[i].WeightageActual)
+                                                                {
+                                                                    <span style="font-weight:bold; font-size:12px; display:block; margin-top:5px;"><span style="color:green">@Model.TechSkillReportCollection[i].WeightageActual</span> / @Model.TechSkillReportCollection[i].WeightageRequired (@pct1%)</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span style="font-weight:bold; font-size:12px; display:block; margin-top:5px;"><span style="color:red">@Model.TechSkillReportCollection[i].WeightageActual</span> / @Model.TechSkillReportCollection[i].WeightageRequired (@pct1%)</span>
+                                                                }
 
                                                                     <span class="rqlevel" style="margin:25px 0px 0px 0px;width:100%;float:left">
 
@@ -811,7 +831,6 @@
                                                                         }
 
                                                                     </span>
-                                                                </div>
                                                             </div>
                                                         }
                                                     }
@@ -1009,25 +1028,39 @@
                                                                         }
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].RequiredLevelId)
                                                                         <span class="rqlevel">Evaluated at <b>@Model.TechSkillTwoReportCollection[i].RequiredLevel</b></span>
+                                                                        <span class="rqlevel">Actual level: <b>@(string.IsNullOrEmpty(Model.TechSkillTwoReportCollection[i].ActualLevel) ? "Not Evaluated" : Model.TechSkillTwoReportCollection[i].ActualLevel)</b></span>
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId)
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired)
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageActual)
+                                                                        @{
+                                                                            var pct2 = Model.TechSkillTwoReportCollection[i].WeightageRequired > 0 ? (int)Math.Round((double)Model.TechSkillTwoReportCollection[i].WeightageActual / Model.TechSkillTwoReportCollection[i].WeightageRequired * 100) : 0;
+                                                                        }
                                                                         <div class="skillBackground skill-round-xlarge skill-small">
                                                                             @if (Model.TechSkillTwoReportCollection[i].ActualLevelId == 7)
                                                                             {
-                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">Not Tested</span></div>
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"></div>
                                                                             }
                                                                             else if (@Model.TechSkillTwoReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillTwoReportCollection[i].WeightageActual)
                                                                             {
-
-                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"></div>
                                                                             }
                                                                             else
                                                                             {
-                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
-
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"></div>
                                                                             }
                                                                         </div>
+                                                                        @if (Model.TechSkillTwoReportCollection[i].ActualLevelId == 7)
+                                                                        {
+                                                                            <span style="font-weight:bold; font-size:12px; color:#000; display:block; margin-top:5px;">Not Tested</span>
+                                                                        }
+                                                                        else if (@Model.TechSkillTwoReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillTwoReportCollection[i].WeightageActual) 
+                                                                        {
+                                                                            <span style="font-weight:bold; font-size:12px; display:block; margin-top:5px;"><span style="color:green">@Model.TechSkillTwoReportCollection[i].WeightageActual</span> / @Model.TechSkillTwoReportCollection[i].WeightageRequired (@pct2%)</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span style="font-weight:bold; font-size:12px; display:block; margin-top:5px;"><span style="color:red">@Model.TechSkillTwoReportCollection[i].WeightageActual</span> / @Model.TechSkillTwoReportCollection[i].WeightageRequired (@pct2%)</span>
+                                                                        }
                                                                     </div>
                                                                 }
                                                             }

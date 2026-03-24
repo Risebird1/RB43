@@ -1415,7 +1415,10 @@ namespace Risebird.Repository
                     //parametersPoints.Add("@Type", "Interview");
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
-                    if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x => x.ActualLevelId == 0))
+
+                    //if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x => x.ActualLevelId == 0))
+
+                        if (reportDetails.TechSkillReportCollection != null && reportDetails.TechSkillReportCollection.Any())
                     {
                         DataTable techReportDt = new DataTable();
                         techReportDt.Columns.Add("InterviewId", typeof(int));
@@ -1735,7 +1738,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select ts.*, [LevelTech].[Name] as RequiredLevel from TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id where InterviewId = @id";
+                var query = "select ts.*, [LevelTech].[Name] as RequiredLevel, [LevelTechActual].[Name] as ActualLevel from TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id left join [LevelTech] as [LevelTechActual] on ts.ActualLevelId=[LevelTechActual].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2885,7 +2888,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select a.*, Skill.[Name] as SkillName from (select SharedTechSkillReport.*, [LevelTech].[Name] as RequiredLevel from SharedTechSkillReport inner join [LevelTech] on SharedTechSkillReport.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
+                var query = "select a.*, Skill.[Name] as SkillName from (select SharedTechSkillReport.*, [LevelTech].[Name] as RequiredLevel, [LevelTechActual].[Name] as ActualLevel from SharedTechSkillReport inner join [LevelTech] on SharedTechSkillReport.RequiredLevelId=[LevelTech].id left join [LevelTech] as [LevelTechActual] on SharedTechSkillReport.ActualLevelId=[LevelTechActual].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

@@ -1,4 +1,4 @@
-﻿.reportdropbtn {
+.reportdropbtn {
     background-color: red;
     color: white;
     padding: 10px;
@@ -107,7 +107,7 @@ a {
     color:#000;
     right:-235px;
     font-weight:bold;
-    width:100px;
+    width:150px;
     display:block;
 }
 .communication-count {
