@@ -49,16 +49,22 @@ BEGIN
 
         IF @ClientId IS NOT NULL
         BEGIN
-            -- Step 3: Find the first active IRF this client user belongs to
-            SELECT TOP 1 @IRFId = IRFId
-            FROM   dbo.TransClientUser
-            WHERE  ClientUserId = @UserId
-              AND  IsActive = 1
-            ORDER  BY id ASC;
+            -- Step 3: Find the first active IRF this client user belongs to.
+            -- Both the TransClientUser membership AND the IRF (skill channel)
+            -- itself must be active (not paused) to be a valid candidate.
+            SELECT TOP 1 @IRFId = tcu.IRFId
+            FROM   dbo.TransClientUser tcu
+            INNER JOIN dbo.IRF         irf ON irf.id = tcu.IRFId
+            WHERE  tcu.ClientUserId = @UserId
+              AND  tcu.IsActive     = 1
+              AND  irf.IsPaused     = 0
+            ORDER  BY tcu.id ASC;
 
             IF @IRFId IS NOT NULL
             BEGIN
-                -- Step 4: Get the RisebirdHr (internal HR) for that IRF
+                -- Step 4: Get the RisebirdHr (internal HR) for that IRF.
+                -- No extra filter needed here — the IRFId was already
+                -- validated as non-paused in Step 3.
                 SELECT TOP 1 @RisebirdHrId = RisebirdHr
                 FROM   dbo.IRF
                 WHERE  id = @IRFId;
