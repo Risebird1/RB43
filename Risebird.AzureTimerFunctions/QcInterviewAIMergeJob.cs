@@ -66,7 +66,7 @@ namespace Risebird.AzureTimerFunctions
                     try
                     {
                         var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails);
-                        var runResult = await _assistantServiceHelper.RunAssistantWithUserMessage(userMessage, assistantId, useJsonResponseFormat: true);
+                        var runResult = await _assistantServiceHelper.GenerateQcAnalysisInterviewAIMerge(userMessage, assistantId, useJsonResponseFormat: true);
                         var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
                         if (string.IsNullOrWhiteSpace(rawText))
                         {

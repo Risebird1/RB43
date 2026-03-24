@@ -1237,7 +1237,7 @@ namespace Risebird.CommonHelper
                 return null;
             }
         }
-        public async Task<RunResult> RunAssistantWithUserMessage(string userMessageContent, string assistantId, bool useJsonResponseFormat = true)
+        public async Task<RunResult> GenerateQcAnalysisInterviewAIMerge(string userMessageContent, string assistantId, bool useJsonResponseFormat = true)
         {
             try
             {
