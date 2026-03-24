@@ -67,7 +67,7 @@ namespace Risebird.AzureTimerFunctions
                     {
                         var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails);
                         var runResult = await _assistantServiceHelper.RunAssistantWithUserMessage(userMessage, assistantId, useJsonResponseFormat: true);
-                        var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
+                        var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
                         if (string.IsNullOrWhiteSpace(rawText))
                         {
                             _log.LogWarning("QcInterviewAIMergeJob: empty assistant response for qcEvaluationId={Id} interviewId={InterviewId}", row.id, row.InterviewId);
@@ -82,8 +82,8 @@ namespace Risebird.AzureTimerFunctions
                         }
 
                         var combined = CombineCategoryWise(items);
-                        var mergedJson = JsonConvert.SerializeObject(combined);
-                        await _meetingService.SaveQcInterviewAIMergedDetails(row.id, mergedJson);
+                        //var mergedJson = JsonConvert.SerializeObject(combined);
+                        await _meetingService.SaveQcInterviewAIMergedDetails(row.id, rawText);
                     }
                     catch (Exception ex)
                     {
