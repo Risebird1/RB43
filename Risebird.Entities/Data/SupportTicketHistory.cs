@@ -10,5 +10,6 @@ namespace Risebird.Entities.Data
         public string   ToStatus   { get; set; }
         public string   ChangedBy  { get; set; }
         public DateTime ChangedAt  { get; set; }
+        public string   EventType  { get; set; }
     }
 }
