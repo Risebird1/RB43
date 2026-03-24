@@ -12,7 +12,8 @@ BEGIN
         h.[FromStatus],
         h.[ToStatus],
         h.[ChangedBy],
-        h.[ChangedAt]
+        h.[ChangedAt],
+        ISNULL(h.[EventType], 'StatusChange') AS [EventType]
     FROM   dbo.SupportTicketHistory h
     WHERE  h.TicketId = @TicketId
     ORDER  BY h.ChangedAt DESC;

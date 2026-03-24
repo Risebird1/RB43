@@ -95,6 +95,42 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<List<string>> GetEligibleAssigneesAsync(int ticketId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<string>(
+                    "usp_GetEligibleAssignees",
+                    new { TicketId = ticketId },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<string>();
+            }
+        }
+
+        public async Task<bool> UpdateTicketAssignmentAsync(int id, string assignedTo, string changedBy)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var rows = await conn.QuerySingleAsync<int>(
+                    "usp_UpdateTicketAssignment",
+                    new { Id = id, AssignedTo = assignedTo, ChangedBy = changedBy ?? "System" },
+                    commandType: CommandType.StoredProcedure);
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<List<SupportTicketVM>> GetTicketsAsync(
             string    status      = null,
             string    intent      = null,
