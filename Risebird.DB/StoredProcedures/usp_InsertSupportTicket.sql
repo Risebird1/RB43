@@ -58,7 +58,7 @@ BEGIN
             WHERE  tcu.ClientUserId = @UserId
               AND  tcu.IsActive     = 1
               AND  irf.IsPaused     = 0
-            ORDER  BY tcu.id ASC;
+            ORDER  BY irf.CreatedOn desc;
 
             IF @IRFId IS NOT NULL
             BEGIN

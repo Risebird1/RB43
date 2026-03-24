@@ -152,6 +152,19 @@
                                       white-space: pre-wrap; word-break: break-word; }
     .summary-label                  { font-size: 11px; font-weight: 700; text-transform: uppercase;
                                       letter-spacing: .5px; color: #6c757d; margin-bottom: 4px; }
+
+    /* ── Inline assignment editor ────────────────────────────────────────────── */
+    .assign-view                    { display: flex; align-items: center; gap: 3px; min-width: 0; }
+    .assign-view a, .assign-view span { flex: 1; min-width: 0; }
+    .btn-edit-assign                { font-size: 9px; padding: 1px 5px; opacity: 0.5; flex-shrink: 0; }
+    .btn-edit-assign:hover          { opacity: 1; }
+    .assign-edit-form               { display: none; flex-direction: column; gap: 4px; }
+    .assign-edit-row                { display: flex; gap: 3px; align-items: center; }
+    .assign-edit-form select        { font-size: 11px; width: 100%; }
+    .btn-assign-ok                  { font-size: 10px; padding: 1px 6px; flex-shrink: 0; }
+    .btn-assign-x                   { font-size: 10px; padding: 1px 6px; flex-shrink: 0; }
+    /* ht-dot for assignment changes */
+    .ht-dot.assignment              { background: #6f42c1; }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -373,14 +386,46 @@
                                     </td>
 
                                     <td class="col-assigned">
-                                        @if (!string.IsNullOrEmpty(t.AssignedTo))
-                                        {
-                                            <a href="mailto:@t.AssignedTo" class="text-decoration-none"
-                                               style="font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px"
-                                               title="@t.AssignedTo">@t.AssignedTo</a>
-                                        }
-                                        else
-                                        { <span class="text-muted fst-italic" style="font-size:12px">Unassigned</span> }
+                                        <!-- display row -->
+                                        <div class="assign-view" id="assign-view-@t.Id">
+                                            @if (!string.IsNullOrEmpty(t.AssignedTo))
+                                            {
+                                                <a href="mailto:@t.AssignedTo" class="text-decoration-none"
+                                                   style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px;display:block"
+                                                   title="@t.AssignedTo">@t.AssignedTo</a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted fst-italic" style="font-size:12px">Unassigned</span>
+                                            }
+                                            <button type="button"
+                                                    class="btn btn-outline-secondary btn-sm btn-edit-assign"
+                                                    data-ticket-id="@t.Id"
+                                                    title="Change assignee">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </button>
+                                        </div>
+                                        <!-- inline edit form (hidden until pencil clicked) -->
+                                        <div class="assign-edit-form" id="assign-edit-@t.Id">
+                                            <select class="form-select form-select-sm"
+                                                    id="assign-select-@t.Id">
+                                                <option value="">Loading…</option>
+                                            </select>
+                                            <div class="assign-edit-row">
+                                                <button type="button"
+                                                        class="btn btn-success btn-sm btn-assign-ok"
+                                                        data-ticket-id="@t.Id"
+                                                        title="Confirm">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-secondary btn-sm btn-assign-x"
+                                                        data-ticket-id="@t.Id"
+                                                        title="Cancel">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </td>
 
                                     <td class="col-subject">@t.Subject</td>
@@ -554,7 +599,7 @@
             <div class="modal-header pb-2">
                 <div>
                     <h6 class="modal-title fw-bold mb-0">
-                        <i class="fas fa-history text-secondary me-2"></i>Status History
+                        <i class="fas fa-history text-secondary me-2"></i>Ticket History
                     </h6>
                     <small class="text-muted" id="historyModalSubject"></small>
                 </div>
@@ -732,6 +777,106 @@
             });
         });
 
+        /* ── Inline assignment editor ────────────────────────────────────── */
+        // Cache fetched assignees per ticket to avoid re-fetching on repeated clicks
+        var assigneeCache = {};
+
+        $(document).on('click', '.btn-edit-assign', function () {
+            var ticketId = $(this).data('ticket-id');
+            var $view    = $('#assign-view-' + ticketId);
+            var $edit    = $('#assign-edit-'   + ticketId);
+            var $select  = $('#assign-select-' + ticketId);
+
+            $view.hide();
+            $edit.css('display', 'flex').show();
+
+            // Use cached list if available
+            if (assigneeCache[ticketId]) {
+                populateSelect($select, assigneeCache[ticketId]);
+                return;
+            }
+
+            $select.html('<option value="">Loading…</option>');
+
+            $.ajax({
+                url:  '@Url.Action("GetEligibleAssignees", "SupportTicket")',
+                type: 'GET',
+                data: { id: ticketId },
+                success: function (data) {
+                    assigneeCache[ticketId] = data || [];
+                    populateSelect($select, assigneeCache[ticketId]);
+                },
+                error: function () {
+                    $select.html('<option value="">Error loading</option>');
+                    showToast('Could not load eligible assignees.', 'danger');
+                }
+            });
+        });
+
+        function populateSelect($select, emails) {
+            $select.empty().append('<option value="">— select assignee —</option>');
+            if (emails.length > 0) {
+                $.each(emails, function (_, email) {
+                    $select.append($('<option>').val(email).text(email));
+                });
+            } else {
+                $select.append('<option value="" disabled>No eligible assignees found</option>');
+            }
+        }
+
+        $(document).on('click', '.btn-assign-ok', function () {
+            var btn       = $(this);
+            var ticketId  = btn.data('ticket-id');
+            var $select   = $('#assign-select-' + ticketId);
+            var newAssign = $select.val();
+            var token     = $('input[name="__RequestVerificationToken"]').val();
+
+            if (!newAssign) { showToast('Please select an assignee.', 'warning'); return; }
+
+            btn.find('i').removeClass().addClass('fas fa-spinner fa-spin');
+            btn.prop('disabled', true);
+            $('#assign-edit-' + ticketId).find('.btn-assign-x').prop('disabled', true);
+
+            $.ajax({
+                url:  '@Url.Action("UpdateAssignment", "SupportTicket")',
+                type: 'POST',
+                data: { __RequestVerificationToken: token, id: ticketId, assignedTo: newAssign },
+                success: function (resp) {
+                    if (resp && resp.success) {
+                        var $view = $('#assign-view-' + ticketId);
+                        // Rebuild display with new assignee
+                        $view.find('a, span').replaceWith(
+                            $('<a>').attr({ href: 'mailto:' + newAssign, title: newAssign })
+                                   .addClass('text-decoration-none')
+                                   .css({ fontSize:'12px', overflow:'hidden', textOverflow:'ellipsis',
+                                          whiteSpace:'nowrap', maxWidth:'110px', display:'block' })
+                                   .text(newAssign)
+                        );
+                        $('#assign-edit-' + ticketId).hide();
+                        $view.show();
+                        showToast('Ticket #' + ticketId + ' reassigned to ' + newAssign + '.', 'success');
+                    } else {
+                        showToast(resp && resp.message ? resp.message : 'Failed to update assignment.', 'danger');
+                        btn.find('i').removeClass().addClass('fas fa-check');
+                        btn.prop('disabled', false);
+                        $('#assign-edit-' + ticketId).find('.btn-assign-x').prop('disabled', false);
+                    }
+                },
+                error: function () {
+                    showToast('Failed to update assignment. Please try again.', 'danger');
+                    btn.find('i').removeClass().addClass('fas fa-check');
+                    btn.prop('disabled', false);
+                    $('#assign-edit-' + ticketId).find('.btn-assign-x').prop('disabled', false);
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-assign-x', function () {
+            var ticketId = $(this).data('ticket-id');
+            $('#assign-edit-' + ticketId).hide();
+            $('#assign-view-'  + ticketId).show();
+        });
+
         /* ── History modal ───────────────────────────────────────────────── */
         var dotClass = { open: 'open', inprogress: 'inprogress', closed: 'closed' };
 
@@ -759,15 +904,28 @@
                     if (!data || data.length === 0) { $('#historyEmpty').show(); return; }
                     var $ul = $('#historyList');
                     $.each(data, function (_, h) {
-                        var dc    = dotClass[h.toStatus.toLowerCase()] || 'open';
-                        var arrow = h.fromStatus === '—'
-                            ? '<span class="text-muted">Created as</span> <strong>' + h.toStatus + '</strong>'
-                            : '<strong>' + h.fromStatus + '</strong>'
-                              + ' <i class="fas fa-arrow-right mx-1 text-muted" style="font-size:10px"></i>'
-                              + '<strong>' + h.toStatus + '</strong>';
+                        var isAssign = h.eventType === 'AssignmentChange';
+                        var dc, arrow;
+                        if (isAssign) {
+                            dc    = 'assignment';
+                            arrow = '<i class="fas fa-user-edit me-1 text-muted" style="font-size:10px"></i>'
+                                  + '<strong>' + h.fromStatus + '</strong>'
+                                  + ' <i class="fas fa-arrow-right mx-1 text-muted" style="font-size:10px"></i>'
+                                  + '<strong>' + h.toStatus + '</strong>';
+                        } else {
+                            dc    = dotClass[h.toStatus.toLowerCase()] || 'open';
+                            arrow = h.fromStatus === '—'
+                                ? '<span class="text-muted">Created as</span> <strong>' + h.toStatus + '</strong>'
+                                : '<strong>' + h.fromStatus + '</strong>'
+                                  + ' <i class="fas fa-arrow-right mx-1 text-muted" style="font-size:10px"></i>'
+                                  + '<strong>' + h.toStatus + '</strong>';
+                        }
+                        var label = isAssign
+                            ? '<span class="badge bg-light text-secondary border me-1" style="font-size:9px">Reassigned</span>'
+                            : '<span class="badge bg-light text-secondary border me-1" style="font-size:9px">Status</span>';
                         $ul.append(
                             '<li><span class="ht-dot ' + dc + '"></span>'
-                          + '<div class="ht-body"><div class="ht-transition">' + arrow + '</div>'
+                          + '<div class="ht-body"><div class="ht-transition">' + label + arrow + '</div>'
                           + '<div class="ht-meta"><i class="fas fa-user me-1"></i>' + h.changedBy
                           + ' &nbsp;&middot;&nbsp; <i class="fas fa-clock me-1"></i>' + h.changedAt
                           + '</div></div></li>'

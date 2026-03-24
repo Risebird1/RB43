@@ -98,34 +98,81 @@ namespace Risebird.Web.Controllers
             int    returnPage        = 1,
             int    returnPageSize    = 25)
         {
-            var allowed = new[] { "Open", "InProgress", "Closed" };
-            if (id <= 0 || !Array.Exists(allowed, s => s == status))
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                TempData["Error"] = "Invalid status update request.";
+                var allowed = new[] { "Open", "InProgress", "Closed" };
+                if (id <= 0 || !Array.Exists(allowed, s => s == status))
+                {
+                    TempData["Error"] = "Invalid status update request.";
+                }
+                else
+                {
+                    var changedBy = HttpContext.Session.GetString("email").Trim('"');
+
+                    var ok = await _repository.UpdateTicketStatusAsync(id, status, changedBy);
+                    TempData[ok ? "Success" : "Error"] = ok
+                        ? $"Ticket #{id} status updated to '{status}'."
+                        : $"Could not update ticket #{id}. Please try again.";
+                }
+
+                return RedirectToAction("Index", new
+                {
+                    status      = returnStatus,
+                    intent      = returnIntent,
+                    senderEmail = returnSenderEmail,
+                    dateFrom    = returnDateFrom,
+                    dateTo      = returnDateTo,
+                    page        = returnPage,
+                    pageSize    = returnPageSize
+                });
             }
             else
             {
-
-                var changedBy = HttpContext.Session.GetString("email")?.Trim('"')
-                                ?? User.Identity?.Name
-                                ?? "Unknown";
-
-                var ok = await _repository.UpdateTicketStatusAsync(id, status, changedBy);
-                TempData[ok ? "Success" : "Error"] = ok
-                    ? $"Ticket #{id} status updated to '{status}'."
-                    : $"Could not update ticket #{id}. Please try again.";
+                return RedirectToAction("SignOut", "Session");
             }
+        }
 
-            return RedirectToAction("Index", new
+        // ── Eligible assignees (JSON) ──────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetEligibleAssignees(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null ||
+                HttpContext.Session.GetString("profileName") == null)
+                return Json(new string[0]);
+
+            try
             {
-                status      = returnStatus,
-                intent      = returnIntent,
-                senderEmail = returnSenderEmail,
-                dateFrom    = returnDateFrom,
-                dateTo      = returnDateTo,
-                page        = returnPage,
-                pageSize    = returnPageSize
-            });
+                var emails = await _repository.GetEligibleAssigneesAsync(id);
+                return Json(emails);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new string[0]);
+            }
+        }
+
+        // ── Update assignment (AJAX POST) ──────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateAssignment(int id, string assignedTo)
+        {
+            if (HttpContext.Session.GetString("email") != null &&
+                HttpContext.Session.GetString("profileName") != null)
+            {
+                if (id <= 0 || string.IsNullOrWhiteSpace(assignedTo))
+                    return Json(new { success = false, message = "Invalid request." });
+
+                var changedBy = HttpContext.Session.GetString("email").Trim('"');
+                var ok        = await _repository.UpdateTicketAssignmentAsync(id, assignedTo.Trim(), changedBy);
+                return Json(new { success = ok });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Session expired." });
+            }
         }
 
         // ── Ticket history (JSON) ──────────────────────────────────────────────
@@ -143,7 +190,8 @@ namespace Risebird.Web.Controllers
                     fromStatus = h.FromStatus ?? "—",
                     toStatus   = h.ToStatus,
                     changedBy  = h.ChangedBy,
-                    changedAt  = h.ChangedAt.ToString("dd MMM yyyy, HH:mm") + " UTC"
+                    changedAt  = h.ChangedAt.ToString("dd MMM yyyy, HH:mm") + " UTC",
+                    eventType  = h.EventType ?? "StatusChange"
                 }));
             }
             catch (Exception ex)
