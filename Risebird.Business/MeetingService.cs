@@ -4534,6 +4534,32 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IEnumerable<QcInterviewAIMergePendingRow>> GetPendingQcInterviewAIMerge()
+        {
+            try
+            {
+                return await _meetingRespository.GetPendingQcInterviewAIMerge();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson)
+        {
+            try
+            {
+                return await _meetingRespository.SaveQcInterviewAIMergedDetails(qcEvaluationId, mergedJson);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId)
         {
             return await _meetingRespository.GetCandidateInterviewDetails(uniqueId, irfId, interviewId, candidateId);

@@ -7782,6 +7782,45 @@ namespace Risebird.Repository
             return false;
         }
 
+        public async Task<IEnumerable<QcInterviewAIMergePendingRow>> GetPendingQcInterviewAIMerge()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<QcInterviewAIMergePendingRow>(con, "usp_GetPendingQcInterviewAIMerge", null, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@qcEvaluationId", qcEvaluationId);
+                    parameters.Add("@mergedJson", mergedJson);
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIMergedDetails", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId)
         {
             try

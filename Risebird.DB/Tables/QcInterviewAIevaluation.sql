@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[QcInterviewAIevaluation](
 	[QCDoneOn] [datetime] NULL,
 	[ReportAIDetails] [varchar](max) NULL,
 	[TranscritAiDetails] [varchar](max) NULL,
+	[MergedAIQCDetails] [varchar](max) NULL,
  CONSTRAINT [PK_QcInterviewAIevaluation] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
