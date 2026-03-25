@@ -5945,6 +5945,53 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<string> GetInterviewerEmailByInterviewId(int interviewId)
+        {
+            try
+            {
+                const string sql = "SELECT TOP 1 interviewer FROM InterviewMeetings WHERE id = @interviewId";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryFirstOrDefaultAsync<string>(con, sql, new { interviewId }, commandTimeout: 120);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// True if there is no InterviewPoints row yet (usp_ApplyPenaltyForQCForm will INSERT Pending), or the row exists with Status Pending.
+        /// </summary>
+        public async Task<bool> CanApplyQcPenaltyToInterviewPointsAsync(int interviewId, string interviewerEmail)
+        {
+            if (string.IsNullOrWhiteSpace(interviewerEmail))
+                return false;
+            try
+            {
+                const string sql = @"
+SELECT TOP 1 ip.Status
+FROM InterviewPoints ip
+INNER JOIN UserList u ON u.id = ip.userid
+WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @interviewerEmail";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var status = await SqlMapper.QueryFirstOrDefaultAsync<string>(con, sql, new { interviewId, interviewerEmail }, commandTimeout: 120);
+                    if (status == null)
+                        return true;
+                    return string.Equals(status.Trim(), "Pending", StringComparison.OrdinalIgnoreCase);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<string> GetClientHRContactByInterviewid(int interviewid)
         {
             try
@@ -7774,6 +7821,48 @@ namespace Risebird.Repository
                     parameters.Add("@reportAIDetails", reportAIDetailsParam);
                     parameters.Add("@redFlagsJson", redFlagsJson);
                     await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIevaluation", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<IEnumerable<QcInterviewAIMergePendingRow>> GetPendingQcInterviewAIMerge()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<QcInterviewAIMergePendingRow>(con, "usp_GetPendingQcInterviewAIMerge", null, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@qcEvaluationId", qcEvaluationId);
+                    parameters.Add("@mergedJson", mergedJson);
+                    parameters.Add("@totalPenalty", totalPenalty);
+                    parameters.Add("@interviewerSuspicious", interviewerSuspicious);
+                    parameters.Add("@redoInterview", redoInterview);
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIMergedDetails", parameters, commandTimeout: 120,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }

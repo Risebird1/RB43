@@ -26,5 +26,9 @@ namespace Risebird.Repository.Interface
         Task<List<string>> GetEligibleAssigneesAsync(int ticketId);
 
         Task<bool> UpdateTicketAssignmentAsync(int id, string assignedTo, string changedBy);
+
+        Task<List<IrfMatchVM>> GetIRFsForSenderAsync(string senderEmail);
+
+        Task<int> InsertCandidateResumeAsync(int irfId, string resumeLink, int addedBy, string clientHrEmailId);
     }
 }
