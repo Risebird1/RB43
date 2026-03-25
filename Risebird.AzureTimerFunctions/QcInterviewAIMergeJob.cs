@@ -2,7 +2,6 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -17,7 +16,7 @@ namespace Risebird.AzureTimerFunctions
 {
     /// <summary>
     /// For QcInterviewAIevaluation rows where QC is not done and both Report AI and Transcript AI JSON exist,
-    /// calls the merge assistant and stores a combined JSON array in MergedAIQCDetails.
+    /// calls the merge assistant and stores <see cref="QcInterviewAIMergeAssistantResponse"/> in MergedAIQCDetails plus summary columns.
     /// </summary>
     public class QcInterviewAIMergeJob
     {
@@ -67,23 +66,28 @@ namespace Risebird.AzureTimerFunctions
                     {
                         var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails);
                         var runResult = await _assistantServiceHelper.GenerateQcAnalysisInterviewAIMerge(userMessage, assistantId, useJsonResponseFormat: true);
-                        var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
+                        var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value?.Replace("```json", "").Replace("```", "");
                         if (string.IsNullOrWhiteSpace(rawText))
                         {
                             _log.LogWarning("QcInterviewAIMergeJob: empty assistant response for qcEvaluationId={Id} interviewId={InterviewId}", row.id, row.InterviewId);
                             continue;
                         }
 
-                        var items = TryParseMergedItems(rawText);
-                        if (items == null || items.Count == 0)
+                        if (!QcInterviewAIMergeAssistantResponse.TryParseFromAssistantText(rawText, out var parsed) || parsed == null)
                         {
                             _log.LogWarning("QcInterviewAIMergeJob: could not parse JSON for qcEvaluationId={Id} interviewId={InterviewId}", row.id, row.InterviewId);
                             continue;
                         }
 
-                        var combined = CombineCategoryWise(items);
-                        //var mergedJson = JsonConvert.SerializeObject(combined);
-                        await _meetingService.SaveQcInterviewAIMergedDetails(row.id, rawText);
+                        var combined = CombineFlagsByCategory(parsed);
+                        var mergedJson = JsonConvert.SerializeObject(combined);
+
+                        await _meetingService.SaveQcInterviewAIMergedDetails(
+                            row.id,
+                            mergedJson,
+                            totalPenalty: combined.total_penalty,
+                            interviewerSuspicious: combined.interviewer_suspicious,
+                            redoInterview: combined.RedoInterview);
                     }
                     catch (Exception ex)
                     {
@@ -103,91 +107,58 @@ namespace Risebird.AzureTimerFunctions
         private static string BuildMergeUserMessage(string reportJson, string transcriptJson)
         {
             return "You are given two JSON evaluations for the same interview: Report AI and Transcript AI. " +
-                   "Reconcile them and output one JSON array only (no markdown). " +
-                   "Each element must have only: category, flag (use consistent category values; flag is the parameter name or code).\n\n" +
+                   "Reconcile them and output one JSON object only (no markdown) with: " +
+                   "flags (array of { category, flag, penalty } only), " +
+                   "total_penalty (integer), interviewer_suspicious (string, e.g. Yes/No), RedoInterview (boolean).\n\n" +
                    "Report AI JSON:\n" + (reportJson ?? "") + "\n\n" +
                    "Transcript AI JSON:\n" + (transcriptJson ?? "");
         }
 
-        private static string NormalizeAssistantJson(string raw)
+        /// <summary>Merge duplicate categories: combine flags text and sum penalties; recompute total_penalty from flags.</summary>
+        private static QcInterviewAIMergeAssistantResponse CombineFlagsByCategory(QcInterviewAIMergeAssistantResponse response)
         {
-            if (string.IsNullOrWhiteSpace(raw))
-                return null;
-            var t = raw.Trim();
-            if (t.StartsWith("```", StringComparison.Ordinal))
-            {
-                var firstNl = t.IndexOf('\n');
-                if (firstNl >= 0)
-                    t = t.Substring(firstNl + 1);
-                var end = t.LastIndexOf("```", StringComparison.Ordinal);
-                if (end > 0)
-                    t = t.Substring(0, end);
-            }
-            return t.Trim();
-        }
-
-        private static List<QcInterviewAIMergedFindingItem> TryParseMergedItems(string rawText)
-        {
-            var normalized = NormalizeAssistantJson(rawText);
-            if (string.IsNullOrEmpty(normalized))
+            if (response == null)
                 return null;
 
-            try
+            if (response.flags == null || response.flags.Count == 0)
             {
-                var token = JToken.Parse(normalized);
-                if (token.Type == JTokenType.Array)
-                    return token.ToObject<List<QcInterviewAIMergedFindingItem>>();
-
-                if (token.Type == JTokenType.Object)
+                return new QcInterviewAIMergeAssistantResponse
                 {
-                    foreach (var prop in ((JObject)token).Properties())
-                    {
-                        if (prop.Value.Type == JTokenType.Array)
-                            return prop.Value.ToObject<List<QcInterviewAIMergedFindingItem>>();
-                    }
-                }
-            }
-            catch
-            {
-                // fall through
+                    flags = response.flags ?? new List<QcInterviewAIMergeFlagItem>(),
+                    total_penalty = response.total_penalty,
+                    interviewer_suspicious = response.interviewer_suspicious,
+                    RedoInterview = response.RedoInterview
+                };
             }
 
-            try
-            {
-                return JsonConvert.DeserializeObject<List<QcInterviewAIMergedFindingItem>>(normalized);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        /// <summary>Unique category per row: duplicate categories merge all flag tokens (comma/semicolon split) into one list.</summary>
-        private static List<QcInterviewAIMergedFindingItem> CombineCategoryWise(List<QcInterviewAIMergedFindingItem> items)
-        {
-            return items
-                .GroupBy(
-                    x => (x.category ?? "").Trim(),
-                    StringComparer.OrdinalIgnoreCase)
+            var mergedFlags = response.flags
+                .GroupBy(f => (f.category ?? "").Trim(), StringComparer.OrdinalIgnoreCase)
                 .Select(g =>
                 {
-                    var categoryDisplay = string.IsNullOrEmpty(g.Key)
-                        ? null
-                        : (g.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.category))?.category?.Trim() ?? g.Key);
+                    var list = g.ToList();
+                    if (list.Count == 1)
+                        return list[0];
 
-                    var flagTokens = g.SelectMany(x => SplitFlagTokens(x.flag))
-                        .Distinct(StringComparer.OrdinalIgnoreCase)
-                        .OrderBy(f => f, StringComparer.OrdinalIgnoreCase)
-                        .ToList();
-
-                    return new QcInterviewAIMergedFindingItem
+                    var categoryDisplay = list.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.category))?.category?.Trim() ?? g.Key;
+                    return new QcInterviewAIMergeFlagItem
                     {
-                        category = categoryDisplay,
-                        flag = flagTokens.Count == 0 ? null : string.Join(", ", flagTokens)
+                        category = string.IsNullOrEmpty(categoryDisplay) ? null : categoryDisplay,
+                        flag = string.Join(", ", list.SelectMany(x => SplitFlagTokens(x.flag)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x, StringComparer.OrdinalIgnoreCase)),
+                        penalty = list.Sum(x => x.penalty ?? 0)
                     };
                 })
-                .Where(x => !string.IsNullOrWhiteSpace(x.category) || !string.IsNullOrWhiteSpace(x.flag))
                 .ToList();
+
+            var sumPenalties = mergedFlags.Sum(f => f.penalty ?? 0);
+            var total = sumPenalties > 0 ? sumPenalties : response.total_penalty;
+
+            return new QcInterviewAIMergeAssistantResponse
+            {
+                flags = mergedFlags,
+                total_penalty = total,
+                interviewer_suspicious = response.interviewer_suspicious,
+                RedoInterview = response.RedoInterview
+            };
         }
 
         private static IEnumerable<string> SplitFlagTokens(string flag)

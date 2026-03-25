@@ -4547,11 +4547,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson)
+        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null)
         {
             try
             {
-                return await _meetingRespository.SaveQcInterviewAIMergedDetails(qcEvaluationId, mergedJson);
+                return await _meetingRespository.SaveQcInterviewAIMergedDetails(qcEvaluationId, mergedJson, totalPenalty, interviewerSuspicious, redoInterview);
             }
             catch (Exception ex)
             {

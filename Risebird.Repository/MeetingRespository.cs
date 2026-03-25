@@ -7803,7 +7803,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson)
+        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null)
         {
             try
             {
@@ -7812,6 +7812,9 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@qcEvaluationId", qcEvaluationId);
                     parameters.Add("@mergedJson", mergedJson);
+                    parameters.Add("@totalPenalty", totalPenalty);
+                    parameters.Add("@interviewerSuspicious", interviewerSuspicious);
+                    parameters.Add("@redoInterview", redoInterview);
                     await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIMergedDetails", parameters, commandTimeout: 120,
                         commandType: CommandType.StoredProcedure);
                     return true;
