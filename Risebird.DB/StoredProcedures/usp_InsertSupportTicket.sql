@@ -20,7 +20,8 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_InsertSupportTicket]
     @DriveFolderLink            NVARCHAR(1000) = NULL,
     @SummaryMail                NVARCHAR(MAX)  = NULL,
     @SummaryCandidates          NVARCHAR(MAX)  = NULL,
-    @SummaryInterviewScores     NVARCHAR(MAX)  = NULL
+    @SummaryInterviewScores     NVARCHAR(MAX)  = NULL,
+    @JobTitle                   NVARCHAR(200)  = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -81,18 +82,23 @@ BEGIN
         END
     END
 
+    -- For "New interview request" the system handles resume ingestion automatically.
+    -- No human HR should receive credit for work they did not do.
+    IF LOWER(@Intent) = 'new interview request'
+        SET @AssignedTo = 'System';
+
     INSERT INTO dbo.SupportTickets (
         SenderEmail, Subject, MailContent, ReceivedAt,
         Intent, PrimarySpecialization, MailBodyIntent,
         AttachmentJobDescription, AttachmentPdf, AttachmentResumes,
         DriveFolderLink, SummaryMail, SummaryCandidates, SummaryInterviewScores,
-        UserId, ClientId, AssignedTo
+        UserId, ClientId, AssignedTo, JobTitle
     ) VALUES (
         @SenderEmail, @Subject, @MailContent, @ReceivedAt,
         @Intent, @PrimarySpecialization, @MailBodyIntent,
         @AttachmentJobDescription, @AttachmentPdf, @AttachmentResumes,
         @DriveFolderLink, @SummaryMail, @SummaryCandidates, @SummaryInterviewScores,
-        @UserId, @ClientId, @AssignedTo
+        @UserId, @ClientId, @AssignedTo, @JobTitle
     );
 
     SELECT SCOPE_IDENTITY() AS NewId;

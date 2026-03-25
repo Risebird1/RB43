@@ -19,5 +19,6 @@
         public static readonly string StringResumeAnalysisAIAssistant = "StringResumeAnalysisAIAssistant";  // this profile is created solely for the purpose of Resume Parsing using OpenAI's assistant and does not map to any Risebird-defined profiles. Added here to avoid duplicacy of creating another enum that lists Profiles.    
         public static readonly string StringReportQCAIAssistant = "StringReportQCAIAssistant";  // this profile is created solely for the purpose of Resume Parsing using OpenAI's assistant and does not map to any Risebird-defined profiles. Added here to avoid duplicacy of creating another enum that lists Profiles.    
         public static readonly string TranscriptToNotesAssistantId = "TranscriptToNotesAssistantId";
+        public static readonly string QcInterviewAIAssistantId = "QcInterviewAIMerge";
     }
 }

@@ -131,6 +131,52 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<List<IrfMatchVM>> GetIRFsForSenderAsync(string senderEmail)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<IrfMatchVM>(
+                    "usp_GetIRFsForSender",
+                    new { SenderEmail = senderEmail },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<IrfMatchVM>();
+            }
+        }
+
+        public async Task<int> InsertCandidateResumeAsync(
+            int    irfId,
+            string resumeLink,
+            int    addedBy,
+            string clientHrEmailId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var newId = await conn.QuerySingleAsync<int>(
+                    "usp_InsertCandidateResume",
+                    new
+                    {
+                        IRFId           = irfId,
+                        ResumeLink      = resumeLink,
+                        AddedBy         = addedBy,
+                        ClientHREmailId = clientHrEmailId
+                    },
+                    commandType: CommandType.StoredProcedure);
+                return newId;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
         public async Task<List<SupportTicketVM>> GetTicketsAsync(
             string    status      = null,
             string    intent      = null,
