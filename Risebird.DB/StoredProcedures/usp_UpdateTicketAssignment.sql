@@ -28,7 +28,8 @@ BEGIN
 
     DECLARE @Updated INT = @@ROWCOUNT;
 
-    IF @Updated > 0
+    -- Only log history when the assignee actually changed
+    IF @Updated > 0 AND ISNULL(@FromAssignedTo, '') <> ISNULL(@AssignedTo, '')
     BEGIN
         INSERT INTO dbo.SupportTicketHistory
             (TicketId, FromStatus, ToStatus, ChangedBy, ChangedAt, EventType)

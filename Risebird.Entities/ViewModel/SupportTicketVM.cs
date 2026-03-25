@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -81,5 +82,30 @@ namespace Risebird.Entities.ViewModel
 
         [JsonProperty("summary_interview_scores")]
         public string SummaryInterviewScores        { get; set; }
+
+        [JsonProperty("job_title")]
+        public string JobTitle                      { get; set; }
+
+        /// <summary>
+        /// Google Drive URLs of individual resume files uploaded during the loop.
+        /// Relay passes these as a JSON array: ["url1","url2"].
+        /// Populated only when webhook_intent = "New interview request".
+        /// </summary>
+        [JsonProperty("resume_drive_urls")]
+        public List<string> ResumeDriveUrls         { get; set; }
+    }
+
+    /// <summary>
+    /// Represents one IRF candidate returned by usp_GetIRFsForSender,
+    /// used during server-side job-title → IRF matching.
+    /// </summary>
+    public class IrfMatchVM
+    {
+        public int    Id              { get; set; }
+        public string IRFStringId     { get; set; }
+        public string JDTiltle        { get; set; }
+        public string SkillCluster    { get; set; }
+        public int    RisebirdHrId    { get; set; }
+        public string RisebirdHrEmail { get; set; }
     }
 }
