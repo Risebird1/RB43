@@ -88,6 +88,9 @@ namespace Risebird.AzureTimerFunctions
                             totalPenalty: combined.total_penalty,
                             interviewerSuspicious: combined.interviewer_suspicious,
                             redoInterview: combined.RedoInterview);
+
+                        if (row.InterviewId > 0)
+                            await PersistPaymentSlaFromQcMergeAsync(row.InterviewId, combined);
                     }
                     catch (Exception ex)
                     {
@@ -170,6 +173,45 @@ namespace Risebird.AzureTimerFunctions
                 var t = part.Trim();
                 if (t.Length > 0)
                     yield return t;
+            }
+        }
+
+        /// <summary>
+        /// Builds <see cref="PaymentSLAVM"/> from AI QC merge (same fields as Interview/GetPaymentSlaDetails) and saves via <see cref="IMeetingService.AddorUpdatePaymentSLADetails"/>.
+        /// </summary>
+        private async Task PersistPaymentSlaFromQcMergeAsync(int interviewId, QcInterviewAIMergeAssistantResponse combined)
+        {
+            var slaType = "QC";
+            var createdBy = "AISystem";
+
+            try
+            {
+                var existing = await _meetingService.FetchPaymentSlaDetailsById(interviewId, slaType);
+                var model = existing ?? new PaymentSLAVM();
+
+                model.Interviewid = interviewId;
+                model.CreatedBy = createdBy;
+                model.Isedit = existing != null;
+                model.isQcDone = true;
+                if (existing == null)
+                {
+                    model.isapprovedchecked = false;
+                    model.techqc = false;
+                    model.PaymentComplianceCount = 0;
+                    model.Rating = 0;
+                    model.VideoEnable = false;
+                }
+
+                PaymentSlaVmQcMergeMapper.ApplyFromMergeResponse(model, combined, applyOnlyIfEmpty: false);
+
+                var saved = await _meetingService.AddorUpdatePaymentSLADetails(model);
+                if (!saved)
+                    _log.LogWarning("QcInterviewAIMergeJob: AddorUpdatePaymentSLADetails returned false for interviewId={InterviewId}", interviewId);
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "QcInterviewAIMergeJob: PersistPaymentSlaFromQcMergeAsync failed for interviewId={InterviewId}", interviewId);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
     }
