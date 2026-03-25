@@ -183,6 +183,8 @@ namespace Risebird.Business.Interface
         Task<bool> AddorUpdateQCFormReport(QCFormVM model);
         List<CallCatalogueVM> GetInterviewerCallCatalogueList();
         Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags, int VideoReward);
+        Task<string> GetInterviewerEmailByInterviewId(int interviewId);
+        Task<bool> CanApplyQcPenaltyToInterviewPointsAsync(int interviewId, string interviewerEmail);
         Task<string> GetClientHRContactByInterviewid(int interviewid);
         Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate);
         Task<List<MeetingVM>> QCReportDetailsByInterviewer(string emailId);

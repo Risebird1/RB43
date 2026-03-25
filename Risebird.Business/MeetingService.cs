@@ -3650,6 +3650,33 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<string> GetInterviewerEmailByInterviewId(int interviewId)
+        {
+            try
+            {
+                return await _meetingRespository.GetInterviewerEmailByInterviewId(interviewId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> CanApplyQcPenaltyToInterviewPointsAsync(int interviewId, string interviewerEmail)
+        {
+            try
+            {
+                return await _meetingRespository.CanApplyQcPenaltyToInterviewPointsAsync(interviewId, interviewerEmail);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<string> GetClientHRContactByInterviewid(int interviewid)
         {
             try

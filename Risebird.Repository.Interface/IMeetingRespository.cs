@@ -223,6 +223,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CallCatalogueVM>> GetInterviewerCallCatalogueList();
         Task<IEnumerable<ResumeDetailsVM>> NotifiyUploadResumeDetails(DateTime startdate, DateTime enddate);
         Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags, int VideoReward);
+        Task<string> GetInterviewerEmailByInterviewId(int interviewId);
+        Task<bool> CanApplyQcPenaltyToInterviewPointsAsync(int interviewId, string interviewerEmail);
         Task<string> GetClientHRContactByInterviewid(int interviewid);
         Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate);
         Task<IEnumerable<MeetingVM>> QCReportDetailsByInterviewer(string emailId);
