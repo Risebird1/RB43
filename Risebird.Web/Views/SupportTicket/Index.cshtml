@@ -62,109 +62,125 @@
 }
 
 <style>
-    /* ── Table ─────────────────────────────────────────────────────────────── */
-    #ticketsTable                   { table-layout: auto; }
-    #ticketsTable th                { font-size: 12px; white-space: nowrap; vertical-align: middle; }
-    #ticketsTable td                { font-size: 12.5px; vertical-align: middle; }
+    /* ── Filter controls (mirrors cx-filter-control) ────────────────────────── */
+    #senderEmailInput.st-filter-control,
+    .st-filter-control.form-select,
+    .st-filter-control.form-control {
+        min-height: 30px;
+        height: 30px;
+        color: grey;
+        font-weight: 500;
+        font-size: 12.7px !important;
+        padding: 0.2rem 0.6rem;
+        line-height: 1.5;
+    }
 
-    /* ── Column widths ──────────────────────────────────────────────────────── */
-    .col-num                        { width: 36px; }
-    .col-date                       { width: 115px; white-space: nowrap; }
-    .col-email                      { max-width: 160px; }
-    .col-client                     { white-space: nowrap; }
-    .col-assigned                   { max-width: 145px; }
-    .col-subject                    { min-width: 130px; max-width: 200px; white-space: normal; word-break: break-word; line-height: 1.4; }
-    .col-intent                     { min-width: 130px; }
-    .col-spec                       { min-width: 100px; max-width: 130px; }
-    .col-attach                     { width: 68px; text-align: center; }
-    .col-mail                       { min-width: 150px; max-width: 220px; }
-    .col-status                     { width: 85px; white-space: nowrap; }
-    .col-actions                    { width: 105px; white-space: nowrap; }
+    /* ── Stat cards ─────────────────────────────────────────────────────────── */
+    .st-stat .stat-value { font-size: 1.5rem; font-weight: 700; }
+    .st-stat .stat-label { font-size: 13px; font-weight: 500; color: #495057; }
 
     /* ── Badges ─────────────────────────────────────────────────────────────── */
-    .intent-badge                   { display: inline-block; font-size: 11px; padding: 0.25em 0.6em;
-                                      border-radius: 20px; font-weight: 500; white-space: nowrap; }
-    .spec-badge                     { display: inline-block; font-size: 11px; padding: 0.2em 0.5em;
-                                      border-radius: 4px; font-weight: 500; line-height: 1.4;
-                                      white-space: normal; word-break: break-word; }
-    .status-open                    { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
-    .status-closed                  { background: #d1e7dd; color: #0a3622; border: 1px solid #198754; }
-    .status-inprogress              { background: #cfe2ff; color: #0a3278; border: 1px solid #0d6efd; }
+    #ticketsTable .badge.st-badge    { width: auto; font-size: 11px !important; padding: 0.35em 0.65em; font-weight: 500; }
+    .intent-badge                    { display: inline-block; font-size: 11px; padding: 0.3em 0.65em;
+                                       border-radius: 4px; font-weight: 500; white-space: nowrap; }
+    .spec-badge                      { display: inline-block; font-size: 11px; padding: 0.25em 0.55em;
+                                       border-radius: 4px; font-weight: 500; line-height: 1.4;
+                                       white-space: normal; word-break: break-word; }
+    .status-open       { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+    .status-closed     { background: #d1e7dd; color: #0a3622; border: 1px solid #198754; }
+    .status-inprogress { background: #cfe2ff; color: #0a3278; border: 1px solid #0d6efd; }
+
+    /* ── Table ──────────────────────────────────────────────────────────────── */
+    #ticketsTable                    { table-layout: auto; }
+    #ticketsTable th                 { font-size: 13px; }
+    .table > thead > tr > th        { font-size: 13px; }
+
+    /* ── Column widths ──────────────────────────────────────────────────────── */
+    .col-num     { width: 36px; }
+    .col-date    { width: 115px; white-space: nowrap; }
+    .col-email   { max-width: 160px; }
+    .col-client  { white-space: nowrap; }
+    .col-assigned{ max-width: 145px; }
+    .col-subject { min-width: 130px;font-size:13px; max-width: 200px; white-space: normal; word-break: break-word; line-height: 1.4; }
+    .col-intent  { min-width: 130px; }
+    .col-spec    { min-width: 100px; max-width: 130px; }
+    .col-attach  { width: 68px; text-align: center; }
+    .col-mail    { min-width: 150px; max-width: 220px; }
+    .col-status  { width: 90px; white-space: nowrap; }
+    .col-actions { width: 110px; white-space: nowrap; }
 
     /* ── Mail preview ───────────────────────────────────────────────────────── */
-    .mail-preview-text              { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-                                      overflow: hidden; color: #555; font-size: 12px; line-height: 1.4;
-                                      word-break: break-word; }
-    .btn-view-mail                  { font-size: 11px; padding: 1px 7px; margin-top: 4px; white-space: nowrap; }
+    .mail-preview-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+                         overflow: hidden; color: #555; font-size: 12px; line-height: 1.4; word-break: break-word; }
+    .btn-view-mail {
+        font-size: 10px!important;
+        padding: 2px 5px!important;
+        border-radius: 0px !important;
+        display: inline-flex; align-items: center; gap: 4px;
+         margin-top: 3px;
+        white-space: nowrap; border-radius: 20px;
+        background: transparent; border: 1px solid #dee2e6;
+        color: #868e96; letter-spacing: 0.2px; transition: all 0.15s ease;
+    }
+    .btn-view-mail:hover { background: #f1f3f5; border-color: #adb5bd; color: #495057; }
 
     /* ── Attachment icons ───────────────────────────────────────────────────── */
-    .attach-icons                   { display: flex; gap: 5px; justify-content: center; align-items: center; }
-    .attach-icon                    { font-size: 13px; }
-    .attach-icon.yes                { color: #198754; }
-    .attach-icon.no                 { color: #dee2e6; }
-    .drive-link                     { display: block; text-align: center; margin-top: 3px; font-size: 11px; }
-
-    /* ── Row hover ──────────────────────────────────────────────────────────── */
-    .ticket-row:hover               { background: #f8f9ff !important; }
+    .attach-icons { display: flex; gap: 5px; justify-content: center; align-items: center; }
+    .attach-icon  { font-size: 13px; }
+    .attach-icon.yes { color: #198754; }
+    .attach-icon.no  { color: #dee2e6; }
+    .drive-link      { display: block; text-align: center; margin-top: 3px; font-size: 11px; }
 
     /* ── Action buttons ─────────────────────────────────────────────────────── */
-    .action-btns                    { display: flex; gap: 4px; justify-content: center; flex-wrap: nowrap; }
-    .status-change-btn,
-    .btn-history                    { font-size: 11px; padding: 2px 6px; line-height: 1.4; flex-shrink: 0; }
+    .action-btns { display: flex; gap: 4px; justify-content: center; flex-wrap: nowrap; }
+    .btn.btn-sm  { font-size: 11px; padding: 3px 5px; background: #d4cece85; }
+    .status-change-btn, .btn-history { font-size: 11px; padding: 2px 6px; line-height: 1.4; flex-shrink: 0; }
 
-    /* ── Summary stat cards ─────────────────────────────────────────────────── */
-    .stat-card .stat-val            { font-size: 1.5rem; font-weight: 700; }
-    .stat-card .stat-lbl            { font-size: 11.5px; color: #6c757d; }
-
-    /* ── Filter bar ─────────────────────────────────────────────────────────── */
-    .filter-bar                     { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;
-                                      padding: 12px 16px; margin-bottom: 16px; }
-    .filter-bar .form-label         { font-size: 12px; font-weight: 600; color: #495057; margin-bottom: 2px; }
-    .filter-bar .form-control,
-    .filter-bar .form-select        { font-size: 12.5px; }
-
-    /* ── Pagination ─────────────────────────────────────────────────────────── */
-    .page-info                      { font-size: 13px; color: #6c757d; }
+    /* ── Inline assignment editor ────────────────────────────────────────────── */
+    .assign-view                { display: flex; align-items: center; gap: 5px; min-width: 0; }
+    .assign-view a,
+    .assign-view .assign-name   { flex: 1; min-width: 0; }
+    .btn-edit-assign            { font-size: 10px; padding: 2px 6px; opacity: 0.35; flex-shrink: 0;
+                                  border-radius: 3px; line-height: 1.4; background: transparent;
+                                  border-color: #dee2e6; color: #6c757d; }
+    .btn-edit-assign:hover      { opacity: 1; background: #f1f3f5; border-color: #adb5bd; color: #495057; }
+    .assign-edit-form           { display: none; flex-direction: column; gap: 5px; }
+    .assign-edit-form select    { font-size: 12px; width: 100%; border: 1px solid #ced4da;
+                                  border-radius: 4px; padding: 5px 8px; color: #212529;
+                                  background-color: #fff; cursor: pointer; }
+    .assign-edit-form select:focus { border-color: #86b7fe; outline: 0;
+                                     box-shadow: 0 0 0 0.2rem rgba(13,110,253,.2); }
+    .assign-edit-row            { display: flex; gap: 4px; align-items: center; }
+    .btn-assign-ok              { font-size: 11px; padding: 3px 10px; flex-shrink: 0; font-weight: 500; }
+    .btn-assign-x               { font-size: 11px; padding: 3px 8px;  flex-shrink: 0; }
 
     /* ── History modal timeline ──────────────────────────────────────────────── */
     .history-timeline               { list-style: none; padding: 0; margin: 0; }
     .history-timeline li            { display: flex; gap: 12px; padding: 10px 0;
                                       border-bottom: 1px solid #f0f0f0; align-items: flex-start; }
     .history-timeline li:last-child { border-bottom: none; }
-    .ht-dot                         { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-    .ht-dot.open                    { background: #ffc107; }
-    .ht-dot.inprogress              { background: #0d6efd; }
-    .ht-dot.closed                  { background: #198754; }
-    .ht-body                        { flex: 1; }
-    .ht-transition                  { font-size: 13px; font-weight: 600; color: #212529; }
-    .ht-meta                        { font-size: 11.5px; color: #6c757d; margin-top: 2px; }
+    .ht-dot          { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .ht-dot.open       { background: #ffc107; }
+    .ht-dot.inprogress { background: #0d6efd; }
+    .ht-dot.closed     { background: #198754; }
+    .ht-dot.assignment { background: #6f42c1; }
+    .ht-body       { flex: 1; }
+    .ht-transition { font-size: 13px; font-weight: 600; color: #212529; }
+    .ht-meta       { font-size: 11.5px; color: #6c757d; margin-top: 2px; }
 
     /* ── Mail modal ─────────────────────────────────────────────────────────── */
-    .mail-modal-meta span           { font-size: 12.5px; color: #6c757d; }
-    .mail-modal-meta strong         { color: #212529; }
-    .mail-modal-body-text           { white-space: pre-wrap; word-break: break-word; font-size: 13px;
-                                      line-height: 1.75; background: #f8f9fa; border-radius: 6px;
-                                      padding: 14px 18px; border: 1px solid #e9ecef;
-                                      max-height: 40vh; overflow-y: auto; font-family: inherit; }
-    .mail-modal-subject             { font-size: 1.05rem; font-weight: 600; color: #212529; line-height: 1.4; }
-    .summary-block                  { background: #f8f9fa; border-radius: 6px; border: 1px solid #e9ecef;
-                                      padding: 10px 14px; font-size: 13px; line-height: 1.6;
-                                      white-space: pre-wrap; word-break: break-word; }
-    .summary-label                  { font-size: 11px; font-weight: 700; text-transform: uppercase;
-                                      letter-spacing: .5px; color: #6c757d; margin-bottom: 4px; }
-
-    /* ── Inline assignment editor ────────────────────────────────────────────── */
-    .assign-view                    { display: flex; align-items: center; gap: 3px; min-width: 0; }
-    .assign-view a, .assign-view span { flex: 1; min-width: 0; }
-    .btn-edit-assign                { font-size: 9px; padding: 1px 5px; opacity: 0.5; flex-shrink: 0; }
-    .btn-edit-assign:hover          { opacity: 1; }
-    .assign-edit-form               { display: none; flex-direction: column; gap: 4px; }
-    .assign-edit-row                { display: flex; gap: 3px; align-items: center; }
-    .assign-edit-form select        { font-size: 11px; width: 100%; }
-    .btn-assign-ok                  { font-size: 10px; padding: 1px 6px; flex-shrink: 0; }
-    .btn-assign-x                   { font-size: 10px; padding: 1px 6px; flex-shrink: 0; }
-    /* ht-dot for assignment changes */
-    .ht-dot.assignment              { background: #6f42c1; }
+    .mail-modal-meta span    { font-size: 12.5px; color: #6c757d; }
+    .mail-modal-meta strong  { color: #212529; }
+    .mail-modal-body-text    { white-space: pre-wrap; word-break: break-word; font-size: 13px;
+                               line-height: 1.75; background: #f8f9fa; border-radius: 6px;
+                               padding: 14px 18px; border: 1px solid #e9ecef;
+                               max-height: 40vh; overflow-y: auto; font-family: inherit; }
+    .mail-modal-subject      { font-size: 1.05rem; font-weight: 600; color: #212529; line-height: 1.4; }
+    .summary-block           { background: #f8f9fa; border-radius: 6px; border: 1px solid #e9ecef;
+                               padding: 10px 14px; font-size: 13px; line-height: 1.6;
+                               white-space: pre-wrap; word-break: break-word; }
+    .summary-label           { font-size: 11px; font-weight: 700; text-transform: uppercase;
+                               letter-spacing: .5px; color: #6c757d; margin-bottom: 4px; }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -181,7 +197,7 @@
             <p class="text-muted mb-0 mt-1">Inbound support requests identified and enriched by Relay.app</p>
         </div>
         <div class="col-auto">
-            <button class="btn btn-outline-secondary btn-sm" onclick="location.reload()">
+            <button style="background: #bceabc;border:0px;color:green" class="btn btn-outline-secondary btn-sm" onclick="location.reload()">
                 <i class="fas fa-sync-alt me-1"></i>Refresh
             </button>
         </div>
@@ -208,53 +224,55 @@
         int cardIP    = Model.Count(t => string.Equals(t.Status, "InProgress", StringComparison.OrdinalIgnoreCase));
         int cardClose = Model.Count(t => string.Equals(t.Status, "Closed",     StringComparison.OrdinalIgnoreCase));
     }
-    <div class="row g-3 mb-3">
+    <div class="row g-3 mb-4">
         <div class="col-6 col-sm-3">
-            <div class="card border-0 shadow-sm text-center py-3 stat-card">
-                <div class="stat-val text-primary">@totalCount</div>
-                <div class="stat-lbl">@(hasFilters ? "Matched" : "Total") Tickets</div>
+            <div class="card border-0 shadow-sm text-center py-3 st-stat">
+                <div class="stat-value text-primary">@totalCount</div>
+                <div class="stat-label">@(hasFilters ? "Matched" : "Total") Tickets</div>
             </div>
         </div>
         <div class="col-6 col-sm-3">
-            <div class="card border-0 shadow-sm text-center py-3 stat-card">
-                <div class="stat-val text-warning">@cardOpen</div>
-                <div class="stat-lbl">Open (page)</div>
+            <div class="card border-0 shadow-sm text-center py-3 st-stat">
+                <div class="stat-value text-warning">@cardOpen</div>
+                <div class="stat-label">Open (page)</div>
             </div>
         </div>
         <div class="col-6 col-sm-3">
-            <div class="card border-0 shadow-sm text-center py-3 stat-card">
-                <div class="stat-val text-info">@cardIP</div>
-                <div class="stat-lbl">In Progress (page)</div>
+            <div class="card border-0 shadow-sm text-center py-3 st-stat">
+                <div class="stat-value text-info">@cardIP</div>
+                <div class="stat-label">In Progress (page)</div>
             </div>
         </div>
         <div class="col-6 col-sm-3">
-            <div class="card border-0 shadow-sm text-center py-3 stat-card">
-                <div class="stat-val text-success">@cardClose</div>
-                <div class="stat-lbl">Closed (page)</div>
+            <div class="card border-0 shadow-sm text-center py-3 st-stat">
+                <div class="stat-value text-success">@cardClose</div>
+                <div class="stat-label">Closed (page)</div>
             </div>
         </div>
     </div>
 
-    <!-- Filter bar -->
+    <!-- Filters -->
     <form asp-action="Index" asp-controller="SupportTicket" method="get" id="filterForm">
         <input type="hidden" name="page"     value="1" />
         <input type="hidden" name="pageSize" value="@pageSize" />
-        <div class="filter-bar">
-            <div class="row g-2 align-items-end">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body py-2 px-3">
+                <div class="d-flex align-items-center gap-2" style="flex-wrap:nowrap;width:100%;">
 
-                <div class="col-12 col-sm-4 col-md-2">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select name="status" id="statusFilter"
+                            class="form-select st-filter-control"
+                            style="flex:1 1 0;min-width:110px;max-width:145px;"
+                            onchange="document.getElementById('filterForm').submit()">
                         <option value="">All statuses</option>
                         @if (sSel_open)   { <option value="Open"       selected>Open</option>        } else { <option value="Open">Open</option>               }
                         @if (sSel_ip)     { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option>  }
                         @if (sSel_closed) { <option value="Closed"     selected>Closed</option>      } else { <option value="Closed">Closed</option>           }
                     </select>
-                </div>
 
-                <div class="col-12 col-sm-8 col-md-4">
-                    <label class="form-label">Intent</label>
-                    <select name="intent" class="form-select form-select-sm">
+                    <select name="intent" id="intentFilter"
+                            class="form-select st-filter-control"
+                            style="flex:0 0 200px;width:200px;"
+                            onchange="document.getElementById('filterForm').submit()">
                         <option value="">All intents</option>
                         @if (iSel_01) { <option value="New interview request"                        selected>New interview request</option>                        } else { <option value="New interview request">New interview request</option>                                       }
                         @if (iSel_02) { <option value="New candidate submission"                     selected>New candidate submission</option>                     } else { <option value="New candidate submission">New candidate submission</option>                               }
@@ -277,57 +295,41 @@
                         @if (iSel_19) { <option value="Interviewer no-show"                          selected>Interviewer no-show</option>                          } else { <option value="Interviewer no-show">Interviewer no-show</option>                                     }
                         @if (iSel_20) { <option value="Quality control issues"                       selected>Quality control issues</option>                       } else { <option value="Quality control issues">Quality control issues</option>                               }
                     </select>
-                </div>
 
-                <div class="col-12 col-sm-5 col-md-2">
-                    <label class="form-label">Sender Email</label>
-                    <input type="text" name="senderEmail" class="form-control form-control-sm"
-                           placeholder="Search email…" value="@selEmail" />
-                </div>
+                    <input type="text" id="senderEmailInput" name="senderEmail"
+                           class="form-control st-filter-control"
+                           placeholder="Sender email…"
+                           style="flex:1 1 0;min-width:130px;"
+                           value="@selEmail" />
 
-                <div class="col-6 col-sm-4 col-md-2">
-                    <label class="form-label">Received From</label>
-                    <input type="date" name="dateFrom" class="form-control form-control-sm" value="@selDateFrom" />
-                </div>
+                    <input type="date" name="dateFrom" class="form-control st-filter-control"
+                           style="flex:1 1 0;min-width:120px;" value="@selDateFrom"
+                           onchange="document.getElementById('filterForm').submit()" />
 
-                <div class="col-6 col-sm-4 col-md-2">
-                    <label class="form-label">Received To</label>
-                    <input type="date" name="dateTo" class="form-control form-control-sm" value="@selDateTo" />
-                </div>
+                    <span class="text-muted flex-shrink-0" style="font-size:11px;">–</span>
 
-                <div class="col-12 col-sm-3 col-md-auto d-flex gap-1 align-items-end">
-                    <button type="submit" class="btn btn-primary btn-sm px-3">
+                    <input type="date" name="dateTo" class="form-control st-filter-control"
+                           style="flex:1 1 0;min-width:120px;" value="@selDateTo"
+                           onchange="document.getElementById('filterForm').submit()" />
+
+                    <button type="submit" class="btn btn-primary btn-sm flex-shrink-0">
                         <i class="fas fa-filter me-1"></i>Apply
                     </button>
-                    @if (hasFilters)
-                    {
-                        <a asp-action="Index" asp-controller="SupportTicket" class="btn btn-outline-secondary btn-sm px-3">
-                            <i class="fas fa-times me-1"></i>Clear
-                        </a>
-                    }
+                    <a asp-action="Index" asp-controller="SupportTicket" class="btn btn-sm btn-outline-secondary flex-shrink-0">
+                        <i class="fas fa-times me-1"></i>Clear
+                    </a>
+
                 </div>
             </div>
-
-            @if (hasFilters)
-            {
-                <div class="mt-2 pt-1 d-flex flex-wrap gap-2 align-items-center">
-                    <small class="text-muted">Active filters:</small>
-                    @if (!string.IsNullOrEmpty(selStatus))   { <span class="badge bg-primary"        style="font-size:11px">Status: @selStatus</span>   }
-                    @if (!string.IsNullOrEmpty(selIntent))   { <span class="badge bg-info text-dark" style="font-size:11px">Intent: @selIntent</span>   }
-                    @if (!string.IsNullOrEmpty(selEmail))    { <span class="badge bg-secondary"      style="font-size:11px">Email: @selEmail</span>     }
-                    @if (!string.IsNullOrEmpty(selDateFrom)) { <span class="badge bg-dark"           style="font-size:11px">From: @selDateFrom</span>   }
-                    @if (!string.IsNullOrEmpty(selDateTo))   { <span class="badge bg-dark"           style="font-size:11px">To: @selDateTo</span>       }
-                </div>
-            }
         </div>
     </form>
 
     <!-- Tickets table -->
-    <div class="card border-0 shadow-sm">
+    <div class="card shadow-sm border-0">
         <div class="card-body p-0">
             @if (!Model.Any())
             {
-                <div class="text-center py-5 text-muted">
+                <div class="text-center text-muted py-5">
                     <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
                     @if (hasFilters)
                     { <span>No tickets match the selected filters.</span> }
@@ -338,7 +340,8 @@
             else
             {
                 <div class="table-responsive">
-                    <table id="ticketsTable" class="table table-hover table-sm mb-0">
+                    <table id="ticketsTable" class="table table-hover table-sm mb-0 align-middle">
+
                         <thead class="table-light">
                             <tr>
                                 <th class="col-num">#</th>
@@ -390,13 +393,18 @@
                                         <div class="assign-view" id="assign-view-@t.Id">
                                             @if (!string.IsNullOrEmpty(t.AssignedTo))
                                             {
-                                                <a href="mailto:@t.AssignedTo" class="text-decoration-none"
-                                                   style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px;display:block"
-                                                   title="@t.AssignedTo">@t.AssignedTo</a>
+                                                <a href="mailto:@t.AssignedTo"
+                                                   class="assign-name text-decoration-none text-dark"
+                                                   style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:105px;display:block"
+                                                   title="@t.AssignedTo">
+                                                    <i class="fas fa-user-circle text-secondary me-1" style="font-size:11px"></i>@t.AssignedTo
+                                                </a>
                                             }
                                             else
                                             {
-                                                <span class="text-muted fst-italic" style="font-size:12px">Unassigned</span>
+                                                <span class="assign-name text-muted fst-italic" style="font-size:12px">
+                                                    <i class="fas fa-user-slash me-1" style="font-size:11px"></i>Unassigned
+                                                </span>
                                             }
                                             <button type="button"
                                                     class="btn btn-outline-secondary btn-sm btn-edit-assign"
@@ -407,22 +415,22 @@
                                         </div>
                                         <!-- inline edit form (hidden until pencil clicked) -->
                                         <div class="assign-edit-form" id="assign-edit-@t.Id">
-                                            <select class="form-select form-select-sm"
+                                            <select class="form-select"
                                                     id="assign-select-@t.Id">
                                                 <option value="">Loading…</option>
                                             </select>
                                             <div class="assign-edit-row">
-                                                <button type="button"
+                                                            <button style="background: #489d48;padding: 1px 5px;" type="button"
                                                         class="btn btn-success btn-sm btn-assign-ok"
                                                         data-ticket-id="@t.Id"
-                                                        title="Confirm">
-                                                    <i class="fas fa-check"></i>
+                                                        title="Save assignment">
+                                                    <i class="fas fa-check me-1"></i>Save
                                                 </button>
-                                                <button type="button"
-                                                        class="btn btn-secondary btn-sm btn-assign-x"
+                                                            <button style="background:#eb4d4d;color:#fff;padding: 1px 5px; type="button"
+                                                        class="btn btn-outline-secondary btn-sm btn-assign-x"
                                                         data-ticket-id="@t.Id"
                                                         title="Cancel">
-                                                    <i class="fas fa-times"></i>
+                                                    Cancel
                                                 </button>
                                             </div>
                                         </div>
@@ -539,49 +547,66 @@
                     </table>
                 </div>
 
-                <!-- Pagination footer -->
-                <div class="d-flex align-items-center justify-content-between px-3 py-3 border-top flex-wrap gap-2">
-                    <div class="page-info">
-                        Showing <strong>@first</strong>–<strong>@last</strong>
-                        of <strong>@totalCount</strong> ticket@(totalCount == 1 ? "" : "s")
-                        @if (hasFilters) { <span class="text-muted">(filtered)</span> }
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <select class="form-select form-select-sm" style="width:auto" onchange="changePageSize(this.value)">
-                            @if (ps10)  { <option value="10"  selected>10 / page</option>  } else { <option value="10">10 / page</option>   }
-                            @if (ps25)  { <option value="25"  selected>25 / page</option>  } else { <option value="25">25 / page</option>   }
-                            @if (ps50)  { <option value="50"  selected>50 / page</option>  } else { <option value="50">50 / page</option>   }
-                            @if (ps100) { <option value="100" selected>100 / page</option> } else { <option value="100">100 / page</option> }
-                        </select>
-                        @if (totalPages > 1)
-                        {
-                            <nav aria-label="Ticket pagination">
-                                <ul class="pagination pagination-sm mb-0">
-                                    <li class="page-item @(page <= 1 ? "disabled" : "")">
-                                        <a class="page-link" href="@pageUrl(page - 1)">‹</a>
-                                    </li>
-                                    @{
-                                        int startP = Math.Max(1, page - 2);
-                                        int endP   = Math.Min(totalPages, page + 2);
-                                        if (startP > 1) { <li class="page-item disabled"><span class="page-link">…</span></li> }
-                                        for (int p = startP; p <= endP; p++)
-                                        {
-                                            <li class="page-item @(p == page ? "active" : "")">
-                                                <a class="page-link" href="@pageUrl(p)">@p</a>
-                                            </li>
-                                        }
-                                        if (endP < totalPages) { <li class="page-item disabled"><span class="page-link">…</span></li> }
-                                    }
-                                    <li class="page-item @(page >= totalPages ? "disabled" : "")">
-                                        <a class="page-link" href="@pageUrl(page + 1)">›</a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        }
-                    </div>
-                </div>
             }
         </div>
+
+        @if (totalCount > 0)
+        {
+            <div class="card-footer d-flex align-items-center justify-content-between bg-white border-top py-2 flex-wrap gap-2">
+                <small class="text-muted">
+                    Showing <strong>@first–@last</strong> of <strong>@totalCount</strong> ticket@(totalCount == 1 ? "" : "s")
+                    @if (hasFilters) { <span>(filtered)</span> }
+                </small>
+
+                @if (totalPages > 1)
+                {
+                    <nav aria-label="Ticket pagination">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item @(page <= 1 ? "disabled" : "")">
+                                <a class="page-link" href="@pageUrl(page - 1)" aria-label="Previous">
+                                    <span aria-hidden="true">«</span>
+                                </a>
+                            </li>
+                            @{
+                                int startP = Math.Max(1, page - 3);
+                                int endP   = Math.Min(totalPages, page + 3);
+                                if (startP > 1)
+                                {
+                                    <li class="page-item"><a class="page-link" href="@pageUrl(1)">1</a></li>
+                                    if (startP > 2) { <li class="page-item disabled"><span class="page-link">…</span></li> }
+                                }
+                                for (int p = startP; p <= endP; p++)
+                                {
+                                    <li class="page-item @(p == page ? "active" : "")">
+                                        <a class="page-link" href="@pageUrl(p)">@p</a>
+                                    </li>
+                                }
+                                if (endP < totalPages)
+                                {
+                                    if (endP < totalPages - 1) { <li class="page-item disabled"><span class="page-link">…</span></li> }
+                                    <li class="page-item"><a class="page-link" href="@pageUrl(totalPages)">@totalPages</a></li>
+                                }
+                            }
+                            <li class="page-item @(page >= totalPages ? "disabled" : "")">
+                                <a class="page-link" href="@pageUrl(page + 1)" aria-label="Next">
+                                    <span aria-hidden="true">»</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+
+                <div class="d-flex align-items-center gap-2">
+                    <small class="text-muted">Per page:</small>
+                    <select class="form-select form-select-sm" style="width:80px" onchange="changePageSize(this.value)">
+                        @if (ps10)  { <option value="10"  selected>10</option>  } else { <option value="10">10</option>   }
+                        @if (ps25)  { <option value="25"  selected>25</option>  } else { <option value="25">25</option>   }
+                        @if (ps50)  { <option value="50"  selected>50</option>  } else { <option value="50">50</option>   }
+                        @if (ps100) { <option value="100" selected>100</option> } else { <option value="100">100</option> }
+                    </select>
+                </div>
+            </div>
+        }
     </div>
 
 </div>
@@ -596,11 +621,11 @@
 <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header pb-2">
+            <div class="modal-header">
                 <div>
-                    <h6 class="modal-title fw-bold mb-0">
+                    <h5 class="modal-title fw-bold mb-0">
                         <i class="fas fa-history text-secondary me-2"></i>Ticket History
-                    </h6>
+                    </h5>
                     <small class="text-muted" id="historyModalSubject"></small>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -615,7 +640,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -631,7 +656,7 @@
 <div class="modal fade" id="mailDetailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header pb-2">
+            <div class="modal-header">
                 <div class="flex-grow-1 me-3">
                     <div class="mail-modal-subject" id="modalSubject"></div>
                 </div>
@@ -663,7 +688,7 @@
                 <div class="mail-modal-body-text" id="modalBody"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
