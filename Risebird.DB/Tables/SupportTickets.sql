@@ -52,5 +52,7 @@ BEGIN
         ALTER TABLE dbo.SupportTickets ADD [UpdatedAt]              DATETIME       NULL;
     IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'AssignedTo'               AND Object_ID = Object_ID(N'SupportTickets'))
         ALTER TABLE dbo.SupportTickets ADD [AssignedTo]             VARCHAR(150)   NULL;
+    IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'JobTitle'                 AND Object_ID = Object_ID(N'SupportTickets'))
+        ALTER TABLE dbo.SupportTickets ADD [JobTitle]               NVARCHAR(200)  NULL;
 END
 GO

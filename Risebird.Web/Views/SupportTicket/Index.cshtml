@@ -905,27 +905,25 @@
                     var $ul = $('#historyList');
                     $.each(data, function (_, h) {
                         var isAssign = h.eventType === 'AssignmentChange';
-                        var dc, arrow;
+                        var dc, arrow, typeIcon;
                         if (isAssign) {
-                            dc    = 'assignment';
-                            arrow = '<i class="fas fa-user-edit me-1 text-muted" style="font-size:10px"></i>'
-                                  + '<strong>' + h.fromStatus + '</strong>'
-                                  + ' <i class="fas fa-arrow-right mx-1 text-muted" style="font-size:10px"></i>'
-                                  + '<strong>' + h.toStatus + '</strong>';
+                            dc       = 'assignment';
+                            typeIcon = '<i class="fas fa-user-edit me-2" style="font-size:11px;color:#6f42c1" title="Reassignment"></i>';
+                            arrow    = '<strong>' + h.fromStatus + '</strong>'
+                                     + ' <i class="fas fa-long-arrow-alt-right mx-1 text-muted" style="font-size:10px"></i>'
+                                     + '<strong>' + h.toStatus + '</strong>';
                         } else {
-                            dc    = dotClass[h.toStatus.toLowerCase()] || 'open';
-                            arrow = h.fromStatus === '—'
-                                ? '<span class="text-muted">Created as</span> <strong>' + h.toStatus + '</strong>'
+                            dc       = dotClass[h.toStatus.toLowerCase()] || 'open';
+                            typeIcon = '<i class="fas fa-sync-alt me-2 text-secondary" style="font-size:10px" title="Status change"></i>';
+                            arrow    = h.fromStatus === '—'
+                                ? '<span class="text-muted">Created as&nbsp;</span><strong>' + h.toStatus + '</strong>'
                                 : '<strong>' + h.fromStatus + '</strong>'
-                                  + ' <i class="fas fa-arrow-right mx-1 text-muted" style="font-size:10px"></i>'
+                                  + ' <i class="fas fa-long-arrow-alt-right mx-1 text-muted" style="font-size:10px"></i>'
                                   + '<strong>' + h.toStatus + '</strong>';
                         }
-                        var label = isAssign
-                            ? '<span class="badge bg-light text-secondary border me-1" style="font-size:9px">Reassigned</span>'
-                            : '<span class="badge bg-light text-secondary border me-1" style="font-size:9px">Status</span>';
                         $ul.append(
                             '<li><span class="ht-dot ' + dc + '"></span>'
-                          + '<div class="ht-body"><div class="ht-transition">' + label + arrow + '</div>'
+                          + '<div class="ht-body"><div class="ht-transition">' + typeIcon + arrow + '</div>'
                           + '<div class="ht-meta"><i class="fas fa-user me-1"></i>' + h.changedBy
                           + ' &nbsp;&middot;&nbsp; <i class="fas fa-clock me-1"></i>' + h.changedAt
                           + '</div></div></li>'
