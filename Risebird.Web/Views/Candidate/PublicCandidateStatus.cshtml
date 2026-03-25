@@ -83,9 +83,13 @@
 
         </script>
            <style>
-               .act-btns, .action-cell.act-btns{
-                       display: table-cell;
-               }
+        
+
+    .btn-act-cold svg[fill] {
+     fill: rgb(116 121 127 / 56%) !important;}
+     .act-btns, .action-cell.act-btns{
+      display: table-cell;
+     }
             .star-rating {
                 border: solid 1px white;
                 display: flex;
@@ -666,10 +670,10 @@
                         background: #fffbeb;
                     }
 
-                        .pcs-btn-act.pcs-btn-cold:hover {
-                            background: #fef3c7;
-                            border-color: #fcd34d;
-                        }
+    .btn-act-cold:hover svg[fill]{
+        fill: rgb(116 118 121 / 66%) !important;
+                    }
+                      
 
                 /* ===== HEADER WRAPPER OVERRIDE ===== */
                 .topheader-header {
@@ -858,6 +862,7 @@
                             display: block;
                             width: auto;
                             height: auto;
+                            padding-left:0px;
                         }
 
                         /* Tooltip appears just below the badge on hover - high z-index so it stays visible above table/modal */
@@ -1030,16 +1035,7 @@
                     align-items: center;
                     padding: 4px 6px !important;
                 }
-                .btn-act.btn-act-cold,
-                .act-btns .btn-act.btn-act-cold {
-                    background: #fef3c7;
-                    color: #d97706;
-                }
-                .btn-act.btn-act-cold:hover,
-                .act-btns .btn-act.btn-act-cold:hover {
-                    background: #fde68a;
-                    color: #b45309;
-                }
+                
                 .dataloading [data-tooltip]::after{
                     border: 0px solid transparent;
                 }
@@ -1272,7 +1268,12 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
                                                 Total Candidates
                                             </a>
-
+                                        <div class="pcs-nav-pill">
+                                            <button type="button" class="pcs-nav-pill" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" title="Manage Interviews">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>
+                                                Manage Interviews
+                                            </button>
+                                        </div>
                                             <div class="pcs-dropdown pcs-nav-pill" id="pcsStatsDropdown">
                                                 <button type="button" class="pcs-nav-pill" id="pcsStatsTrigger" onclick="togglePcsStatsDropdown(event)" title="Stats">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="4" /><line x1="12" x2="12" y1="20" y2="10" /><line x1="6" x2="6" y1="20" y2="14" /></svg>
@@ -1308,7 +1309,7 @@
                                                     }
                                                 </div>
                                             </div>
-                                            <div class="pcs-nav-pill">
+                                            @* <div class="pcs-nav-pill">
                                                 <button type="button" class="pcs-nav-pill" onclick="CandidateProbableNoShow('@ViewBag.emailid','@ViewBag.id')" title="Probable NoShow">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><line x1="17" x2="22" y1="8" y2="13" /><line x1="22" x2="17" y1="8" y2="13" /></svg>
                                                     Probable NoShow
@@ -1325,7 +1326,7 @@
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M9 15h6" /><path d="M9 11h3" /></svg>
                                                     Not Processed
                                                 </button>
-                                            </div>
+                                            </div> *@
                                             @if (ViewBag.ClientRole == "HRs" || ViewBag.ClientRole == "Staffing Agency")
                                             {<div class="pcs-nav-pill">
                                                 <button type="button" class="pcs-nav-pill" onclick="openInterviewManagement()" title="Live Co-ordination">
@@ -1334,12 +1335,7 @@
                                                 </button>
                                             </div>
                                             }
-                                            <div class="pcs-nav-pill">
-                                                <button type="button" class="pcs-nav-pill" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" title="Manage Interviews">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>
-                                                    Manage Interviews
-                                                </button>
-                                            </div>
+                                            
                                             }
 
                                             @if (ViewBag.ClientId == 177 && (ViewBag.emailid == "anabella.morales@turing.com" || ViewBag.emailid == "priyanka.k@turing.com" || ViewBag.emailid == "mani.maruthaiya@turing.com" || ViewBag.emailid == "tamara.dokic@turing.com" || ViewBag.emailid == "henrique.chierighini@turing.com"))
@@ -2210,9 +2206,9 @@
                                                                                                 <button type="button" class="btn-act" title="Send Invite" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId', '@((int)CommunicationMedium.Email)')">
                                                                                                     <svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                                                                                                 </button>
-                                                                                                <button type="button" class="btn-act" title="Send Invite Over Whatsapp" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId', '@((int)CommunicationMedium.Whatsapp)')">
+                                                                                                @* <button type="button" class="btn-act" title="Send Invite Over Whatsapp" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId', '@((int)CommunicationMedium.Whatsapp)')">
                                                                                                     <img class="icon-m icon-img" src="~/img/whatsapp.png" alt="WhatsApp"/>
-                                                                                                </button>
+                                                                                                </button> *@
                                                                                                 }
 
                                                                                                 }
@@ -2246,21 +2242,27 @@
                                                                                                     <svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                                                                                                 </button>
                                                                                                 }
-                                                                                                @if (item.Phone != null && item.Phone != string.Empty)
+                                                                                               @*  @if (item.Phone != null && item.Phone != string.Empty)
                                                                                                 {
                                                                                                 <span class="call" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')">
                                                                                                     <button type="button" class="btn-act btn-act-call" title="Call candidate">
                                                                                                         <svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                                                                                                     </button>
                                                                                                 </span>
-                                                                                                }
+                                                                                                } *@
                                                                                                 <button type="button" class="btn-act" aria-label="Candidate Status" title="Candidate Status" onclick="PublicStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFname','@item.CandidateName')">
                                                                                                     <svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                                                                                                 </button>
                                                                                                 @if (!item.IsColdCandidate && (item.CurrentMeetingStatus != 4 && item.CurrentMeetingStatus != 6 && item.CurrentMeetingStatus != 7 && item.CurrentMeetingStatus != 8) && (item.confirmationStatus != 1 || item.CurrentMeetingStatus != 2))
                                                                                                 {
                                                                                                 <button type="button" class="btn-act btn-act-cold" aria-label="Mark Cold Candidate" title="Mark Cold Candidate" onclick="MarkedColdCandidate('@item.CandidateId','@item.IRFname', '@item.CandidateEmailId','@item.InterviewId','@item.IRFId');">
-                                                                                                    <img class="icon-m icon-img" src="~/img/approve-blk.png" alt="Cold"/>
+                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" width="64" height="64" fill="#9CA3AF">
+ 
+  <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3 0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304h-91.4z"/>
+  
+  <path d="M528 128a96 96 0 1 0 0 192 96 96 0 1 0 0-192zm0 32c8.8 0 16 7.2 16 16v48l32 16c7.9 4 11 13.7 7 21.5s-13.7 11-21.5 7l-40-20c-5.4-2.7-8.5-8.2-8.5-14.2V176c0-8.8 7.2-16 16-16z"/>
+</svg>
+
                                                                                                 </button>
                                                                                                 }
                                                                                         </td>

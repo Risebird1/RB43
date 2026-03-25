@@ -3,6 +3,7 @@
     ViewData["Title"] = "Client Users";
     ViewBag.PageHeader = "Client Users";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["ForceRisebirdLogo"] = true;
 
     int currentPage = ViewBag.Page       != null ? (int)ViewBag.Page       : 1;
     int pageSize    = ViewBag.PageSize   != null ? (int)ViewBag.PageSize   : 50;
