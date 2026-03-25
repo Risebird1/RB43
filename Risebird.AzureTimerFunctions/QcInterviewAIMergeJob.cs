@@ -205,28 +205,6 @@ namespace Risebird.AzureTimerFunctions
                 PaymentSlaVmQcMergeMapper.ApplyFromMergeResponse(model, combined, applyOnlyIfEmpty: false);
 
                 var saved = await _meetingService.AddorUpdatePaymentSLADetails(model);
-                if (!saved)
-                {
-                    _log.LogWarning("QcInterviewAIMergeJob: AddorUpdatePaymentSLADetails returned false for interviewId={InterviewId}", interviewId);
-                }
-                else
-                {
-                    var interviewerEmail = await _meetingService.GetInterviewerEmailByInterviewId(interviewId);
-                    if (string.IsNullOrWhiteSpace(interviewerEmail))
-                    {
-                        _log.LogWarning("QcInterviewAIMergeJob: no interviewer email for interviewId={InterviewId}; skipping ApplyPenaltyQCForm", interviewId);
-                    }
-                    else if (await _meetingService.CanApplyQcPenaltyToInterviewPointsAsync(interviewId, interviewerEmail))
-                    {
-                        var redflags = combined.total_penalty.HasValue
-                            ? Math.Clamp(combined.total_penalty.Value, 0, 16)
-                            : Math.Clamp(combined.flags?.Count ?? 0, 0, 16);
-                        var videoReward = model.VideoReward;
-                        var applied = await _meetingService.ApplyPenaltyQCForm(interviewId, interviewerEmail, redflags, videoReward);
-                        if (!applied)
-                            _log.LogWarning("QcInterviewAIMergeJob: ApplyPenaltyQCForm returned false for interviewId={InterviewId}", interviewId);
-                    }
-                }
             }
             catch (Exception ex)
             {
