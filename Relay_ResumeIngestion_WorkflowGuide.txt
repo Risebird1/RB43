@@ -4,7 +4,7 @@ RELAY.APP WORKFLOW CHANGES — Resume Auto-Ingestion for "New Interview Request"
 
 OVERVIEW
 --------
-When an email is classified as "New interview request", this workflow now:
+When an email is classified as "New candidate submission", this workflow now:
   1. Extracts the job title from the email
   2. Uploads .pdf/.doc/.docx resume attachments to Google Drive (existing)
   3. Captures individual Drive URLs for each uploaded resume file (NEW)
@@ -98,7 +98,7 @@ ingestion entirely for non-resume intents.
 
 After Step 2 (Prompt GPT) and before the "Create folder" step, add a "Paths" step:
 
-  Path A (default): webhook_intent IS "New interview request"
+  Path A (default): webhook_intent IS "New candidate submission"
     -> Continue to Create folder -> Upload loop -> HTTP webhook
 
   Path B: webhook_intent is anything else
@@ -110,7 +110,7 @@ not interview requests.
 Configuration:
   1. Click "+" between Prompt GPT and Create folder
   2. Choose "Paths" (Flow control)
-  3. Path 1 condition: AI Output -> webhook_intent -> equals -> "New interview request"
+  3. Path 1 condition: AI Output -> webhook_intent -> equals -> "New candidate submission"
   4. Move "Create folder", loop, and upload steps into Path 1
   5. The HTTP webhook step goes after the Paths merge point (runs for both paths)
   6. In Path 2, set resume_drive_urls = [] in the HTTP body (hardcoded empty array)
@@ -128,7 +128,7 @@ STEP 5 — TEST THE UPDATED WORKFLOW
    - Verify the Upload step runs for each .pdf/.doc/.docx file
    - Verify the HTTP webhook receives the full payload with resume URLs
 4. Check the portal:
-   - A new SupportTicket should appear with Intent = "New interview request"
+   - A new SupportTicket should appear with Intent = "New candidate submission"
    - The DB should have new rows in CandidateResume for the matched IRF
    - The webhook response body will include:
        "resumeIngestion": "Resumes ingested: 2, IRF: <IRF-string-id>"

@@ -328,9 +328,9 @@ namespace Risebird.Web.Controllers
 
                 var newId = await _repository.InsertTicketAsync(ticket);
 
-                // ── Resume ingestion (New interview request only) ──────────────
+                // ── Resume ingestion (New candidate submission only) ───────────
                 var resumeIngestionResult = new System.Text.StringBuilder();
-                if (string.Equals(ticket.Intent, "New interview request",
+                if (string.Equals(ticket.Intent, "New candidate submission",
                         StringComparison.OrdinalIgnoreCase)
                     && ticket.AttachmentResumes
                     && payload.ResumeDriveUrls != null
