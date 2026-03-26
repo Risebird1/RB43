@@ -8136,7 +8136,7 @@ ul.ks-cboxtags {
             border: 2px solid rgba(139, 139, 139, .3);
             color: #adadad;
             border-radius: 25px;
-            line-height: 22px;
+            line-height:15px;
             /* white-space: nowrap;*/
             margin: 3px 0px;
             -webkit-touch-callout: none;
