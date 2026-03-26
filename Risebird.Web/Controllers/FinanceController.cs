@@ -95,6 +95,7 @@ namespace Risebird.Web.Controllers
                     var verificationenddate = new DateTime(2024, 10, 01);
                     foreach (var item in model)
                     {
+                        int i = 0;
                         //var _onemoth = item.Date.AddMonths(1).DayOfWeek;
                         //int diff = (7 + (_onemoth - DayOfWeek.Monday)) % 7;
                         //var _firstdate = item.Date.AddMonths(1).AddDays(-1 * diff).Date;
@@ -134,7 +135,7 @@ namespace Risebird.Web.Controllers
                             item.MeetingStatusDetails = "";
                         }
                         //if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatusDetails != "No Show(Interviewer)" && item.MeetingStatusDetails != "No Show")
-                        if (item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5 && item.MeetingStatus != 9)
+                        if (item.CrossCheckvalue != null && item.CrossCheckvalue.Contains("Penalty") && item.MeetingStatus != 5 && item.MeetingStatus != 9)
                         {
                             item.MeetingStatusDetails = "Unassign Meeting within 1/2 hr";
                             item.InterviewStatusDetails = "";
