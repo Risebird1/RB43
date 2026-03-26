@@ -1811,6 +1811,50 @@ namespace Risebird.Web.Controllers
                 return View(reportModel);
             }
         }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GenerateAIReportPDFFile(Guid seId)
+        {
+            try
+            {
+                string profileName = HttpContext?.Session?.GetString("profileName")?.Trim();
+                profileName = profileName?.Replace("\"", "");
+                ViewBag.ProfileName = profileName;
+
+                var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
+                InterviewReportResult aiReport = null;
+                var aiReportJson = await _aiinterviewerService.GetReportOfAIInterviewByAssistant(seId);
+                if (!string.IsNullOrEmpty(aiReportJson))
+                {
+                    aiReport = JsonConvert.DeserializeObject<InterviewReportResult>(aiReportJson);
+                }
+                if (aiReport == null)
+                {
+                    aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails?.AIInterviewType ?? 0);
+                }
+
+                var reportModel = new AIInterviewReportWrapperClass();
+                reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+                reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
+                reportModel.CandidateEmail = meetingDetails?.candidateEmail;
+                reportModel.CandidateName = meetingDetails?.candidateName;
+                reportModel.InterviewDate = meetingDetails?.interviewDate ?? DateTime.MinValue;
+                reportModel.SessionId = seId.ToString();
+                reportModel.InterviewId = meetingDetails?.InterviewId ?? 0;
+                reportModel.resumeLink = meetingDetails?.resumeLink;
+                reportModel.MatchScorePercentage = meetingDetails?.MatchScorePercentage ?? 0;
+
+                ViewBag.IsAdaptive = meetingDetails?.AIInterviewType != (int)AIInterviewTypeEnum.Preset;
+
+                return View(reportModel);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Report", new { seId });
+            }
+        }
+
         private string CleanMessage(string input)
         {
             if (string.IsNullOrWhiteSpace(input)) return "";
