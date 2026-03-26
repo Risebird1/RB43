@@ -5604,11 +5604,18 @@ namespace Risebird.Web.Controllers
             {
                 var data = await _candidateService.GetColdCandidatesListByClient(emailid);
                 ViewBag.Email = emailid;
-                data = data.Select(x =>
-                {
-                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                    return x;
-                }).ToList();
+
+                var today = DateTime.Today;
+                var startDate = today.AddDays(-45);
+                var endDate = today.AddDays(45);
+
+                data = data
+                    .Where(x => x.interviewDate >= startDate && x.interviewDate <= endDate)
+                    .Select(x =>
+                    {
+                        x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                        return x;
+                    }).ToList();
 
                 return PartialView("_GetColdCandidatePartial", data);
 
