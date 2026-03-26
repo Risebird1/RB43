@@ -28,7 +28,7 @@ BEGIN
                 irf.id                                 AS Id,
                 irf.IRFId                              AS IRFStringId,
                 ISNULL(irf.JDTiltle,     '')           AS JDTiltle,
-                ISNULL(irf.SkillCluster, '')           AS SkillCluster,
+                --ISNULL(irf.SkillCluster, '')           AS SkillCluster,
                 irf.RisebirdHr                         AS RisebirdHrId,
                 ISNULL(ul.EmailId,       '')           AS RisebirdHrEmail
             FROM   dbo.TransClientUser tcu
