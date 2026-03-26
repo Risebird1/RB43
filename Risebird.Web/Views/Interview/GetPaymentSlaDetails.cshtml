@@ -157,7 +157,7 @@
                                             <ul class="ks-cboxtags">
                                                 @Html.HiddenFor(m => m.Inaccuratedecisionmaking)
                                                 <li>
-                                                    @if (Model.Inaccuratedecisionmaking.Split(",").Contains("False positive"))
+                                                    @if (Model.Inaccuratedecisionmaking.Split(",").Select(x => x.Trim()).Contains("False positive"))
                                                     {
                                                         <input type="checkbox" id="checkboxOne" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False positive" /> <label for="checkboxOne">False positive</label>
                                                     }
@@ -167,7 +167,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.Inaccuratedecisionmaking.Split(",").Contains("False negative"))
+                                                    @if (Model.Inaccuratedecisionmaking.Split(",").Select(x => x.Trim()).Contains("False negative"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwo" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False negative" />
 
@@ -179,7 +179,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.Inaccuratedecisionmaking.Split(",").Contains("Lacking Sincerity"))
+                                                    @if (Model.Inaccuratedecisionmaking.Split(",").Select(x => x.Trim()).Contains("Lacking Sincerity"))
                                                     {
                                                         <input type="checkbox" id="checkboxThree" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="Lacking Sincerity" />
 
@@ -202,7 +202,7 @@
                                 @Html.LabelFor(model => model.Inaccuratedecisionmaking, htmlAttributes: new { @class = "bolder desp-label" })*@
                                 @* <div>
                                 @Html.HiddenFor(m=> m.Inaccuratedecisionmaking)
-                                @if(Model.Inaccuratedecisionmaking.Split(",").Contains("False positive"))
+                                @if(Model.Inaccuratedecisionmaking.Split(",").Select(x => x.Trim()).Contains("False positive"))
                                 {
                                 <input type="checkbox" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False positive" /> <d>False positive</d>
                                 }
@@ -210,7 +210,7 @@
                                 {
                                 <input type="checkbox" name="Inaccuratedecisionmaking" onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False positive" /> <d>False positive</d>
                                 }
-                                @if(Model.Inaccuratedecisionmaking.Split(",").Contains("False negative"))
+                                @if(Model.Inaccuratedecisionmaking.Split(",").Select(x => x.Trim()).Contains("False negative"))
                                 {
                                 <input type="checkbox" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False negative" /> <d>False negative</d>
                                 }
@@ -218,7 +218,7 @@
                                 {
                                 <input type="checkbox" name="Inaccuratedecisionmaking" onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False negative" /> <d>False negative</d>
                                 }
-                                @if(Model.Inaccuratedecisionmaking.Split(",").Contains("Lacking Sincerity"))
+                                @if(Model.Inaccuratedecisionmaking.Split(",").Select(x => x.Trim()).Contains("Lacking Sincerity"))
                                 {
                                 <input type="checkbox" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="Lacking Sincerity" /> <d>Lacking Sincerity</d>
                                 }
@@ -241,7 +241,7 @@
                                             @Html.HiddenFor(m => m.QuestionsRelevance)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if (Model.QuestionsRelevance.Split(",").Contains("irrelevant"))
+                                                    @if (Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("irrelevant"))
                                                     {
                                                         <input type="checkbox" id="checkboxEight" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="irrelevant" />
 
@@ -255,7 +255,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.QuestionsRelevance.Split(",").Contains("mismatch difficulty level"))
+                                                    @if (Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("mismatch difficulty level"))
                                                     {
                                                         <input type="checkbox" id="checkboxNine" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="mismatch difficulty level" /> <label for="checkboxNine">mismatch difficulty level</label>
                                                     }
@@ -267,7 +267,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.QuestionsRelevance.Split(",").Contains("google questions"))
+                                                    @if (Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("google questions"))
                                                     {
                                                         <input type="checkbox" id="checkboxTen" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="google questions" />
                                                         <label for="checkboxTen">theoretical / abstract / google questions- what is this/that ?</label>
@@ -279,7 +279,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.QuestionsRelevance.Split(",").Contains("same questions to all candidates"))
+                                                    @if (Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("same questions to all candidates"))
                                                     {
                                                         <input type="checkbox" id="checkboxEleven" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="same questions to all candidates" />
                                                         <label for="checkboxEleven">same questions to all candidates</label>
@@ -293,7 +293,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.QuestionsRelevance.Split(",").Contains("same questions for all skill channel"))
+                                                    @if (Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("same questions for all skill channel"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwelve" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="same questions for all skill channel" /> <label for="checkboxTwelve">same questions for all skill channel</label>
                                                     }
@@ -303,7 +303,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.QuestionsRelevance.Split(",").Contains("same question repeated multiple times in the report "))
+                                                    @if (Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("same question repeated multiple times in the report "))
                                                     {
                                                         <input type="checkbox" id="checkboxThirteen" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="same question repeated multiple times in the report " />
                                                         <label for="checkboxThirteen"> same question repeated multiple times in the report </label>
@@ -323,7 +323,7 @@
                                 @Html.LabelFor(model => model.QuestionsRelevance, htmlAttributes: new { @class = "bolder desp-label" })
                                 <div>
                                 @Html.HiddenFor(m=>m.QuestionsRelevance)
-                                @if(Model.QuestionsRelevance.Split(",").Contains("irrelevant"))
+                                @if(Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("irrelevant"))
                                 {
                                 <input type="checkbox" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="irrelevant" /> <d>irrelevant</d>
                                 }
@@ -331,7 +331,7 @@
                                 {
                                 <input type="checkbox" name="QuestionsRelevance" onclick="ChangeCheckBox('QuestionsRelevance')" value="irrelevant" /> <d>irrelevant</d>
                                 }
-                                @if(Model.QuestionsRelevance.Split(",").Contains("mismatch difficulty level"))
+                                @if(Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("mismatch difficulty level"))
                                 {
                                 <input type="checkbox" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="mismatch difficulty level" /> <d>mismatch difficulty level</d>
                                 }
@@ -339,7 +339,7 @@
                                 {
                                 <input type="checkbox" name="QuestionsRelevance" onclick="ChangeCheckBox('QuestionsRelevance')" value="mismatch difficulty level" /> <d>mismatch difficulty level</d>
                                 }
-                                @if(Model.QuestionsRelevance.Split(",").Contains("google questions"))
+                                @if(Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("google questions"))
                                 {
                                 <input type="checkbox" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="google questions" /> <d>theoretical / abstract / google questions- what is this/that ?</d>
                                 }
@@ -347,7 +347,7 @@
                                 {
                                 <input type="checkbox" name="QuestionsRelevance" onclick="ChangeCheckBox('QuestionsRelevance')" value="google questions" /> <d>theoretical / abstract / google questions- what is this/that ?</d>
                                 }
-                                @if(Model.QuestionsRelevance.Split(",").Contains("same questions to all candidates"))
+                                @if(Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("same questions to all candidates"))
                                 {
                                 <input type="checkbox" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="same questions to all candidates" /> <d>same questions to all candidates</d>
                                 }
@@ -355,7 +355,7 @@
                                 {
                                 <input type="checkbox" name="QuestionsRelevance" onclick="ChangeCheckBox('QuestionsRelevance')" value="same questions to all candidates" /> <d>same questions to all candidates</d>
                                 }
-                                @if(Model.QuestionsRelevance.Split(",").Contains("same questions for all skill channel"))
+                                @if(Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("same questions for all skill channel"))
                                 {
                                 <input type="checkbox" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="same questions for all skill channel" /> <d>same questions for all skill channel</d>
                                 }
@@ -363,7 +363,7 @@
                                 {
                                 <input type="checkbox" name="QuestionsRelevance" onclick="ChangeCheckBox('QuestionsRelevance')" value="same questions for all skill channel" /> <d>same questions for all skill channel</d>
                                 }
-                                @if(Model.QuestionsRelevance.Split(",").Contains("same question repeated multiple times in the report "))
+                                @if(Model.QuestionsRelevance.Split(",").Select(x => x.Trim()).Contains("same question repeated multiple times in the report "))
                                 {
                                 <input type="checkbox" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="same question repeated multiple times in the report " /> <d>same question repeated multiple times in the report </d>
                                 }
@@ -386,7 +386,7 @@
                                             @Html.HiddenFor(m => m.PoorFeedbackComments)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if (Model.PoorFeedbackComments.Split(",").Contains("Grammatical errors"))
+                                                    @if (Model.PoorFeedbackComments.Split(",").Select(x => x.Trim()).Contains("Grammatical errors"))
                                                     {
                                                         <input type="checkbox" id="checkboxSixteen" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Grammatical errors" /> <label for="checkboxSixteen">Grammatical errors</label>
                                                     }
@@ -397,7 +397,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.PoorFeedbackComments.Split(",").Contains("Too short"))
+                                                    @if (Model.PoorFeedbackComments.Split(",").Select(x => x.Trim()).Contains("Too short"))
                                                     {
                                                         <input type="checkbox" id="checkboxSeventeen" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Too short" /> <label for="checkboxSeventeen">Too short</label>
                                                     }
@@ -407,7 +407,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.PoorFeedbackComments.Split(",").Contains("Too generic"))
+                                                    @if (Model.PoorFeedbackComments.Split(",").Select(x => x.Trim()).Contains("Too generic"))
                                                     {
                                                         <input type="checkbox" id="checkboxEighteen" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Too generic" /> <label for="checkboxEighteen">Too generic</label>
                                                     }
@@ -417,7 +417,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.PoorFeedbackComments.Split(",").Contains("Irrelevant"))
+                                                    @if (Model.PoorFeedbackComments.Split(",").Select(x => x.Trim()).Contains("Irrelevant"))
                                                     {
                                                         <input type="checkbox" id="checkboxNineteen" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Irrelevant" /> <label for="checkboxNineteen">Irrelevant</label>
                                                     }
@@ -427,7 +427,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.PoorFeedbackComments.Split(",").Contains("poor reasoning for selecting/rejecting the candidates"))
+                                                    @if (Model.PoorFeedbackComments.Split(",").Select(x => x.Trim()).Contains("poor reasoning for selecting/rejecting the candidates"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwenty" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="poor reasoning for selecting/rejecting the candidates" /> <label for="checkboxTwenty">poor reasoning for selecting/rejecting the candidates</label>
                                                     }
@@ -447,7 +447,7 @@
                                 @Html.LabelFor(model => model.PoorFeedbackComments, htmlAttributes: new { @class = "bolder desp-label" })
                                 <div>
                                 @Html.HiddenFor(m=>m.PoorFeedbackComments)
-                                @if(Model.PoorFeedbackComments.Split(",").Contains("Grammatical errors"))
+                                @if(Model.PoorFeedbackComments.Split(",").Select(x => x.Trim()).Contains("Grammatical errors"))
                                 {
                                 <input type="checkbox" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Grammatical errors" /> <d>Grammatical errors</d>
                                 }
@@ -455,7 +455,7 @@
                                 {
                                 <input type="checkbox" name="PoorFeedbackComments" onclick="ChangeCheckBox('PoorFeedbackComments')" value="Grammatical errors" /> <d>Grammatical errors</d>
                                 }
-                                @if(Model.PoorFeedbackComments.Split(",").Contains("Too short"))
+                                @if(Model.PoorFeedbackComments.Split(",").Select(x => x.Trim()).Contains("Too short"))
                                 {
                                 <input type="checkbox" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Too short" /> <d>Too short</d>
                                 }
@@ -463,7 +463,7 @@
                                 {
                                 <input type="checkbox" name="PoorFeedbackComments" onclick="ChangeCheckBox('PoorFeedbackComments')" value="Too short" /> <d>Too short</d>
                                 }
-                                @if(Model.PoorFeedbackComments.Split(",").Contains("Too generic"))
+                                @if(Model.PoorFeedbackComments.Split(",").Select(x => x.Trim()).Contains("Too generic"))
                                 {
                                 <input type="checkbox" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Too generic" /> <d>Too generic</d>
                                 }
@@ -471,7 +471,7 @@
                                 {
                                 <input type="checkbox" name="PoorFeedbackComments" onclick="ChangeCheckBox('PoorFeedbackComments')" value="Too generic" /> <d>Too generic</d>
                                 }
-                                @if(Model.PoorFeedbackComments.Split(",").Contains("Irrelevant"))
+                                @if(Model.PoorFeedbackComments.Split(",").Select(x => x.Trim()).Contains("Irrelevant"))
                                 {
                                 <input type="checkbox" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Irrelevant" /> <d>Irrelevant</d>
                                 }
@@ -479,7 +479,7 @@
                                 {
                                 <input type="checkbox" name="PoorFeedbackComments" onclick="ChangeCheckBox('PoorFeedbackComments')" value="Irrelevant" /> <d>Irrelevant</d>
                                 }
-                                @if(Model.PoorFeedbackComments.Split(",").Contains("poor reasoning for selecting/rejecting the candidates"))
+                                @if(Model.PoorFeedbackComments.Split(",").Select(x => x.Trim()).Contains("poor reasoning for selecting/rejecting the candidates"))
                                 {
                                 <input type="checkbox" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="poor reasoning for selecting/rejecting the candidates" /> <d>poor reasoning for selecting/rejecting the candidates</d>
                                 }
@@ -502,7 +502,7 @@
                                             @Html.HiddenFor(m => m.LimitedHandoncoding)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if (Model.LimitedHandoncoding.Split(",").Contains("Not Check candidate competency"))
+                                                    @if (Model.LimitedHandoncoding.Split(",").Select(x => x.Trim()).Contains("Not Check candidate competency"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwentyNine" name="LimitedHandoncoding" checked onclick="ChangeCheckBox('LimitedHandoncoding')" value="Not Check candidate competency" />
 
@@ -523,7 +523,7 @@
                                 @Html.LabelFor(model => model.LimitedHandoncoding, htmlAttributes: new { @class = "bolder desp-label" })
                                 <div>
                                 @Html.HiddenFor(m=>m.LimitedHandoncoding)
-                                @if(Model.LimitedHandoncoding.Split(",").Contains("wasting"))
+                                @if(Model.LimitedHandoncoding.Split(",").Select(x => x.Trim()).Contains("wasting"))
                                 {
                                 <input type="checkbox" name="LimitedHandoncoding" checked onclick="ChangeCheckBox('LimitedHandoncoding')" value="Not Check candidate competency" /> <d>Not Check candidate competency</d>
                                 }
@@ -546,7 +546,7 @@
                                             @Html.HiddenFor(m => m.WeakInfrastructure)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if (Model.WeakInfrastructure.Split(",").Contains("Internet"))
+                                                    @if (Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("Internet"))
                                                     {
                                                         <input type="checkbox" id="checkboxThirtyTwo" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Internet" />
 
@@ -560,7 +560,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.WeakInfrastructure.Split(",").Contains("Video/Audio"))
+                                                    @if (Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("Video/Audio"))
                                                     {
                                                         <input type="checkbox" id="checkboxThirtyThree" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Video/Audio" />
 
@@ -574,7 +574,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.WeakInfrastructure.Split(",").Contains("constraints"))
+                                                    @if (Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("constraints"))
                                                     {
                                                         <input type="checkbox" id="checkboxThirtyFour" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="constraints" />
 
@@ -588,7 +588,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.WeakInfrastructure.Split(",").Contains("BG Noise"))
+                                                    @if (Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("BG Noise"))
                                                     {
                                                         <input type="checkbox" id="checkboxThirtyFive" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="BG Noise" /> <label for="checkboxThirtyFive">BG Noise</label>
                                                     }
@@ -600,7 +600,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.WeakInfrastructure.Split(",").Contains("Firewalls blocking"))
+                                                    @if (Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("Firewalls blocking"))
                                                     {
                                                         <input type="checkbox" id="checkboxThirtySix" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Firewalls blocking" />
 
@@ -614,7 +614,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.WeakInfrastructure.Split(",").Contains("Using Mobile phones"))
+                                                    @if (Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("Using Mobile phones"))
                                                     {
                                                         <input type="checkbox" id="checkboxThirtySeven" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Using Mobile phones" />
 
@@ -629,7 +629,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if (Model.WeakInfrastructure.Split(",").Contains("Suspicious Interviewer Infrastructure Qualtiy"))
+                                                    @if (Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("Suspicious Interviewer Infrastructure Qualtiy"))
                                                     {
                                                         <input type="checkbox" id="checkboxThirtyEight" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Suspicious Interviewer Infrastructure Qualtiy" />
 
@@ -651,7 +651,7 @@
                                 @Html.LabelFor(model => model.WeakInfrastructure, htmlAttributes: new { @class = "bolder desp-label" })
                                 <div>
                                 @Html.HiddenFor(m=>m.WeakInfrastructure)
-                                @if(Model.WeakInfrastructure.Split(",").Contains("Internet"))
+                                @if(Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("Internet"))
                                 {
                                 <input type="checkbox" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Internet" /> <d>Internet</d>
                                 }
@@ -659,7 +659,7 @@
                                 {
                                 <input type="checkbox" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Internet" /> <d>Internet</d>
                                 }
-                                @if(Model.WeakInfrastructure.Split(",").Contains("Video/Audio"))
+                                @if(Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("Video/Audio"))
                                 {
                                 <input type="checkbox" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Video/Audio" /> <d>Video, Audio</d>
                                 }
@@ -667,7 +667,7 @@
                                 {
                                 <input type="checkbox" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Video/Audio" /> <d>Video, Audio</d>
                                 }
-                                @if(Model.WeakInfrastructure.Split(",").Contains("constraints"))
+                                @if(Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("constraints"))
                                 {
                                 <input type="checkbox" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="constraints" /> <d>constraints</d>
                                 }
@@ -675,7 +675,7 @@
                                 {
                                 <input type="checkbox" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="constraints" /> <d>constraints</d>
                                 }
-                                @if(Model.WeakInfrastructure.Split(",").Contains("BG Noise"))
+                                @if(Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("BG Noise"))
                                 {
                                 <input type="checkbox" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="BG Noise" /> <d>BG Noise</d>
                                 }
@@ -683,7 +683,7 @@
                                 {
                                 <input type="checkbox" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="BG Noise" /> <d>BG Noise</d>
                                 }
-                                @if(Model.WeakInfrastructure.Split(",").Contains("Firewalls blocking"))
+                                @if(Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("Firewalls blocking"))
                                 {
                                 <input type="checkbox" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Firewalls blocking" /> <d>Firewalls blocking</d>
                                 }
@@ -691,7 +691,7 @@
                                 {
                                 <input type="checkbox" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Firewalls blocking" /> <d>Firewalls blocking</d>
                                 }
-                                @if(Model.WeakInfrastructure.Split(",").Contains("Using Mobile phones"))
+                                @if(Model.WeakInfrastructure.Split(",").Select(x => x.Trim()).Contains("Using Mobile phones"))
                                 {
                                 <input type="checkbox" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Using Mobile phones" /> <d>Using Mobile phones</d>
                                 }
@@ -713,7 +713,7 @@
                                             @Html.HiddenFor(m => m.UnethicalPractices)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if (Model.UnethicalPractices.Split(",").Contains("Bribery"))
+                                                    @if (Model.UnethicalPractices.Split(",").Select(x => x.Trim()).Contains("Bribery"))
                                                     {
                                                         <input type="checkbox" id="checkboxFortyTwo" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Bribery" /> <label for="checkboxFortyTwo">Bribery</label>
                                                     }
@@ -723,7 +723,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.UnethicalPractices.Split(",").Contains("Biases"))
+                                                    @if (Model.UnethicalPractices.Split(",").Select(x => x.Trim()).Contains("Biases"))
                                                     {
                                                         <input type="checkbox" id="checkboxFortyThree" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Biases" /> <label for="checkboxFortyThree">Biases</label>
                                                     }
@@ -733,7 +733,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.UnethicalPractices.Split(",").Contains("Fake reporting"))
+                                                    @if (Model.UnethicalPractices.Split(",").Select(x => x.Trim()).Contains("Fake reporting"))
                                                     {
                                                         <input type="checkbox" id="checkboxFortyFour" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Fake reporting" /> <label for="checkboxFortyFour">Fake reporting</label>
                                                     }
@@ -745,7 +745,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.UnethicalPractices.Split(",").Contains("Fake interviewing"))
+                                                    @if (Model.UnethicalPractices.Split(",").Select(x => x.Trim()).Contains("Fake interviewing"))
                                                     {
                                                         <input type="checkbox" id="checkboxFortyFive" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Fake interviewing" /> <label for="checkboxFortyFive">Fake interviewing</label>
                                                     }
@@ -755,7 +755,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.UnethicalPractices.Split(",").Contains("Impersonation"))
+                                                    @if (Model.UnethicalPractices.Split(",").Select(x => x.Trim()).Contains("Impersonation"))
                                                     {
                                                         <input type="checkbox" id="checkboxFortySix" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Impersonation" /> <label for="checkboxFortySix">Impersonation</label>
                                                     }
@@ -770,7 +770,7 @@
 
 
                                                 <li>
-                                                    @if (Model.UnethicalPractices.Split(",").Contains("Video off during Onsite/US interview"))
+                                                    @if (Model.UnethicalPractices.Split(",").Select(x => x.Trim()).Contains("Video off during Onsite/US interview"))
                                                     {
                                                         <input type="checkbox" id="checkboxFiftyThree" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Video off during Onsite/US interview" /> <label for="checkboxFiftyThree">Video off during Onsite/US interview</label>
                                                     }
@@ -790,7 +790,7 @@
                                 @Html.LabelFor(model => model.UnethicalPractices, htmlAttributes: new { @class = "bolder desp-label" })
                                 <div>
                                 @Html.HiddenFor(m=>m.UnethicalPractices)
-                                @if(Model.UnethicalPractices.Split(",").Contains("Bribery"))
+                                @if(Model.UnethicalPractices.Split(",").Select(x => x.Trim()).Contains("Bribery"))
                                 {
                                 <input type="checkbox" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Bribery" /> <d>Bribery</d>
                                 }
@@ -798,7 +798,7 @@
                                 {
                                 <input type="checkbox" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Bribery" /> <d>Bribery</d>
                                 }
-                                @if(Model.UnethicalPractices.Split(",").Contains("Biases"))
+                                @if(Model.UnethicalPractices.Split(",").Select(x => x.Trim()).Contains("Biases"))
                                 {
                                 <input type="checkbox" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Biases" /> <d>Biases</d>
                                 }
@@ -806,7 +806,7 @@
                                 {
                                 <input type="checkbox" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Biases" /> <d>Biases</d>
                                 }
-                                @if(Model.UnethicalPractices.Split(",").Contains("Fake reporting"))
+                                @if(Model.UnethicalPractices.Split(",").Select(x => x.Trim()).Contains("Fake reporting"))
                                 {
                                 <input type="checkbox" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Fake reporting" /> <d>Fake reporting</d>
                                 }
@@ -814,7 +814,7 @@
                                 {
                                 <input type="checkbox" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Fake reporting" /> <d>Fake reporting</d>
                                 }
-                                @if(Model.UnethicalPractices.Split(",").Contains("Fake interviewing"))
+                                @if(Model.UnethicalPractices.Split(",").Select(x => x.Trim()).Contains("Fake interviewing"))
                                 {
                                 <input type="checkbox" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Fake interviewing" /> <d>Fake interviewing</d>
                                 }
@@ -822,7 +822,7 @@
                                 {
                                 <input type="checkbox" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Fake interviewing" /> <d>Fake interviewing</d>
                                 }
-                                @if(Model.UnethicalPractices.Split(",").Contains("Impersonation"))
+                                @if(Model.UnethicalPractices.Split(",").Select(x => x.Trim()).Contains("Impersonation"))
                                 {
                                 <input type="checkbox" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Impersonation" /> <d>Impersonation</d>
                                 }
@@ -845,7 +845,7 @@
                                             @Html.HiddenFor(m => m.InterviewerVideo)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if (Model.InterviewerVideo.Split(",").Contains("Video Off When Mandatory"))
+                                                    @if (Model.InterviewerVideo.Split(",").Select(x => x.Trim()).Contains("Video Off When Mandatory"))
                                                     {
                                                         <input type="checkbox" id="checkboxFiftyFive" name="InterviewerVideo" checked onclick="ChangeCheckBox('InterviewerVideo')" value="Video Off When Mandatory" /> <label for="checkboxFiftyFive">Video Off When Mandatory</label>
                                                     }
@@ -855,7 +855,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.InterviewerVideo.Split(",").Contains("Stretched Video After Candidate Left"))
+                                                    @if (Model.InterviewerVideo.Split(",").Select(x => x.Trim()).Contains("Stretched Video After Candidate Left"))
                                                     {
                                                         <input type="checkbox" id="checkboxFiftyFour" name="InterviewerVideo" checked onclick="ChangeCheckBox('InterviewerVideo')" value="Stretched Video After Candidate Left" /> <label style="padding:3px 8px;" for="checkboxFiftyFour">Stretched Video After Candidate Left</label>
                                                     }
@@ -865,7 +865,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.InterviewerVideo.Split(",").Contains("Left Call Without Notice"))
+                                                    @if (Model.InterviewerVideo.Split(",").Select(x => x.Trim()).Contains("Left Call Without Notice"))
                                                     {
                                                         <input type="checkbox" id="checkboxFiftySix" name="InterviewerVideo" checked onclick="ChangeCheckBox('InterviewerVideo')" value="Left Call Without Notice" /> <label for="checkboxFiftySix">Left Call Without Notice</label>
                                                     }
@@ -967,7 +967,7 @@
                                                 @Html.HiddenFor(m => m.TimeManagement)
                                                 <li>
                                                     @*<input type="checkbox" id="checkboxOne" value="Rainbow Dash"><label for="checkboxOne">Rainbow Dash</label>*@
-                                                    @if (Model.TimeManagement.Split(",").Contains("Late start"))
+                                                    @if (Model.TimeManagement.Split(",").Select(x => x.Trim()).Contains("Late start"))
                                                     {
                                                         <input type="checkbox" id="checkboxFour" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="Late start" />
 
@@ -979,7 +979,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.TimeManagement.Split(",").Contains("end before time"))
+                                                    @if (Model.TimeManagement.Split(",").Select(x => x.Trim()).Contains("end before time"))
                                                     {
                                                         <input type="checkbox" id="checkboxFive" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="end before time" /> <label for="checkboxFive">end before time</label>
                                                     }
@@ -990,7 +990,7 @@
 
                                                 </li>
                                                 <li>
-                                                    @if (Model.TimeManagement.Split(",").Contains("too fast/too slow"))
+                                                    @if (Model.TimeManagement.Split(",").Select(x => x.Trim()).Contains("too fast/too slow"))
                                                     {
                                                         <input type="checkbox" id="checkboxSix" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="too fast/too slow" /> <label for="checkboxSix">too fast/too slow</label>
 
@@ -1002,7 +1002,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.TimeManagement.Split(",").Contains("wasting time in irrelevant points"))
+                                                    @if (Model.TimeManagement.Split(",").Select(x => x.Trim()).Contains("wasting time in irrelevant points"))
                                                     {
                                                         <input type="checkbox" id="checkboxSeven" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="wasting time in irrelevant points" /> <label for="checkboxSeven">wasting time in irrelevant points</label>
                                                     }
@@ -1020,7 +1020,7 @@
                                 @Html.LabelFor(model => model.TimeManagement, htmlAttributes: new { @class = "bolder desp-label" })
                                 <div>
                                 @Html.HiddenFor(m=> m.TimeManagement)
-                                @if(Model.TimeManagement.Split(",").Contains("Late start"))
+                                @if(Model.TimeManagement.Split(",").Select(x => x.Trim()).Contains("Late start"))
                                 {
                                 <input type="checkbox" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="Late start" /> <d>Late start</d>
                                 }
@@ -1028,7 +1028,7 @@
                                 {
                                 <input type="checkbox" name="TimeManagement" onclick="ChangeCheckBox('TimeManagement')" value="Late start" /> <d>Late start</d>
                                 }
-                                @if(Model.TimeManagement.Split(",").Contains("end before time"))
+                                @if(Model.TimeManagement.Split(",").Select(x => x.Trim()).Contains("end before time"))
                                 {
                                 <input type="checkbox" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="end before time" /> <d>end before time</d>
                                 }
@@ -1036,7 +1036,7 @@
                                 {
                                 <input type="checkbox" name="TimeManagement" onclick="ChangeCheckBox('TimeManagement')" value="end before time" /> <d>end before time</d>
                                 }
-                                @if(Model.TimeManagement.Split(",").Contains("too fast/too slow"))
+                                @if(Model.TimeManagement.Split(",").Select(x => x.Trim()).Contains("too fast/too slow"))
                                 {
                                 <input type="checkbox" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="too fast/too slow" /> <d>too fast/too slow</d>
                                 }
@@ -1044,7 +1044,7 @@
                                 {
                                 <input type="checkbox" name="TimeManagement" onclick="ChangeCheckBox('TimeManagement')" value="too fast/too slow" /> <d>too fast/too slow</d>
                                 }
-                                @if(Model.TimeManagement.Split(",").Contains("wasting time in irrelevant points"))
+                                @if(Model.TimeManagement.Split(",").Select(x => x.Trim()).Contains("wasting time in irrelevant points"))
                                 {
                                 <input type="checkbox" name="TimeManagement" checked onclick="ChangeCheckBox('TimeManagement')" value="wasting time in irrelevant points" /> <d>wasting time in irrelevant points</d>
                                 }
@@ -1066,7 +1066,7 @@
                                             @Html.HiddenFor(m => m.ScoreRubricIgnorance)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if (Model.ScoreRubricIgnorance.Split(",").Contains("Not from score rubtic"))
+                                                    @if (Model.ScoreRubricIgnorance.Split(",").Select(x => x.Trim()).Contains("Not from score rubtic"))
                                                     {
                                                         <input type="checkbox" id="checkboxFourteen" name="ScoreRubricIgnorance" checked onclick="ChangeCheckBox('ScoreRubricIgnorance')" value="Not from score rubtic" /> <label for="checkboxFourteen">questions not linked to desired scoring rubric</label>
                                                     }
@@ -1076,7 +1076,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.ScoreRubricIgnorance.Split(",").Contains("filling score rubric without cognizance"))
+                                                    @if (Model.ScoreRubricIgnorance.Split(",").Select(x => x.Trim()).Contains("filling score rubric without cognizance"))
                                                     {
                                                         <input type="checkbox" id="checkboxFifthteen" name="ScoreRubricIgnorance" checked onclick="ChangeCheckBox('ScoreRubricIgnorance')" value="filling score rubric without cognizance" /> <label for="checkboxFifthteen">filling score rubric without cognizance</label>
                                                     }
@@ -1096,7 +1096,7 @@
                                     @Html.LabelFor(model => model.ScoreRubricIgnorance, htmlAttributes: new { @class = "bolder desp-label" })
                                     <div>
                                     @Html.HiddenFor(m=>m.ScoreRubricIgnorance)
-                                    @if(Model.ScoreRubricIgnorance.Split(",").Contains("Not from score rubtic"))
+                                    @if(Model.ScoreRubricIgnorance.Split(",").Select(x => x.Trim()).Contains("Not from score rubtic"))
                                     {
                                     <input type="checkbox" name="ScoreRubricIgnorance" checked onclick="ChangeCheckBox('ScoreRubricIgnorance')" value="Not from score rubtic" /> <d>asking questions which are not linked to desired scoring rubric</d>
                                     }
@@ -1104,7 +1104,7 @@
                                     {
                                     <input type="checkbox" name="ScoreRubricIgnorance" onclick="ChangeCheckBox('ScoreRubricIgnorance')" value="Not from score rubtic" /> <d>asking questions which are not linked to desired scoring rubric</d>
                                     }
-                                    @if(Model.ScoreRubricIgnorance.Split(",").Contains("filling score rubric without cognizance"))
+                                    @if(Model.ScoreRubricIgnorance.Split(",").Select(x => x.Trim()).Contains("filling score rubric without cognizance"))
                                     {
                                     <input type="checkbox" name="ScoreRubricIgnorance" checked onclick="ChangeCheckBox('ScoreRubricIgnorance')" value="filling score rubric without cognizance" /> <d>filling score rubric without cognizance</d>
                                     }
@@ -1129,7 +1129,7 @@
                                                 @Html.HiddenFor(m => m.CandidateInteractionQuality)
                                                 <li>
 
-                                                    @if (Model.CandidateInteractionQuality.Split(",").Contains("wasting time"))
+                                                    @if (Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("wasting time"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwentyOne" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="wasting time" />
 
@@ -1144,7 +1144,7 @@
                                                 </li>
                                                 <li>
 
-                                                    @if (Model.CandidateInteractionQuality.Split(",").Contains("Personal Information"))
+                                                    @if (Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Personal Information"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwentyTwo" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal Information" />
 
@@ -1156,7 +1156,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.CandidateInteractionQuality.Split(",").Contains("Reading questions without interacting"))
+                                                    @if (Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Reading questions without interacting"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwentyThree" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Reading questions without interacting" /> <label for="checkboxTwentyThree">Reading questions without interacting</label>
                                                     }
@@ -1166,7 +1166,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.CandidateInteractionQuality.Split(",").Contains("Personal remarks"))
+                                                    @if (Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Personal remarks"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwentyFour" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal remarks" /> <label for="checkboxTwentyFour">Personal remarks</label>
                                                     }
@@ -1176,7 +1176,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.CandidateInteractionQuality.Split(",").Contains("Outside scope of interview"))
+                                                    @if (Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Outside scope of interview"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwentyFive" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Outside scope of interview" /> <label for="checkboxTwentyFive">Outside scope of interview</label>
                                                     }
@@ -1186,7 +1186,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.CandidateInteractionQuality.Split(",").Contains("Bias"))
+                                                    @if (Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Bias"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwentySix" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Bias" /> <label for="checkboxTwentySix">Bias</label>
                                                     }
@@ -1196,7 +1196,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.CandidateInteractionQuality.Split(",").Contains("Impatience"))
+                                                    @if (Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Impatience"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwentySeven" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Impatience" />
 
@@ -1208,7 +1208,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.CandidateInteractionQuality.Split(",").Contains("Disrespect"))
+                                                    @if (Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Disrespect"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwentyEight" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Disrespect" /> <label for="checkboxTwentyEight">Disrespect</label>
                                                     }
@@ -1222,7 +1222,7 @@
 
 
                                                 <li>
-                                                    @if (Model.CandidateInteractionQuality.Split(",").Contains("Poor Interaction"))
+                                                    @if (Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Poor Interaction"))
                                                     {
                                                         <input type="checkbox" id="checkboxFiftyTwo" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Poor Interaction" /> <label for="checkboxFiftyTwo">Poor Interaction</label>
                                                     }
@@ -1242,7 +1242,7 @@
                                 @Html.LabelFor(model => model.CandidateInteractionQuality, htmlAttributes: new { @class = "bolder desp-label" })
                                 <div>
                                 @Html.HiddenFor(m=>m.CandidateInteractionQuality)
-                                @if(Model.CandidateInteractionQuality.Split(",").Contains("wasting"))
+                                @if(Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("wasting"))
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="wasting" /> <d>wasting</d>
                                 }
@@ -1250,7 +1250,7 @@
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="wasting" /> <d>wasting</d>
                                 }
-                                @if(Model.CandidateInteractionQuality.Split(",").Contains("Personal Information"))
+                                @if(Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Personal Information"))
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal Information" /> <d>Personal Information</d>
                                 }
@@ -1258,7 +1258,7 @@
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal Information" /> <d>Personal Information</d>
                                 }
-                                @if(Model.CandidateInteractionQuality.Split(",").Contains("Reading questions without interacting"))
+                                @if(Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Reading questions without interacting"))
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Reading questions without interacting" /> <d>Reading questions without interacting</d>
                                 }
@@ -1266,7 +1266,7 @@
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Reading questions without interacting" /> <d>Reading questions without interacting</d>
                                 }
-                                @if(Model.CandidateInteractionQuality.Split(",").Contains("Personal remarks"))
+                                @if(Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Personal remarks"))
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal remarks" /> <d>Personal remarks</d>
                                 }
@@ -1274,7 +1274,7 @@
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Personal remarks" /> <d>Personal remarks</d>
                                 }
-                                @if(Model.CandidateInteractionQuality.Split(",").Contains("Outside scope of interview"))
+                                @if(Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Outside scope of interview"))
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Outside scope of interview" /> <d>Outside scope of interview</d>
                                 }
@@ -1282,7 +1282,7 @@
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Outside scope of interview" /> <d>Outside scope of interview</d>
                                 }
-                                @if(Model.CandidateInteractionQuality.Split(",").Contains("Bias"))
+                                @if(Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Bias"))
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Bias" /> <d>Bias</d>
                                 }
@@ -1290,7 +1290,7 @@
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Bias" /> <d>Bias</d>
                                 }
-                                @if(Model.CandidateInteractionQuality.Split(",").Contains("Impatience"))
+                                @if(Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Impatience"))
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Impatience" /> <d>Impatience</d>
                                 }
@@ -1298,7 +1298,7 @@
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Impatience" /> <d>Impatience</d>
                                 }
-                                @if(Model.CandidateInteractionQuality.Split(",").Contains("Disrespect"))
+                                @if(Model.CandidateInteractionQuality.Split(",").Select(x => x.Trim()).Contains("Disrespect"))
                                 {
                                 <input type="checkbox" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Disrespect" /> <d>Disrespect</d>
                                 }
@@ -1322,7 +1322,7 @@
                                             <ul class="ks-cboxtags">
                                                 <li>
 
-                                                    @if (Model.WrongStatusUpdates.Split(",").Contains("Marking noshow candidate as completed"))
+                                                    @if (Model.WrongStatusUpdates.Split(",").Select(x => x.Trim()).Contains("Marking noshow candidate as completed"))
                                                     {
                                                         <input type="checkbox" id="checkboxThirty" name="WrongStatusUpdates" checked onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking noshow candidate as completed" /> <label for="checkboxThirty">Marking noshow candidate as completed</label>
                                                     }
@@ -1332,7 +1332,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.WrongStatusUpdates.Split(",").Contains("Marking not qualified candidate as selected"))
+                                                    @if (Model.WrongStatusUpdates.Split(",").Select(x => x.Trim()).Contains("Marking not qualified candidate as selected"))
                                                     {
                                                         <input type="checkbox" id="checkboxThirtyOne" name="WrongStatusUpdates" checked onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking not qualified candidate as selected" /> <label for="checkboxThirtyOne">Marking not qualified candidate as selected</label>
                                                     }
@@ -1342,7 +1342,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.WrongStatusUpdates.Split(",").Contains("Marking reject candidate as selected"))
+                                                    @if (Model.WrongStatusUpdates.Split(",").Select(x => x.Trim()).Contains("Marking reject candidate as selected"))
                                                     {
                                                         <input type="checkbox" id="checkboxFiftyOne" name="WrongStatusUpdates" checked onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking reject candidate as selected" /> <label for="checkboxFiftyOne">Marking reject candidate as selected</label>
                                                     }
@@ -1359,7 +1359,7 @@
                                 @Html.LabelFor(model => model.WrongStatusUpdates, htmlAttributes: new { @class = "bolder desp-label" })
                                 <div>
                                 @Html.HiddenFor(m=>m.WrongStatusUpdates)
-                                @if (Model.WrongStatusUpdates.Split(",").Contains("Marking noshow candidate as completed"))
+                                @if (Model.WrongStatusUpdates.Split(",").Select(x => x.Trim()).Contains("Marking noshow candidate as completed"))
                                 {
                                 <input type="checkbox" name="WrongStatusUpdates" checked onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking noshow candidate as completed" /> <d>Marking noshow candidate as completed</d>
                                 }
@@ -1367,7 +1367,7 @@
                                 {
                                 <input type="checkbox" name="WrongStatusUpdates" onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking noshow candidate as completed" /> <d>Marking noshow candidate as completed</d>
                                 }
-                                @if (Model.WrongStatusUpdates.Split(",").Contains("Marking not qualified candidate as selected"))
+                                @if (Model.WrongStatusUpdates.Split(",").Select(x => x.Trim()).Contains("Marking not qualified candidate as selected"))
                                 {
                                 <input type="checkbox" name="WrongStatusUpdates" checked onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking not qualified candidate as selected" /> <d>Marking not qualified candidate as selected</d>
                                 }
@@ -1391,7 +1391,7 @@
                                             @Html.HiddenFor(m => m.ProctoringIgnorance)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if (Model.ProctoringIgnorance.Split(",").Contains("Conducting interviews while candidate video is off"))
+                                                    @if (Model.ProctoringIgnorance.Split(",").Select(x => x.Trim()).Contains("Conducting interviews while candidate video is off"))
                                                     {
                                                         <input type="checkbox" id="checkboxThirtyEighth" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Conducting interviews while candidate video is off" /> <label for="checkboxThirtyEighth">Conducting interviews while candidate video is off</label>
                                                     }
@@ -1403,7 +1403,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.ProctoringIgnorance.Split(",").Contains("Ignoring suspicious candidate"))
+                                                    @if (Model.ProctoringIgnorance.Split(",").Select(x => x.Trim()).Contains("Ignoring suspicious candidate"))
                                                     {
                                                         <input type="checkbox" id="checkboxThirtyNine" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Ignoring suspicious candidate" /> <label for="checkboxThirtyNine">Ignoring suspicious candidate</label>
                                                     }
@@ -1413,7 +1413,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.ProctoringIgnorance.Split(",").Contains("Ignoring use of suspicious apps or cheating by candidate"))
+                                                    @if (Model.ProctoringIgnorance.Split(",").Select(x => x.Trim()).Contains("Ignoring use of suspicious apps or cheating by candidate"))
                                                     {
                                                         <input type="checkbox" id="checkboxForty" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Ignoring use of suspicious apps or cheating by candidate" /> <label for="checkboxForty">Ignoring use of suspicious apps or cheating by candidate</label>
                                                     }
@@ -1423,7 +1423,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.ProctoringIgnorance.Split(",").Contains("allowing candidates to take interview from mobile environment"))
+                                                    @if (Model.ProctoringIgnorance.Split(",").Select(x => x.Trim()).Contains("allowing candidates to take interview from mobile environment"))
                                                     {
                                                         <input type="checkbox" id="checkboxFortyOne" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="allowing candidates to take interview from mobile environment" /> <label for="checkboxFortyOne">allowing candidates to take interview from mobile <br />&nbsp;/ inappropriate environment</label>
                                                     }
@@ -1435,7 +1435,7 @@
 
 
                                                 <li>
-                                                    @if (Model.ProctoringIgnorance.Split(",").Contains("Whether candidate video is clearly visible"))
+                                                    @if (Model.ProctoringIgnorance.Split(",").Select(x => x.Trim()).Contains("Whether candidate video is clearly visible"))
                                                     {
                                                         <input type="checkbox" id="checkboxFifty" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Whether candidate video is clearly visible" /> <label for="checkboxFifty">Whether candidate video is clearly visible</label>
                                                     }
@@ -1452,7 +1452,7 @@
                                 @Html.LabelFor(model => model.ProctoringIgnorance, htmlAttributes: new { @class = "bolder desp-label" })
                                 <div>
                                 @Html.HiddenFor(m=>m.ProctoringIgnorance)
-                                @if(Model.ProctoringIgnorance.Split(",").Contains("Conducting interviews while candidate video is off"))
+                                @if(Model.ProctoringIgnorance.Split(",").Select(x => x.Trim()).Contains("Conducting interviews while candidate video is off"))
                                 {
                                 <input type="checkbox" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Conducting interviews while candidate video is off" /> <d>Conducting interviews while candidate video is off</d>
                                 }
@@ -1460,7 +1460,7 @@
                                 {
                                 <input type="checkbox" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="Conducting interviews while candidate video is off" /> <d>Conducting interviews while candidate video is off</d>
                                 }
-                                @if(Model.ProctoringIgnorance.Split(",").Contains("Ignoring suspicious candidate"))
+                                @if(Model.ProctoringIgnorance.Split(",").Select(x => x.Trim()).Contains("Ignoring suspicious candidate"))
                                 {
                                 <input type="checkbox" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Ignoring suspicious candidate" /> <d>Ignoring suspicious candidate</d>
                                 }
@@ -1468,7 +1468,7 @@
                                 {
                                 <input type="checkbox" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="Ignoring suspicious candidate" /> <d>Ignoring suspicious candidate</d>
                                 }
-                                @if(Model.ProctoringIgnorance.Split(",").Contains("Ignoring use of suspicious apps or cheating by candidate"))
+                                @if(Model.ProctoringIgnorance.Split(",").Select(x => x.Trim()).Contains("Ignoring use of suspicious apps or cheating by candidate"))
                                 {
                                 <input type="checkbox" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Ignoring use of suspicious apps or cheating by candidate" /> <d>Ignoring use of suspicious apps or cheating by candidate</d>
                                 }
@@ -1476,7 +1476,7 @@
                                 {
                                 <input type="checkbox" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="Ignoring use of suspicious apps or cheating by candidate" /> <d>Ignoring use of suspicious apps or cheating by candidate</d>
                                 }
-                                @if(Model.ProctoringIgnorance.Split(",").Contains("allowing candidates to take interview from mobile environment"))
+                                @if(Model.ProctoringIgnorance.Split(",").Select(x => x.Trim()).Contains("allowing candidates to take interview from mobile environment"))
                                 {
                                 <input type="checkbox" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="allowing candidates to take interview from mobile environment" /> <d>allowing candidates to take interview from mobile /inappropriate environment</d>
                                 }
@@ -1499,7 +1499,7 @@
                                             @Html.HiddenFor(m => m.PoorCommunicationSkills)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if (Model.PoorCommunicationSkills.Split(",").Contains("Using language other than English"))
+                                                    @if (Model.PoorCommunicationSkills.Split(",").Select(x => x.Trim()).Contains("Using language other than English"))
                                                     {
                                                         <input type="checkbox" id="checkboxFortySeven" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Using language other than English" /> <label for="checkboxFortySeven">Using language other than English</label>
                                                     }
@@ -1511,7 +1511,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.PoorCommunicationSkills.Split(",").Contains("Unable to articulate questions"))
+                                                    @if (Model.PoorCommunicationSkills.Split(",").Select(x => x.Trim()).Contains("Unable to articulate questions"))
                                                     {
                                                         <input type="checkbox" id="checkboxFortyEight" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Unable to articulate questions" /> <label for="checkboxFortyEight">Unable to articulate questions</label>
                                                     }
@@ -1521,7 +1521,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.PoorCommunicationSkills.Split(",").Contains("Confusing candidates"))
+                                                    @if (Model.PoorCommunicationSkills.Split(",").Select(x => x.Trim()).Contains("Confusing candidates"))
                                                     {
                                                         <input type="checkbox" id="checkboxFortyNine" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Confusing candidates" /> <label for="checkboxFortyNine">Confusing candidates</label>
                                                     }
@@ -1540,7 +1540,7 @@
                                 @Html.LabelFor(model => model.PoorCommunicationSkills, htmlAttributes: new { @class = "bolder desp-label" })
                                 <div>
                                 @Html.HiddenFor(m=>m.PoorCommunicationSkills)
-                                @if(Model.PoorCommunicationSkills.Split(",").Contains("Using language other than English"))
+                                @if(Model.PoorCommunicationSkills.Split(",").Select(x => x.Trim()).Contains("Using language other than English"))
                                 {
                                 <input type="checkbox" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Using language other than English" /> <d>Using language other than English</d>
                                 }
@@ -1548,7 +1548,7 @@
                                 {
                                 <input type="checkbox" name="PoorCommunicationSkills" onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Using language other than English" /> <d>Using language other than English</d>
                                 }
-                                @if(Model.PoorCommunicationSkills.Split(",").Contains("Unable to articulate questions"))
+                                @if(Model.PoorCommunicationSkills.Split(",").Select(x => x.Trim()).Contains("Unable to articulate questions"))
                                 {
                                 <input type="checkbox" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Unable to articulate questions" /> <d>Unable to articulate questions</d>
                                 }
@@ -1556,7 +1556,7 @@
                                 {
                                 <input type="checkbox" name="PoorCommunicationSkills" onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Unable to articulate questions" /> <d>Unable to articulate questions</d>
                                 }
-                                @if(Model.PoorCommunicationSkills.Split(",").Contains("Confusing candidates"))
+                                @if(Model.PoorCommunicationSkills.Split(",").Select(x => x.Trim()).Contains("Confusing candidates"))
                                 {
                                 <input type="checkbox" name="PoorCommunicationSkills" checked onclick="ChangeCheckBox('PoorCommunicationSkills')" value="Confusing candidates" /> <d>Confusing candidates</d>
                                 }
