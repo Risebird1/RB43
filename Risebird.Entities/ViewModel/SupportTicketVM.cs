@@ -89,7 +89,7 @@ namespace Risebird.Entities.ViewModel
         /// <summary>
         /// Google Drive URLs of individual resume files uploaded during the loop.
         /// Relay passes these as a JSON array: ["url1","url2"].
-        /// Populated only when webhook_intent = "New interview request".
+        /// Populated only when webhook_intent = "New candidate submission".
         /// </summary>
         [JsonProperty("resume_drive_urls")]
         public List<string> ResumeDriveUrls         { get; set; }

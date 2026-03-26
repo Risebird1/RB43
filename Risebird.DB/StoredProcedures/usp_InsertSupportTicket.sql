@@ -82,9 +82,9 @@ BEGIN
         END
     END
 
-    -- For "New interview request" the system handles resume ingestion automatically.
+    -- For "New candidate submission" the system handles resume ingestion automatically.
     -- No human HR should receive credit for work they did not do.
-    IF LOWER(@Intent) = 'new interview request'
+    IF LOWER(@Intent) = 'new candidate submission'
         SET @AssignedTo = 'System';
 
     INSERT INTO dbo.SupportTickets (

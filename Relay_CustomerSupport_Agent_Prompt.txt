@@ -126,7 +126,7 @@ Rules:
     the only identifier (e.g. "Lead Consultant" is fine; "Senior Angular Developer"
     -> "Angular Developer" is preferred)
   - If no role title is clearly identifiable, set to null
-  - This field is critical for the "New interview request" intent ? extract it
+  - This field is critical for the "New candidate submission" intent ? extract it
     carefully for those emails
 
 --------------------------------------------------------------------------------
@@ -217,7 +217,7 @@ Fields:
     An array of individual Google Drive file URLs for files that are resumes or
     CVs. Each element is the direct link to one uploaded resume file.
     Set to [] (empty array) if no resumes are present or the intent is not
-    "New interview request".
+    "New candidate submission".
 
     Example:
     "resume_drive_urls": [
