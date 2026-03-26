@@ -9,6 +9,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -224,27 +225,38 @@ namespace Risebird.Web.Controllers
             if (irfs.Count == 1)                 return irfs[0];
 
             if (string.IsNullOrWhiteSpace(jobTitle))
-                return irfs[0];
+                return BestByRecency(irfs);
 
             // Pass 1: score against JDTiltle
             var pass1 = irfs
                 .Select(irf => new { irf, score = ScoreIRF(irf.JDTiltle, jobTitle) })
                 .OrderByDescending(x => x.score)
-                .ThenBy(x => x.irf.Id)
+                .ThenByDescending(x => x.irf.EndDate)
+                .ThenByDescending(x => x.irf.StartDate)
+                .ThenByDescending(x => x.irf.CreatedOn)
                 .ToList();
 
             if (pass1[0].score > 0)
                 return pass1[0].irf;
 
-            // Pass 2: JDTitleTwo produced no match — fall back to SkillCluster
+            // Pass 2: JDTiltle produced no match — fall back to SkillCluster
             var pass2 = irfs
                 .Select(irf => new { irf, score = ScoreIRF(irf.SkillCluster, jobTitle) })
                 .OrderByDescending(x => x.score)
-                .ThenBy(x => x.irf.Id)
+                .ThenByDescending(x => x.irf.EndDate)
+                .ThenByDescending(x => x.irf.StartDate)
+                .ThenByDescending(x => x.irf.CreatedOn)
                 .ToList();
 
-            return pass2[0].score > 0 ? pass2[0].irf : irfs[0];
+            return pass2[0].score > 0 ? pass2[0].irf : BestByRecency(irfs);
         }
+
+        private static IrfMatchVM BestByRecency(List<IrfMatchVM> irfs) =>
+            irfs
+                .OrderByDescending(x => x.EndDate)
+                .ThenByDescending(x => x.StartDate)
+                .ThenByDescending(x => x.CreatedOn)
+                .First();
 
         private static int ScoreIRF(string irfField, string jobTitle)
         {

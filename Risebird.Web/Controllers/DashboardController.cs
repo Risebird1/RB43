@@ -35,6 +35,7 @@ using Risebird.Entities.Data.VapiModels;
 using Risebird.Entities.Data.PlivoModels;
 using Risebird.Entities.Data.PlivoCXModels;
 using Risebird.Entities.Data.PlivoWhatsAppModels;
+using NuGet.Protocol.Core.Types;
 //using System.Web.WebPages;
 //using UglyToad.PdfPig.Logging;
 //using Risebird.Entities.Data.AffIndaModels;
@@ -79,6 +80,8 @@ namespace Risebird.Web.Controllers
         private readonly IPlivoCXCallRepository _plivoCXCallRepository;
         private readonly IPlivoWhatsAppService _plivoWhatsAppService;
         private readonly IPlivoWhatsAppRepository _plivoWhatsAppRepository;
+        private readonly ISupportTicketRepository _repository;
+
 
         //private readonly IIRFService _irfService;
 
@@ -97,7 +100,7 @@ namespace Risebird.Web.Controllers
             IPhoneNumberHelper phoneNumberHelper,
             IPlivoService plivoService, IPlivoCallRepository plivoCallRepository,
             IPlivoCXService plivoCXService, IPlivoCXCallRepository plivoCXCallRepository,
-            IPlivoWhatsAppService plivoWhatsAppService, IPlivoWhatsAppRepository plivoWhatsAppRepository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IPlivoWhatsAppService plivoWhatsAppService, IPlivoWhatsAppRepository plivoWhatsAppRepository, ISupportTicketRepository repository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -136,6 +139,7 @@ namespace Risebird.Web.Controllers
             _plivoCXCallRepository = plivoCXCallRepository;
             _plivoWhatsAppService = plivoWhatsAppService;
             _plivoWhatsAppRepository = plivoWhatsAppRepository;
+            _repository = repository;
         }
 
         [Authorize]
@@ -155,6 +159,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+                        //var irfs = await MatchIRFAsync("snehal.choudhari@quadranttechnologies.com", "Java");
                         // ========================================
                         // PLIVO WHATSAPP DIAGNOSTICS
                         // Access via: /Dashboard/Index?diagnoseWhatsApp=true
@@ -475,6 +480,70 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        private async Task<IrfMatchVM> MatchIRFAsync(string senderEmail, string jobTitle)
+        {
+            var irfs = await _repository.GetIRFsForSenderAsync(senderEmail);
+            if (irfs == null || irfs.Count == 0) return null;
+            if (irfs.Count == 1) return irfs[0];
+
+            if (string.IsNullOrWhiteSpace(jobTitle))
+                return BestByRecency(irfs);
+
+            // Pass 1: score against JDTiltle
+            var pass1 = irfs
+                .Select(irf => new { irf, score = ScoreIRF(irf.JDTiltle, jobTitle) })
+                .OrderByDescending(x => x.score)
+                .ThenByDescending(x => x.irf.EndDate)
+                .ThenByDescending(x => x.irf.StartDate)
+                .ThenByDescending(x => x.irf.CreatedOn)
+                .ToList();
+
+            if (pass1[0].score > 0)
+                return pass1[0].irf;
+
+            // Pass 2: JDTiltle produced no match — fall back to SkillCluster
+            var pass2 = irfs
+                .Select(irf => new { irf, score = ScoreIRF(irf.SkillCluster, jobTitle) })
+                .OrderByDescending(x => x.score)
+                .ThenByDescending(x => x.irf.EndDate)
+                .ThenByDescending(x => x.irf.StartDate)
+                .ThenByDescending(x => x.irf.CreatedOn)
+                .ToList();
+
+            return pass2[0].score > 0 ? pass2[0].irf : BestByRecency(irfs);
+        }
+
+        private static IrfMatchVM BestByRecency(List<IrfMatchVM> irfs) =>
+            irfs
+                .OrderByDescending(x => x.EndDate)
+                .ThenByDescending(x => x.StartDate)
+                .ThenByDescending(x => x.CreatedOn)
+                .First();
+
+        private static int ScoreIRF(string irfField, string jobTitle)
+        {
+            if (string.IsNullOrWhiteSpace(irfField) || string.IsNullOrWhiteSpace(jobTitle))
+                return 0;
+
+            var f = irfField.ToLowerInvariant();
+            var jt = jobTitle.ToLowerInvariant();
+
+            if (jt.Contains(f) || f.Contains(jt)) return 100;
+
+            var sep = new[] { ' ', ',', '/', '+', '-', '.', '_', '(', ')' };
+            var fWords = f.Split(sep, StringSplitOptions.RemoveEmptyEntries)
+                           .Where(w => w.Length > 2).ToHashSet();
+            var jtWords = jt.Split(sep, StringSplitOptions.RemoveEmptyEntries)
+                            .Where(w => w.Length > 2).ToHashSet();
+
+            if (fWords.Count == 0 || jtWords.Count == 0) return 0;
+
+            int matches = fWords.Count(w => jtWords.Contains(w));
+            if (matches == 0) return 0;
+
+            return (int)((double)matches / Math.Max(fWords.Count, jtWords.Count) * 90);
         }
 
         // ─── Plivo call trigger ───────────────────────────────────────────────────
@@ -7485,5 +7554,6 @@ NEVER:
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
     }
 }
