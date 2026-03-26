@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.CandidateTimelineVM>
+@model IEnumerable<Risebird.Entities.ViewModel.CandidateTimelineVM>
 @using Risebird.Entities.Enum
 @using Risebird.CommonHelper
 @using Newtonsoft.Json;
@@ -86,6 +86,19 @@
 </style>
 
 <style>
+    /* infoButton inline before candidate name – matches GetCandidates layout */
+    .cs-name-top {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .cs-info-btn {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        flex-shrink: 0;
+    }
+
     .candidate-search .name-field {
         width: max-content;
     }
@@ -454,10 +467,10 @@
                                                                                 <tr data-changes="1" style="background:@colorcode">
                                                                                     <td class="cadName text-left pl15" style="padding-top:20px;" valign="top">
                                                                                         <div class="col-md-9">
-                                                                                            @if (item.HasEmailDroppedOrBounced == true)
-                                                                                            {
-                                                                                                <div class="absCenter">
-                                                                                                    <button class="infoButton" style="top:-5px;left:0px;">
+                                                                                            <div class="cs-name-top">
+                                                                                                @if (item.HasEmailDroppedOrBounced == true)
+                                                                                                {
+                                                                                                    <button class="infoButton cs-info-btn">
                                                                                                         <div class="infoButton-btn">
                                                                                                             <span class="infoButton-btn-text">i</span>
                                                                                                         </div>
@@ -465,9 +478,8 @@
                                                                                                             <div class="infoButton-container-message"><b style="color:red">Bounce/Dropped :</b> emails indicates a temporary delivery failure</div>
                                                                                                         </div>
                                                                                                     </button>
-                                                                                                </div>
-                                                                                            }
-                                                                                            <div class="candidate-field">
+                                                                                                }
+                                                                                                <div class="candidate-field">
                                                                                                 <span class="pull-left">
                                                                                                     @if (item.CandidateName != null && item.CandidateName != "")
                                                                                                     {
@@ -731,6 +743,7 @@
 
                                                                                                 </span>
                                                                                             </div>
+                                                                                            </div>@* closes cs-name-top *@
                                                                                             <div class="candidate-field">Skill Id: @item.IRFname</div>
 
 
@@ -743,16 +756,29 @@
                                                                                                     }
                                                                                                     else
                                                                                                     {
-                                                                                                        <p style="margin:5px 0px;" class="email-field"><span class="pull-left"><b>Email:</b><i class="fa fa-envelope" aria-hidden="true" style="color: #e8a121;padding: 0px 1px 0px 10px;"></i> @item.CandidateEmailId</span> <span class="pull-left" style="margin-left:10px;"><b>Mobile:</b><i class="fa fa-phone" aria-hidden="true" style="color: #1f9208;padding: 0px 1px 0px 5px;font-family:FontAwesome;transform: rotate(6deg);left: 1px;position: relative;font-size: 16px;"></i> @item.Phone</span> </p>
+                                                                                                        <p style="margin:5px 0px;" class="email-field"><span class="pull-left"><b>Email:</b><i class="fa fa-envelope" aria-hidden="true" style="color: #e8a121;padding: 0px 1px 0px 10px;"></i> @item.CandidateEmailId</span></p>
 
                                                                                                     }
                                                                                                 }
-                                                                                                <p style="margin:5px 0px;" class="email-field" hidden><span class="pull-left"><b>Email:</b><i class="fa fa-envelope" aria-hidden="true" style="color: #e8a121;padding: 0px 1px 0px 10px;"></i> @item.CandidateEmailId</span> <span class="pull-left" style="margin-left:10px;"><b>Mobile:</b><i class="fa fa-phone" aria-hidden="true" style="color: #1f9208;padding: 0px 1px 0px 5px;font-family:FontAwesome;transform: rotate(6deg);left: 1px;position: relative;font-size: 16px;"></i> @item.Phone</span></p>
-                                                                                                @* @if (item.Phone != null && item.Phone != string.Empty)
-                                                                                            {
-                                                                                            <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span></span>
-                                                                                            }*@
+                                                                                                <p style="margin:5px 0px;" class="email-field" hidden><span class="pull-left"><b>Email:</b><i class="fa fa-envelope" aria-hidden="true" style="color: #e8a121;padding: 0px 1px 0px 10px;"></i> @item.CandidateEmailId</span></p>
                                                                                             </div>
+                                                                                            @if (!item.IsReportBlocked && item.InterviewId != 0 && item.CurrentStatus != "Scheduled" && item.CurrentStatus != "Cancelled" && item.CurrentStatus != "Status Pending" && !item.RedoInterview && !item.IsColdCandidate)
+                                                                                            {
+                                                                                                <div class="candidate-field">
+                                                                                                    @if (item.IsAIInterview)
+                                                                                                    {
+                                                                                                        <a style="text-decoration:none;font-size:13px;font-weight:500" target="_blank" href='@Url.Action("Report", "AIInterview", new { seId = item.SessionId})'>
+                                                                                                            <span title="AI Interview Report">View Report <i class="fa fa-chevron-right" style="padding-left:4px;"></i></span>
+                                                                                                        </a>
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <a style="text-decoration:none;font-size:13px;font-weight:500" target="_blank" href="@Url.Action("ClientReportV2", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true })">
+                                                                                                            <span title="Client Report">View Report <i class="fa fa-chevron-right" style="padding-left:4px;"></i></span>
+                                                                                                        </a>
+                                                                                                    }
+                                                                                                </div>
+                                                                                            }
                                                                                             <div class="candidate-field">
                                                                                                 <p>Client Hr:@item.HREmail</p>
                                                                                             </div>
@@ -766,60 +792,7 @@
                                                                                                 </div>
                                                                                             }
                                                                                         </div>
-                                                                                        <div class="col-md-3">
-                                                                                            @if (ViewBag.ClientRole != "HRs" && ViewBag.ClientRole != "Staffing Agency" && ViewBag.CandidateType != CandidateTypeSearch.NotProcessedResume.GetDescription())
-                                                                                            {
-                                                                                                <div>
-                                                                                                    @if (item.RedoInterview == true || item.IsColdCandidate || item.InterviewId == 0 || item.CurrentStatus == "Scheduled" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "Status Pending")
-                                                                                                    {
-                                                                                                        <p></p>
-                                                                                                    }
-                                                                                                    else
-                                                                                                    {
-                                                                                                        @if (!item.IsReportBlocked)
-                                                                                                        {
-                                                                                                            <div stye="width:100%;float:left">
-                                                                                                                @if (item.IsAIInterview) {
-                                                                                                                    <span class="interview_9">
-                                                                                                                        <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
-                                                                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
-                                                                                                                                <span>
-                                                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                                                                                                                                        <!-- Report/document shape -->
-                                                                                                                                        <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
-                                                                                                                                        <path d="M15 2v5h5"></path>
-
-                                                                                                                                        <!-- Brain-like AI/circuit element -->
-                                                                                                                                        <path d="M10 12c0-1 .5-2 2-2s2 1 2 2-.5 2-2 2-2-1-2-2z"></path>
-                                                                                                                                        <line x1="12" y1="10" x2="12" y2="8"></line>
-                                                                                                                                        <line x1="12" y1="14" x2="12" y2="16"></line>
-                                                                                                                                        <line x1="10" y1="12" x2="8" y2="12"></line>
-                                                                                                                                        <line x1="14" y1="12" x2="16" y2="12"></line>
-
-                                                                                                                                        <!-- Text lines on report -->
-                                                                                                                                        <line x1="7" y1="18" x2="17" y2="18"></line>
-                                                                                                                                    </svg>
-                                                                                                                                </span>
-                                                                                                                            </button>
-                                                                                                                        </a>
-                                                                                                                    </span>
-                                                                                                                    //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
-                                                                                                                }
-                                                                                                                else{
-                                                                                                                    <a style="text-decoration:none;font-size:13px;font-weight:500" target="_blank" href="@Url.Action("ClientReportV2", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId,isClient = true})">
-                                                                                                                    <span title="Client Report">View Report <i class="fa fa-chevron-right" style="padding-left:4px;"></i></span>
-                                                                                                                </a>
-                                                                                                                }
-                                                                                                            </div>
-                                                                                                        }
-                                                                                                        else
-                                                                                                        {
-                                                                                                            <p></p>
-                                                                                                        }
-                                                                                                    }
-                                                                                                </div>
-                                                                                            }
-                                                                                        </div>
+                                                                                        <div class="col-md-3"></div>
                                                                                     </td>
                                                                                 </tr>
                                                                             }
