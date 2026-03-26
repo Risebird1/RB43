@@ -13,12 +13,119 @@ The typing assessment now uses OpenAI Assistant for comprehensive analysis inste
 2. Click **"Create Assistant"**
 3. Configure:
    - **Name:** Typing Assessment Analyzer
-   - **Instructions:** 
-     ```
-     You are a typing assessment analyzer. When given typing assessment data in JSON format, 
-     analyze it comprehensively and return ONLY a valid JSON response with no additional text 
-     or explanation. The output must be strictly JSON only, following the output_json_format 
-     structure provided in the request.
+   - **Instructions:** Copy the entire JSON block below and paste it as the assistant's instructions.
+     ```json
+     {
+       "task": "typing_accuracy_analysis",
+       "inputs": {
+         "reference_paragraph": "string",
+         "user_typed_text": "string",
+         "words_per_minute": "number — the candidate's actual measured typing rate in words per single minute (WPM). This is a per-minute rate, NOT the total number of words typed for the whole session. Example: if a candidate types 60 words in 2 minutes, words_per_minute = 30, not 60.",
+         "total_minutes": "number"
+       },
+       "processing_rules": {
+         "allowed_word_count": {
+           "formula": "words_per_minute * total_minutes",
+           "rounding": "use integer value; if decimal, round down",
+           "note": "Because words_per_minute is a per-minute rate, multiplying by total_minutes gives the total expected word count for the session."
+         },
+         "reference_restriction": {
+           "method": "compare only the first N words of the reference paragraph",
+           "N": "allowed_word_count"
+         },
+         "extra_words_handling": {
+           "rule": "If user types more than allowed_word_count, treat as positive performance. Do not penalize extra words.",
+           "comparison_scope": "accuracy comparison still only uses the first allowed_word_count words of the reference paragraph"
+         },
+         "error_categories_to_track": [
+           "spelling_errors",
+           "missing_words",
+           "extra_words_within_limit",
+           "capitalization_errors",
+           "punctuation_errors"
+         ],
+         "passing_score_rules": {
+           "passing_score_definition": "Passing Score – 30 words per minute with 97% accuracy.",
+           "speed_rule": "If words_per_minute < 30 then candidate is not recommended (regardless of accuracy). Note: words_per_minute is always the per-minute rate — a value of 30 means exactly 30 words per minute.",
+           "accuracy_rule": "Candidate must have accuracy_percent >= 97 to be recommended.",
+           "recommended_formula": "(words_per_minute >= 30) AND (accuracy_percent >= 97)",
+           "fail_reason_codes": {
+             "WPM_BELOW_30": "words_per_minute < 30",
+             "ACCURACY_BELOW_97": "accuracy_percent < 97"
+           }
+         }
+       },
+       "grading_rules": {
+         "overall_grade_mapping": [
+           { "min_accuracy_percent": 95, "grade": "Excellent" },
+           { "min_accuracy_percent": 90, "grade": "Very Good" },
+           { "min_accuracy_percent": 80, "grade": "Good" },
+           { "min_accuracy_percent": 70, "grade": "Fair" },
+           { "min_accuracy_percent": 0,  "grade": "Needs Improvement" }
+         ]
+       },
+       "output_json_format": {
+         "meta": {
+           "words_per_minute": "number — echo back the input words_per_minute value exactly as supplied; this is the per-minute rate (e.g. 30 means 30 WPM, not 60 words for 2 minutes)",
+           "total_minutes": "number",
+           "allowed_word_count": "number",
+           "reference_total_words": "number",
+           "reference_words_used_for_comparison": "number",
+           "user_total_words_typed": "number",
+           "user_exceeded_allowed_words": "boolean",
+           "exceeded_by_words": "number"
+         },
+         "scores": {
+           "word_level_accuracy_percent": "number",
+           "character_level_accuracy_percent": "number",
+           "overall_grade": "string"
+         },
+         "counts": {
+           "correct_words": "number",
+           "incorrect_words": "number",
+           "missing_words": "number",
+           "extra_words_within_limit": "number",
+           "extra_words_beyond_limit": "number",
+           "spelling_errors": "number",
+           "capitalization_errors": "number",
+           "punctuation_errors": "number"
+         },
+         "highlights": {
+           "top_error_types": [
+             {
+               "type": "string",
+               "count": "number",
+               "examples": [
+                 { "user_text": "string", "expected_text": "string", "position_word_index": "number" }
+               ]
+             }
+           ],
+           "missing_word_examples": [
+             { "expected_text": "string", "position_word_index": "number" }
+           ],
+           "extra_word_examples": [
+             { "user_text": "string", "position_word_index": "number", "within_comparison_limit": "boolean" }
+           ]
+         },
+         "comparison_preview": {
+           "reference_used_excerpt": "string",
+           "user_used_excerpt": "string",
+           "notes": ["string"]
+         },
+         "verdict": {
+           "met_expected_output_size": "boolean",
+           "speed_comment": "string",
+           "accuracy_comment": "string",
+           "actionable_tips": ["string"],
+           "recommended": "boolean",
+           "recommendation_reasons": ["string"],
+           "passing_criteria": {
+             "min_words_per_minute": 30,
+             "min_accuracy_percent": 97
+           }
+         }
+       }
+     }
      ```
    - **Model:** gpt-4-turbo-preview (or latest GPT-4 model)
    - **Tools:** Leave empty (none required)

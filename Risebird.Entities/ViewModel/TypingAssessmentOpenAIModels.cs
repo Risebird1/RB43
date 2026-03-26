@@ -144,5 +144,14 @@ namespace Risebird.Entities.ViewModel
         public string speed_comment { get; set; }
         public string accuracy_comment { get; set; }
         public List<string> actionable_tips { get; set; }
+        public bool recommended { get; set; }
+        public List<string> recommendation_reasons { get; set; }
+        public TypingPassingCriteria passing_criteria { get; set; }
+    }
+
+    public class TypingPassingCriteria
+    {
+        public int min_words_per_minute { get; set; }
+        public decimal min_accuracy_percent { get; set; }
     }
 }

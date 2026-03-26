@@ -365,26 +365,20 @@ namespace Risebird.Web.Controllers
 
                     if (inserted > 0)
                     {
+                        // Ingestion succeeded — system did the work, reassign away from HR
+                        await _repository.UpdateTicketAssignmentAsync(newId, "System", "System");
                         resumeIngestionResult.Append(
                             $"Resumes ingested: {inserted}, IRF: {irfMatch.IRFStringId}");
                     }
                     else
                     {
-                        // Ingestion failed or no IRF found — assign to the responsible HR
-                        // so they can handle the ticket manually.
+                        // Ingestion failed — the ticket keeps its naturally resolved HR
+                        // assignment so they can handle it manually. No update needed.
                         var fallbackHR = irfMatch?.RisebirdHrEmail;
-                        if (!string.IsNullOrWhiteSpace(fallbackHR))
-                        {
-                            await _repository.UpdateTicketAssignmentAsync(
-                                newId, fallbackHR, "System");
-                            resumeIngestionResult.Append(
-                                $"Ingestion failed — assigned to {fallbackHR} for manual review.");
-                        }
-                        else
-                        {
-                            resumeIngestionResult.Append(
-                                "Ingestion failed — no IRF or HR resolved; ticket left unassigned.");
-                        }
+                        resumeIngestionResult.Append(
+                            !string.IsNullOrWhiteSpace(fallbackHR)
+                                ? $"Ingestion failed — assigned to {fallbackHR} for manual review."
+                                : "Ingestion failed — no IRF resolved; ticket assigned to default HR.");
                     }
                 }
 

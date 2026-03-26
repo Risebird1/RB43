@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.Candidate>
+@model IEnumerable<Risebird.Entities.ViewModel.Candidate>
 @using Risebird.Entities.Enum
 @* @model X.PagedList.IPagedList<Risebird.Entities.ViewModel.Candidate> *@
 @using Microsoft.AspNetCore.Http
@@ -53,6 +53,389 @@
     </style>
 }
 
+<style>
+    /* ===================================================================
+       GETCANDIDATES – PCS-INSPIRED DESIGN SYSTEM
+    =================================================================== */
+
+    /* --- Page header bar --- */
+    .gc-header-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 14px;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .gc-header-left { display: flex; align-items: center; gap: 8px; }
+    .gc-header-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #1e293b;
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        line-height: 1.35;
+    }
+    .gc-header-right {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* --- Nav-pill buttons (matches pcs-nav-pill) --- */
+    .pcs-nav-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        font-size: 11.5px;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 600;
+        color: #475569;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.18s, color 0.18s, border-color 0.18s;
+        text-decoration: none !important;
+        white-space: nowrap;
+        line-height: 1.35;
+        vertical-align: middle;
+        outline: none;
+        box-shadow: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    .pcs-nav-pill:hover, .pcs-nav-pill:focus {
+        background: #e2e8f0;
+        color: #1e293b !important;
+        text-decoration: none !important;
+        border-color: #cbd5e1;
+        outline: none;
+        box-shadow: none;
+    }
+    .pcs-nav-pill svg, .pcs-nav-pill i { color: #64748b; font-size: 11px; flex-shrink: 0; }
+    .pcs-nav-pill:hover svg, .pcs-nav-pill:hover i { color: #334155; }
+
+    /* --- Export icon button --- */
+    .gc-export-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 6px;
+        border: 1px solid #86efac;
+        background: #f0fdf4;
+        color: #16a34a !important;
+        font-size: 11.5px;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.16s, border-color 0.16s, color 0.16s;
+        text-decoration: none !important;
+        vertical-align: middle;
+        line-height: 1.35;
+        white-space: nowrap;
+        outline: none;
+        box-shadow: none;
+    }
+    .gc-export-btn:hover { background: #dcfce7; border-color: #4ade80; color: #15803d !important; }
+    .gc-export-btn i { color: inherit !important; font-size: 11px; }
+
+    /* --- Import Candidate button --- */
+    .gc-import-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        background: #f1f5f9;
+        color: #475569 !important;
+        font-size: 11.5px;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.16s, border-color 0.16s, color 0.16s;
+        text-decoration: none !important;
+        vertical-align: middle;
+        line-height: 1.35;
+        white-space: nowrap;
+        outline: none;
+        box-shadow: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    .gc-import-btn:hover { background: #e2e8f0; border-color: #cbd5e1; color: #1e293b !important; }
+    .gc-import-btn i { color: inherit !important; font-size: 11px; }
+
+    /* --- Custom search box toolbar --- */
+    .gc-table-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 0 6px;
+    }
+    .gc-search-box {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        height: 34px;
+        min-width: 220px;
+        max-width: 300px;
+        transition: border-color 0.18s, box-shadow 0.18s;
+        overflow: hidden;
+    }
+    .gc-search-box:focus-within {
+        border-color: #94a3b8;
+        box-shadow: 0 0 0 3px rgba(148,163,184,0.14);
+    }
+    .gc-search-ico {
+        display: flex; align-items: center; justify-content: center;
+        width: 32px; flex-shrink: 0; color: #94a3b8;
+    }
+    .gc-search-inp {
+        flex: 1 1 auto; border: none; outline: none; background: transparent;
+        font-size: 12px; font-family: 'Roboto', sans-serif; color: #334155;
+        padding: 0; height: 100%;
+    }
+    .gc-search-inp::placeholder { color: #94a3b8; }
+    .gc-search-reset {
+        display: flex; align-items: center; justify-content: center;
+        width: 26px; flex-shrink: 0; border: none; background: transparent;
+        color: #94a3b8; cursor: pointer; padding: 0; transition: color 0.15s;
+    }
+    .gc-search-reset:hover { color: #64748b; }
+
+    /* Hide DataTable's auto-generated search box (using our custom one) */
+    #candidateTableId_wrapper .dataTables_filter { display: none !important; }
+    /* Hide the now-empty top row that DataTables generated */
+    #candidateTableId_wrapper > .row:first-child { display: none !important; }
+    /* Length selector moved into gc-table-toolbar – style it inline */
+    .gc-table-toolbar .dataTables_length {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+        font-size: 12px;
+        color: #475569;
+        font-family: 'Roboto', sans-serif;
+    }
+    .gc-table-toolbar .dataTables_length label { margin: 0; font-weight: 500; }
+    .gc-table-toolbar .dataTables_length select {
+        height: 34px;
+        padding: 2px 8px;
+        font-size: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        color: #475569;
+        background: #fff;
+        cursor: pointer;
+    }
+
+    /* --- Compact Corporate Table (mirrors PCS #candidateTable) --- */
+    #candidateTableId {
+        font-family: 'Roboto', sans-serif;
+        font-size: 12px;
+        border-collapse: collapse;
+    }
+    #candidateTableId thead th {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: #475569 !important;
+        background: #f1f5f9 !important;
+        border-bottom: 2px solid #cbd5e1 !important;
+        white-space: nowrap;
+        padding: 7px 10px !important;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+    #candidateTableId tfoot th {
+        background: #f8fafc !important;
+        font-size: 11px !important;
+        color: #64748b !important;
+        padding: 5px 10px !important;
+    }
+    #candidateTableId tbody td {
+        font-size: 11.5px;
+        color: #334155;
+        vertical-align: middle !important;
+        padding: 5px 10px !important;
+        border-color: #f1f5f9 !important;
+        line-height: 1.35;
+    }
+    #candidateTableId tbody tr:hover td { background-color: #f8fafc !important; }
+    #candidateTableId tbody td p { margin: 0; padding: 0; line-height: 1.3; }
+    /* Candidate name/email in cells */
+    #candidateTableId .name-field {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #1e3a5f;
+        font-family: 'Roboto', sans-serif;
+        margin: 0; line-height: 1.35;
+    }
+    #candidateTableId .email-field {
+        font-size: 10.5px;
+        color: #64748b !important;
+        font-family: 'Roboto', sans-serif;
+        margin: 0; line-height: 1.25;
+    }
+    /* Compact name/email cell – remove old margin-top bloat */
+    #candidateTableId .cadName { margin-top: 0 !important; }
+    #candidateTableId .cadEmail { margin-top: 2px !important; }
+    /* Cold-mark button placed beside name */
+    .gc-name-top {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    /* infoButton is now a flex sibling – reset the absolute-positioning hacks from dashboard-new.css */
+    .gc-info-btn {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        flex-shrink: 0;
+    }
+
+    .gc-cold-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        background: #fffbeb;
+        color: #d97706;
+        border: 1px solid #fde68a;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 5px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    /* Compact status badges */
+    #candidateTableId .current {
+        font-size: 10.5px !important;
+        padding: 2px 6px !important;
+        border-radius: 4px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    /* DataTable pagination & length – match PCS compact style */
+    #candidateTableId_wrapper .dataTables_length select {
+        font-size: 11.5px;
+        border: 1px solid #e2e8f0;
+        border-radius: 5px;
+        padding: 2px 6px;
+        color: #475569;
+    }
+    #candidateTableId_wrapper .dataTables_info {
+        font-size: 11px;
+        color: #64748b;
+        padding-top: 6px !important;
+    }
+    #candidateTableId_wrapper .dataTables_paginate .paginate_button {
+        font-size: 11.5px !important;
+        padding: 3px 8px !important;
+        border-radius: 5px !important;
+        color: #475569 !important;
+    }
+    #candidateTableId_wrapper .dataTables_paginate .paginate_button.current,
+    #candidateTableId_wrapper .dataTables_paginate .paginate_button.current:hover {
+        background: #f1f5f9 !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #1e293b !important;
+    }
+
+    /* ===================================================================
+       ACTION CELL – pcs-btn-act (identical to PublicCandidateStatus)
+    =================================================================== */
+
+    /* Flex container for the action <td> */
+    .gc-act-cell {
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 3px;
+        padding: 5px 8px !important;
+        vertical-align: middle !important;
+    }
+
+    /* Base button – matches PCS pcs-btn-act exactly */
+    .pcs-btn-act {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 5px;
+        border: 1px solid #e2e8f0;
+        background: #e5e7eb;
+        color: #111827;
+        cursor: pointer;
+        transition: background 0.16s, border-color 0.16s, color 0.16s;
+        text-decoration: none !important;
+        flex-shrink: 0;
+        padding: 0;
+        box-shadow: none;
+        font-size: 12px;
+        line-height: 1;
+    }
+    .pcs-btn-send{
+        position:relative;
+       top: -1px;
+    }
+    .pcs-btn-act:hover {
+        color: #1e293b;
+        text-decoration: none !important;
+    }
+    .pcs-btn-act svg, .pcs-btn-act img {
+        width: 13px;
+        height: 13px;
+        flex-shrink: 0;
+        display: block;
+            color: #80868ed9;
+    }
+
+    .pcs-btn-act i {
+     color: #80868ed9;
+     font-size: 12px;
+    }
+
+    .pcs-btn-act i:hover,.pcs-btn-act svg:hover {
+     color: #111827;
+     font-size: 12px;
+     }
+
+    /* Colour modifiers (identical token values to PCS) */
+    .pcs-btn-act.pcs-btn-schedule { position:relative;top:-1px; }
+    .pcs-btn-act.pcs-btn-schedule:hover { background: #dbeafe; border-color: #93c5fd; }
+
+  
+
+    .pcs-btn-act.pcs-btn-wa { color: #16a34a; border-color: #bbf7d0; background: #f0fdf4; }
+    .pcs-btn-act.pcs-btn-wa:hover { background: #dcfce7; border-color: #86efac; }
+
+    .pcs-btn-act.pcs-btn-cancel { color: #dc2626; border-color: #fecaca; background: #fff5f5; }
+    .pcs-btn-act.pcs-btn-cancel:hover { background: #fee2e2; border-color: #fca5a5; }
+
+    .pcs-btn-act.pcs-btn-call { color: #059669; border-color: #a7f3d0; background: #ecfdf5; }
+    .pcs-btn-act.pcs-btn-call:hover { background: #d1fae5; border-color: #6ee7b7; }
+
+    .pcs-btn-act.pcs-btn-status { color: #7c3aed; border-color: #ddd6fe; background: #f5f3ff; }
+    .pcs-btn-act.pcs-btn-status:hover { background: #ede9fe; }
+
+
+    /* Recolour hard-coded fill="#fff" SVG paths to currentColor */
+    .pcs-btn-act svg path[fill]:not([fill="none"]),
+    .pcs-btn-act svg rect[fill]:not([fill="none"]),
+    .pcs-btn-act svg circle[fill]:not([fill="none"]) { fill: currentColor; }
+</style>
+
 <input type="hidden" value="@ViewBag.profile" id="hidprofile" />
 <input type="hidden" value="@ViewBag.IRFName" id="hidirfname" />
 <input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
@@ -60,97 +443,54 @@
 <div class="main-panel" id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
-            <div class="card-header bg-w clearfix">
-                <div class="pull-left">
-                    <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title"> Candidates for <strong>'@ViewBag.IRFName'</strong></h4></div>
+            <div class="gc-header-bar">
+                <div class="gc-header-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <h4 class="gc-header-title">Candidates for <strong>@ViewBag.IRFName</strong></h4>
                 </div>
 
-                <div class="pull-right client-ms">
-                    <div class="mc-button-area text-left">
-
-
-                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidates</font></span>
-                        </button>*@
-
-
-                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
-                        </button>*@
-
-                        @if (ViewBag.AccessType != "Public")
-                        {
-                            @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
+                <div class="gc-header-right">
+                    @if (ViewBag.AccessType != "Public")
+                    {
+                        <a class="gc-export-btn" title="Export to Excel" onclick="location.href='@Url.Action("CandidateDataExporttoExcel", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'">
+                            <i class="far fa-file-excel"></i> Export to Excel
+                        </a>
+                    }
+                    @if (ViewBag.ButtonAccess && ViewBag.AccessType != "Public")
+                    {
+                        <button type="button" class="gc-import-btn" title="Import candidates from Excel" onclick="ModalButtonClick(false)">
+                            <i class="far fa-file-excel"></i> Import Candidates
                         </button>
-                        *@
+                        <button type="button" class="pcs-nav-pill" title="Import candidates with invite" onclick="ModalButtonClick(true)">
+                            <i class="far fa-file-excel"></i> Import (Invite)
+                        </button>
+                        <button type="button" class="pcs-nav-pill" style="background:#f0fdf4;border-color:#bbf7d0;color:#16a34a;" title="Send WhatsApp Invite" onclick="OpenWhatsAppInviteModal()">
+                            <img src="~/img/whatsapp.png" style="max-width:13px;vertical-align:middle;flex-shrink:0;" />
+                            WhatsApp Invite
+                        </button>
+                        <button type="button" class="pcs-nav-pill" title="Add new candidate" onclick="javascript:AddCandidate('@ViewBag.IRFId', '@ViewBag.IRFName');">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                            Add Candidate
+                        </button>
+                    }
 
-                            @* <i class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'"></i> *@
-                            <i class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top" onclick="location.href='@Url.Action("CandidateDataExporttoExcel", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'"></i>
-
-                        }
-                        @if (ViewBag.ButtonAccess && ViewBag.AccessType != "Public")
+                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
+                    {
+                        @if (ViewBag.ClientRole != "HRs" && ViewBag.AccessType != "Public")
                         {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick(true)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates (Invite)</font></span>
-                            </button>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" style="background: #2c8d2cb8!important;">
-                                <span data-toggle="tooltip" data-placement="top" onclick="OpenWhatsAppInviteModal()" data-original-title="Tooltip on top">
-                                    <img src="~/img/whatsapp.png" style="max-width:18px; vertical-align: middle; margin-right: 5px;" />
-                                    <font style=" font-family: Roboto, sans-serif; font-size:12px;"> WhatsApp Invite</font>
-                                </span>
-                            </button>
-
-                            @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Add", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName })'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate</font></span>
-                        </button>*@
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="javascript:AddCandidate('@ViewBag.IRFId', '@ViewBag.IRFName');" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;position:relative;top:-1px;"> Add Candidate</font></span>
+                            <button type="button" class="pcs-nav-pill" title="View candidate resumes" onclick="location.href='@Url.Action("Resumes", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'">
+                                <i class="fa fa-file-alt" style="font-size:10px;"></i> Resumes
                             </button>
                         }
+                    }
 
-
-                        @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
-                        {
-                            @if (ViewBag.ClientRole != "HRs")
-                            {
-                                @if (ViewBag.AccessType != "Public")
-                                {
-                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                        <span class="fa fa-file-alt" style="font-size:14px;" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Resumes", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Candidates Resume</font></span>
-                                    </button>
-                                }
-                            }
-                        }
-
-                        @if (ViewBag.AccessType != "Public")
-                        {
-                            <button id="getstatus_13" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "IRF")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                            </button>
-                        }
-
-
-
-                        @*@Html.ActionLink("Back", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })*@
-
-                        @*     <div id="meeting_filter" class="dataTables_filter pull-right" style="margin-left:10px;">
-
-                        <div class="searchCon" style="height:35px;">
-
-                        <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                        <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
-
-                        <span class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
-
-                        <button style="display:none;" type="button" id="x">x</button>
-
-                        </div>
-                        </div>*@
-
-
-                    </div>
+                    @if (ViewBag.AccessType != "Public")
+                    {
+                        <button id="getstatus_13" type="button" class="pcs-nav-pill" title="Back to IRF list" onclick="location.href='@Url.Action("Index", "IRF")'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                            Back
+                        </button>
+                    }
                 </div>
             </div>
         </div>
@@ -210,6 +550,18 @@
                                 <div id="tableID">
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
                                         <div class="clearfix"></div>
+                                        <!-- PCS-style search toolbar -->
+                                        <div class="gc-table-toolbar">
+                                            <div class="gc-search-box">
+                                                <span class="gc-search-ico" aria-hidden="true">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                                                </span>
+                                                <input type="search" class="gc-search-inp" id="gc-candidate-search" placeholder="Search candidates…" autocomplete="off" />
+                                                <button type="button" class="gc-search-reset" onclick="gcClearSearch()" title="Clear search" aria-label="Clear search">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                                                </button>
+                                            </div>
+                                        </div>
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
 
@@ -311,93 +663,64 @@
 
                                                                 <td valign="top" style="position:relative;">
 
-                                                                    @if (item.Name != null && item.Name != "")
-                                                                    {
-                                                                        @if (item.Name.Length > 20)
+                                                                    <div class="gc-name-top">
+                                                                        @if (item.IsColdCandidate)
                                                                         {
-                                                                            <div class="cadName" style="margin-top:10px;">
-                                                                                @if (item.HasEmailDroppedOrBounced == true)
-                                                                                {
-                                                                                    <div class="absCenter">
-                                                                                        <button class="infoButton">
-                                                                                            <div class="infoButton-btn">
-                                                                                                <span class="infoButton-btn-text">i</span>
-                                                                                            </div>
-                                                                                            <div class="infoButton-container">
-                                                                                                <div class="infoButton-container-message"><b style="color:red">Bounce/Dropped :</b> emails indicates a temporary delivery failure</div>
-                                                                                            </div>
-                                                                                        </button>
-                                                                                    </div>
-
-                                                                                }
-                                                                                <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
-                                                                            </div>
+                                                                            <span class="gc-cold-badge">❄ Cold</span>
                                                                         }
 
-                                                                        else
+                                                                        @if (item.HasEmailDroppedOrBounced == true)
                                                                         {
-                                                                            <div class="cadName" style="margin-top:15px;">
-                                                                                @if (item.HasEmailDroppedOrBounced == true)
+                                                                            <button class="infoButton gc-info-btn">
+                                                                                <div class="infoButton-btn">
+                                                                                    <span class="infoButton-btn-text">i</span>
+                                                                                </div>
+                                                                                <div class="infoButton-container">
+                                                                                    <div class="infoButton-container-message"><b style="color:red">Bounce/Dropped :</b> emails indicates a temporary delivery failure</div>
+                                                                                </div>
+                                                                            </button>
+                                                                        }
+
+                                                                        @if (item.Name != null && item.Name != "")
+                                                                        {
+                                                                            <div class="cadName">
+                                                                                @if (item.Name.Length > 20)
                                                                                 {
-                                                                                    <div class="absCenter">
-                                                                                        <button class="infoButton">
-                                                                                            <div class="infoButton-btn">
-                                                                                                <span class="infoButton-btn-text">i</span>
-                                                                                            </div>
-                                                                                            <div class="infoButton-container">
-                                                                                                <div class="infoButton-container-message"><b style="color:red">Bounce/Dropped :</b> emails indicates a temporary delivery failure</div>
-                                                                                            </div>
-                                                                                        </button>
-                                                                                    </div>
+                                                                                    <a onclick="" data-tooltip="@item.Name"><span class="name-field">@item.Name.Substring(0, 20)..</span></a>
                                                                                 }
-                                                                                <a onclick=""><span class="name-field"> @item.Name</span> </a>
+                                                                                else
+                                                                                {
+                                                                                    <a onclick=""><span class="name-field">@item.Name</span></a>
+                                                                                }
                                                                             </div>
                                                                         }
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <span></span>
-                                                                    }
+                                                                    </div>
 
                                                                     @if (item.EmailId != null && item.EmailId != "")
                                                                     {
-                                                                        @if (item.EmailId.Length > 30)
-                                                                        {
-
-                                                                            <div class="cadEmail">
-                                                                                <a onclick="" data-tooltip="@item.EmailId"><span class="email-field">Emaild: @item.EmailId.Substring(0, 30)... </span> </a>
-
-                                                                            </div>
-                                                                        }
-
-                                                                        else
-                                                                        {
-                                                                            <div class="cadEmail">
-                                                                                <a onclick="" data-tooltip="@item.EmailId"><span>Emaild: @item.EmailId</span> </a>
-                                                                            </div>
-                                                                        }
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <span></span>
+                                                                        <div class="cadEmail">
+                                                                            @if (item.EmailId.Length > 30)
+                                                                            {
+                                                                                <a onclick="" data-tooltip="@item.EmailId"><span class="email-field">@item.EmailId.Substring(0, 30)...</span></a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a onclick="" data-tooltip="@item.EmailId"><span class="email-field">@item.EmailId</span></a>
+                                                                            }
+                                                                        </div>
                                                                     }
                                                                     <div>@item.IRFName</div>
                                                                     @if (ViewBag.profile != "Client")
                                                                     {
-                                                                        <span style="margin: 5px 0px;    display: inline-block;">
+                                                                        <span style="margin: 5px 0px; display: inline-block;">
                                                                             @if (item.Phone != null && item.Phone != string.Empty)
                                                                             {
                                                                                 <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject,1)">
                                                                                     <img src="~/img/calling.png" width="17" />
                                                                                 </span>
-
                                                                             }
                                                                             @item.Phone
                                                                         </span>
-                                                                    }
-                                                                    @if (item.IsColdCandidate)
-                                                                    {
-                                                                        <span class="cold-mark" style="top:-86px;">Cold Candidate Marked</span>
                                                                     }
 
                                                                 </td>
@@ -698,39 +1021,28 @@
                                                                     <td></td>
                                                                 }
 
-                                                                <td style="width:20%" class="text-left">
+                                                                <td class="gc-act-cell text-left" style="display: table-cell !important;vertical-align: middle !important;">
 
                                                                     @if (ViewBag.profile != "Recruiter")
-
                                                                     {
                                                                         @if (ViewBag.AccessType != "Public")
                                                                         {
                                                                             if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
                                                                             {
-
                                                                                 @if (!item.IsColdCandidate)
                                                                                 {
-                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Email })" title="Send Invite Over Mail" style="top: 0px;left:2px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
-                                                                                        <span title="Send Invite over Email"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;left:-1px;"></i></span>
+                                                                                    <a target="_blank" class="pcs-btn-act pcs-btn-send" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Email })" title="Send Invite Over Mail">
+                                                                                        <i class="fa fa-send"></i>
                                                                                     </a>
-                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background: #2c8d2cb8!important;">
-                                                                                        <span title="Send Invite Over Whatsapp">
-                                                                                            <img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" />
-                                                                                        </span>
+                                                                                    <a target="_blank" class="pcs-btn-act pcs-btn-wa" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp">
+                                                                                        <img src="~/img/whatsapp.png" />
                                                                                     </a>
-                                                                                    @* <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background: #2c8d2cb8!important;">
-                                                                <span title="Send Invite Over Whatsapp">
-                                                                <img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" />
-                                                                </span>
-                                                                </a> *@
                                                                                 }
                                                                             }
                                                                             else
                                                                             {
-                                                                                <div id="getstatus_8" class="btn shadow btn-invite btn-xs sharp me-1 mb-40" aria-label="Kindly enter Client HR's EmailId to send invite!" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
-                                                                                    <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" style="position:relative;top:-1px;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                                                    </span>
+                                                                                <div id="getstatus_8" class="pcs-btn-act" title="Kindly enter Client HR's EmailId to send invite!">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                                 </div>
                                                                             }
                                                                         }
@@ -739,188 +1051,122 @@
                                                                         {
                                                                             @if (!item.IsColdCandidate)
                                                                             {
-                                                                                <a target="_blank" class="btn shadow btn-unassign btn-xs sharp me-1 item4" href="@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })" title="Cancel Invite" style="top: 0px;position: relative;cursor: pointer; width:22px!important;height:22px!important;left:-1px">
-                                                                                    <span title="Cancel Invite"><i class="fa fa-remove" style="left:2px; top:0px;font-size:14px; position: relative;left:1px;"></i></span>
+                                                                                <a target="_blank" class="pcs-btn-act pcs-btn-cancel" href="@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })" title="Cancel Invite">
+                                                                                    <i class="fa fa-remove"></i>
                                                                                 </a>
                                                                             }
-
                                                                         }
 
                                                                         @if (ViewBag.profile != "Client")
                                                                         {
-                                                                            @*<button class="mdc-fab app-fab--absolute mdc-fab-secondary mb-40" aria-label="Audio files">
-                                                                <span onclick="location.href = '@Url.Action("UploadAudio", "Candidate", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
-
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
-                                                                </span>
-                                                                </button>*@
-
-
-                                                                            <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: 2px;position: relative;cursor: pointer; width:22px!important;height:22px!important;border-radius:4px;left:-2px">
-                                                                                <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-1px;"></i></span>
+                                                                            <div class="pcs-btn-act pcs-btn-status" onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status">
+                                                                                <i class="fa fa-plus-square"></i>
                                                                             </div>
-
-
-
                                                                         }
+
                                                                         @if (ViewBag.profile != "Client" || ViewBag.AccessType != null && ViewBag.AccessType == "Public")
                                                                         {
-                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Candidate Status List" style="width:22px!important;height:22px!important;left:-4px;position:relative">
-                                                                                <span onclick="GetCandidateStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Candidate Status List">
-                                                                                    <svg style="position:relative;top:-2px;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="#fff" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
-                                                                                </span>
+                                                                            <button class="pcs-btn-act" onclick="GetCandidateStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Candidate Status List">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
                                                                             </button>
-
                                                                         }
-
                                                                     }
+
                                                                     @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
                                                                     {
                                                                         @if (ViewBag.profile == "Admin")
                                                                         {
-                                                                            <div class="btn btn-record shadow btn-xs sharp me-1" aria-label="Call Record" style="position: relative;cursor: pointer; width:22px!important;height:22px!important;left:-6px; margin-right:0px!important;">
-                                                                                <span onclick="FetchRecording('@item.EmailId')" title="Call Record"><i style="left: 0px;top:-1px;position:relative;font-size:12px;font-size:12px;" class='fa fa-dot-circle'></i></span>
+                                                                            <div class="pcs-btn-act pcs-btn-call" onclick="FetchRecording('@item.EmailId')" title="Call Record">
+                                                                                <i class="fa fa-dot-circle"></i>
                                                                             </div>
-
-                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Candidate Resume Summary" style="width:22px!important;height:22px!important;left:-5px;position:relative;background:#3e656e85;border-color:#38b0cc85">
-                                                                                <span onclick="GetCandidateResumeSummary('@item.id')" title="Candidate Resume Summary">
-                                                                                    <i class="fa fa-user" aria-hidden="true" style="font-size: 11px;position: relative;left: -4px;"></i><i class="fa fa-file" aria-hidden="true" style="font-size: 9px;position: relative;left: -8px;"></i>
-                                                                                </span>
+                                                                            <button class="pcs-btn-act" onclick="GetCandidateResumeSummary('@item.id')" title="Candidate Resume Summary">
+                                                                                <i class="fa fa-user"></i>
                                                                             </button>
                                                                         }
-
-
-                                                                        @* <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Screen Resume" style="width:23px!important;height:23px!important;">
-                                                                <span onclick="ScreenCandidateBasedOnResume('@item.ResumeLink','@item.EmailId', '@item.JDTiltle')" title="Screen Resume">
-                                                                <svg style="position:relative;top:-2px;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="#fff" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
-                                                                </span>
-                                                                </button> *@
-
-                                                                        @* <div style="float:left;">
-                                                                            <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenCandidate", "AIScreener" , new { jdTitle = item.JDTiltle, emailId = item.EmailId, irfId = item.IRFId, candidateMasterId = item.CandidateMasterId, irfName = item.IRFName})">
-                                                                                <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="background:#98a3d7;border-color:#98a3d7; width:22px!important;height:22px!important; top:3px;position:relative;left:-2px;   margin: 0px 0px 0px 3px;">
-                                                                                    <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" fill="#fff" width="12" height="12" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="font-size: 9px;position: relative;left: -6px;color:#fff; top: 2px;"></i></span>
-                                                                                </span>
-                                                                            </a>
-                                                                        </div> *@
-                                                                        
                                                                     }
-                                                                    @if((ViewBag.AccessType != null && ViewBag.AccessType == "Public") || (ViewBag.profile != null && (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")))
+
+                                                                    @if ((ViewBag.AccessType != null && ViewBag.AccessType == "Public") || (ViewBag.profile != null && (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")))
                                                                     {
                                                                         string accessType = ViewBag.AccessType ?? "";
-                                                                        <div style="float:left;">
-                                                                            <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenCandidateV2", "AIScreener" , new { emailId = item.EmailId, irfId = item.IRFId, candidateMasterId = item.CandidateMasterId, accessType = accessType})">
-                                                                                <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="background:#98a3d7;border-color:#98a3d7; width:22px!important;height:22px!important; top:3px;position:relative;left:-2px;   margin: 0px 0px 0px 3px;">
-                                                                                    <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" fill="#fff" width="12" height="12" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="font-size: 9px;position: relative;left: -6px;color:#fff; top: 2px;"></i></span>
-                                                                                </span>
-                                                                            </a>
-                                                                        </div>
+                                                                        <a class="pcs-btn-act" target="_blank" href="@Url.Action("ScreenCandidateV2", "AIScreener", new { emailId = item.EmailId, irfId = item.IRFId, candidateMasterId = item.CandidateMasterId, accessType = accessType })" title="Screen Resume">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg>
+                                                                        </a>
                                                                     }
+
                                                                     @if (ViewBag.AccessType != "Public")
                                                                     {
-
-                                                                        <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })" title="Edit" style="top: 0px;left:-8px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
-                                                                            <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
+                                                                        <a target="_blank" class="pcs-btn-act" href="@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })" title="Edit">
+                                                                            <i class="fa fa-edit"></i>
                                                                         </a>
-
                                                                     }
+
                                                                     @if (ViewBag.profile != "Client")
                                                                     {
-
-                                                                        <div class="btn btn-copy shadow btn-xs me-1" aria-label="Copy Public URL" style="top: 3px;border-radius:4px;position: relative;cursor: pointer; width:23px!important;height:23px!important;float:left;">
-                                                                            <span onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId',1);" title="Copy Public URL"><i class='fa fa-clone' style="position:relative;left:0px;font-size:12px;top:-1px;"></i></span>
+                                                                        <div class="pcs-btn-act" onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId',1);" title="Copy Public URL">
+                                                                            <i class="fa fa-clone"></i>
                                                                         </div>
-
                                                                     }
 
                                                                     @if (!item.IsColdCandidate)
                                                                     {
-                                                                        <div style="float:left;margin: 0px 4px 0px 0px;">
-                                                                            <a target="_blank" class="btn shadow btn-schedule btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;left:3px;">
-                                                                                <span title="Schedule Meeting"><i class="fa fa-calendar" style="left:0px; top:-1px;font-size:13px; position: relative;"></i></span>
+                                                                        <a target="_blank" class="pcs-btn-act pcs-btn-schedule" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting">
+                                                                            <i class="fa fa-calendar"></i>
+                                                                        </a>
+                                                                    }
+
+                                                                    @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin"))
+                                                                    {
+                                                                        <div class="pcs-btn-act pcs-btn-cancel" onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete">
+                                                                            <i class="fa fa-trash"></i>
+                                                                        </div>
+                                                                    }
+
+                                                                    @if (ViewBag.profile != "Client")
+                                                                    {
+                                                                        @if (item.IsAIInterview)
+                                                                        {
+                                                                            <a target="_blank" class="pcs-btn-act" href='@Url.Action("Report", "AIInterview", new { seId = item.SessionId})' title="AI Interview Report">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                                                                    <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+                                                                                    <path d="M15 2v5h5"></path>
+                                                                                    <path d="M10 12c0-1 .5-2 2-2s2 1 2 2-.5 2-2 2-2-1-2-2z"></path>
+                                                                                    <line x1="12" y1="10" x2="12" y2="8"></line>
+                                                                                    <line x1="12" y1="14" x2="12" y2="16"></line>
+                                                                                    <line x1="10" y1="12" x2="8" y2="12"></line>
+                                                                                    <line x1="14" y1="12" x2="16" y2="12"></line>
+                                                                                    <line x1="7" y1="18" x2="17" y2="18"></line>
+                                                                                </svg>
                                                                             </a>
-                                                                        </div>
-                                                                    }
-
-                                                                    @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
-                                                                    {
-
-                                                                        <div class="btn btn-delete shadow btn-xs sharp me-1 pull-left" aria-label="Delete" style="top:4px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background:#d35555;margin: 0px 0px 0px 4px;">
-                                                                            <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete"><i class='fa fa-trash' style="font-size:13px;left:0px;top:0px; position:relative;color:#fff"></i></span>
-                                                                        </div>
-
-                                                                    }
-
-                                                                    @if (ViewBag.profile != "Client")
-                                                                    {
-
-
-
-                                                                        <div style="float:left;">
-                                                                            @if (item.IsAIInterview)
-                                                                            {
-                                                                                <span class="interview_9">
-                                                                                    <a style="text-decoration:none" target="_blank" href='@Url.Action("Report", "AIInterview" , new { seId = item.SessionId})'>
-                                                                                        <button class="btn shadow btn-xs sharp me-1" aria-label="Report" style="position:relative;top: 0px;width: 23px;height: 23px;background: #42a5f5;">
-                                                                                            <span>
-                                                                                                <svg style="position:relative;top:-2px;left:-2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                                                                                                    <!-- Report/document shape -->
-                                                                                                    <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
-                                                                                                    <path d="M15 2v5h5"></path>
-
-                                                                                                    <!-- Brain-like AI/circuit element -->
-                                                                                                    <path d="M10 12c0-1 .5-2 2-2s2 1 2 2-.5 2-2 2-2-1-2-2z"></path>
-                                                                                                    <line x1="12" y1="10" x2="12" y2="8"></line>
-                                                                                                    <line x1="12" y1="14" x2="12" y2="16"></line>
-                                                                                                    <line x1="10" y1="12" x2="8" y2="12"></line>
-                                                                                                    <line x1="14" y1="12" x2="16" y2="12"></line>
-
-                                                                                                    <!-- Text lines on report -->
-                                                                                                    <line x1="7" y1="18" x2="17" y2="18"></line>
-                                                                                                </svg>
-                                                                                            </span>
-                                                                                        </button>
-                                                                                    </a>
-                                                                                </span>
-                                                                                //Remember : Change the report icon for an ai interview report. A normal report and an AI report should be identifiable by their distinct icons.
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.IRFId})">
-                                                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="background:#98a3d7;border-color:#98a3d7; width:22px!important;height:22px!important; top:3px;position:relative;   margin: 0px 0px 0px 3px;">
-                                                                                        <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-2px;left:-1px" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                                    </button>
-                                                                                </a>
-                                                                            }
-                                                                        </div>
-
-
-
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a target="_blank" class="pcs-btn-act" href="@Url.Action("ClientReport", "Interview", new { interviewId = item.imid, irfId = item.IRFId })" title="Client Interview Report">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg>
+                                                                            </a>
+                                                                        }
                                                                     }
                                                                     @if (!item.IsColdCandidate)
                                                                     {
-                                                                        <div style="float:left">
-                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:22px!important;height:22px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;top:2px;left:0px;margin: 0px 0px 0px 3px;">
-                                                                                <span onclick="MarkedColdCandidate('@item.id','@item.IRFName', '@item.EmailId','@item.imid','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
-                                                                                    <img src="~/img/approve-blk.png" style="position: relative;top: -1.5px;left:-3px;max-width: 16px;" />
-                                                                                </span>
-                                                                            </button>
-                                                                        </div>
+                                                                        <button class="pcs-btn-act pcs-btn-cold" onclick="MarkedColdCandidate('@item.id','@item.IRFName', '@item.EmailId','@item.imid','@item.IRFId');" title="Mark Cold Candidate">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" width="64" height="64" fill="#9CA3AF">
+
+                                                                                <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3 0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304h-91.4z"></path>
+
+                                                                                <path d="M528 128a96 96 0 1 0 0 192 96 96 0 1 0 0-192zm0 32c8.8 0 16 7.2 16 16v48l32 16c7.9 4 11 13.7 7 21.5s-13.7 11-21.5 7l-40-20c-5.4-2.7-8.5-8.2-8.5-14.2V176c0-8.8 7.2-16 16-16z"></path>
+                                                                            </svg>
+                                                                        </button>
                                                                     }
                                                                     @if (ViewBag.profile == "Client" && ViewBag.AccessType == "Public")
                                                                     {
-
-                                                                        <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Email })" title="Send Invite Over Mail" style="top: 0px;left:-6px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
-                                                                            <span title="Send Invite over Email"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;left:-1px;"></i></span>
+                                                                        <a target="_blank" class="pcs-btn-act pcs-btn-send" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Email })" title="Send Invite Over Mail">
+                                                                            <i class="fa fa-send"></i>
                                                                         </a>
-
-                                                                        <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp" style="top: 0px;left:-9px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background: #2c8d2cb8!important;">
-                                                                            <span title="Send Invite Over Whatsapp">
-                                                                                <img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" />
-                                                                            </span>
+                                                                        <a target="_blank" class="pcs-btn-act pcs-btn-wa" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp">
+                                                                            <img src="~/img/whatsapp.png" />
                                                                         </a>
-
                                                                     }
+
+                                                                   
                                                                 </td>
                                                                 @if (ViewBag.profile != "Client")
                                                                 {
@@ -928,10 +1174,8 @@
                                                                         @if (item.Phone != null && item.Phone != string.Empty)
                                                                         {
 
-                                                                            <div id="getstatus_11" class="btn shadow btn-xs sharp me-1" aria-label="Call Candidate" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background:#8baabe;color:#fff;">
-                                                                                <span id="getstatus_11" class="call" onclick="AutoCallCandidate('@item.Phone','@item.IRFId', '@item.CandidateMasterId', '@item.Name')" title="Call Candidate">
-                                                                                    <span class="fa fa-phone-square" style="font-size:14px!important;position:relative;top:0px;"></span>
-                                                                                </span>
+                                                                            <div class="pcs-btn-act pcs-btn-call" onclick="AutoCallCandidate('@item.Phone','@item.IRFId', '@item.CandidateMasterId', '@item.Name')" title="Call Candidate">
+                                                                                <i class="fa fa-phone-square"></i>
                                                                             </div>
 
                                                                         }
@@ -1604,23 +1848,22 @@ else if (ViewBag.Message != null)
                 },
                 order: [[1, 'desc']]
             });
-    @*        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
-    *@
-            $(".dataTables_filter").keyup(function (e) {
-                if ($('#txtmeeting_filter').val() == "") {
-                    $("#x").hide();
-                }
-                else {
-                    $("#x").show();
-                }
-            });
-            $("#x").click(function (e) {
-                $(".dataTables_filter input").val('');
-                $(this).hide();
-                //searchResult();
-            });
 
+            // Move length selector into the toolbar so it shares the same row as the search box
+            $('#candidateTableId_wrapper .dataTables_length').prependTo('.gc-table-toolbar');
+
+            // Wire the custom PCS-style search box to DataTable
+            $('#gc-candidate-search').off('input.gcSearch').on('input.gcSearch', function () {
+                table.search($(this).val()).draw();
+            });
         };
+
+        function gcClearSearch() {
+            $('#gc-candidate-search').val('');
+            if ($.fn.DataTable.isDataTable('#candidateTableId')) {
+                $('#candidateTableId').DataTable().search('').draw();
+            }
+        }
 
 </script>
 
