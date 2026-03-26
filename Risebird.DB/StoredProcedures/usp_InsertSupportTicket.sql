@@ -4,8 +4,11 @@
 -- inserts the full enriched ticket row.
 --
 -- Assignment logic (only applies when the sender is a known client user):
---   SenderEmail → UserList → ClientUser → TransClientUser (TOP 1 active IRF)
---                          → IRF.RisebirdHr → UserList.EmailId = AssignedTo
+--   SenderEmail → UserList.id (@UserId)
+--             → ClientUser (for @ClientId only)
+--             → TransClientUser.ClientUserId = UserList.id → TOP 1 active IRF
+--             → IRF.RisebirdHr → UserList.EmailId = AssignedTo
+-- NOTE: TransClientUser.ClientUserId references UserList.id, NOT ClientUser.id.
 CREATE OR ALTER PROCEDURE [dbo].[usp_InsertSupportTicket]
     @SenderEmail                VARCHAR(150),
     @Subject                    NVARCHAR(500),
@@ -81,11 +84,6 @@ BEGIN
             END
         END
     END
-
-    -- For "New candidate submission" the system handles resume ingestion automatically.
-    -- No human HR should receive credit for work they did not do.
-    IF LOWER(@Intent) = 'new candidate submission'
-        SET @AssignedTo = 'System';
 
     INSERT INTO dbo.SupportTickets (
         SenderEmail, Subject, MailContent, ReceivedAt,

@@ -78,19 +78,19 @@ namespace Risebird.AzureTimerFunctions
                             _log.LogWarning("QcInterviewAIMergeJob: could not parse JSON for qcEvaluationId={Id} interviewId={InterviewId}", row.id, row.InterviewId);
                             continue;
                         }
-
+                        var PaymentComplanceCount = parsed.flags != null ? parsed.flags.Count() : 0;
                         var combined = CombineFlagsByCategory(parsed);
                         var mergedJson = JsonConvert.SerializeObject(combined);
 
                         await _meetingService.SaveQcInterviewAIMergedDetails(
                             row.id,
-                            mergedJson,
+                            rawText,
                             totalPenalty: combined.total_penalty,
                             interviewerSuspicious: combined.interviewer_suspicious,
                             redoInterview: combined.RedoInterview);
 
                         if (row.InterviewId > 0)
-                            await PersistPaymentSlaFromQcMergeAsync(row.InterviewId, combined);
+                            await PersistPaymentSlaFromQcMergeAsync(row.InterviewId, combined, PaymentComplanceCount);
                     }
                     catch (Exception ex)
                     {
@@ -179,7 +179,7 @@ namespace Risebird.AzureTimerFunctions
         /// <summary>
         /// Builds <see cref="PaymentSLAVM"/> from AI QC merge (same fields as Interview/GetPaymentSlaDetails) and saves via <see cref="IMeetingService.AddorUpdatePaymentSLADetails"/>.
         /// </summary>
-        private async Task PersistPaymentSlaFromQcMergeAsync(int interviewId, QcInterviewAIMergeAssistantResponse combined)
+        private async Task PersistPaymentSlaFromQcMergeAsync(int interviewId, QcInterviewAIMergeAssistantResponse combined, int PaymentComplanceCount)
         {
             var slaType = "QC";
             var createdBy = "AISystem";
@@ -193,11 +193,11 @@ namespace Risebird.AzureTimerFunctions
                 model.CreatedBy = createdBy;
                 model.Isedit = existing != null;
                 model.isQcDone = true;
+                model.PaymentComplianceCount = PaymentComplanceCount;
                 if (existing == null)
                 {
                     model.isapprovedchecked = false;
                     model.techqc = false;
-                    model.PaymentComplianceCount = 0;
                     model.Rating = 0;
                     model.VideoEnable = false;
                 }
