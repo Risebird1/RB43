@@ -191,7 +191,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if ((Model.Inaccuratedecisionmaking ?? "").Split(",").Contains("Candidate rating below threshold"))
+                                                    @if ((Model.Inaccuratedecisionmaking ?? "").Split(",").Select(x => x.Trim()).Contains("Candidate rating below threshold"))
                                                     {
                                                         <input type="checkbox" id="checkboxRating" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="Candidate rating below threshold" />
 
@@ -327,7 +327,7 @@
                                                 </li>
 
                                                  <li>
-                                                    @if ((Model.QuestionsRelevance ?? "").Split(",").Contains("Too few questions asked"))
+                                                    @if ((Model.QuestionsRelevance ?? "").Split(",").Select(x => x.Trim()).Contains("Too few questions asked"))
                                                     {
                                                         <input type="checkbox" id="checkboxFewQuestion" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="Too few questions asked" />
                                                         <label for="checkboxFewQuestion">Too few questions asked </label>
@@ -338,7 +338,7 @@
                                                     }
                                                 </li>
                                                   <li>
-                                                    @if ((Model.QuestionsRelevance ?? "").Split(",").Contains("Poor question quality"))
+                                                    @if ((Model.QuestionsRelevance ?? "").Split(",").Select(x => x.Trim()).Contains("Poor question quality"))
                                                     {
                                                         <input type="checkbox" id="checkboxPoorQuestion" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="Poor question quality" />
                                                         <label for="checkboxPoorQuestion">Poor question quality </label>
@@ -474,7 +474,7 @@
                                                 `
 
                                                 <li>
-                                                    @if ((Model.PoorFeedbackComments ?? "").Split(",").Contains("Poor comment quality"))
+                                                    @if ((Model.PoorFeedbackComments ?? "").Split(",").Select(x => x.Trim()).Contains("Poor comment quality"))
                                                     {
                                                         <input type="checkbox" id="checkboxPoorFeedback" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Poor comment quality" /> <label for="checkboxPoorFeedback">Poor comment quality</label>
                                                     }
@@ -485,7 +485,7 @@
                                                 </li>
 
                                                  <li>
-                                                    @if ((Model.PoorFeedbackComments ?? "").Split(",").Contains("Poor verdict justification"))
+                                                    @if ((Model.PoorFeedbackComments ?? "").Split(",").Select(x => x.Trim()).Contains("Poor verdict justification"))
                                                     {
                                                         <input type="checkbox" id="checkboxPoorVerdict" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Poor verdict justification" /> <label for="checkboxPoorVerdict">Poor Verdict justification</label>
                                                     }
@@ -843,7 +843,7 @@
 
 
                                                 <li>
-                                                    @if ((Model.UnethicalPractices ?? "").Split(",").Contains("Unprofessional behavior"))
+                                                    @if ((Model.UnethicalPractices ?? "").Split(",").Select(x => x.Trim()).Contains("Unprofessional behavior"))
                                                     {
                                                         <input type="checkbox" id="checkboxBehavior" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Unprofessional behavior" /> <label for="checkboxBehavior">Unprofessional behavior</label>
                                                     }
@@ -966,7 +966,7 @@
                                             @Html.HiddenFor(m => m.AITranscriptScore)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Contains("Low AI transcript quality score"))
+                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Select(x => x.Trim()).Contains("Low AI transcript quality score"))
                                                     {
                                                         <input type="checkbox" id="checkboxLowAItranscript" name="AITranscriptScore" checked onclick="ChangeCheckBox('AITranscriptScore')" value="Low AI transcript quality score" /> <label for="checkboxLowAItranscript">Low AI transcript quality score</label>
                                                     }
@@ -976,7 +976,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Contains("Disengaged Or Absent Interviewer"))
+                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Select(x => x.Trim()).Contains("Disengaged Or Absent Interviewer"))
                                                     {
                                                         <input type="checkbox" id="checkboxdisengagedInterviewer" name="AITranscriptScore" checked onclick="ChangeCheckBox('AITranscriptScore')" value="Disengaged Or absent interviewer" /> <label style="padding:3px 8px;" for="checkboxdisengagedInterviewer">Disengaged Or absent interviewer</label>
                                                     }
@@ -986,7 +986,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Contains("Scripted robotic Or low effort"))
+                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Select(x => x.Trim()).Contains("Scripted robotic Or low effort"))
                                                     {
                                                         <input type="checkbox" id="checkboxscriptedRoboticOrLowEffort" name="AITranscriptScore" checked onclick="ChangeCheckBox('AITranscriptScore')" value="Scripted robotic Or low effort" /> <label for="checkboxscriptedRoboticOrLowEffort">Scripted robotic Or low effort</label>
                                                     }
@@ -996,7 +996,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Contains("Unethical Or unprofessional behavior"))
+                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Select(x => x.Trim()).Contains("Unethical Or unprofessional behavior"))
                                                     {
                                                         <input type="checkbox" id="checkboxUnethical" name="AITranscriptScore" checked onclick="ChangeCheckBox('AITranscriptScore')" value="Unethical Or unprofessional behavior"/> <label for="checkboxUnethical">Unethical Or unprofessional behavior</label>
                                                     }
@@ -1006,7 +1006,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Contains("Poor Communication And Lack Of Clarity"))
+                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Select(x => x.Trim()).Contains("Poor Communication And Lack Of Clarity"))
                                                     {
                                                         <input type="checkbox" id="checkboxPoorCommunication" name="AITranscriptScore" checked onclick="ChangeCheckBox('AITranscriptScore')" value="Poor communication and lack of clarity" /> <label for="checkboxPoorCommunication">Poor communication and lack of clarity</label>
                                                     }
@@ -1017,7 +1017,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Contains("Time wasting and inefficient interview"))
+                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Select(x => x.Trim()).Contains("Time wasting and inefficient interview"))
                                                     {
                                                         <input type="checkbox" id="checkboxtimeWasting" name="AITranscriptScore" checked onclick="ChangeCheckBox('AITranscriptScore')" value="Time wasting and inefficient interview" /> <label for="checkboxtimeWasting">Time wasting and inefficient interview</label>
                                                     }
@@ -1028,7 +1028,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Contains("Fake Or weak evaluation methods"))
+                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Select(x => x.Trim()).Contains("Fake Or weak evaluation methods"))
                                                     {
                                                         <input type="checkbox" id="checkboxWeakEvaluation" name="AITranscriptScore" checked onclick="ChangeCheckBox('AITranscriptScore')" value="Fake Or weak evaluation methods" /> <label for="checkboxWeakEvaluation">Fake Or weak evaluation methods</label>
                                                     }
@@ -1039,7 +1039,7 @@
                                                 </li>
 
                                                  <li>
-                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Contains("Personal Identifiable Or Contact Information Discussed"))
+                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Select(x => x.Trim()).Contains("Personal Identifiable Or Contact Information Discussed"))
                                                     {
                                                         <input type="checkbox" id="checkboxIdentifiable" name="AITranscriptScore" checked onclick="ChangeCheckBox('AITranscriptScore')" value="Personal identifiable Or contact information discussed" /> <label for="checkboxIdentifiable">Personal identifiable Or contact information discussed</label>
                                                     }
@@ -1050,7 +1050,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Contains("Unproductive Time due to setup Or connectivity issues"))
+                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Select(x => x.Trim()).Contains("Unproductive Time due to setup Or connectivity issues"))
                                                     {
                                                         <input type="checkbox" id="checkboxunproductiveTimeDue" name="AITranscriptScore" checked onclick="ChangeCheckBox('AITranscriptScore')" value="Unproductive Time due to setup Or connectivity issues" /> <label for="checkboxunproductiveTimeDue">Unproductive Time due to setup Or connectivity issues</label>
                                                     }
@@ -1061,7 +1061,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Contains("Interviewer or interviewee absent or session incomplete"))
+                                                    @if ((Model.AITranscriptScore ?? "").Split(",").Select(x => x.Trim()).Contains("Interviewer or interviewee absent or session incomplete"))
                                                     {
                                                         <input type="checkbox" id="checkboxSessionIncomplete" name="AITranscriptScore" checked onclick="ChangeCheckBox('AITranscriptScore')" value="Interviewer or interviewee absent or session incomplete" /> <label for="checkboxSessionIncomplete">Interviewer or interviewee absent or session incomplete</label>
                                                     }
@@ -1088,7 +1088,7 @@
                                             @Html.HiddenFor(m => m.AIReportScore)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if ((Model.AIReportScore ?? "").Split(",").Contains("Low AI report verdict"))
+                                                    @if ((Model.AIReportScore ?? "").Split(",").Select(x => x.Trim()).Contains("Low AI report verdict"))
                                                     {
                                                         <input type="checkbox" id="checkboxAIreportverdict" name="AIReportScore" checked onclick="ChangeCheckBox('AIReportScore')" value="Low AI transcript quality score" /> <label for="checkboxAIreportverdict">Low AI transcript quality score</label>
                                                     }
@@ -1098,7 +1098,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if ((Model.AIReportScore ?? "").Split(",").Contains("Poor question quality"))
+                                                    @if ((Model.AIReportScore ?? "").Split(",").Select(x => x.Trim()).Contains("Poor question quality"))
                                                     {
                                                         <input type="checkbox" id="checkboxPoorquestion" name="AIReportScore" checked onclick="ChangeCheckBox('AIReportScore')" value="Poor question quality"/> <label style="padding:3px 8px;" for="checkboxPoorquestion">Poor question quality</label>
                                                     }
@@ -1108,7 +1108,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if ((Model.AIReportScore ?? "").Split(",").Contains("Poor comment quality"))
+                                                    @if ((Model.AIReportScore ?? "").Split(",").Select(x => x.Trim()).Contains("Poor comment quality"))
                                                     {
                                                         <input type="checkbox" id="checkboxPoorcomment" name="AIReportScore" checked onclick="ChangeCheckBox('AIReportScore')" value="Poor comment quality" /> <label for="checkboxPoorcomment">Poor comment quality</label>
                                                     }
@@ -1120,7 +1120,7 @@
 
 
                                                 <li>
-                                                    @if ((Model.AIReportScore ?? "").Split(",").Contains("Mechanical consistency missing"))
+                                                    @if ((Model.AIReportScore ?? "").Split(",").Select(x => x.Trim()).Contains("Mechanical consistency missing"))
                                                     {
                                                         <input type="checkbox" id="checkboxMechanicalconsistency" name="AIReportScore" checked onclick="ChangeCheckBox('AIReportScore')" value="Mechanical consistency missing" /> <label for="checkboxMechanicalconsistency">Mechanical consistency missing</label>
                                                     }
@@ -1131,7 +1131,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.AIReportScore ?? "").Split(",").Contains("Poor verdict justification"))
+                                                    @if ((Model.AIReportScore ?? "").Split(",").Select(x => x.Trim()).Contains("Poor verdict justification"))
                                                     {
                                                         <input type="checkbox" id="checkboxPoorverdict" name="AIReportScore" checked onclick="ChangeCheckBox('AIReportScore')" value="Poor verdict justification" /> <label for="checkboxPoorverdict">Poor verdict justification</label>
                                                     }
@@ -1354,7 +1354,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.ScoreRubricIgnorance ?? "").Split(",").Contains("Mechanical consistency missing"))
+                                                    @if ((Model.ScoreRubricIgnorance ?? "").Split(",").Select(x => x.Trim()).Contains("Mechanical consistency missing"))
                                                     {
                                                         <input type="checkbox" id="checkboxMechanicalconsistency" name="ScoreRubricIgnorance" checked onclick="ChangeCheckBox('ScoreRubricIgnorance')" value="Mechanical consistency missing" /> <label for="checkboxMechanicalconsistency">Mechanical consistency missing</label>
                                                     }
@@ -1367,7 +1367,7 @@
                                                 </li>`
 
                                                 <li>
-                                                    @if ((Model.ScoreRubricIgnorance ?? "").Split(",").Contains("Weak evaluation method"))
+                                                    @if ((Model.ScoreRubricIgnorance ?? "").Split(",").Select(x => x.Trim()).Contains("Weak evaluation method"))
                                                     {
                                                         <input type="checkbox" id="checkboxWeakevaluation" name="ScoreRubricIgnorance" checked onclick="ChangeCheckBox('ScoreRubricIgnorance')" value="Weak evaluation method" /> <label for="checkboxWeakevaluation">Weak evaluation method</label>
                                                     }
@@ -1526,7 +1526,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.CandidateInteractionQuality ?? "").Split(",").Contains("Candidate requested redo"))
+                                                    @if ((Model.CandidateInteractionQuality ?? "").Split(",").Select(x => x.Trim()).Contains("Candidate requested redo"))
                                                     {
                                                         <input type="checkbox" id="checkboxrequestedredo" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Candidate requested redo" /> <label for="checkboxrequestedredo">Candidate requested redo</label>
                                                     }
@@ -1539,7 +1539,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.CandidateInteractionQuality ?? "").Split(",").Contains("Disengaged / absent interviewer"))
+                                                    @if ((Model.CandidateInteractionQuality ?? "").Split(",").Select(x => x.Trim()).Contains("Disengaged / absent interviewer"))
                                                     {
                                                         <input type="checkbox" id="checkboxDisengaged" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Disengaged / absent interviewer" /> <label for="checkboxDisengaged">Disengaged / absent interviewer</label>
                                                     }
@@ -1899,7 +1899,7 @@
                                             @Html.HiddenFor(m => m.AttendanceJoinCompliance)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if ((Model.AttendanceJoinCompliance ?? "").Split(",").Contains("Candidate NoShow"))
+                                                    @if ((Model.AttendanceJoinCompliance ?? "").Split(",").Select(x => x.Trim()).Contains("Candidate NoShow"))
                                                     {
                                                         <input type="checkbox" id="checkboxCandidateNoShow" name="AttendanceJoinCompliance" checked onclick="ChangeCheckBox('AttendanceJoinCompliance')" value="Candidate NoShow" /> <label for="checkboxCandidateNoShow">Candidate NoShow</label>
                                                     }
@@ -1911,7 +1911,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if ((Model.AttendanceJoinCompliance ?? "").Split(",").Contains("Interviewer NoShow"))
+                                                    @if ((Model.AttendanceJoinCompliance ?? "").Split(",").Select(x => x.Trim()).Contains("Interviewer NoShow"))
                                                     {
                                                         <input type="checkbox" id="checkboxInterviewerNoShow" name="AttendanceJoinCompliance" checked onclick="ChangeCheckBox('AttendanceJoinCompliance')" value="Interviewer NoShow" /> <label for="checkboxInterviewerNoShow">Interviewer NoShow</label>
                                                     }
@@ -1921,7 +1921,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if ((Model.AttendanceJoinCompliance ?? "").Split(",").Contains("Late join"))
+                                                    @if ((Model.AttendanceJoinCompliance ?? "").Split(",").Select(x => x.Trim()).Contains("Late join"))
                                                     {
                                                         <input type="checkbox" id="checkboxLatejoin" name="AttendanceJoinCompliance" checked onclick="ChangeCheckBox('AttendanceJoinCompliance')" value="Late join" /> <label for="checkboxLatejoin">Late join</label>
                                                     }
@@ -1934,7 +1934,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.AttendanceJoinCompliance ?? "").Split(",").Contains("Session incomplete / absent participant"))
+                                                    @if ((Model.AttendanceJoinCompliance ?? "").Split(",").Select(x => x.Trim()).Contains("Session incomplete / absent participant"))
                                                     {
                                                         <input type="checkbox" id="checkboxSessionincomplete" name="AttendanceJoinCompliance" checked onclick="ChangeCheckBox('AttendanceJoinCompliance')" value="Session incomplete / absent participant" /> <label for="checkboxSessionincomplete">Session incomplete / absent participant</label>
                                                     }
@@ -1947,7 +1947,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.AttendanceJoinCompliance ?? "").Split(",").Contains("Did not click join link"))
+                                                    @if ((Model.AttendanceJoinCompliance ?? "").Split(",").Select(x => x.Trim()).Contains("Did not click join link"))
                                                     {
                                                         <input type="checkbox" id="checkboxClickjoin" name="AttendanceJoinCompliance" checked onclick="ChangeCheckBox('AttendanceJoinCompliance')" value="Did not click join link" /> <label for="checkboxClickjoin">Did not click join link</label>
                                                     }
@@ -1980,7 +1980,7 @@
                                             @Html.HiddenFor(m => m.AIContradictionScore)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Contains("Low AI contradiction score"))
+                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Select(x => x.Trim()).Contains("Low AI contradiction score"))
                                                     {
                                                         <input type="checkbox" id="checkboxAIcontradiction" name="AIContradictionScore" checked onclick="ChangeCheckBox('AIContradictionScore')" value="Low AI contradiction score" /> <label for="checkboxAIcontradiction">Low AI contradiction score</label>
                                                     }
@@ -1992,7 +1992,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Contains("Tech skill score contradiction with AI"))
+                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Select(x => x.Trim()).Contains("Tech skill score contradiction with AI"))
                                                     {
                                                         <input type="checkbox" id="checkboxTechSkillScore" name="AIContradictionScore" checked onclick="ChangeCheckBox('AIContradictionScore')" value="Tech skill score contradiction with AI" /> <label for="checkboxTechSkillScore">Tech skill score contradiction with AI</label>
                                                     }
@@ -2002,7 +2002,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Contains("Score rubric and score contradiction with AI"))
+                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Select(x => x.Trim()).Contains("Score rubric and score contradiction with AI"))
                                                     {
                                                         <input type="checkbox" id="checkboxScoreRubricWithAI" name="AIContradictionScore" checked onclick="ChangeCheckBox('AIContradictionScore')" value="Score rubric and score contradiction with AI" /> <label for="checkboxScoreRubricWithAI">Score rubric and score contradiction with AI</label>
                                                     }
@@ -2015,7 +2015,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Contains("Question discussed rating contradiction with AI"))
+                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Select(x => x.Trim()).Contains("Question discussed rating contradiction with AI"))
                                                     {
                                                         <input type="checkbox" id="checkboxQuestiondiscussed" name="AIContradictionScore" checked onclick="ChangeCheckBox('AIContradictionScore')" value="Question discussed rating contradiction with AI" /> <label for="checkboxQuestiondiscussed">Question discussed rating contradiction with AI</label>
                                                     }
@@ -2028,7 +2028,7 @@
                                                 </li>
 
                                                 <li>
-                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Contains("Communication score contradiction with AI"))
+                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Select(x => x.Trim()).Contains("Communication score contradiction with AI"))
                                                     {
                                                         <input type="checkbox" id="checkboxCommunicationScore" name="AIContradictionScore" checked onclick="ChangeCheckBox('AIContradictionScore')" value="Communication score contradiction with AI" /> <label for="checkboxCommunicationScore">Communication score contradiction with AI</label>
                                                     }
@@ -2042,7 +2042,7 @@
 
 
                                                 <li>
-                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Contains("Interview status contradiction with AI"))
+                                                    @if ((Model.AIContradictionScore ?? "").Split(",").Select(x => x.Trim()).Contains("Interview status contradiction with AI"))
                                                     {
                                                         <input type="checkbox" id="checkboxInterviewstatus" name="AIContradictionScore" checked onclick="ChangeCheckBox('AIContradictionScore')" value="Interview status contradiction with AI" /> <label for="checkboxInterviewstatus">Interview status contradiction with AI</label>
                                                     }
