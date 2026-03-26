@@ -56,10 +56,10 @@ namespace Risebird.Entities.ViewModel
                     continue;
 
                 var flagPart = (item.flag ?? "").Trim();
-                if (item.penalty.HasValue && item.penalty.Value != 0)
-                    flagPart = string.IsNullOrEmpty(flagPart)
-                        ? $"penalty:{item.penalty}"
-                        : $"{flagPart} (penalty:{item.penalty})";
+                //if (item.penalty.HasValue && item.penalty.Value != 0)
+                //    flagPart = string.IsNullOrEmpty(flagPart)
+                //        ? $"penalty:{item.penalty}"
+                //        : $"{flagPart} (penalty:{item.penalty})";
 
                 prop.SetValue(model, Truncate(flagPart, 250));
             }
