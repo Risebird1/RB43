@@ -7485,5 +7485,156 @@ NEVER:
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        public async Task<IActionResult> TestQCData(int interviewid,int id)
+        {
+
+            var assistantId = _configuration["OpenAI:QcInterviewAIMergeAssistantId"];
+            try
+            {
+                try
+                {
+                    var userMessage = BuildMergeUserMessage();
+                    var runResult = await _assistantServiceHelper.GenerateQcAnalysisInterviewAIMerge(userMessage, assistantId, useJsonResponseFormat: true);
+                    var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value?.Replace("```json", "").Replace("```", "");
+                    if (string.IsNullOrWhiteSpace(rawText))
+                    {
+                    }
+
+                    if (!QcInterviewAIMergeAssistantResponse.TryParseFromAssistantText(rawText, out var parsed) || parsed == null)
+                    {
+                    }
+
+                    var combined = CombineFlagsByCategory(parsed);
+                    var mergedJson = JsonConvert.SerializeObject(combined);
+
+                    await _meetingService.SaveQcInterviewAIMergedDetails(
+                        id,
+                        mergedJson,
+                        totalPenalty: combined.total_penalty,
+                        interviewerSuspicious: combined.interviewer_suspicious,
+                        redoInterview: combined.RedoInterview);
+
+                    if (interviewid > 0)
+                        await PersistPaymentSlaFromQcMergeAsync(interviewid, combined);
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return Json("");
+        }
+
+        private static string BuildMergeUserMessage()
+        {
+            string reportJson = "{   \"auditable\": \"Yes\",   \"auditability_fail_reasons\": [],   \"extraction_confidence\": \"High\",   \"derived_metrics\": {     \"tech_skill_percentage\": 29,     \"score_mismatch\": 0,     \"status_band_from_score\": \"Strongly Rejected\",     \"question_count\": 17   },   \"bucket_results\": {     \"question_quality\": {       \"score\": 25,       \"verdict\": \"Good\",       \"observation\": \"The question set covers a broad range of relevant technical topics for a Senior Cloud Engineer, including AWS, DevOps, CI/CD, Infrastructure as Code, Monitoring, and Scripting. There is a mix of scenario-based, applied, and conceptual questions. Depth is present in several scenario and troubleshooting questions.\",       \"confidence\": \"High\"     },     \"comment_quality\": {       \"score\": 18,       \"verdict\": \"Moderate\",       \"observation\": \"Comments provide a clear rejection rationale and reference specific skill gaps, but lack detailed skill-by-skill breakdown or explicit linkage to individual question performance. The feedback is somewhat generic but does mention relevant experience gaps and communication issues.\",       \"confidence\": \"High\"     },     \"mechanical_or_inherent_consistency\": {       \"score\": 20,       \"verdict\": \"Good\",       \"observation\": \"Rubric scores, reported tech skill score, and verdict are all consistent. No arithmetic or structural inconsistencies detected.\",       \"confidence\": \"High\"     },     \"verdict_justification\": {       \"score\": 25,       \"verdict\": \"Good\",       \"observation\": \"The final rejection status is fully supported by the low tech skill percentage (29%), the rubric scores, and the interviewer's comments about missing required skills and limited communication.\",       \"confidence\": \"High\"     }   },   \"findings\": [     {       \"issue\": \"Interviewer comments are somewhat generic and do not provide detailed skill-by-skill feedback or explicit linkage to individual question performance.\",       \"bucket\": \"Comment Quality\",       \"severity\": \"Major\",       \"penalty\": 7,       \"evidence\": [         \"INTERVIEW FEEDBACK: REJECTED Candidate Mohini Kashyap joined the interview before time and shared her ID proof as requested. Mohini has 7 years of experience in IT, in which her relevant experience in cloud and DevOps is 4 years. But during the interview, the interviewer came to know she has experience only in private cloud, no experience in Kubernetes or Docker, and limited experience in CI/CD tools, Terraform, and Linux. There are many of the areas mentioned in the job description she is unaware of, and she wasn't able to ask any questions. We couldn't consider this candidate for the further rounds of the interview due to the limited technical and communication skills.\"       ],       \"reasoning\": \"While the comments justify the rejection and mention specific gaps, they do not provide a granular breakdown or detailed linkage to the rubric or question ratings, which is expected for professional justification.\",       \"confidence\": \"High\"     }   ],   \"red_markers\": [     {       \"issue\": \"Interviewer comments are generic and lack detailed skill-by-skill justification.\",       \"severity\": \"Major\",       \"evidence\": \"Comments provide only high-level rationale and do not reference specific question performance or rubric breakdown.\",       \"confidence\": \"High\"     }   ],   \"flags\": [     \"No code snippets available despite technical role.\",     \"Candidate rating of interviewer is 0/5, but this does not affect audit.\"   ],   \"audit_summary\": \"The report is auditable and structurally sound. The question set is broad, relevant, and includes scenario-based and applied questions, supporting a credible technical assessment. The rubric scores, tech skill percentage, and verdict are all consistent and justified. The main weakness is in the comment quality: while the rejection is justified and some specific gaps are mentioned, the feedback is somewhat generic and lacks detailed skill-by-skill analysis or explicit linkage to individual question performance. This results in a moderate deduction for comment quality, but the report remains professionally reliable overall.\",   \"final_score\": 93,   \"final_verdict\": \"Yes\",   \"audit_confidence\": \"High\" }";
+            string transcriptJson = "{   \"completeAnalysis\": \"• Interviewer Identification: Pradab (explicitly introduces himself as the interviewer)\\n• Interviewee Identification: Bhari (addressed by name and responds to questions)\\n• Role Identification Confidence: Explicit\\n\\n• Question Summary Overview:\\n  • [timestamp unavailable] \\\"Can you share your ID please?\\\" - Question Quality: Standard pre-interview ID check; valid and not disruptive.\\n  • [timestamp unavailable] \\\"Please share your career introduction, your experience, current/previous organizations, skill sets, and day-to-day responsibilities.\\\" - Question Quality: Comprehensive opener; good for context.\\n  • [timestamp unavailable] \\\"What exactly are the role and responsibilities, daily basis tasks?\\\" - Question Quality: Clarification; relevant for candidate understanding.\\n  • [timestamp unavailable] \\\"What is the difference between rebooting an EC2 instance and stopping/starting it?\\\" - Question Quality: Technical, clear, and relevant.\\n  • [timestamp unavailable] \\\"Can you detach and attach EBS volumes while an instance is running?\\\" - Question Quality: Technical, scenario-based; appropriate.\\n  • [timestamp unavailable] \\\"What security measures would you follow for a critical EC2 instance?\\\" - Question Quality: Technical, practical; good depth.\\n  • [timestamp unavailable] \\\"How would you help an auditor get lists of AWS users with various access types?\\\" - Question Quality: Technical, real-world scenario; clear.\\n  • [timestamp unavailable] \\\"How would you segregate S3 data for lifecycle and cost optimization?\\\" - Question Quality: Technical, practical; well-phrased.\\n  • [timestamp unavailable] \\\"Difference between Security Group and NACL in AWS?\\\" - Question Quality: Standard technical; clear.\\n  • [timestamp unavailable] \\\"How would you enable communication between EC2 instances in different regions?\\\" - Question Quality: Technical, scenario-based; relevant.\\n  • [timestamp unavailable] \\\"What is the difference between COPY and ADD in Docker?\\\" - Question Quality: Technical, specific; appropriate.\\n  • [timestamp unavailable] \\\"How do you minimize Docker image size?\\\" - Question Quality: Technical, practical; good.\\n  • [timestamp unavailable] \\\"Difference between declarative and scripted pipelines in Jenkins?\\\" - Question Quality: Technical, relevant.\\n  • [timestamp unavailable] \\\"How would you troubleshoot Jenkins master overload and job failures?\\\" - Question Quality: Technical, scenario-based; good depth.\\n  • [timestamp unavailable] \\\"What are provisioners in Terraform and their types?\\\" - Question Quality: Technical, clear.\\n  • [timestamp unavailable] \\\"How would you recover from accidental deletion of Terraform state files?\\\" - Question Quality: Technical, scenario-based; practical.\\n  • [timestamp unavailable] \\\"How do you export data from one Terraform module to another?\\\" - Question Quality: Technical, specific; relevant.\\n  • [timestamp unavailable] \\\"What is your understanding of links in Linux and their types?\\\" - Question Quality: Technical, standard.\\n  • [timestamp unavailable] \\\"How would you investigate and resolve Linux server performance issues?\\\" - Question Quality: Technical, scenario-based; practical.\\n  • [timestamp unavailable] \\\"Describe a major issue you handled in your job, including technical and process steps.\\\" - Question Quality: Behavioral, comprehensive; good for assessment.\\n  • [timestamp unavailable] \\\"Do you have any questions for me?\\\" - Question Quality: Standard closing; professional.\\n\\n• Red Flag Summary:\\n  • Disengaged or Absent Interviewer\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: No evidence found for this red flag in the transcript.\\n  • Scripted, Robotic, or Low-Effort\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: The interviewer follows a logical flow, adapts to candidate responses, and provides explanations and feedback.\\n  • Unethical or Unprofessional Behavior\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: No evidence of unprofessional or unethical behavior; the interviewer is polite and constructive.\\n  • Poor Communication and Lack of Clarity\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: Questions are generally clear and relevant; minor language issues do not materially affect clarity.\\n  • Time-Wasting and Inefficient Interview\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: The session is focused on technical and role-relevant topics; no excessive small talk or irrelevant discussion.\\n  • Fake or Weak Evaluation Methods\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: The interviewer asks a range of technical, scenario-based, and behavioral questions; evaluation is appropriate for the role.\\n  • Personal Identifiable or Contact Information Discussed\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: ID check is standard and appropriate; no unnecessary or excessive PII requests.\\n  • Unproductive Time Due to Setup or Connectivity Issues\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: Brief initial video/connectivity troubleshooting, but not excessive or disruptive to the interview.\\n  • Interviewer or Interviewee Absent or Session Incomplete\\n    - RedFlagVerdict: no\\n    - ScoreImpact: 0\\n    - Observation: Both parties are present and participate throughout; no evidence of absence or fake/incomplete session.\\n\\n• Interview Validity Assessment:\\n  - Observation: The interview appears validly conducted, with both interviewer and interviewee present and engaged. No evidence of fake completion or invalid session.\\n\\n• Overall Score Calculation:\\n  - Starting Score: 10\\n  - Total Deductions: 0\\n  - Final Score: 10\\n\\n• Overall Observation:\\n  - The interviewer is professional, attentive, and conducts a thorough technical and behavioral evaluation. The session is valid, with no evidence of fake, careless, inattentive, or unprofessional behavior.\\n\\n• Final Verdict Explanation:\\n  - Verdict is \\\"no\\\" because there is no evidence of fake, careless, inattentive, weak, or unprofessional interviewer behavior, nor any sign of an invalid or fake-completed interview session.\",   \"score\": 10,   \"verdict\": \"no\",   \"questionSummary\": [     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"Can you share your ID please?\",       \"questionQualityComment\": \"Standard pre-interview ID check; valid and not disruptive.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"Please share your career introduction, your experience, current/previous organizations, skill sets, and day-to-day responsibilities.\",       \"questionQualityComment\": \"Comprehensive opener; good for context.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"What exactly are the role and responsibilities, daily basis tasks?\",       \"questionQualityComment\": \"Clarification; relevant for candidate understanding.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"What is the difference between rebooting an EC2 instance and stopping/starting it?\",       \"questionQualityComment\": \"Technical, clear, and relevant.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"Can you detach and attach EBS volumes while an instance is running?\",       \"questionQualityComment\": \"Technical, scenario-based; appropriate.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"What security measures would you follow for a critical EC2 instance?\",       \"questionQualityComment\": \"Technical, practical; good depth.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"How would you help an auditor get lists of AWS users with various access types?\",       \"questionQualityComment\": \"Technical, real-world scenario; clear.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"How would you segregate S3 data for lifecycle and cost optimization?\",       \"questionQualityComment\": \"Technical, practical; well-phrased.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"Difference between Security Group and NACL in AWS?\",       \"questionQualityComment\": \"Standard technical; clear.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"How would you enable communication between EC2 instances in different regions?\",       \"questionQualityComment\": \"Technical, scenario-based; relevant.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"What is the difference between COPY and ADD in Docker?\",       \"questionQualityComment\": \"Technical, specific; appropriate.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"How do you minimize Docker image size?\",       \"questionQualityComment\": \"Technical, practical; good.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"Difference between declarative and scripted pipelines in Jenkins?\",       \"questionQualityComment\": \"Technical, relevant.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"How would you troubleshoot Jenkins master overload and job failures?\",       \"questionQualityComment\": \"Technical, scenario-based; good depth.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"What are provisioners in Terraform and their types?\",       \"questionQualityComment\": \"Technical, clear.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"How would you recover from accidental deletion of Terraform state files?\",       \"questionQualityComment\": \"Technical, scenario-based; practical.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"How do you export data from one Terraform module to another?\",       \"questionQualityComment\": \"Technical, specific; relevant.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"What is your understanding of links in Linux and their types?\",       \"questionQualityComment\": \"Technical, standard.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"How would you investigate and resolve Linux server performance issues?\",       \"questionQualityComment\": \"Technical, scenario-based; practical.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"Describe a major issue you handled in your job, including technical and process steps.\",       \"questionQualityComment\": \"Behavioral, comprehensive; good for assessment.\"     },     {       \"timestamp\": \"timestamp unavailable\",       \"question\": \"Do you have any questions for me?\",       \"questionQualityComment\": \"Standard closing; professional.\"     }   ],   \"redFlags\": {     \"disengagedOrAbsentInterviewer\": {       \"redFlagVerdict\": \"no\",       \"scoreImpact\": 0,       \"observation\": \"No evidence found for this red flag in the transcript.\",       \"evidence\": []     },     \"scriptedRoboticOrLowEffort\": {       \"redFlagVerdict\": \"no\",       \"scoreImpact\": 0,       \"observation\": \"The interviewer follows a logical flow, adapts to candidate responses, and provides explanations and feedback.\",       \"evidence\": []     },     \"unethicalOrUnprofessionalBehavior\": {       \"redFlagVerdict\": \"no\",       \"scoreImpact\": 0,       \"observation\": \"No evidence of unprofessional or unethical behavior; the interviewer is polite and constructive.\",       \"evidence\": []     },     \"poorCommunicationAndLackOfClarity\": {       \"redFlagVerdict\": \"no\",       \"scoreImpact\": 0,       \"observation\": \"Questions are generally clear and relevant; minor language issues do not materially affect clarity.\",       \"evidence\": []     },     \"timeWastingAndInefficientInterview\": {       \"redFlagVerdict\": \"no\",       \"scoreImpact\": 0,       \"observation\": \"The session is focused on technical and role-relevant topics; no excessive small talk or irrelevant discussion.\",       \"evidence\": []     },     \"fakeOrWeakEvaluationMethods\": {       \"redFlagVerdict\": \"no\",       \"scoreImpact\": 0,       \"observation\": \"The interviewer asks a range of technical, scenario-based, and behavioral questions; evaluation is appropriate for the role.\",       \"evidence\": []     },     \"personalIdentifiableOrContactInformationDiscussed\": {       \"redFlagVerdict\": \"no\",       \"scoreImpact\": 0,       \"observation\": \"ID check is standard and appropriate; no unnecessary or excessive PII requests.\",       \"evidence\": []     },     \"unproductiveTimeDueToSetupOrConnectivityIssues\": {       \"redFlagVerdict\": \"no\",       \"scoreImpact\": 0,       \"observation\": \"Brief initial video/connectivity troubleshooting, but not excessive or disruptive to the interview.\",       \"evidence\": []     },     \"interviewerOrIntervieweeAbsentOrSessionIncomplete\": {       \"redFlagVerdict\": \"no\",       \"scoreImpact\": 0,       \"observation\": \"Both parties are present and participate throughout; no evidence of absence or fake/incomplete session.\",       \"evidence\": []     }   } }";
+            return "You are given two JSON evaluations for the same interview: Report AI and Transcript AI. " +
+                   "Reconcile them and output one JSON object only (no markdown) with: " +
+                   "flags (array of { category, flag, penalty } only), " +
+                   "total_penalty (integer), interviewer_suspicious (string, e.g. Yes/No), RedoInterview (boolean).\n\n" +
+                   "Report AI JSON:\n" + (reportJson ?? "") + "\n\n" +
+                   "Transcript AI JSON:\n" + (transcriptJson ?? "");
+        }
+
+        /// <summary>Merge duplicate categories: combine flags text and sum penalties; recompute total_penalty from flags.</summary>
+        private static QcInterviewAIMergeAssistantResponse CombineFlagsByCategory(QcInterviewAIMergeAssistantResponse response)
+        {
+            if (response == null)
+                return null;
+
+            if (response.flags == null || response.flags.Count == 0)
+            {
+                return new QcInterviewAIMergeAssistantResponse
+                {
+                    flags = response.flags ?? new List<QcInterviewAIMergeFlagItem>(),
+                    total_penalty = response.total_penalty,
+                    interviewer_suspicious = response.interviewer_suspicious,
+                    RedoInterview = response.RedoInterview
+                };
+            }
+
+            var mergedFlags = response.flags
+                .GroupBy(f => (f.category ?? "").Trim(), StringComparer.OrdinalIgnoreCase)
+                .Select(g =>
+                {
+                    var list = g.ToList();
+                    if (list.Count == 1)
+                        return list[0];
+
+                    var categoryDisplay = list.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.category))?.category?.Trim() ?? g.Key;
+                    return new QcInterviewAIMergeFlagItem
+                    {
+                        category = string.IsNullOrEmpty(categoryDisplay) ? null : categoryDisplay,
+                        flag = string.Join(", ", list.SelectMany(x => SplitFlagTokens(x.flag)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x, StringComparer.OrdinalIgnoreCase)),
+                        penalty = list.Sum(x => x.penalty ?? 0)
+                    };
+                })
+                .ToList();
+
+            var sumPenalties = mergedFlags.Sum(f => f.penalty ?? 0);
+            var total = sumPenalties > 0 ? sumPenalties : response.total_penalty;
+
+            return new QcInterviewAIMergeAssistantResponse
+            {
+                flags = mergedFlags,
+                total_penalty = total,
+                interviewer_suspicious = response.interviewer_suspicious,
+                RedoInterview = response.RedoInterview
+            };
+        }
+
+        private static IEnumerable<string> SplitFlagTokens(string flag)
+        {
+            if (string.IsNullOrWhiteSpace(flag))
+                yield break;
+            foreach (var part in flag.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var t = part.Trim();
+                if (t.Length > 0)
+                    yield return t;
+            }
+        }
+
+        /// <summary>
+        /// Builds <see cref="PaymentSLAVM"/> from AI QC merge (same fields as Interview/GetPaymentSlaDetails) and saves via <see cref="IMeetingService.AddorUpdatePaymentSLADetails"/>.
+        /// </summary>
+        private async Task PersistPaymentSlaFromQcMergeAsync(int interviewId, QcInterviewAIMergeAssistantResponse combined)
+        {
+            var slaType = "QC";
+            var createdBy = "AISystem";
+
+            try
+            {
+                var existing = await _meetingService.FetchPaymentSlaDetailsById(interviewId, slaType);
+                var model = existing ?? new PaymentSLAVM();
+
+                model.Interviewid = interviewId;
+                model.CreatedBy = createdBy;
+                model.Isedit = existing != null;
+                model.isQcDone = true;
+                if (existing == null)
+                {
+                    model.isapprovedchecked = false;
+                    model.techqc = false;
+                    model.PaymentComplianceCount = 0;
+                    model.Rating = 0;
+                    model.VideoEnable = false;
+                }
+
+                PaymentSlaVmQcMergeMapper.ApplyFromMergeResponse(model, combined, applyOnlyIfEmpty: false);
+
+                var saved = await _meetingService.AddorUpdatePaymentSLADetails(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
     }
 }
