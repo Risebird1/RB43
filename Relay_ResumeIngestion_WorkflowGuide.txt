@@ -1,0 +1,169 @@
+================================================================================
+RELAY.APP WORKFLOW CHANGES — Resume Auto-Ingestion for "New Interview Request"
+================================================================================
+
+OVERVIEW
+--------
+When an email is classified as "New candidate submission", this workflow now:
+  1. Extracts the job title from the email
+  2. Uploads .pdf/.doc/.docx resume attachments to Google Drive (existing)
+  3. Captures individual Drive URLs for each uploaded resume file (NEW)
+  4. Sends all data including resume URLs to the portal webhook (updated payload)
+  5. The portal server matches the job title to the correct skill channel (IRF)
+     and automatically inserts the resumes into the candidate queue
+
+No second LLM step is needed in Relay — all IRF matching logic runs server-side.
+
+--------------------------------------------------------------------------------
+STEP 1 — UPDATE THE AI PROMPT (Prompt GPT step)
+--------------------------------------------------------------------------------
+
+1. Open your workflow in Edit mode (toggle Off first if needed).
+2. Click on Step 2 — "Prompt GPT 5.4".
+3. Replace the entire prompt with the contents of:
+       Relay_CustomerSupport_Agent_Prompt.txt
+   (the updated version includes the new "job_title" and "resume_drive_urls" fields)
+4. In the Output section on the right, add two new fields:
+   a. Field name: job_title
+      Type: Text (string or null)
+   b. Field name: resume_drive_urls
+      Type: List of Text (array of strings)
+5. Click Done.
+
+--------------------------------------------------------------------------------
+STEP 2 — CAPTURE INDIVIDUAL RESUME DRIVE URLs IN THE LOOP
+--------------------------------------------------------------------------------
+
+The current loop (Step 4 or 5 — "For each item in Attachments") uploads files
+to Drive. You need to capture each uploaded file's URL.
+
+Inside the loop, AFTER the "Upload" step:
+
+2a. Add a "Build a list / Append to list" step
+    - Action: "Add item to list"  (or "Append to list" depending on your Relay version)
+    - List name: resume_urls_list  (create a new workflow variable)
+    - Item to add: the Drive file URL from the Upload step output
+      (click "+ Data from previous steps" -> select the Upload step -> "File link" or "Web view link")
+
+    If Relay does not have a native "append to list" action:
+    - Use a "Set variable" step instead, building a comma-separated string
+    - The portal can split on commas to get individual URLs
+
+2b. (Optional) Add a condition before 2a to only collect resume files:
+    - Condition: Current item -> File name -> contains -> "cv"
+      OR: Current item -> File name -> contains -> "resume"
+      OR: Current item -> File name -> contains -> "profile"
+    This prevents JD files from being added to the resume list.
+    If you skip this, the portal will still work but may attempt to ingest JDs.
+
+--------------------------------------------------------------------------------
+STEP 3 — UPDATE THE HTTP WEBHOOK STEP
+--------------------------------------------------------------------------------
+
+Click on the last step — "Custom HTTP request to portal.risebird.io".
+
+Update the request body JSON to include the two new fields:
+
+  Old body (excerpt):
+  {
+    ...existing fields...,
+    "drive_folder_link": "{{steps.create_folder.output.folder_link}}"
+  }
+
+  New body (add these two lines at the end, before the closing brace):
+  {
+    ...existing fields...,
+    "drive_folder_link":  "{{steps.create_folder.output.folder_link}}",
+    "job_title":          "{{steps.prompt_gpt.output.job_title}}",
+    "resume_drive_urls":  {{steps.prompt_gpt.output.resume_drive_urls}}
+  }
+
+  Notes:
+  - Replace "steps.prompt_gpt" with the actual Relay reference name for your
+    GPT step (visible when you click the step).
+  - resume_drive_urls should be referenced WITHOUT quotes around the double
+    braces, since it is already an array — not a string.
+  - If you used a comma-separated string approach in Step 2, wrap it in quotes:
+    "resume_drive_urls": "{{steps.loop.collected.upload_output.file_link}}"
+    and the portal will split it on commas.
+
+Click Done -> Publish.
+
+--------------------------------------------------------------------------------
+STEP 4 — (OPTIONAL) ADD INTENT-CONDITIONAL PATH
+--------------------------------------------------------------------------------
+
+This step is optional but improves efficiency: skip the Drive upload and resume
+ingestion entirely for non-resume intents.
+
+After Step 2 (Prompt GPT) and before the "Create folder" step, add a "Paths" step:
+
+  Path A (default): webhook_intent IS "New candidate submission"
+    -> Continue to Create folder -> Upload loop -> HTTP webhook
+
+  Path B: webhook_intent is anything else
+    -> Jump directly to HTTP webhook (skip Drive steps)
+
+This reduces Drive API calls and credits for the majority of emails that are
+not interview requests.
+
+Configuration:
+  1. Click "+" between Prompt GPT and Create folder
+  2. Choose "Paths" (Flow control)
+  3. Path 1 condition: AI Output -> webhook_intent -> equals -> "New candidate submission"
+  4. Move "Create folder", loop, and upload steps into Path 1
+  5. The HTTP webhook step goes after the Paths merge point (runs for both paths)
+  6. In Path 2, set resume_drive_urls = [] in the HTTP body (hardcoded empty array)
+
+--------------------------------------------------------------------------------
+STEP 5 — TEST THE UPDATED WORKFLOW
+--------------------------------------------------------------------------------
+
+1. Toggle the workflow ON.
+2. Send a test email to the monitored inbox from a known client email address,
+   with subject like "RE: New profiles - Angular Developer" and attach 1-2 PDF
+   resumes.
+3. Watch the Relay run log:
+   - Verify Prompt GPT output includes "job_title" and "resume_drive_urls"
+   - Verify the Upload step runs for each .pdf/.doc/.docx file
+   - Verify the HTTP webhook receives the full payload with resume URLs
+4. Check the portal:
+   - A new SupportTicket should appear with Intent = "New candidate submission"
+   - The DB should have new rows in CandidateResume for the matched IRF
+   - The webhook response body will include:
+       "resumeIngestion": "Resumes ingested: 2, IRF: <IRF-string-id>"
+     If it shows "No matching IRF found", check that:
+     a. The sender email exists in UserList and is linked to a ClientUser
+     b. The ClientUser is mapped to at least one active IRF via TransClientUser
+     c. The IRF's SkillCluster has at least one word in common with the job title
+
+--------------------------------------------------------------------------------
+TROUBLESHOOTING
+--------------------------------------------------------------------------------
+
+Q: resume_drive_urls arrives as null or missing in the portal
+A: The Relay expression for resume_drive_urls may be referencing the wrong step
+   output key. Open the Relay run log, expand the HTTP webhook Input tab, and
+   check the raw JSON body to see what is being sent.
+
+Q: "No matching IRF found" even though the sender is a known client
+A: Run this query in the DB to verify:
+   SELECT tcu.*, irf.SkillCluster
+   FROM   TransClientUser tcu
+   JOIN   IRF irf ON irf.id = tcu.IRFId
+   JOIN   ClientUser cu ON cu.id = tcu.ClientUserId
+   JOIN   UserList ul ON ul.id = cu.UserId
+   WHERE  LOWER(ul.EmailId) = LOWER('<sender_email>')
+     AND  tcu.IsActive = 1
+     AND  irf.IsPaused = 0
+   If no rows return, the sender is not mapped to any active skill channel.
+
+Q: Resumes are ingested but against the wrong IRF
+A: The word-scoring algorithm picked the highest-scoring IRF based on
+   SkillCluster vs job_title overlap. To improve accuracy:
+   - Ensure IRF.SkillCluster values are descriptive (e.g., "Angular" not "FE")
+   - The extracted job_title from Relay should be specific (e.g., "Angular Developer")
+
+================================================================================
+END OF GUIDE
+================================================================================

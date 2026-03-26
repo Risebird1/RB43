@@ -141,7 +141,8 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false, bool testPlivoRescheduleCalls = false,
-            bool testPlivoWhatsAppSchedule = false, bool testPlivoWhatsAppReschedule = false)
+            bool testPlivoWhatsAppSchedule = false, bool testPlivoWhatsAppReschedule = false,
+            bool diagnoseWhatsApp = false, string waRunId = null, string waFlowId = null)
         {
             try
             {
@@ -154,6 +155,16 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileName = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
+                        // ========================================
+                        // PLIVO WHATSAPP DIAGNOSTICS
+                        // Access via: /Dashboard/Index?diagnoseWhatsApp=true
+                        // With run detail: /Dashboard/Index?diagnoseWhatsApp=true&waRunId=RUN_ID&waFlowId=FLOW_ID
+                        // ========================================
+                        if (diagnoseWhatsApp)
+                        {
+                            return await DiagnoseWhatsAppAsync(waRunId, waFlowId);
+                        }
+
                         // ========================================
                         // PLIVO WHATSAPP RESCHEDULE — TEST/TRIGGER MODE
                         // Access via: /Dashboard/Index?testPlivoWhatsAppReschedule=true
@@ -555,15 +566,15 @@ namespace Risebird.Web.Controllers
                         var callLog = new Risebird.Entities.Data.PlivoCXModels.PlivoCXCallLog
                         {
                             RecipientPhone = phoneNumber,
-                            RecipientName  = candidate.CandidateName,
+                            RecipientName = candidate.CandidateName,
                             RecipientEmail = candidate.CandidateEmail,
-                            IRFId          = candidate.IRFId,
-                            CandidateId    = candidate.CandidateId,
-                            JobTitle       = candidate.IRFName,
-                            ClientName     = candidate.ClientName,
-                            CallStatus     = "initiated",
+                            IRFId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
+                            CallStatus = "initiated",
                             InterviewBooked = false,
-                            TriggeredBy    = $"Dashboard-{triggeredByEmail}"
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
                         int logId = await _plivoCXCallRepository.SaveCallLogAsync(callLog);
                         testResults.Add($"   Call log saved — DB Id: {logId}");
@@ -571,15 +582,15 @@ namespace Risebird.Web.Controllers
                         // 2. Trigger Plivo CX outbound call
                         var triggerReq = new Risebird.Entities.Data.PlivoCXModels.PlivoCXTriggerRequest
                         {
-                            PhoneNumber          = phoneNumber,
-                            CandidateName        = candidate.CandidateName ?? "Candidate",
-                            CandidateEmail       = candidate.CandidateEmail,
-                            IrfId                = candidate.IRFId.ToString(),
-                            JobTitle             = candidate.IRFName,
-                            ClientName           = candidate.ClientName,
-                            LogId                = logId.ToString(),
-                            TodayDate            = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
-                            TomorrowDate         = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
+                            PhoneNumber = phoneNumber,
+                            CandidateName = candidate.CandidateName ?? "Candidate",
+                            CandidateEmail = candidate.CandidateEmail,
+                            IrfId = candidate.IRFId.ToString(),
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
+                            LogId = logId.ToString(),
+                            TodayDate = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            TomorrowDate = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
                             DayAfterTomorrowDate = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
                         };
 
@@ -591,24 +602,24 @@ namespace Risebird.Web.Controllers
                             await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
                                 new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
                                 {
-                                    LogType          = "trigger-request",
-                                    HttpStatusCode   = response?.HttpStatusCode,
-                                    PlivoCXId        = response?.ApiId,
-                                    CallLogId        = logId,
-                                    RawPayload       = Newtonsoft.Json.JsonConvert.SerializeObject(triggerReq),
+                                    LogType = "trigger-request",
+                                    HttpStatusCode = response?.HttpStatusCode,
+                                    PlivoCXId = response?.ApiId,
+                                    CallLogId = logId,
+                                    RawPayload = Newtonsoft.Json.JsonConvert.SerializeObject(triggerReq),
                                     ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
-                                    ErrorMessage     = response?.Error
+                                    ErrorMessage = response?.Error
                                 });
                             await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
                                 new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
                                 {
-                                    LogType          = "trigger-response",
-                                    HttpStatusCode   = response?.HttpStatusCode,
-                                    PlivoCXId        = response?.ApiId,
-                                    CallLogId        = logId,
-                                    RawPayload       = response?.RawResponseBody,
+                                    LogType = "trigger-response",
+                                    HttpStatusCode = response?.HttpStatusCode,
+                                    PlivoCXId = response?.ApiId,
+                                    CallLogId = logId,
+                                    RawPayload = response?.RawResponseBody,
                                     ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
-                                    ErrorMessage     = response?.Error
+                                    ErrorMessage = response?.Error
                                 });
                         }
                         catch { }
@@ -616,20 +627,20 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrEmpty(response?.Error))
                         {
                             testResults.Add($"   TRIGGER FAILED: {response.Error}");
-                            callLog.Id         = logId;
+                            callLog.Id = logId;
                             callLog.CallStatus = "trigger-failed";
-                            callLog.UpdatedAt  = DateTime.UtcNow;
+                            callLog.UpdatedAt = DateTime.UtcNow;
                             await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
                             failureCount++;
                         }
                         else
                         {
                             testResults.Add($"   Triggered — ApiId: {response?.ApiId} | Http: {response?.HttpStatusCode}");
-                            callLog.Id                    = logId;
+                            callLog.Id = logId;
                             callLog.PlivoCXConversationId = response?.ConversationId;
-                            callLog.PlivoCXRequestId      = response?.ApiId;
-                            callLog.CallStatus            = "triggered";
-                            callLog.UpdatedAt             = DateTime.UtcNow;
+                            callLog.PlivoCXRequestId = response?.ApiId;
+                            callLog.CallStatus = "triggered";
+                            callLog.UpdatedAt = DateTime.UtcNow;
                             await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
 
                             await _plivoCXCallRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
@@ -749,17 +760,17 @@ namespace Risebird.Web.Controllers
                         // 1. Save call log (CallPurpose = "reschedule")
                         var callLog = new Risebird.Entities.Data.PlivoCXModels.PlivoCXCallLog
                         {
-                            RecipientPhone   = phoneNumber,
-                            RecipientName    = candidate.CandidateName,
-                            RecipientEmail   = candidate.CandidateEmail,
-                            IRFId            = candidate.IRFId,
-                            CandidateId      = candidate.CandidateId,
-                            JobTitle         = candidate.JobTitle,
-                            ClientName       = candidate.ClientName,
-                            CallStatus       = "initiated",
-                            InterviewBooked  = false,
-                            CallPurpose      = "reschedule",
-                            TriggeredBy      = $"Dashboard-{triggeredByEmail}"
+                            RecipientPhone = phoneNumber,
+                            RecipientName = candidate.CandidateName,
+                            RecipientEmail = candidate.CandidateEmail,
+                            IRFId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.JobTitle,
+                            ClientName = candidate.ClientName,
+                            CallStatus = "initiated",
+                            InterviewBooked = false,
+                            CallPurpose = "reschedule",
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
                         int logId = await _plivoCXCallRepository.SaveCallLogAsync(callLog);
                         testResults.Add($"   Call log saved — DB Id: {logId}");
@@ -767,18 +778,18 @@ namespace Risebird.Web.Controllers
                         // 2. Trigger the reschedule agent
                         var triggerReq = new Risebird.Entities.Data.PlivoCXModels.PlivoCXTriggerRequest
                         {
-                            PhoneNumber           = phoneNumber,
-                            CandidateName         = candidate.CandidateName ?? "Candidate",
-                            CandidateEmail        = candidate.CandidateEmail,
-                            IrfId                 = candidate.IRFId.ToString(),
-                            JobTitle              = candidate.JobTitle,
-                            ClientName            = candidate.ClientName,
-                            LogId                 = logId.ToString(),
-                            CallPurpose           = "reschedule",
+                            PhoneNumber = phoneNumber,
+                            CandidateName = candidate.CandidateName ?? "Candidate",
+                            CandidateEmail = candidate.CandidateEmail,
+                            IrfId = candidate.IRFId.ToString(),
+                            JobTitle = candidate.JobTitle,
+                            ClientName = candidate.ClientName,
+                            LogId = logId.ToString(),
+                            CallPurpose = "reschedule",
                             OriginalInterviewDate = candidate.OriginalInterviewDate,
-                            TodayDate             = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
-                            TomorrowDate          = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
-                            DayAfterTomorrowDate  = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
+                            TodayDate = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            TomorrowDate = DateTime.Now.AddDays(1).ToString("dddd, dd MMMM yyyy"),
+                            DayAfterTomorrowDate = DateTime.Now.AddDays(2).ToString("dddd, dd MMMM yyyy")
                         };
 
                         var response = await _plivoCXService.TriggerRescheduleCallAsync(triggerReq);
@@ -789,24 +800,24 @@ namespace Risebird.Web.Controllers
                             await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
                                 new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
                                 {
-                                    LogType          = "reschedule-trigger-request",
-                                    HttpStatusCode   = response?.HttpStatusCode,
-                                    PlivoCXId        = response?.ApiId,
-                                    CallLogId        = logId,
-                                    RawPayload       = Newtonsoft.Json.JsonConvert.SerializeObject(triggerReq),
+                                    LogType = "reschedule-trigger-request",
+                                    HttpStatusCode = response?.HttpStatusCode,
+                                    PlivoCXId = response?.ApiId,
+                                    CallLogId = logId,
+                                    RawPayload = Newtonsoft.Json.JsonConvert.SerializeObject(triggerReq),
                                     ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
-                                    ErrorMessage     = response?.Error
+                                    ErrorMessage = response?.Error
                                 });
                             await _plivoCXCallRepository.SaveWebhookDebugLogAsync(
                                 new Risebird.Entities.Data.PlivoCXModels.PlivoCXWebhookDebugLog
                                 {
-                                    LogType          = "reschedule-trigger-response",
-                                    HttpStatusCode   = response?.HttpStatusCode,
-                                    PlivoCXId        = response?.ApiId,
-                                    CallLogId        = logId,
-                                    RawPayload       = response?.RawResponseBody,
+                                    LogType = "reschedule-trigger-response",
+                                    HttpStatusCode = response?.HttpStatusCode,
+                                    PlivoCXId = response?.ApiId,
+                                    CallLogId = logId,
+                                    RawPayload = response?.RawResponseBody,
                                     ProcessingStatus = string.IsNullOrEmpty(response?.Error) ? "success" : "failed",
-                                    ErrorMessage     = response?.Error
+                                    ErrorMessage = response?.Error
                                 });
                         }
                         catch { }
@@ -814,20 +825,20 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrEmpty(response?.Error))
                         {
                             testResults.Add($"   TRIGGER FAILED: {response.Error}");
-                            callLog.Id         = logId;
+                            callLog.Id = logId;
                             callLog.CallStatus = "trigger-failed";
-                            callLog.UpdatedAt  = DateTime.UtcNow;
+                            callLog.UpdatedAt = DateTime.UtcNow;
                             await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
                             failureCount++;
                         }
                         else
                         {
                             testResults.Add($"   Triggered — ApiId: {response?.ApiId} | Http: {response?.HttpStatusCode}");
-                            callLog.Id                    = logId;
+                            callLog.Id = logId;
                             callLog.PlivoCXConversationId = response?.ConversationId;
-                            callLog.PlivoCXRequestId      = response?.ApiId;
-                            callLog.CallStatus            = "triggered";
-                            callLog.UpdatedAt             = DateTime.UtcNow;
+                            callLog.PlivoCXRequestId = response?.ApiId;
+                            callLog.CallStatus = "triggered";
+                            callLog.UpdatedAt = DateTime.UtcNow;
                             await _plivoCXCallRepository.UpdateCallLogAsync(callLog);
 
                             await _plivoCXCallRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
@@ -934,14 +945,16 @@ namespace Risebird.Web.Controllers
                             testResults.Add("");
                             continue;
                         }
-
+                        //candidate.CandidatePhone = "+918888571923";
                         if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(candidate.CandidatePhone, out var phoneNumber, out var phoneError))
                         {
                             testResults.Add($"   SKIPPED — invalid phone: {phoneError}");
                             testResults.Add("");
                             continue;
                         }
-                        phoneNumber = "+918888571923";
+                        //phoneNumber = "+918888571923";
+                        //phoneNumber = "+919830929409";
+                        //phoneNumber = "+918077988602";
                         testResults.Add($"   Sanitised phone: {phoneNumber}");
 
                         var tomorrow = DateTime.Now.AddDays(1);
@@ -950,17 +963,17 @@ namespace Risebird.Web.Controllers
                         // 1. Save log to get DB Id
                         var log = new PlivoWhatsAppLog
                         {
-                            RecipientName  = candidate.CandidateName,
+                            RecipientName = candidate.CandidateName,
                             RecipientPhone = phoneNumber,
                             RecipientEmail = candidate.CandidateEmail,
-                            IRFId          = candidate.IRFId,
-                            CandidateId    = candidate.CandidateId,
-                            JobTitle       = candidate.IRFName,
-                            ClientName     = candidate.ClientName,
+                            IRFId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
                             MessagePurpose = "schedule",
-                            Status         = "initiated",
-                            MessageStatus  = "initiated",
-                            TriggeredBy    = $"Dashboard-{triggeredByEmail}"
+                            Status = "initiated",
+                            MessageStatus = "initiated",
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
                         int logId = await _plivoWhatsAppRepository.SaveLogAsync(log);
                         log.Id = logId;
@@ -969,19 +982,19 @@ namespace Risebird.Web.Controllers
                         // 2. Build trigger context and send
                         var context = new PlivoWhatsAppTriggerContext
                         {
-                            CandidateName     = candidate.CandidateName,
-                            CandidatePhone    = phoneNumber,
-                            CandidateEmail    = candidate.CandidateEmail,
-                            IrfId             = candidate.IRFId,
-                            CandidateId       = candidate.CandidateId,
-                            JobTitle          = candidate.IRFName,
-                            ClientName        = candidate.ClientName,
-                            MessagePurpose    = "schedule",
-                            LogId             = logId.ToString(),
-                            TodayDate         = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            CandidateName = candidate.CandidateName,
+                            CandidatePhone = phoneNumber,
+                            CandidateEmail = candidate.CandidateEmail,
+                            IrfId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
+                            MessagePurpose = "schedule",
+                            LogId = logId.ToString(),
+                            TodayDate = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
                             TomorrowDateLabel = tomorrow.ToString("dddd, dd MMMM yyyy"),
                             DayAfterDateLabel = dayAfter.ToString("dddd, dd MMMM yyyy"),
-                            TriggeredBy       = $"Dashboard-{triggeredByEmail}"
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
 
                         var response = await _plivoWhatsAppService.SendScheduleMessageAsync(context);
@@ -989,8 +1002,8 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrEmpty(response?.Error))
                         {
                             testResults.Add($"   TRIGGER FAILED: {response.Error}");
-                            log.Status             = "trigger-failed";
-                            log.MessageStatus      = "trigger-failed";
+                            log.Status = "trigger-failed";
+                            log.MessageStatus = "trigger-failed";
                             log.BookingApiResponse = response.Error;
                             await _plivoWhatsAppRepository.UpdateLogAsync(log);
                             failureCount++;
@@ -999,9 +1012,9 @@ namespace Risebird.Web.Controllers
                         {
                             testResults.Add($"   Triggered — ConversationId: {response?.ConversationId} | ApiId: {response?.ApiId}");
                             log.PlivoCXConversationId = response?.ConversationId;
-                            log.PlivoCXRequestId      = response?.ApiId;
-                            log.MessageStatus         = "triggered";
-                            log.Status                = "triggered";
+                            log.PlivoCXRequestId = response?.ApiId;
+                            log.MessageStatus = "triggered";
+                            log.Status = "triggered";
                             await _plivoWhatsAppRepository.UpdateLogAsync(log);
                             await _plivoWhatsAppRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
                             successCount++;
@@ -1124,18 +1137,18 @@ namespace Risebird.Web.Controllers
                         // 1. Save log to get DB Id
                         var log = new PlivoWhatsAppLog
                         {
-                            RecipientName         = candidate.CandidateName,
-                            RecipientPhone        = phoneNumber,
-                            RecipientEmail        = candidate.CandidateEmail,
-                            IRFId                 = candidate.IRFId,
-                            CandidateId           = candidate.CandidateId,
-                            JobTitle              = candidate.IRFName,
-                            ClientName            = candidate.ClientName,
-                            MessagePurpose        = "reschedule",
+                            RecipientName = candidate.CandidateName,
+                            RecipientPhone = phoneNumber,
+                            RecipientEmail = candidate.CandidateEmail,
+                            IRFId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
+                            MessagePurpose = "reschedule",
                             OriginalInterviewDate = candidate.OriginalInterviewDate,
-                            Status                = "initiated",
-                            MessageStatus         = "initiated",
-                            TriggeredBy           = $"Dashboard-{triggeredByEmail}"
+                            Status = "initiated",
+                            MessageStatus = "initiated",
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
                         int logId = await _plivoWhatsAppRepository.SaveLogAsync(log);
                         log.Id = logId;
@@ -1144,20 +1157,20 @@ namespace Risebird.Web.Controllers
                         // 2. Build trigger context and send
                         var context = new PlivoWhatsAppTriggerContext
                         {
-                            CandidateName         = candidate.CandidateName,
-                            CandidatePhone        = phoneNumber,
-                            CandidateEmail        = candidate.CandidateEmail,
-                            IrfId                 = candidate.IRFId,
-                            CandidateId           = candidate.CandidateId,
-                            JobTitle              = candidate.IRFName,
-                            ClientName            = candidate.ClientName,
-                            MessagePurpose        = "reschedule",
+                            CandidateName = candidate.CandidateName,
+                            CandidatePhone = phoneNumber,
+                            CandidateEmail = candidate.CandidateEmail,
+                            IrfId = candidate.IRFId,
+                            CandidateId = candidate.CandidateId,
+                            JobTitle = candidate.IRFName,
+                            ClientName = candidate.ClientName,
+                            MessagePurpose = "reschedule",
                             OriginalInterviewDate = candidate.OriginalInterviewDate,
-                            LogId                 = logId.ToString(),
-                            TodayDate             = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
-                            TomorrowDateLabel     = tomorrow.ToString("dddd, dd MMMM yyyy"),
-                            DayAfterDateLabel     = dayAfter.ToString("dddd, dd MMMM yyyy"),
-                            TriggeredBy           = $"Dashboard-{triggeredByEmail}"
+                            LogId = logId.ToString(),
+                            TodayDate = DateTime.Now.ToString("dddd, dd MMMM yyyy"),
+                            TomorrowDateLabel = tomorrow.ToString("dddd, dd MMMM yyyy"),
+                            DayAfterDateLabel = dayAfter.ToString("dddd, dd MMMM yyyy"),
+                            TriggeredBy = $"Dashboard-{triggeredByEmail}"
                         };
 
                         var response = await _plivoWhatsAppService.SendRescheduleMessageAsync(context);
@@ -1165,8 +1178,8 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrEmpty(response?.Error))
                         {
                             testResults.Add($"   TRIGGER FAILED: {response.Error}");
-                            log.Status             = "trigger-failed";
-                            log.MessageStatus      = "trigger-failed";
+                            log.Status = "trigger-failed";
+                            log.MessageStatus = "trigger-failed";
                             log.BookingApiResponse = response.Error;
                             await _plivoWhatsAppRepository.UpdateLogAsync(log);
                             failureCount++;
@@ -1175,9 +1188,9 @@ namespace Risebird.Web.Controllers
                         {
                             testResults.Add($"   Triggered — ConversationId: {response?.ConversationId} | ApiId: {response?.ApiId}");
                             log.PlivoCXConversationId = response?.ConversationId;
-                            log.PlivoCXRequestId      = response?.ApiId;
-                            log.MessageStatus         = "triggered";
-                            log.Status                = "triggered";
+                            log.PlivoCXRequestId = response?.ApiId;
+                            log.MessageStatus = "triggered";
+                            log.Status = "triggered";
                             await _plivoWhatsAppRepository.UpdateLogAsync(log);
                             await _plivoWhatsAppRepository.IncrementCallAttemptsAsync(candidate.CandidateId);
                             successCount++;
@@ -1214,6 +1227,185 @@ namespace Risebird.Web.Controllers
                 ViewBag.PlivoTestResults = testResults;
                 return View("VapiTestResults");
             }
+        }
+
+        // ─── Plivo WhatsApp Diagnostics ───────────────────────────────────────────
+
+        /// <summary>
+        /// Diagnostic tool for WhatsApp send failures.
+        /// Queries two sources in parallel:
+        ///   1. Plivo Messaging API — recent outbound WhatsApp messages from our number,
+        ///      including per-message status and WhatsApp error codes
+        ///   2. Plivo CX agentflow API — run-level detail for a specific agent run ID
+        ///      (probes three probable endpoint patterns; returns whichever responds)
+        ///
+        /// Access via:
+        ///   /Dashboard/Index?diagnoseWhatsApp=true
+        ///   /Dashboard/Index?diagnoseWhatsApp=true&waRunId=RUN_ID&waFlowId=FLOW_ID
+        ///
+        /// Copy waRunId and waFlowId from the cx.plivo.com URL when viewing an agent run:
+        ///   cx.plivo.com/agent/runs/{waFlowId}/{waRunId}
+        /// </summary>
+        private async Task<IActionResult> DiagnoseWhatsAppAsync(string runId, string flowId)
+        {
+            runId = "b49f5a19-3e45-4d37-8fde-58e8b2ceb734";
+            flowId = "5d91b207-15d7-4e7a-a698-0683026f5a5f";
+
+            var results = new List<string>();
+            results.Add($"[WA Diagnose] Started at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+            results.Add("");
+
+            var authId = _configuration["PlivoWhatsApp:ApiAuthId"] ?? string.Empty;
+            var authToken = _configuration["PlivoWhatsApp:ApiAuthToken"] ?? string.Empty;
+            var fromNumber = (_configuration["PlivoWhatsApp:FromNumber"] ?? "+919667032088").TrimStart('+');
+
+            if (string.IsNullOrEmpty(authId) || string.IsNullOrEmpty(authToken))
+            {
+                results.Add("ERROR: PlivoWhatsApp:ApiAuthId or ApiAuthToken not configured.");
+                ViewBag.PlivoTestResults = results;
+                return View("VapiTestResults");
+            }
+
+            var credentials = Convert.ToBase64String(
+                System.Text.Encoding.ASCII.GetBytes($"{authId}:{authToken}"));
+
+            using var http = new HttpClient();
+            http.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
+            http.Timeout = TimeSpan.FromSeconds(15);
+
+            // ── 1. Plivo Messaging API — recent outbound WhatsApp messages ────────────
+            results.Add("══════════════════════════════════════════════");
+            results.Add("1. PLIVO MESSAGING API — Recent outbound messages");
+            results.Add($"   From: +{fromNumber}  |  Type: whatsapp  |  Last 10");
+            results.Add("══════════════════════════════════════════════");
+            try
+            {
+                var msgUrl = $"https://api.plivo.com/v1/Account/{authId}/Message/" +
+                             $"?message_type=whatsapp&src={fromNumber}&limit=10&sort=-created_on";
+                results.Add($"   GET {msgUrl}");
+
+                var msgResp = await http.GetAsync(msgUrl);
+                var msgBody = await msgResp.Content.ReadAsStringAsync();
+
+                results.Add($"   HTTP Status: {(int)msgResp.StatusCode} {msgResp.StatusCode}");
+                results.Add("");
+
+                if (msgResp.IsSuccessStatusCode)
+                {
+                    try
+                    {
+                        var parsed = JsonConvert.DeserializeObject<dynamic>(msgBody);
+                        var objects = parsed?.objects;
+                        if (objects != null)
+                        {
+                            int idx = 0;
+                            foreach (var msg in objects)
+                            {
+                                idx++;
+                                results.Add($"   [{idx}] MessageUUID : {msg?.message_uuid}");
+                                results.Add($"        To           : {msg?.to_number ?? msg?.to}");
+                                results.Add($"        Status       : {msg?.message_state ?? msg?.status}");
+                                results.Add($"        Error Code   : {msg?.error_code ?? "(none)"}");
+                                results.Add($"        Error Message: {msg?.error_message ?? "(none)"}");
+                                results.Add($"        Created      : {msg?.creation_time ?? msg?.created_on}");
+                                results.Add($"        Type         : {msg?.message_type}");
+                                results.Add("");
+                            }
+                            if (idx == 0) results.Add("   No outbound WhatsApp messages found.");
+                        }
+                        else
+                        {
+                            results.Add($"   Raw response: {msgBody.Substring(0, Math.Min(1000, msgBody.Length))}");
+                        }
+                    }
+                    catch
+                    {
+                        results.Add($"   Raw response: {msgBody.Substring(0, Math.Min(1000, msgBody.Length))}");
+                    }
+                }
+                else
+                {
+                    results.Add($"   API Error: {msgBody.Substring(0, Math.Min(500, msgBody.Length))}");
+                }
+            }
+            catch (Exception ex)
+            {
+                results.Add($"   EXCEPTION: {ex.Message}");
+            }
+
+            // ── 2. Plivo CX agentflow API — run detail ────────────────────────────────
+            results.Add("══════════════════════════════════════════════");
+            results.Add("2. PLIVO CX AGENTFLOW API — Run Detail");
+            results.Add("══════════════════════════════════════════════");
+
+            if (string.IsNullOrEmpty(runId))
+            {
+                results.Add("   No waRunId provided — skipping run detail lookup.");
+                results.Add("   Pass ?diagnoseWhatsApp=true&waRunId=RUN_ID&waFlowId=FLOW_ID");
+                results.Add("   (Copy both IDs from the cx.plivo.com URL when viewing an agent run)");
+            }
+            else
+            {
+                results.Add($"   Run ID  : {runId}");
+                results.Add($"   Flow ID : {flowId ?? "(not provided)"}");
+                results.Add("");
+
+                // Pattern A — /flow/{flowId}/runs/{runId}
+                if (!string.IsNullOrEmpty(flowId))
+                {
+                    await ProbeAgentflowUrl(http, results, "Pattern A (flow-scoped)",
+                        $"https://agentflow.plivo.com/v1/account/{authId}/flow/{flowId}/runs/{runId}");
+                }
+
+                // Pattern B — /runs/{runId}
+                await ProbeAgentflowUrl(http, results, "Pattern B (global runs)",
+                    $"https://agentflow.plivo.com/v1/account/{authId}/runs/{runId}");
+
+                // Pattern C — /flow/{flowId}/run/{runId} (singular)
+                if (!string.IsNullOrEmpty(flowId))
+                {
+                    await ProbeAgentflowUrl(http, results, "Pattern C (singular /run/)",
+                        $"https://agentflow.plivo.com/v1/account/{authId}/flow/{flowId}/run/{runId}");
+                }
+
+                // Pattern D — cx.plivo.com REST API
+                await ProbeAgentflowUrl(http, results, "Pattern D (cx.plivo.com API)",
+                    $"https://cx.plivo.com/api/v1/account/{authId}/runs/{runId}");
+            }
+
+            results.Add("");
+            results.Add("══════════════════════════════════════════════");
+            results.Add("Diagnose complete.");
+            results.Add("The key field to look for is 'error_code' in section 1.");
+            results.Add("Common codes:");
+            results.Add("  131030 — Template not found or not approved for this WABA");
+            results.Add("  131042 — Template message components mismatch");
+            results.Add("  131026 — Message undeliverable (number not on WhatsApp)");
+            results.Add("  131047 — Business account daily limit reached");
+            results.Add("  132000 — Template param count mismatch");
+            results.Add("══════════════════════════════════════════════");
+
+            ViewBag.PlivoTestResults = results;
+            return View("VapiTestResults");
+        }
+
+        private static async Task ProbeAgentflowUrl(HttpClient http, List<string> results, string label, string url)
+        {
+            try
+            {
+                results.Add($"   {label}");
+                results.Add($"   GET {url}");
+                var resp = await http.GetAsync(url);
+                var body = await resp.Content.ReadAsStringAsync();
+                results.Add($"   HTTP Status: {(int)resp.StatusCode} {resp.StatusCode}");
+                results.Add($"   Response: {body.Substring(0, Math.Min(800, body.Length))}");
+            }
+            catch (Exception ex)
+            {
+                results.Add($"   EXCEPTION: {ex.Message}");
+            }
+            results.Add("");
         }
 
         // ─── Vapi prompt helper (existing) ───────────────────────────────────────
@@ -7293,5 +7485,6 @@ NEVER:
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        
     }
 }

@@ -183,6 +183,8 @@ namespace Risebird.Business.Interface
         Task<bool> AddorUpdateQCFormReport(QCFormVM model);
         List<CallCatalogueVM> GetInterviewerCallCatalogueList();
         Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags, int VideoReward);
+        Task<string> GetInterviewerEmailByInterviewId(int interviewId);
+        Task<bool> CanApplyQcPenaltyToInterviewPointsAsync(int interviewId, string interviewerEmail);
         Task<string> GetClientHRContactByInterviewid(int interviewid);
         Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate);
         Task<List<MeetingVM>> QCReportDetailsByInterviewer(string emailId);
@@ -252,6 +254,9 @@ namespace Risebird.Business.Interface
         Task<bool> DeleteQuestionsDiscussedFromReport(int interviewId);
         Task<string> GetInterviewCancellationSource(int interviewid);
         Task<bool> SaveAITranscriptAnalysis(int interviewId, TranscriptAnalysisSchema model);
+        Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null, bool transcritAi = true, string reportAIJsonResponse = null);
+        Task<IEnumerable<QcInterviewAIMergePendingRow>> GetPendingQcInterviewAIMerge();
+        Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null);
         Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId,string cancellationreason);
         Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);
         Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model);

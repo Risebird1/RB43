@@ -1,0 +1,996 @@
+@model List<Risebird.Entities.ViewModel.SupportTicketVM>
+@{
+    ViewData["Title"] = "Customer Support Tickets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int    page        = ViewBag.Page        != null ? (int)ViewBag.Page        : 1;
+    int    pageSize    = ViewBag.PageSize     != null ? (int)ViewBag.PageSize    : 25;
+    int    totalCount  = ViewBag.TotalCount   != null ? (int)ViewBag.TotalCount  : 0;
+    int    totalPages  = ViewBag.TotalPages   != null ? (int)ViewBag.TotalPages  : 1;
+    string selStatus   = ViewBag.Status      as string ?? string.Empty;
+    string selIntent   = ViewBag.Intent      as string ?? string.Empty;
+    string selEmail    = ViewBag.SenderEmail as string ?? string.Empty;
+    string selDateFrom = ViewBag.DateFrom    as string ?? string.Empty;
+    string selDateTo   = ViewBag.DateTo      as string ?? string.Empty;
+
+    bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selIntent)
+                   || !string.IsNullOrEmpty(selEmail)  || !string.IsNullOrEmpty(selDateFrom)
+                   || !string.IsNullOrEmpty(selDateTo);
+
+    bool sSel_open   = selStatus == "Open";
+    bool sSel_ip     = selStatus == "InProgress";
+    bool sSel_closed = selStatus == "Closed";
+
+    bool iSel_01 = selIntent == "New interview request";
+    bool iSel_02 = selIntent == "New candidate submission";
+    bool iSel_03 = selIntent == "Candidate status update";
+    bool iSel_04 = selIntent == "Candidate reports";
+    bool iSel_05 = selIntent == "Stop interviews";
+    bool iSel_06 = selIntent == "Cold candidate";
+    bool iSel_07 = selIntent == "Interviewer misalignment";
+    bool iSel_08 = selIntent == "Interviewer replacement";
+    bool iSel_09 = selIntent == "Interviewer false negative";
+    bool iSel_10 = selIntent == "Interviewer false positive";
+    bool iSel_11 = selIntent == "Score rubric concerns";
+    bool iSel_12 = selIntent == "Candidate bad experience with Risebird";
+    bool iSel_13 = selIntent == "Candidate bad experience with interviewer";
+    bool iSel_14 = selIntent == "Delay in scheduling";
+    bool iSel_15 = selIntent == "Delay in getting interviews started";
+    bool iSel_16 = selIntent == "Delay in report sharing";
+    bool iSel_17 = selIntent == "Good experience with Risebird";
+    bool iSel_18 = selIntent == "Poor experience with Risebird support team";
+    bool iSel_19 = selIntent == "Interviewer no-show";
+    bool iSel_20 = selIntent == "Quality control issues";
+
+    bool ps10  = pageSize == 10;
+    bool ps25  = pageSize == 25;
+    bool ps50  = pageSize == 50;
+    bool ps100 = pageSize == 100;
+
+    int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
+    int last  = Math.Min(page * pageSize, totalCount);
+
+    string pageUrl(int p) {
+        var q = $"?page={p}&pageSize={pageSize}";
+        if (!string.IsNullOrEmpty(selStatus))   q += $"&status={Uri.EscapeDataString(selStatus)}";
+        if (!string.IsNullOrEmpty(selIntent))   q += $"&intent={Uri.EscapeDataString(selIntent)}";
+        if (!string.IsNullOrEmpty(selEmail))    q += $"&senderEmail={Uri.EscapeDataString(selEmail)}";
+        if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
+        if (!string.IsNullOrEmpty(selDateTo))   q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
+        return Url.Action("Index", "SupportTicket") + q;
+    }
+}
+
+<style>
+    /* ── Filter controls (mirrors cx-filter-control) ────────────────────────── */
+    #senderEmailInput.st-filter-control,
+    .st-filter-control.form-select,
+    .st-filter-control.form-control {
+        min-height: 30px;
+        height: 30px;
+        color: grey;
+        font-weight: 500;
+        font-size: 12.7px !important;
+        padding: 0.2rem 0.6rem;
+        line-height: 1.5;
+    }
+
+    /* ── Stat cards ─────────────────────────────────────────────────────────── */
+    .st-stat .stat-value { font-size: 1.5rem; font-weight: 700; }
+    .st-stat .stat-label { font-size: 13px; font-weight: 500; color: #495057; }
+
+    /* ── Badges ─────────────────────────────────────────────────────────────── */
+    #ticketsTable .badge.st-badge    { width: auto; font-size: 11px !important; padding: 0.35em 0.65em; font-weight: 500; }
+    .intent-badge                    { display: inline-block; font-size: 11px; padding: 0.3em 0.65em;
+                                       border-radius: 4px; font-weight: 500; white-space: nowrap; }
+    .spec-badge                      { display: inline-block; font-size: 11px; padding: 0.25em 0.55em;
+                                       border-radius: 4px; font-weight: 500; line-height: 1.4;
+                                       white-space: normal; word-break: break-word; }
+    .status-open       { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+    .status-closed     { background: #d1e7dd; color: #0a3622; border: 1px solid #198754; }
+    .status-inprogress { background: #cfe2ff; color: #0a3278; border: 1px solid #0d6efd; }
+
+    /* ── Table ──────────────────────────────────────────────────────────────── */
+    #ticketsTable                    { table-layout: auto; }
+    #ticketsTable th                 { font-size: 13px; }
+    .table > thead > tr > th        { font-size: 13px; }
+
+    /* ── Column widths ──────────────────────────────────────────────────────── */
+    .col-num     { width: 36px; }
+    .col-date    { width: 115px; white-space: nowrap; }
+    .col-email   { max-width: 160px; }
+    .col-client  { white-space: nowrap; }
+    .col-assigned{ max-width: 145px; }
+    .col-subject { min-width: 130px;font-size:13px; max-width: 200px; white-space: normal; word-break: break-word; line-height: 1.4; }
+    .col-intent  { min-width: 130px; }
+    .col-spec    { min-width: 100px; max-width: 130px; }
+    .col-attach  { width: 68px; text-align: center; }
+    .col-mail    { min-width: 150px; max-width: 220px; }
+    .col-status  { width: 90px; white-space: nowrap; }
+    .col-actions { width: 110px; white-space: nowrap; }
+
+    /* ── Mail preview ───────────────────────────────────────────────────────── */
+    .mail-preview-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+                         overflow: hidden; color: #555; font-size: 12px; line-height: 1.4; word-break: break-word; }
+    .btn-view-mail {
+        font-size: 10px!important;
+        padding: 2px 5px!important;
+        border-radius: 0px !important;
+        display: inline-flex; align-items: center; gap: 4px;
+         margin-top: 3px;
+        white-space: nowrap; border-radius: 20px;
+        background: transparent; border: 1px solid #dee2e6;
+        color: #868e96; letter-spacing: 0.2px; transition: all 0.15s ease;
+    }
+    .btn-view-mail:hover { background: #f1f3f5; border-color: #adb5bd; color: #495057; }
+
+    /* ── Attachment icons ───────────────────────────────────────────────────── */
+    .attach-icons { display: flex; gap: 5px; justify-content: center; align-items: center; }
+    .attach-icon  { font-size: 13px; }
+    .attach-icon.yes { color: #198754; }
+    .attach-icon.no  { color: #dee2e6; }
+    .drive-link      { display: block; text-align: center; margin-top: 3px; font-size: 11px; }
+
+    /* ── Action buttons ─────────────────────────────────────────────────────── */
+    .action-btns { display: flex; gap: 4px; justify-content: center; flex-wrap: nowrap; }
+    .btn.btn-sm  { font-size: 11px; padding: 3px 5px; background: #d4cece85; }
+    .status-change-btn, .btn-history { font-size: 11px; padding: 2px 6px; line-height: 1.4; flex-shrink: 0; }
+
+    /* ── Inline assignment editor ────────────────────────────────────────────── */
+    .assign-view                { display: flex; align-items: center; gap: 5px; min-width: 0; }
+    .assign-view a,
+    .assign-view .assign-name   { flex: 1; min-width: 0; }
+    .btn-edit-assign            { font-size: 10px; padding: 2px 6px; opacity: 0.35; flex-shrink: 0;
+                                  border-radius: 3px; line-height: 1.4; background: transparent;
+                                  border-color: #dee2e6; color: #6c757d; }
+    .btn-edit-assign:hover      { opacity: 1; background: #f1f3f5; border-color: #adb5bd; color: #495057; }
+    .assign-edit-form           { display: none; flex-direction: column; gap: 5px; }
+    .assign-edit-form select    { font-size: 12px; width: 100%; border: 1px solid #ced4da;
+                                  border-radius: 4px; padding: 5px 8px; color: #212529;
+                                  background-color: #fff; cursor: pointer; }
+    .assign-edit-form select:focus { border-color: #86b7fe; outline: 0;
+                                     box-shadow: 0 0 0 0.2rem rgba(13,110,253,.2); }
+    .assign-edit-row            { display: flex; gap: 4px; align-items: center; }
+    .btn-assign-ok              { font-size: 11px; padding: 3px 10px; flex-shrink: 0; font-weight: 500; }
+    .btn-assign-x               { font-size: 11px; padding: 3px 8px;  flex-shrink: 0; }
+
+    /* ── History modal timeline ──────────────────────────────────────────────── */
+    .history-timeline               { list-style: none; padding: 0; margin: 0; }
+    .history-timeline li            { display: flex; gap: 12px; padding: 10px 0;
+                                      border-bottom: 1px solid #f0f0f0; align-items: flex-start; }
+    .history-timeline li:last-child { border-bottom: none; }
+    .ht-dot          { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .ht-dot.open       { background: #ffc107; }
+    .ht-dot.inprogress { background: #0d6efd; }
+    .ht-dot.closed     { background: #198754; }
+    .ht-dot.assignment { background: #6f42c1; }
+    .ht-body       { flex: 1; }
+    .ht-transition { font-size: 13px; font-weight: 600; color: #212529; }
+    .ht-meta       { font-size: 11.5px; color: #6c757d; margin-top: 2px; }
+
+    /* ── Mail modal ─────────────────────────────────────────────────────────── */
+    .mail-modal-meta span    { font-size: 12.5px; color: #6c757d; }
+    .mail-modal-meta strong  { color: #212529; }
+    .mail-modal-body-text    { white-space: pre-wrap; word-break: break-word; font-size: 13px;
+                               line-height: 1.75; background: #f8f9fa; border-radius: 6px;
+                               padding: 14px 18px; border: 1px solid #e9ecef;
+                               max-height: 40vh; overflow-y: auto; font-family: inherit; }
+    .mail-modal-subject      { font-size: 1.05rem; font-weight: 600; color: #212529; line-height: 1.4; }
+    .summary-block           { background: #f8f9fa; border-radius: 6px; border: 1px solid #e9ecef;
+                               padding: 10px 14px; font-size: 13px; line-height: 1.6;
+                               white-space: pre-wrap; word-break: break-word; }
+    .summary-label           { font-size: 11px; font-weight: 700; text-transform: uppercase;
+                               letter-spacing: .5px; color: #6c757d; margin-bottom: 4px; }
+</style>
+
+<div class="main-panel" id="main-panel">
+<div class="pt30">
+<div class="content client">
+<div class="container-fluid py-4">
+
+    <!-- Page header -->
+    <div class="row mb-3 align-items-center">
+        <div class="col">
+            <h4 class="fw-bold mb-0">
+                <i class="fas fa-headset text-primary me-2"></i>Customer Support Tickets
+            </h4>
+            <p class="text-muted mb-0 mt-1">Inbound support requests identified and enriched by Relay.app</p>
+        </div>
+        <div class="col-auto">
+            <button style="background: #bceabc;border:0px;color:green" class="btn btn-outline-secondary btn-sm" onclick="location.reload()">
+                <i class="fas fa-sync-alt me-1"></i>Refresh
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Summary stat cards -->
+    @{
+        int cardOpen  = Model.Count(t => string.Equals(t.Status, "Open",       StringComparison.OrdinalIgnoreCase));
+        int cardIP    = Model.Count(t => string.Equals(t.Status, "InProgress", StringComparison.OrdinalIgnoreCase));
+        int cardClose = Model.Count(t => string.Equals(t.Status, "Closed",     StringComparison.OrdinalIgnoreCase));
+    }
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-sm-3">
+            <div class="card border-0 shadow-sm text-center py-3 st-stat">
+                <div class="stat-value text-primary">@totalCount</div>
+                <div class="stat-label">@(hasFilters ? "Matched" : "Total") Tickets</div>
+            </div>
+        </div>
+        <div class="col-6 col-sm-3">
+            <div class="card border-0 shadow-sm text-center py-3 st-stat">
+                <div class="stat-value text-warning">@cardOpen</div>
+                <div class="stat-label">Open (page)</div>
+            </div>
+        </div>
+        <div class="col-6 col-sm-3">
+            <div class="card border-0 shadow-sm text-center py-3 st-stat">
+                <div class="stat-value text-info">@cardIP</div>
+                <div class="stat-label">In Progress (page)</div>
+            </div>
+        </div>
+        <div class="col-6 col-sm-3">
+            <div class="card border-0 shadow-sm text-center py-3 st-stat">
+                <div class="stat-value text-success">@cardClose</div>
+                <div class="stat-label">Closed (page)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <form asp-action="Index" asp-controller="SupportTicket" method="get" id="filterForm">
+        <input type="hidden" name="page"     value="1" />
+        <input type="hidden" name="pageSize" value="@pageSize" />
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body py-2 px-3">
+                <div class="d-flex align-items-center gap-2" style="flex-wrap:nowrap;width:100%;">
+
+                    <select name="status" id="statusFilter"
+                            class="form-select st-filter-control"
+                            style="flex:1 1 0;min-width:110px;max-width:145px;"
+                            onchange="document.getElementById('filterForm').submit()">
+                        <option value="">All statuses</option>
+                        @if (sSel_open)   { <option value="Open"       selected>Open</option>        } else { <option value="Open">Open</option>               }
+                        @if (sSel_ip)     { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option>  }
+                        @if (sSel_closed) { <option value="Closed"     selected>Closed</option>      } else { <option value="Closed">Closed</option>           }
+                    </select>
+
+                    <select name="intent" id="intentFilter"
+                            class="form-select st-filter-control"
+                            style="flex:0 0 200px;width:200px;"
+                            onchange="document.getElementById('filterForm').submit()">
+                        <option value="">All intents</option>
+                        @if (iSel_01) { <option value="New interview request"                        selected>New interview request</option>                        } else { <option value="New interview request">New interview request</option>                                       }
+                        @if (iSel_02) { <option value="New candidate submission"                     selected>New candidate submission</option>                     } else { <option value="New candidate submission">New candidate submission</option>                               }
+                        @if (iSel_03) { <option value="Candidate status update"                      selected>Candidate status update</option>                      } else { <option value="Candidate status update">Candidate status update</option>                               }
+                        @if (iSel_04) { <option value="Candidate reports"                            selected>Candidate reports</option>                            } else { <option value="Candidate reports">Candidate reports</option>                                           }
+                        @if (iSel_05) { <option value="Stop interviews"                              selected>Stop interviews</option>                              } else { <option value="Stop interviews">Stop interviews</option>                                               }
+                        @if (iSel_06) { <option value="Cold candidate"                               selected>Cold candidate</option>                               } else { <option value="Cold candidate">Cold candidate</option>                                                 }
+                        @if (iSel_07) { <option value="Interviewer misalignment"                     selected>Interviewer misalignment</option>                     } else { <option value="Interviewer misalignment">Interviewer misalignment</option>                           }
+                        @if (iSel_08) { <option value="Interviewer replacement"                      selected>Interviewer replacement</option>                      } else { <option value="Interviewer replacement">Interviewer replacement</option>                             }
+                        @if (iSel_09) { <option value="Interviewer false negative"                   selected>Interviewer false negative</option>                   } else { <option value="Interviewer false negative">Interviewer false negative</option>                       }
+                        @if (iSel_10) { <option value="Interviewer false positive"                   selected>Interviewer false positive</option>                   } else { <option value="Interviewer false positive">Interviewer false positive</option>                       }
+                        @if (iSel_11) { <option value="Score rubric concerns"                        selected>Score rubric concerns</option>                        } else { <option value="Score rubric concerns">Score rubric concerns</option>                                 }
+                        @if (iSel_12) { <option value="Candidate bad experience with Risebird"       selected>Candidate bad experience with Risebird</option>       } else { <option value="Candidate bad experience with Risebird">Candidate bad experience with Risebird</option> }
+                        @if (iSel_13) { <option value="Candidate bad experience with interviewer"    selected>Candidate bad experience with interviewer</option>    } else { <option value="Candidate bad experience with interviewer">Candidate bad experience with interviewer</option> }
+                        @if (iSel_14) { <option value="Delay in scheduling"                          selected>Delay in scheduling</option>                          } else { <option value="Delay in scheduling">Delay in scheduling</option>                                     }
+                        @if (iSel_15) { <option value="Delay in getting interviews started"          selected>Delay in getting interviews started</option>          } else { <option value="Delay in getting interviews started">Delay in getting interviews started</option>     }
+                        @if (iSel_16) { <option value="Delay in report sharing"                      selected>Delay in report sharing</option>                      } else { <option value="Delay in report sharing">Delay in report sharing</option>                           }
+                        @if (iSel_17) { <option value="Good experience with Risebird"                selected>Good experience with Risebird</option>                } else { <option value="Good experience with Risebird">Good experience with Risebird</option>                 }
+                        @if (iSel_18) { <option value="Poor experience with Risebird support team"   selected>Poor experience with Risebird support team</option>   } else { <option value="Poor experience with Risebird support team">Poor experience with Risebird support team</option> }
+                        @if (iSel_19) { <option value="Interviewer no-show"                          selected>Interviewer no-show</option>                          } else { <option value="Interviewer no-show">Interviewer no-show</option>                                     }
+                        @if (iSel_20) { <option value="Quality control issues"                       selected>Quality control issues</option>                       } else { <option value="Quality control issues">Quality control issues</option>                               }
+                    </select>
+
+                    <input type="text" id="senderEmailInput" name="senderEmail"
+                           class="form-control st-filter-control"
+                           placeholder="Sender email…"
+                           style="flex:1 1 0;min-width:130px;"
+                           value="@selEmail" />
+
+                    <input type="date" name="dateFrom" class="form-control st-filter-control"
+                           style="flex:1 1 0;min-width:120px;" value="@selDateFrom"
+                           onchange="document.getElementById('filterForm').submit()" />
+
+                    <span class="text-muted flex-shrink-0" style="font-size:11px;">–</span>
+
+                    <input type="date" name="dateTo" class="form-control st-filter-control"
+                           style="flex:1 1 0;min-width:120px;" value="@selDateTo"
+                           onchange="document.getElementById('filterForm').submit()" />
+
+                    <button type="submit" class="btn btn-primary btn-sm flex-shrink-0">
+                        <i class="fas fa-filter me-1"></i>Apply
+                    </button>
+                    <a asp-action="Index" asp-controller="SupportTicket" class="btn btn-sm btn-outline-secondary flex-shrink-0">
+                        <i class="fas fa-times me-1"></i>Clear
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tickets table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            @if (!Model.Any())
+            {
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                    @if (hasFilters)
+                    { <span>No tickets match the selected filters.</span> }
+                    else
+                    { <span>No support tickets yet. Once Relay.app routes an email, it will appear here.</span> }
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table id="ticketsTable" class="table table-hover table-sm mb-0 align-middle">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th class="col-num">#</th>
+                                <th class="col-date">Received At</th>
+                                <th>Sender Email</th>
+                                <th class="col-client">Client</th>
+                                <th class="col-assigned">Assigned To</th>
+                                <th class="col-subject">Subject</th>
+                                <th class="col-intent">Intent</th>
+                                <th class="col-spec">Specialization</th>
+                                <th class="col-attach" title="JD / PDF / Resume">Attach.</th>
+                                <th class="col-mail">Mail Content</th>
+                                <th class="col-status">Status</th>
+                                <th class="col-actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in Model)
+                            {
+                                string tStatus   = t.Status?.ToLower();
+                                string statusCss = tStatus == "open"       ? "status-open"
+                                                 : tStatus == "inprogress" ? "status-inprogress"
+                                                 : tStatus == "closed"     ? "status-closed"
+                                                 : "bg-light border";
+                                string driveLink = t.DriveFolderLink;
+                                <tr class="ticket-row">
+
+                                    <td class="col-num text-muted" style="font-size:12px">@t.Id</td>
+
+                                    <td class="col-date" style="font-size:12px">
+                                        @(t.ReceivedAt.HasValue ? t.ReceivedAt.Value.ToString("dd MMM yy, HH:mm") : "—")
+                                    </td>
+
+                                    <td class="col-email">
+                                        <a href="mailto:@t.SenderEmail" class="text-decoration-none"
+                                           style="font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:155px"
+                                           title="@t.SenderEmail">@t.SenderEmail</a>
+                                    </td>
+
+                                    <td class="col-client">
+                                        @if (!string.IsNullOrEmpty(t.ClientName))
+                                        { <span class="fw-semibold">@t.ClientName</span> }
+                                        else
+                                        { <span class="text-muted fst-italic">Unknown</span> }
+                                    </td>
+
+                                    <td class="col-assigned">
+                                        <!-- display row -->
+                                        <div class="assign-view" id="assign-view-@t.Id">
+                                            @if (!string.IsNullOrEmpty(t.AssignedTo))
+                                            {
+                                                <a href="mailto:@t.AssignedTo"
+                                                   class="assign-name text-decoration-none text-dark"
+                                                   style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:105px;display:block"
+                                                   title="@t.AssignedTo">
+                                                    <i class="fas fa-user-circle text-secondary me-1" style="font-size:11px"></i>@t.AssignedTo
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="assign-name text-muted fst-italic" style="font-size:12px">
+                                                    <i class="fas fa-user-slash me-1" style="font-size:11px"></i>Unassigned
+                                                </span>
+                                            }
+                                            <button type="button"
+                                                    class="btn btn-outline-secondary btn-sm btn-edit-assign"
+                                                    data-ticket-id="@t.Id"
+                                                    title="Change assignee">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </button>
+                                        </div>
+                                        <!-- inline edit form (hidden until pencil clicked) -->
+                                        <div class="assign-edit-form" id="assign-edit-@t.Id">
+                                            <select class="form-select"
+                                                    id="assign-select-@t.Id">
+                                                <option value="">Loading…</option>
+                                            </select>
+                                            <div class="assign-edit-row">
+                                                            <button style="background: #489d48;padding: 1px 5px;" type="button"
+                                                        class="btn btn-success btn-sm btn-assign-ok"
+                                                        data-ticket-id="@t.Id"
+                                                        title="Save assignment">
+                                                    <i class="fas fa-check me-1"></i>Save
+                                                </button>
+                                                            <button style="background:#eb4d4d;color:#fff;padding: 1px 5px; type="button"
+                                                        class="btn btn-outline-secondary btn-sm btn-assign-x"
+                                                        data-ticket-id="@t.Id"
+                                                        title="Cancel">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="col-subject">@t.Subject</td>
+
+                                    <td class="col-intent">
+                                        @if (!string.IsNullOrEmpty(t.Intent))
+                                        { <span class="intent-badge bg-light border">@t.Intent</span> }
+                                        else
+                                        { <span class="text-muted">—</span> }
+                                    </td>
+
+                                    <td class="col-spec">
+                                        @if (!string.IsNullOrEmpty(t.PrimarySpecialization))
+                                        { <span class="spec-badge bg-light text-dark border">@t.PrimarySpecialization</span> }
+                                        else
+                                        { <span class="text-muted">—</span> }
+                                    </td>
+
+                                    <td class="col-attach">
+                                        <div class="attach-icons">
+                                            <i class="fas fa-file-alt attach-icon @(t.AttachmentJobDescription ? "yes" : "no")"
+                                               title="@(t.AttachmentJobDescription ? "JD attached" : "No JD")"></i>
+                                            <i class="fas fa-file-pdf attach-icon @(t.AttachmentPdf ? "yes" : "no")"
+                                               title="@(t.AttachmentPdf ? "PDF attached" : "No PDF")"></i>
+                                            <i class="fas fa-user attach-icon @(t.AttachmentResumes ? "yes" : "no")"
+                                               title="@(t.AttachmentResumes ? "Resume(s) attached" : "No resumes")"></i>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(driveLink))
+                                        {
+                                            <a href="@driveLink" target="_blank" class="drive-link text-warning text-decoration-none"
+                                               title="Open Drive folder"><i class="fab fa-google-drive"></i></a>
+                                        }
+                                    </td>
+
+                                    <td class="col-mail">
+                                        @if (!string.IsNullOrWhiteSpace(t.MailContent))
+                                        {
+                                            <div class="mail-preview-text">@t.MailContent</div>
+                                            <button type="button"
+                                                    class="btn btn-outline-secondary btn-sm btn-view-mail"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#mailDetailModal"
+                                                    data-sender="@t.SenderEmail"
+                                                    data-subject="@t.Subject"
+                                                    data-intent="@(t.Intent ?? "—")"
+                                                    data-specialization="@(t.PrimarySpecialization ?? "—")"
+                                                    data-mailbodyintent="@(t.MailBodyIntent ?? "—")"
+                                                    data-received="@(t.ReceivedAt.HasValue ? t.ReceivedAt.Value.ToString("dd MMM yyyy, HH:mm") : "—")"
+                                                    data-body="@t.MailContent"
+                                                    data-summarymail="@(t.SummaryMail ?? "")"
+                                                    data-summarycandidates="@(t.SummaryCandidates ?? "")"
+                                                    data-summaryinterviews="@(t.SummaryInterviewScores ?? "")">
+                                                <i class="fas fa-expand-alt me-1"></i>View full
+                                            </button>
+                                        }
+                                        else { <span class="text-muted">—</span> }
+                                    </td>
+
+                                    <td class="col-status">
+                                        <span class="intent-badge @statusCss">@(t.Status ?? "Open")</span>
+                                    </td>
+
+                                    <td class="col-actions">
+                                        <div class="action-btns">
+                                        @if (tStatus == "open")
+                                        {
+                                            <button type="button" title="Mark In Progress"
+                                                    class="btn btn-outline-primary btn-sm status-change-btn"
+                                                    data-ticket-id="@t.Id" data-new-status="InProgress">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                            <button type="button" title="Close Ticket"
+                                                    class="btn btn-outline-success btn-sm status-change-btn"
+                                                    data-ticket-id="@t.Id" data-new-status="Closed">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        }
+                                        else if (tStatus == "inprogress")
+                                        {
+                                            <button type="button" title="Mark Open"
+                                                    class="btn btn-outline-warning btn-sm status-change-btn"
+                                                    data-ticket-id="@t.Id" data-new-status="Open">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                            <button type="button" title="Close Ticket"
+                                                    class="btn btn-outline-success btn-sm status-change-btn"
+                                                    data-ticket-id="@t.Id" data-new-status="Closed">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" title="Reopen Ticket"
+                                                    class="btn btn-outline-warning btn-sm status-change-btn"
+                                                    data-ticket-id="@t.Id" data-new-status="Open">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        }
+                                        <button type="button" title="View History"
+                                                class="btn btn-outline-secondary btn-sm btn-history"
+                                                data-ticket-id="@t.Id"
+                                                data-ticket-subject="@t.Subject">
+                                            <i class="fas fa-history"></i>
+                                        </button>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            }
+        </div>
+
+        @if (totalCount > 0)
+        {
+            <div class="card-footer d-flex align-items-center justify-content-between bg-white border-top py-2 flex-wrap gap-2">
+                <small class="text-muted">
+                    Showing <strong>@first–@last</strong> of <strong>@totalCount</strong> ticket@(totalCount == 1 ? "" : "s")
+                    @if (hasFilters) { <span>(filtered)</span> }
+                </small>
+
+                @if (totalPages > 1)
+                {
+                    <nav aria-label="Ticket pagination">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item @(page <= 1 ? "disabled" : "")">
+                                <a class="page-link" href="@pageUrl(page - 1)" aria-label="Previous">
+                                    <span aria-hidden="true">«</span>
+                                </a>
+                            </li>
+                            @{
+                                int startP = Math.Max(1, page - 3);
+                                int endP   = Math.Min(totalPages, page + 3);
+                                if (startP > 1)
+                                {
+                                    <li class="page-item"><a class="page-link" href="@pageUrl(1)">1</a></li>
+                                    if (startP > 2) { <li class="page-item disabled"><span class="page-link">…</span></li> }
+                                }
+                                for (int p = startP; p <= endP; p++)
+                                {
+                                    <li class="page-item @(p == page ? "active" : "")">
+                                        <a class="page-link" href="@pageUrl(p)">@p</a>
+                                    </li>
+                                }
+                                if (endP < totalPages)
+                                {
+                                    if (endP < totalPages - 1) { <li class="page-item disabled"><span class="page-link">…</span></li> }
+                                    <li class="page-item"><a class="page-link" href="@pageUrl(totalPages)">@totalPages</a></li>
+                                }
+                            }
+                            <li class="page-item @(page >= totalPages ? "disabled" : "")">
+                                <a class="page-link" href="@pageUrl(page + 1)" aria-label="Next">
+                                    <span aria-hidden="true">»</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+
+                <div class="d-flex align-items-center gap-2">
+                    <small class="text-muted">Per page:</small>
+                    <select class="form-select form-select-sm" style="width:80px" onchange="changePageSize(this.value)">
+                        @if (ps10)  { <option value="10"  selected>10</option>  } else { <option value="10">10</option>   }
+                        @if (ps25)  { <option value="25"  selected>25</option>  } else { <option value="25">25</option>   }
+                        @if (ps50)  { <option value="50"  selected>50</option>  } else { <option value="50">50</option>   }
+                        @if (ps100) { <option value="100" selected>100</option> } else { <option value="100">100</option> }
+                    </select>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+</div>
+</div>
+</div>
+
+<!-- Toast container -->
+<div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1100"></div>
+
+<!-- Ticket History Modal -->
+<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title fw-bold mb-0">
+                        <i class="fas fa-history text-secondary me-2"></i>Ticket History
+                    </h5>
+                    <small class="text-muted" id="historyModalSubject"></small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <div class="text-center py-4 text-muted" id="historyLoading">
+                    <i class="fas fa-spinner fa-spin me-2"></i>Loading history…
+                </div>
+                <ul class="history-timeline" id="historyList" style="display:none"></ul>
+                <div class="text-center py-4 text-muted" id="historyEmpty" style="display:none">
+                    <i class="fas fa-inbox me-2"></i>No status changes recorded yet.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast container (bottom-right) -->
+<div id="toastContainer"
+     class="toast-container position-fixed bottom-0 end-0 p-3"
+     style="z-index:1100">
+</div>
+
+<!-- Mail Detail Modal -->
+<div class="modal fade" id="mailDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="flex-grow-1 me-3">
+                    <div class="mail-modal-subject" id="modalSubject"></div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <div class="mail-modal-meta d-flex flex-wrap gap-3 mb-3 pb-2 border-bottom">
+                    <div><span>From &nbsp;</span><strong id="modalSender"></strong></div>
+                    <div><span>Received &nbsp;</span><strong id="modalReceived"></strong></div>
+                    <div><span>Intent &nbsp;</span><strong id="modalIntent"></strong></div>
+                    <div><span>Specialization &nbsp;</span><strong id="modalSpec"></strong></div>
+                    <div><span>Body Intent &nbsp;</span><strong id="modalBodyIntent"></strong></div>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-12" id="summaryMailWrap" style="display:none">
+                        <div class="summary-label">Summary</div>
+                        <div class="summary-block" id="summaryMail"></div>
+                    </div>
+                    <div class="col-md-6" id="summaryCandidatesWrap" style="display:none">
+                        <div class="summary-label">Candidates</div>
+                        <div class="summary-block" id="summaryCandidates"></div>
+                    </div>
+                    <div class="col-md-6" id="summaryInterviewsWrap" style="display:none">
+                        <div class="summary-label">Interview Scores</div>
+                        <div class="summary-block" id="summaryInterviews"></div>
+                    </div>
+                </div>
+                <div class="summary-label">Full Email</div>
+                <div class="mail-modal-body-text" id="modalBody"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script>
+        /* ── Helpers ─────────────────────────────────────────────────────── */
+        function decodeHtml(str) {
+            if (!str) return '';
+            return new DOMParser().parseFromString(str, 'text/html').documentElement.textContent;
+        }
+
+        function showSummary(wrapperId, elId, value) {
+            var decoded = decodeHtml(value);
+            if (decoded && decoded.trim() !== '' && decoded.trim() !== '—') {
+                $('#' + elId).text(decoded);
+                $('#' + wrapperId).show();
+            } else {
+                $('#' + wrapperId).hide();
+            }
+        }
+
+        function showToast(message, type) {
+            var id = 'toast-' + Date.now();
+            $('#toastContainer').append(
+                '<div id="' + id + '" class="toast align-items-center text-bg-' + type + ' border-0 mb-2" role="alert" style="min-width:280px">'
+              + '<div class="d-flex"><div class="toast-body">' + message + '</div>'
+              + '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>'
+              + '</div></div>'
+            );
+            var el = document.getElementById(id);
+            var t  = new bootstrap.Toast(el, { delay: 3500 });
+            t.show();
+            el.addEventListener('hidden.bs.toast', function () { $(this).remove(); });
+        }
+
+        /* ── Button builders ─────────────────────────────────────────────── */
+        function makeBtn(id, status, btnCss, icon, tip) {
+            return $('<button>').attr({ type: 'button', title: tip })
+                .addClass('btn btn-sm status-change-btn ' + btnCss)
+                .attr('data-ticket-id', id).attr('data-new-status', status)
+                .html('<i class="fas ' + icon + '"></i>');
+        }
+
+        function makeHistoryBtn(id, subject) {
+            return $('<button>').attr({ type: 'button', title: 'View History' })
+                .addClass('btn btn-sm btn-outline-secondary btn-history')
+                .attr('data-ticket-id', id).attr('data-ticket-subject', subject || '')
+                .html('<i class="fas fa-history"></i>');
+        }
+
+        /* ── Status maps ─────────────────────────────────────────────────── */
+        var statusCssMap = { open: 'status-open', inprogress: 'status-inprogress', closed: 'status-closed' };
+        var iconMap      = { InProgress: 'fa-play', Closed: 'fa-check', Open: 'fa-undo' };
+
+        /* ── Status change AJAX ──────────────────────────────────────────── */
+        $(document).on('click', '.status-change-btn', function () {
+            var btn       = $(this);
+            var ticketId  = btn.data('ticket-id');
+            var newStatus = btn.data('new-status');
+            var token     = $('input[name="__RequestVerificationToken"]').val();
+            var row       = btn.closest('tr');
+
+            btn.find('i').removeClass().addClass('fas fa-spinner fa-spin');
+            row.find('.status-change-btn').prop('disabled', true);
+
+            $.ajax({
+                url:  '@Url.Action("UpdateStatus", "SupportTicket")',
+                type: 'POST',
+                data: {
+                    __RequestVerificationToken: token,
+                    id:                ticketId,
+                    status:            newStatus,
+                    returnStatus:      '@selStatus',
+                    returnIntent:      '@selIntent',
+                    returnSenderEmail: '@selEmail',
+                    returnDateFrom:    '@selDateFrom',
+                    returnDateTo:      '@selDateTo',
+                    returnPage:        @(page),
+                    returnPageSize:    @(pageSize)
+                },
+                success: function () {
+                    var key = newStatus.toLowerCase();
+                    /* update status badge */
+                    row.find('.intent-badge.status-open, .intent-badge.status-inprogress, .intent-badge.status-closed')
+                       .removeClass('status-open status-inprogress status-closed')
+                       .addClass(statusCssMap[key] || 'bg-light border')
+                       .text(newStatus);
+                    /* rebuild action buttons */
+                    var subject = row.find('.col-subject').text().trim();
+                    var $cell   = row.find('.action-btns').empty();
+                    if (key === 'open') {
+                        $cell.append(makeBtn(ticketId, 'InProgress', 'btn-outline-primary', 'fa-play',  'Mark In Progress'));
+                        $cell.append(makeBtn(ticketId, 'Closed',     'btn-outline-success', 'fa-check', 'Close Ticket'));
+                    } else if (key === 'inprogress') {
+                        $cell.append(makeBtn(ticketId, 'Open',   'btn-outline-warning', 'fa-undo',  'Mark Open'));
+                        $cell.append(makeBtn(ticketId, 'Closed', 'btn-outline-success', 'fa-check', 'Close Ticket'));
+                    } else {
+                        $cell.append(makeBtn(ticketId, 'Open', 'btn-outline-warning', 'fa-undo', 'Reopen Ticket'));
+                    }
+                    $cell.append(makeHistoryBtn(ticketId, subject));
+                    showToast('Ticket #' + ticketId + ' marked as ' + newStatus + '.', 'success');
+                },
+                error: function () {
+                    btn.find('i').removeClass().addClass('fas ' + (iconMap[newStatus] || 'fa-circle'));
+                    row.find('.status-change-btn').prop('disabled', false);
+                    showToast('Failed to update ticket #' + ticketId + '. Please try again.', 'danger');
+                }
+            });
+        });
+
+        /* ── Inline assignment editor ────────────────────────────────────── */
+        // Cache fetched assignees per ticket to avoid re-fetching on repeated clicks
+        var assigneeCache = {};
+
+        $(document).on('click', '.btn-edit-assign', function () {
+            var ticketId = $(this).data('ticket-id');
+            var $view    = $('#assign-view-' + ticketId);
+            var $edit    = $('#assign-edit-'   + ticketId);
+            var $select  = $('#assign-select-' + ticketId);
+
+            $view.hide();
+            $edit.css('display', 'flex').show();
+
+            // Use cached list if available
+            if (assigneeCache[ticketId]) {
+                populateSelect($select, assigneeCache[ticketId]);
+                return;
+            }
+
+            $select.html('<option value="">Loading…</option>');
+
+            $.ajax({
+                url:  '@Url.Action("GetEligibleAssignees", "SupportTicket")',
+                type: 'GET',
+                data: { id: ticketId },
+                success: function (data) {
+                    assigneeCache[ticketId] = data || [];
+                    populateSelect($select, assigneeCache[ticketId]);
+                },
+                error: function () {
+                    $select.html('<option value="">Error loading</option>');
+                    showToast('Could not load eligible assignees.', 'danger');
+                }
+            });
+        });
+
+        function populateSelect($select, emails) {
+            $select.empty().append('<option value="">— select assignee —</option>');
+            if (emails.length > 0) {
+                $.each(emails, function (_, email) {
+                    $select.append($('<option>').val(email).text(email));
+                });
+            } else {
+                $select.append('<option value="" disabled>No eligible assignees found</option>');
+            }
+        }
+
+        $(document).on('click', '.btn-assign-ok', function () {
+            var btn       = $(this);
+            var ticketId  = btn.data('ticket-id');
+            var $select   = $('#assign-select-' + ticketId);
+            var newAssign = $select.val();
+            var token     = $('input[name="__RequestVerificationToken"]').val();
+
+            if (!newAssign) { showToast('Please select an assignee.', 'warning'); return; }
+
+            btn.find('i').removeClass().addClass('fas fa-spinner fa-spin');
+            btn.prop('disabled', true);
+            $('#assign-edit-' + ticketId).find('.btn-assign-x').prop('disabled', true);
+
+            $.ajax({
+                url:  '@Url.Action("UpdateAssignment", "SupportTicket")',
+                type: 'POST',
+                data: { __RequestVerificationToken: token, id: ticketId, assignedTo: newAssign },
+                success: function (resp) {
+                    if (resp && resp.success) {
+                        var $view = $('#assign-view-' + ticketId);
+                        // Rebuild display with new assignee
+                        $view.find('a, span').replaceWith(
+                            $('<a>').attr({ href: 'mailto:' + newAssign, title: newAssign })
+                                   .addClass('text-decoration-none')
+                                   .css({ fontSize:'12px', overflow:'hidden', textOverflow:'ellipsis',
+                                          whiteSpace:'nowrap', maxWidth:'110px', display:'block' })
+                                   .text(newAssign)
+                        );
+                        $('#assign-edit-' + ticketId).hide();
+                        $view.show();
+                        showToast('Ticket #' + ticketId + ' reassigned to ' + newAssign + '.', 'success');
+                    } else {
+                        showToast(resp && resp.message ? resp.message : 'Failed to update assignment.', 'danger');
+                        btn.find('i').removeClass().addClass('fas fa-check');
+                        btn.prop('disabled', false);
+                        $('#assign-edit-' + ticketId).find('.btn-assign-x').prop('disabled', false);
+                    }
+                },
+                error: function () {
+                    showToast('Failed to update assignment. Please try again.', 'danger');
+                    btn.find('i').removeClass().addClass('fas fa-check');
+                    btn.prop('disabled', false);
+                    $('#assign-edit-' + ticketId).find('.btn-assign-x').prop('disabled', false);
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-assign-x', function () {
+            var ticketId = $(this).data('ticket-id');
+            $('#assign-edit-' + ticketId).hide();
+            $('#assign-view-'  + ticketId).show();
+        });
+
+        /* ── History modal ───────────────────────────────────────────────── */
+        var dotClass = { open: 'open', inprogress: 'inprogress', closed: 'closed' };
+
+        $(document).on('click', '.btn-history', function () {
+            var ticketId = $(this).data('ticket-id');
+            var subject  = $(this).data('ticket-subject') || ('Ticket #' + ticketId);
+
+            $('#historyModalSubject').text(subject);
+            $('#historyLoading').show();
+            $('#historyList').hide().empty();
+            $('#historyEmpty').hide();
+
+            var modalEl = document.getElementById('historyModal');
+            var modal   = (typeof bootstrap !== 'undefined' && bootstrap.Modal)
+                          ? (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl))
+                          : null;
+            if (modal) modal.show(); else $(modalEl).modal('show');
+
+            $.ajax({
+                url:  '@Url.Action("GetHistory", "SupportTicket")',
+                type: 'GET',
+                data: { id: ticketId },
+                success: function (data) {
+                    $('#historyLoading').hide();
+                    if (!data || data.length === 0) { $('#historyEmpty').show(); return; }
+                    var $ul = $('#historyList');
+                    $.each(data, function (_, h) {
+                        var isAssign = h.eventType === 'AssignmentChange';
+                        var dc, arrow, typeIcon;
+                        if (isAssign) {
+                            dc       = 'assignment';
+                            typeIcon = '<i class="fas fa-user-edit me-2" style="font-size:11px;color:#6f42c1" title="Reassignment"></i>';
+                            arrow    = '<strong>' + h.fromStatus + '</strong>'
+                                     + ' <i class="fas fa-long-arrow-alt-right mx-1 text-muted" style="font-size:10px"></i>'
+                                     + '<strong>' + h.toStatus + '</strong>';
+                        } else {
+                            dc       = dotClass[h.toStatus.toLowerCase()] || 'open';
+                            typeIcon = '<i class="fas fa-sync-alt me-2 text-secondary" style="font-size:10px" title="Status change"></i>';
+                            arrow    = h.fromStatus === '—'
+                                ? '<span class="text-muted">Created as&nbsp;</span><strong>' + h.toStatus + '</strong>'
+                                : '<strong>' + h.fromStatus + '</strong>'
+                                  + ' <i class="fas fa-long-arrow-alt-right mx-1 text-muted" style="font-size:10px"></i>'
+                                  + '<strong>' + h.toStatus + '</strong>';
+                        }
+                        $ul.append(
+                            '<li><span class="ht-dot ' + dc + '"></span>'
+                          + '<div class="ht-body"><div class="ht-transition">' + typeIcon + arrow + '</div>'
+                          + '<div class="ht-meta"><i class="fas fa-user me-1"></i>' + h.changedBy
+                          + ' &nbsp;&middot;&nbsp; <i class="fas fa-clock me-1"></i>' + h.changedAt
+                          + '</div></div></li>'
+                        );
+                    });
+                    $ul.show();
+                },
+                error: function () {
+                    $('#historyLoading').hide();
+                    $('#historyEmpty').text('Could not load history. Please try again.').show();
+                }
+            });
+        });
+
+        /* ── Mail modal ──────────────────────────────────────────────────── */
+        $(document).ready(function () {
+            $('#mailDetailModal').on('show.bs.modal', function (e) {
+                var btn = $(e.relatedTarget);
+                $('#modalSubject').text(decodeHtml(btn.data('subject')) || '(no subject)');
+                $('#modalSender').text(decodeHtml(btn.data('sender')));
+                $('#modalReceived').text(btn.data('received'));
+                $('#modalIntent').text(btn.data('intent'));
+                $('#modalSpec').text(decodeHtml(btn.data('specialization')));
+                $('#modalBodyIntent').text(decodeHtml(btn.data('mailbodyintent')));
+                $('#modalBody').text(decodeHtml(btn.data('body')));
+                showSummary('summaryMailWrap',       'summaryMail',       btn.data('summarymail'));
+                showSummary('summaryCandidatesWrap', 'summaryCandidates', btn.data('summarycandidates'));
+                showSummary('summaryInterviewsWrap', 'summaryInterviews', btn.data('summaryinterviews'));
+            });
+            $('#mailDetailModal').on('hidden.bs.modal', function () {
+                $('#modalSubject,#modalSender,#modalReceived,#modalIntent,#modalSpec,#modalBodyIntent,#modalBody').text('');
+                $('#summaryMail,#summaryCandidates,#summaryInterviews').text('');
+                $('#summaryMailWrap,#summaryCandidatesWrap,#summaryInterviewsWrap').hide();
+            });
+        });
+
+        /* ── Page size ───────────────────────────────────────────────────── */
+        function changePageSize(size) {
+            var form = document.getElementById('filterForm');
+            form.querySelector('[name="pageSize"]').value = size;
+            form.querySelector('[name="page"]').value     = 1;
+            form.submit();
+        }
+    </script>
+}

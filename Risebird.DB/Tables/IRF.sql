@@ -684,6 +684,16 @@ BEGIN
     Add isMultiLingual bit
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SkillCluster')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add SkillCluster VARCHAR(200) NULL
+END
+
 END
 
 

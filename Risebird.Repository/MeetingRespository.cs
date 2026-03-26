@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -1414,7 +1415,10 @@ namespace Risebird.Repository
                     //parametersPoints.Add("@Type", "Interview");
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_AddUpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
-                    if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x => x.ActualLevelId == 0))
+
+                    //if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x => x.ActualLevelId == 0))
+
+                        if (reportDetails.TechSkillReportCollection != null && reportDetails.TechSkillReportCollection.Any())
                     {
                         DataTable techReportDt = new DataTable();
                         techReportDt.Columns.Add("InterviewId", typeof(int));
@@ -1734,7 +1738,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select ts.*, [LevelTech].[Name] as RequiredLevel from TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id where InterviewId = @id";
+                var query = "select ts.*, [LevelTech].[Name] as RequiredLevel, [LevelTechActual].[Name] as ActualLevel from TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id left join [LevelTech] as [LevelTechActual] on ts.ActualLevelId=[LevelTechActual].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2884,7 +2888,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select a.*, Skill.[Name] as SkillName from (select SharedTechSkillReport.*, [LevelTech].[Name] as RequiredLevel from SharedTechSkillReport inner join [LevelTech] on SharedTechSkillReport.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
+                var query = "select a.*, Skill.[Name] as SkillName from (select SharedTechSkillReport.*, [LevelTech].[Name] as RequiredLevel, [LevelTechActual].[Name] as ActualLevel from SharedTechSkillReport inner join [LevelTech] on SharedTechSkillReport.RequiredLevelId=[LevelTech].id left join [LevelTech] as [LevelTechActual] on SharedTechSkillReport.ActualLevelId=[LevelTechActual].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -5941,6 +5945,53 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<string> GetInterviewerEmailByInterviewId(int interviewId)
+        {
+            try
+            {
+                const string sql = "SELECT TOP 1 interviewer FROM InterviewMeetings WHERE id = @interviewId";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryFirstOrDefaultAsync<string>(con, sql, new { interviewId }, commandTimeout: 120);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// True if there is no InterviewPoints row yet (usp_ApplyPenaltyForQCForm will INSERT Pending), or the row exists with Status Pending.
+        /// </summary>
+        public async Task<bool> CanApplyQcPenaltyToInterviewPointsAsync(int interviewId, string interviewerEmail)
+        {
+            if (string.IsNullOrWhiteSpace(interviewerEmail))
+                return false;
+            try
+            {
+                const string sql = @"
+SELECT TOP 1 ip.Status
+FROM InterviewPoints ip
+INNER JOIN UserList u ON u.id = ip.userid
+WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @interviewerEmail";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var status = await SqlMapper.QueryFirstOrDefaultAsync<string>(con, sql, new { interviewId, interviewerEmail }, commandTimeout: 120);
+                    if (status == null)
+                        return true;
+                    return string.Equals(status.Trim(), "Pending", StringComparison.OrdinalIgnoreCase);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<string> GetClientHRContactByInterviewid(int interviewid)
         {
             try
@@ -7712,9 +7763,109 @@ namespace Risebird.Repository
                     parameters.Add("@score", model.score);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveAITranscriptAnalysis", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
+                    // Persist red-flag data (parameter name + verdict only) to QC analysis tables
+                    await SaveQcInterviewAIevaluation(interviewId, model);
                     return true;
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Saves transcript AI or report AI evaluation into QcInterviewAIevaluation and QcInterviewAIevaluationDetails.
+        /// When transcritAi=true stores in TranscritAiDetails; when false stores in ReportAIDetails. Red-flag rows use SourceType.
+        /// </summary>
+        /// <param name="jsonResponse">Optional. Full transcript AI JSON for TranscritAiDetails (used when transcritAi=true). If null, model is serialized.</param>
+        /// <param name="reportAIJsonResponse">Optional. Full report AI JSON for ReportAIDetails (used when transcritAi=false). If null, model is serialized.</param>
+        /// <param name="transcritAi">True = transcript AI (default); false = report AI.</param>
+        public async Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null, bool transcritAi = true, string reportAIJsonResponse = null)
+        {
+            try
+            {
+                if (model == null) return false;
+
+                var redFlagDetails = new List<QcInterviewAIevaluationDetailItem>();
+                if (model.redFlags != null)
+                {
+                    foreach (var kv in model.redFlags)
+                    {
+                        redFlagDetails.Add(new QcInterviewAIevaluationDetailItem
+                        {
+                            FlagName = kv.Key,
+                            Verdict = kv.Value?.redFlagVerdict,
+                            Remark = kv.Value?.observation
+                        });
+                    }
+                }
+
+                var redFlagsJson = redFlagDetails.Count > 0
+                    ? JsonConvert.SerializeObject(redFlagDetails)
+                    : (string)null;
+
+                var transcritAiDetailsParam = transcritAi ? jsonResponse : null;
+                var reportAIDetailsParam = !transcritAi ? reportAIJsonResponse : null;
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@score", model.score);
+                    parameters.Add("@verdict", model.verdict ?? (string)null);
+                    parameters.Add("@transcritAi", transcritAi);
+                    parameters.Add("@transcritAiDetails", transcritAiDetailsParam);
+                    parameters.Add("@reportAIDetails", reportAIDetailsParam);
+                    parameters.Add("@redFlagsJson", redFlagsJson);
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIevaluation", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<IEnumerable<QcInterviewAIMergePendingRow>> GetPendingQcInterviewAIMerge()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<QcInterviewAIMergePendingRow>(con, "usp_GetPendingQcInterviewAIMerge", null, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@qcEvaluationId", qcEvaluationId);
+                    parameters.Add("@mergedJson", mergedJson);
+                    parameters.Add("@totalPenalty", totalPenalty);
+                    parameters.Add("@interviewerSuspicious", interviewerSuspicious);
+                    parameters.Add("@redoInterview", redoInterview);
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIMergedDetails", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
             }
             catch (SqlException ex)
             {

@@ -432,16 +432,18 @@
     }
 
     .rb-action-btn {
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: all 0.3s ease;
+        padding: 7px 8px;
+        border-radius: 4px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        background: #42a5f5 !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 13px;
     }
 
     .rb-primary-btn {
@@ -1582,6 +1584,9 @@
                 <i class="fa fa-calendar"></i>
                 <span>@DateTime.Now.ToString("MMMM dd, yyyy")</span>
             </div>
+            <button class="rb-action-btn rb-secondary-btn" onclick="getPDF()" style="margin-top:10px;">
+                <i class="fa fa-download"></i> Download PDF
+            </button>
         </div>
     </div>
 
@@ -1778,6 +1783,22 @@
                                                 <tbody>
                                                     <tr>
                                                         <td style="width: 160px; font-weight: 600; background: #f8f9fa; padding: 6px 10px;">
+                                                            <i class="fa fa-tachometer"></i> Words Per Minute
+                                                        </td>
+                                                        <td style="padding: 6px 10px;">
+                                                            @{
+                                                                var wpmToShow = (analysis.meta != null && analysis.meta.words_per_minute > 0)
+                                                                    ? analysis.meta.words_per_minute
+                                                                    : tsa.WordsPerMinute;
+                                                            }
+                                                            <strong style="font-size:1.1rem; color:@(wpmToShow >= 30 ? "#28a745" : "#dc3545");">
+                                                                @wpmToShow.ToString("N1")
+                                                            </strong>
+                                                            <span style="margin-left:8px; color:#666; font-size:0.8rem;">(Required: 30 WPM)</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="font-weight: 600; background: #f8f9fa; padding: 6px 10px;">
                                                             <i class="fa fa-check-circle"></i> Word Accuracy
                                                         </td>
                                                         <td style="padding: 6px 10px;">
@@ -2869,13 +2890,11 @@
     </div>
 
     <div class="rb-report-actions">
-        @* <button class="rb-action-btn rb-secondary-btn" onclick="downloadReport()">
-            <i class="fa fa-download"></i> Download PDF
-        </button> *@
         @* <a href="@Url.Action("Index", "AIInterview")" class="rb-action-btn rb-back-btn">
             <i class="fa fa-arrow-left"></i> Back to Interview
         </a> *@
     </div>
+    <input type="hidden" id="AIReportSessionId" value="@Model.SessionId" />
 </div>
 
 <div id="UpdateCandidateAnswerModel" class="modal modal-bg" style="z-index:3">
@@ -2984,8 +3003,10 @@
 </script>
 
 <script>
-    function downloadReport() {
-        alert('PDF download functionality will be implemented here.');
+    function getPDF() {
+        var sessionId = document.getElementById('AIReportSessionId').value;
+        var url = '/AIInterview/GenerateAIReportPDFFile?seId=' + sessionId;
+        window.open(url, '_blank');
     }
 
     document.addEventListener('DOMContentLoaded', function() {

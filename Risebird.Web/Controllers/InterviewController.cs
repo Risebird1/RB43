@@ -9330,6 +9330,16 @@ namespace Risebird.Web.Controllers
                     {
                         //saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
                         saveOperationResult = await _meetingService.SaveOpenAIReportQCV2(model.InterviewId, ai_qcAnalysisModel);//responseInJson.Replace("'", "")
+                    }
+                    try
+                    {
+                        var rawJson = response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
+                        var reportModel = JsonConvert.DeserializeObject<ReportAIQCResponseSchema>(rawJson);
+                        var reportaiModel = await MapReportAIResponseToTranscriptSchema(reportModel);
+                        bool result = await _meetingService.SaveQcInterviewAIevaluation(model.InterviewId, reportaiModel, reportAIJsonResponse: rawJson, transcritAi: false);
+                    }
+                    catch (Exception ex)
+                    {
 
                     }
                     return ai_qcAnalysisModel;
@@ -9468,6 +9478,42 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        private async Task<TranscriptAnalysisSchema> MapReportAIResponseToTranscriptSchema(ReportAIQCResponseSchema report)
+        {
+            var redFlags = new Dictionary<string, TranscriptRedFlagEntry>();
+            if (report.bucket_results != null)
+            {
+                foreach (var kv in report.bucket_results)
+                {
+                    var bucketKey = kv.Key;
+                    var bucketVal = kv.Value;
+                    var remark = bucketVal?.observation ?? string.Empty;
+
+                    if (report.findings != null)
+                    {
+                        var bucketKeyNorm = bucketKey.Replace(" ", "_").ToLowerInvariant();
+                        var matchingFinding = report.findings.FirstOrDefault(f =>
+                            f?.bucket != null &&
+                            string.Equals(f.bucket.Replace(" ", "_").ToLowerInvariant(), bucketKeyNorm, StringComparison.OrdinalIgnoreCase));
+                        if (matchingFinding != null)
+                            remark = matchingFinding.issue ?? remark;
+                    }
+
+                    redFlags[bucketKey] = new TranscriptRedFlagEntry
+                    {
+                        redFlagVerdict = bucketVal?.verdict ?? string.Empty,
+                        observation = remark
+                    };
+                }
+            }
+            return new TranscriptAnalysisSchema
+            {
+                score = report.final_score,
+                verdict = report.final_verdict ?? string.Empty,
+                completeAnalysis = report.audit_summary ?? string.Empty,
+                redFlags = redFlags
+            };
         }
         #region Multi Skill Sets
         public async Task ReportSkillSetandCombine(InterviewReport model)

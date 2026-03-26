@@ -1,12 +1,41 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.ClientUserVM>
+@model List<Risebird.Entities.ViewModel.ClientUserVM>
 @{
     ViewData["Title"] = "Client Users";
     ViewBag.PageHeader = "Client Users";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["ForceRisebirdLogo"] = true;
+
+    int currentPage = ViewBag.Page       != null ? (int)ViewBag.Page       : 1;
+    int pageSize    = ViewBag.PageSize   != null ? (int)ViewBag.PageSize   : 50;
+    int totalCount  = ViewBag.TotalCount != null ? (int)ViewBag.TotalCount : 0;
+    int totalPages  = ViewBag.TotalPages != null ? (int)ViewBag.TotalPages : 1;
+    string search   = ViewBag.Search     as string;
+
+    int rangeStart = totalCount > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+    int rangeEnd   = Math.Min(currentPage * pageSize, totalCount);
+
+    Func<int, int, string, string> pageUrl = (p, ps, q) =>
+        Url.Action("ClientUsers", "User", new {
+            page     = p,
+            pageSize = ps,
+            search   = string.IsNullOrEmpty(q) ? null : q
+        }) ?? string.Empty;
 }
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link href="~/Newassets/css/interviewer.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css?v=2024" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+<style>
+    #cu_search_wrap .interviewer-search-reset {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s;
+    }
+    #cu_search_wrap.has-value .interviewer-search-reset {
+        opacity: 1;
+        pointer-events: auto;
+    }
+</style>
 
 <div class="main-panel" id="main-panel">
 
@@ -15,36 +44,68 @@
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title"> Client Users</h4></div>
+                    <div class="mobile-view"><h4 class="card-title"> Client Users</h4></div>
                 </div>
-
                 <div class="pull-right">
-
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add client user" onclick="location.href='@Url.Action("AddClientUser","User")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Client User</font></span>
+                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add client user"
+                              onclick="location.href='@Url.Action("AddClientUser","User")'"
+                              data-original-title="Tooltip on top">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Client User</font>
+                        </span>
                     </button>
-
-
                 </div>
             </div>
         </div>
     </div>
+
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
-
                     <div class="mdc-card-wrapper__text-section">
+
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
+
                         <div class="dataloading">
 
+                            <!-- ── Search bar ─────────────────────────────────────── -->
+                            <div style="padding: 0px 8px 10px 8px;text-align: right;">
+                                <form method="get" action="@Url.Action("ClientUsers","User")" id="cu_search_form">
+                                    <input type="hidden" name="pageSize" value="@pageSize" />
+                                    <input type="hidden" name="page"     value="1" />
+                                    <div id="cu_search_wrap" class="interviewer-search-wrap @(!string.IsNullOrEmpty(search) ? "has-value" : "")">
+                                        <div class="interviewer-search-box">
+                                            <span class="interviewer-search-ico"
+                                                  onclick="document.getElementById('cu_search_form').submit()"
+                                                  title="Search"
+                                                  style="cursor:pointer; pointer-events:auto;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
+                                            </span>
+                                            <input type="search"
+                                                   name="search"
+                                                   class="interviewer-search-inp"
+                                                   id="cu_search_input"
+                                                   placeholder="Search client users…"
+                                                   value="@(search ?? "")"
+                                                   autocomplete="off" />
+                                            <button type="button" class="interviewer-search-reset"
+                                                    onclick="clearClientUserSearch()"
+                                                    title="Clear search" aria-label="Clear search">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- ── Table ──────────────────────────────────────────── -->
                             <div class="table-responsive">
                                 <table id="clientduser" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
-
                                             <th>First Name</th>
                                             <th>Last Name</th>
                                             <th>Email Id</th>
@@ -61,25 +122,6 @@
                                             <th hidden></th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>
-
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                            <th>Email Id</th>
-                                            <th>Client name</th>
-                                            <th>Role</th>
-                                            <th>Mobile Number</th>
-                                            <th>Active</th>
-                                            @if (ViewBag.Profile != "SeniorHR")
-                                            {
-                                                <th>Password</th>
-                                            }
-                                            <th class="disabled-sorting text-center">Actions</th>
-                                            <th hidden></th>
-                                            <th hidden></th>
-                                        </tr>
-                                    </tfoot>
                                     <tbody>
                                         @foreach (var item in Model)
                                         {
@@ -105,7 +147,6 @@
                                                             <div>
                                                                 <span> @item.UserPassword</span>
                                                             </div>
-
                                                         </div>
                                                         <div class="desktop-view">
                                                             <div style="position:relative">
@@ -124,44 +165,30 @@
                                                     </td>
                                                 }
                                                 <td class="text-center">
-
-
-
                                                     <div class="btn btn-edit shadow btn-xs sharp-btn me-1" aria-label="Edit client user">
-                                                        <span onclick="location.href = '@Url.Action("EditClientUser", "User", new { id = item.id})'" title="Click here to edit client user"><i class='fa fa-pencil' style='color: white'></i></span>
+                                                        <span onclick="location.href = '@Url.Action("EditClientUser", "User", new { id = item.id})'"
+                                                              title="Click here to edit client user">
+                                                            <i class='fa fa-pencil' style='color: white'></i>
+                                                        </span>
                                                     </div>
 
-
-
-                                                    @*<button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client user">
-                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                </button>*@
                                                     @if (item.IsActive)
-
                                                     {
-
                                                         <div class="btn btn-reset shadow btn-xs sharp-btn me-1" aria-label="Reset Navigation">
                                                             <span onclick="javascript:ResetNavigation('@item.UserId','@item.EmailId');">
                                                                 <i class='fa fa-refresh'></i>
                                                             </span>
                                                         </div>
 
-
                                                         <div class="btn btn-share shadow btn-xs sharp-btn me-1" aria-label="Share Public URL">
                                                             <span onclick="javascript:SendPublicURL('@item.EmailId');"><i class="fa fa-share-alt" aria-hidden="true"></i></span>
                                                         </div>
-
 
                                                         @if (ViewBag.Profile != "SeniorHR")
                                                         {
                                                             <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL">
                                                                 <span onclick="javascript:CopyPublicUrl('@item.EmailId');"><i class='fa fa-clone'></i></span>
                                                             </div>
-
-                                                            @*
-                                                <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
-                                                <span onclick="javascript:CopyPublicUrl('@item.EmailId');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
-                                                </button>*@
                                                         }
                                                     }
                                                 </td>
@@ -170,10 +197,104 @@
                                                 <td hidden>@item.idProfile</td>
                                             </tr>
                                         }
+                                        @if (!Model.Any())
+                                        {
+                                            <tr>
+                                                <td colspan="11" class="text-center text-muted py-4">No client users found.</td>
+                                            </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>
+
+                            <!-- ── Pagination footer ─────────────────────────────── -->
+                            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; background:#fff; border-top:1px solid #dee2e6; padding:8px 16px; gap:8px;">
+
+                                <small style="color:#6c757d;">
+                                    Showing <strong>@rangeStart–@rangeEnd</strong> of <strong>@totalCount</strong> users
+                                </small>
+
+                                @if (totalPages > 1)
+                                {
+                                    <nav aria-label="Client user pages">
+                                        <ul class="pagination pagination-sm mb-0">
+
+                                            @{ var prevDisabled = currentPage <= 1 ? "disabled" : ""; }
+                                            <li class="page-item @prevDisabled">
+                                                <a class="page-link" href="@pageUrl(currentPage - 1, pageSize, search)" aria-label="Previous">
+                                                    <span aria-hidden="true">«</span>
+                                                </a>
+                                            </li>
+
+                                            @{
+                                                int windowHalf = 3;
+                                                int pageStart  = Math.Max(1, currentPage - windowHalf);
+                                                int pageEnd    = Math.Min(totalPages, currentPage + windowHalf);
+
+                                                if (pageStart > 1)
+                                                {
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="@pageUrl(1, pageSize, search)">1</a>
+                                                    </li>
+                                                    if (pageStart > 2)
+                                                    {
+                                                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                                                    }
+                                                }
+
+                                                for (int p = pageStart; p <= pageEnd; p++)
+                                                {
+                                                    var isActive = p == currentPage ? "active" : "";
+                                                    <li class="page-item @isActive">
+                                                        <a class="page-link" href="@pageUrl(p, pageSize, search)">@p</a>
+                                                    </li>
+                                                }
+
+                                                if (pageEnd < totalPages)
+                                                {
+                                                    if (pageEnd < totalPages - 1)
+                                                    {
+                                                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                                                    }
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="@pageUrl(totalPages, pageSize, search)">@totalPages</a>
+                                                    </li>
+                                                }
+                                            }
+
+                                            @{ var nextDisabled = currentPage >= totalPages ? "disabled" : ""; }
+                                            <li class="page-item @nextDisabled">
+                                                <a class="page-link" href="@pageUrl(currentPage + 1, pageSize, search)" aria-label="Next">
+                                                    <span aria-hidden="true">»</span>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </nav>
+                                }
+
+                                <div style="display:flex; align-items:center; gap:6px;">
+                                    <small style="color:#6c757d;">Per page:</small>
+                                    <select style="width:80px; font-size:13px; padding:2px 6px; border:1px solid #ced4da; border-radius:4px;"
+                                            onchange="changePageSize(this.value)">
+                                        @foreach (var ps in new[] { 25, 50, 100, 200 })
+                                        {
+                                            if (pageSize == ps)
+                                            {
+                                                <option value="@ps" selected>@ps</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@ps">@ps</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                            </div>
+
                         </div>
+                        <!-- end dataloading -->
 
                     </div>
                     <!-- end content-->
@@ -186,8 +307,9 @@
     </div>
 
 </div>
+
+<!-- Share URL modal -->
 <div id="PublicUrlShareModel" class="modal modal-bg">
-    <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="filheader">
@@ -202,116 +324,73 @@
             <div class="modal-body">
                 <div class="col-md-12">
                     <div class="video-url">
-                        <label class="label-field desp-label"> Video Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                        <label class="label-field desp-label"> Video Url:  <b id="txtvideoUrls"> </b></label>
+                        <button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
                             <p class="special-text">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
-                                <span id="special_text" class="special-text__tooltip">
-                                    Copy Link
-                                </span>
+                                <span id="special_text" class="special-text__tooltip">Copy Link</span>
                             </p>
                         </button>
                     </div>
                 </div>
-                <div class="col-md-12 ">
+                <div class="col-md-12">
                     <div class="text-right">
-                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button"
+                               onclick="closePublicUrlShareModel()" id="hangUpButton"
+                               class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
         $(document).ready(function () {
-            my_code();
-        });
-        function my_code() {
             var msg = '@ViewBag.Message';
             if (msg.includes("Success")) {
                 swal.fire("Successful", '@ViewBag.Message', "success");
-            }
-            else {
+            } else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
             }
-
-        }
-
-        //window.onload = my_code();
+        });
     </script>
 }
 
-
-
-
-
 <script>
-    function searchResult() {
-        $('#clientduser').DataTable();
-    }
+    // ── Search box behaviour ──────────────────────────────────────────────────
+    (function () {
+        var inp  = document.getElementById('cu_search_input');
+        var wrap = document.getElementById('cu_search_wrap');
+        if (!inp || !wrap) return;
 
-    function RefreshSearch() {
-        $('#clientduser').DataTable().destroy();
+        inp.addEventListener('input', function () {
+            wrap.classList.toggle('has-value', this.value.length > 0);
+        });
 
-        setTimeout(function () {
-            applyDataTable();
-        }, 2000);
-    }
-
-    $(document).ready(function () {
-
-        applyDataTable();
-
-    });
-
-
-
-    function applyDataTable() {
-        $('#clientduser').DataTable({
-            "pagingType": "full_numbers",
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-
-            order: [],
-            responsive: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search records",
-            },
-            "fnInitComplete": function () {
-                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()' ><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
-                $(".dataTables_filter").keyup(function (e) {
-                    if ($(this).val() != "") {
-                        $("#x").show();
-
-                    }
-                    else { $("#x").show(); }
-                });
+        // Submit on Enter
+        inp.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('cu_search_form').submit();
             }
-
         });
+    })();
 
+    function clearClientUserSearch() {
+        window.location = '@pageUrl(1, pageSize, null)';
     }
 
+    // ── Per-page change ───────────────────────────────────────────────────────
+    function changePageSize(ps) {
+        var base = '@pageUrl(1, 1, search)';
+        window.location = base.replace('pageSize=1', 'pageSize=' + ps);
+    }
 
-
-
-
-    $(document).ready(function () {
-        $("#x").click(function (e) {
-            $(".dataTables_filter input").val('');
-            $(this).hide();
-        });
-
-    });
-
+    // ── Delete ────────────────────────────────────────────────────────────────
     function DeleteEntityfromEnvironment(clientUserId, EmailId) {
-
-
-
         swal.fire({
             title: 'Are you sure you want to delete client user ' + EmailId + '?',
             text: "It will be permanently deleted !",
@@ -322,50 +401,32 @@
             confirmButtonText: 'Yes, delete it!',
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
-                    //var IdIRF = dataID;
                     $.ajax({
                         url: '/User/DeleteClientUser',
                         data: { 'id': clientUserId },
                         type: 'get',
-                        success: function (result) {
-                            resolve(result)
-
-                        },
-                        error: function () {
-                            //reject("error message")
-                            swal.fire("Error deleting!", "Please try again", "error");
-                        }
-                    })
-                })
+                        success: function (result) { resolve(result); },
+                        error: function () { swal.fire("Error deleting!", "Please try again", "error"); }
+                    });
+                });
             },
             allowOutsideClick: false
         }).then(function (result) {
             if (result.dismiss !== 'cancel') {
                 swal.fire({
-                    title: 'Deleted!',
-                    type: 'success',
+                    title: 'Deleted!', type: 'success',
                     html: '<p>Your record has been deleted.</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-                    window.location = "/User/ClientUsers";
-                })
+                    showCancelButton: false, confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!', allowOutsideClick: false
+                }).then(function () { window.location = "/User/ClientUsers"; });
+            } else {
+                swal.fire('Cancelled', 'Not deleted!', 'error');
             }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Cancelled',
-                    'Not deleted!',
-                    'error'
-                )
-            }
-        })
+        });
     }
 
+    // ── Reset Navigation ──────────────────────────────────────────────────────
     function ResetNavigation(userId, emailId) {
-
-
         swal.fire({
             title: 'Are you sure you want to reset navigation history for client user ' + emailId + '?',
             text: "Navigation history will be reset!",
@@ -381,45 +442,29 @@
                         data: { 'userId': userId },
                         type: 'get',
                         success: function (result) {
-                            if (result == true) {
-                                resolve(result);
-                            }
-                            else {
-                                swal.fire("Failed performing reset!", "Please try again", "error");
-
-                            }
+                            if (result == true) { resolve(result); }
+                            else { swal.fire("Failed performing reset!", "Please try again", "error"); }
                         },
-                        error: function () {
-                            swal.fire("Error performing reset!", "Please try again", "error");
-                        }
-                    })
-                })
+                        error: function () { swal.fire("Error performing reset!", "Please try again", "error"); }
+                    });
+                });
             },
             allowOutsideClick: false
         }).then(function (result) {
             if (result.dismiss !== 'cancel') {
                 swal.fire({
-                    title: 'Successful!',
-                    type: 'success',
+                    title: 'Successful!', type: 'success',
                     html: '<p>Navigation history was reset.</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-                    window.location = "/User/ClientUsers";
-                })
+                    showCancelButton: false, confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!', allowOutsideClick: false
+                }).then(function () { window.location = "/User/ClientUsers"; });
+            } else {
+                swal.fire('Cancelled', 'Action cancelled!', 'error');
             }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Cancelled',
-                    'Action cancelled!',
-                    'error'
-                )
-            }
-        })
+        });
     }
 
+    // ── Send Public URL ───────────────────────────────────────────────────────
     function SendPublicURL(EmailId) {
         swal.fire({
             title: 'Are you sure you want to send Public Url for client user ' + EmailId + '?',
@@ -436,105 +481,74 @@
                         type: 'POST',
                         success: function (result) {
                             if (result == "Success") {
-                                swal.fire({
-                                    title: 'Sent!',
-                                    type: 'success',
-                                    html: '<p>Public URL send successfully.</p>',
-                                    showCancelButton: false,
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'Close!',
-                                    allowOutsideClick: false
-                                });
+                                swal.fire({ title: 'Sent!', type: 'success', html: '<p>Public URL send successfully.</p>', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Close!', allowOutsideClick: false });
                             } else {
-                                swal.fire({
-                                    title: 'Fail to sent!',
-                                    type: 'error',
-                                    html: '<p>Fail to send the public URL, Please try again.</p>',
-                                    showCancelButton: false,
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'Close!',
-                                    allowOutsideClick: false
-                                });
+                                swal.fire({ title: 'Fail to sent!', type: 'error', html: '<p>Fail to send the public URL, Please try again.</p>', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Close!', allowOutsideClick: false });
                             }
                         },
-                        error: function () {
-                            swal.fire("Error Sending!", "Please try again", "error");
-                        }
-                    })
-                })
+                        error: function () { swal.fire("Error Sending!", "Please try again", "error"); }
+                    });
+                });
             },
             allowOutsideClick: false
-        })
+        });
     }
 </script>
+
 <script type="text/javascript">
-    //// script for loader starts here
     $(".dataloading").hide();
-    $("#clientduser").hide();
     var loader;
     function ShowProgress() {
         $(".dataloading").hide();
-        $("#clientduser").hide();
         loader = document.getElementsByClassName("loader")[0];
         loader.style.display = "block";
-        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-        loader.style.top = top + "px";
+        var top  = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth  / 2 - loader.offsetWidth  / 2, 0);
+        loader.style.top  = top  + "px";
         loader.style.left = left + "px";
-    };
+    }
     ShowProgress();
 
     window.onload = function () {
         setTimeout(function () {
             loader.style.display = "none";
             $(".dataloading").show();
-            $("#clientduser").show();
-        }, 2000);
+        }, 1500);
     };
-    //// script for loader ends here
 </script>
 
-
 <script>
-
     function showhidepass(id) {
         var value = document.getElementById("password-field_" + id);
         if (value.getAttribute("type") == "text") {
-
             value.setAttribute("type", "password");
-            $("#secret_" + id).addClass('show');
-            $("#secret_" + id).removeClass('hide');
+            $("#secret_" + id).addClass('show').removeClass('hide');
             $("#password-field_" + id).addClass('passshow');
-
             $("#toggle-password_" + id).removeClass("fa-eye-slash");
-        }
-        else {
-
+        } else {
             value.setAttribute("type", "text");
             $("#password-field_" + id).removeClass('passshow');
             $("#toggle-password_" + id).addClass("fa-eye-slash");
-            $("#secret_" + id).addClass('hide');
-            $("#secret_" + id).removeClass('show');
-
+            $("#secret_" + id).addClass('hide').removeClass('show');
         }
-
     }
+
     function CopyPublicUrl(EmailId) {
         $.ajax({
             url: '/Client/CopyPublicURLClientUser',
             data: { 'Emailid': EmailId },
             type: 'POST',
             success: function (result) {
-                var modal = document.getElementById("PublicUrlShareModel");
-                modal.style.display = "block";
+                document.getElementById("PublicUrlShareModel").style.display = "block";
                 $("#txtvideoUrls").text(result);
             }
         });
     }
+
     function closePublicUrlShareModel() {
-        var modal = document.getElementById("PublicUrlShareModel");
-        modal.style.display = "none";
+        document.getElementById("PublicUrlShareModel").style.display = "none";
     }
+
     function copyToClipboard(element) {
         var temp = $("<input>");
         $("body").append(temp);
@@ -543,16 +557,10 @@
         temp.remove();
         $('#special_text').text('Copied');
     }
-
 </script>
-
 
 <script>
     $('#check').on('click', function () {
-        if (document.getElementById('check').checked) {
-            $('#test-input').get(0).type = 'text';
-        } else {
-            $('#test-input').get(0).type = 'password';
-        }
+        $('#test-input').get(0).type = document.getElementById('check').checked ? 'text' : 'password';
     });
 </script>

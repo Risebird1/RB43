@@ -7575,7 +7575,7 @@ input[type=search]:focus {
 
 .irrelevant {
     background: #ffa5005e;
-    color: #d39e3a;
+    color: #5b574d;
 }
 
 .noshowcandidate {
@@ -9245,9 +9245,10 @@ option {
 }
 
 .upload-resume-btn {
-    background: #42a5f5;
+    background: #308dd89e;
     color: #fff !important;
-    font-size: 13px;
+    font-size: 11.5px;
+    padding: 4px;
     padding: 5px;
     border-radius: 5px;
     cursor: pointer;
@@ -9881,8 +9882,8 @@ option {
     background-color: transparent;
     border: 1px solid red;
     border-radius: 10px;
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
     color: red;
     background-color: white;
     font-weight: 700;
@@ -9893,31 +9894,31 @@ option {
 .infoButton-btn-text {
     display: block;
     text-align: center;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
+    width: 9px;
+    height: 9px;
+    line-height: 10px;
     transform: rotate(45deg);
+    padding-left: 7px;
 }
 
 .infoButton-container {
     position: absolute;
-    bottom: calc(-100% + 60px);
+    bottom: calc(-100% + 50px);
     left: 0;
     margin-right: 0px;
     /*transform: scale(0);*/
     opacity: 0;
     transition: transform 0ms linear 200ms;
-    background: #fff;
 }
 
 .infoButton-container-message {
     box-sizing: border-box;
     width: 375px;
-    padding: 6px 7px;
+    padding: 2px 7px;
     font-size: 11px;
     box-shadow: 0px 5px 5px #0000000f;
     border-radius: 4px;
-    line-height: 1.3;
+    line-height: 15px;
     text-align: left;
     transform: translateY(10px);
     opacity: 1;
