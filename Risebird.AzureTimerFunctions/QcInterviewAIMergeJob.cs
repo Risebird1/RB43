@@ -84,7 +84,7 @@ namespace Risebird.AzureTimerFunctions
 
                         await _meetingService.SaveQcInterviewAIMergedDetails(
                             row.id,
-                            mergedJson,
+                            rawText,
                             totalPenalty: combined.total_penalty,
                             interviewerSuspicious: combined.interviewer_suspicious,
                             redoInterview: combined.RedoInterview);
