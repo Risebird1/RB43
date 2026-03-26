@@ -62,6 +62,18 @@ namespace Risebird.Entities.ViewModel
         public string UnethicalPractices { get; set; }
         [Display(Name = "Poor Communication Skills")]
         public string PoorCommunicationSkills { get; set; }
+
+        [Display(Name = "Attendance / Join Compliance")]
+        public string AttendanceJoinCompliance { get; set; }
+
+        [Display(Name = "AI Transcript Score")]
+        public string AITranscriptScore { get; set; }
+
+        [Display(Name = "AI Report Score")]
+        public string AIReportScore { get; set; }
+
+        [Display(Name = "AI Contradiction Score")]
+        public string AIContradictionScore { get; set; }
         public string ResumeLink { get; set; }
         public int RedMarker { get; set; }
         public string interviewer { get; set; }
