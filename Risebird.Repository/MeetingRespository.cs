@@ -7048,6 +7048,8 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                     parameters.Add("@InterviewerVideo", model.InterviewerVideo);
                     parameters.Add("@CorrectInterview", model.CorrectInterview);
                     parameters.Add("@FeedBackComment", model.FeedBackComment);
+                    parameters.Add("@AttendanceJoinCompliance", model.AttendanceJoinCompliance);
+                    parameters.Add("@AIContradictionScore", model.AIContradictionScore);
 
                     var result = await SqlMapper.QueryAsync(con, "usp_AddorUpdatePaymentSLADetails", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);

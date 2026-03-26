@@ -30,6 +30,8 @@ CREATE TABLE [dbo].[PaymentSLADetails](
     [RecommendationComments] [varchar](500) NULL,
     [InterviewerVideo] [varchar](250) NULL,
     [CorrectInterview] [varchar](20) NULL,
+    [AttendanceJoinCompliance] [varchar](250) NULL,
+    [AIContradictionScore] [varchar](250) NULL,
  CONSTRAINT [PK_PaymentSLADetails] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -109,6 +111,24 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE PaymentSLADetails
     Add CorrectInterview varchar(20)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AttendanceJoinCompliance')
+      AND Object_ID = Object_ID(N'PaymentSLADetails'))
+BEGIN
+    ALTER TABLE PaymentSLADetails
+    Add AttendanceJoinCompliance varchar(250)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AIContradictionScore')
+      AND Object_ID = Object_ID(N'PaymentSLADetails'))
+BEGIN
+    ALTER TABLE PaymentSLADetails
+    Add AIContradictionScore varchar(250)
 END
 END
 GO

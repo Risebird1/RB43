@@ -8540,6 +8540,14 @@ namespace Risebird.Web.Controllers
             {
                 model.InterviewerVideo = string.Empty;
             }
+            if (string.IsNullOrEmpty(model.AttendanceJoinCompliance))
+            {
+                model.AttendanceJoinCompliance = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.AIContradictionScore))
+            {
+                model.AIContradictionScore = string.Empty;
+            }
         }
         [HttpPost]
         public async Task<JsonResult> PaymentSlaDetailsNotApproved(int interviewid)

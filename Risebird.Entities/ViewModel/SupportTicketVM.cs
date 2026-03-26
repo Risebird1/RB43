@@ -101,11 +101,14 @@ namespace Risebird.Entities.ViewModel
     /// </summary>
     public class IrfMatchVM
     {
-        public int    Id              { get; set; }
-        public string IRFStringId     { get; set; }
-        public string JDTiltle        { get; set; }
-        public string SkillCluster    { get; set; }
-        public int    RisebirdHrId    { get; set; }
-        public string RisebirdHrEmail { get; set; }
+        public int       Id              { get; set; }
+        public string    IRFStringId     { get; set; }
+        public string    JDTiltle        { get; set; }
+        public string    SkillCluster    { get; set; }
+        public int       RisebirdHrId    { get; set; }
+        public string    RisebirdHrEmail { get; set; }
+        public DateTime? StartDate       { get; set; }
+        public DateTime? EndDate         { get; set; }
+        public DateTime? CreatedOn       { get; set; }
     }
 }

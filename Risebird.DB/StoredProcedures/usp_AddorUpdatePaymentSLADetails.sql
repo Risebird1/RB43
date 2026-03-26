@@ -35,7 +35,9 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @RecommendationComments varchar(500),    
 @InterviewerVideo varchar(250) ,   
 @CorrectInterview varchar(15),  
-@FeedBackComment varchar(max)  
+@FeedBackComment varchar(max),
+@AttendanceJoinCompliance varchar(250),
+@AIContradictionScore varchar(250)
 AS      
 BEGIN      
 Declare @Userid int           
@@ -65,15 +67,15 @@ ScoreRubricIgnorance=@ScoreRubricIgnorance,PoorFeedbackComments=@PoorFeedbackCom
 LimitedHandoncoding=@LimitedHandoncoding,WrongStatusUpdates=@WrongStatusUpdates,WeakInfrastructure=@WeakInfrastructure,ProctoringIgnorance=@ProctoringIgnorance,      
 UnethicalPractices=@UnethicalPractices,PoorCommunicationSkills=@PoorCommunicationSkills,ModifiedBy=@Emailid,ModifiedOn=@CreatedOn,PaymentDeduction=@PaymentDeduction,isapproved=@isapproved,      
 PaymentComplianceCount=@PaymentComplianceCount,VideoEnable=@VideoEnable,isQcDone=@isQcDone,Recommendation=@Recommendation,IsTechQCDone= @techqc,RecommendationComments=@RecommendationComments,InterviewerVideo=@InterviewerVideo,  
-CorrectInterview=@CorrectInterview  
+CorrectInterview=@CorrectInterview,AttendanceJoinCompliance=@AttendanceJoinCompliance,AIContradictionScore=@AIContradictionScore  
 where Interviewid=@Interviewid      
 end      
 else      
 begin      
 Insert into PaymentSLADetails(Interviewid,Inaccuratedecisionmaking,TimeManagement,QuestionsRelevance,ScoreRubricIgnorance,PoorFeedbackComments,CandidateInteractionQuality,      
-LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable,isQcDone,Recommendation,IsTechQCDone,RecommendationComments,InterviewerVideo,CorrectInterview)       
+LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable,isQcDone,Recommendation,IsTechQCDone,RecommendationComments,InterviewerVideo,CorrectInterview,AttendanceJoinCompliance,AIContradictionScore)       
 values(@Interviewid,@Inaccuratedecisionmaking,@TimeManagement,@QuestionsRelevance,@ScoreRubricIgnorance,@PoorFeedbackComments,@CandidateInteractionQuality,      
-@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable,@isQcDone,@Recommendation,@techqc,@RecommendationComments,@InterviewerVideo,@CorrectInterview)       
+@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable,@isQcDone,@Recommendation,@techqc,@RecommendationComments,@InterviewerVideo,@CorrectInterview,@AttendanceJoinCompliance,@AIContradictionScore)       
 end      
 end    
 If(@isapproved=1)      
