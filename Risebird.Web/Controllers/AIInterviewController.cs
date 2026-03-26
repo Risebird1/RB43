@@ -983,13 +983,19 @@ namespace Risebird.Web.Controllers
                                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
                                     new Exception($"Starting OpenAI typing assessment analysis for session {model.SessionId}"));
 
+                                // Compute candidate's actual WPM from typed word count and time taken
+                                int typedWordCount = string.IsNullOrWhiteSpace(model.TypedText) ? 0 :
+                                    model.TypedText.Trim().Split(new char[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
+                                decimal totalMinutesTaken = model.TypingTimeTaken > 0 ? model.TypingTimeTaken / 60M : 2.00M;
+                                decimal actualWpm = totalMinutesTaken > 0 ? Math.Round((decimal)typedWordCount / totalMinutesTaken, 2) : 0M;
+
                                 // Prepare input data for OpenAI assistant (assistant is pre-configured with instructions)
                                 var inputs = new TypingInputs
                                 {
                                     reference_paragraph = model.TypingSampleText,
                                     user_typed_text = model.TypedText,
-                                    words_per_minute = 30.00M, // Passing criteria
-                                    total_minutes = 2.00M // 2 minute duration
+                                    words_per_minute = actualWpm, // Candidate's actual WPM (words per single minute)
+                                    total_minutes = totalMinutesTaken
                                 };
 
                                 // Serialize inputs to JSON
@@ -1036,8 +1042,11 @@ namespace Risebird.Web.Controllers
                                     {
                                         wordAccuracy = analysisResult.scores.word_level_accuracy_percent;
                                         charAccuracy = analysisResult.scores.character_level_accuracy_percent;
-                                        // Pass if word accuracy >= 97%
-                                        isPassed = wordAccuracy >= 97.00M;
+                                        // Pass only if word accuracy >= 97% AND WPM >= 30
+                                        decimal wpmForVerdict = analysisResult.meta?.words_per_minute > 0
+                                            ? analysisResult.meta.words_per_minute
+                                            : actualWpm;
+                                        isPassed = wordAccuracy >= 97.00M && wpmForVerdict >= 30.00M;
                                     }
 
                                     var typingAssessment = new TypingSpeedAssessment
@@ -1052,7 +1061,9 @@ namespace Risebird.Web.Controllers
                                         TotalCharacters = analysisResult?.meta?.user_total_words_typed ?? 0,
                                         CorrectCharacters = analysisResult?.counts?.correct_words ?? 0,
                                         AccuracyPercentage = wordAccuracy,
-                                        WordsPerMinute = 30.00M, // Based on requirement
+                                        WordsPerMinute = analysisResult?.meta?.words_per_minute > 0
+                                            ? analysisResult.meta.words_per_minute
+                                            : actualWpm,
                                         PassingWPM = 30.00M,
                                         PassingAccuracyPercentage = 97.00M,
                                         IsPassed = isPassed,
