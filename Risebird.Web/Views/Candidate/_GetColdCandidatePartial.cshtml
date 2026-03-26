@@ -117,7 +117,7 @@
                             width: auto;
                             height: auto;
                         }
-
+                        .pcs-info-badge .infoButton-btn-text {padding-left:0px;}
                         /* Tooltip below badge - high z-index so it stays visible above table/modal */
                         #mailsTable .pcs-info-badge .infoButton-container {
                             position: absolute;
@@ -180,35 +180,22 @@
                                             <table id="mailsTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
-                                                        <th>Action</th>
                                                         <th>Skill Channel</th>
-                                                        @* <th>Interview Date</th> *@
-                                                        <th>Candidate Email</th>
-                                                        <th>Candidate Name</th>
-                                                        <th>Mobile Number</th>
-                                                        @* <th>Client Name</th>
-                                                        <th>Channel Owner</th> *@
+                                                        <th style="text-align:left">Candidate Details</th>
                                                         <th>Current Status</th>
                                                         <th>Cold Candidate Marked By</th>
                                                         <th>Cold Candidate Marked Date</th>
-
-
+                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tfoot>
                                                     <tr>
-                                                        <th>Action</th>
                                                         <th>Skill Channel</th>
-                                                        @* <th>Interview Date</th> *@
-                                                        <th>Candidate Email</th>
-                                                        <th>Candidate Name</th>
-                                                        <th>Mobile Number</th>
-                                                        @*  <th>Client Name</th>
-                                                        <th>Channel Owner</th> *@
+                                                        <th style="text-align:left">Candidate Details</th>
                                                         <th>Current Status</th>
                                                         <th>Cold Candidate Marked By</th>
                                                         <th>Cold Candidate Marked Date</th>
-
+                                                        <th>Action</th>
                                                     </tr>
                                                 </tfoot>
                                                 <tbody>
@@ -227,46 +214,57 @@
 
                                                         var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
                                                         <tr data-changes="1" style="background:@colorcode;z-index:99">
-                                                            <td class="text-center action-cell act-btns" style="position:relative;display:table-cell!important">
-                                                                <button type="button" class="btn-act" title="Candidate Status List" onclick="GetCandidateStatusListByList('@item.irfIntId','@item.CandidateMasterId', '@item.IRFId', '@item.candidateEmail')">
-                                                                    <svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                                                                </button>
-                                                                <button type="button" class="btn-act btn-act-cold" title="Undo Mark Cold Candidate" onclick="UndoMarkedColdCandidate('@item.CandidateId','@item.IRFId', '@item.candidateEmail','@item.irfIntId','@item.scheduleUniqueid','@item.imid','@ViewBag.Email',1);">
-                                                                    <img class="icon-m icon-img" src="~/img/approve-blk.png" alt="Undo Cold"/>
-                                                                </button>
+                                                            <td>@item.IRFId</td>
+                                                            <td class="cadName text-left pl15" valign="top">
+                                                                <div style="position:relative;z-index:10;">
+                                                                    <div class="candidate-field">
+                                                                        @if (item.candidateName != null && item.candidateName != "")
+                                                                        {
+                                                                            @if (item.candidateName.Length > 15)
+                                                                            {
+                                                                                <p class="name-field" title="@item.candidateName">@item.candidateName.Substring(0, 15) ...</p>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <p class="name-field">@item.candidateName</p>
+                                                                            }
+                                                                        }
+                                                                        @if (item.HasEmailDroppedOrBounced == true)
+                                                                        {
+                                                                            <button class="infoButton pcs-info-badge" title="Bounce/Dropped">
+                                                                                <div class="infoButton-btn">
+                                                                                    <span class="infoButton-btn-text">!</span>
+                                                                                </div>
+                                                                                <div class="infoButton-container" style="background:none;">
+                                                                                    <div class="infoButton-container-message"><b style="color:#dc2626">Bounce/Dropped:</b> emails indicates a temporary delivery failure</div>
+                                                                                </div>
+                                                                            </button>
+                                                                        }
+                                                                    </div>
+                                                                    <div class="candidate-field">
+                                                                        @if (item.candidateEmail != null && item.candidateEmail != "")
+                                                                        {
+                                                                            @if (item.candidateEmail.Length > 30)
+                                                                            {
+                                                                                <p class="email-field" title="@item.candidateEmail">@item.candidateEmail.Substring(0, 30) ...</p>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <p class="email-field">@item.candidateEmail</p>
+                                                                            }
+                                                                        }
+                                                                    </div>
+                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                    {
+                                                                        <div class="candidate-field">
+                                                                            <span class="call" style="cursor:pointer;display:inline-flex;align-items:center;gap:5px;" title="Click to call candidate" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.63 12.1 19.79 19.79 0 0 1 1.56 3.49 2 2 0 0 1 3.53 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                                                                <p class="email-field" style="color:#059669!important;margin:0;">@item.MobileNumber</p>
+                                                                            </span>
+                                                                        </div>
+                                                                    }
+                                                                </div>
                                                             </td>
-                                                            <td style="position:relative;">
-                                                                @item.IRFId
-                                                                 @if (item.HasEmailDroppedOrBounced == true)
-                                                                                                    {
-                                                                                                    <button class="infoButton pcs-info-badge" title="Bounce/Dropped">
-                                                                                                        <div class="infoButton-btn">
-                                                                                                            <span class="infoButton-btn-text">!</span>
-                                                                                                        </div>
-                                                                                                        <div class="infoButton-container" style="background:none;">
-                                                                                                            <div class="infoButton-container-message"><b style="color:#dc2626">Bounce/Dropped:</b> emails indicates a temporary delivery failure</div>
-                                                                                                        </div>
-                                                                                                    </button>
-                                                                                                    }
-
-                                                            </td>
-                                                            @* <td>@item.interviewDate</td> *@
-                                                            <td>@item.candidateEmail</td>
-                                                            <td>@item.candidateName</td>
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
-                                                                <td style="text-align:left">
-                                                                    @* <span aria-label="Click here to call the candidate">
-                                                            <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
-                                                            </span>@item.MobileNumber *@
-
-                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span style=" cursor:pointer; " title="Click here to call the candidate."><img src="/img/calling.png" width="15" style="margin-right:15px;">@item.MobileNumber</span>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td style="text-align:left"></td>
-                                                            }
                                                             @* <td>@item.ClientName</td>
                                                         <td>@item.ChannelOwner</td> *@
                                                             <td class="text-center">
@@ -448,7 +446,14 @@
                                                             </td>
                                                             <td>@item.ColdMarkedBY</td>
                                                             <td>@item.ColdMarkedDate</td>
-
+                                                            <td class="text-center action-cell act-btns" style="display:table-cell!important;">
+                                                                <button type="button" class="btn-act" title="Candidate Status List" onclick="GetCandidateStatusListByList('@item.irfIntId','@item.CandidateMasterId', '@item.IRFId', '@item.candidateEmail')">
+                                                                    <svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                                                </button>
+                                                                <button type="button" class="btn-act" title="Undo Mark Cold Candidate" onclick="UndoMarkedColdCandidate('@item.CandidateId','@item.IRFId', '@item.candidateEmail','@item.irfIntId','@item.scheduleUniqueid','@item.imid','@ViewBag.Email',1);">
+                                                                    <svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2v6h6"/><path d="M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>
+                                                                </button>
+                                                            </td>
                                                         </tr>
                                                     }
                                                 </tbody>
