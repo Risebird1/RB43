@@ -1,0 +1,77 @@
+@model Risebird.Entities.ViewModel.QcInterviewMergedAIQCVM
+@{
+    ViewData["Title"] = "Merged AI QC Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-panel" id="main-panel">
+    <div class="panel-header panel-header-sm"></div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Merged AI QC Details - Interview #@Model.InterviewId</h4>
+                    </div>
+                    <div class="card-body">
+                        @if (ViewBag.Message != null)
+                        {
+                            <div class="alert alert-info">@ViewBag.Message</div>
+                        }
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label><b>Total Penalty</b></label>
+                                <div>@(Model.AIMergeTotalPenalty?.ToString() ?? "NA")</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label><b>Interviewer Suspicious</b></label>
+                                <div>@(string.IsNullOrWhiteSpace(Model.AIMergeInterviewerSuspicious) ? "NA" : Model.AIMergeInterviewerSuspicious)</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label><b>Redo Interview</b></label>
+                                <div>@(Model.AIMergeRedoInterview.HasValue ? (Model.AIMergeRedoInterview.Value ? "Yes" : "No") : "NA")</div>
+                            </div>
+                        </div>
+
+                        <h5>Merged Flags</h5>
+                        @if (Model.Merged?.flags != null && Model.Merged.flags.Count > 0)
+                        {
+                            <div style="overflow-x: auto;">
+                                <table class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Flag</th>
+                                            <th>Penalty</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var flag in Model.Merged.flags)
+                                        {
+                                            <tr>
+                                                <td>@flag.category</td>
+                                                <td>@flag.flag</td>
+                                                <td>@(flag.penalty?.ToString() ?? "NA")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">No merged flags available.</div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(Model.RawMergedJson))
+                        {
+                            <h5>Raw JSON</h5>
+                            <pre style="max-height: 320px; overflow: auto; white-space: pre-wrap;">@Model.RawMergedJson</pre>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
