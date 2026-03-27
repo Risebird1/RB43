@@ -7876,6 +7876,31 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             return false;
         }
 
+        public async Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId)
+        {
+            try
+            {
+                const string query = @"SELECT TOP 1 id, InterviewId, ReportAI, TranscritAi, PenalityApplied, QCDone, QCDoneOn,
+                    ReportAIDetails, TranscritAiDetails, MergedAIQCDetails, AIMergeTotalPenalty, AIMergeInterviewerSuspicious, AIMergeRedoInterview
+                    FROM dbo.QcInterviewAIevaluation WHERE InterviewId = @interviewId ORDER BY id DESC";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    return await SqlMapper.QueryFirstOrDefaultAsync<QcInterviewAIevaluation>(con, query, parameters, commandTimeout: 120);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId)
         {
             try

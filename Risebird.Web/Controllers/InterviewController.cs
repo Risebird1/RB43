@@ -9776,6 +9776,48 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> QCMergedAIDetails(int interviewId)
+        {
+            string emailId = string.Empty;
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+                emailId = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+                var evaluation = await _meetingService.GetQcInterviewAIevaluationByInterviewId(interviewId);
+                if (evaluation == null)
+                {
+                    ViewBag.Message = "QC AI evaluation was not found for this interview.";
+                    return View(new QcInterviewMergedAIQCVM { InterviewId = interviewId });
+                }
+
+                var vm = new QcInterviewMergedAIQCVM
+                {
+                    InterviewId = interviewId,
+                    RawMergedJson = evaluation.MergedAIQCDetails,
+                    Merged = QcInterviewAIMergeAssistantResponse.FromMergedDetailsJson(evaluation.MergedAIQCDetails),
+                    AIMergeTotalPenalty = evaluation.AIMergeTotalPenalty,
+                    AIMergeInterviewerSuspicious = evaluation.AIMergeInterviewerSuspicious,
+                    AIMergeRedoInterview = evaluation.AIMergeRedoInterview
+                };
+                if (vm.Merged == null && string.IsNullOrWhiteSpace(vm.RawMergedJson))
+                {
+                    ViewBag.Message = "Merged AI QC details are not available yet.";
+                }
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; userEmailId : {emailId}");
+                return null;
+            }
+        }
+
         public async Task<JsonResult> GetQuestionSkillById(string questionText, int irfId)//,int techSkillCommentId
         {
             if (HttpContext.Session.GetString("email") != null)
