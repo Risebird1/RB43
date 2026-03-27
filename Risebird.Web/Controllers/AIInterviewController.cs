@@ -1855,6 +1855,10 @@ namespace Risebird.Web.Controllers
                 reportModel.resumeLink = meetingDetails?.resumeLink;
                 reportModel.MatchScorePercentage = meetingDetails?.MatchScorePercentage ?? 0;
 
+                List<TypingSpeedAssessment> typingAssessmentsPdf;
+                try { typingAssessmentsPdf = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessmentsPdf = new List<TypingSpeedAssessment>(); }
+                reportModel.TypingSpeedAssessments = typingAssessmentsPdf;
+
                 ViewBag.IsAdaptive = meetingDetails?.AIInterviewType != (int)AIInterviewTypeEnum.Preset;
 
                 return View(reportModel);
