@@ -87,6 +87,14 @@ namespace Risebird.Entities.ViewModel
         public string JobTitle                      { get; set; }
 
         /// <summary>
+        /// Explicit Risebird Skill Channel ID (IRFId) extracted from the email body.
+        /// Exactly 10 alphanumeric characters when present. Allows the server to skip
+        /// the scoring algorithm and resolve the IRF directly.
+        /// </summary>
+        [JsonProperty("skill_channel_id")]
+        public string SkillChannelId                { get; set; }
+
+        /// <summary>
         /// Google Drive URLs of individual resume files uploaded during the loop.
         /// Relay passes these as a JSON array: ["url1","url2"].
         /// Populated only when webhook_intent = "New candidate submission".
