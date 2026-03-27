@@ -9,7 +9,7 @@ Your job is to:
   1. Read each inbound support email
   2. Determine whether the email is eligible for processing
   3. Classify the email into a primary intent
-  4. Extract structured operational fields (including job title)
+  4. Extract structured operational fields (including job title and skill channel ID)
   5. Process attachments
   6. Upload attachments to Google Drive
   7. Return the Drive folder link and individual resume file links
@@ -51,6 +51,7 @@ If the email matches any exclusion rule:
   - Do NOT treat it as a valid support workflow email
   - Set webhook_intent             = "Cold candidate"
   - Set job_title                  = null
+  - Set skill_channel_id           = null
   - Set primary_specialization     = null
   - Set mail_body_intent           = null
   - Set attachment_job_description = false  (unless a qualifying attachment actually exists)
@@ -104,7 +105,7 @@ Rules:
   - If the email is empty, unreadable, or spam-like -> webhook_intent = "Cold candidate"
 
 --------------------------------------------------------------------------------
-PART 2  JOB TITLE  (*** NEW FIELD ***)
+PART 2  JOB TITLE
 --------------------------------------------------------------------------------
 
 Extract "job_title" as the specific role / position title being requested or
@@ -126,11 +127,32 @@ Rules:
     the only identifier (e.g. "Lead Consultant" is fine; "Senior Angular Developer"
     -> "Angular Developer" is preferred)
   - If no role title is clearly identifiable, set to null
-  - This field is critical for the "New candidate submission" intent ? extract it
-    carefully for those emails
+  - This field is critical for "New candidate submission" and "New interview request"
+    intents ? extract it carefully for those emails
 
 --------------------------------------------------------------------------------
-PART 3  PRIMARY SPECIALIZATION
+PART 3  SKILL CHANNEL ID  (*** NEW FIELD ***)
+--------------------------------------------------------------------------------
+
+Extract "skill_channel_id" if the sender has explicitly mentioned a Risebird
+Skill Channel ID anywhere in the email subject or body.
+
+What a Skill Channel ID looks like:
+  - Exactly 10 characters long
+  - Contains only letters (A-Z, a-z) and digits (0-9) ? no spaces or symbols
+  - Examples: QUADRJAVA5, KPRISMRIC4, QUAJAVASER, DOTNETCORE
+
+Rules:
+  - Scan the subject line and body for any standalone 10-character alphanumeric token
+  - Only extract it if the context makes it clear it is a Skill Channel / IRF reference
+    (e.g. the sender writes "for channel QUADRJAVA5", "IRF: KPRISMRIC4",
+    "skill channel DOTNETCORE", or simply mentions it alongside a role or request)
+  - If found, return the ID exactly as written (preserve original casing)
+  - If no such code is clearly mentioned or identifiable, set to null
+  - Do NOT guess ? only extract when you are confident it is a Skill Channel ID
+
+--------------------------------------------------------------------------------
+PART 4  PRIMARY SPECIALIZATION
 --------------------------------------------------------------------------------
 
 Extract "primary_specialization" as a free-text skill / domain field.
@@ -148,7 +170,7 @@ Rules:
   - If none is mentioned, set to null
 
 --------------------------------------------------------------------------------
-PART 4  MAIL BODY INTENT
+PART 5  MAIL BODY INTENT
 --------------------------------------------------------------------------------
 
 Extract "mail_body_intent" as a concise free-text description of the email's
@@ -161,7 +183,7 @@ Rules:
   - If unclear, set to null
 
 --------------------------------------------------------------------------------
-PART 5  SUMMARIES
+PART 6  SUMMARIES
 --------------------------------------------------------------------------------
 
 1. summary_mail
@@ -185,7 +207,7 @@ PART 5  SUMMARIES
    If not present, set to null.
 
 --------------------------------------------------------------------------------
-PART 6  ATTACHMENT + GOOGLE DRIVE PROCESSING  (*** UPDATED ***)
+PART 7  ATTACHMENT + GOOGLE DRIVE PROCESSING  (*** UPDATED ***)
 --------------------------------------------------------------------------------
 
 For every eligible email:
@@ -213,11 +235,13 @@ Fields:
     Set this to the Google Drive folder link where the attachments were uploaded.
     If no attachments exist and no folder is created, set to null.
 
-  - resume_drive_urls  (*** NEW FIELD ***)
+  - resume_drive_urls  (*** UPDATED ***)
     An array of individual Google Drive file URLs for files that are resumes or
     CVs. Each element is the direct link to one uploaded resume file.
-    Set to [] (empty array) if no resumes are present or the intent is not
-    "New candidate submission".
+    Populate this array when webhook_intent is "New candidate submission" OR
+    "New interview request" AND resumes are present.
+    Set to [] (empty array) if no resumes are present or the intent is neither
+    of those two.
 
     Example:
     "resume_drive_urls": [
@@ -239,7 +263,7 @@ Attachment handling rules:
   - If attachments exist for an eligible email, drive_folder_link must not be null
 
 --------------------------------------------------------------------------------
-PART 7  CLASSIFICATION FLOW
+PART 8  CLASSIFICATION FLOW
 --------------------------------------------------------------------------------
 
   1.  Read the email
@@ -247,16 +271,17 @@ PART 7  CLASSIFICATION FLOW
   3.  If excluded -> assign webhook_intent = "Cold candidate" and stop
   4.  If eligible -> assign webhook_intent using the 20-category list (Part 1)
   5.  Extract job_title (Part 2)
-  6.  Extract primary_specialization (Part 3)
-  7.  Extract mail_body_intent (Part 4)
-  8.  Generate summaries (Part 5)
-  9.  Process and upload attachments (Part 6)
-  10. Collect individual resume Drive URLs into resume_drive_urls (Part 6)
-  11. Populate the final JSON (Part 8)
-  12. Send the webhook payload
+  6.  Extract skill_channel_id (Part 3)
+  7.  Extract primary_specialization (Part 4)
+  8.  Extract mail_body_intent (Part 5)
+  9.  Generate summaries (Part 6)
+  10. Process and upload attachments (Part 7)
+  11. Collect individual resume Drive URLs into resume_drive_urls (Part 7)
+  12. Populate the final JSON (Part 9)
+  13. Send the webhook payload
 
 --------------------------------------------------------------------------------
-PART 8  FINAL OUTPUT JSON  (*** UPDATED ***)
+PART 9  FINAL OUTPUT JSON  (*** UPDATED ***)
 --------------------------------------------------------------------------------
 
 {
@@ -266,6 +291,7 @@ PART 8  FINAL OUTPUT JSON  (*** UPDATED ***)
   "received_at":                "{{trigger.date}}",
   "webhook_intent":             "<one of the 20 categories above>",
   "job_title":                  "<string or null>",
+  "skill_channel_id":           "<string or null>",
   "primary_specialization":     "<string or null>",
   "mail_body_intent":           "<string or null>",
   "attachment_job_description": <true|false>,

@@ -218,11 +218,28 @@ namespace Risebird.Web.Controllers
         ///
         /// Tiebreaker: lowest IRF.id (oldest / most established channel).
         /// </summary>
-        private async Task<IrfMatchVM> MatchIRFAsync(string senderEmail, string jobTitle)
+        private async Task<IrfMatchVM> MatchIRFAsync(
+            string senderEmail,
+            string jobTitle,
+            string skillChannelId = null)
         {
             var irfs = await _repository.GetIRFsForSenderAsync(senderEmail);
             if (irfs == null || irfs.Count == 0) return null;
             if (irfs.Count == 1)                 return irfs[0];
+
+            // Shortcut: if the sender included an explicit Skill Channel ID in the
+            // email body, try to resolve it directly from the sender's eligible IRF
+            // list. This avoids running the scoring algorithm entirely.
+            // A Skill Channel ID is exactly 10 alphanumeric characters.
+            if (!string.IsNullOrWhiteSpace(skillChannelId)
+                && skillChannelId.Trim().Length == 10)
+            {
+                var direct = irfs.FirstOrDefault(irf =>
+                    string.Equals(irf.IRFStringId, skillChannelId.Trim(),
+                        StringComparison.OrdinalIgnoreCase));
+                if (direct != null) return direct;
+                // ID not in sender's eligible list — fall through to scoring
+            }
 
             if (string.IsNullOrWhiteSpace(jobTitle))
                 return BestByRecency(irfs);
@@ -340,10 +357,15 @@ namespace Risebird.Web.Controllers
 
                 var newId = await _repository.InsertTicketAsync(ticket);
 
-                // ── Resume ingestion (New candidate submission only) ───────────
+                // ── Resume ingestion ("New candidate submission" OR "New interview request") ──
                 var resumeIngestionResult = new System.Text.StringBuilder();
-                if (string.Equals(ticket.Intent, "New candidate submission",
-                        StringComparison.OrdinalIgnoreCase)
+                var isResumeIngestionIntent =
+                    string.Equals(ticket.Intent, "New candidate submission",
+                        StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(ticket.Intent, "New interview request",
+                        StringComparison.OrdinalIgnoreCase);
+
+                if (isResumeIngestionIntent
                     && ticket.AttachmentResumes
                     && payload.ResumeDriveUrls != null
                     && payload.ResumeDriveUrls.Count > 0)
@@ -354,12 +376,26 @@ namespace Risebird.Web.Controllers
                     try
                     {
                         irfMatch = await MatchIRFAsync(
-                            ticket.SenderEmail, ticket.JobTitle ?? ticket.Subject);
+                            ticket.SenderEmail,
+                            ticket.JobTitle ?? ticket.Subject,
+                            payload.SkillChannelId);
 
                         if (irfMatch != null)
                         {
-                            foreach (var url in payload.ResumeDriveUrls
-                                         .Where(u => !string.IsNullOrWhiteSpace(u)))
+                            // Relay sometimes sends all URLs joined by whitespace in a
+                            // single array element instead of one element per URL.
+                            // Flatten by splitting every element on whitespace so both
+                            // formats (proper array and space-joined string) are handled.
+                            var individualUrls = payload.ResumeDriveUrls
+                                .Where(u => !string.IsNullOrWhiteSpace(u))
+                                .SelectMany(u => u.Split(
+                                    new[] { ' ', '\n', '\r', '\t' },
+                                    StringSplitOptions.RemoveEmptyEntries))
+                                .Where(u => u.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                                .Distinct()
+                                .ToList();
+
+                            foreach (var url in individualUrls)
                             {
                                 var rid = await _repository.InsertCandidateResumeAsync(
                                     irfMatch.Id,
