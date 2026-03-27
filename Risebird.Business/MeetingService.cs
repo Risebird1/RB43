@@ -4574,6 +4574,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId)
+        {
+            try
+            {
+                return await _meetingRespository.GetQcInterviewAIevaluationByInterviewId(interviewId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null)
         {
             try
