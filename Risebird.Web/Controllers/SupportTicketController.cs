@@ -84,6 +84,38 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Returns tickets that were ever assigned to "System" — i.e., tickets
+        /// where resume ingestion succeeded and the system processed them automatically.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> SystemTickets(int page = 1, int pageSize = 25)
+        {
+            try
+            {
+                if (page     < 1)   page     = 1;
+                if (pageSize < 10)  pageSize = 10;
+                if (pageSize > 200) pageSize = 200;
+
+                var tickets = await _repository.GetSystemAssignedTicketsAsync(page, pageSize);
+
+                int totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
+                int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+                ViewBag.Page       = page;
+                ViewBag.PageSize   = pageSize;
+                ViewBag.TotalCount = totalCount;
+                ViewBag.TotalPages = totalPages;
+
+                return View(tickets);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return View(new List<SupportTicketVM>());
+            }
+        }
+
         // ── Status update ─────────────────────────────────────────────────────
 
         [HttpPost]
@@ -405,8 +437,12 @@ namespace Risebird.Web.Controllers
                     {
                         // Ingestion succeeded — system did the work, reassign away from HR
                         await _repository.UpdateTicketAssignmentAsync(newId, "System", "System");
+
+                        // Auto-close the ticket since resumes were successfully ingested
+                        await _repository.UpdateTicketStatusAsync(newId, "Closed", "System");
+
                         resumeIngestionResult.Append(
-                            $"Resumes ingested: {inserted}, IRF: {irfMatch.IRFStringId}");
+                            $"Resumes ingested: {inserted}, IRF: {irfMatch.IRFStringId}, ticket auto-closed");
                     }
                     else
                     {
