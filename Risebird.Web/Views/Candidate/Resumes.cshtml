@@ -228,6 +228,7 @@
                                                     <tr>
                                                         <th>Date Added On</th>
                                                         <th>Added By</th>
+                                                        <th>Ticket</th>
                                                         <th>File Name</th>
                                                         <th>Processed</th>
                                                         <th>Resume Parsed</th>
@@ -241,6 +242,20 @@
                                                         <tr id=@item.id>
                                                             <td>@item.AddedOn</td>
                                                             <td>@item.AddedByEmailId</td>
+                                                            <td>
+                                                                @if (item.SupportTicketId.HasValue && item.SupportTicketId.Value > 0)
+                                                                {
+                                                                    <a href="@Url.Action("Index", "SupportTicket", new { senderEmail = item.ClientHREmailId })"
+                                                                       class="badge bg-secondary text-decoration-none"
+                                                                       title="View ticket #@item.SupportTicketId">
+                                                                        #@item.SupportTicketId
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="text-muted">—</span>
+                                                                }
+                                                            </td>
                                                             <td>
                                                                 @{
                                                                     var fileName = string.Empty;
@@ -303,6 +318,7 @@
                                                     <tr>
                                                         <th>Date Added On</th>
                                                         <th>Added By</th>
+                                                        <th>Ticket</th>
                                                         <th>File Name</th>
                                                         <th>Processed</th>
                                                         <th>Resume Parsed</th>
@@ -316,6 +332,20 @@
                                                         <tr id=@item.id>
                                                             <td>@item.AddedOn</td>
                                                             <td>@item.AddedByEmailId</td>
+                                                            <td>
+                                                                @if (item.SupportTicketId.HasValue && item.SupportTicketId.Value > 0)
+                                                                {
+                                                                    <a href="@Url.Action("Index", "SupportTicket", new { senderEmail = item.ClientHREmailId })"
+                                                                       class="badge bg-secondary text-decoration-none"
+                                                                       title="View ticket #@item.SupportTicketId">
+                                                                        #@item.SupportTicketId
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="text-muted">—</span>
+                                                                }
+                                                            </td>
                                                             <td>
                                                                 @{
                                                                     var fileName = string.Empty;
@@ -378,6 +408,7 @@
                                                     <tr>
                                                         <th>Date Added On</th>
                                                         <th>Added By</th>
+                                                        <th>Ticket</th>
                                                         <th>File Name</th>
                                                         <th>Processed</th>
                                                         <th>Resume Parsed</th>
@@ -391,6 +422,20 @@
                                                         <tr id=@item.id>
                                                             <td>@item.AddedOn</td>
                                                             <td>@item.AddedByEmailId</td>
+                                                            <td>
+                                                                @if (item.SupportTicketId.HasValue && item.SupportTicketId.Value > 0)
+                                                                {
+                                                                    <a href="@Url.Action("Index", "SupportTicket", new { senderEmail = item.ClientHREmailId })"
+                                                                       class="badge bg-secondary text-decoration-none"
+                                                                       title="View ticket #@item.SupportTicketId">
+                                                                        #@item.SupportTicketId
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="text-muted">—</span>
+                                                                }
+                                                            </td>
                                                             <td>
                                                                 @{
                                                                     var fileName = string.Empty;
@@ -453,6 +498,7 @@
                                                     <tr>
                                                         <th>Date Added On</th>
                                                         <th>Added By</th>
+                                                        <th>Ticket</th>
                                                         <th>File Name</th>
                                                         <th>Processed</th>
                                                         <th>Resume Parsed</th>
@@ -466,6 +512,20 @@
                                                         <tr id=@item.id>
                                                             <td>@item.AddedOn</td>
                                                             <td>@item.AddedByEmailId</td>
+                                                            <td>
+                                                                @if (item.SupportTicketId.HasValue && item.SupportTicketId.Value > 0)
+                                                                {
+                                                                    <a href="@Url.Action("Index", "SupportTicket", new { senderEmail = item.ClientHREmailId })"
+                                                                       class="badge bg-secondary text-decoration-none"
+                                                                       title="View ticket #@item.SupportTicketId">
+                                                                        #@item.SupportTicketId
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="text-muted">—</span>
+                                                                }
+                                                            </td>
                                                             <td>
                                                                 @{
                                                                     var fileName = string.Empty;

@@ -1,0 +1,200 @@
+@model List<Risebird.Entities.ViewModel.SupportTicketVM>
+@{
+    ViewData["Title"] = "System Processed Tickets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int page       = ViewBag.Page       != null ? (int)ViewBag.Page       : 1;
+    int pageSize   = ViewBag.PageSize   != null ? (int)ViewBag.PageSize   : 25;
+    int totalCount = ViewBag.TotalCount != null ? (int)ViewBag.TotalCount : 0;
+    int totalPages = ViewBag.TotalPages != null ? (int)ViewBag.TotalPages : 1;
+
+    int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
+    int last  = Math.Min(page * pageSize, totalCount);
+
+    string pageUrl(int p) => Url.Action("SystemTickets", "SupportTicket") + $"?page={p}&pageSize={pageSize}";
+}
+
+<style>
+    .st-stat .stat-value { font-size: 1.5rem; font-weight: 700; }
+    .st-stat .stat-label { font-size: 13px; font-weight: 500; color: #495057; }
+    #ticketsTable { table-layout: auto; }
+    #ticketsTable th { font-size: 13px; }
+    .table > thead > tr > th { font-size: 13px; }
+    .col-num      { width: 36px; }
+    .col-date     { width: 115px; white-space: nowrap; }
+    .col-email    { max-width: 180px; }
+    .col-client   { white-space: nowrap; }
+    .col-subject  { min-width: 130px; max-width: 220px; white-space: normal; word-break: break-word; line-height: 1.4; }
+    .col-intent   { min-width: 130px; }
+    .col-irf      { min-width: 100px; }
+    .col-status   { width: 90px; white-space: nowrap; }
+    .col-actions  { width: 120px; text-align: center; }
+    .status-open       { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+    .status-closed     { background: #d1e7dd; color: #0a3622; border: 1px solid #198754; }
+    .status-inprogress { background: #cfe2ff; color: #0a3278; border: 1px solid #0d6efd; }
+    .badge.st-badge    { font-size: 11px !important; padding: 0.35em 0.65em; font-weight: 500; }
+    .intent-badge      { display: inline-block; font-size: 11px; padding: 0.3em 0.65em;
+                         border-radius: 4px; font-weight: 500; white-space: nowrap; }
+    .irf-badge         { display: inline-block; font-size: 11px; padding: 0.25em 0.55em;
+                         border-radius: 4px; font-weight: 600; background: #e9ecef; color: #212529;
+                         font-family: monospace; }
+    .btn-resumes       { font-size: 11px; padding: 3px 8px; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="content">
+        <div class="container-fluid px-3">
+
+            <!-- Header with back link -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="mb-0"><i class="fas fa-robot me-2 text-primary"></i>System Processed Tickets</h5>
+                <a asp-action="Index" asp-controller="SupportTicket" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i>All Tickets
+                </a>
+            </div>
+
+            <!-- Stats row -->
+            <div class="row g-2 mb-3">
+                <div class="col-auto">
+                    <div class="card border-0 shadow-sm st-stat p-3 text-center" style="min-width:110px;">
+                        <div class="stat-value text-primary">@totalCount</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    @if (!Model.Any())
+                    {
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-robot fa-3x mb-3 d-block"></i>
+                            <span>No system-processed tickets found.</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table id="ticketsTable" class="table table-hover table-sm mb-0 align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="col-num">#</th>
+                                        <th class="col-date">Received At</th>
+                                        <th class="col-email">Sender Email</th>
+                                        <th class="col-client">Client</th>
+                                        <th class="col-subject">Subject</th>
+                                        <th class="col-intent">Intent</th>
+                                        <th class="col-irf">Ingested IRF</th>
+                                        <th class="col-status">Status</th>
+                                        <th class="col-actions">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var t in Model)
+                                    {
+                                        string tStatus   = t.Status?.ToLower();
+                                        string statusCss = tStatus == "open"       ? "status-open"
+                                                         : tStatus == "inprogress" ? "status-inprogress"
+                                                         : tStatus == "closed"     ? "status-closed"
+                                                         : "bg-light border";
+                                        <tr>
+                                            <td class="col-num text-muted" style="font-size:12px">@t.Id</td>
+
+                                            <td class="col-date" style="font-size:12px">
+                                                @(t.ReceivedAt.HasValue ? t.ReceivedAt.Value.ToString("dd MMM yy, HH:mm") : "—")
+                                            </td>
+
+                                            <td class="col-email">
+                                                <a href="mailto:@t.SenderEmail" class="text-decoration-none"
+                                                   style="font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:175px"
+                                                   title="@t.SenderEmail">@t.SenderEmail</a>
+                                            </td>
+
+                                            <td class="col-client">
+                                                @if (!string.IsNullOrEmpty(t.ClientName))
+                                                { <span class="fw-semibold">@t.ClientName</span> }
+                                                else
+                                                { <span class="text-muted fst-italic">Unknown</span> }
+                                            </td>
+
+                                            <td class="col-subject" style="font-size:12px">@t.Subject</td>
+
+                                            <td class="col-intent">
+                                                @if (!string.IsNullOrEmpty(t.Intent))
+                                                { <span class="intent-badge bg-light border">@t.Intent</span> }
+                                                else
+                                                { <span class="text-muted">—</span> }
+                                            </td>
+
+                                            <td class="col-irf">
+                                                @if (t.IngestedIRFId.HasValue && !string.IsNullOrEmpty(t.IngestedIRFName))
+                                                {
+                                                    <span class="irf-badge">@t.IngestedIRFName</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">—</span>
+                                                }
+                                            </td>
+
+                                            <td class="col-status">
+                                                <span class="badge st-badge @statusCss">@t.Status</span>
+                                            </td>
+
+                                            <td class="col-actions text-center">
+                                                @if (t.IngestedIRFId.HasValue && !string.IsNullOrEmpty(t.IngestedIRFName))
+                                                {
+                                                    <a href="@Url.Action("Resumes", "Candidate", new { irfId = t.IngestedIRFId.Value, irfName = t.IngestedIRFName })"
+                                                       class="btn btn-outline-primary btn-sm btn-resumes"
+                                                       title="View ingested resumes">
+                                                        <i class="fas fa-file-alt me-1"></i>Resumes
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted" style="font-size:11px">—</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            @if (totalPages > 1)
+            {
+                <nav class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="text-muted" style="font-size:13px">
+                        Showing @first – @last of @totalCount
+                    </span>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item @(page == 1 ? "disabled" : "")">
+                            <a class="page-link" href="@pageUrl(1)">First</a>
+                        </li>
+                        <li class="page-item @(page == 1 ? "disabled" : "")">
+                            <a class="page-link" href="@pageUrl(page - 1)">Prev</a>
+                        </li>
+                        @for (int p = Math.Max(1, page - 2); p <= Math.Min(totalPages, page + 2); p++)
+                        {
+                            <li class="page-item @(p == page ? "active" : "")">
+                                <a class="page-link" href="@pageUrl(p)">@p</a>
+                            </li>
+                        }
+                        <li class="page-item @(page == totalPages ? "disabled" : "")">
+                            <a class="page-link" href="@pageUrl(page + 1)">Next</a>
+                        </li>
+                        <li class="page-item @(page == totalPages ? "disabled" : "")">
+                            <a class="page-link" href="@pageUrl(totalPages)">Last</a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+
+        </div>
+    </div>
+</div>
