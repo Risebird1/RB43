@@ -149,11 +149,33 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<IrfMatchVM> GetIRFByStringIdAsync(string irfStringId)
+        {
+            if (string.IsNullOrWhiteSpace(irfStringId))
+                return null;
+
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var row = await conn.QuerySingleOrDefaultAsync<IrfMatchVM>(
+                    "usp_GetIRFByStringId",
+                    new { IRFStringId = irfStringId.Trim() },
+                    commandType: CommandType.StoredProcedure);
+                return row;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<int> InsertCandidateResumeAsync(
             int    irfId,
             string resumeLink,
             int    addedBy,
-            string clientHrEmailId)
+            string clientHrEmailId,
+            int?   supportTicketId = null)
         {
             try
             {
@@ -165,7 +187,8 @@ namespace Risebird.Repository
                         IRFId           = irfId,
                         ResumeLink      = resumeLink,
                         AddedBy         = addedBy,
-                        ClientHREmailId = clientHrEmailId
+                        ClientHREmailId = clientHrEmailId,
+                        SupportTicketId = supportTicketId
                     },
                     commandType: CommandType.StoredProcedure);
                 return newId;
