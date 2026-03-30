@@ -205,41 +205,30 @@ namespace Risebird.Web.Controllers
         // ── IRF matching (server-side, no extra Relay step) ───────────────────
 
         /// <summary>
-        /// Matches the extracted job title to the best candidate IRF for the sender.
-        ///
-        /// Matching priority:
-        ///   1. Score against IRF.JDTitleTwo (the role-specific JD title — most precise)
-        ///   2. If all JDTitleTwo scores are 0, fall back to IRF.SkillCluster
-        ///
-        /// Scoring tiers (per field):
-        ///   100 — direct string containment (one contains the other)
-        ///   1–90 — word-overlap ratio
-        ///   0    — no shared words
-        ///
-        /// Tiebreaker: lowest IRF.id (oldest / most established channel).
+        /// Resolves the IRF for resume ingestion.
+        ///   1. If skill_channel_id is a 10-char code, usp_GetIRFByStringId confirms it
+        ///      against IRF.IRFId; on match, scoring is skipped.
+        ///   2. Otherwise: sender's eligible IRFs via TransClientUser, then score
+        ///      JDTiltle then SkillCluster; tiebreak by EndDate, StartDate, CreatedOn.
         /// </summary>
         private async Task<IrfMatchVM> MatchIRFAsync(
             string senderEmail,
             string jobTitle,
             string skillChannelId = null)
         {
-            var irfs = await _repository.GetIRFsForSenderAsync(senderEmail);
-            if (irfs == null || irfs.Count == 0) return null;
-            if (irfs.Count == 1)                 return irfs[0];
-
-            // Shortcut: if the sender included an explicit Skill Channel ID in the
-            // email body, try to resolve it directly from the sender's eligible IRF
-            // list. This avoids running the scoring algorithm entirely.
-            // A Skill Channel ID is exactly 10 alphanumeric characters.
+            // Explicit Skill Channel ID from Relay: confirm it exists in IRF (string
+            // IRFId column). No sender / TransClientUser filter — if valid, skip scoring.
             if (!string.IsNullOrWhiteSpace(skillChannelId)
                 && skillChannelId.Trim().Length == 10)
             {
-                var direct = irfs.FirstOrDefault(irf =>
-                    string.Equals(irf.IRFStringId, skillChannelId.Trim(),
-                        StringComparison.OrdinalIgnoreCase));
-                if (direct != null) return direct;
-                // ID not in sender's eligible list — fall through to scoring
+                var byDb = await _repository.GetIRFByStringIdAsync(skillChannelId.Trim());
+                if (byDb != null)
+                    return byDb;
             }
+
+            var irfs = await _repository.GetIRFsForSenderAsync(senderEmail);
+            if (irfs == null || irfs.Count == 0) return null;
+            if (irfs.Count == 1)                 return irfs[0];
 
             if (string.IsNullOrWhiteSpace(jobTitle))
                 return BestByRecency(irfs);
@@ -401,7 +390,8 @@ namespace Risebird.Web.Controllers
                                     irfMatch.Id,
                                     url.Trim(),
                                     irfMatch.RisebirdHrId,
-                                    ticket.SenderEmail);
+                                    ticket.SenderEmail,
+                                    newId);
                                 if (rid > 0) inserted++;
                             }
                         }

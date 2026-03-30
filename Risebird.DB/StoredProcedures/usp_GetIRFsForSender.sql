@@ -37,6 +37,8 @@ BEGIN
           AND  tcu.IsActive     = 1
           AND  irf.IsPaused     = 0
           AND  ul.IsActive      = 1
+          AND  CAST(GETUTCDATE() AS DATE) >= CAST(irf.StartDate AS DATE)
+          AND  CAST(GETUTCDATE() AS DATE) <= CAST(irf.EndDate   AS DATE)
         ORDER  BY irf.EndDate   DESC,
                   irf.StartDate DESC,
                   irf.CreatedOn DESC;
