@@ -29,6 +29,9 @@ namespace Risebird.Repository.Interface
 
         Task<List<IrfMatchVM>> GetIRFsForSenderAsync(string senderEmail);
 
-        Task<int> InsertCandidateResumeAsync(int irfId, string resumeLink, int addedBy, string clientHrEmailId);
+        /// <summary>Resolves an IRF by string IRFId column (Skill Channel name) if it exists and is valid.</summary>
+        Task<IrfMatchVM> GetIRFByStringIdAsync(string irfStringId);
+
+        Task<int> InsertCandidateResumeAsync(int irfId, string resumeLink, int addedBy, string clientHrEmailId, int? supportTicketId = null);
     }
 }

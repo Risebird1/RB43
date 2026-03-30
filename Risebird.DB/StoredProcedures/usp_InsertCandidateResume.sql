@@ -5,7 +5,8 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_InsertCandidateResume]
     @IRFId           INT,
     @ResumeLink      NVARCHAR(500),
     @AddedBy         INT,
-    @ClientHREmailId VARCHAR(100) = NULL
+    @ClientHREmailId VARCHAR(100) = NULL,
+    @SupportTicketId INT           = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -30,9 +31,9 @@ BEGIN
     END
 
     INSERT INTO dbo.CandidateResume
-        (IRFId, ResumeLink, AddedBy, AddedOn, IsProcessed, ClientHREmailId)
+        (IRFId, ResumeLink, AddedBy, AddedOn, IsProcessed, IsResumeParsed, ClientHREmailId, SupportTicketId)
     VALUES
-        (@IRFId, @ResumeLink, @AddedBy, GETUTCDATE(), 0, @ClientHREmailId);
+        (@IRFId, @ResumeLink, @AddedBy, GETUTCDATE(), 0, 0, @ClientHREmailId, @SupportTicketId);
 
     SELECT CAST(SCOPE_IDENTITY() AS INT) AS NewId;
 END
