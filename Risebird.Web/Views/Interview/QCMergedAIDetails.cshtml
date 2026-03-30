@@ -1,77 +1,317 @@
 @model Risebird.Entities.ViewModel.QcInterviewMergedAIQCVM
+@using Newtonsoft.Json.Linq
 @{
-    ViewData["Title"] = "Merged AI QC Details";
+    ViewData["Title"] = "Payment Deduction Reasoning";
+    ViewBag.PageHeader = "Payment Deduction Reasoning";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Extract only "reasoning" from the raw JSON (if present) without changing persisted schema.
+    var extractedReasonings = new List<string>();
+    try
+    {
+        if (!string.IsNullOrWhiteSpace(Model?.RawMergedJson))
+        {
+            var token = JToken.Parse(Model.RawMergedJson);
+            var flagsToken = token.Type == JTokenType.Object ? token["flags"] : token;
+            if (flagsToken is JArray arr)
+            {
+                foreach (var item in arr)
+                {
+                    extractedReasonings.Add(item?["reasoning"]?.ToString());
+                }
+            }
+        }
+    }
+    catch
+    {
+        // If parsing fails, keep reasonings empty and render without the column values.
+    }
 }
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=2026" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2026" />
+
+<style>
+    .qc-summary {
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 12px;
+        background: linear-gradient(135deg, #ffffff 0%, #fbfcff 100%);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+        padding: 10px 10px;
+    }
+
+    .qc-summary__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    .qc-summary__title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #212529;
+        letter-spacing: 0.02em;
+    }
+    .table-striped.table-bordered th{
+        font-size:12px;
+        padding: 7px 5px;
+        background: #e0e0e0 !important;
+        color: #676767;
+        font-family: "Raleway", sans-serif;
+    }
+    .qc-summary__grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    @@media (max-width: 991.98px) {
+        .qc-summary__grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .qc-metric {
+        border-radius: 10px;
+        background: #e5e1e13d;
+        border: 1px solid rgba(0,0,0,0.06);
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 52px;
+    }
+
+    .qc-metric__left {
+        min-width: 0;
+    }
+
+    .qc-metric__label {
+        color: #6c757d;
+        font-size: 11px;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 4px;
+    }
+
+    .qc-metric__value {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .qc-metric__badge {
+        flex: 0 0 auto;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        line-height: 1;
+        border: 1px solid transparent;
+        background: #f8f9fa;
+        color: #495057;
+    }
+
+    .qc-metric--ok .qc-metric__badge { background: rgba(92,184,92,0.12); border-color: rgba(92,184,92,0.28); color: #2f7d32; }
+    .qc-metric--warn .qc-metric__badge { background: rgba(240,173,78,0.14); border-color: rgba(240,173,78,0.30); color: #9a5b00; }
+    .qc-metric--danger .qc-metric__badge { background: rgba(217,83,79,0.14); border-color: rgba(217,83,79,0.30); color: #a31818; }
+    .qc-metric--info .qc-metric__badge { background: rgba(91,192,222,0.14); border-color: rgba(91,192,222,0.30); color: #146c86; }
+
+    .reasoning-preview {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+        white-space: normal;
+        line-height: 1.35;
+    }
+
+    .reasoning-expanded {
+        -webkit-line-clamp: unset;
+        display: block;
+        overflow: visible;
+    }
+
+    .reasoning-toggle {
+        border: 0;
+        background: transparent;
+        padding: 0;
+        font-size: 0.9rem;
+        cursor: pointer;
+        color: #007bff;
+        font-weight: 600;
+        text-decoration: underline;
+    }
+</style>
 
 <div class="main-panel" id="main-panel">
     <div class="panel-header panel-header-sm"></div>
+   
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Merged AI QC Details - Interview #@Model.InterviewId</h4>
-                    </div>
-                    <div class="card-body">
+                <div>
+                    <div style="margin-top:40px;" class="mdc-card-wrapper__text-section">
+                       
+                        <div>
                         @if (ViewBag.Message != null)
                         {
                             <div class="alert alert-info">@ViewBag.Message</div>
                         }
 
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label><b>Total Penalty</b></label>
-                                <div>@(Model.AIMergeTotalPenalty?.ToString() ?? "NA")</div>
+                        @{
+                            var totalPenaltyStr = Model.AIMergeTotalPenalty?.ToString() ?? "NA";
+                            var suspiciousStr = string.IsNullOrWhiteSpace(Model.AIMergeInterviewerSuspicious) ? "NA" : Model.AIMergeInterviewerSuspicious;
+                            var redoStr = Model.AIMergeRedoInterview.HasValue ? (Model.AIMergeRedoInterview.Value ? "Yes" : "No") : "NA";
+
+                            var penaltyMetricClass = "qc-metric qc-metric--info";
+                            if (Model.AIMergeTotalPenalty.HasValue)
+                            {
+                                penaltyMetricClass = Model.AIMergeTotalPenalty.Value >= 10 ? "qc-metric qc-metric--danger"
+                                    : Model.AIMergeTotalPenalty.Value >= 5 ? "qc-metric qc-metric--warn"
+                                    : "qc-metric qc-metric--ok";
+                            }
+
+                            var redoMetricClass = redoStr == "Yes" ? "qc-metric qc-metric--danger"
+                                : redoStr == "No" ? "qc-metric qc-metric--ok"
+                                : "qc-metric qc-metric--info";
+                        }
+
+                        <div class="qc-summary mb-4">
+                            <div class="qc-summary__head">
+                                <div class="qc-summary__title">QC Summary</div>
                             </div>
-                            <div class="col-md-4">
-                                <label><b>Interviewer Suspicious</b></label>
-                                <div>@(string.IsNullOrWhiteSpace(Model.AIMergeInterviewerSuspicious) ? "NA" : Model.AIMergeInterviewerSuspicious)</div>
-                            </div>
-                            <div class="col-md-4">
-                                <label><b>Redo Interview</b></label>
-                                <div>@(Model.AIMergeRedoInterview.HasValue ? (Model.AIMergeRedoInterview.Value ? "Yes" : "No") : "NA")</div>
+
+                            <div class="qc-summary__grid">
+                                <div class="@penaltyMetricClass">
+                                    <div class="qc-metric__left">
+                                        <div class="qc-metric__label">Total Penalty</div>
+                                        <div class="qc-metric__value">@totalPenaltyStr</div>
+                                    </div>
+                                    <div class="qc-metric__badge">Score</div>
+                                </div>
+
+                                <div class="qc-metric qc-metric--warn">
+                                    <div class="qc-metric__left">
+                                        <div class="qc-metric__label">Interviewer Suspicious</div>
+                                        <div class="qc-metric__value" style="font-size: 1.05rem;">@suspiciousStr</div>
+                                    </div>
+                                    <div class="qc-metric__badge">Signal</div>
+                                </div>
+
+                                <div class="@redoMetricClass">
+                                    <div class="qc-metric__left">
+                                        <div class="qc-metric__label">Redo Interview</div>
+                                        <div class="qc-metric__value" style="font-size: 1.05rem;">@redoStr</div>
+                                    </div>
+                                    <div class="qc-metric__badge">Action</div>
+                                </div>
                             </div>
                         </div>
 
-                        <h5>Merged Flags</h5>
-                        @if (Model.Merged?.flags != null && Model.Merged.flags.Count > 0)
-                        {
-                            <div style="overflow-x: auto;">
-                                <table class="table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Category</th>
-                                            <th>Flag</th>
-                                            <th>Penalty</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var flag in Model.Merged.flags)
-                                        {
-                                            <tr>
-                                                <td>@flag.category</td>
-                                                <td>@flag.flag</td>
-                                                <td>@(flag.penalty?.ToString() ?? "NA")</td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
+                        <div class="d-flex align-items-center justify-content-between flex-wrap" style="gap: 8px;">
+                            <h5 class="mb-2">Merged Flags</h5>
+                            <div class="text-muted" style="font-size: 0.9rem;">
+                                @(Model.Merged?.flags != null ? $"{Model.Merged.flags.Count} item(s)" : "0 item(s)")
                             </div>
-                        }
-                        else
-                        {
-                            <div class="alert alert-warning">No merged flags available.</div>
-                        }
-
-                        @if (!string.IsNullOrWhiteSpace(Model.RawMergedJson))
-                        {
-                            <h5>Raw JSON</h5>
-                            <pre style="max-height: 320px; overflow: auto; white-space: pre-wrap;">@Model.RawMergedJson</pre>
-                        }
+                        </div>
+                            @if (Model.Merged?.flags != null && Model.Merged.flags.Count > 0)
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Category</th>
+                                                <th>Flag</th>
+                                                <th>Penalty</th>
+                                                <th>Reasoning</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (var i = 0; i < Model.Merged.flags.Count; i++)
+                                            {
+                                                var flag = Model.Merged.flags[i];
+                                                var reasoning = (i >= 0 && i < extractedReasonings.Count) ? extractedReasonings[i] : null;
+                                                <tr>
+                                                    <td style="white-space: nowrap;">@flag.category</td>
+                                                    <td>@flag.flag</td>
+                                                    <td style="white-space: nowrap;">@(flag.penalty?.ToString() ?? "NA")</td>
+                                                    <td style="min-width: 280px;">
+                                                        @if (string.IsNullOrWhiteSpace(reasoning))
+                                                        {
+                                                            <span>NA</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            var rid = $"reasoning_{i}";
+                                                            var tid = $"reasoning_toggle_{i}";
+                                                            <div id="@rid" class="reasoning-preview">@reasoning</div>
+                                                            <button style="color:#007bff!important" type="button" id="@tid" class="reasoning-toggle text-primary d-none" data-target="@rid">
+                                                                Read more
+                                                            </button>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning">No merged flags available.</div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    (function () {
+        function isTruncated(el) {
+            // Works well enough for line-clamp: compare scrollHeight vs clientHeight
+            return el && el.scrollHeight > el.clientHeight + 1;
+        }
+
+        function initReasoningToggles() {
+            var buttons = document.querySelectorAll('button.reasoning-toggle[data-target]');
+            for (var i = 0; i < buttons.length; i++) {
+                (function (btn) {
+                    var targetId = btn.getAttribute('data-target');
+                    var target = document.getElementById(targetId);
+                    if (!target) return;
+
+                    // Show toggle only if actually truncated
+                    if (isTruncated(target)) {
+                        btn.classList.remove('d-none');
+                    }
+
+                    btn.addEventListener('click', function () {
+                        var expanded = target.classList.toggle('reasoning-expanded');
+                        btn.textContent = expanded ? 'Read less' : 'Read more';
+                    });
+                })(buttons[i]);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initReasoningToggles);
+        } else {
+            initReasoningToggles();
+        }
+    })();
+</script>
