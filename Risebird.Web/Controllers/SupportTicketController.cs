@@ -249,10 +249,15 @@ namespace Risebird.Web.Controllers
         ///   2. Otherwise: sender's eligible IRFs via TransClientUser, then score
         ///      JDTiltle then SkillCluster; tiebreak by EndDate, StartDate, CreatedOn.
         /// </summary>
+        /// <summary>
+        /// Matches sender to the best IRF based on job title and specialization.
+        /// Priority: explicit skill_channel_id > scoring (JDTitle + SkillCluster vs jobTitle + specialization) > recency.
+        /// </summary>
         private async Task<IrfMatchVM> MatchIRFAsync(
             string senderEmail,
             string jobTitle,
-            string skillChannelId = null)
+            string skillChannelId = null,
+            string specialization = null)
         {
             // Explicit Skill Channel ID from Relay: confirm it exists in IRF (string
             // IRFId column). No sender / TransClientUser filter — if valid, skip scoring.
@@ -266,33 +271,45 @@ namespace Risebird.Web.Controllers
 
             var irfs = await _repository.GetIRFsForSenderAsync(senderEmail);
             if (irfs == null || irfs.Count == 0) return null;
-            if (irfs.Count == 1)                 return irfs[0];
 
-            if (string.IsNullOrWhiteSpace(jobTitle))
-                return BestByRecency(irfs);
+            // Build combined search text from jobTitle and specialization
+            var searchText = string.Join(" ",
+                new[] { jobTitle, specialization }
+                    .Where(s => !string.IsNullOrWhiteSpace(s)))
+                .Trim();
 
-            // Pass 1: score against JDTiltle
-            var pass1 = irfs
-                .Select(irf => new { irf, score = ScoreIRF(irf.JDTiltle, jobTitle) })
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // No search criteria — return most recent, or single IRF
+                return irfs.Count == 1 ? irfs[0] : BestByRecency(irfs);
+            }
+
+            // Score each IRF: combine JDTiltle and SkillCluster into one field to match against
+            var scored = irfs
+                .Select(irf => new
+                {
+                    irf,
+                    score = ScoreIRF(
+                        (irf.JDTiltle + " " + irf.SkillCluster).Trim(),
+                        searchText)
+                })
                 .OrderByDescending(x => x.score)
                 .ThenByDescending(x => x.irf.EndDate)
                 .ThenByDescending(x => x.irf.StartDate)
                 .ThenByDescending(x => x.irf.CreatedOn)
                 .ToList();
 
-            if (pass1[0].score > 0)
-                return pass1[0].irf;
+            // If best score > 0, return that IRF
+            if (scored[0].score > 0)
+                return scored[0].irf;
 
-            // Pass 2: JDTiltle produced no match — fall back to SkillCluster
-            var pass2 = irfs
-                .Select(irf => new { irf, score = ScoreIRF(irf.SkillCluster, jobTitle) })
-                .OrderByDescending(x => x.score)
-                .ThenByDescending(x => x.irf.EndDate)
-                .ThenByDescending(x => x.irf.StartDate)
-                .ThenByDescending(x => x.irf.CreatedOn)
-                .ToList();
+            // No good match found — only return single IRF if that's all there is
+            // Otherwise return null to indicate no suitable match
+            if (irfs.Count == 1)
+                return irfs[0];
 
-            return pass2[0].score > 0 ? pass2[0].irf : BestByRecency(irfs);
+            // Multiple IRFs but none matched — return null (no confident match)
+            return null;
         }
 
         private static IrfMatchVM BestByRecency(List<IrfMatchVM> irfs) =>
@@ -405,7 +422,8 @@ namespace Risebird.Web.Controllers
                         irfMatch = await MatchIRFAsync(
                             ticket.SenderEmail,
                             ticket.JobTitle ?? ticket.Subject,
-                            payload.SkillChannelId);
+                            payload.SkillChannelId,
+                            ticket.PrimarySpecialization);
 
                         if (irfMatch != null)
                         {
@@ -466,6 +484,36 @@ namespace Risebird.Web.Controllers
                                 "Ingestion failed — no IRF or HR resolved; ticket left unassigned.");
                         }
                     }
+                }
+                else if (isResumeIngestionIntent)
+                {
+                    // Resume ingestion intent but no resumes attached or no drive URLs
+                    // Still need to assign to an HR since the SP left it NULL
+                    var irfMatch = await MatchIRFAsync(
+                        ticket.SenderEmail,
+                        ticket.JobTitle ?? ticket.Subject,
+                        payload.SkillChannelId,
+                        ticket.PrimarySpecialization);
+
+                    var fallbackHR = irfMatch?.RisebirdHrEmail;
+                    if (!string.IsNullOrWhiteSpace(fallbackHR))
+                    {
+                        await _repository.UpdateTicketAssignmentAsync(newId, fallbackHR, "System");
+                        resumeIngestionResult.Append(
+                            $"No resumes to ingest — assigned to {fallbackHR} for manual review.");
+                    }
+                    else
+                    {
+                        resumeIngestionResult.Append(
+                            "No resumes to ingest and no HR resolved; ticket left unassigned.");
+                    }
+                }
+                else
+                {
+                    // Non-resume-ingestion intents (e.g., "Candidate status update", "Stop interviews", etc.)
+                    // The SP already handled HR assignment for these intents.
+                    // No additional action needed here.
+                    resumeIngestionResult.Append("N/A");
                 }
 
                 return Ok(new
