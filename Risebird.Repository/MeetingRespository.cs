@@ -1418,7 +1418,7 @@ namespace Risebird.Repository
 
                     //if (reportDetails.TechSkillReportCollection != null && !reportDetails.TechSkillReportCollection.Any(x => x.ActualLevelId == 0))
 
-                        if (reportDetails.TechSkillReportCollection != null && reportDetails.TechSkillReportCollection.Any())
+                    if (reportDetails.TechSkillReportCollection != null && reportDetails.TechSkillReportCollection.Any())
                     {
                         DataTable techReportDt = new DataTable();
                         techReportDt.Columns.Add("InterviewId", typeof(int));
@@ -7852,7 +7852,7 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             return null;
         }
 
-        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null)
+        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null, string contradictionJson = null)
         {
             try
             {
@@ -7864,6 +7864,11 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                     parameters.Add("@totalPenalty", totalPenalty);
                     parameters.Add("@interviewerSuspicious", interviewerSuspicious);
                     parameters.Add("@redoInterview", redoInterview);
+                    if (string.IsNullOrWhiteSpace(contradictionJson))
+                    {
+                        contradictionJson = "";
+                    }
+                    parameters.Add("@contradictionJson", contradictionJson);
                     await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIMergedDetails", parameters, commandTimeout: 120,
                         commandType: CommandType.StoredProcedure);
                     return true;
