@@ -6,9 +6,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-  
--- Pending rows: human QC not done, both Report AI and Transcript AI JSON present, and merged output not yet stored.  
-CREATE PROCEDURE [dbo].[usp_GetPendingQcInterviewAIMerge]  
+Create PROCEDURE [dbo].[usp_GetPendingQcInterviewAIMerge]  
 AS  
 BEGIN  
     SET NOCOUNT ON;  
@@ -26,11 +24,14 @@ BEGIN
         q.[ReportAIDetails],  
         q.[TranscritAiDetails],
 		ic.[TranscriptSummary],
-		q.[ContradictionJson]
+		q.[ContradictionJson],
+		imj.[Joinedon],
+		im.interviewDate
     FROM [dbo].[QcInterviewAIevaluation] q  
 	join InterviewMeetings im on im.id=q.InterviewId
 	join InterviewComments ic on ic.InterviewId=q.InterviewId
 	join IRF on IRF.IRFId=im.IRFId
+	outer Apply(Select Min(Joinedon) as JoinedOn From InterviewMeetingsJoinTime where Interviewid=q.InterviewId and interviewer=im.Interviewer) imj
     WHERE (q.[QCDone] IS NULL OR q.[QCDone] = 0)  
       AND q.[ReportAIDetails] IS NOT NULL AND LEN(LTRIM(RTRIM(q.[ReportAIDetails]))) > 0  
       AND q.[TranscritAiDetails] IS NOT NULL AND LEN(LTRIM(RTRIM(q.[TranscritAiDetails]))) > 0  

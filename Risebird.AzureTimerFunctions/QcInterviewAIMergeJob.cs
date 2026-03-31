@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Graph.Chats.GetAllMessages;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -144,7 +146,7 @@ namespace Risebird.AzureTimerFunctions
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, contradictionEx);
                         }
 
-                        var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails, contradictionJson);
+                        var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails, contradictionJson, row.interviewDate, row.Joinedon);
                         var runResult = await _assistantServiceHelper.GenerateQcAnalysisInterviewAIMerge(userMessage, assistantId, useJsonResponseFormat: true);
                         var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value?.Replace("```json", "").Replace("```", "");
                         if (string.IsNullOrWhiteSpace(rawText))
@@ -310,7 +312,7 @@ namespace Risebird.AzureTimerFunctions
             return message;
         }
 
-        private static string BuildMergeUserMessage(string reportJson, string transcriptJson, string contradictionJson = null)
+        private static string BuildMergeUserMessage(string reportJson, string transcriptJson, string contradictionJson, DateTime interviewdate, DateTime? Joinedon)
         {
             var message =
                 "You are given JSON evaluations for the same interview: Report AI, Transcript AI, and optionally Contradiction AI. " +
@@ -324,7 +326,10 @@ namespace Risebird.AzureTimerFunctions
             {
                 message += "\n\nContradiction AI JSON:\n" + contradictionJson;
             }
-
+            if (Joinedon.HasValue)
+            {
+                message += "\n\nInterview Datetime: " + interviewdate + " and interviewer join the meeting at " + Joinedon.Value;
+            }
             return message;
         }
 
