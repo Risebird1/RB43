@@ -5,7 +5,10 @@ namespace Risebird.Entities.ViewModel
     {
         public int id { get; set; }
         public int InterviewId { get; set; }
+        public int irfId { get; set; }
         public string ReportAIDetails { get; set; }
         public string TranscritAiDetails { get; set; }
+        public string TranscriptSummary { get; set; }
+        public string ContradictionJson { get; set; }
     }
 }

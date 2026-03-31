@@ -39,6 +39,7 @@ namespace Risebird.CommonHelper
         private readonly string stringResumeAnalysisAssistantIdV2;
         private readonly string AITranscriptToNotesAssistantId;
         private readonly string QcInterviewAIMergeAssistantId;
+        private readonly string ContradictionReportAIAssistantId;
 
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IOpenAIApiLogger openAIApiLogger)
@@ -64,6 +65,7 @@ namespace Risebird.CommonHelper
             stringResumeAnalysisAssistantIdV2 = _configuration["OpenAI:InterviewerScreenerAssistantIdV2"];
             AITranscriptToNotesAssistantId = _configuration["OpenAI:AITranscriptToNotesAssistantId"];
             QcInterviewAIMergeAssistantId = _configuration["OpenAI:QcInterviewAIMergeAssistantId"];
+            ContradictionReportAIAssistantId = _configuration["OpenAI:ContradictionReportAIAssistantId"];
         }
 
         public async Task<RunResult> ScreenAsync(ScreeningRequest requestModel)
@@ -278,6 +280,11 @@ namespace Risebird.CommonHelper
                     {
                         assistantId = QcInterviewAIMergeAssistantId;
                         operationType = "QcInterviewAIMerge";
+                    }
+                    else if (profileType == ProfileNames.ContradictionReportAIAssistantId)
+                    {
+                        assistantId = ContradictionReportAIAssistantId;
+                        operationType = "ContradictionReport";
                     }
                     else
                     {
@@ -666,7 +673,7 @@ namespace Risebird.CommonHelper
         //    }
 
         //}
-        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null, string resumeStringData = null, string reportStringData = null, string jdTitle = null, string resumeStringDataForParsing = null, string transcripttonotes = null, string plainAssistantMessage = null)
+        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null, string resumeStringData = null, string reportStringData = null, string jdTitle = null, string resumeStringDataForParsing = null, string transcripttonotes = null, string plainAssistantMessage = null, string contradictiontranscriptSummary = null)
         {
             try
             {
@@ -702,6 +709,10 @@ namespace Risebird.CommonHelper
                 else if (!string.IsNullOrWhiteSpace(plainAssistantMessage))
                 {
                     queryContent = plainAssistantMessage;
+                }
+                else if (!string.IsNullOrWhiteSpace(contradictiontranscriptSummary))
+                {
+                    queryContent = contradictiontranscriptSummary;
                 }
                 else if (!string.IsNullOrEmpty(jobTitleForRubrics))//case for generating tech skill rubric
                 {
@@ -1249,6 +1260,43 @@ namespace Risebird.CommonHelper
                     return null;
 
                 string runId = await CreateRun(threadId, ProfileNames.QcInterviewAIAssistantId);
+                await Task.Delay(10000);
+                if (string.IsNullOrEmpty(runId))
+                    return null;
+
+                string runStatus = string.Empty;
+                int pollInterval = 10000;
+                int maxPollInterval = 30000;
+                while (runStatus != "completed")
+                {
+                    await Task.Delay(pollInterval);
+                    runStatus = await RetrieveRun(runId, threadId);
+                    if (runStatus == "failed")
+                        break;
+                    pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
+                }
+
+                if (runStatus == "completed")
+                    await RetrieveRunStepsForTokenUsage(runId, threadId);
+
+                var messages = await ListRunMessages(threadId);
+                return messages;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<RunResult> GeneratecontradictionReport(string transcriptSummary)
+        {
+            try
+            {
+                string threadId = await CreateThreadAsync(contradictiontranscriptSummary: transcriptSummary);
+                if (string.IsNullOrEmpty(threadId))
+                    return null;
+
+                string runId = await CreateRun(threadId, ProfileNames.ContradictionReportAIAssistantId);
                 await Task.Delay(10000);
                 if (string.IsNullOrEmpty(runId))
                     return null;
