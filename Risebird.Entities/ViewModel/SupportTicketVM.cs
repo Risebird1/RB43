@@ -33,6 +33,12 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedAt                   { get; set; }
         public string   ClientName                  { get; set; }
         public int      TotalCount                  { get; set; }
+
+        /// <summary>IRF integer id (from CandidateResume) for tickets processed by System.</summary>
+        public int?     IngestedIRFId               { get; set; }
+
+        /// <summary>IRF string name (from IRF.IRFId) for tickets processed by System.</summary>
+        public string   IngestedIRFName             { get; set; }
     }
 
     /// <summary>
