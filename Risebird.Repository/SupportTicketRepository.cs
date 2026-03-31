@@ -251,5 +251,23 @@ namespace Risebird.Repository
                 return new List<SupportTicketVM>();
             }
         }
+
+        public async Task<List<SupportTicketVM>> GetHybridTicketsAsync(int page = 1, int pageSize = 25)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<SupportTicketVM>(
+                    "usp_GetHybridTickets",
+                    new { Page = page, PageSize = pageSize },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<SupportTicketVM>();
+            }
+        }
     }
 }

@@ -1,13 +1,12 @@
 -- usp_InsertSupportTicket
 -- Called by the Relay webhook endpoint.
--- Resolves UserId, ClientId, and AssignedTo from the sender email, then
--- inserts the full enriched ticket row.
+-- Resolves UserId, ClientId from the sender email, then inserts the ticket.
 --
--- Assignment logic (only applies when the sender is a known client user):
---   SenderEmail → UserList.id (@UserId)
---             → ClientUser (for @ClientId only)
---             → TransClientUser.ClientUserId = UserList.id → TOP 1 active IRF
---             → IRF.RisebirdHr → UserList.EmailId = AssignedTo
+-- Assignment logic:
+--   - For resume ingestion intents ("New candidate submission", "New interview request"):
+--     AssignedTo is left NULL. The controller determines assignment after ingestion.
+--   - For all other intents: AssignedTo is resolved to the RisebirdHr email.
+--
 -- NOTE: TransClientUser.ClientUserId references UserList.id, NOT ClientUser.id.
 CREATE OR ALTER PROCEDURE [dbo].[usp_InsertSupportTicket]
     @SenderEmail                VARCHAR(150),
@@ -31,10 +30,14 @@ BEGIN
 
     DECLARE @UserId         INT          = NULL;
     DECLARE @ClientId       INT          = NULL;
-    --DECLARE @ClientUserId   INT          = NULL;
     DECLARE @IRFId          INT          = NULL;
     DECLARE @RisebirdHrId   INT          = NULL;
     DECLARE @AssignedTo     VARCHAR(150) = NULL;
+
+    -- Check if this is a resume ingestion intent (assignment deferred to controller)
+    DECLARE @IsResumeIngestionIntent BIT = 0;
+    IF LOWER(@Intent) IN ('new candidate submission', 'new interview request')
+        SET @IsResumeIngestionIntent = 1;
 
     -- Step 1: Resolve UserId from sender email
     SELECT TOP 1 @UserId = id
@@ -44,31 +47,26 @@ BEGIN
 
     IF @UserId IS NOT NULL
     BEGIN
-        -- Step 2: Resolve ClientId and the ClientUser row id
-        SELECT TOP 1
-            @ClientId     = ClientId--,
-            --@ClientUserId = id
+        -- Step 2: Resolve ClientId
+        SELECT TOP 1 @ClientId = ClientId
         FROM  dbo.ClientUser
         WHERE UserId = @UserId;
 
-        IF @ClientId IS NOT NULL
+        -- Only resolve HR assignment for non-resume-ingestion intents
+        IF @ClientId IS NOT NULL AND @IsResumeIngestionIntent = 0
         BEGIN
             -- Step 3: Find the first active IRF this client user belongs to.
-            -- Both the TransClientUser membership AND the IRF (skill channel)
-            -- itself must be active (not paused) to be a valid candidate.
             SELECT TOP 1 @IRFId = tcu.IRFId
             FROM   dbo.TransClientUser tcu
             INNER JOIN dbo.IRF         irf ON irf.id = tcu.IRFId
             WHERE  tcu.ClientUserId = @UserId
               AND  tcu.IsActive     = 1
               AND  irf.IsPaused     = 0
-            ORDER  BY irf.CreatedOn desc;
+            ORDER  BY irf.CreatedOn DESC;
 
             IF @IRFId IS NOT NULL
             BEGIN
-                -- Step 4: Get the RisebirdHr (internal HR) for that IRF.
-                -- No extra filter needed here — the IRFId was already
-                -- validated as non-paused in Step 3.
+                -- Step 4: Get the RisebirdHr for that IRF.
                 SELECT TOP 1 @RisebirdHrId = RisebirdHr
                 FROM   dbo.IRF
                 WHERE  id = @IRFId;

@@ -34,7 +34,10 @@ namespace Risebird.Repository.Interface
 
         Task<int> InsertCandidateResumeAsync(int irfId, string resumeLink, int addedBy, string clientHrEmailId, int? supportTicketId = null);
 
-        /// <summary>Returns tickets that were ever assigned to "System" at any point in their history.</summary>
+        /// <summary>Returns tickets that were assigned ONLY to "System" and never to any human HR.</summary>
         Task<List<SupportTicketVM>> GetSystemAssignedTicketsAsync(int page = 1, int pageSize = 25);
+
+        /// <summary>Returns tickets that were assigned to BOTH "System" AND at least one human HR.</summary>
+        Task<List<SupportTicketVM>> GetHybridTicketsAsync(int page = 1, int pageSize = 25);
     }
 }

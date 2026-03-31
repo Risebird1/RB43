@@ -1,6 +1,7 @@
 -- usp_GetSupportTickets
 -- Paginated, filtered support tickets joined with Client.Name.
 -- TotalCount via window function avoids a second round-trip.
+-- EXCLUDES tickets that were ever assigned to "System" (those appear in the System tab).
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetSupportTickets]
     @Status      VARCHAR(50)    = NULL,
     @Intent      NVARCHAR(500)  = NULL,
@@ -48,6 +49,15 @@ BEGIN
         AND (@SenderEmail IS NULL OR st.SenderEmail LIKE '%' + @SenderEmail + '%')
         AND (@DateFrom    IS NULL OR st.ReceivedAt  >= @DateFrom)
         AND (@DateTo      IS NULL OR st.ReceivedAt   < DATEADD(DAY, 1, @DateTo))
+        -- Exclude tickets that were ever assigned to System (they appear in the System tab)
+        AND (st.AssignedTo IS NULL OR st.AssignedTo <> 'System')
+        AND NOT EXISTS (
+            SELECT 1
+            FROM   dbo.SupportTicketHistory h
+            WHERE  h.TicketId   = st.Id
+              AND  h.ToStatus   = 'System'
+              AND  h.EventType  = 'AssignmentChange'
+        )
     ORDER BY st.ReceivedAt DESC
     OFFSET (@Page - 1) * @PageSize ROWS
     FETCH  NEXT @PageSize ROWS ONLY;

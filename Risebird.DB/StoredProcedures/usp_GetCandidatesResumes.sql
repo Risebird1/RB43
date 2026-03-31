@@ -11,13 +11,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_GetCandidatesResumes]    
+Create PROCEDURE [dbo].[usp_GetCandidatesResumes]    
 @IRFId int,
 @emailid varchar(200)
 AS    
 Begin  
-Declare @ClientRole int
+Declare @ClientRole int = 0
+if(@emailid != '')
+Begin
 Select @ClientRole=RoleId From ClientUser cu join UserList ul on ul.id=cu.UserId where ul.EmailId=@emailid
+
+End
 
 if(@ClientRole=1 or @ClientRole=4)
 begin
@@ -39,5 +43,3 @@ End
   
 
 GO
-
-
