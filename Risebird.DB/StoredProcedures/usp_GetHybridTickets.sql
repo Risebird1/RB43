@@ -1,0 +1,91 @@
+-- usp_GetHybridTickets
+-- Returns SupportTickets that were assigned to BOTH "System" AND at least one human HR.
+-- These are tickets that needed both automatic processing and manual attention.
+-- Also returns IRF info from CandidateResume (the first resume ingested for that ticket).
+CREATE OR ALTER PROCEDURE [dbo].[usp_GetHybridTickets]
+    @Page     INT = 1,
+    @PageSize INT = 20
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Offset INT = (@Page - 1) * @PageSize;
+
+    ;WITH SystemTicketIds AS (
+        -- Tickets that were ever assigned to System
+        SELECT DISTINCT TicketId
+        FROM   dbo.SupportTicketHistory
+        WHERE  ToStatus  = 'System'
+          AND  EventType = 'AssignmentChange'
+        UNION
+        SELECT id AS TicketId
+        FROM   dbo.SupportTickets
+        WHERE  AssignedTo = 'System'
+    ),
+    HumanAssignedTicketIds AS (
+        -- Tickets that were assigned to a human (non-System, non-NULL)
+        SELECT DISTINCT TicketId
+        FROM   dbo.SupportTicketHistory
+        WHERE  EventType = 'AssignmentChange'
+          AND  ToStatus IS NOT NULL
+          AND  ToStatus <> 'System'
+          AND  ToStatus <> ''
+        UNION
+        SELECT id AS TicketId
+        FROM   dbo.SupportTickets
+        WHERE  AssignedTo IS NOT NULL
+          AND  AssignedTo <> 'System'
+          AND  AssignedTo <> ''
+    ),
+    HybridTicketIds AS (
+        -- Tickets in BOTH sets (assigned to System AND to a human)
+        SELECT TicketId
+        FROM   SystemTicketIds
+        WHERE  TicketId IN (SELECT TicketId FROM HumanAssignedTicketIds)
+    ),
+    TicketIRF AS (
+        SELECT 
+            cr.SupportTicketId,
+            cr.IRFId,
+            irf.IRFId AS IRFName,
+            ROW_NUMBER() OVER (PARTITION BY cr.SupportTicketId ORDER BY cr.id ASC) AS rn
+        FROM dbo.CandidateResume cr
+        INNER JOIN dbo.IRF irf ON irf.id = cr.IRFId
+        WHERE cr.SupportTicketId IS NOT NULL
+    )
+    SELECT
+        t.Id,
+        t.SenderEmail,
+        t.Subject,
+        t.MailContent,
+        t.ReceivedAt,
+        t.Intent,
+        t.PrimarySpecialization,
+        t.MailBodyIntent,
+        t.AttachmentJobDescription,
+        t.AttachmentPdf,
+        t.AttachmentResumes,
+        t.DriveFolderLink,
+        t.SummaryMail,
+        t.SummaryCandidates,
+        t.SummaryInterviewScores,
+        t.UserId,
+        t.ClientId,
+        ISNULL(c.Name, '') AS ClientName,
+        t.Status,
+        t.CreatedAt,
+        t.UpdatedAt,
+        t.AssignedTo,
+        t.JobTitle,
+        tirf.IRFId     AS IngestedIRFId,
+        tirf.IRFName   AS IngestedIRFName,
+        COUNT(*) OVER() AS TotalCount
+    FROM   dbo.SupportTickets t
+    INNER JOIN HybridTicketIds h ON h.TicketId = t.Id
+    LEFT JOIN dbo.Client c ON c.id = t.ClientId
+    LEFT JOIN TicketIRF tirf ON tirf.SupportTicketId = t.Id AND tirf.rn = 1
+    ORDER BY t.CreatedAt DESC
+    OFFSET @Offset ROWS
+    FETCH NEXT @PageSize ROWS ONLY;
+END
+GO

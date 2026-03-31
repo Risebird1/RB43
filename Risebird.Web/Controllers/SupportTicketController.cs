@@ -37,6 +37,7 @@ namespace Risebird.Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Index(
+            string tab         = "all",
             string status      = null,
             string intent      = null,
             string senderEmail = null,
@@ -51,61 +52,66 @@ namespace Risebird.Web.Controllers
                 if (pageSize < 10)  pageSize = 10;
                 if (pageSize > 200) pageSize = 200;
 
-                DateTime? dtFrom = null;
-                DateTime? dtTo   = null;
+                List<SupportTicketVM> tickets;
+                int totalCount;
+                int totalPages;
 
-                if (!string.IsNullOrWhiteSpace(dateFrom) &&
-                    DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
-                if (!string.IsNullOrWhiteSpace(dateTo) &&
-                    DateTime.TryParse(dateTo,   out var pTo))   dtTo   = pTo;
+                if (tab == "system")
+                {
+                    // System tab — tickets assigned ONLY to System (never to human HR)
+                    tickets    = await _repository.GetSystemAssignedTicketsAsync(page, pageSize);
+                    totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
+                    totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-                var tickets = await _repository.GetTicketsAsync(
-                    status, intent, senderEmail, dtFrom, dtTo, page, pageSize);
+                    // Clear filters (they don't apply)
+                    status = intent = senderEmail = dateFrom = dateTo = null;
+                }
+                else if (tab == "hybrid")
+                {
+                    // Hybrid tab — tickets assigned to BOTH System AND human HR
+                    tickets    = await _repository.GetHybridTicketsAsync(page, pageSize);
+                    totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
+                    totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-                int totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
-                int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+                    // Clear filters (they don't apply)
+                    status = intent = senderEmail = dateFrom = dateTo = null;
+                }
+                else
+                {
+                    // Manual Review tab — tickets never assigned to System
+                    DateTime? dtFrom = null;
+                    DateTime? dtTo   = null;
 
-                ViewBag.Page        = page;
-                ViewBag.PageSize    = pageSize;
-                ViewBag.TotalCount  = totalCount;
-                ViewBag.TotalPages  = totalPages;
-                ViewBag.Status      = status      ?? string.Empty;
-                ViewBag.Intent      = intent      ?? string.Empty;
-                ViewBag.SenderEmail = senderEmail ?? string.Empty;
-                ViewBag.DateFrom    = dateFrom    ?? string.Empty;
-                ViewBag.DateTo      = dateTo      ?? string.Empty;
+                    if (!string.IsNullOrWhiteSpace(dateFrom) &&
+                        DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
+                    if (!string.IsNullOrWhiteSpace(dateTo) &&
+                        DateTime.TryParse(dateTo,   out var pTo))   dtTo   = pTo;
 
-                return View(tickets);
-            }
-            catch (Exception ex)
-            {
-                await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return View(new System.Collections.Generic.List<SupportTicketVM>());
-            }
-        }
+                    tickets    = await _repository.GetTicketsAsync(
+                        status, intent, senderEmail, dtFrom, dtTo, page, pageSize);
+                    totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
+                    totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+                }
 
-        /// <summary>
-        /// Returns tickets that were ever assigned to "System" — i.e., tickets
-        /// where resume ingestion succeeded and the system processed them automatically.
-        /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> SystemTickets(int page = 1, int pageSize = 25)
-        {
-            try
-            {
-                if (page     < 1)   page     = 1;
-                if (pageSize < 10)  pageSize = 10;
-                if (pageSize > 200) pageSize = 200;
+                // Fetch counts for tab badges
+                var systemTicketsForCount = await _repository.GetSystemAssignedTicketsAsync(1, 1);
+                int systemCount = systemTicketsForCount.Count > 0 ? systemTicketsForCount[0].TotalCount : 0;
 
-                var tickets = await _repository.GetSystemAssignedTicketsAsync(page, pageSize);
+                var hybridTicketsForCount = await _repository.GetHybridTicketsAsync(1, 1);
+                int hybridCount = hybridTicketsForCount.Count > 0 ? hybridTicketsForCount[0].TotalCount : 0;
 
-                int totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
-                int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-
-                ViewBag.Page       = page;
-                ViewBag.PageSize   = pageSize;
-                ViewBag.TotalCount = totalCount;
-                ViewBag.TotalPages = totalPages;
+                ViewBag.Tab           = tab;
+                ViewBag.Page          = page;
+                ViewBag.PageSize      = pageSize;
+                ViewBag.TotalCount    = totalCount;
+                ViewBag.TotalPages    = totalPages;
+                ViewBag.SystemCount   = systemCount;
+                ViewBag.HybridCount   = hybridCount;
+                ViewBag.Status        = status      ?? string.Empty;
+                ViewBag.Intent        = intent      ?? string.Empty;
+                ViewBag.SenderEmail   = senderEmail ?? string.Empty;
+                ViewBag.DateFrom      = dateFrom    ?? string.Empty;
+                ViewBag.DateTo        = dateTo      ?? string.Empty;
 
                 return View(tickets);
             }
@@ -433,12 +439,12 @@ namespace Risebird.Web.Controllers
                         await _logger.LogMessage(LogLevelInfo.Exception, rex);
                     }
 
+                    // For resume ingestion intents, AssignedTo was left NULL by the SP.
+                    // Now assign based on the outcome:
                     if (inserted > 0)
                     {
-                        // Ingestion succeeded — system did the work, reassign away from HR
+                        // Ingestion succeeded — assign to System and close
                         await _repository.UpdateTicketAssignmentAsync(newId, "System", "System");
-
-                        // Auto-close the ticket since resumes were successfully ingested
                         await _repository.UpdateTicketStatusAsync(newId, "Closed", "System");
 
                         resumeIngestionResult.Append(
@@ -446,13 +452,19 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        // Ingestion failed — the ticket keeps its naturally resolved HR
-                        // assignment so they can handle it manually. No update needed.
+                        // Ingestion failed — assign to the resolved HR for manual review
                         var fallbackHR = irfMatch?.RisebirdHrEmail;
-                        resumeIngestionResult.Append(
-                            !string.IsNullOrWhiteSpace(fallbackHR)
-                                ? $"Ingestion failed — assigned to {fallbackHR} for manual review."
-                                : "Ingestion failed — no IRF resolved; ticket assigned to default HR.");
+                        if (!string.IsNullOrWhiteSpace(fallbackHR))
+                        {
+                            await _repository.UpdateTicketAssignmentAsync(newId, fallbackHR, "System");
+                            resumeIngestionResult.Append(
+                                $"Ingestion failed — assigned to {fallbackHR} for manual review.");
+                        }
+                        else
+                        {
+                            resumeIngestionResult.Append(
+                                "Ingestion failed — no IRF or HR resolved; ticket left unassigned.");
+                        }
                     }
                 }
 
