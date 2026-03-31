@@ -230,6 +230,16 @@ Fields:
   - attachment_resumes
     Set to true if one or more attachments appear to be resumes, CVs, or
     candidate profiles. Otherwise false.
+    
+    IMPORTANT: For "New candidate submission" or "New interview request" intents,
+    be INCLUSIVE when identifying resumes:
+      - Resume filenames are often just the candidate's name + role (e.g., 
+        "John_Smith_Java_Developer.pdf", "ABUTHAHIRM[5y_6m] - Azure Developer.pdf")
+      - They do NOT always contain words like "resume", "cv", or "profile"
+      - For these two intents: treat ALL PDF/DOC/DOCX attachments as resumes
+        UNLESS the filename clearly indicates it's a JD (contains "JD", 
+        "job description", "requirement", "hiring brief")
+      - Set attachment_resumes = true if ANY such files exist
 
   - drive_folder_link
     Set this to the Google Drive folder link where the attachments were uploaded.
@@ -239,8 +249,8 @@ Fields:
     An array of individual Google Drive file URLs for files that are resumes or
     CVs. Each element is the direct link to one uploaded resume file.
     Populate this array when webhook_intent is "New candidate submission" OR
-    "New interview request" AND resumes are present.
-    Set to [] (empty array) if no resumes are present or the intent is neither
+    "New interview request" AND attachments exist.
+    Set to [] (empty array) if no attachments exist or the intent is neither
     of those two.
 
     Example:
@@ -251,10 +261,18 @@ Fields:
 
     HOW TO BUILD THIS IN RELAY:
     Inside the "For each attachment" loop, after the Upload step, use the
-    uploaded file's Drive link. Collect these using a "Build a list" step
-    filtered to files where the filename suggests a resume (contains "cv",
-    "resume", "profile", or similar). After the loop ends, pass the
-    collected list as resume_drive_urls in the HTTP webhook body.
+    uploaded file's Drive link.
+    
+    For "New candidate submission" or "New interview request" intents:
+      - Include ALL uploaded PDF/DOC/DOCX files in resume_drive_urls
+      - EXCLUDE only files where filename clearly contains "JD", "job description",
+        "requirement", or "hiring brief"
+    
+    For other intents:
+      - Only include files where filename contains "cv", "resume", "profile"
+    
+    After the loop ends, pass the collected list as resume_drive_urls in the
+    HTTP webhook body.
 
 Attachment handling rules:
   - Only upload .pdf, .doc, .docx files (enforced by loop filter)
