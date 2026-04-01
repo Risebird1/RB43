@@ -947,6 +947,18 @@
                                                         <input type="checkbox" id="checkboxFiftySix" name="InterviewerVideo" onclick="ChangeCheckBox('InterviewerVideo')" value="Left Call Without Notice" />  <label for="checkboxFiftySix">Left Call Without Notice</label>
                                                     }
                                                 </li>
+
+
+                                                <li>
+                                                    @if (Model.InterviewerVideo.Split(",").Select(x => x.Trim()).Contains("Interviewer Video off"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxInterviewerVideoOff" name="InterviewerVideo" checked onclick="ChangeCheckBox('InterviewerVideo')" value="Interviewer Video off" /> <label for="checkboxInterviewerVideoOff">Interviewer Video Off</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxInterviewerVideoOff" name="InterviewerVideo" onclick="ChangeCheckBox('InterviewerVideo')" value="Interviewer Video off" />  <label for="checkboxInterviewerVideoOff">Interviewer Video Off</label>
+                                                    }
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>

@@ -1,0 +1,55 @@
+@model Risebird.Entities.ViewModel.PaymentSLAVM
+
+@{
+    ViewData["Title"] = "Rate Your Interviewer";
+}
+
+<div class="candidateRatingInterviewerPage" style="max-width: 750px; margin: 0 auto; padding: 20px 12px;">
+    <style>
+        /* Only affects the standalone CandidateRatingInterviewer page */
+        .candidateRatingInterviewerPage #containerHide {
+            text-align: center;
+        }
+
+        .candidateRatingInterviewerPage #ratingInterviewer {
+            display: flex;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .candidateRatingInterviewerPage #containerHide h2 {
+            margin-bottom: 14px;
+        }
+    </style>
+
+    <div class="filheader" style="padding: 10px 0px 12px 0px; display:flex; flex-direction:column; align-items:center; text-align:center;">
+        <h2 style="margin:0;font-weight:700;letter-spacing:0.2px;color:#204065;font-size:30px; display:flex; align-items:center; justify-content:center; gap:10px;">
+            <img src="~/img/rating-star-icon.png" alt="" aria-hidden="true" style="height:30px;" />
+            Rate Your Interviewer
+        </h2>
+        <div style="margin-top:6px;font-size:13px;color:#6b7b8c;max-width:520px;">
+            Your feedback helps us understand what worked well and what didn’t, so we can improve future interviews.
+        </div>
+        <div style="margin-top:10px;height:2px;width:90px;background:linear-gradient(90deg,#0d6efd 0%,#42a5f5 60%,#7bdff6 100%);border-radius:999px;"></div>
+    </div>
+
+    <div id="divInterviewRatingRedo">
+        @await Html.PartialAsync("InterviewRateRedo", Model)
+    </div>
+</div>
+
+<script>
+    // `InterviewRateRedo` calls this after submit success.
+    function closeClientInterviewRating() {
+        try {
+            if (window.opener && !window.opener.closed) {
+                window.opener.location.reload();
+            }
+            window.close();
+        } catch (e) {
+            // If window cannot be closed, just leave it as-is.
+        }
+    }
+</script>
+

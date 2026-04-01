@@ -6095,7 +6095,7 @@ input[type=search]:focus {
 
 .interviewresponsebtn {
     text-decoration: none;
-    padding: 7px 65px;
+    padding: 7px 32px;
     position: relative;
     clear: both;
     border-radius: 3px;
@@ -6105,15 +6105,14 @@ input[type=search]:focus {
 }
 
 .greenbtn {
-    background: #25a125;
+    background: #25a125b0;
 }
 
-    .greenbtn:hover {
-        background: #208520;
-    }
-
+ .greenbtn:hover {
+    background: #208520;
+}
 .redbtn {
-    background: #cf3f35;
+    background: #da362aad;
 }
 
     .redbtn:hover {
@@ -6171,7 +6170,8 @@ input[type=search]:focus {
 }
 
 .content-wrappers .meeting-link .click_herebtn {
-    padding: 14px 40px;
+    padding: 12px 50px;
+    font-size:18px;
 }
 
 .candidate-tab .card-block h1 {
@@ -6197,7 +6197,7 @@ input[type=search]:focus {
     margin: 20px 0px;
     color: #3094e5;
     font-weight: bold;
-    font-size: 19px;
+    font-size: 20px;
     position: relative;
     top: -36px;
 }

@@ -9656,6 +9656,17 @@ namespace Risebird.Web.Controllers
             ViewBag.actionType = actionType;
             return PartialView(model);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CandidateRatingInterviewer(int id, int actionType = 0)
+        {
+            var model = new PaymentSLAVM();
+            model.Interviewid = id;
+            await SetInitialValue(model);
+            ViewBag.actionType = actionType;
+            ViewBag.IncludeInterviewerVideoOff = true;
+            return View("CandidateRatingInterviewer", model);
+        }
         public async Task<IActionResult> AddCodeDetails(int id, int interviewId)
         {
             var emailid = HttpContext.Session.GetString("email")?.Trim();
