@@ -20,5 +20,8 @@ namespace Risebird.Entities.Data
         public string ClientHREmailId { get; set; }
         public string ReasonBehindNotProcessed { get; set; }
 
+        /// <summary>Optional link back to a support ticket when the resume was ingested via Relay webhook.</summary>
+        public int? SupportTicketId { get; set; }
+
     }
 }

@@ -149,11 +149,33 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<IrfMatchVM> GetIRFByStringIdAsync(string irfStringId)
+        {
+            if (string.IsNullOrWhiteSpace(irfStringId))
+                return null;
+
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var row = await conn.QuerySingleOrDefaultAsync<IrfMatchVM>(
+                    "usp_GetIRFByStringId",
+                    new { IRFStringId = irfStringId.Trim() },
+                    commandType: CommandType.StoredProcedure);
+                return row;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<int> InsertCandidateResumeAsync(
             int    irfId,
             string resumeLink,
             int    addedBy,
-            string clientHrEmailId)
+            string clientHrEmailId,
+            int?   supportTicketId = null)
         {
             try
             {
@@ -165,7 +187,8 @@ namespace Risebird.Repository
                         IRFId           = irfId,
                         ResumeLink      = resumeLink,
                         AddedBy         = addedBy,
-                        ClientHREmailId = clientHrEmailId
+                        ClientHREmailId = clientHrEmailId,
+                        SupportTicketId = supportTicketId
                     },
                     commandType: CommandType.StoredProcedure);
                 return newId;
@@ -208,6 +231,65 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return new List<SupportTicketVM>();
+            }
+        }
+
+        public async Task<List<SupportTicketVM>> GetSystemAssignedTicketsAsync(int page = 1, int pageSize = 25)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<SupportTicketVM>(
+                    "usp_GetSystemAssignedTickets",
+                    new { Page = page, PageSize = pageSize },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<SupportTicketVM>();
+            }
+        }
+
+        public async Task<List<SupportTicketVM>> GetHybridTicketsAsync(int page = 1, int pageSize = 25)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<SupportTicketVM>(
+                    "usp_GetHybridTickets",
+                    new { Page = page, PageSize = pageSize },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<SupportTicketVM>();
+            }
+        }
+
+        public async Task<IrfMatchVM> AutoMapUserToIRFAsync(string senderEmail, string jobTitle, string specialization = null)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var result = await conn.QueryFirstOrDefaultAsync<IrfMatchVM>(
+                    "usp_AutoMapUserToIRF",
+                    new
+                    {
+                        SenderEmail    = senderEmail,
+                        JobTitle       = jobTitle,
+                        Specialization = specialization
+                    },
+                    commandType: CommandType.StoredProcedure);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

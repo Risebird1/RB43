@@ -37,6 +37,7 @@ namespace Risebird.Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Index(
+            string tab         = "all",
             string status      = null,
             string intent      = null,
             string senderEmail = null,
@@ -51,36 +52,73 @@ namespace Risebird.Web.Controllers
                 if (pageSize < 10)  pageSize = 10;
                 if (pageSize > 200) pageSize = 200;
 
-                DateTime? dtFrom = null;
-                DateTime? dtTo   = null;
+                List<SupportTicketVM> tickets;
+                int totalCount;
+                int totalPages;
 
-                if (!string.IsNullOrWhiteSpace(dateFrom) &&
-                    DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
-                if (!string.IsNullOrWhiteSpace(dateTo) &&
-                    DateTime.TryParse(dateTo,   out var pTo))   dtTo   = pTo;
+                if (tab == "system")
+                {
+                    // System tab — tickets assigned ONLY to System (never to human HR)
+                    tickets    = await _repository.GetSystemAssignedTicketsAsync(page, pageSize);
+                    totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
+                    totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-                var tickets = await _repository.GetTicketsAsync(
-                    status, intent, senderEmail, dtFrom, dtTo, page, pageSize);
+                    // Clear filters (they don't apply)
+                    status = intent = senderEmail = dateFrom = dateTo = null;
+                }
+                else if (tab == "hybrid")
+                {
+                    // Hybrid tab — tickets assigned to BOTH System AND human HR
+                    tickets    = await _repository.GetHybridTicketsAsync(page, pageSize);
+                    totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
+                    totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-                int totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
-                int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+                    // Clear filters (they don't apply)
+                    status = intent = senderEmail = dateFrom = dateTo = null;
+                }
+                else
+                {
+                    // Manual Review tab — tickets never assigned to System
+                    DateTime? dtFrom = null;
+                    DateTime? dtTo   = null;
 
-                ViewBag.Page        = page;
-                ViewBag.PageSize    = pageSize;
-                ViewBag.TotalCount  = totalCount;
-                ViewBag.TotalPages  = totalPages;
-                ViewBag.Status      = status      ?? string.Empty;
-                ViewBag.Intent      = intent      ?? string.Empty;
-                ViewBag.SenderEmail = senderEmail ?? string.Empty;
-                ViewBag.DateFrom    = dateFrom    ?? string.Empty;
-                ViewBag.DateTo      = dateTo      ?? string.Empty;
+                    if (!string.IsNullOrWhiteSpace(dateFrom) &&
+                        DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
+                    if (!string.IsNullOrWhiteSpace(dateTo) &&
+                        DateTime.TryParse(dateTo,   out var pTo))   dtTo   = pTo;
+
+                    tickets    = await _repository.GetTicketsAsync(
+                        status, intent, senderEmail, dtFrom, dtTo, page, pageSize);
+                    totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
+                    totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+                }
+
+                // Fetch counts for tab badges
+                var systemTicketsForCount = await _repository.GetSystemAssignedTicketsAsync(1, 1);
+                int systemCount = systemTicketsForCount.Count > 0 ? systemTicketsForCount[0].TotalCount : 0;
+
+                var hybridTicketsForCount = await _repository.GetHybridTicketsAsync(1, 1);
+                int hybridCount = hybridTicketsForCount.Count > 0 ? hybridTicketsForCount[0].TotalCount : 0;
+
+                ViewBag.Tab           = tab;
+                ViewBag.Page          = page;
+                ViewBag.PageSize      = pageSize;
+                ViewBag.TotalCount    = totalCount;
+                ViewBag.TotalPages    = totalPages;
+                ViewBag.SystemCount   = systemCount;
+                ViewBag.HybridCount   = hybridCount;
+                ViewBag.Status        = status      ?? string.Empty;
+                ViewBag.Intent        = intent      ?? string.Empty;
+                ViewBag.SenderEmail   = senderEmail ?? string.Empty;
+                ViewBag.DateFrom      = dateFrom    ?? string.Empty;
+                ViewBag.DateTo        = dateTo      ?? string.Empty;
 
                 return View(tickets);
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return View(new System.Collections.Generic.List<SupportTicketVM>());
+                return View(new List<SupportTicketVM>());
             }
         }
 
@@ -205,50 +243,91 @@ namespace Risebird.Web.Controllers
         // ── IRF matching (server-side, no extra Relay step) ───────────────────
 
         /// <summary>
-        /// Matches the extracted job title to the best candidate IRF for the sender.
-        ///
-        /// Matching priority:
-        ///   1. Score against IRF.JDTitleTwo (the role-specific JD title — most precise)
-        ///   2. If all JDTitleTwo scores are 0, fall back to IRF.SkillCluster
-        ///
-        /// Scoring tiers (per field):
-        ///   100 — direct string containment (one contains the other)
-        ///   1–90 — word-overlap ratio
-        ///   0    — no shared words
-        ///
-        /// Tiebreaker: lowest IRF.id (oldest / most established channel).
+        /// Resolves the IRF for resume ingestion.
+        ///   1. If skill_channel_id is a 10-char code, usp_GetIRFByStringId confirms it
+        ///      against IRF.IRFId; on match, scoring is skipped.
+        ///   2. Otherwise: sender's eligible IRFs via TransClientUser, then score
+        ///      JDTiltle then SkillCluster; tiebreak by EndDate, StartDate, CreatedOn.
         /// </summary>
-        private async Task<IrfMatchVM> MatchIRFAsync(string senderEmail, string jobTitle)
+        /// <summary>
+        /// Matches sender to the best IRF based on job title and specialization.
+        /// Priority: explicit skill_channel_id > scoring (JDTitle + SkillCluster vs jobTitle + specialization) > recency.
+        /// </summary>
+        private async Task<IrfMatchVM> MatchIRFAsync(
+            string senderEmail,
+            string jobTitle,
+            string skillChannelId = null,
+            string specialization = null)
         {
+            // Explicit Skill Channel ID from Relay: confirm it exists in IRF (string
+            // IRFId column). No sender / TransClientUser filter — if valid, skip scoring.
+            if (!string.IsNullOrWhiteSpace(skillChannelId)
+                && skillChannelId.Trim().Length == 10)
+            {
+                var byDb = await _repository.GetIRFByStringIdAsync(skillChannelId.Trim());
+                if (byDb != null)
+                    return byDb;
+            }
+
             var irfs = await _repository.GetIRFsForSenderAsync(senderEmail);
-            if (irfs == null || irfs.Count == 0) return null;
-            if (irfs.Count == 1)                 return irfs[0];
+            
+            // If no existing mappings found, try auto-mapping based on client and job title
+            if (irfs == null || irfs.Count == 0)
+            {
+                // Attempt to auto-map: finds matching IRF for user's client and creates mapping
+                var autoMapped = await _repository.AutoMapUserToIRFAsync(
+                    senderEmail, 
+                    jobTitle, 
+                    specialization);
+                
+                if (autoMapped != null)
+                {
+                    // Auto-mapping succeeded — return the newly mapped IRF
+                    return autoMapped;
+                }
+                
+                // Auto-mapping failed — no matching IRF found
+                return null;
+            }
 
-            if (string.IsNullOrWhiteSpace(jobTitle))
-                return BestByRecency(irfs);
+            // Build combined search text from jobTitle and specialization
+            var searchText = string.Join(" ",
+                new[] { jobTitle, specialization }
+                    .Where(s => !string.IsNullOrWhiteSpace(s)))
+                .Trim();
 
-            // Pass 1: score against JDTiltle
-            var pass1 = irfs
-                .Select(irf => new { irf, score = ScoreIRF(irf.JDTiltle, jobTitle) })
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // No search criteria — return most recent, or single IRF
+                return irfs.Count == 1 ? irfs[0] : BestByRecency(irfs);
+            }
+
+            // Score each IRF: combine JDTiltle and SkillCluster into one field to match against
+            var scored = irfs
+                .Select(irf => new
+                {
+                    irf,
+                    score = ScoreIRF(
+                        (irf.JDTiltle + " " + irf.SkillCluster).Trim(),
+                        searchText)
+                })
                 .OrderByDescending(x => x.score)
                 .ThenByDescending(x => x.irf.EndDate)
                 .ThenByDescending(x => x.irf.StartDate)
                 .ThenByDescending(x => x.irf.CreatedOn)
                 .ToList();
 
-            if (pass1[0].score > 0)
-                return pass1[0].irf;
+            // If best score > 0, return that IRF
+            if (scored[0].score > 0)
+                return scored[0].irf;
 
-            // Pass 2: JDTiltle produced no match — fall back to SkillCluster
-            var pass2 = irfs
-                .Select(irf => new { irf, score = ScoreIRF(irf.SkillCluster, jobTitle) })
-                .OrderByDescending(x => x.score)
-                .ThenByDescending(x => x.irf.EndDate)
-                .ThenByDescending(x => x.irf.StartDate)
-                .ThenByDescending(x => x.irf.CreatedOn)
-                .ToList();
+            // No good match found — only return single IRF if that's all there is
+            // Otherwise return null to indicate no suitable match
+            if (irfs.Count == 1)
+                return irfs[0];
 
-            return pass2[0].score > 0 ? pass2[0].irf : BestByRecency(irfs);
+            // Multiple IRFs but none matched — return null (no confident match)
+            return null;
         }
 
         private static IrfMatchVM BestByRecency(List<IrfMatchVM> irfs) =>
@@ -338,13 +417,30 @@ namespace Risebird.Web.Controllers
                     JobTitle                 = payload.JobTitle?.Trim()
                 };
 
+                // Correct attachment flags based on actual resume_drive_urls content
+                // GPT may not set these correctly, so we override based on actual data
+                bool hasResumeUrls = payload.ResumeDriveUrls != null
+                                  && payload.ResumeDriveUrls.Any(u => !string.IsNullOrWhiteSpace(u));
+                if (hasResumeUrls)
+                {
+                    ticket.AttachmentResumes = true;
+                    // If there are resume URLs, there's likely at least one PDF
+                    ticket.AttachmentPdf = true;
+                }
+
                 var newId = await _repository.InsertTicketAsync(ticket);
 
-                // ── Resume ingestion (New candidate submission only) ───────────
+                // ── Resume ingestion ("New candidate submission" OR "New interview request") ──
                 var resumeIngestionResult = new System.Text.StringBuilder();
-                if (string.Equals(ticket.Intent, "New candidate submission",
-                        StringComparison.OrdinalIgnoreCase)
-                    && ticket.AttachmentResumes
+                var isResumeIngestionIntent =
+                    string.Equals(ticket.Intent, "New candidate submission",
+                        StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(ticket.Intent, "New interview request",
+                        StringComparison.OrdinalIgnoreCase);
+
+                // Check for resume URLs - don't rely on AttachmentResumes flag since
+                // GPT may not set it correctly even when resume_drive_urls has content
+                if (isResumeIngestionIntent
                     && payload.ResumeDriveUrls != null
                     && payload.ResumeDriveUrls.Count > 0)
                 {
@@ -354,18 +450,34 @@ namespace Risebird.Web.Controllers
                     try
                     {
                         irfMatch = await MatchIRFAsync(
-                            ticket.SenderEmail, ticket.JobTitle ?? ticket.Subject);
+                            ticket.SenderEmail,
+                            ticket.JobTitle ?? ticket.Subject,
+                            payload.SkillChannelId,
+                            ticket.PrimarySpecialization);
 
                         if (irfMatch != null)
                         {
-                            foreach (var url in payload.ResumeDriveUrls
-                                         .Where(u => !string.IsNullOrWhiteSpace(u)))
+                            // Relay sometimes sends all URLs joined by whitespace in a
+                            // single array element instead of one element per URL.
+                            // Flatten by splitting every element on whitespace so both
+                            // formats (proper array and space-joined string) are handled.
+                            var individualUrls = payload.ResumeDriveUrls
+                                .Where(u => !string.IsNullOrWhiteSpace(u))
+                                .SelectMany(u => u.Split(
+                                    new[] { ' ', '\n', '\r', '\t' },
+                                    StringSplitOptions.RemoveEmptyEntries))
+                                .Where(u => u.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                                .Distinct()
+                                .ToList();
+
+                            foreach (var url in individualUrls)
                             {
                                 var rid = await _repository.InsertCandidateResumeAsync(
                                     irfMatch.Id,
                                     url.Trim(),
                                     irfMatch.RisebirdHrId,
-                                    ticket.SenderEmail);
+                                    ticket.SenderEmail,
+                                    newId);
                                 if (rid > 0) inserted++;
                             }
                         }
@@ -375,23 +487,63 @@ namespace Risebird.Web.Controllers
                         await _logger.LogMessage(LogLevelInfo.Exception, rex);
                     }
 
+                    // For resume ingestion intents, AssignedTo was left NULL by the SP.
+                    // Now assign based on the outcome:
                     if (inserted > 0)
                     {
-                        // Ingestion succeeded — system did the work, reassign away from HR
+                        // Ingestion succeeded — assign to System and close
                         await _repository.UpdateTicketAssignmentAsync(newId, "System", "System");
+                        await _repository.UpdateTicketStatusAsync(newId, "Closed", "System");
+
                         resumeIngestionResult.Append(
-                            $"Resumes ingested: {inserted}, IRF: {irfMatch.IRFStringId}");
+                            $"Resumes ingested: {inserted}, IRF: {irfMatch.IRFStringId}, ticket auto-closed");
                     }
                     else
                     {
-                        // Ingestion failed — the ticket keeps its naturally resolved HR
-                        // assignment so they can handle it manually. No update needed.
+                        // Ingestion failed — assign to the resolved HR for manual review
                         var fallbackHR = irfMatch?.RisebirdHrEmail;
-                        resumeIngestionResult.Append(
-                            !string.IsNullOrWhiteSpace(fallbackHR)
-                                ? $"Ingestion failed — assigned to {fallbackHR} for manual review."
-                                : "Ingestion failed — no IRF resolved; ticket assigned to default HR.");
+                        if (!string.IsNullOrWhiteSpace(fallbackHR))
+                        {
+                            await _repository.UpdateTicketAssignmentAsync(newId, fallbackHR, "System");
+                            resumeIngestionResult.Append(
+                                $"Ingestion failed — assigned to {fallbackHR} for manual review.");
+                        }
+                        else
+                        {
+                            resumeIngestionResult.Append(
+                                "Ingestion failed — no IRF or HR resolved; ticket left unassigned.");
+                        }
                     }
+                }
+                else if (isResumeIngestionIntent)
+                {
+                    // Resume ingestion intent but no resumes attached or no drive URLs
+                    // Still need to assign to an HR since the SP left it NULL
+                    var irfMatch = await MatchIRFAsync(
+                        ticket.SenderEmail,
+                        ticket.JobTitle ?? ticket.Subject,
+                        payload.SkillChannelId,
+                        ticket.PrimarySpecialization);
+
+                    var fallbackHR = irfMatch?.RisebirdHrEmail;
+                    if (!string.IsNullOrWhiteSpace(fallbackHR))
+                    {
+                        await _repository.UpdateTicketAssignmentAsync(newId, fallbackHR, "System");
+                        resumeIngestionResult.Append(
+                            $"No resumes to ingest — assigned to {fallbackHR} for manual review.");
+                    }
+                    else
+                    {
+                        resumeIngestionResult.Append(
+                            "No resumes to ingest and no HR resolved; ticket left unassigned.");
+                    }
+                }
+                else
+                {
+                    // Non-resume-ingestion intents (e.g., "Candidate status update", "Stop interviews", etc.)
+                    // The SP already handled HR assignment for these intents.
+                    // No additional action needed here.
+                    resumeIngestionResult.Append("N/A");
                 }
 
                 return Ok(new
