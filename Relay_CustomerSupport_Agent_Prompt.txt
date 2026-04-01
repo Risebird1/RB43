@@ -104,6 +104,18 @@ Rules:
   - Do NOT invent new categories
   - If the email is empty, unreadable, or spam-like -> webhook_intent = "Cold candidate"
 
+IMPORTANT DISTINCTION FOR "New interview request":
+  - This intent covers TWO scenarios:
+    1. REQUEST TO CREATE A NEW SKILL CHANNEL ? sender is asking to create a new
+       channel/requirement. This typically includes a JD (job description) attachment.
+    2. ADDING RESUMES TO AN EXISTING CHANNEL ? sender is adding candidate resumes 
+       for an existing channel. This typically has resumes attached but NO JD.
+  - Both scenarios use the SAME intent ("New interview request"), but the
+    attachment_job_description field will differ:
+      - Scenario 1 (new channel request): attachment_job_description = true
+      - Scenario 2 (adding to existing):  attachment_job_description = false
+  - This distinction is CRITICAL for downstream processing.
+
 --------------------------------------------------------------------------------
 PART 2  JOB TITLE
 --------------------------------------------------------------------------------
