@@ -1290,17 +1290,17 @@ namespace Risebird.Business
                 reportModel.IsAIInterview = interviewDetails.IsAIInterview;
                 reportModel.SessionId = interviewDetails.SessionId;
                 reportModel.AssistantId = interviewDetails.AssistantId;
-                if(!string.IsNullOrEmpty(interviewDetails.TranscriptSummary))
+                if (!string.IsNullOrEmpty(interviewDetails.TranscriptSummary))
                 {
                     reportModel.TranscriptSummaryObject = JsonConvert.DeserializeObject<TranscriptSummaryVM>(interviewDetails.TranscriptSummary);
 
                 }
-                
+
                 if (reportModel.IsAIInterview && !string.IsNullOrEmpty(reportModel.SessionId))
                 {
                     reportModel.AIVideoCount = await _meetingRespository.GetAIInterviewVideoCount(reportModel.SessionId);
                 }
-                
+
                 return reportModel;
             }
             catch (Exception e)
@@ -1423,7 +1423,7 @@ namespace Risebird.Business
                         throw new InvalidOperationException("Cannot mark AI interview as completed: No candidate response videos found for this interview.");
                     }
                 }
-                
+
                 if (reportModel.MeetingStatus == (int)MeetingStatus.DroppedSelected)
                 {
                     reportModel.InterviewStatus = (int)InterviewStatus.Selected;
@@ -4587,11 +4587,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null)
+        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null, string contradictionJson = null)
         {
             try
             {
-                return await _meetingRespository.SaveQcInterviewAIMergedDetails(qcEvaluationId, mergedJson, totalPenalty, interviewerSuspicious, redoInterview);
+                return await _meetingRespository.SaveQcInterviewAIMergedDetails(qcEvaluationId, mergedJson, totalPenalty, interviewerSuspicious, redoInterview, contradictionJson);
             }
             catch (Exception ex)
             {
@@ -4621,7 +4621,7 @@ namespace Risebird.Business
                         throw new InvalidOperationException("Cannot mark AI interview as completed: No candidate response videos found for this interview.");
                     }
                 }
-                
+
                 return await _meetingRespository.SaveAIInterviewProctorEvaluation(model);
             }
             catch (Exception ex)

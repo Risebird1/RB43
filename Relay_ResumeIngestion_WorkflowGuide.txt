@@ -71,7 +71,7 @@ The full updated JSON body must include these fields (in addition to existing):
 Save the step.
 
 ================================================================================
-STEP 3 — VERIFY THE "resume_drive_urls" LOOP CONDITION
+STEP 3 — VERIFY THE "resume_drive_urls" LOOP CONDITION (*** CRITICAL ***)
 ================================================================================
 
 Currently the loop (step 6 "For each item in Attachments") and the URL
@@ -88,8 +88,24 @@ the resume URL collection to a specific intent. If so:
 
   This ensures resume Drive URLs are collected and sent for BOTH intents.
 
+IMPORTANT — Resume Identification for These Intents:
+
+For "New candidate submission" or "New interview request" intents:
+  - Resume filenames often do NOT contain "resume", "cv", or "profile"
+  - They are typically named with candidate name + role, e.g.:
+      "John_Smith_Java_Developer.pdf"
+      "ABUTHAHIRM[5y_6m] - Azure Developer - Expleo.pdf"
+      "Aluri Gangaiah_Jconnect_Azure Developer (Python).pdf"
+
+  - For these two intents, include ALL uploaded PDF/DOC/DOCX files in 
+    resume_drive_urls UNLESS the filename clearly indicates a JD:
+      Contains "JD", "job description", "requirement", "hiring brief" → EXCLUDE
+      All other PDF/DOC/DOCX files → INCLUDE as resumes
+
+  - Also ensure attachment_resumes = true if any such files exist
+
 If there is no such condition and all attachments are processed regardless of
-intent, no change is needed here.
+intent, verify the resume identification logic follows the above rules.
 
 ================================================================================
 STEP 4 — PUBLISH THE WORKFLOW
