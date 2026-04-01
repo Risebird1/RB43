@@ -124,5 +124,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime? StartDate       { get; set; }
         public DateTime? EndDate         { get; set; }
         public DateTime? CreatedOn       { get; set; }
+
+        /// <summary>True if this mapping was auto-created by usp_AutoMapUserToIRF.</summary>
+        public bool      WasAutoMapped   { get; set; }
     }
 }

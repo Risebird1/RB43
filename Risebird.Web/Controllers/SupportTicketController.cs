@@ -270,7 +270,25 @@ namespace Risebird.Web.Controllers
             }
 
             var irfs = await _repository.GetIRFsForSenderAsync(senderEmail);
-            if (irfs == null || irfs.Count == 0) return null;
+            
+            // If no existing mappings found, try auto-mapping based on client and job title
+            if (irfs == null || irfs.Count == 0)
+            {
+                // Attempt to auto-map: finds matching IRF for user's client and creates mapping
+                var autoMapped = await _repository.AutoMapUserToIRFAsync(
+                    senderEmail, 
+                    jobTitle, 
+                    specialization);
+                
+                if (autoMapped != null)
+                {
+                    // Auto-mapping succeeded — return the newly mapped IRF
+                    return autoMapped;
+                }
+                
+                // Auto-mapping failed — no matching IRF found
+                return null;
+            }
 
             // Build combined search text from jobTitle and specialization
             var searchText = string.Join(" ",
@@ -398,6 +416,17 @@ namespace Risebird.Web.Controllers
                     SummaryInterviewScores   = payload.SummaryInterviewScores?.Trim(),
                     JobTitle                 = payload.JobTitle?.Trim()
                 };
+
+                // Correct attachment flags based on actual resume_drive_urls content
+                // GPT may not set these correctly, so we override based on actual data
+                bool hasResumeUrls = payload.ResumeDriveUrls != null
+                                  && payload.ResumeDriveUrls.Any(u => !string.IsNullOrWhiteSpace(u));
+                if (hasResumeUrls)
+                {
+                    ticket.AttachmentResumes = true;
+                    // If there are resume URLs, there's likely at least one PDF
+                    ticket.AttachmentPdf = true;
+                }
 
                 var newId = await _repository.InsertTicketAsync(ticket);
 
