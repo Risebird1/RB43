@@ -410,7 +410,7 @@ namespace Risebird.Web.Controllers
                         StringComparison.OrdinalIgnoreCase);
 
                 if (isResumeIngestionIntent
-                    && ticket.AttachmentResumes
+                    //&& ticket.AttachmentResumes
                     && payload.ResumeDriveUrls != null
                     && payload.ResumeDriveUrls.Count > 0)
                 {
