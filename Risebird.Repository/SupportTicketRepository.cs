@@ -269,5 +269,28 @@ namespace Risebird.Repository
                 return new List<SupportTicketVM>();
             }
         }
+
+        public async Task<IrfMatchVM> AutoMapUserToIRFAsync(string senderEmail, string jobTitle, string specialization = null)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var result = await conn.QueryFirstOrDefaultAsync<IrfMatchVM>(
+                    "usp_AutoMapUserToIRF",
+                    new
+                    {
+                        SenderEmail    = senderEmail,
+                        JobTitle       = jobTitle,
+                        Specialization = specialization
+                    },
+                    commandType: CommandType.StoredProcedure);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
