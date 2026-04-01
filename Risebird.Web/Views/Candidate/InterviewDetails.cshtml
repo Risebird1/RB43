@@ -395,7 +395,7 @@ a.rb-link:hover {
                                                     </div>
                                                     }*@
                                                             <div class="clearfix"></div>
-                                                            <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" style="margin-left:10px;background:#42a5f5;cursor:pointer;position: relative;top:0px;" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
+                                                            <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a style="cursor:pointer;position: relative;top:0px;color: #42a5f5;" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
                                                             <p style="line-height:32px;font-size:17px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
 
                                                             <div style="padding:0px;margin:0px 0px 15px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDateTimeZone (@item.TimeZonesValue)</span></div>
@@ -458,7 +458,14 @@ a.rb-link:hover {
                                                                                             </a>
                                                                                     </div>
 
-                                                                                    <div style="position:relative;"> <span class="time-txt">(Please join 10 min before the interview time)</span></div>
+                                                                                    <div style="position:relative;"> <span class="time-txt">(Meeting link will be enabled at the interview time)</span></div>
+                                                                                    <div style="position:relative;margin-top:6px;">
+                                                                            <span style="color:grey;font-weight:700;"> If you feel the interviewer is not engaged or any other ethical issue</span> <a style="cursor:pointer;color:#3094e5;font-weight:600;text-decoration:underline;font-size:16px;margin-bottom:20px;display:inline-block"
+                                                                                           href="@Url.Action("CandidateRatingInterviewer", "Interview", new { id = item.Interviewid })"
+                                                                                           target="_blank" rel="noopener noreferrer">
+                                                                                             Report here
+                                                                                        </a>
+                                                                                    </div>
                                                                     }
                                                                 }
                                                                 
