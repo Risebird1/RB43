@@ -292,5 +292,23 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<string> GetHRForSenderAsync(string senderEmail)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var result = await conn.QueryFirstOrDefaultAsync<string>(
+                    "usp_GetHRForSender",
+                    new { SenderEmail = senderEmail },
+                    commandType: CommandType.StoredProcedure);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
