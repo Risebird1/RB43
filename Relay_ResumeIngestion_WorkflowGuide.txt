@@ -8,10 +8,26 @@ Changes needed in Relay to support:
   1. Extracting "skill_channel_id" from the email body (new field)
   2. Triggering resume ingestion for BOTH intents:
        - "New candidate submission"
-       - "New interview request"
+       - "New interview request" (when NOT a new channel request)
   3. Passing "skill_channel_id" in the webhook payload so the server can skip
      the job-title scoring algorithm when the sender explicitly mentions
      their Skill Channel ID (e.g. QUADRJAVA5)
+
+IMPORTANT — "New interview request" HANDLING:
+  The system distinguishes between TWO scenarios under this intent:
+  
+  Scenario A: REQUEST TO CREATE A NEW SKILL CHANNEL
+    - JD (job description) is attached → attachment_job_description = true
+    - Server SKIPS resume ingestion (channel doesn't exist yet)
+    - Ticket assigned to HR for manual channel creation
+  
+  Scenario B: ADDING RESUMES TO AN EXISTING CHANNEL
+    - Resumes attached but NO JD → attachment_job_description = false
+    - Server proceeds with resume ingestion (channel already exists)
+    - Ticket auto-closed if ingestion succeeds
+  
+  Make sure the AI correctly sets attachment_job_description based on
+  whether a JD document is attached.
 
 Background: A Skill Channel ID is always exactly 10 alphanumeric characters
 (A-Z, a-z, 0-9). The server already validates it against the sender's eligible

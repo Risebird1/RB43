@@ -430,19 +430,28 @@ namespace Risebird.Web.Controllers
 
                 var newId = await _repository.InsertTicketAsync(ticket);
 
-                // ── Resume ingestion ("New candidate submission" OR "New interview request") ──
+                // ── Resume ingestion logic ──
                 var resumeIngestionResult = new System.Text.StringBuilder();
-                var isResumeIngestionIntent =
-                    string.Equals(ticket.Intent, "New candidate submission",
-                        StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(ticket.Intent, "New interview request",
-                        StringComparison.OrdinalIgnoreCase);
-
-                // Check for resume URLs - don't rely on AttachmentResumes flag since
-                // GPT may not set it correctly even when resume_drive_urls has content
-                if (isResumeIngestionIntent
+                
+                var isNewCandidateSubmission = string.Equals(ticket.Intent, 
+                    "New candidate submission", StringComparison.OrdinalIgnoreCase);
+                var isNewInterviewRequest = string.Equals(ticket.Intent, 
+                    "New interview request", StringComparison.OrdinalIgnoreCase);
+                
+                // For "New interview request" with JD attached:
+                // This is a request to CREATE a new skill channel — skip resume ingestion
+                // and assign to HR for manual channel creation.
+                var isNewChannelRequest = isNewInterviewRequest && ticket.AttachmentJobDescription;
+                
+                // Resume ingestion applies to:
+                // 1. "New candidate submission" (always for existing channels)
+                // 2. "New interview request" WITHOUT JD attached (resumes for existing channel)
+                var shouldAttemptIngestion = 
+                    (isNewCandidateSubmission || (isNewInterviewRequest && !isNewChannelRequest))
                     && payload.ResumeDriveUrls != null
-                    && payload.ResumeDriveUrls.Count > 0)
+                    && payload.ResumeDriveUrls.Count > 0;
+
+                if (shouldAttemptIngestion)
                 {
                     IrfMatchVM irfMatch = null;
                     int        inserted = 0;
@@ -515,22 +524,37 @@ namespace Risebird.Web.Controllers
                         }
                     }
                 }
-                else if (isResumeIngestionIntent)
+                else if (isNewChannelRequest)
+                {
+                    // "New interview request" with JD attached = request to CREATE a new skill channel
+                    // Don't attempt resume ingestion — assign directly to an HR for manual channel creation
+                    // No need to match an IRF (it doesn't exist yet) — just find the HR for this client
+                    var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
+
+                    if (!string.IsNullOrWhiteSpace(hrEmail))
+                    {
+                        await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
+                        resumeIngestionResult.Append(
+                            $"New channel request (JD attached) — assigned to {hrEmail} for channel creation.");
+                    }
+                    else
+                    {
+                        resumeIngestionResult.Append(
+                            "New channel request (JD attached) — no HR resolved; ticket left unassigned.");
+                    }
+                }
+                else if (isNewCandidateSubmission || isNewInterviewRequest)
                 {
                     // Resume ingestion intent but no resumes attached or no drive URLs
                     // Still need to assign to an HR since the SP left it NULL
-                    var irfMatch = await MatchIRFAsync(
-                        ticket.SenderEmail,
-                        ticket.JobTitle ?? ticket.Subject,
-                        payload.SkillChannelId,
-                        ticket.PrimarySpecialization);
+                    // No IRF matching needed — just find the HR for this client directly
+                    var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
 
-                    var fallbackHR = irfMatch?.RisebirdHrEmail;
-                    if (!string.IsNullOrWhiteSpace(fallbackHR))
+                    if (!string.IsNullOrWhiteSpace(hrEmail))
                     {
-                        await _repository.UpdateTicketAssignmentAsync(newId, fallbackHR, "System");
+                        await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
                         resumeIngestionResult.Append(
-                            $"No resumes to ingest — assigned to {fallbackHR} for manual review.");
+                            $"No resumes to ingest — assigned to {hrEmail} for manual review.");
                     }
                     else
                     {
