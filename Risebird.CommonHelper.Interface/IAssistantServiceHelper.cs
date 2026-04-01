@@ -17,5 +17,6 @@ namespace Risebird.CommonHelper.Interface
         Task<RunResult> GenerateReportQCAnalysis(string reportStringData);
         Task<RunResult> ParseResume(string resumeData);
         Task<RunResult> TranscriptToNotes(string transcriptdata);
+        Task<RunResult> GeneratecontradictionReport(string transcriptSummary);
     }
 }

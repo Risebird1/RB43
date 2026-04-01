@@ -16,6 +16,7 @@ CREATE TABLE [dbo].[QcInterviewAIevaluation](
 	[AIMergeTotalPenalty] [int] NULL,
 	[AIMergeInterviewerSuspicious] [varchar](50) NULL,
 	[AIMergeRedoInterview] [bit] NULL,
+	[ContradictionJson] [varchar](max) NULL,
  CONSTRAINT [PK_QcInterviewAIevaluation] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

@@ -409,8 +409,9 @@ namespace Risebird.Web.Controllers
                     string.Equals(ticket.Intent, "New interview request",
                         StringComparison.OrdinalIgnoreCase);
 
+                // Check for resume URLs - don't rely on AttachmentResumes flag since
+                // GPT may not set it correctly even when resume_drive_urls has content
                 if (isResumeIngestionIntent
-                    //&& ticket.AttachmentResumes
                     && payload.ResumeDriveUrls != null
                     && payload.ResumeDriveUrls.Count > 0)
                 {

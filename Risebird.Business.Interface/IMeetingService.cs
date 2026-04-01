@@ -164,7 +164,7 @@ namespace Risebird.Business.Interface
         Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
         bool UpdateCancelInterviewDetails(int meetingid);
         Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder();
-        Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response,string cancellationreason);
+        Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response, string cancellationreason);
         Task<List<CustomerDetailsVM>> FetchCustomerDetails();
         Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se);
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();
@@ -256,9 +256,9 @@ namespace Risebird.Business.Interface
         Task<bool> SaveAITranscriptAnalysis(int interviewId, TranscriptAnalysisSchema model);
         Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null, bool transcritAi = true, string reportAIJsonResponse = null);
         Task<IEnumerable<QcInterviewAIMergePendingRow>> GetPendingQcInterviewAIMerge();
-        Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null);
+        Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null, string contradictionJson = null);
         Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId);
-        Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId,string cancellationreason);
+        Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, string cancellationreason);
         Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);
         Task<UnassignedInterviewVM> GetInterviewerInterviewDetails(int interviewId);
         Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model);
