@@ -45,5 +45,11 @@ namespace Risebird.Repository.Interface
         /// Creates a TransClientUser entry if a matching IRF is found for the user's client.
         /// </summary>
         Task<IrfMatchVM> AutoMapUserToIRFAsync(string senderEmail, string jobTitle, string specialization = null);
+
+        /// <summary>
+        /// Resolves the RisebirdHR email for a sender based on their client's existing IRF mappings.
+        /// Does not require matching a specific IRF - just finds an HR who handles this client.
+        /// </summary>
+        Task<string> GetHRForSenderAsync(string senderEmail);
     }
 }
