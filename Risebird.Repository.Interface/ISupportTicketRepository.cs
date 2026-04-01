@@ -29,6 +29,21 @@ namespace Risebird.Repository.Interface
 
         Task<List<IrfMatchVM>> GetIRFsForSenderAsync(string senderEmail);
 
-        Task<int> InsertCandidateResumeAsync(int irfId, string resumeLink, int addedBy, string clientHrEmailId);
+        /// <summary>Resolves an IRF by string IRFId column (Skill Channel name) if it exists and is valid.</summary>
+        Task<IrfMatchVM> GetIRFByStringIdAsync(string irfStringId);
+
+        Task<int> InsertCandidateResumeAsync(int irfId, string resumeLink, int addedBy, string clientHrEmailId, int? supportTicketId = null);
+
+        /// <summary>Returns tickets that were assigned ONLY to "System" and never to any human HR.</summary>
+        Task<List<SupportTicketVM>> GetSystemAssignedTicketsAsync(int page = 1, int pageSize = 25);
+
+        /// <summary>Returns tickets that were assigned to BOTH "System" AND at least one human HR.</summary>
+        Task<List<SupportTicketVM>> GetHybridTicketsAsync(int page = 1, int pageSize = 25);
+
+        /// <summary>
+        /// Auto-maps a client user to a matching IRF when no existing mapping exists.
+        /// Creates a TransClientUser entry if a matching IRF is found for the user's client.
+        /// </summary>
+        Task<IrfMatchVM> AutoMapUserToIRFAsync(string senderEmail, string jobTitle, string specialization = null);
     }
 }

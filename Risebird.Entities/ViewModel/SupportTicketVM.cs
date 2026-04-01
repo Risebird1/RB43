@@ -33,6 +33,12 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedAt                   { get; set; }
         public string   ClientName                  { get; set; }
         public int      TotalCount                  { get; set; }
+
+        /// <summary>IRF integer id (from CandidateResume) for tickets processed by System.</summary>
+        public int?     IngestedIRFId               { get; set; }
+
+        /// <summary>IRF string name (from IRF.IRFId) for tickets processed by System.</summary>
+        public string   IngestedIRFName             { get; set; }
     }
 
     /// <summary>
@@ -87,6 +93,14 @@ namespace Risebird.Entities.ViewModel
         public string JobTitle                      { get; set; }
 
         /// <summary>
+        /// Explicit Risebird Skill Channel ID (IRFId) extracted from the email body.
+        /// Exactly 10 alphanumeric characters when present. Allows the server to skip
+        /// the scoring algorithm and resolve the IRF directly.
+        /// </summary>
+        [JsonProperty("skill_channel_id")]
+        public string SkillChannelId                { get; set; }
+
+        /// <summary>
         /// Google Drive URLs of individual resume files uploaded during the loop.
         /// Relay passes these as a JSON array: ["url1","url2"].
         /// Populated only when webhook_intent = "New candidate submission".
@@ -110,5 +124,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime? StartDate       { get; set; }
         public DateTime? EndDate         { get; set; }
         public DateTime? CreatedOn       { get; set; }
+
+        /// <summary>True if this mapping was auto-created by usp_AutoMapUserToIRF.</summary>
+        public bool      WasAutoMapped   { get; set; }
     }
 }

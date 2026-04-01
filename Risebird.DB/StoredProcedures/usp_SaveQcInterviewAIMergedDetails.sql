@@ -12,7 +12,8 @@ CREATE PROCEDURE [dbo].[usp_SaveQcInterviewAIMergedDetails]
     @mergedJson NVARCHAR(MAX),
     @totalPenalty INT = NULL,
     @interviewerSuspicious VARCHAR(50) = NULL,
-    @redoInterview BIT = NULL
+    @redoInterview BIT = NULL,
+    @contradictionJson varchar(max)
 AS
 BEGIN
         UPDATE [dbo].[QcInterviewAIevaluation]
@@ -21,7 +22,10 @@ BEGIN
             [AIMergeInterviewerSuspicious] = @interviewerSuspicious,
             [AIMergeRedoInterview] = @redoInterview,
             [QCDone] = 1,
-            [QCDoneOn] = DATEADD(MINUTE, 330, GETDATE())
+            [QCDoneOn] = DATEADD(MINUTE, 330, GETDATE()),
+			[ContradictionJson]=@contradictionJson
         WHERE [id] = @qcEvaluationId;
 END
+
+
 GO
