@@ -302,7 +302,9 @@ namespace Risebird.Web.Controllers
                 return irfs.Count == 1 ? irfs[0] : BestByRecency(irfs);
             }
 
-            // Score each IRF: combine JDTiltle and SkillCluster into one field to match against
+            // Score each mapped IRF: combine JDTiltle and SkillCluster into one field to match against
+            const int StrongMatchThreshold = 80; // Score >= 70 = confident match
+            
             var scored = irfs
                 .Select(irf => new
                 {
@@ -317,16 +319,32 @@ namespace Risebird.Web.Controllers
                 .ThenByDescending(x => x.irf.CreatedOn)
                 .ToList();
 
-            // If best score > 0, return that IRF
-            if (scored[0].score > 0)
+            var bestMappedScore = scored[0].score;
+
+            // If mapped IRF has a strong match (>= threshold), use it directly
+            if (bestMappedScore >= StrongMatchThreshold)
                 return scored[0].irf;
 
-            // No good match found — only return single IRF if that's all there is
-            // Otherwise return null to indicate no suitable match
-            if (irfs.Count == 1)
-                return irfs[0];
+            // Mapped IRFs don't have a strong match — search ALL client IRFs for a better fit
+            // This handles cases where sender is mapped to wrong IRF but correct one exists for same client
+            var clientBestMatch = await _repository.FindBestIRFForClientAsync(
+                senderEmail,
+                jobTitle,
+                specialization,
+                createMapping: true);
 
-            // Multiple IRFs but none matched — return null (no confident match)
+            if (clientBestMatch != null)
+            {
+                // Found a strong matching IRF among all client IRFs — use it
+                return clientBestMatch;
+            }
+
+            // No strong match found anywhere
+            // If mapped IRF has at least some match (> 0), use it as fallback
+            if (bestMappedScore > 0)
+                return scored[0].irf;
+
+            // No match at all — return null for manual review
             return null;
         }
 
