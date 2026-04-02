@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 
 namespace Risebird.Entities.ViewModel
@@ -71,5 +71,7 @@ namespace Risebird.Entities.ViewModel
         public int QCPresent { get; set; }
         public bool IsAIInterview { get; set; }
         public string SessionId { get; set; }
+        public string PaymentSlaActionStatus { get; set; }
+        public int PaymentSlaReturnBack { get; set; }
     }
 }

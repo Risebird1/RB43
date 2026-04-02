@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.ProctoringReport
+@model Risebird.Entities.ViewModel.ProctoringReport
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -8,6 +8,8 @@
     @Html.HiddenFor(m => m.IsQCdone)
     @Html.HiddenFor(m => m.type)
     @Html.HiddenFor(m => m.ProxyvotingCount)
+    @Html.HiddenFor(m => m.PaymentSlaActionStatus)
+    @Html.HiddenFor(m => m.PaymentSlaReturnBack)
     <div class="canvas_div_pdf">
         <div class="report-full-wrap">
             <div class="card-wrap" style="margin:0px 0px">
