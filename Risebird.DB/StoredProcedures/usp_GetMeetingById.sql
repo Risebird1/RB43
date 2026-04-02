@@ -94,8 +94,8 @@ SELECT [InterviewMeetings].id as imid
   ,[InterviewMeetings].CandidateInterviewChecks 
   ,[InterviewMeetings].AssistantId
   ,[InterviewMeetings].SessionId
-  ,Case When ISNULL(cf.FormURL,'')!=''  or ISNULL(IRF.CandidateVideo,'')!='' then 1 else 0 end as ConsentRequired,
-  InterviewComments.TranscriptSummary
+  ,Case When ISNULL(cf.FormURL,'')!=''  or ISNULL(IRF.CandidateVideo,'')!='' then 1 else 0 end as ConsentRequired
+  ,Case When ISNULL(IRF.generateTranscriptSummary,0)=1 then InterviewComments.TranscriptSummary else '' end as TranscriptSummary
 FROM [dbo].[InterviewMeetings]            
 inner join             
 IRF on [InterviewMeetings].IRFId = IRF.IRFId            
