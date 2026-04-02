@@ -510,6 +510,24 @@ namespace Risebird.AzureTimerFunctions
                                     {
                                         _zoho.DeleteRecordingAsync(_recordingupload.erecordingId);
                                     }
+                                    if (!string.IsNullOrEmpty(transcriptSummaryCleanedJson))
+                                    {
+                                        try
+                                        {
+                                            using (HttpClient client = new HttpClient())
+                                            {
+                                                client.Timeout = TimeSpan.FromMinutes(3);
+                                                var request = new HttpRequestMessage(HttpMethod.Get, $"https://portal.risebird.io/Interview/AIClientReport?interviewId={meeting.imid}&irfId={meeting.irfIntId}&IsContradictionAI={true}");
+                                                var response = await client.SendAsync(request);
+                                                response.EnsureSuccessStatusCode();
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            log.LogInformation($"Zoho : API Call For transcriptSummaryCleanedJson {ex.Message}");
+                                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                        }
+                                    }
                                     log.LogInformation($"Zoho : Video link and/or transcript url updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
                                 }
                             }

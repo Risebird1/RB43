@@ -1293,7 +1293,7 @@ namespace Risebird.Business
                 if (!string.IsNullOrEmpty(interviewDetails.TranscriptSummary))
                 {
                     reportModel.TranscriptSummaryObject = JsonConvert.DeserializeObject<TranscriptSummaryVM>(interviewDetails.TranscriptSummary);
-
+                    reportModel.TranscriptSummary = interviewDetails.TranscriptSummary;
                 }
 
                 if (reportModel.IsAIInterview && !string.IsNullOrEmpty(reportModel.SessionId))
@@ -4587,11 +4587,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null, string contradictionJson = null)
+        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null)
         {
             try
             {
-                return await _meetingRespository.SaveQcInterviewAIMergedDetails(qcEvaluationId, mergedJson, totalPenalty, interviewerSuspicious, redoInterview, contradictionJson);
+                return await _meetingRespository.SaveQcInterviewAIMergedDetails(qcEvaluationId, mergedJson, totalPenalty, interviewerSuspicious, redoInterview);
             }
             catch (Exception ex)
             {
@@ -4599,7 +4599,18 @@ namespace Risebird.Business
                 return false;
             }
         }
-
+        public async Task<bool> SaveAiContradictionDetails(int qcEvaluationId, string contradictionJson = null)
+        {
+            try
+            {
+                return await _meetingRespository.SaveAiContradictionDetails(qcEvaluationId, contradictionJson);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public async Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId)
         {
             return await _meetingRespository.GetCandidateInterviewDetails(uniqueId, irfId, interviewId, candidateId);
