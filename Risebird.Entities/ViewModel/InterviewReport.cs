@@ -406,6 +406,7 @@ namespace Risebird.Entities.ViewModel
         public float TotalTechScore { get; set; }
         public TranscriptSummaryVM TranscriptSummaryObject { get; set; }
         public int AIVideoCount { get; set; }
+        public string TranscriptSummary { get; set; }
 
     }
     public class RBInterviewDetails

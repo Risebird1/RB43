@@ -7852,7 +7852,7 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             return null;
         }
 
-        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null, string contradictionJson = null)
+        public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null)
         {
             try
             {
@@ -7864,12 +7864,31 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                     parameters.Add("@totalPenalty", totalPenalty);
                     parameters.Add("@interviewerSuspicious", interviewerSuspicious);
                     parameters.Add("@redoInterview", redoInterview);
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIMergedDetails", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> SaveAiContradictionDetails(int qcEvaluationId, string contradictionJson = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@qcEvaluationId", qcEvaluationId);
                     if (string.IsNullOrWhiteSpace(contradictionJson))
                     {
                         contradictionJson = "";
                     }
                     parameters.Add("@contradictionJson", contradictionJson);
-                    await SqlMapper.ExecuteAsync(con, "usp_SaveQcInterviewAIMergedDetails", parameters, commandTimeout: 120,
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveAiContradictionDetails", parameters, commandTimeout: 120,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
