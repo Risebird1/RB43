@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -17,6 +17,7 @@ namespace Risebird.Entities.ViewModel
         public string ChannelOwner { get; set; }
         public string candidateEmail { get; set; }
         public string candidateName { get; set; }
+        public string CandidatePhone { get; set; }
         public string CreatedBy { get; set; }
         public string IRFId { get; set; }
         public int irfIntId { get; set; }
