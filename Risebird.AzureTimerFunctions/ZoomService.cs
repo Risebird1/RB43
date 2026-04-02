@@ -37,7 +37,7 @@ namespace Risebird.AzureTimerFunctions
             IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository,
             IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper,
-            ITeamsMeetingHelper iteamsMeetingHelper, IGoogleEventHelper googleEventHelper, 
+            ITeamsMeetingHelper iteamsMeetingHelper, IGoogleEventHelper googleEventHelper,
             IZohoMeetingHelper zoho, IOpenAIInterviewerAssistantHelper ai)
         {
             _configuration = configuration;
@@ -413,7 +413,7 @@ namespace Risebird.AzureTimerFunctions
                                     }
                                 }
                                 var transcriptSummaryCleanedJson = string.Empty;
-                                
+
                                 if (string.IsNullOrEmpty(meeting.AudioTranscriptFileLink))
                                 {
                                     var transcriptionDownloadUrl = _recordingupload.transcriptionDownloadUrl;
@@ -467,38 +467,38 @@ namespace Risebird.AzureTimerFunctions
                                         }
 
                                         ///write code to generate transcript summary
-                                        if (meeting.generateTranscriptSummary)
+                                        //if (meeting.generateTranscriptSummary)
+                                        //{
+                                        var transcriptString = await DownloadTranscriptStringAsync(transcriptionDownloadUrl, accessToken);
+                                        if (!string.IsNullOrEmpty(transcriptString))
                                         {
-                                            var transcriptString = await DownloadTranscriptStringAsync(transcriptionDownloadUrl, accessToken);
-                                            if (!string.IsNullOrEmpty(transcriptString))
+                                            var transcriptSummary = new TranscriptSummaryVM();
+                                            var threadId = await _ai.CreateThreadAsync();
+                                            await _ai.AddMessageAsync(threadId, "user", transcriptString);
+
+                                            //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
+
+                                            var runId = await _ai.CreateRunAsync(threadId, "asst_ebkDMtxPbZS8o6d6NabRGlrC"); //assistant id of the assistant named : AI Interviewee response extraction and analysis 
+                                            await _ai.WaitForRunAsync(threadId, runId);
+
+
+                                            var replies = await _ai.GetMessagesAsync(threadId);
+
+                                            try
                                             {
-                                                var transcriptSummary = new TranscriptSummaryVM();
-                                                var threadId = await _ai.CreateThreadAsync();
-                                                await _ai.AddMessageAsync(threadId, "user", transcriptString);
-
-                                                //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
-
-                                                var runId = await _ai.CreateRunAsync(threadId, "asst_ebkDMtxPbZS8o6d6NabRGlrC"); //assistant id of the assistant named : AI Interviewee response extraction and analysis 
-                                                await _ai.WaitForRunAsync(threadId, runId);
-
-
-                                                var replies = await _ai.GetMessagesAsync(threadId);
-
-                                                try
+                                                transcriptSummary = TryParseTranscriptSummaryVM(replies?.FirstOrDefault());
+                                                if (transcriptSummary != null)
                                                 {
-                                                    transcriptSummary = TryParseTranscriptSummaryVM(replies?.FirstOrDefault());
-                                                    if (transcriptSummary != null)
-                                                    {
-                                                        transcriptSummaryCleanedJson = JsonConvert.SerializeObject(transcriptSummary);
-                                                    }
+                                                    transcriptSummaryCleanedJson = JsonConvert.SerializeObject(transcriptSummary);
+                                                }
 
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                             }
                                         }
+                                        //}
 
                                     }
                                 }
@@ -888,7 +888,7 @@ namespace Risebird.AzureTimerFunctions
 
         private async Task<string> DownloadTranscriptStringAsync(string url, string accessToken)
         {
-            
+
             using var myWebClient = new HttpClient();
 
             myWebClient.DefaultRequestHeaders.Authorization =
