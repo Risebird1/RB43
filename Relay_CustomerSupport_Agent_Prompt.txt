@@ -322,7 +322,68 @@ Attachment handling rules:
   - If attachments exist for an eligible email, drive_folder_link must not be null
 
 --------------------------------------------------------------------------------
-PART 8  CLASSIFICATION FLOW
+PART 8  CANDIDATE SCHEDULING DATA EXTRACTION (*** NEW ***)
+--------------------------------------------------------------------------------
+
+When the email intent is "New candidate submission" or "New interview request",
+AND the email contains interview scheduling information (available slots/times),
+extract structured candidate scheduling data.
+
+CRITICAL: This data is used for AUTO-SCHEDULING interviews. Only extract when
+you have 100% CONFIDENCE in ALL fields for a candidate. If ANY field is uncertain
+for a candidate, DO NOT include that candidate in the array.
+
+Fields to extract for each candidate:
+
+  - candidate_name:       Full name of the candidate (REQUIRED - 100% confidence)
+  - candidate_email:      Email address if mentioned (null if not explicitly stated)
+  - interview_date:       Date in YYYY-MM-DD format (REQUIRED - 100% confidence)
+  - interview_time:       Time in HH:MM format, 24-hour (REQUIRED - 100% confidence)
+  - timezone:             Timezone code (default "IST" if not specified)
+  - skill_channel_id:     10-character IRF ID for THIS candidate (REQUIRED - 100% confidence)
+  - resume_drive_url:     The specific Google Drive URL for THIS candidate's resume
+
+Rules:
+  - Only extract candidates where you can CONFIDENTLY match:
+    * Name to a specific resume attachment
+    * Date and time slot to that candidate
+    * Skill Channel ID to that candidate (may be same for all or different)
+  
+  - If the email mentions multiple candidates with different slots/IRFs, extract each separately
+  
+  - If you CANNOT confidently associate a resume with a candidate, set resume_drive_url to null
+  
+  - Date/Time parsing examples:
+    * "available on 5th April at 2 PM IST" -> date: "2026-04-05", time: "14:00", timezone: "IST"
+    * "tomorrow 10:30 AM" -> calculate actual date, time: "10:30"
+    * "March 15, 2026 at 3:00 PM" -> date: "2026-03-15", time: "15:00"
+  
+  - If candidate has multiple available slots, pick the FIRST mentioned slot
+  
+  - If timezone is not specified, default to "IST"
+  
+  - NEVER guess or infer. Only extract with 100% certainty.
+
+Output format:
+  "candidate_schedule_data": [
+    {
+      "candidate_name": "John Doe",
+      "candidate_email": "john.doe@example.com",
+      "interview_date": "2026-04-05",
+      "interview_time": "14:00",
+      "timezone": "IST",
+      "skill_channel_id": "QUADRJAVA5",
+      "resume_drive_url": "https://drive.google.com/file/d/xxx/view"
+    }
+  ]
+
+Set to empty array [] if:
+  - Intent is not "New candidate submission" or "New interview request"
+  - No scheduling information is present in the email
+  - Cannot extract data with 100% confidence for any candidate
+
+--------------------------------------------------------------------------------
+PART 9  CLASSIFICATION FLOW
 --------------------------------------------------------------------------------
 
   1.  Read the email
@@ -336,11 +397,12 @@ PART 8  CLASSIFICATION FLOW
   9.  Generate summaries (Part 6)
   10. Process and upload attachments (Part 7)
   11. Collect individual resume Drive URLs into resume_drive_urls (Part 7)
-  12. Populate the final JSON (Part 9)
-  13. Send the webhook payload
+  12. Extract candidate scheduling data if applicable (Part 8) ? 100% CONFIDENCE ONLY
+  13. Populate the final JSON (Part 10)
+  14. Send the webhook payload
 
 --------------------------------------------------------------------------------
-PART 9  FINAL OUTPUT JSON  (*** UPDATED ***)
+PART 10  FINAL OUTPUT JSON  (*** UPDATED ***)
 --------------------------------------------------------------------------------
 
 {
@@ -360,7 +422,18 @@ PART 9  FINAL OUTPUT JSON  (*** UPDATED ***)
   "resume_drive_urls":          ["<url1>", "<url2>"],
   "summary_mail":               "<string>",
   "summary_candidates":         "<string or null>",
-  "summary_interview_scores":   "<string or null>"
+  "summary_interview_scores":   "<string or null>",
+  "candidate_schedule_data":    [
+    {
+      "candidate_name":      "<string>",
+      "candidate_email":     "<string or null>",
+      "interview_date":      "<YYYY-MM-DD>",
+      "interview_time":      "<HH:MM>",
+      "timezone":            "<string, default IST>",
+      "skill_channel_id":    "<10-char string>",
+      "resume_drive_url":    "<string or null>"
+    }
+  ]
 }
 
 ================================================================================
