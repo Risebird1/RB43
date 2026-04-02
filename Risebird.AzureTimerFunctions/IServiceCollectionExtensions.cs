@@ -1,3 +1,5 @@
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -53,6 +55,7 @@ namespace Risebird.AzureFunctions
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddHttpClient(); // Required for VapiService and PlivoService
             services.AddScoped<INotificationHelper, NotificationHelper>();
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
             // Vapi
             services.AddScoped<IVapiService, VapiService>();
             services.AddScoped<IVapiCallRepository, VapiCallRepository>();
