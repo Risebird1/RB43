@@ -29,6 +29,23 @@ IMPORTANT — "New interview request" HANDLING:
   Make sure the AI correctly sets attachment_job_description based on
   whether a JD document is attached.
 
+CRITICAL — SENSITIVE EMAIL FILTERING (Privacy Protection):
+  The system blocks emails containing personal/confidential information:
+  
+  - Salary slips, payroll notifications, bank statements
+  - Tax documents (Form 16, ITR, W2)
+  - Medical records, prescriptions
+  - Password reset emails, OTPs
+  - Identity documents (Aadhaar, PAN, SSN)
+  - Personal bills, credit card statements
+  
+  When AI detects such emails:
+  - Set webhook_intent = "Sensitive personal email"
+  - Do NOT upload attachments to Google Drive
+  - Server will block and log these for audit
+  
+  This is enforced at BOTH Relay and server levels for data protection.
+
 Background: A Skill Channel ID is always exactly 10 alphanumeric characters
 (A-Z, a-z, 0-9). The server already validates it against the sender's eligible
 list, so there is no security risk if a wrong ID is sent — it simply falls back
