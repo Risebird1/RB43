@@ -48,6 +48,7 @@ BEGIN
             cr.SupportTicketId,
             cr.IRFId,
             irf.IRFId AS IRFName,
+            ISNULL(irf.JDTiltle, '') AS JDTitle,
             ROW_NUMBER() OVER (PARTITION BY cr.SupportTicketId ORDER BY cr.id ASC) AS rn
         FROM dbo.CandidateResume cr
         INNER JOIN dbo.IRF irf ON irf.id = cr.IRFId
@@ -79,6 +80,7 @@ BEGIN
         t.JobTitle,
         tirf.IRFId     AS IngestedIRFId,
         tirf.IRFName   AS IngestedIRFName,
+        tirf.JDTitle   AS IngestedIRFJDTitle,
         COUNT(*) OVER() AS TotalCount
     FROM   dbo.SupportTickets t
     INNER JOIN HybridTicketIds h ON h.TicketId = t.Id

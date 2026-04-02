@@ -145,10 +145,11 @@ BEGIN
     END
 
     -- Step 5: Create mapping if requested and not already mapped
+    -- Mark as auto-mapped by the resume ingestion flow
     IF @CreateMapping = 1 AND @AlreadyMapped = 0
     BEGIN
-        INSERT INTO dbo.TransClientUser (IRFId, ClientUserId, ClientRoleId, IsActive)
-        VALUES (@MatchedIRFId, @UserId, ISNULL(@ClientRoleId, 1), 1);
+        INSERT INTO dbo.TransClientUser (IRFId, ClientUserId, ClientRoleId, IsActive, IsAutoMapped, AutoMappedOn)
+        VALUES (@MatchedIRFId, @UserId, ISNULL(@ClientRoleId, 1), 1, 1, GETUTCDATE());
         SET @AlreadyMapped = 0; -- Indicates we created a new mapping
     END
     ELSE

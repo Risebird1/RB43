@@ -69,7 +69,7 @@ namespace Risebird.AzureTimerFunctions
                     return;
                 }
 
-                var candidates = await _repository.GetEligibleCandidatesForRescheduleAsync(2);
+                var candidates = await _repository.GetEligibleCandidatesForRescheduleAsync(4);
                 if (candidates == null || !candidates.Any())
                 {
                     _log.LogInformation("[PlivoCX-Reschedule] No eligible candidates for rescheduling");
