@@ -1,19 +1,8 @@
 using BitMiracle.LibTiff.Classic;
-using DinkToPdf;
-using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewEngines;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Graph.Chats.GetAllMessages;
-using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -25,8 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Amazon.Runtime.Internal.Settings.SettingsCollection;
-using Orientation = DinkToPdf.Orientation;
 
 namespace Risebird.AzureTimerFunctions
 {
@@ -37,7 +24,6 @@ namespace Risebird.AzureTimerFunctions
     public class QcInterviewAIMergeJob
     {
         private const string DefaultMergeAssistantId = "asst_VJ5EYhocpfuzhwjwZmMcfblr";
-        private const string ContradictionAssistantId = "asst_9Nw7SKbhCsZ0Zp40kEa45rry";
 
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IConfiguration _configuration;
@@ -45,11 +31,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IMeetingService _meetingService;
         private readonly IOpenAIInterviewerAssistantHelper _ai;
         private readonly ILogger _log;
-        private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly ICompositeViewEngine _viewEngine;
-        private readonly ITempDataProvider _tempDataProvider;
-        private readonly IConverter _converter;
 
         public QcInterviewAIMergeJob(
             ILoggerFactory loggerFactory,
@@ -58,11 +40,7 @@ namespace Risebird.AzureTimerFunctions
             IAssistantServiceHelper assistantServiceHelper,
             IMeetingService meetingService,
             IOpenAIInterviewerAssistantHelper ai,
-            IAzureStorageHelper azureStorageHelper,
-            IHttpContextAccessor contextAccessor,
-            ICompositeViewEngine viewEngine,
-            ITempDataProvider tempDataProvider,
-            IConverter converter)
+            IHttpContextAccessor contextAccessor)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _configuration = configuration;
@@ -70,11 +48,7 @@ namespace Risebird.AzureTimerFunctions
             _meetingService = meetingService;
             _ai = ai;
             _log = loggerFactory.CreateLogger<QcInterviewAIMergeJob>();
-            _azureStorageHelper = azureStorageHelper;
             _contextAccessor = contextAccessor;
-            _viewEngine = viewEngine;
-            _tempDataProvider = tempDataProvider;
-            _converter = converter;
         }
 
         [Function("QcInterviewAIMergeJob")]
@@ -99,54 +73,7 @@ namespace Risebird.AzureTimerFunctions
                 {
                     try
                     {
-                        string contradictionJson = null;
-
-                        // Only call the Contradiction AI assistant if TranscriptSummary exists for this interview
-                        try
-                        {
-                            var transcriptSummary = row.TranscriptSummary;
-                            if (string.IsNullOrWhiteSpace(row.ContradictionJson))
-                            {
-                                if (!string.IsNullOrWhiteSpace(transcriptSummary))
-                                {
-                                    var model = await _meetingService.GetInteviewReport(row.InterviewId, row.irfId);
-                                    await ReportSkillSetandSeperate(model);
-                                    if (!string.IsNullOrEmpty(model.AudioTranscriptFileLink))
-                                    {
-                                        model.AudioTranscriptFileLink = null;
-                                    }
-                                    // Render the partial view to a string
-                                    var htmlContent = await RenderToStringAsync("AIClientReport", model);
-                                    //Generate PDF from HTML content
-                                    var pdfContent = GeneratePdf(htmlContent);
-                                    string fileName = "AIClientReport_" + model.InterviewId.ToString() + "_" + DateTime.Now.ToString() + ".pdf";
-                                    // Upload PDF to Azure Blob Storage
-                                    string uploadedFileURL = string.Empty;
-                                    using (MemoryStream stream = new MemoryStream(pdfContent))
-                                    {
-                                        await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
-                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
-                                        var blob = containerRef.GetBlockBlobReference(fileName);
-                                        uploadedFileURL = blob.Uri.ToString();
-                                    }
-                                    var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
-                                    var contradictionReportMessage = BuildContradictionReportMessage(transcriptSummary, reportStringContent);
-                                    var runcontradictionResult = await _assistantServiceHelper.GeneratecontradictionReport(contradictionReportMessage);
-                                    contradictionJson = runcontradictionResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value?.Replace("```json", "").Replace("```", "");
-                                }
-                            }
-                            else
-                            {
-                                contradictionJson = row.ContradictionJson;
-                            }
-                        }
-                        catch (Exception contradictionEx)
-                        {
-                            _log.LogError(contradictionEx, "QcInterviewAIMergeJob: error while calling Contradiction AI assistant for qcEvaluationId={Id} interviewId={InterviewId}", row.id, row.InterviewId);
-                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, contradictionEx);
-                        }
-
-                        var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails, contradictionJson, row.interviewDate, row.Joinedon);
+                        var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails, row.ContradictionJson, row.interviewDate, row.Joinedon);
                         var runResult = await _assistantServiceHelper.GenerateQcAnalysisInterviewAIMerge(userMessage, assistantId, useJsonResponseFormat: true);
                         var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value?.Replace("```json", "").Replace("```", "");
                         if (string.IsNullOrWhiteSpace(rawText))
@@ -169,8 +96,7 @@ namespace Risebird.AzureTimerFunctions
                             rawText,
                             totalPenalty: combined.total_penalty,
                             interviewerSuspicious: combined.interviewer_suspicious,
-                            redoInterview: combined.RedoInterview,
-                            contradictionJson: contradictionJson);
+                            redoInterview: combined.RedoInterview);
 
                         if (row.InterviewId > 0)
                             await PersistPaymentSlaFromQcMergeAsync(row.InterviewId, combined, PaymentComplanceCount);
@@ -189,129 +115,6 @@ namespace Risebird.AzureTimerFunctions
 
             _log.LogInformation("QcInterviewAIMergeJob finished at {Time}", DateTime.Now);
         }
-        public async Task ReportSkillSetandSeperate(InterviewReport model)
-        {
-            model.QuestionsTwoCollection = model.QuestionsCollection?.Where(x => x.SkillSet == 2).ToList();
-            model.QuestionsCollection = model.QuestionsCollection?.Where(x => x.SkillSet != 2).ToList();
-            model.TechSkillTwoReportCollection = model.TechSkillReportCollection?.Where(x => x.SkillSet == 2).ToList();
-            model.TechSkillReportCollection = model.TechSkillReportCollection?.Where(x => x.SkillSet != 2).ToList();
-        }
-        public async Task<string> RenderToStringAsync(string viewName, object model)
-        {
-            try
-            {
-                var httpContext = _contextAccessor.HttpContext;
-                var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new ActionDescriptor());
-
-                using (var sw = new StringWriter())
-                {
-                    var viewResult = _viewEngine.FindView(actionContext, viewName, false);
-
-                    if (viewResult.View == null)
-                    {
-                        throw new ArgumentNullException($"The view '{viewName}' was not found.");
-                    }
-
-                    var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
-                    {
-                        Model = model
-                    };
-
-                    var tempData = new TempDataDictionary(actionContext.HttpContext, _tempDataProvider);
-
-                    var viewContext = new ViewContext(
-                        actionContext,
-                        viewResult.View,
-                        viewDictionary,
-                        tempData,
-                        sw,
-                        new HtmlHelperOptions()
-                    );
-                    await viewResult.View.RenderAsync(viewContext);
-                    return sw.ToString();
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-        public byte[] GeneratePdf(string htmlContent)
-        {
-            try
-            {
-                var globalSettings = new GlobalSettings
-                {
-                    ColorMode = DinkToPdf.ColorMode.Color,
-                    Orientation = Orientation.Portrait,
-                    PaperSize = DinkToPdf.PaperKind.A4,
-                };
-
-                var objectSettings = new DinkToPdf.ObjectSettings
-                {
-                    PagesCount = true,
-                    HtmlContent = htmlContent,
-                    WebSettings = { DefaultEncoding = "utf-8" },
-                    HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
-                    FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
-                };
-
-                var pdf = new HtmlToPdfDocument()
-                {
-                    GlobalSettings = globalSettings,
-                    Objects = { objectSettings }
-                };
-
-                return _converter.Convert(pdf);
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-        public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
-        {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
-
-                    using (MemoryStream stream = new MemoryStream(pdfBytes))
-                    {
-                        using (var pdfDocument = UglyToad.PdfPig.PdfDocument.Open(stream))
-                        {
-                            string text = "";
-                            foreach (var page in pdfDocument.GetPages())
-                            {
-                                text += page.Text + "\n";
-                            }
-                            return text;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                //var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
-
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-
-                return null;
-            }
-        }
-        private static string BuildContradictionReportMessage(string transcriptSummary, string reportStringContent)
-        {
-            var message =
-                "You are given JSON evaluations for the same interview:AI Report ,Human Report. " +
-                "Reconcile them and output one JSON object only (no markdown) with: " +
-                "AI Report JSON:\n" + (transcriptSummary ?? "") + "\n\n" +
-                "Human Report JSON:\n" + (reportStringContent ?? "");
-            return message;
-        }
-
         private static string BuildMergeUserMessage(string reportJson, string transcriptJson, string contradictionJson, DateTime interviewdate, DateTime? Joinedon)
         {
             var message =

@@ -18,7 +18,7 @@ AS
 Begin 
 
 select distinct im.id as imid, im.ZoomMeetingId, im.interviewDate, im.zoomLink, irf.MeetingPlatform, 
-ic.VideoDuration, irf.ClientId, cl.[Name] as ClientCompanyName,im.MeetingPlatForm as InterviewMeetingPlatForm, irf.generateTranscriptSummary
+ic.VideoDuration, irf.ClientId, cl.[Name] as ClientCompanyName,im.MeetingPlatForm as InterviewMeetingPlatForm, irf.generateTranscriptSummary,irf.id as irfIntId
 from InterviewMeetings im 
 join IRF on IRF.IRFId = im.IRFId
 join Client cl on cl.id = irf.ClientId
