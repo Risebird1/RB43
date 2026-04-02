@@ -163,8 +163,9 @@ BEGIN
 
     -- Step 5: Create the mapping in TransClientUser
     -- NOTE: ClientUserId stores UserList.id (not ClientUser.id)
-    INSERT INTO dbo.TransClientUser (IRFId, ClientUserId, ClientRoleId, IsActive)
-    VALUES (@MatchedIRFId, @UserId, ISNULL(@ClientRoleId, 1), 1);
+    -- Mark as auto-mapped by the resume ingestion flow
+    INSERT INTO dbo.TransClientUser (IRFId, ClientUserId, ClientRoleId, IsActive, IsAutoMapped, AutoMappedOn)
+    VALUES (@MatchedIRFId, @UserId, ISNULL(@ClientRoleId, 1), 1, 1, GETUTCDATE());
 
     -- Step 6: Return the matched IRF
     SELECT 
