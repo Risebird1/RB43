@@ -39,6 +39,9 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>IRF string name (from IRF.IRFId) for tickets processed by System.</summary>
         public string   IngestedIRFName             { get; set; }
+
+        /// <summary>JD title of the ingested IRF.</summary>
+        public string   IngestedIRFJDTitle          { get; set; }
     }
 
     /// <summary>
