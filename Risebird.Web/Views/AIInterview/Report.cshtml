@@ -495,6 +495,28 @@
     .ai-interviewer-cmt{
     box-shadow:none;padding: 20px 20px 0px 0px;
     }
+    /* Final Verdict — match PublicCandidateStatus / dashboard-new (.selected / .rejected) */
+    .ai-final-verdict-badge {
+    font-size: 12px;
+    padding: 2px 8px;
+    display: inline-block;
+    font-weight: 600;
+    border-radius: 0.2rem;
+    margin-left: 6px;
+    vertical-align: middle;
+    }
+    .ai-final-verdict-select {
+    background: #90ee9094;
+    color: forestgreen;
+    }
+    .ai-final-verdict-reject {
+    background: #fdebf3;
+    color: #ee4936;
+    }
+    .ai-final-verdict-average {
+    background: #fef9c3;
+    color: #ca8a04;
+    }
     .skill-teal {
     color: #fff !important;
     background-color: #009688 !important;
@@ -1672,8 +1694,11 @@
         </div>
         </div>
         @{
+            bool hasTypingData = Model.TypingSpeedAssessments != null && Model.TypingSpeedAssessments.Any();
             var typingAssessments = (ViewBag.TypingSpeedAssessments as IEnumerable<Risebird.Entities.ViewModel.TypingSpeedAssessment>) ?? Enumerable.Empty<Risebird.Entities.ViewModel.TypingSpeedAssessment>();
         }
+         @if (hasTypingData)
+        {
         <div class="rb-report-section" style="margin-bottom:20px;">
             <div class="rb-section-header" style="margin-bottom:5px;">
                 <h2><i class="fa fa-keyboard-o"></i> Typing Speed Assessment</h2>
@@ -1936,7 +1961,7 @@
                
             </div>
         </div>
-
+        }
         <div style="display:flex; align-items:center; margin: 32px 0 28px 0; gap: 0;">
             <div style="flex:1; height:2px; background: linear-gradient(90deg, transparent 0%, #4eda92 40%, #56e0cb 100%); border-radius:2px; opacity:0.5;"></div>
             <div style="display:flex; align-items:center; gap:8px; padding: 0 18px; background:#fff; position:relative; z-index:1;">
@@ -2194,9 +2219,31 @@
                                             <div class="question" style="margin-top:4px;">
                                                 @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
                                                 {
+                                                    string _fvClass = null;
+                                                    var _fv = Model.AIInterviewEvaluation.FinalVerdict.Trim();
+                                                    var _fvL = _fv.ToLowerInvariant();
+                                                    if (_fvL.Contains("reject"))
+                                                    {
+                                                        _fvClass = "ai-final-verdict-reject";
+                                                    }
+                                                    else if (_fvL == "selected" || _fvL.Contains("strongly selected") || _fvL.Contains("marginally selected") || _fvL.Contains("marginal selected"))
+                                                    {
+                                                        _fvClass = "ai-final-verdict-select";
+                                                    }
+                                                    else if (_fvL == "average")
+                                                    {
+                                                        _fvClass = "ai-final-verdict-average";
+                                                    }
                                                     <div style="margin:6px 0;">
                                                         <label style="color:#000;font-weight:bold">Final Verdict:</label>
-                                                        <span style="color:#000;margin-left:6px;">@Model.AIInterviewEvaluation.FinalVerdict</span>
+                                                        @if (_fvClass != null)
+                                                        {
+                                                            <span class="ai-final-verdict-badge @_fvClass">@_fv</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color:#000;margin-left:6px;">@_fv</span>
+                                                        }
                                                     </div>
                                                 }
                                                 @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalComment))
