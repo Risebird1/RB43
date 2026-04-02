@@ -794,7 +794,7 @@ group by irf.id
   where ul.EmailId=@EmailId          
   order by irf.CreatedOn desc       
  End      
-Else if(@Profile='SeniorHR' or @Profile='SupportAdmin')            
+Else if(@Profile='SeniorHR') -- or @Profile='SupportAdmin'
  Begin            
          
  delete from @tbl_IRFSubset    
