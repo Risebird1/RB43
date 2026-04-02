@@ -8728,7 +8728,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ProxyForm(int interviewid, bool IsQCDone, string type)
+        public async Task<IActionResult> ProxyForm(int interviewid, bool IsQCDone, string type, string paymentSlaActionStatus = null, int paymentSlaReturnBack = 0)
         {
             try
             {
@@ -8742,6 +8742,8 @@ namespace Risebird.Web.Controllers
                     model.IsQCdone = IsQCDone;
                 }
                 model.type = type;
+                model.PaymentSlaActionStatus = paymentSlaActionStatus ?? string.Empty;
+                model.PaymentSlaReturnBack = paymentSlaReturnBack;
                 await SetProxyFormInitialValue(model);
                 return PartialView(model);
             }
@@ -8769,6 +8771,10 @@ namespace Risebird.Web.Controllers
                         if (model.type == "QCPendingReport")
                         {
                             return RedirectToAction("UnassignedInterviews", "Dashboard", new { actionstatus = RibbonActionType.QCPendingReport });
+                        }
+                        if (model.type == "PaymentSLA")
+                        {
+                            return RedirectToAction("PaymentSlaDetails", "Interview", new { actionstatus = model.PaymentSlaActionStatus ?? string.Empty, returnBack = model.PaymentSlaReturnBack });
                         }
                     }
                     return RedirectToAction("ProxyForm", "Interview", new { interviewid = model.InterviewId });
@@ -9660,6 +9666,7 @@ namespace Risebird.Web.Controllers
             model.Interviewid = id;
             await SetInitialValue(model);
             ViewBag.actionType = actionType;
+            ViewBag.IncludeInterviewerVideoOff = true;
             return PartialView(model);
         }
 

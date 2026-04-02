@@ -1,4 +1,4 @@
-﻿
+
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
 
 <div id="ProxyModel" class="modal modal-bg" style="z-index:3; overflow:auto;">
@@ -22,10 +22,17 @@
     </div>
 </div>
 <script>
-    function ProxyFormDetails(id, IsQCDone, type) {
+    function ProxyFormDetails(id, IsQCDone, type, paymentSlaActionStatus, paymentSlaReturnBack) {
+        var data = { 'interviewid': id, 'IsQCDone': IsQCDone, 'type': type };
+        if (arguments.length >= 4) {
+            data.paymentSlaActionStatus = paymentSlaActionStatus != null ? paymentSlaActionStatus : '';
+        }
+        if (arguments.length >= 5) {
+            data.paymentSlaReturnBack = paymentSlaReturnBack != null ? paymentSlaReturnBack : 0;
+        }
         $.ajax({
             url: '/Interview/ProxyForm',
-            data: { 'interviewid': id, 'IsQCDone': IsQCDone, 'type': type },
+            data: data,
             type: "GET",
             success: function (data) {
                 openProxyModel();

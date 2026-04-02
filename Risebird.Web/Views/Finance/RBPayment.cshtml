@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.RBInterviewDetails>
+@model IEnumerable<Risebird.Entities.ViewModel.RBInterviewDetails>
 @*@using Risebird.Entities.Enum*@
 @{
     ViewData["Title"] = "RB Details";
@@ -340,6 +340,17 @@
                                                         else
                                                         {
                                                             <span> @item.PaymentSLA</span>
+                                                        }
+                                                        @if (item.PaymentSLA > 0)
+                                                        {
+                                                            <br />
+                                                            <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCMergedAIDetails", "Interview", new { interviewId = item.InterviewId })">
+                                                                <button type="button" aria-label="Payment Deduction Reasoning" style="position:relative;top:7px;font-size:11px;border: 0px;background: #fbefdf;">
+                                                                    <span title="Payment Deduction Reasoning" class="mdc-fab__icon material-icons">
+                                                                        <i class="fas fa-code-branch" style="color: rgb(255, 255, 255);font-size: 16px;"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </a>
                                                         }
                                                     </td>
                                                     @* <td>@item.VideoReward</td> *@

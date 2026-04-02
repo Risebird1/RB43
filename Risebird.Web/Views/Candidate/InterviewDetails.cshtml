@@ -459,18 +459,20 @@ a.rb-link:hover {
                                                                                     </div>
 
                                                                                     <div style="position:relative;"> <span class="time-txt">(Meeting link will be enabled at the interview time)</span></div>
-                                                                                    <div style="position:relative;margin-top:6px;">
+                                                                                
+                                                                    }
+                                                                }
+                                                                
+                                                            </div>
+
+
+                                                                <div style="position:relative;margin-top:6px;">
                                                                             <span style="color:grey;font-weight:700;"> If you feel the interviewer is not engaged or any other ethical issue</span> <a style="cursor:pointer;color:#3094e5;font-weight:600;text-decoration:underline;font-size:16px;margin-bottom:20px;display:inline-block"
                                                                                            href="@Url.Action("CandidateRatingInterviewer", "Interview", new { id = item.Interviewid })"
                                                                                            target="_blank" rel="noopener noreferrer">
                                                                                              Report here
                                                                                         </a>
                                                                                     </div>
-                                                                    }
-                                                                }
-                                                                
-                                                            </div>
-
                                                             @if (item.interviewDate >= DateTime.Now)
                                                             {
 
