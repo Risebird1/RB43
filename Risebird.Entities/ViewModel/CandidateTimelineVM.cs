@@ -20,7 +20,7 @@ namespace Risebird.Entities.ViewModel
         //public TimelineStatus OnboardingDetails { get; set; }
         //public TimelineStatus CurrentStatusDetails { get; set; }
 
-        public int? InterviewId { get; set; }
+        public int InterviewId { get; set; }
         public int IRFId { get; set; }
         public int CandidateId { get; set; }
         public int CandidateMasterId { get; set; }
