@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using RestSharp;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -690,19 +691,264 @@ namespace Risebird.Web.Controllers
                     resumeIngestionResult.Append("N/A");
                 }
 
+                // ── Auto-scheduling flow for candidates with slot data ────────────────
+                var autoScheduleResults = new List<CandidateScheduleResult>();
+                var hasAutoScheduleCandidates = payload.CandidateScheduleData != null 
+                                                && payload.CandidateScheduleData.Count > 0;
+
+                if (hasAutoScheduleCandidates && (isNewCandidateSubmission || isNewInterviewRequest))
+                {
+                    foreach (var candidate in payload.CandidateScheduleData)
+                    {
+                        var result = new CandidateScheduleResult
+                        {
+                            CandidateName    = candidate.CandidateName,
+                            CandidateEmail   = candidate.CandidateEmail,
+                            SkillChannelId   = candidate.SkillChannelId,
+                            Scheduled        = false
+                        };
+
+                        try
+                        {
+                            // Validate 100% confidence fields
+                            if (string.IsNullOrWhiteSpace(candidate.CandidateName))
+                            {
+                                result.Reason = "Candidate name missing — confidence < 100%";
+                                autoScheduleResults.Add(result);
+                                continue;
+                            }
+                            if (string.IsNullOrWhiteSpace(candidate.SkillChannelId) ||
+                                candidate.SkillChannelId.Trim().Length != 10)
+                            {
+                                result.Reason = "Invalid or missing skill_channel_id — confidence < 100%";
+                                autoScheduleResults.Add(result);
+                                continue;
+                            }
+                            if (string.IsNullOrWhiteSpace(candidate.InterviewDate) ||
+                                string.IsNullOrWhiteSpace(candidate.InterviewTime))
+                            {
+                                result.Reason = "Interview date/time missing — confidence < 100%";
+                                autoScheduleResults.Add(result);
+                                continue;
+                            }
+                            if (string.IsNullOrWhiteSpace(candidate.ResumeDriveUrl))
+                            {
+                                result.Reason = "Resume URL missing — cannot match candidate to resume";
+                                autoScheduleResults.Add(result);
+                                continue;
+                            }
+
+                            // Parse interview datetime
+                            DateTime? interviewDateTime = null;
+                            try
+                            {
+                                var dateStr = candidate.InterviewDate + " " + candidate.InterviewTime;
+                                interviewDateTime = DateTime.Parse(dateStr);
+                                result.InterviewDateTime = interviewDateTime;
+                            }
+                            catch
+                            {
+                                result.Reason = $"Could not parse interview datetime: {candidate.InterviewDate} {candidate.InterviewTime}";
+                                autoScheduleResults.Add(result);
+                                continue;
+                            }
+
+                            // Verify IRF exists
+                            var irf = await _repository.GetIRFByStringIdAsync(candidate.SkillChannelId.Trim());
+                            if (irf == null)
+                            {
+                                result.Reason = $"IRF '{candidate.SkillChannelId}' not found or inactive";
+                                autoScheduleResults.Add(result);
+                                continue;
+                            }
+
+                            // Insert candidate resume with auto-schedule metadata
+                            var resumeId = await _repository.InsertCandidateResumeForAutoScheduleAsync(
+                                irf.Id,
+                                candidate.ResumeDriveUrl.Trim(),
+                                irf.RisebirdHrId,
+                                ticket.SenderEmail,
+                                newId,
+                                candidate.CandidateName.Trim(),
+                                candidate.CandidateEmail?.Trim(),
+                                interviewDateTime);
+
+                            if (resumeId > 0)
+                            {
+                                result.CandidateResumeId = resumeId;
+                                result.Scheduled = true;
+                                result.Reason = $"Queued for auto-scheduling. Resume ID: {resumeId}, IRF: {irf.IRFStringId}. " +
+                                               "Will be scheduled after resume parsing and email verification.";
+                            }
+                            else
+                            {
+                                result.Reason = "Failed to insert candidate resume record";
+                            }
+                        }
+                        catch (Exception asEx)
+                        {
+                            result.Reason = $"Error processing candidate: {asEx.Message}";
+                            await _logger.LogMessage(LogLevelInfo.Exception, asEx);
+                        }
+
+                        autoScheduleResults.Add(result);
+                    }
+
+                    // Mark ticket as having auto-schedule candidates
+                    var queuedCount = autoScheduleResults.Count(r => r.Scheduled);
+                    if (queuedCount > 0)
+                    {
+                        await _repository.SetTicketHasAutoScheduleCandidatesAsync(newId, true);
+                    }
+
+                    // Always assign to HR for manual review (HR will verify and trigger scheduling)
+                    var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
+                    if (!string.IsNullOrWhiteSpace(hrEmail))
+                    {
+                        await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
+                    }
+                }
+
                 return Ok(new
                 {
-                    success          = true,
-                    ticketId         = newId,
-                    resumeIngestion  = resumeIngestionResult.Length > 0
-                                       ? resumeIngestionResult.ToString()
-                                       : "N/A"
+                    success            = true,
+                    ticketId           = newId,
+                    resumeIngestion    = resumeIngestionResult.Length > 0
+                                         ? resumeIngestionResult.ToString()
+                                         : "N/A",
+                    autoScheduling     = hasAutoScheduleCandidates
+                                         ? new
+                                         {
+                                             candidatesProcessed = autoScheduleResults.Count,
+                                             candidatesQueued    = autoScheduleResults.Count(r => r.Scheduled),
+                                             candidatesFailed    = autoScheduleResults.Count(r => !r.Scheduled),
+                                             details             = autoScheduleResults
+                                         }
+                                         : null
                 });
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return StatusCode(500, new { error = "An internal error occurred." });
+            }
+        }
+
+        // ── Auto-Schedule Candidates API ─────────────────────────────────────
+
+        /// <summary>
+        /// Gets candidate data for HR review modal (auto-schedule flow).
+        /// Returns both extracted (from email) and parsed (from resume) data.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetAutoScheduleCandidates(int ticketId)
+        {
+            try
+            {
+                var candidates = await _repository.GetAutoScheduleCandidatesForTicketAsync(ticketId);
+                return Json(new { success = true, candidates });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Schedules an interview for a candidate from the auto-schedule flow.
+        /// Called from the HR review modal after parsing is complete.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> ScheduleCandidate([FromBody] ScheduleCandidateRequest request)
+        {
+            try
+            {
+                if (request == null || request.CandidateResumeId <= 0)
+                    return Json(new { success = false, error = "Invalid request" });
+
+                // Get candidate data
+                var candidates = await _repository.GetAutoScheduleCandidatesForTicketAsync(request.TicketId);
+                var candidate = candidates.FirstOrDefault(c => c.CandidateResumeId == request.CandidateResumeId);
+
+                if (candidate == null)
+                    return Json(new { success = false, error = "Candidate not found" });
+
+                if (candidate.ParsingStatus != "Parsed")
+                    return Json(new { success = false, error = "Resume parsing not complete. Please wait and try again." });
+
+                if (candidate.IsAlreadyScheduled)
+                    return Json(new { success = false, error = "Interview already scheduled for this candidate." });
+
+                var candidateEmail = !string.IsNullOrWhiteSpace(candidate.ParsedCandidateEmail)
+                    ? candidate.ParsedCandidateEmail
+                    : candidate.ExtractedCandidateEmail;
+
+                if (string.IsNullOrWhiteSpace(candidateEmail))
+                    return Json(new { success = false, error = "No candidate email available" });
+
+                var candidateName = !string.IsNullOrWhiteSpace(candidate.ParsedCandidateName)
+                    ? candidate.ParsedCandidateName
+                    : candidate.ExtractedCandidateName;
+
+                // Call the Schedule API (same as PlivoCXInterviewCallController)
+                const string scheduleApiUrl = "https://api.portal.risebird.io/api/Candidates/Schedule";
+                const string scheduleApiKey = "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==";
+
+                if (string.IsNullOrWhiteSpace(candidate.TenantId))
+                    return Json(new { success = false, error = "Client tenant ID not found" });
+
+                var scheduleRequest = new
+                {
+                    skillChannelId = candidate.SkillChannelId,
+                    requestedBy = "SupportTicketAutoSchedule",
+                    requestType = "schedule_supportTicket",
+                    CandidateList = new[]
+                    {
+                        new
+                        {
+                            EmailId = candidateEmail,
+                            Name = candidateName,
+                            Interviewdate = candidate.ScheduledInterviewDateTime,
+                            Phone = candidate.ParsedCandidatePhone,
+                            ResumeLink = candidate.ResumeLink
+                        }
+                    }
+                };
+
+                var restClient = new RestClient(scheduleApiUrl);
+                var restRequest = new RestRequest(scheduleApiUrl, Method.Post);
+                restRequest.AddHeader("content-type", "application/json");
+                restRequest.AddHeader("x-functions-key", scheduleApiKey);
+                restRequest.AddHeader("tenant-id", candidate.TenantId);
+                restRequest.AddParameter("application/json", JsonConvert.SerializeObject(scheduleRequest), ParameterType.RequestBody);
+
+                var response = await restClient.ExecuteAsync(restRequest);
+                var responseBody = response.Content;
+
+                if (response.IsSuccessful)
+                {
+                    return Json(new 
+                    { 
+                        success = true, 
+                        message = $"Interview scheduled for {candidateName} ({candidateEmail}) at {candidate.ScheduledInterviewDateTime:g}",
+                        apiResponse = responseBody
+                    });
+                }
+                else
+                {
+                    return Json(new 
+                    { 
+                        success = false, 
+                        error = $"Schedule API returned {response.StatusCode}",
+                        details = responseBody
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
             }
         }
     }
