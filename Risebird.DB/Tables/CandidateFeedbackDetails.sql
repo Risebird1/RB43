@@ -11,6 +11,7 @@ CREATE TABLE [dbo].[CandidateFeedbackDetails](
 	[UnethicalPractices] [varchar](250) NULL,
 	[TimeManagement] [varchar](250) NULL,
 	[PoorCommunicationSkills] [varchar](250) NULL,
+	[InterviewerVideo] [varchar](250) NULL,
 	[CreatedOn] [datetime] NULL,
 	[InterviewId][int] NULL,
 PRIMARY KEY CLUSTERED 
@@ -30,6 +31,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE CandidateFeedbackDetails
     Add InterviewId INT
+END
+
+IF NOT EXISTS(
+    SELECT 1
+    FROM sys.columns
+    WHERE Name = N'InterviewerVideo'
+      AND Object_ID = OBJECT_ID(N'dbo.CandidateFeedbackDetails', N'U'))
+BEGIN
+    ALTER TABLE dbo.CandidateFeedbackDetails
+    ADD InterviewerVideo VARCHAR(250) NULL;
 END
 
 END
