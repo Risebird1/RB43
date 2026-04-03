@@ -45,6 +45,9 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>True if this ticket has candidates with auto-schedule data (interview slots from email).</summary>
         public bool     HasAutoScheduleCandidates   { get; set; }
+
+        /// <summary>True if this ticket has resumes pending HR review before ingestion.</summary>
+        public bool     HasPendingResumes           { get; set; }
     }
 
     /// <summary>
@@ -260,5 +263,74 @@ namespace Risebird.Entities.ViewModel
     {
         public int TicketId            { get; set; }
         public int CandidateResumeId   { get; set; }
+    }
+
+    /// <summary>
+    /// ViewModel for pending resumes shown in the HR review modal.
+    /// Contains comprehensive context from ticket, IRF, and client for informed decision-making.
+    /// </summary>
+    public class PendingResumeVM
+    {
+        // Pending Resume fields
+        public int       Id                          { get; set; }
+        public int       SupportTicketId             { get; set; }
+        public string    ResumeUrl                   { get; set; }
+        public string    CandidateName               { get; set; }
+        public string    CandidateEmail              { get; set; }
+        
+        // Resolved IRF
+        public int?      ResolvedIRFId               { get; set; }
+        public string    ResolvedIRFStringId         { get; set; }
+        public string    ResolvedJobTitle            { get; set; }
+        public string    ResolvedHREmail             { get; set; }
+        public string    ResolvedHRName              { get; set; }
+        
+        // Scheduling data
+        public bool      HasSchedulingData           { get; set; }
+        public DateTime? ScheduledInterviewDateTime  { get; set; }
+        public string    ScheduleTimezone            { get; set; }
+        
+        // Status
+        public string    Status                      { get; set; }
+        public int?      IngestedResumeId            { get; set; }
+        public DateTime? ProcessedAt                 { get; set; }
+        public string    ProcessedBy                 { get; set; }
+        public DateTime  CreatedAt                   { get; set; }
+        
+        // IRF details
+        public string    IRFJobTitle                 { get; set; }
+        public string    IRFSkillCluster             { get; set; }
+        public DateTime? IRFStartDate                { get; set; }
+        public DateTime? IRFEndDate                  { get; set; }
+        public int?      IRFPositions                { get; set; }
+        public string    IRFJDLink                   { get; set; }
+        
+        // Client info
+        public string    ClientName                  { get; set; }
+        public string    TenantId                    { get; set; }
+        
+        // Ticket context (email details for HR decision)
+        public string    TicketSenderEmail           { get; set; }
+        public string    TicketSubject               { get; set; }
+        public string    TicketMailContent           { get; set; }
+        public string    TicketIntent                { get; set; }
+        public string    TicketPrimarySpecialization { get; set; }
+        public string    TicketMailBodyIntent        { get; set; }
+        public string    TicketJobTitle              { get; set; }
+        public DateTime? TicketReceivedAt            { get; set; }
+        public string    TicketDriveFolderLink       { get; set; }
+        public string    TicketSummaryMail           { get; set; }
+        public string    TicketSummaryCandidates     { get; set; }
+        public bool      TicketHasJD                 { get; set; }
+        public bool      TicketHasPdf                { get; set; }
+        public bool      TicketHasResumes            { get; set; }
+    }
+
+    /// <summary>Request model for ingesting a pending resume.</summary>
+    public class IngestPendingResumeRequest
+    {
+        public int    PendingResumeId        { get; set; }
+        public bool   AlsoSchedule           { get; set; }
+        public string ProcessedByEmail       { get; set; }
     }
 }
