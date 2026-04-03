@@ -1,5 +1,11 @@
 /****** Object:  StoredProcedure [dbo].[usp_CandidateFeedbackDetails]    Script Date: 10/10/2023 11:13:12 AM ******/
 
+/*
+  Prerequisite (existing databases): run first —
+    Risebird.DB\Scripts\CandidateFeedbackDetails_Add_InterviewerVideo_Column.sql
+  Otherwise CREATE may fail with: Invalid column name 'InterviewerVideo'.
+*/
+
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_CandidateFeedbackDetails'))
 BEGIN
     DROP PROCEDURE dbo.usp_CandidateFeedbackDetails
@@ -19,6 +25,7 @@ CREATE PROCEDURE [dbo].[usp_CandidateFeedbackDetails]
 @UnethicalPractices varchar(250),
 @TimeManagement varchar(250),
 @PoorCommunicationSkills varchar(250),
+@InterviewerVideo varchar(250),
 @CreatedOn DATETIME,
 @InterviewId int
 AS
@@ -27,14 +34,15 @@ if Exists(Select * from CandidateFeedbackDetails where InterviewId=@InterviewId)
 Begin
 Update CandidateFeedbackDetails set Rating=@Rating,CandidateInteractionQuality=@CandidateInteractionQuality,LimitedHandoncoding=@LimitedHandoncoding, 
 WeakInfrastructure=@WeakInfrastructure,UnethicalPractices=@UnethicalPractices,TimeManagement=@TimeManagement,PoorCommunicationSkills=@PoorCommunicationSkills,
+InterviewerVideo=@InterviewerVideo,
 CreatedOn=@CreatedOn
 Where InterviewId=@InterviewId
 End
 Else
 Begin
 Insert into CandidateFeedbackDetails(Rating,CandidateInteractionQuality,LimitedHandoncoding,WeakInfrastructure,UnethicalPractices,
-TimeManagement,PoorCommunicationSkills,CreatedOn,InterviewId)values(@Rating,@CandidateInteractionQuality,@LimitedHandoncoding,@WeakInfrastructure,@UnethicalPractices,
-@TimeManagement,@PoorCommunicationSkills,@CreatedOn,@InterviewId)
+TimeManagement,PoorCommunicationSkills,InterviewerVideo,CreatedOn,InterviewId)values(@Rating,@CandidateInteractionQuality,@LimitedHandoncoding,@WeakInfrastructure,@UnethicalPractices,
+@TimeManagement,@PoorCommunicationSkills,@InterviewerVideo,@CreatedOn,@InterviewId)
 End
 End
 

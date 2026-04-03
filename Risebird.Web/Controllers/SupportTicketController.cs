@@ -94,12 +94,10 @@ namespace Risebird.Web.Controllers
                     totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
                 }
 
-                // Fetch counts for tab badges
-                var systemTicketsForCount = await _repository.GetSystemAssignedTicketsAsync(1, 1);
-                int systemCount = systemTicketsForCount.Count > 0 ? systemTicketsForCount[0].TotalCount : 0;
-
-                var hybridTicketsForCount = await _repository.GetHybridTicketsAsync(1, 1);
-                int hybridCount = hybridTicketsForCount.Count > 0 ? hybridTicketsForCount[0].TotalCount : 0;
+                // Fetch counts for tab badges (optimized single query)
+                var counts = await _repository.GetTicketCountsAsync();
+                int systemCount = counts.SystemOnlyCount;
+                int hybridCount = counts.HybridCount;
 
                 ViewBag.Tab           = tab;
                 ViewBag.Page          = page;
@@ -1066,13 +1064,16 @@ namespace Risebird.Web.Controllers
                 if (!pending.ResolvedIRFId.HasValue)
                     return Json(new { success = false, error = "No IRF resolved for this resume. Please select an IRF." });
 
-                // Get HR ID from email
-                var hrId = 0;
-                if (!string.IsNullOrWhiteSpace(pending.ResolvedHREmail))
+                // Get HR user ID from the resolved IRF's RisebirdHr field
+                int hrId = await _repository.GetHRUserIdForIRFAsync(pending.ResolvedIRFId.Value);
+                if (hrId <= 0)
                 {
-                    // Attempt to get HR user ID (simplified — in production, query UserList)
-                    // For now, we'll use the resolved IRF's HR or fallback to system user
+                    // Fall back to getting any valid system user if HR not found
+                    hrId = await _repository.GetSystemUserIdAsync();
+                    if (hrId <= 0)
+                        return Json(new { success = false, error = "No valid HR user found to attribute this resume." });
                 }
+                
                 int ingestedResumeId = 0;
 
                 // Insert into CandidateResume

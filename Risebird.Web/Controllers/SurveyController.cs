@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -827,6 +827,7 @@ namespace Risebird.Web.Controllers
             var model = new PaymentSLAVM();
             model.Interviewid = id;
             await SetInitialValue(model);
+            ViewBag.IncludeInterviewerVideoOff = true;
             return View(model);
         }
         [HttpPost]
@@ -836,6 +837,7 @@ namespace Risebird.Web.Controllers
             {
                 await _surveyService.CandidateFeedbackFormDetailsService(model);
                 await SetInitialValue(model);
+                ViewBag.IncludeInterviewerVideoOff = true;
                 return View(model);
             }
             catch (Exception ex)
@@ -894,6 +896,10 @@ namespace Risebird.Web.Controllers
             if (string.IsNullOrEmpty(model.PoorCommunicationSkills))
             {
                 model.PoorCommunicationSkills = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.InterviewerVideo))
+            {
+                model.InterviewerVideo = string.Empty;
             }
         }
         public async Task<IActionResult> PublicCandidateFeedback(string emailid, string uniqueid)

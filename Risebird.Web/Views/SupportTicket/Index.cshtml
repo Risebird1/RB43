@@ -72,6 +72,30 @@
 }
 
 <style>
+    /* ── Loading overlay ───────────────────────────────────────────────────── */
+    #loadingOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+    #loadingOverlay.show { display: flex; }
+    #loadingOverlay .spinner-content {
+        text-align: center;
+        background: white;
+        padding: 30px 50px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    #loadingOverlay .spinner-border { width: 3rem; height: 3rem; }
+    #loadingOverlay .loading-text { margin-top: 15px; font-weight: 500; color: #495057; }
+
     /* ── Filter controls (mirrors cx-filter-control) ────────────────────────── */
     #senderEmailInput.st-filter-control,
     .st-filter-control.form-select,
@@ -310,6 +334,16 @@
     .text-decoration-line-through { text-decoration: line-through; }
 </style>
 
+<!-- Loading Overlay -->
+<div id="loadingOverlay">
+    <div class="spinner-content">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="loading-text">Loading tickets...</div>
+    </div>
+</div>
+
 <div class="main-panel" id="main-panel">
 <div class="pt30">
 <div class="content client">
@@ -324,13 +358,13 @@
             <p class="text-muted mb-0 mt-1">Inbound support requests identified and enriched by Relay.app</p>
         </div>
         <div class="col-auto d-flex gap-2">
-            <button type="button" 
+            @* <button type="button" 
                     class="btn btn-warning btn-sm btn-review-resumes" 
                     data-ticket-id="-1" 
                     data-ticket-subject="TEST: Sample Resume Submission"
                     title="Test the Review Resumes modal with dummy data">
                 <i class="fas fa-flask me-1"></i>Test Review Modal
-            </button>
+            </button> *@
             <button style="background: #bceabc;border:0px;color:green" class="btn btn-outline-secondary btn-sm" onclick="location.reload()">
                 <i class="fas fa-sync-alt me-1"></i>Refresh
             </button>
@@ -1341,8 +1375,26 @@
             });
         });
 
+        /* ── Loading overlay ─────────────────────────────────────────────── */
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+        
+        // Show loading on form submission
+        document.getElementById('filterForm').addEventListener('submit', showLoading);
+        
+        // Show loading on tab/pagination link clicks
+        document.querySelectorAll('.nav-tabs .nav-link, .pagination .page-link').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                if (!this.parentElement.classList.contains('disabled')) {
+                    showLoading();
+                }
+            });
+        });
+
         /* ── Page size ───────────────────────────────────────────────────── */
         function changePageSize(size) {
+            showLoading();
             var form = document.getElementById('filterForm');
             form.querySelector('[name="pageSize"]').value = size;
             form.querySelector('[name="page"]').value     = 1;
