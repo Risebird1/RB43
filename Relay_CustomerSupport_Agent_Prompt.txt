@@ -34,19 +34,6 @@ Do NOT process the email as a valid support request if ANY of the following are 
      subscription update, automated product update, or community update
   5. The email is clearly spam, irrelevant, unsolicited sales, bulk outreach,
      or non-actionable notification
-  6. *** CRITICAL *** The email contains SENSITIVE PERSONAL/CONFIDENTIAL information:
-     - Salary slips, payslips, salary credited notifications
-     - Bank account statements, transaction alerts, balance notifications
-     - Tax documents (Form 16, ITR, W2, 1099, tax returns)
-     - Insurance policies, claims, premium reminders
-     - Medical/health records, prescriptions, lab reports
-     - Password reset emails, OTPs, verification codes
-     - Personal identification documents (Aadhaar, PAN, SSN, passport)
-     - Credit card statements, loan documents
-     - Investment statements, mutual fund reports
-     - Personal bills (electricity, phone, utility)
-     - HR/Payroll system emails (GreytHR, Darwinbox, Keka, ADP, etc.)
-     - Any email that appears to be forwarded personal correspondence
 
 Examples of emails to EXCLUDE:
   - Internal Risebird emails
@@ -59,12 +46,6 @@ Examples of emails to EXCLUDE:
   - Promotional campaigns
   - Automated marketing mails
   - Spam / junk emails
-  - *** Salary/payroll notifications ***
-  - *** Bank transaction alerts ***
-  - *** Tax documents ***
-  - *** Medical records ***
-  - *** Password/OTP emails ***
-  - *** Any personal financial information ***
 
 If the email matches any exclusion rule:
   - Do NOT treat it as a valid support workflow email
@@ -81,16 +62,6 @@ If the email matches any exclusion rule:
   - Set summary_candidates         = null
   - Set summary_interview_scores   = null
   - Set summary_mail               = a brief reason for exclusion
-
-*** SPECIAL HANDLING FOR SENSITIVE PERSONAL EMAILS (Rule 6) ***
-If the email contains sensitive personal/confidential information:
-  - Set webhook_intent             = "Sensitive personal email"
-  - Set all other fields to null/false/[]
-  - Set summary_mail               = "BLOCKED: Sensitive personal email - [type]"
-    where [type] is one of: salary, bank, tax, medical, password, identification, etc.
-  - Do NOT upload any attachments to Google Drive
-  - Do NOT include any content in the webhook payload
-  - This is CRITICAL for privacy and data protection compliance
 
 Eligibility guidance:
   - Prefer exclusion when the message is clearly automated, internal,
