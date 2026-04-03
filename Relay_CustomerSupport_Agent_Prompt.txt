@@ -59,6 +59,7 @@ If the email matches any exclusion rule:
   - Set attachment_resumes         = false  (unless a resume/CV actually exists)
   - Set drive_folder_link          = null   (unless attachments are intentionally processed)
   - Set resume_drive_urls          = []
+  - Set resume_associations        = []
   - Set summary_candidates         = null
   - Set summary_interview_scores   = null
   - Set summary_mail               = a brief reason for exclusion
@@ -257,34 +258,50 @@ Fields:
     Set this to the Google Drive folder link where the attachments were uploaded.
     If no attachments exist and no folder is created, set to null.
 
-  - resume_drive_urls  (*** UPDATED ***)
-    An array of individual Google Drive file URLs for files that are resumes or
-    CVs. Each element is the direct link to one uploaded resume file.
-    Populate this array when webhook_intent is "New candidate submission" OR
-    "New interview request" AND attachments exist.
-    Set to [] (empty array) if no attachments exist or the intent is neither
-    of those two.
+  - resume_drive_urls  (DEPRECATED - use resume_associations instead)
+    Legacy array of individual Google Drive file URLs for resume files.
+    Set to [] (empty array).
 
-    Example:
-    "resume_drive_urls": [
-      "https://drive.google.com/file/d/abc123/view",
-      "https://drive.google.com/file/d/def456/view"
+  - resume_associations  (*** NEW - REPLACES resume_drive_urls ***)
+    An array of objects where EACH resume is mapped to its intended IRF/skill channel.
+    This is CRITICAL: different resumes in the same email may be intended for 
+    DIFFERENT skill channels/roles. You MUST analyze the email body to determine
+    which resume belongs to which role.
+
+    For each uploaded resume:
+      1. Identify the candidate name from the filename or email body
+      2. Determine which skill channel / job title this resume is intended for
+         by reading the email body context
+      3. Extract the skill_channel_id (10-char alphanumeric code) if mentioned
+      4. Extract the job_title for this specific resume
+
+    Structure:
+    "resume_associations": [
+      {
+        "resume_url": "https://drive.google.com/file/d/abc123/view",
+        "skill_channel_id": "JavaDev123" or null,
+        "job_title": "Java Developer",
+        "candidate_name": "John Smith"
+      },
+      {
+        "resume_url": "https://drive.google.com/file/d/def456/view",
+        "skill_channel_id": "PythDev98" or null,
+        "job_title": "Python Developer",
+        "candidate_name": "Jane Doe"
+      }
     ]
 
-    HOW TO BUILD THIS IN RELAY:
-    Inside the "For each attachment" loop, after the Upload step, use the
-    uploaded file's Drive link.
-    
-    For "New candidate submission" or "New interview request" intents:
-      - Include ALL uploaded PDF/DOC/DOCX files in resume_drive_urls
-      - EXCLUDE only files where filename clearly contains "JD", "job description",
-        "requirement", or "hiring brief"
-    
-    For other intents:
-      - Only include files where filename contains "cv", "resume", "profile"
-    
-    After the loop ends, pass the collected list as resume_drive_urls in the
-    HTTP webhook body.
+    IMPORTANT RULES:
+    - Parse the email body to understand which resume is for which role
+    - Look for patterns like "Resume for Java Developer role: John Smith"
+    - Look for skill channel IDs (10-char codes) mentioned near candidate names
+    - If the email mentions multiple roles, each resume should be mapped to its role
+    - If you cannot determine the job_title for a specific resume, set it to null
+    - If all resumes are for the same role, they should all have the same job_title
+    - skill_channel_id should only be set if explicitly mentioned in the email
+
+    Set to [] (empty array) if no attachments exist or the intent is neither
+    "New candidate submission" nor "New interview request".
 
 Attachment handling rules:
   - Only upload .pdf, .doc, .docx files (enforced by loop filter)
@@ -390,7 +407,15 @@ PART 10  FINAL OUTPUT JSON  (*** UPDATED ***)
   "attachment_pdf":             <true|false>,
   "attachment_resumes":         <true|false>,
   "drive_folder_link":          "<string or null>",
-  "resume_drive_urls":          ["<url1>", "<url2>"],
+  "resume_drive_urls":          [],
+  "resume_associations":        [
+    {
+      "resume_url":        "<Google Drive URL>",
+      "skill_channel_id":  "<10-char string or null>",
+      "job_title":         "<string or null>",
+      "candidate_name":    "<string or null>"
+    }
+  ],
   "summary_mail":               "<string>",
   "summary_candidates":         "<string or null>",
   "summary_interview_scores":   "<string or null>",

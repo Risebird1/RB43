@@ -41,6 +41,7 @@ BEGIN
         st.CreatedAt,
         st.JobTitle,
         st.HasAutoScheduleCandidates,
+        st.HasPendingResumes,
         c.[Name]        AS ClientName,
         COUNT(*) OVER() AS TotalCount
     FROM  dbo.SupportTickets st

@@ -79,6 +79,7 @@ BEGIN
         t.AssignedTo,
         t.JobTitle,
         t.HasAutoScheduleCandidates,
+        t.HasPendingResumes,
         tirf.IRFId     AS IngestedIRFId,
         tirf.IRFName   AS IngestedIRFName,
         tirf.JDTitle   AS IngestedIRFJDTitle,

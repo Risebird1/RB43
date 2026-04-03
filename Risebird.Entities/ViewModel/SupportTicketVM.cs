@@ -45,6 +45,9 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>True if this ticket has candidates with auto-schedule data (interview slots from email).</summary>
         public bool     HasAutoScheduleCandidates   { get; set; }
+
+        /// <summary>True if this ticket has resumes pending HR review before ingestion.</summary>
+        public bool     HasPendingResumes           { get; set; }
     }
 
     /// <summary>
@@ -110,9 +113,18 @@ namespace Risebird.Entities.ViewModel
         /// Google Drive URLs of individual resume files uploaded during the loop.
         /// Relay passes these as a JSON array: ["url1","url2"].
         /// Populated only when webhook_intent = "New candidate submission".
+        /// DEPRECATED: Use resume_associations instead for per-resume IRF mapping.
         /// </summary>
         [JsonProperty("resume_drive_urls")]
         public List<string> ResumeDriveUrls         { get; set; }
+
+        /// <summary>
+        /// Per-resume IRF associations. Each entry maps a resume URL to its intended
+        /// skill channel/IRF based on context from the email body.
+        /// Use this instead of the flat resume_drive_urls + single skill_channel_id.
+        /// </summary>
+        [JsonProperty("resume_associations")]
+        public List<ResumeAssociation> ResumeAssociations { get; set; }
 
         /// <summary>
         /// Structured candidate scheduling data extracted by Relay AI.
@@ -121,6 +133,25 @@ namespace Risebird.Entities.ViewModel
         /// </summary>
         [JsonProperty("candidate_schedule_data")]
         public List<CandidateScheduleEntry> CandidateScheduleData { get; set; }
+    }
+
+    /// <summary>
+    /// Maps a single resume to its intended IRF/skill channel.
+    /// Used when an email contains multiple resumes intended for different roles.
+    /// </summary>
+    public class ResumeAssociation
+    {
+        [JsonProperty("resume_url")]
+        public string ResumeUrl               { get; set; }
+
+        [JsonProperty("skill_channel_id")]
+        public string SkillChannelId          { get; set; }
+
+        [JsonProperty("job_title")]
+        public string JobTitle                { get; set; }
+
+        [JsonProperty("candidate_name")]
+        public string CandidateName           { get; set; }
     }
 
     /// <summary>
@@ -232,5 +263,74 @@ namespace Risebird.Entities.ViewModel
     {
         public int TicketId            { get; set; }
         public int CandidateResumeId   { get; set; }
+    }
+
+    /// <summary>
+    /// ViewModel for pending resumes shown in the HR review modal.
+    /// Contains comprehensive context from ticket, IRF, and client for informed decision-making.
+    /// </summary>
+    public class PendingResumeVM
+    {
+        // Pending Resume fields
+        public int       Id                          { get; set; }
+        public int       SupportTicketId             { get; set; }
+        public string    ResumeUrl                   { get; set; }
+        public string    CandidateName               { get; set; }
+        public string    CandidateEmail              { get; set; }
+        
+        // Resolved IRF
+        public int?      ResolvedIRFId               { get; set; }
+        public string    ResolvedIRFStringId         { get; set; }
+        public string    ResolvedJobTitle            { get; set; }
+        public string    ResolvedHREmail             { get; set; }
+        public string    ResolvedHRName              { get; set; }
+        
+        // Scheduling data
+        public bool      HasSchedulingData           { get; set; }
+        public DateTime? ScheduledInterviewDateTime  { get; set; }
+        public string    ScheduleTimezone            { get; set; }
+        
+        // Status
+        public string    Status                      { get; set; }
+        public int?      IngestedResumeId            { get; set; }
+        public DateTime? ProcessedAt                 { get; set; }
+        public string    ProcessedBy                 { get; set; }
+        public DateTime  CreatedAt                   { get; set; }
+        
+        // IRF details
+        public string    IRFJobTitle                 { get; set; }
+        public string    IRFSkillCluster             { get; set; }
+        public DateTime? IRFStartDate                { get; set; }
+        public DateTime? IRFEndDate                  { get; set; }
+        public int?      IRFPositions                { get; set; }
+        public string    IRFJDLink                   { get; set; }
+        
+        // Client info
+        public string    ClientName                  { get; set; }
+        public string    TenantId                    { get; set; }
+        
+        // Ticket context (email details for HR decision)
+        public string    TicketSenderEmail           { get; set; }
+        public string    TicketSubject               { get; set; }
+        public string    TicketMailContent           { get; set; }
+        public string    TicketIntent                { get; set; }
+        public string    TicketPrimarySpecialization { get; set; }
+        public string    TicketMailBodyIntent        { get; set; }
+        public string    TicketJobTitle              { get; set; }
+        public DateTime? TicketReceivedAt            { get; set; }
+        public string    TicketDriveFolderLink       { get; set; }
+        public string    TicketSummaryMail           { get; set; }
+        public string    TicketSummaryCandidates     { get; set; }
+        public bool      TicketHasJD                 { get; set; }
+        public bool      TicketHasPdf                { get; set; }
+        public bool      TicketHasResumes            { get; set; }
+    }
+
+    /// <summary>Request model for ingesting a pending resume.</summary>
+    public class IngestPendingResumeRequest
+    {
+        public int    PendingResumeId        { get; set; }
+        public bool   AlsoSchedule           { get; set; }
+        public string ProcessedByEmail       { get; set; }
     }
 }
