@@ -8728,7 +8728,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ProxyForm(int interviewid, bool IsQCDone, string type)
+        public async Task<IActionResult> ProxyForm(int interviewid, bool IsQCDone, string type, string paymentSlaActionStatus = null, int paymentSlaReturnBack = 0)
         {
             try
             {
@@ -8742,6 +8742,8 @@ namespace Risebird.Web.Controllers
                     model.IsQCdone = IsQCDone;
                 }
                 model.type = type;
+                model.PaymentSlaActionStatus = paymentSlaActionStatus ?? string.Empty;
+                model.PaymentSlaReturnBack = paymentSlaReturnBack;
                 await SetProxyFormInitialValue(model);
                 return PartialView(model);
             }
@@ -8769,6 +8771,10 @@ namespace Risebird.Web.Controllers
                         if (model.type == "QCPendingReport")
                         {
                             return RedirectToAction("UnassignedInterviews", "Dashboard", new { actionstatus = RibbonActionType.QCPendingReport });
+                        }
+                        if (model.type == "PaymentSLA")
+                        {
+                            return RedirectToAction("PaymentSlaDetails", "Interview", new { actionstatus = model.PaymentSlaActionStatus ?? string.Empty, returnBack = model.PaymentSlaReturnBack });
                         }
                     }
                     return RedirectToAction("ProxyForm", "Interview", new { interviewid = model.InterviewId });
@@ -9123,7 +9129,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool? isOpenAIQC = null, bool? isBackgroudJobRequest = null, bool? regenerateAIQC = null)
+        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool? isOpenAIQC = null, bool? isBackgroudJobRequest = null, bool? regenerateAIQC = null, bool IsContradictionAI = false)
         {
             try
             {
@@ -9222,6 +9228,12 @@ namespace Risebird.Web.Controllers
 
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 ViewBag.ClientDetails = "";
+                if (IsContradictionAI)
+                {
+                    //generate the Contradiction 
+                    await GenerateContradictionAI(model, interviewId);
+                }
+
                 if (isOpenAIQC.HasValue && isOpenAIQC.Value)
                 {
                     //write code to return QC results
@@ -9654,6 +9666,7 @@ namespace Risebird.Web.Controllers
             model.Interviewid = id;
             await SetInitialValue(model);
             ViewBag.actionType = actionType;
+            ViewBag.IncludeInterviewerVideoOff = true;
             return PartialView(model);
         }
 
@@ -9843,6 +9856,49 @@ namespace Risebird.Web.Controllers
                 return Json(result);
             }
             return Json("");
+        }
+        public async Task GenerateContradictionAI(InterviewReport model, int interviewId)
+        {
+            try
+            {
+                string contradictionJson = null;
+                var transcriptSummary = model.TranscriptSummary;
+                if (!string.IsNullOrWhiteSpace(transcriptSummary))
+                {
+                    // Render the partial view to a string
+                    var htmlContent = await RenderToStringAsync("AIClientReport", model);
+                    //Generate PDF from HTML content
+                    var pdfContent = GeneratePdf(htmlContent);
+                    string fileName = "AIClientReport_" + model.InterviewId.ToString() + "_" + DateTime.Now.ToString() + ".pdf";
+                    // Upload PDF to Azure Blob Storage
+                    string uploadedFileURL = string.Empty;
+                    using (MemoryStream stream = new MemoryStream(pdfContent))
+                    {
+                        await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
+                        var blob = containerRef.GetBlockBlobReference(fileName);
+                        uploadedFileURL = blob.Uri.ToString();
+                    }
+                    var reportStringContent = await ReadPdfFromUrlAsync(uploadedFileURL);
+                    var contradictionReportMessage = BuildContradictionReportMessage(transcriptSummary, reportStringContent);
+                    var runcontradictionResult = await _assistantServiceHelper.GeneratecontradictionReport(contradictionReportMessage);
+                    contradictionJson = runcontradictionResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value?.Replace("```json", "").Replace("```", "");
+                    await _meetingService.SaveAiContradictionDetails(interviewId, contradictionJson: contradictionJson);
+                }
+            }
+            catch (Exception contradictionEx)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, contradictionEx);
+            }
+        }
+        private static string BuildContradictionReportMessage(string transcriptSummary, string reportStringContent)
+        {
+            var message =
+                "You are given JSON evaluations for the same interview:AI Report ,Human Report. " +
+                "Reconcile them and output one JSON object only (no markdown) with: " +
+                "AI Report JSON:\n" + (transcriptSummary ?? "") + "\n\n" +
+                "Human Report JSON:\n" + (reportStringContent ?? "");
+            return message;
         }
     }
 }

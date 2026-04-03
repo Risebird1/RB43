@@ -1,3 +1,5 @@
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;

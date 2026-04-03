@@ -5065,8 +5065,6 @@ NEVER:
             }
         }
 
-
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Participantwaiting(string type, int returnBack)
