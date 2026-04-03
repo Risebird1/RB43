@@ -144,8 +144,10 @@ BEGIN
         SET @AlreadyMapped = 1;
     END
 
-    -- Step 5: Create mapping if requested and not already mapped
-    -- Mark as auto-mapped by the resume ingestion flow
+    -- Step 5: Auto-mapping DISABLED - just return the match without creating TransClientUser entry
+    -- The @CreateMapping parameter is ignored; no new mappings are created automatically.
+    -- To re-enable, uncomment the INSERT block below.
+    /*
     IF @CreateMapping = 1 AND @AlreadyMapped = 0
     BEGIN
         INSERT INTO dbo.TransClientUser (IRFId, ClientUserId, ClientRoleId, IsActive, IsAutoMapped, AutoMappedOn)
@@ -156,6 +158,9 @@ BEGIN
     BEGIN
         SET @AlreadyMapped = 1; -- Either already mapped or we didn't create
     END
+    */
+    -- Always report as "not auto-mapped" since we're not creating mappings
+    SET @AlreadyMapped = 1;
 
     -- Step 6: Return the matched IRF
     SELECT 

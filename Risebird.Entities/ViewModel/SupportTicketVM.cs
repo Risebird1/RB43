@@ -110,9 +110,18 @@ namespace Risebird.Entities.ViewModel
         /// Google Drive URLs of individual resume files uploaded during the loop.
         /// Relay passes these as a JSON array: ["url1","url2"].
         /// Populated only when webhook_intent = "New candidate submission".
+        /// DEPRECATED: Use resume_associations instead for per-resume IRF mapping.
         /// </summary>
         [JsonProperty("resume_drive_urls")]
         public List<string> ResumeDriveUrls         { get; set; }
+
+        /// <summary>
+        /// Per-resume IRF associations. Each entry maps a resume URL to its intended
+        /// skill channel/IRF based on context from the email body.
+        /// Use this instead of the flat resume_drive_urls + single skill_channel_id.
+        /// </summary>
+        [JsonProperty("resume_associations")]
+        public List<ResumeAssociation> ResumeAssociations { get; set; }
 
         /// <summary>
         /// Structured candidate scheduling data extracted by Relay AI.
@@ -121,6 +130,25 @@ namespace Risebird.Entities.ViewModel
         /// </summary>
         [JsonProperty("candidate_schedule_data")]
         public List<CandidateScheduleEntry> CandidateScheduleData { get; set; }
+    }
+
+    /// <summary>
+    /// Maps a single resume to its intended IRF/skill channel.
+    /// Used when an email contains multiple resumes intended for different roles.
+    /// </summary>
+    public class ResumeAssociation
+    {
+        [JsonProperty("resume_url")]
+        public string ResumeUrl               { get; set; }
+
+        [JsonProperty("skill_channel_id")]
+        public string SkillChannelId          { get; set; }
+
+        [JsonProperty("job_title")]
+        public string JobTitle                { get; set; }
+
+        [JsonProperty("candidate_name")]
+        public string CandidateName           { get; set; }
     }
 
     /// <summary>

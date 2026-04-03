@@ -161,13 +161,15 @@ BEGIN
         RETURN;
     END
 
-    -- Step 5: Create the mapping in TransClientUser
-    -- NOTE: ClientUserId stores UserList.id (not ClientUser.id)
-    -- Mark as auto-mapped by the resume ingestion flow
+    -- Step 5: Auto-mapping DISABLED - do NOT create TransClientUser entry
+    -- The SP still finds the best matching IRF but does not insert any mapping.
+    -- To re-enable auto-mapping, uncomment the INSERT below.
+    /*
     INSERT INTO dbo.TransClientUser (IRFId, ClientUserId, ClientRoleId, IsActive, IsAutoMapped, AutoMappedOn)
     VALUES (@MatchedIRFId, @UserId, ISNULL(@ClientRoleId, 1), 1, 1, GETUTCDATE());
+    */
 
-    -- Step 6: Return the matched IRF
+    -- Step 6: Return the matched IRF (WasAutoMapped = 0 since we're not creating mappings)
     SELECT 
         irf.id                           AS Id,
         irf.IRFId                        AS IRFStringId,
@@ -178,7 +180,7 @@ BEGIN
         irf.StartDate                    AS StartDate,
         irf.EndDate                      AS EndDate,
         irf.CreatedOn                    AS CreatedOn,
-        CAST(1 AS BIT)                   AS WasAutoMapped
+        CAST(0 AS BIT)                   AS WasAutoMapped
     FROM   dbo.IRF irf
     INNER JOIN dbo.UserList ul ON ul.id = irf.RisebirdHr
     WHERE  irf.id = @MatchedIRFId;
