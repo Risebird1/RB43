@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.PaymentSLAVM
+@model Risebird.Entities.ViewModel.PaymentSLAVM
 @{
     ViewData["Title"] = "Feedback";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
@@ -163,6 +163,20 @@
 
                                             </div>
                                         </div>
+                                        @if (ViewBag.IncludeInterviewerVideoOff == true)
+                                        {
+                                            <div class="w-auto">
+                                                <div class="form-group">
+                                                    <div class="accordion-group">
+                                                        <div class="accordion-heading">
+                                                            <a style="text-decoration:none;color:#000;font-weight:600;font-size:13px;" class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#interviewerVideoOff'>
+                                                                Interviewer Not Engaging
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
                                         <div class="w-auto">
                                             <div class="form-group">
 
@@ -460,6 +474,40 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @if (ViewBag.IncludeInterviewerVideoOff == true)
+                                        {
+                                            <div class='page' id='interviewerVideoOff'>
+                                                <div class='page__header'>
+                                                    <div class='page__title'>
+                                                        Interviewer not engaging
+                                                    </div>
+                                                    <div class='page__close'>
+                                                        <i style="font-size: 20px;" class="fa fa-close"></i>
+                                                    </div>
+                                                </div>
+                                                <div class='page__body'>
+                                                    <div class="accordion-body">
+                                                        <div class="accordion-inner">
+                                                            @Html.HiddenFor(m => m.InterviewerVideo)
+                                                            <ul class="ks-cboxtags">
+                                                                <li>
+                                                                    @if (Model.InterviewerVideo.Split(",").Select(x => x.Trim()).Contains("Interviewer Video off"))
+                                                                    {
+                                                                        <input type="checkbox" id="checkboxInterviewerVideoOff" name="InterviewerVideo" checked onclick="ChangeCheckBox('InterviewerVideo')" value="Interviewer Video off" />
+                                                                        <label for="checkboxInterviewerVideoOff">Interviewer Video Off</label>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="checkbox" id="checkboxInterviewerVideoOff" name="InterviewerVideo" onclick="ChangeCheckBox('InterviewerVideo')" value="Interviewer Video off" />
+                                                                        <label for="checkboxInterviewerVideoOff">Interviewer Video Off</label>
+                                                                    }
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
                                         <div class='page' id='time'>
                                             <div class='page__header'>
                                                 <div class='page__title'>
@@ -745,6 +793,7 @@
         var PoorCommunicationSkills = $("#PoorCommunicationSkills").val();
         var TimeManagement = $("#TimeManagement").val();
         var Interviewid = $("#Interviewid").val();
+        var InterviewerVideo = ($("#InterviewerVideo").length ? $("#InterviewerVideo").val() : "");
         $.ajax({
             type: "POST",
             data: {
@@ -755,6 +804,7 @@
                 WeakInfrastructure: WeakInfrastructure,
                 UnethicalPractices: UnethicalPractices,
                 PoorCommunicationSkills: PoorCommunicationSkills,
+                InterviewerVideo: InterviewerVideo,
                 Interviewid: Interviewid
             },
             url: "/Survey/CandidateFeedbackForm",
