@@ -1,6 +1,7 @@
 -- usp_InsertPendingResume
 -- Inserts a pending resume record for HR review.
 -- Called by the webhook instead of directly inserting into CandidateResume.
+-- Stores original resolved IRF for accuracy tracking.
 CREATE OR ALTER PROCEDURE [dbo].[usp_InsertPendingResume]
     @SupportTicketId            INT,
     @ResumeUrl                  NVARCHAR(1000),
@@ -20,14 +21,16 @@ BEGIN
     INSERT INTO dbo.SupportTicketPendingResumes (
         SupportTicketId, ResumeUrl, CandidateName, CandidateEmail,
         ResolvedIRFId, ResolvedIRFStringId, ResolvedJobTitle, ResolvedHREmail,
+        OriginalResolvedIRFId, OriginalResolvedIRFStringId,
         HasSchedulingData, ScheduledInterviewDateTime, ScheduleTimezone,
-        Status, CreatedAt
+        Status, IRFChangedByHR, CreatedAt
     )
     VALUES (
         @SupportTicketId, @ResumeUrl, @CandidateName, @CandidateEmail,
         @ResolvedIRFId, @ResolvedIRFStringId, @ResolvedJobTitle, @ResolvedHREmail,
+        @ResolvedIRFId, @ResolvedIRFStringId,  -- Store original values
         @HasSchedulingData, @ScheduledInterviewDateTime, @ScheduleTimezone,
-        'Pending', GETUTCDATE()
+        'Pending', 0, GETUTCDATE()
     );
     
     -- Update ticket to indicate pending resumes
