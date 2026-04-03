@@ -380,87 +380,6 @@ namespace Risebird.Web.Controllers
             return (int)((double)matches / Math.Max(fWords.Count, jtWords.Count) * 90);
         }
 
-        // ── Sensitive email detection ─────────────────────────────────────────
-        
-        private static readonly HashSet<string> SensitiveSenderDomains = new(StringComparer.OrdinalIgnoreCase)
-        {
-            // Banks (India)
-            "hdfcbank.com", "icicibank.com", "sbi.co.in", "axisbank.com", "kotak.com",
-            "yesbank.in", "indusind.com", "rbl.co.in", "idfcfirstbank.com", "bankofbaroda.co.in",
-            // Banks (International)
-            "chase.com", "bankofamerica.com", "wellsfargo.com", "citi.com", "hsbc.com",
-            // HR/Payroll systems
-            "greythr.com", "darwinbox.com", "keka.com", "adp.com", "paylocity.com",
-            "gusto.com", "rippling.com", "bamboohr.com", "zenefits.com", "namely.com",
-            // Tax/Government
-            "incometax.gov.in", "irs.gov", "gst.gov.in",
-            // Insurance
-            "licindia.in", "iciciprulife.com", "hdfclife.com", "starhealth.in",
-            // Credit cards
-            "americanexpress.com", "visa.com", "mastercard.com"
-        };
-
-        private static readonly string[] SensitiveKeywords = new[]
-        {
-            // Salary/Payroll
-            "salary credited", "salary slip", "payslip", "pay slip", "salary statement",
-            "salary transfer", "salary deposited", "monthly salary", "net pay",
-            "gross salary", "salary credit", "payroll",
-            // Bank
-            "bank statement", "account statement", "transaction alert", "balance update",
-            "credited to your account", "debited from your account", "fund transfer",
-            "neft", "imps", "rtgs", "upi transaction", "account balance",
-            // Tax
-            "form 16", "form-16", "form16", "itr", "income tax return", "tax return",
-            "tds certificate", "w-2", "w2 form", "1099", "tax statement",
-            // Medical
-            "medical report", "lab report", "health report", "prescription",
-            "diagnosis", "patient report", "test results", "medical records",
-            // Password/Security
-            "password reset", "reset your password", "otp", "one time password",
-            "verification code", "security code", "2fa", "two factor",
-            // Identity
-            "aadhaar", "pan card", "passport", "ssn", "social security",
-            "identity verification", "kyc",
-            // Credit/Loans
-            "credit card statement", "loan statement", "emi", "loan approved",
-            "credit limit", "card statement",
-            // Insurance
-            "policy document", "insurance premium", "claim status", "policy renewal",
-            // Personal bills
-            "electricity bill", "phone bill", "utility bill", "mobile bill"
-        };
-
-        private static (bool IsSensitive, string Reason) DetectSensitiveEmail(
-            string senderEmail, string subject, string body, string intent)
-        {
-            // Check if Relay already identified it as sensitive
-            if (string.Equals(intent, "Sensitive personal email", StringComparison.OrdinalIgnoreCase))
-                return (true, "Identified by Relay as sensitive personal email");
-
-            // Check sender domain
-            if (!string.IsNullOrWhiteSpace(senderEmail))
-            {
-                var atIndex = senderEmail.IndexOf('@');
-                if (atIndex > 0 && atIndex < senderEmail.Length - 1)
-                {
-                    var domain = senderEmail.Substring(atIndex + 1).ToLowerInvariant();
-                    if (SensitiveSenderDomains.Contains(domain))
-                        return (true, $"Sender domain blocked: {domain}");
-                }
-            }
-
-            // Check subject and body for sensitive keywords
-            var combined = ((subject ?? "") + " " + (body ?? "")).ToLowerInvariant();
-            foreach (var keyword in SensitiveKeywords)
-            {
-                if (combined.Contains(keyword))
-                    return (true, $"Sensitive keyword detected: {keyword}");
-            }
-
-            return (false, null);
-        }
-
         // ── Relay webhook ─────────────────────────────────────────────────────
 
         [AllowAnonymous]
@@ -491,27 +410,6 @@ namespace Risebird.Web.Controllers
 
                 if (payload == null || string.IsNullOrWhiteSpace(payload.SenderEmail))
                     return BadRequest(new { error = "Missing required field: sender_email." });
-
-                // ── SENSITIVE EMAIL CHECK (Privacy Protection) ──────────────────
-                var (isSensitive, sensitiveReason) = DetectSensitiveEmail(
-                    payload.SenderEmail,
-                    payload.Subject,
-                    payload.MailContent,
-                    payload.WebhookIntent);
-
-                if (isSensitive)
-                {
-                    await _logger.LogMessage(LogLevelInfo.Warning,
-                        $"BLOCKED sensitive email from {payload.SenderEmail}: {sensitiveReason}");
-                    
-                    return Ok(new
-                    {
-                        success = false,
-                        blocked = true,
-                        reason  = "Sensitive personal email detected and blocked for privacy protection.",
-                        detail  = sensitiveReason
-                    });
-                }
 
                 DateTime? receivedAt = null;
                 if (!string.IsNullOrWhiteSpace(payload.ReceivedAt) &&
