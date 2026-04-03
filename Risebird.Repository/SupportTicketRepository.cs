@@ -334,5 +334,76 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<int> InsertCandidateResumeForAutoScheduleAsync(
+            int irfId,
+            string resumeLink,
+            int addedBy,
+            string clientHrEmailId,
+            int? supportTicketId,
+            string candidateName,
+            string candidateEmail,
+            DateTime? scheduledInterviewDateTime)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var result = await conn.QueryFirstOrDefaultAsync<int>(
+                    "usp_InsertCandidateResumeForAutoSchedule",
+                    new
+                    {
+                        IRFId                      = irfId,
+                        ResumeLink                 = resumeLink,
+                        AddedBy                    = addedBy,
+                        ClientHREmailId            = clientHrEmailId,
+                        SupportTicketId            = supportTicketId,
+                        CandidateName              = candidateName,
+                        CandidateEmail             = candidateEmail,
+                        ScheduledInterviewDateTime = scheduledInterviewDateTime
+                    },
+                    commandType: CommandType.StoredProcedure);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<List<AutoScheduleCandidateVM>> GetAutoScheduleCandidatesForTicketAsync(int ticketId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<AutoScheduleCandidateVM>(
+                    "usp_GetAutoScheduleCandidatesForTicket",
+                    new { TicketId = ticketId },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<AutoScheduleCandidateVM>();
+            }
+        }
+
+        public async Task<bool> SetTicketHasAutoScheduleCandidatesAsync(int ticketId, bool value)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                await conn.ExecuteAsync(
+                    "UPDATE dbo.SupportTickets SET HasAutoScheduleCandidates = @Value WHERE Id = @TicketId",
+                    new { TicketId = ticketId, Value = value });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

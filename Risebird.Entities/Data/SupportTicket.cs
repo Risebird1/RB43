@@ -25,5 +25,6 @@ namespace Risebird.Entities.Data
         public string   JobTitle                    { get; set; }
         public string   Status                      { get; set; }
         public DateTime CreatedAt                   { get; set; }
+        public bool     HasAutoScheduleCandidates   { get; set; }
     }
 }

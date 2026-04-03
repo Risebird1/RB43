@@ -23,7 +23,8 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_InsertSupportTicket]
     @SummaryMail                NVARCHAR(MAX)  = NULL,
     @SummaryCandidates          NVARCHAR(MAX)  = NULL,
     @SummaryInterviewScores     NVARCHAR(MAX)  = NULL,
-    @JobTitle                   NVARCHAR(200)  = NULL
+    @JobTitle                   NVARCHAR(200)  = NULL,
+    @HasAutoScheduleCandidates  BIT            = 0
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -88,13 +89,13 @@ BEGIN
         Intent, PrimarySpecialization, MailBodyIntent,
         AttachmentJobDescription, AttachmentPdf, AttachmentResumes,
         DriveFolderLink, SummaryMail, SummaryCandidates, SummaryInterviewScores,
-        UserId, ClientId, AssignedTo, JobTitle
+        UserId, ClientId, AssignedTo, JobTitle, HasAutoScheduleCandidates
     ) VALUES (
         @SenderEmail, @Subject, @MailContent, @ReceivedAt,
         @Intent, @PrimarySpecialization, @MailBodyIntent,
         @AttachmentJobDescription, @AttachmentPdf, @AttachmentResumes,
         @DriveFolderLink, @SummaryMail, @SummaryCandidates, @SummaryInterviewScores,
-        @UserId, @ClientId, @AssignedTo, @JobTitle
+        @UserId, @ClientId, @AssignedTo, @JobTitle, @HasAutoScheduleCandidates
     );
 
     SELECT SCOPE_IDENTITY() AS NewId;

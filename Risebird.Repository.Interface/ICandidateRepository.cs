@@ -1,4 +1,4 @@
-﻿using Risebird.Entities.Data;
+using Risebird.Entities.Data;
 using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.ViewModel;
 using System;
