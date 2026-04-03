@@ -129,5 +129,21 @@ namespace Risebird.Repository.Interface
         /// Tracks the change for accuracy analysis.
         /// </summary>
         Task<bool> UpdatePendingResumeIRFAsync(int pendingResumeId, int newIRFId, string changedBy, string reason);
+
+        /// <summary>
+        /// Gets counts for all three tabs in a single optimized query.
+        /// Returns (ManualReviewCount, SystemOnlyCount, HybridCount).
+        /// </summary>
+        Task<(int ManualReviewCount, int SystemOnlyCount, int HybridCount)> GetTicketCountsAsync();
+
+        /// <summary>
+        /// Gets the RisebirdHr user ID for a given IRF.
+        /// </summary>
+        Task<int> GetHRUserIdForIRFAsync(int irfId);
+
+        /// <summary>
+        /// Gets a fallback system user ID (for AddedBy when no HR found).
+        /// </summary>
+        Task<int> GetSystemUserIdAsync();
     }
 }

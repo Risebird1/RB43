@@ -597,5 +597,66 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<(int ManualReviewCount, int SystemOnlyCount, int HybridCount)> GetTicketCountsAsync()
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var result = await conn.QueryFirstOrDefaultAsync<dynamic>(
+                    "usp_GetTicketCounts",
+                    commandType: CommandType.StoredProcedure);
+                
+                if (result == null)
+                    return (0, 0, 0);
+                
+                return (
+                    (int)result.ManualReviewCount,
+                    (int)result.SystemOnlyCount,
+                    (int)result.HybridCount
+                );
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return (0, 0, 0);
+            }
+        }
+
+        public async Task<int> GetHRUserIdForIRFAsync(int irfId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var hrId = await conn.QueryFirstOrDefaultAsync<int?>(
+                    "SELECT RisebirdHr FROM dbo.IRF WHERE id = @IRFId AND ISNULL(IsDeleted, 0) = 0",
+                    new { IRFId = irfId });
+                return hrId ?? 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<int> GetSystemUserIdAsync()
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                // Get any active HR-level user (idProfile = 3 is typically HR) as fallback
+                var userId = await conn.QueryFirstOrDefaultAsync<int?>(
+                    @"SELECT TOP 1 id FROM dbo.UserList 
+                      WHERE IsActive = 1 AND idProfile IN (3, 1, 2)
+                      ORDER BY idProfile ASC, id ASC");
+                return userId ?? 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
     }
 }
