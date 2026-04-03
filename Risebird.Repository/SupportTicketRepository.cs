@@ -532,5 +532,70 @@ namespace Risebird.Repository
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
+
+        public async Task<List<IRFOptionVM>> GetIRFsForClientAsync(string senderEmail)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<IRFOptionVM>(
+                    "usp_GetIRFsForClient",
+                    new { SenderEmail = senderEmail },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<IRFOptionVM>();
+            }
+        }
+
+        public async Task<bool> UpdatePendingResumeIRFAsync(int pendingResumeId, int newIRFId, string changedBy, string reason)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                
+                // Get IRF details for the new IRF
+                var irf = await conn.QueryFirstOrDefaultAsync<dynamic>(@"
+                    SELECT irf.id, irf.IRFId AS IRFStringId, irf.JDTiltle, ul.EmailId AS HREmail
+                    FROM dbo.IRF irf
+                    LEFT JOIN dbo.UserList ul ON ul.id = irf.RisebirdHr
+                    WHERE irf.id = @IRFId",
+                    new { IRFId = newIRFId });
+                
+                if (irf == null)
+                    return false;
+                
+                // Update the pending resume with new IRF and track the change
+                await conn.ExecuteAsync(@"
+                    UPDATE dbo.SupportTicketPendingResumes 
+                    SET ResolvedIRFId       = @NewIRFId,
+                        ResolvedIRFStringId = @IRFStringId,
+                        ResolvedJobTitle    = @JDTitle,
+                        ResolvedHREmail     = @HREmail,
+                        IRFChangedByHR      = 1,
+                        IRFChangedAt        = GETUTCDATE(),
+                        IRFChangeReason     = @Reason
+                    WHERE Id = @PendingResumeId",
+                    new 
+                    { 
+                        PendingResumeId = pendingResumeId,
+                        NewIRFId        = newIRFId,
+                        IRFStringId     = (string)irf.IRFStringId,
+                        JDTitle         = (string)irf.JDTiltle,
+                        HREmail         = (string)irf.HREmail,
+                        Reason          = reason
+                    });
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

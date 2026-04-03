@@ -268,6 +268,7 @@ namespace Risebird.Entities.ViewModel
     /// <summary>
     /// ViewModel for pending resumes shown in the HR review modal.
     /// Contains comprehensive context from ticket, IRF, and client for informed decision-making.
+    /// Includes IRF change tracking for accuracy analysis.
     /// </summary>
     public class PendingResumeVM
     {
@@ -278,12 +279,20 @@ namespace Risebird.Entities.ViewModel
         public string    CandidateName               { get; set; }
         public string    CandidateEmail              { get; set; }
         
-        // Resolved IRF
+        // Current resolved IRF (may be changed by HR)
         public int?      ResolvedIRFId               { get; set; }
         public string    ResolvedIRFStringId         { get; set; }
         public string    ResolvedJobTitle            { get; set; }
         public string    ResolvedHREmail             { get; set; }
         public string    ResolvedHRName              { get; set; }
+        
+        // Original system-resolved IRF (for accuracy tracking)
+        public int?      OriginalResolvedIRFId       { get; set; }
+        public string    OriginalResolvedIRFStringId { get; set; }
+        public string    OriginalIRFJobTitle         { get; set; }
+        public bool      IRFChangedByHR              { get; set; }
+        public DateTime? IRFChangedAt                { get; set; }
+        public string    IRFChangeReason             { get; set; }
         
         // Scheduling data
         public bool      HasSchedulingData           { get; set; }
@@ -297,7 +306,7 @@ namespace Risebird.Entities.ViewModel
         public string    ProcessedBy                 { get; set; }
         public DateTime  CreatedAt                   { get; set; }
         
-        // IRF details
+        // Current IRF details
         public string    IRFJobTitle                 { get; set; }
         public string    IRFSkillCluster             { get; set; }
         public DateTime? IRFStartDate                { get; set; }
@@ -308,6 +317,7 @@ namespace Risebird.Entities.ViewModel
         // Client info
         public string    ClientName                  { get; set; }
         public string    TenantId                    { get; set; }
+        public int?      ClientId                    { get; set; }
         
         // Ticket context (email details for HR decision)
         public string    TicketSenderEmail           { get; set; }
@@ -326,11 +336,34 @@ namespace Risebird.Entities.ViewModel
         public bool      TicketHasResumes            { get; set; }
     }
 
+    /// <summary>
+    /// IRF option for the dropdown in pending resume review.
+    /// </summary>
+    public class IRFOptionVM
+    {
+        public int       Id              { get; set; }
+        public string    IRFStringId     { get; set; }
+        public string    JDTitle         { get; set; }
+        public string    SkillCluster    { get; set; }
+        public DateTime? StartDate       { get; set; }
+        public DateTime? EndDate         { get; set; }
+        public int?      Positions       { get; set; }
+        public int       RisebirdHrId    { get; set; }
+        public string    RisebirdHrEmail { get; set; }
+        public string    RisebirdHrName  { get; set; }
+        public string    ClientName      { get; set; }
+        public int       ClientId        { get; set; }
+    }
+
     /// <summary>Request model for ingesting a pending resume.</summary>
     public class IngestPendingResumeRequest
     {
         public int    PendingResumeId        { get; set; }
         public bool   AlsoSchedule           { get; set; }
         public string ProcessedByEmail       { get; set; }
+        
+        // IRF override (if HR wants to change the resolved IRF)
+        public int?   OverrideIRFId          { get; set; }
+        public string IRFChangeReason        { get; set; }
     }
 }

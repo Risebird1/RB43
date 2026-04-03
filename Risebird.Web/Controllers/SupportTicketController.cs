@@ -734,12 +734,20 @@ namespace Risebird.Web.Controllers
         /// <summary>
         /// Gets pending resumes for HR review modal.
         /// Returns all pending resumes with resolved IRF info.
+        /// Use ticketId = -1 for test data.
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetPendingResumes(int ticketId)
         {
             try
             {
+                // TEST MODE: Return hardcoded data for ticketId = -1
+                if (ticketId == -1)
+                {
+                    var testResumes = GetTestPendingResumes();
+                    return Json(new { success = true, resumes = testResumes });
+                }
+
                 var resumes = await _repository.GetPendingResumesForTicketAsync(ticketId);
                 return Json(new { success = true, resumes });
             }
@@ -751,8 +759,258 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
+        /// Returns hardcoded test data for UI testing.
+        /// </summary>
+        private List<PendingResumeVM> GetTestPendingResumes()
+        {
+            var now = DateTime.UtcNow;
+            return new List<PendingResumeVM>
+            {
+                new PendingResumeVM
+                {
+                    Id = 1001,
+                    SupportTicketId = -1,
+                    ResumeUrl = "https://drive.google.com/file/d/abc123/view",
+                    CandidateName = "Rahul Sharma",
+                    CandidateEmail = "rahul.sharma@gmail.com",
+                    ResolvedIRFId = 24500,
+                    ResolvedIRFStringId = "AzureDevEn",
+                    ResolvedJobTitle = "Azure DevOps Engineer",
+                    ResolvedHREmail = "hr.lead@risebird.io",
+                    ResolvedHRName = "Priya Mehta",
+                    HasSchedulingData = true,
+                    ScheduledInterviewDateTime = now.AddDays(2).AddHours(10),
+                    ScheduleTimezone = "IST",
+                    Status = "Pending",
+                    CreatedAt = now.AddHours(-2),
+                    IRFJobTitle = "Azure DevOps Engineer",
+                    IRFSkillCluster = "Cloud & DevOps",
+                    IRFStartDate = now.AddMonths(-1),
+                    IRFEndDate = now.AddMonths(2),
+                    IRFPositions = 3,
+                    IRFJDLink = "https://risebirdportal.blob.core.windows.net/resumes/Azure_DevOps.docx",
+                    ClientName = "TechCorp Solutions",
+                    TenantId = "tenant-123",
+                    TicketSenderEmail = "recruiter@techcorp.com",
+                    TicketSubject = "Resume Submission - Azure DevOps Engineers for Q2 Hiring",
+                    TicketMailContent = "Hi Team,\n\nPlease find attached resumes for the Azure DevOps Engineer position.\n\nCandidate 1: Rahul Sharma - 5 years experience in Azure, CI/CD, Kubernetes\nAvailable: April 2nd, 10:00 AM IST\n\nCandidate 2: Ananya Patel - 4 years experience, strong in Terraform\nNo scheduling preference\n\nCandidate 3: Vikram Singh - 6 years, AWS + Azure certified\n\nPlease schedule interviews at the earliest.\n\nThanks,\nRecruiter Team",
+                    TicketIntent = "New candidate submission",
+                    TicketPrimarySpecialization = "Azure DevOps",
+                    TicketMailBodyIntent = "Resume submission with scheduling request",
+                    TicketJobTitle = "Azure DevOps Engineer",
+                    TicketReceivedAt = now.AddHours(-2),
+                    TicketDriveFolderLink = "https://drive.google.com/drive/folders/xyz789",
+                    TicketSummaryMail = "Recruiter from TechCorp submitting 3 candidates for Azure DevOps role. One candidate has specific availability for April 2nd morning.",
+                    TicketSummaryCandidates = "3 candidates submitted: Rahul Sharma (5 yrs), Ananya Patel (4 yrs), Vikram Singh (6 yrs)",
+                    TicketHasJD = false,
+                    TicketHasPdf = true,
+                    TicketHasResumes = true
+                },
+                new PendingResumeVM
+                {
+                    Id = 1002,
+                    SupportTicketId = -1,
+                    ResumeUrl = "https://drive.google.com/file/d/def456/view",
+                    CandidateName = "Ananya Patel",
+                    CandidateEmail = "ananya.patel@outlook.com",
+                    ResolvedIRFId = 24500,
+                    ResolvedIRFStringId = "AzureDevEn",
+                    ResolvedJobTitle = "Azure DevOps Engineer",
+                    ResolvedHREmail = "hr.lead@risebird.io",
+                    ResolvedHRName = "Priya Mehta",
+                    HasSchedulingData = false,
+                    Status = "Pending",
+                    CreatedAt = now.AddHours(-2),
+                    IRFJobTitle = "Azure DevOps Engineer",
+                    IRFSkillCluster = "Cloud & DevOps",
+                    IRFStartDate = now.AddMonths(-1),
+                    IRFEndDate = now.AddMonths(2),
+                    IRFPositions = 3,
+                    IRFJDLink = "https://risebirdportal.blob.core.windows.net/resumes/Azure_DevOps.docx",
+                    ClientName = "TechCorp Solutions",
+                    TenantId = "tenant-123",
+                    TicketSenderEmail = "recruiter@techcorp.com",
+                    TicketSubject = "Resume Submission - Azure DevOps Engineers for Q2 Hiring",
+                    TicketMailContent = "Hi Team,\n\nPlease find attached resumes for the Azure DevOps Engineer position.\n\nCandidate 1: Rahul Sharma - 5 years experience in Azure, CI/CD, Kubernetes\nAvailable: April 2nd, 10:00 AM IST\n\nCandidate 2: Ananya Patel - 4 years experience, strong in Terraform\nNo scheduling preference\n\nCandidate 3: Vikram Singh - 6 years, AWS + Azure certified\n\nPlease schedule interviews at the earliest.\n\nThanks,\nRecruiter Team",
+                    TicketIntent = "New candidate submission",
+                    TicketPrimarySpecialization = "Azure DevOps",
+                    TicketMailBodyIntent = "Resume submission with scheduling request",
+                    TicketJobTitle = "Azure DevOps Engineer",
+                    TicketReceivedAt = now.AddHours(-2),
+                    TicketDriveFolderLink = "https://drive.google.com/drive/folders/xyz789",
+                    TicketSummaryMail = "Recruiter from TechCorp submitting 3 candidates for Azure DevOps role. One candidate has specific availability for April 2nd morning.",
+                    TicketSummaryCandidates = "3 candidates submitted: Rahul Sharma (5 yrs), Ananya Patel (4 yrs), Vikram Singh (6 yrs)",
+                    TicketHasJD = false,
+                    TicketHasPdf = true,
+                    TicketHasResumes = true
+                },
+                new PendingResumeVM
+                {
+                    Id = 1003,
+                    SupportTicketId = -1,
+                    ResumeUrl = "https://drive.google.com/file/d/ghi789/view",
+                    CandidateName = "Vikram Singh",
+                    CandidateEmail = null,
+                    ResolvedIRFId = null,
+                    ResolvedIRFStringId = null,
+                    ResolvedJobTitle = null,
+                    ResolvedHREmail = null,
+                    HasSchedulingData = false,
+                    Status = "Pending",
+                    CreatedAt = now.AddHours(-2),
+                    ClientName = null,
+                    TicketSenderEmail = "recruiter@techcorp.com",
+                    TicketSubject = "Resume Submission - Azure DevOps Engineers for Q2 Hiring",
+                    TicketMailContent = "Hi Team,\n\nPlease find attached resumes for the Azure DevOps Engineer position.\n\nCandidate 1: Rahul Sharma - 5 years experience in Azure, CI/CD, Kubernetes\nAvailable: April 2nd, 10:00 AM IST\n\nCandidate 2: Ananya Patel - 4 years experience, strong in Terraform\nNo scheduling preference\n\nCandidate 3: Vikram Singh - 6 years, AWS + Azure certified\n\nPlease schedule interviews at the earliest.\n\nThanks,\nRecruiter Team",
+                    TicketIntent = "New candidate submission",
+                    TicketPrimarySpecialization = "Azure DevOps",
+                    TicketMailBodyIntent = "Resume submission with scheduling request",
+                    TicketJobTitle = "Azure DevOps Engineer",
+                    TicketReceivedAt = now.AddHours(-2),
+                    TicketDriveFolderLink = "https://drive.google.com/drive/folders/xyz789",
+                    TicketSummaryMail = "Recruiter from TechCorp submitting 3 candidates for Azure DevOps role. One candidate has specific availability for April 2nd morning.",
+                    TicketSummaryCandidates = "3 candidates submitted: Rahul Sharma (5 yrs), Ananya Patel (4 yrs), Vikram Singh (6 yrs)",
+                    TicketHasJD = false,
+                    TicketHasPdf = true,
+                    TicketHasResumes = true
+                },
+                new PendingResumeVM
+                {
+                    Id = 1004,
+                    SupportTicketId = -1,
+                    ResumeUrl = "https://drive.google.com/file/d/jkl012/view",
+                    CandidateName = "Sneha Reddy",
+                    CandidateEmail = "sneha.reddy@yahoo.com",
+                    ResolvedIRFId = 24501,
+                    ResolvedIRFStringId = "JavaSpring",
+                    ResolvedJobTitle = "Java Spring Boot Developer",
+                    ResolvedHREmail = "hr.lead@risebird.io",
+                    ResolvedHRName = "Priya Mehta",
+                    // IRF was changed by HR (example of tracking)
+                    OriginalResolvedIRFId = 24500,
+                    OriginalResolvedIRFStringId = "AzureDevEn",
+                    OriginalIRFJobTitle = "Azure DevOps Engineer",
+                    IRFChangedByHR = true,
+                    IRFChangedAt = now.AddMinutes(-35),
+                    IRFChangeReason = "Candidate has Java background, not DevOps",
+                    HasSchedulingData = true,
+                    ScheduledInterviewDateTime = now.AddDays(3).AddHours(14).AddMinutes(30),
+                    ScheduleTimezone = "IST",
+                    Status = "Ingested",
+                    IngestedResumeId = 55001,
+                    ProcessedAt = now.AddMinutes(-30),
+                    ProcessedBy = "reviewer@risebird.io",
+                    CreatedAt = now.AddHours(-3),
+                    IRFJobTitle = "Java Spring Boot Developer",
+                    IRFSkillCluster = "Backend Development",
+                    IRFStartDate = now.AddMonths(-2),
+                    IRFEndDate = now.AddMonths(1),
+                    IRFPositions = 2,
+                    ClientName = "TechCorp Solutions",
+                    ClientId = 100,
+                    TenantId = "tenant-456",
+                    TicketSenderEmail = "recruiter@techcorp.com",
+                    TicketSubject = "Resume Submission - Azure DevOps Engineers for Q2 Hiring",
+                    TicketMailContent = "Hi Team,\n\nPlease find attached resumes for the Azure DevOps Engineer position.\n\nCandidate 1: Rahul Sharma - 5 years experience in Azure, CI/CD, Kubernetes\nAvailable: April 2nd, 10:00 AM IST\n\nCandidate 2: Ananya Patel - 4 years experience, strong in Terraform\nNo scheduling preference\n\nCandidate 3: Vikram Singh - 6 years, AWS + Azure certified\n\nPlease schedule interviews at the earliest.\n\nThanks,\nRecruiter Team",
+                    TicketIntent = "New candidate submission",
+                    TicketPrimarySpecialization = "Azure DevOps",
+                    TicketMailBodyIntent = "Resume submission with scheduling request",
+                    TicketJobTitle = "Azure DevOps Engineer",
+                    TicketReceivedAt = now.AddHours(-2),
+                    TicketDriveFolderLink = "https://drive.google.com/drive/folders/xyz789",
+                    TicketSummaryMail = "Recruiter from TechCorp submitting 3 candidates for Azure DevOps role.",
+                    TicketHasJD = false,
+                    TicketHasPdf = true,
+                    TicketHasResumes = true
+                },
+                new PendingResumeVM
+                {
+                    Id = 1005,
+                    SupportTicketId = -1,
+                    ResumeUrl = "https://drive.google.com/file/d/mno345/view",
+                    CandidateName = "Arjun Kapoor",
+                    CandidateEmail = "arjun.k@gmail.com",
+                    ResolvedIRFId = 24502,
+                    ResolvedIRFStringId = "ReactFront",
+                    ResolvedJobTitle = "React Frontend Developer",
+                    ResolvedHREmail = "support@risebird.io",
+                    ResolvedHRName = "Amit Kumar",
+                    HasSchedulingData = false,
+                    Status = "Rejected",
+                    ProcessedAt = now.AddMinutes(-15),
+                    ProcessedBy = "reviewer@risebird.io",
+                    CreatedAt = now.AddHours(-4),
+                    IRFJobTitle = "React Frontend Developer",
+                    IRFSkillCluster = "Frontend Development",
+                    IRFStartDate = now.AddMonths(-3),
+                    IRFEndDate = now.AddDays(15),
+                    IRFPositions = 1,
+                    ClientName = "StartupXYZ",
+                    TenantId = "tenant-789",
+                    TicketSenderEmail = "recruiter@techcorp.com",
+                    TicketSubject = "Resume Submission - Azure DevOps Engineers for Q2 Hiring",
+                    TicketMailContent = "Hi Team,\n\nPlease find attached resumes for the Azure DevOps Engineer position.\n\nCandidate 1: Rahul Sharma - 5 years experience in Azure, CI/CD, Kubernetes\nAvailable: April 2nd, 10:00 AM IST\n\nCandidate 2: Ananya Patel - 4 years experience, strong in Terraform\nNo scheduling preference\n\nCandidate 3: Vikram Singh - 6 years, AWS + Azure certified\n\nPlease schedule interviews at the earliest.\n\nThanks,\nRecruiter Team",
+                    TicketIntent = "New candidate submission",
+                    TicketPrimarySpecialization = "Azure DevOps",
+                    TicketMailBodyIntent = "Resume submission with scheduling request",
+                    TicketJobTitle = "Azure DevOps Engineer",
+                    TicketReceivedAt = now.AddHours(-2),
+                    TicketDriveFolderLink = "https://drive.google.com/drive/folders/xyz789",
+                    TicketSummaryMail = "Recruiter from TechCorp submitting 3 candidates for Azure DevOps role.",
+                    TicketHasJD = false,
+                    TicketHasPdf = true,
+                    TicketHasResumes = true
+                }
+            };
+        }
+
+        /// <summary>
+        /// Gets all active IRFs for a client (for the IRF dropdown).
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetIRFsForClient(string senderEmail)
+        {
+            try
+            {
+                // TEST MODE
+                if (string.IsNullOrWhiteSpace(senderEmail) || senderEmail == "recruiter@techcorp.com")
+                {
+                    var testIRFs = GetTestIRFOptions();
+                    return Json(new { success = true, irfs = testIRFs });
+                }
+
+                var irfs = await _repository.GetIRFsForClientAsync(senderEmail);
+                return Json(new { success = true, irfs });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Returns test IRF options for UI testing.
+        /// </summary>
+        private List<IRFOptionVM> GetTestIRFOptions()
+        {
+            var now = DateTime.UtcNow;
+            return new List<IRFOptionVM>
+            {
+                new IRFOptionVM { Id = 24500, IRFStringId = "AzureDevEn", JDTitle = "Azure DevOps Engineer", SkillCluster = "Cloud & DevOps", StartDate = now.AddMonths(-1), EndDate = now.AddMonths(2), Positions = 3, RisebirdHrEmail = "hr.lead@risebird.io", RisebirdHrName = "Priya Mehta", ClientName = "TechCorp Solutions", ClientId = 100 },
+                new IRFOptionVM { Id = 24501, IRFStringId = "JavaSpring", JDTitle = "Java Spring Boot Developer", SkillCluster = "Backend Development", StartDate = now.AddMonths(-2), EndDate = now.AddMonths(1), Positions = 2, RisebirdHrEmail = "hr.lead@risebird.io", RisebirdHrName = "Priya Mehta", ClientName = "TechCorp Solutions", ClientId = 100 },
+                new IRFOptionVM { Id = 24502, IRFStringId = "ReactFront", JDTitle = "React Frontend Developer", SkillCluster = "Frontend Development", StartDate = now.AddMonths(-3), EndDate = now.AddDays(15), Positions = 1, RisebirdHrEmail = "support@risebird.io", RisebirdHrName = "Amit Kumar", ClientName = "TechCorp Solutions", ClientId = 100 },
+                new IRFOptionVM { Id = 24503, IRFStringId = "PythonML01", JDTitle = "Python ML Engineer", SkillCluster = "Machine Learning", StartDate = now.AddMonths(-1), EndDate = now.AddMonths(3), Positions = 4, RisebirdHrEmail = "hr.lead@risebird.io", RisebirdHrName = "Priya Mehta", ClientName = "TechCorp Solutions", ClientId = 100 },
+                new IRFOptionVM { Id = 24504, IRFStringId = "NodeBacken", JDTitle = "Node.js Backend Developer", SkillCluster = "Backend Development", StartDate = now.AddMonths(-2), EndDate = now.AddMonths(2), Positions = 2, RisebirdHrEmail = "support@risebird.io", RisebirdHrName = "Amit Kumar", ClientName = "TechCorp Solutions", ClientId = 100 },
+                new IRFOptionVM { Id = 24505, IRFStringId = "AWSArchite", JDTitle = "AWS Solutions Architect", SkillCluster = "Cloud & DevOps", StartDate = now.AddDays(-15), EndDate = now.AddMonths(3), Positions = 2, RisebirdHrEmail = "hr.lead@risebird.io", RisebirdHrName = "Priya Mehta", ClientName = "TechCorp Solutions", ClientId = 100 },
+            };
+        }
+
+        /// <summary>
         /// Ingests a pending resume into CandidateResume table.
         /// Optionally schedules the interview if scheduling data is present.
+        /// Supports IRF override by HR with change tracking.
+        /// Use PendingResumeId >= 1000 for test mode (returns mock success).
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> IngestPendingResume([FromBody] IngestPendingResumeRequest request)
@@ -762,6 +1020,22 @@ namespace Risebird.Web.Controllers
                 if (request == null || request.PendingResumeId <= 0)
                     return Json(new { success = false, error = "Invalid request" });
 
+                // TEST MODE: Return mock success for test IDs (>= 1000)
+                if (request.PendingResumeId >= 1000)
+                {
+                    await Task.Delay(500); // Simulate processing
+                    var irfChanged = request.OverrideIRFId.HasValue;
+                    return Json(new
+                    {
+                        success = true,
+                        message = $"[TEST] Resume #{request.PendingResumeId} ingested successfully!" + 
+                                  (irfChanged ? $" (IRF changed to #{request.OverrideIRFId})" : ""),
+                        candidateResumeId = 99000 + request.PendingResumeId,
+                        irfChanged = irfChanged,
+                        scheduleMessage = request.AlsoSchedule ? "[TEST] Interview scheduling queued." : null
+                    });
+                }
+
                 var pending = await _repository.GetPendingResumeByIdAsync(request.PendingResumeId);
                 if (pending == null)
                     return Json(new { success = false, error = "Pending resume not found" });
@@ -769,8 +1043,28 @@ namespace Risebird.Web.Controllers
                 if (pending.Status != "Pending")
                     return Json(new { success = false, error = $"Resume already processed (status: {pending.Status})" });
 
+                var processedBy = request.ProcessedByEmail ?? HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+
+                // Handle IRF override if provided
+                bool irfWasChanged = false;
+                if (request.OverrideIRFId.HasValue && request.OverrideIRFId.Value != pending.ResolvedIRFId)
+                {
+                    var updated = await _repository.UpdatePendingResumeIRFAsync(
+                        request.PendingResumeId,
+                        request.OverrideIRFId.Value,
+                        processedBy,
+                        request.IRFChangeReason ?? "HR override during review");
+                    
+                    if (!updated)
+                        return Json(new { success = false, error = "Failed to update IRF. Please try again." });
+                    
+                    // Refresh the pending resume data
+                    pending = await _repository.GetPendingResumeByIdAsync(request.PendingResumeId);
+                    irfWasChanged = true;
+                }
+
                 if (!pending.ResolvedIRFId.HasValue)
-                    return Json(new { success = false, error = "No IRF resolved for this resume. Cannot ingest." });
+                    return Json(new { success = false, error = "No IRF resolved for this resume. Please select an IRF." });
 
                 // Get HR ID from email
                 var hrId = 0;
@@ -779,8 +1073,6 @@ namespace Risebird.Web.Controllers
                     // Attempt to get HR user ID (simplified — in production, query UserList)
                     // For now, we'll use the resolved IRF's HR or fallback to system user
                 }
-
-                var processedBy = request.ProcessedByEmail ?? HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                 int ingestedResumeId = 0;
 
                 // Insert into CandidateResume
@@ -831,8 +1123,10 @@ namespace Risebird.Web.Controllers
                 return Json(new
                 {
                     success = true,
-                    message = $"Resume ingested successfully into IRF {pending.ResolvedIRFStringId}",
+                    message = $"Resume ingested successfully into IRF {pending.ResolvedIRFStringId}" +
+                              (irfWasChanged ? " (IRF changed by HR)" : ""),
                     candidateResumeId = ingestedResumeId,
+                    irfChanged = irfWasChanged,
                     scheduleMessage
                 });
             }
@@ -944,12 +1238,20 @@ namespace Risebird.Web.Controllers
 
         /// <summary>
         /// Rejects a pending resume (marks as Rejected, won't be ingested).
+        /// Use pendingResumeId >= 1000 for test mode.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> RejectPendingResume(int pendingResumeId)
         {
             try
             {
+                // TEST MODE: Return mock success for test IDs (>= 1000)
+                if (pendingResumeId >= 1000)
+                {
+                    await Task.Delay(300); // Simulate processing
+                    return Json(new { success = true, message = $"[TEST] Resume #{pendingResumeId} rejected." });
+                }
+
                 var processedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                 var pending = await _repository.GetPendingResumeByIdAsync(pendingResumeId);
                 
