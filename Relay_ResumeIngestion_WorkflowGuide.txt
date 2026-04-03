@@ -29,6 +29,33 @@ IMPORTANT — "New interview request" HANDLING:
   Make sure the AI correctly sets attachment_job_description based on
   whether a JD document is attached.
 
+NEW — PER-RESUME IRF ASSOCIATION (*** CRITICAL ***):
+  When an email contains multiple resumes, they may be intended for DIFFERENT
+  skill channels/roles. The AI must now extract a `resume_associations` array
+  that maps EACH resume to its intended IRF.
+  
+  Structure:
+  "resume_associations": [
+    {
+      "resume_url": "<Google Drive URL>",
+      "skill_channel_id": "<10-char code or null>",
+      "job_title": "<role this resume is for>",
+      "candidate_name": "<candidate name from filename/body>"
+    }
+  ]
+  
+  The server will:
+  1. Process each resume individually
+  2. Match each resume to its specific IRF based on job_title or skill_channel_id
+  3. Different resumes can go to different skill channels
+  
+  The old `resume_drive_urls` field is deprecated (set to []).
+
+IMPORTANT — SKIP INGESTION WHEN primary_specialization IS NULL:
+  If the AI cannot determine the primary_specialization (it's null/empty),
+  the server will skip resume ingestion entirely and assign the ticket to an HR
+  for manual review. This prevents incorrect IRF matching when context is unclear.
+
 NEW — CANDIDATE SCHEDULE DATA EXTRACTION (*** See Part 8 in prompt ***):
   When candidates' interview slots are mentioned in emails:
   

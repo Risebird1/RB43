@@ -462,16 +462,130 @@ namespace Risebird.Web.Controllers
                 // and assign to HR for manual channel creation.
                 var isNewChannelRequest = isNewInterviewRequest && ticket.AttachmentJobDescription;
                 
+                // Check if we have resume associations (per-resume IRF mapping) or legacy flat URLs
+                var hasResumeAssociations = payload.ResumeAssociations != null && payload.ResumeAssociations.Count > 0;
+                var hasLegacyUrls = payload.ResumeDriveUrls != null && payload.ResumeDriveUrls.Count > 0;
+                
                 // Resume ingestion applies to:
                 // 1. "New candidate submission" (always for existing channels)
                 // 2. "New interview request" WITHOUT JD attached (resumes for existing channel)
-                var shouldAttemptIngestion = 
-                    (isNewCandidateSubmission || (isNewInterviewRequest && !isNewChannelRequest))
-                    && payload.ResumeDriveUrls != null
-                    && payload.ResumeDriveUrls.Count > 0;
-
-                if (shouldAttemptIngestion)
+                var isResumeIngestionIntent = isNewCandidateSubmission || (isNewInterviewRequest && !isNewChannelRequest);
+                var hasResumesToIngest = hasResumeAssociations || hasLegacyUrls;
+                
+                // ── CRITICAL: Skip ingestion if primary_specialization is null ───────────
+                // When we can't determine the specialization, we can't reliably match IRFs.
+                // Just assign to HR for manual review instead of risking wrong IRF assignment.
+                var skipDueToNullSpecialization = isResumeIngestionIntent 
+                    && hasResumesToIngest 
+                    && string.IsNullOrWhiteSpace(ticket.PrimarySpecialization);
+                
+                if (skipDueToNullSpecialization)
                 {
+                    var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
+                    if (!string.IsNullOrWhiteSpace(hrEmail))
+                    {
+                        await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
+                        resumeIngestionResult.Append(
+                            $"Skipped ingestion (primary_specialization is null) — assigned to {hrEmail} for manual review.");
+                    }
+                    else
+                    {
+                        resumeIngestionResult.Append(
+                            "Skipped ingestion (primary_specialization is null) — no HR resolved; ticket left unassigned.");
+                    }
+                }
+                else if (isResumeIngestionIntent && hasResumeAssociations)
+                {
+                    // ── NEW: Per-resume IRF association logic ────────────────────────────
+                    // Each resume has its own intended IRF/job_title from the email context
+                    int inserted = 0;
+                    var irfResults = new List<string>();
+                    
+                    foreach (var assoc in payload.ResumeAssociations)
+                    {
+                        if (string.IsNullOrWhiteSpace(assoc.ResumeUrl))
+                            continue;
+                        
+                        try
+                        {
+                            IrfMatchVM irfMatch = null;
+                            
+                            // If explicit skill_channel_id provided, use it directly
+                            if (!string.IsNullOrWhiteSpace(assoc.SkillChannelId) &&
+                                assoc.SkillChannelId.Trim().Length == 10)
+                            {
+                                irfMatch = await _repository.GetIRFByStringIdAsync(assoc.SkillChannelId.Trim());
+                            }
+                            
+                            // Otherwise, match using job_title from this specific resume association
+                            if (irfMatch == null && !string.IsNullOrWhiteSpace(assoc.JobTitle))
+                            {
+                                irfMatch = await MatchIRFAsync(
+                                    ticket.SenderEmail,
+                                    assoc.JobTitle,
+                                    null,
+                                    ticket.PrimarySpecialization);
+                            }
+                            
+                            // Last resort: use global job_title from email
+                            if (irfMatch == null)
+                            {
+                                irfMatch = await MatchIRFAsync(
+                                    ticket.SenderEmail,
+                                    ticket.JobTitle ?? ticket.Subject,
+                                    payload.SkillChannelId,
+                                    ticket.PrimarySpecialization);
+                            }
+                            
+                            if (irfMatch != null)
+                            {
+                                var rid = await _repository.InsertCandidateResumeAsync(
+                                    irfMatch.Id,
+                                    assoc.ResumeUrl.Trim(),
+                                    irfMatch.RisebirdHrId,
+                                    ticket.SenderEmail,
+                                    newId);
+                                    
+                                if (rid > 0)
+                                {
+                                    inserted++;
+                                    irfResults.Add($"{assoc.CandidateName ?? "Unknown"} → {irfMatch.IRFStringId}");
+                                }
+                            }
+                        }
+                        catch (Exception rex)
+                        {
+                            await _logger.LogMessage(LogLevelInfo.Exception, rex);
+                        }
+                    }
+                    
+                    // Assign based on outcome
+                    if (inserted > 0)
+                    {
+                        await _repository.UpdateTicketAssignmentAsync(newId, "System", "System");
+                        await _repository.UpdateTicketStatusAsync(newId, "Closed", "System");
+                        resumeIngestionResult.Append(
+                            $"Resumes ingested: {inserted} ({string.Join(", ", irfResults)}), ticket auto-closed");
+                    }
+                    else
+                    {
+                        var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
+                        if (!string.IsNullOrWhiteSpace(hrEmail))
+                        {
+                            await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
+                            resumeIngestionResult.Append(
+                                $"Per-resume ingestion failed — assigned to {hrEmail} for manual review.");
+                        }
+                        else
+                        {
+                            resumeIngestionResult.Append(
+                                "Per-resume ingestion failed — no HR resolved; ticket left unassigned.");
+                        }
+                    }
+                }
+                else if (isResumeIngestionIntent && hasLegacyUrls)
+                {
+                    // ── LEGACY: Single IRF for all resumes (backward compatibility) ──────
                     IrfMatchVM irfMatch = null;
                     int        inserted = 0;
 
@@ -485,10 +599,6 @@ namespace Risebird.Web.Controllers
 
                         if (irfMatch != null)
                         {
-                            // Relay sometimes sends all URLs joined by whitespace in a
-                            // single array element instead of one element per URL.
-                            // Flatten by splitting every element on whitespace so both
-                            // formats (proper array and space-joined string) are handled.
                             var individualUrls = payload.ResumeDriveUrls
                                 .Where(u => !string.IsNullOrWhiteSpace(u))
                                 .SelectMany(u => u.Split(
@@ -515,20 +625,15 @@ namespace Risebird.Web.Controllers
                         await _logger.LogMessage(LogLevelInfo.Exception, rex);
                     }
 
-                    // For resume ingestion intents, AssignedTo was left NULL by the SP.
-                    // Now assign based on the outcome:
                     if (inserted > 0)
                     {
-                        // Ingestion succeeded — assign to System and close
                         await _repository.UpdateTicketAssignmentAsync(newId, "System", "System");
                         await _repository.UpdateTicketStatusAsync(newId, "Closed", "System");
-
                         resumeIngestionResult.Append(
                             $"Resumes ingested: {inserted}, IRF: {irfMatch.IRFStringId}, ticket auto-closed");
                     }
                     else
                     {
-                        // Ingestion failed — assign to the resolved HR for manual review
                         var fallbackHR = irfMatch?.RisebirdHrEmail;
                         if (!string.IsNullOrWhiteSpace(fallbackHR))
                         {
