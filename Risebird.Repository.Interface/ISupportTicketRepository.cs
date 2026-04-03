@@ -118,5 +118,16 @@ namespace Risebird.Repository.Interface
         /// Checks if a ticket still has any pending resumes and updates HasPendingResumes flag.
         /// </summary>
         Task RefreshTicketPendingResumeFlagAsync(int ticketId);
+
+        /// <summary>
+        /// Gets all active IRFs for a client (by sender email) for the IRF dropdown.
+        /// </summary>
+        Task<List<IRFOptionVM>> GetIRFsForClientAsync(string senderEmail);
+
+        /// <summary>
+        /// Updates the resolved IRF for a pending resume (when HR overrides system's choice).
+        /// Tracks the change for accuracy analysis.
+        /// </summary>
+        Task<bool> UpdatePendingResumeIRFAsync(int pendingResumeId, int newIRFId, string changedBy, string reason);
     }
 }

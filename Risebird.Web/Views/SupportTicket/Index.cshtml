@@ -304,6 +304,10 @@
     .action-cell .btn        { font-size: 11px; padding: 4px 8px; }
     .status-badge            { font-size: 10px; padding: 3px 8px; }
     .no-irf-warning          { background: #fff3cd; border: 1px dashed #ffc107; }
+    .irf-dropdown-cell       { min-width: 200px; }
+    .irf-dropdown-cell .irf-select { font-size: 11px; }
+    .irf-dropdown-cell .irf-preview { font-size: 10px; line-height: 1.3; }
+    .text-decoration-line-through { text-decoration: line-through; }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -319,7 +323,14 @@
             </h4>
             <p class="text-muted mb-0 mt-1">Inbound support requests identified and enriched by Relay.app</p>
         </div>
-        <div class="col-auto">
+        <div class="col-auto d-flex gap-2">
+            <button type="button" 
+                    class="btn btn-warning btn-sm btn-review-resumes" 
+                    data-ticket-id="-1" 
+                    data-ticket-subject="TEST: Sample Resume Submission"
+                    title="Test the Review Resumes modal with dummy data">
+                <i class="fas fa-flask me-1"></i>Test Review Modal
+            </button>
             <button style="background: #bceabc;border:0px;color:green" class="btn btn-outline-secondary btn-sm" onclick="location.reload()">
                 <i class="fas fa-sync-alt me-1"></i>Refresh
             </button>
@@ -962,12 +973,12 @@
                                     <thead class="table-light">
                                         <tr>
                                             <th style="width:30px">#</th>
-                                            <th style="min-width:150px">Candidate</th>
-                                            <th style="min-width:200px">Resolved IRF</th>
-                                            <th style="min-width:120px">IRF Details</th>
-                                            <th style="min-width:100px">Scheduling</th>
-                                            <th style="width:80px">Status</th>
-                                            <th style="min-width:200px">Actions</th>
+                                            <th style="min-width:140px">Candidate</th>
+                                            <th style="min-width:180px">System Resolved IRF</th>
+                                            <th style="min-width:220px">Change IRF (if needed)</th>
+                                            <th style="min-width:90px">Scheduling</th>
+                                            <th style="width:70px">Status</th>
+                                            <th style="min-width:180px">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="pendingResumesTableBody">
@@ -1340,11 +1351,14 @@
 
         /* ── Pending Resumes Review modal ───────────────────────────────── */
         var currentPendingResumesTicketId = null;
+        var availableIRFs = [];  // Cache of IRF options for dropdown
+        var currentSenderEmail = null;
 
         $(document).on('click', '.btn-review-resumes', function () {
             var ticketId = $(this).data('ticket-id');
             var subject  = $(this).data('ticket-subject') || ('Ticket #' + ticketId);
             currentPendingResumesTicketId = ticketId;
+            availableIRFs = [];
 
             $('#pendingResumesModalSubject').text('Ticket #' + ticketId);
             $('#pendingResumesLoading').show();
@@ -1365,23 +1379,49 @@
                 type: 'GET',
                 data: { ticketId: ticketId },
                 success: function (res) {
-                    $('#pendingResumesLoading').hide();
                     if (!res.success) {
+                        $('#pendingResumesLoading').hide();
                         $('#pendingResumesEmpty').text('Error: ' + (res.error || 'Unknown error')).show();
                         return;
                     }
                     if (!res.resumes || res.resumes.length === 0) {
+                        $('#pendingResumesLoading').hide();
                         $('#pendingResumesEmpty').show();
                         return;
                     }
+                    
+                    currentSenderEmail = res.resumes[0].ticketSenderEmail;
                     renderEmailContext(res.resumes[0]);
-                    renderPendingResumesTable(res.resumes);
-                    $('#emailContextSection').show();
-                    $('#pendingResumesList').show();
+                    
+                    // Load IRF options for dropdown
+                    loadIRFOptions(currentSenderEmail, function() {
+                        renderPendingResumesTable(res.resumes);
+                        $('#pendingResumesLoading').hide();
+                        $('#emailContextSection').show();
+                        $('#pendingResumesList').show();
+                    });
                 },
                 error: function () {
                     $('#pendingResumesLoading').hide();
                     $('#pendingResumesEmpty').text('Could not load resumes. Please try again.').show();
+                }
+            });
+        }
+
+        function loadIRFOptions(senderEmail, callback) {
+            $.ajax({
+                url: '@Url.Action("GetIRFsForClient", "SupportTicket")',
+                type: 'GET',
+                data: { senderEmail: senderEmail },
+                success: function (res) {
+                    if (res.success && res.irfs) {
+                        availableIRFs = res.irfs;
+                    }
+                    if (callback) callback();
+                },
+                error: function () {
+                    availableIRFs = [];
+                    if (callback) callback();
                 }
             });
         }
@@ -1431,57 +1471,67 @@
                 var hasIRF = r.resolvedIRFId && r.resolvedIRFStringId;
                 var hasScheduleData = r.hasSchedulingData && r.scheduledInterviewDateTime;
                 var rowClass = !hasIRF && r.status === 'Pending' ? 'no-irf-warning' : '';
+                var wasChanged = r.irfChangedByHR;
                 
                 // Candidate cell
                 var candidateHtml = '<div class="candidate-cell">' +
                     '<div class="name">' + escapeHtml(r.candidateName || 'Unknown') + '</div>' +
                     '<div class="email">' + escapeHtml(r.candidateEmail || '—') + '</div>' +
                     '<a href="' + escapeHtml(r.resumeUrl || '#') + '" target="_blank" class="btn btn-outline-primary resume-link-btn mt-1">' +
-                    '<i class="fas fa-external-link-alt me-1"></i>View Resume</a>' +
+                    '<i class="fas fa-external-link-alt me-1"></i>Resume</a>' +
                 '</div>';
                 
-                // IRF cell
-                var irfHtml = '<div class="irf-cell">';
-                if (hasIRF) {
-                    irfHtml += '<div class="irf-id">' + escapeHtml(r.resolvedIRFStringId) + '</div>' +
-                              '<div class="jd-title">' + escapeHtml(r.irfJobTitle || r.resolvedJobTitle || '—') + '</div>' +
-                              '<div class="client-name"><i class="fas fa-building me-1"></i>' + escapeHtml(r.clientName || '—') + '</div>';
+                // System Resolved IRF cell
+                var sysIrfHtml = '<div class="irf-cell">';
+                var originalIRF = wasChanged ? r.originalResolvedIRFStringId : r.resolvedIRFStringId;
+                var originalTitle = wasChanged ? r.originalIRFJobTitle : (r.irfJobTitle || r.resolvedJobTitle);
+                if (originalIRF) {
+                    sysIrfHtml += '<div class="irf-id' + (wasChanged ? ' text-decoration-line-through text-muted' : '') + '">' + escapeHtml(originalIRF) + '</div>' +
+                              '<div class="jd-title' + (wasChanged ? ' text-decoration-line-through text-muted' : '') + '">' + escapeHtml(originalTitle || '—') + '</div>';
+                    if (wasChanged) {
+                        sysIrfHtml += '<div class="mt-1 small"><span class="badge bg-info"><i class="fas fa-exchange-alt me-1"></i>Changed to: ' + escapeHtml(r.resolvedIRFStringId) + '</span></div>';
+                    }
                 } else {
-                    irfHtml += '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Not Resolved</span>';
+                    sysIrfHtml += '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Not Resolved</span>';
                 }
-                irfHtml += '</div>';
+                sysIrfHtml += '</div>';
                 
-                // IRF Details cell
-                var irfDetailsHtml = '<div class="irf-details-cell">';
-                if (hasIRF) {
-                    if (r.irfSkillCluster) {
-                        irfDetailsHtml += '<div class="detail-row"><span class="detail-label">Skill:</span>' + escapeHtml(r.irfSkillCluster) + '</div>';
+                // IRF Dropdown cell (only for pending)
+                var irfDropdownHtml = '<div class="irf-dropdown-cell">';
+                if (r.status === 'Pending') {
+                    irfDropdownHtml += '<select class="form-select form-select-sm irf-select" data-pending-id="' + r.id + '" data-original-irf="' + (r.resolvedIRFId || '') + '">';
+                    irfDropdownHtml += '<option value="">-- Select IRF --</option>';
+                    $.each(availableIRFs, function(j, irf) {
+                        var selected = (irf.id === r.resolvedIRFId) ? ' selected' : '';
+                        irfDropdownHtml += '<option value="' + irf.id + '"' + selected + '>' + 
+                            escapeHtml(irf.irfStringId) + ' — ' + escapeHtml(irf.jdTitle) + 
+                            '</option>';
+                    });
+                    irfDropdownHtml += '</select>';
+                    irfDropdownHtml += '<div class="irf-preview mt-1 small" id="irf-preview-' + r.id + '">';
+                    if (hasIRF) {
+                        irfDropdownHtml += '<span class="text-muted">' + escapeHtml(r.irfSkillCluster || '') + '</span>';
+                        if (r.resolvedHRName || r.resolvedHREmail) {
+                            irfDropdownHtml += '<br><span class="text-muted"><i class="fas fa-user me-1"></i>' + escapeHtml(r.resolvedHRName || r.resolvedHREmail) + '</span>';
+                        }
                     }
-                    if (r.irfStartDate || r.irfEndDate) {
-                        irfDetailsHtml += '<div class="detail-row"><span class="detail-label">Period:</span>' + 
-                            formatShortDate(r.irfStartDate) + ' - ' + formatShortDate(r.irfEndDate) + '</div>';
-                    }
-                    if (r.irfPositions) {
-                        irfDetailsHtml += '<div class="detail-row"><span class="detail-label">Pos:</span>' + r.irfPositions + '</div>';
-                    }
-                    if (r.resolvedHREmail) {
-                        irfDetailsHtml += '<div class="detail-row"><span class="detail-label">HR:</span>' + 
-                            escapeHtml(r.resolvedHRName || r.resolvedHREmail) + '</div>';
-                    }
-                    if (r.irfjdLink) {
-                        irfDetailsHtml += '<a href="' + escapeHtml(r.irfjdLink) + '" target="_blank" class="btn btn-outline-secondary resume-link-btn mt-1">' +
-                            '<i class="fas fa-file-alt me-1"></i>View JD</a>';
-                    }
+                    irfDropdownHtml += '</div>';
                 } else {
-                    irfDetailsHtml += '<span class="text-muted">—</span>';
+                    // Already processed - show final IRF
+                    if (hasIRF) {
+                        irfDropdownHtml += '<span class="badge bg-secondary">' + escapeHtml(r.resolvedIRFStringId) + '</span>' +
+                                          '<div class="small text-muted">' + escapeHtml(r.irfJobTitle || '') + '</div>';
+                    } else {
+                        irfDropdownHtml += '<span class="text-muted">—</span>';
+                    }
                 }
-                irfDetailsHtml += '</div>';
+                irfDropdownHtml += '</div>';
                 
                 // Schedule cell
                 var scheduleHtml = '<div class="schedule-cell">';
                 if (hasScheduleData) {
-                    scheduleHtml += '<div class="datetime"><i class="fas fa-calendar-check me-1"></i>' + 
-                        formatDateTime(r.scheduledInterviewDateTime) + '</div>' +
+                    scheduleHtml += '<div class="datetime small"><i class="fas fa-calendar-check me-1"></i>' + 
+                        formatShortDateTime(r.scheduledInterviewDateTime) + '</div>' +
                         '<div class="timezone">' + escapeHtml(r.scheduleTimezone || 'IST') + '</div>';
                 } else {
                     scheduleHtml += '<span class="text-muted">—</span>';
@@ -1492,32 +1542,33 @@
                 var statusClass = r.status === 'Ingested' ? 'bg-success' :
                                   r.status === 'Rejected' ? 'bg-danger' : 'bg-warning text-dark';
                 var statusHtml = '<span class="badge status-badge ' + statusClass + '">' + r.status + '</span>';
+                if (wasChanged && r.status === 'Ingested') {
+                    statusHtml += '<br><span class="badge bg-info status-badge mt-1"><i class="fas fa-exchange-alt"></i></span>';
+                }
                 
                 // Actions cell
                 var actionsHtml = '<div class="action-cell" data-pending-id="' + r.id + '">';
                 if (r.status === 'Pending') {
-                    if (hasIRF) {
-                        if (hasScheduleData) {
-                            actionsHtml += '<button type="button" class="btn btn-success btn-ingest-resume" data-pending-id="' + r.id + '" data-schedule="true" title="Ingest & Schedule">' +
-                                '<i class="fas fa-calendar-plus"></i></button> ';
-                        }
-                        actionsHtml += '<button type="button" class="btn btn-primary btn-ingest-resume" data-pending-id="' + r.id + '" data-schedule="false" title="Ingest Resume">' +
-                            '<i class="fas fa-file-import"></i></button> ';
+                    if (hasScheduleData) {
+                        actionsHtml += '<button type="button" class="btn btn-success btn-sm btn-ingest-resume" data-pending-id="' + r.id + '" data-schedule="true" title="Ingest & Schedule">' +
+                            '<i class="fas fa-calendar-plus me-1"></i>Ingest+Sched</button> ';
                     }
-                    actionsHtml += '<button type="button" class="btn btn-outline-danger btn-reject-resume" data-pending-id="' + r.id + '" title="Reject">' +
+                    actionsHtml += '<button type="button" class="btn btn-primary btn-sm btn-ingest-resume" data-pending-id="' + r.id + '" data-schedule="false" title="Ingest Resume">' +
+                        '<i class="fas fa-file-import me-1"></i>Ingest</button> ';
+                    actionsHtml += '<button type="button" class="btn btn-outline-danger btn-sm btn-reject-resume" data-pending-id="' + r.id + '" title="Reject">' +
                         '<i class="fas fa-times"></i></button>';
                 } else if (r.status === 'Ingested') {
-                    actionsHtml += '<span class="text-success"><i class="fas fa-check-circle"></i></span>';
+                    actionsHtml += '<span class="text-success"><i class="fas fa-check-circle fa-lg"></i></span>';
                 } else {
-                    actionsHtml += '<span class="text-danger"><i class="fas fa-ban"></i></span>';
+                    actionsHtml += '<span class="text-danger"><i class="fas fa-ban fa-lg"></i></span>';
                 }
                 actionsHtml += '</div>';
                 
                 var row = '<tr class="' + rowClass + '" data-pending-id="' + r.id + '">' +
                     '<td class="text-muted">' + (i + 1) + '</td>' +
                     '<td>' + candidateHtml + '</td>' +
-                    '<td>' + irfHtml + '</td>' +
-                    '<td>' + irfDetailsHtml + '</td>' +
+                    '<td>' + sysIrfHtml + '</td>' +
+                    '<td>' + irfDropdownHtml + '</td>' +
                     '<td>' + scheduleHtml + '</td>' +
                     '<td>' + statusHtml + '</td>' +
                     '<td>' + actionsHtml + '</td>' +
@@ -1525,6 +1576,35 @@
                 
                 $tbody.append(row);
             });
+        }
+
+        // Update preview when IRF dropdown changes
+        $(document).on('change', '.irf-select', function() {
+            var $select = $(this);
+            var pendingId = $select.data('pending-id');
+            var selectedId = parseInt($select.val());
+            var $preview = $('#irf-preview-' + pendingId);
+            var $row = $select.closest('tr');
+            
+            if (selectedId) {
+                var irf = availableIRFs.find(function(i) { return i.id === selectedId; });
+                if (irf) {
+                    $preview.html(
+                        '<span class="text-muted">' + escapeHtml(irf.skillCluster || '') + '</span>' +
+                        (irf.risebirdHrName ? '<br><span class="text-muted"><i class="fas fa-user me-1"></i>' + escapeHtml(irf.risebirdHrName) + '</span>' : '')
+                    );
+                    $row.removeClass('no-irf-warning');
+                }
+            } else {
+                $preview.html('<span class="text-danger">Please select an IRF</span>');
+            }
+        });
+
+        function formatShortDateTime(dt) {
+            if (!dt) return '—';
+            var d = new Date(dt);
+            return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) +
+                   ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
         }
 
         function formatShortDate(dt) {
@@ -1591,9 +1671,31 @@
             var alsoSchedule = $btn.data('schedule') === true || $btn.data('schedule') === 'true';
             var $row = $btn.closest('tr');
             var $actionCell = $btn.closest('.action-cell');
+            
+            // Get selected IRF from dropdown
+            var $irfSelect = $row.find('.irf-select');
+            var selectedIRFId = $irfSelect.val() ? parseInt($irfSelect.val()) : null;
+            var originalIRFId = $irfSelect.data('original-irf') ? parseInt($irfSelect.data('original-irf')) : null;
+            
+            // Validate IRF selection
+            if (!selectedIRFId) {
+                showToast('Please select an IRF before ingesting.', 'warning');
+                $irfSelect.focus();
+                return;
+            }
+            
+            // Check if IRF was changed
+            var irfChanged = selectedIRFId !== originalIRFId;
+            var changeReason = null;
+            
+            if (irfChanged && originalIRFId) {
+                changeReason = prompt('You are changing the IRF. Please provide a brief reason (optional):');
+                if (changeReason === null) return; // User cancelled
+            }
 
             $actionCell.find('button').prop('disabled', true);
-            $btn.html('<i class="fas fa-spinner fa-spin"></i>');
+            $row.find('.irf-select').prop('disabled', true);
+            $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Processing…');
 
             $.ajax({
                 url: '@Url.Action("IngestPendingResume", "SupportTicket")',
@@ -1601,16 +1703,34 @@
                 contentType: 'application/json',
                 data: JSON.stringify({
                     pendingResumeId: pendingId,
-                    alsoSchedule: alsoSchedule
+                    alsoSchedule: alsoSchedule,
+                    overrideIRFId: irfChanged ? selectedIRFId : null,
+                    irfChangeReason: changeReason || null
                 }),
                 success: function (res) {
                     if (res.success) {
                         // Update status badge
-                        $row.find('.status-badge').removeClass('bg-warning text-dark').addClass('bg-success').text('Ingested');
+                        var statusHtml = '<span class="badge status-badge bg-success">Ingested</span>';
+                        if (res.irfChanged) {
+                            statusHtml += '<br><span class="badge bg-info status-badge mt-1" title="IRF was changed"><i class="fas fa-exchange-alt"></i></span>';
+                        }
+                        $row.find('td:eq(5)').html(statusHtml);
+                        
                         // Replace actions with success icon
                         $actionCell.html('<span class="text-success"><i class="fas fa-check-circle fa-lg"></i></span>');
+                        
+                        // Update dropdown cell to show final selection
+                        var selectedIrf = availableIRFs.find(function(i) { return i.id === selectedIRFId; });
+                        if (selectedIrf) {
+                            $row.find('.irf-dropdown-cell').html(
+                                '<span class="badge bg-secondary">' + escapeHtml(selectedIrf.irfStringId) + '</span>' +
+                                '<div class="small text-muted">' + escapeHtml(selectedIrf.jdTitle) + '</div>'
+                            );
+                        }
+                        
                         // Remove warning class if present
                         $row.removeClass('no-irf-warning');
+                        
                         // Update pending count
                         var currentCount = parseInt($('#pendingCount').text()) || 0;
                         $('#pendingCount').text((currentCount - 1) + ' pending');
@@ -1621,13 +1741,15 @@
                         }
                     } else {
                         $actionCell.find('button').prop('disabled', false);
-                        $btn.html('<i class="fas fa-file-import"></i>');
+                        $row.find('.irf-select').prop('disabled', false);
+                        $btn.html('<i class="fas fa-file-import me-1"></i>Ingest');
                         showToast(res.error || 'Failed to ingest resume.', 'danger');
                     }
                 },
                 error: function () {
                     $actionCell.find('button').prop('disabled', false);
-                    $btn.html('<i class="fas fa-file-import"></i>');
+                    $row.find('.irf-select').prop('disabled', false);
+                    $btn.html('<i class="fas fa-file-import me-1"></i>Ingest');
                     showToast('Failed to ingest resume. Please try again.', 'danger');
                 }
             });
