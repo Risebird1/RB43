@@ -58,5 +58,29 @@ namespace Risebird.Repository.Interface
         /// Use when existing mappings don't match well and we need to find a better fit.
         /// </summary>
         Task<IrfMatchVM> FindBestIRFForClientAsync(string senderEmail, string jobTitle, string specialization = null, bool createMapping = true);
+
+        /// <summary>
+        /// Inserts a candidate resume with auto-scheduling metadata for email-based scheduling flow.
+        /// </summary>
+        Task<int> InsertCandidateResumeForAutoScheduleAsync(
+            int irfId,
+            string resumeLink,
+            int addedBy,
+            string clientHrEmailId,
+            int? supportTicketId,
+            string candidateName,
+            string candidateEmail,
+            DateTime? scheduledInterviewDateTime);
+
+        /// <summary>
+        /// Gets candidate resume records with auto-schedule data for a support ticket.
+        /// Returns both extracted (from email) and parsed (from resume) data.
+        /// </summary>
+        Task<List<AutoScheduleCandidateVM>> GetAutoScheduleCandidatesForTicketAsync(int ticketId);
+
+        /// <summary>
+        /// Updates the HasAutoScheduleCandidates flag for a ticket.
+        /// </summary>
+        Task<bool> SetTicketHasAutoScheduleCandidatesAsync(int ticketId, bool value);
     }
 }

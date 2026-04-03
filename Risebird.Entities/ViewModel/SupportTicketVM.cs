@@ -42,6 +42,9 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>JD title of the ingested IRF.</summary>
         public string   IngestedIRFJDTitle          { get; set; }
+
+        /// <summary>True if this ticket has candidates with auto-schedule data (interview slots from email).</summary>
+        public bool     HasAutoScheduleCandidates   { get; set; }
     }
 
     /// <summary>
@@ -110,6 +113,57 @@ namespace Risebird.Entities.ViewModel
         /// </summary>
         [JsonProperty("resume_drive_urls")]
         public List<string> ResumeDriveUrls         { get; set; }
+
+        /// <summary>
+        /// Structured candidate scheduling data extracted by Relay AI.
+        /// Only populated when intent is "New candidate submission" or "New interview request"
+        /// AND the email contains interview scheduling information with 100% confidence.
+        /// </summary>
+        [JsonProperty("candidate_schedule_data")]
+        public List<CandidateScheduleEntry> CandidateScheduleData { get; set; }
+    }
+
+    /// <summary>
+    /// Represents one candidate's scheduling data extracted from an email.
+    /// All fields require 100% confidence for auto-scheduling to proceed.
+    /// </summary>
+    public class CandidateScheduleEntry
+    {
+        [JsonProperty("candidate_name")]
+        public string CandidateName           { get; set; }
+
+        [JsonProperty("candidate_email")]
+        public string CandidateEmail          { get; set; }
+
+        [JsonProperty("interview_date")]
+        public string InterviewDate           { get; set; }
+
+        [JsonProperty("interview_time")]
+        public string InterviewTime           { get; set; }
+
+        [JsonProperty("timezone")]
+        public string Timezone                { get; set; }
+
+        [JsonProperty("skill_channel_id")]
+        public string SkillChannelId          { get; set; }
+
+        [JsonProperty("resume_drive_url")]
+        public string ResumeDriveUrl          { get; set; }
+    }
+
+    /// <summary>
+    /// Result of auto-scheduling attempt for a single candidate.
+    /// </summary>
+    public class CandidateScheduleResult
+    {
+        public string CandidateName           { get; set; }
+        public string CandidateEmail          { get; set; }
+        public string SkillChannelId          { get; set; }
+        public DateTime? InterviewDateTime    { get; set; }
+        public bool Scheduled                 { get; set; }
+        public string Reason                  { get; set; }
+        public int? CandidateResumeId         { get; set; }
+        public string MeetingLink             { get; set; }
     }
 
     /// <summary>
@@ -130,5 +184,53 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>True if this mapping was auto-created by usp_AutoMapUserToIRF.</summary>
         public bool      WasAutoMapped   { get; set; }
+    }
+
+    /// <summary>
+    /// ViewModel for auto-schedule candidate data shown in the HR review modal.
+    /// Contains both extracted (from email) and parsed (from resume) data.
+    /// </summary>
+    public class AutoScheduleCandidateVM
+    {
+        public int       CandidateResumeId           { get; set; }
+        public int       IRFId                       { get; set; }
+        public string    ResumeLink                  { get; set; }
+        public DateTime  AddedOn                     { get; set; }
+        public bool?     IsProcessed                 { get; set; }
+        public bool?     IsResumeParsed              { get; set; }
+        public bool?     IsResumeParsingFailed       { get; set; }
+        public bool?     IsEmailMissing              { get; set; }
+        public string    ReasonBehindNotProcessed    { get; set; }
+        public bool      IsAutoScheduled             { get; set; }
+        public DateTime? ScheduledInterviewDateTime  { get; set; }
+        
+        // Extracted data (from email)
+        public string    ExtractedCandidateName      { get; set; }
+        public string    ExtractedCandidateEmail     { get; set; }
+        
+        // IRF info
+        public string    SkillChannelId              { get; set; }
+        public string    JobTitle                    { get; set; }
+        public int?      ClientId                    { get; set; }
+        public string    ClientName                  { get; set; }
+        public string    TenantId                    { get; set; }
+        
+        // Parsed data (from resume parsing, if completed)
+        public int?      CandidateId                 { get; set; }
+        public string    ParsedCandidateName         { get; set; }
+        public string    ParsedCandidateEmail        { get; set; }
+        public string    ParsedCandidatePhone        { get; set; }
+        
+        // Status indicators
+        public string    ParsingStatus               { get; set; }
+        public bool      IsAlreadyScheduled          { get; set; }
+        public bool?     EmailMatches                { get; set; }
+    }
+
+    /// <summary>Request model for scheduling a candidate from the HR review modal.</summary>
+    public class ScheduleCandidateRequest
+    {
+        public int TicketId            { get; set; }
+        public int CandidateResumeId   { get; set; }
     }
 }

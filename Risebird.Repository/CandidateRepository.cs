@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -2081,5 +2081,6 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
     }
 }

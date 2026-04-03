@@ -78,6 +78,7 @@ BEGIN
         t.UpdatedAt,
         t.AssignedTo,
         t.JobTitle,
+        t.HasAutoScheduleCandidates,
         tirf.IRFId     AS IngestedIRFId,
         tirf.IRFName   AS IngestedIRFName,
         tirf.JDTitle   AS IngestedIRFJDTitle,

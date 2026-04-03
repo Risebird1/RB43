@@ -46,6 +46,23 @@ CRITICAL — SENSITIVE EMAIL FILTERING (Privacy Protection):
   
   This is enforced at BOTH Relay and server levels for data protection.
 
+NEW — CANDIDATE SCHEDULE DATA EXTRACTION (*** See Part 8 in prompt ***):
+  When candidates' interview slots are mentioned in emails:
+  
+  - Extract candidate_schedule_data array with 100% CONFIDENCE ONLY
+  - Each entry must have: candidate_name, interview_date, interview_time, 
+    skill_channel_id (10-char IRF ID), and resume_drive_url
+  - Server will:
+    1. Validate all fields
+    2. Insert resumes with auto-schedule flag and extracted data
+    3. Mark ticket as HasAutoScheduleCandidates = true
+    4. Assign ticket to HR for review (NOT auto-scheduled)
+  - HR reviews via "Review & Schedule" button on ticket dashboard
+  - HR sees extracted data (from email) vs parsed data (from resume)
+  - HR manually triggers scheduling after reviewing and validating
+  
+  This applies to "New candidate submission" and "New interview request" intents.
+
 Background: A Skill Channel ID is always exactly 10 alphanumeric characters
 (A-Z, a-z, 0-9). The server already validates it against the sender's eligible
 list, so there is no security risk if a wrong ID is sent — it simply falls back

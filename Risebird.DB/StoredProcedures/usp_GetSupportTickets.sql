@@ -39,6 +39,8 @@ BEGIN
         st.AssignedTo,
         st.Status,
         st.CreatedAt,
+        st.JobTitle,
+        st.HasAutoScheduleCandidates,
         c.[Name]        AS ClientName,
         COUNT(*) OVER() AS TotalCount
     FROM  dbo.SupportTickets st
