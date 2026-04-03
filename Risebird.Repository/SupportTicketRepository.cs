@@ -405,5 +405,132 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<int> InsertPendingResumeAsync(
+            int supportTicketId,
+            string resumeUrl,
+            string candidateName,
+            string candidateEmail,
+            int? resolvedIRFId,
+            string resolvedIRFStringId,
+            string resolvedJobTitle,
+            string resolvedHREmail,
+            bool hasSchedulingData,
+            DateTime? scheduledInterviewDateTime,
+            string scheduleTimezone)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var result = await conn.QueryFirstOrDefaultAsync<int>(
+                    "usp_InsertPendingResume",
+                    new
+                    {
+                        SupportTicketId            = supportTicketId,
+                        ResumeUrl                  = resumeUrl,
+                        CandidateName              = candidateName,
+                        CandidateEmail             = candidateEmail,
+                        ResolvedIRFId              = resolvedIRFId,
+                        ResolvedIRFStringId        = resolvedIRFStringId,
+                        ResolvedJobTitle           = resolvedJobTitle,
+                        ResolvedHREmail            = resolvedHREmail,
+                        HasSchedulingData          = hasSchedulingData,
+                        ScheduledInterviewDateTime = scheduledInterviewDateTime,
+                        ScheduleTimezone           = scheduleTimezone
+                    },
+                    commandType: CommandType.StoredProcedure);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<List<PendingResumeVM>> GetPendingResumesForTicketAsync(int ticketId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<PendingResumeVM>(
+                    "usp_GetPendingResumesForTicket",
+                    new { TicketId = ticketId },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<PendingResumeVM>();
+            }
+        }
+
+        public async Task<PendingResumeVM> GetPendingResumeByIdAsync(int pendingResumeId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var sql = @"
+                    SELECT
+                        pr.Id, pr.SupportTicketId, pr.ResumeUrl, pr.CandidateName, pr.CandidateEmail,
+                        pr.ResolvedIRFId, pr.ResolvedIRFStringId, pr.ResolvedJobTitle, pr.ResolvedHREmail,
+                        pr.HasSchedulingData, pr.ScheduledInterviewDateTime, pr.ScheduleTimezone,
+                        pr.Status, pr.IngestedResumeId, pr.ProcessedAt, pr.ProcessedBy, pr.CreatedAt,
+                        irf.JDTiltle AS IRFJobTitle, cl.Name AS ClientName, cl.tenantId AS TenantId
+                    FROM dbo.SupportTicketPendingResumes pr
+                    LEFT JOIN dbo.IRF irf ON irf.id = pr.ResolvedIRFId
+                    LEFT JOIN dbo.Client cl ON cl.id = irf.ClientId
+                    WHERE pr.Id = @Id";
+                var result = await conn.QueryFirstOrDefaultAsync<PendingResumeVM>(sql, new { Id = pendingResumeId });
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdatePendingResumeStatusAsync(int pendingResumeId, string status, int? ingestedResumeId, string processedBy)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                await conn.ExecuteAsync(@"
+                    UPDATE dbo.SupportTicketPendingResumes 
+                    SET Status           = @Status, 
+                        IngestedResumeId = @IngestedResumeId, 
+                        ProcessedAt      = GETUTCDATE(), 
+                        ProcessedBy      = @ProcessedBy 
+                    WHERE Id = @Id",
+                    new { Id = pendingResumeId, Status = status, IngestedResumeId = ingestedResumeId, ProcessedBy = processedBy });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task RefreshTicketPendingResumeFlagAsync(int ticketId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                await conn.ExecuteAsync(@"
+                    UPDATE dbo.SupportTickets 
+                    SET HasPendingResumes = CASE 
+                        WHEN EXISTS (SELECT 1 FROM dbo.SupportTicketPendingResumes WHERE SupportTicketId = @TicketId AND Status = 'Pending') 
+                        THEN 1 ELSE 0 END 
+                    WHERE Id = @TicketId",
+                    new { TicketId = ticketId });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
     }
 }

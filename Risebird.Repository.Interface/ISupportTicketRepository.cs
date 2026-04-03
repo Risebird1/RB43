@@ -82,5 +82,41 @@ namespace Risebird.Repository.Interface
         /// Updates the HasAutoScheduleCandidates flag for a ticket.
         /// </summary>
         Task<bool> SetTicketHasAutoScheduleCandidatesAsync(int ticketId, bool value);
+
+        /// <summary>
+        /// Inserts a pending resume record for HR review.
+        /// </summary>
+        Task<int> InsertPendingResumeAsync(
+            int supportTicketId,
+            string resumeUrl,
+            string candidateName,
+            string candidateEmail,
+            int? resolvedIRFId,
+            string resolvedIRFStringId,
+            string resolvedJobTitle,
+            string resolvedHREmail,
+            bool hasSchedulingData,
+            DateTime? scheduledInterviewDateTime,
+            string scheduleTimezone);
+
+        /// <summary>
+        /// Gets all pending resumes for a support ticket.
+        /// </summary>
+        Task<List<PendingResumeVM>> GetPendingResumesForTicketAsync(int ticketId);
+
+        /// <summary>
+        /// Gets a single pending resume by ID.
+        /// </summary>
+        Task<PendingResumeVM> GetPendingResumeByIdAsync(int pendingResumeId);
+
+        /// <summary>
+        /// Updates a pending resume's status after HR action.
+        /// </summary>
+        Task<bool> UpdatePendingResumeStatusAsync(int pendingResumeId, string status, int? ingestedResumeId, string processedBy);
+
+        /// <summary>
+        /// Checks if a ticket still has any pending resumes and updates HasPendingResumes flag.
+        /// </summary>
+        Task RefreshTicketPendingResumeFlagAsync(int ticketId);
     }
 }
