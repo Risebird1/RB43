@@ -1017,16 +1017,36 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> IngestPendingResume([FromBody] IngestPendingResumeRequest request)
         {
+            var overallStopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stepStopwatch = new System.Diagnostics.Stopwatch();
+            int? ticketId = null;
+            int? pendingId = request?.PendingResumeId;
+            int? candidateResumeId = null;
+            var processedBy = "System";
+
             try
             {
+                // CP01: Request Received
+                stepStopwatch.Restart();
+                await _repository.LogProcessingCheckpointAsync(
+                    null, pendingId, null,
+                    "CP01_REQUEST_RECEIVED", "Started",
+                    $"Ingest request received. AlsoSchedule={request?.AlsoSchedule}, OverrideIRF={request?.OverrideIRFId}, OverrideTime={request?.OverrideInterviewDateTime}",
+                    JsonConvert.SerializeObject(request),
+                    processedBy);
+
                 if (request == null || request.PendingResumeId <= 0)
+                {
+                    await _repository.LogProcessingCheckpointAsync(null, pendingId, null, "CP01_REQUEST_RECEIVED", "Failed", "Invalid request - null or invalid PendingResumeId");
                     return Json(new { success = false, error = "Invalid request" });
+                }
 
                 // TEST MODE: Return mock success for test IDs (>= 1000)
                 if (request.PendingResumeId >= 1000)
                 {
-                    await Task.Delay(500); // Simulate processing
+                    await Task.Delay(500);
                     var irfChanged = request.OverrideIRFId.HasValue;
+                    await _repository.LogProcessingCheckpointAsync(null, pendingId, null, "CP_TEST_MODE", "Success", "Test mode - mock response returned");
                     return Json(new
                     {
                         success = true,
@@ -1038,60 +1058,110 @@ namespace Risebird.Web.Controllers
                     });
                 }
 
+                // CP02: Load Pending Resume
+                stepStopwatch.Restart();
                 var pending = await _repository.GetPendingResumeByIdAsync(request.PendingResumeId);
+                stepStopwatch.Stop();
+
                 if (pending == null)
+                {
+                    await _repository.LogProcessingCheckpointAsync(null, pendingId, null, "CP02_LOAD_PENDING", "Failed", "Pending resume not found", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                     return Json(new { success = false, error = "Pending resume not found" });
+                }
+
+                ticketId = pending.SupportTicketId;
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, null,
+                    "CP02_LOAD_PENDING", "Success",
+                    $"Loaded pending resume. IRF={pending.ResolvedIRFStringId}, ResumeUrl={pending.ResumeUrl}",
+                    JsonConvert.SerializeObject(new { pending.ResolvedIRFId, pending.ResolvedIRFStringId, pending.CandidateName, pending.CandidateEmail, pending.Status }),
+                    processedBy, (int)stepStopwatch.ElapsedMilliseconds);
 
                 if (pending.Status != "Pending")
+                {
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP02_LOAD_PENDING", "Failed", $"Resume already processed (status: {pending.Status})");
                     return Json(new { success = false, error = $"Resume already processed (status: {pending.Status})" });
+                }
 
-                var processedBy = request.ProcessedByEmail ?? HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                processedBy = request.ProcessedByEmail ?? HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
 
-                // Handle IRF override if provided
+                // CP03: IRF Override (if applicable)
                 bool irfWasChanged = false;
                 if (request.OverrideIRFId.HasValue && request.OverrideIRFId.Value != pending.ResolvedIRFId)
                 {
+                    stepStopwatch.Restart();
+                    await _repository.LogProcessingCheckpointAsync(
+                        ticketId, pendingId, null,
+                        "CP03_IRF_OVERRIDE", "Started",
+                        $"HR override IRF from {pending.ResolvedIRFId} to {request.OverrideIRFId}",
+                        JsonConvert.SerializeObject(new { OriginalIRF = pending.ResolvedIRFId, NewIRF = request.OverrideIRFId, Reason = request.IRFChangeReason }),
+                        processedBy);
+
                     var updated = await _repository.UpdatePendingResumeIRFAsync(
                         request.PendingResumeId,
                         request.OverrideIRFId.Value,
                         processedBy,
                         request.IRFChangeReason ?? "HR override during review");
+                    stepStopwatch.Stop();
                     
                     if (!updated)
+                    {
+                        await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP03_IRF_OVERRIDE", "Failed", "Failed to update IRF in database", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                         return Json(new { success = false, error = "Failed to update IRF. Please try again." });
+                    }
                     
-                    // Refresh the pending resume data
                     pending = await _repository.GetPendingResumeByIdAsync(request.PendingResumeId);
                     irfWasChanged = true;
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP03_IRF_OVERRIDE", "Success", $"IRF updated to {pending.ResolvedIRFStringId}", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                 }
 
                 if (!pending.ResolvedIRFId.HasValue)
+                {
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP04_VALIDATE_IRF", "Failed", "No IRF resolved for this resume");
                     return Json(new { success = false, error = "No IRF resolved for this resume. Please select an IRF." });
+                }
 
-                // Get HR user ID from the resolved IRF's RisebirdHr field
+                // CP04: Resolve HR User ID
+                stepStopwatch.Restart();
                 int hrId = await _repository.GetHRUserIdForIRFAsync(pending.ResolvedIRFId.Value);
+                string hrSource = "IRF.RisebirdHr";
                 if (hrId <= 0)
                 {
-                    // Fall back to getting any valid system user if HR not found
                     hrId = await _repository.GetSystemUserIdAsync();
+                    hrSource = "SystemFallback";
                     if (hrId <= 0)
+                    {
+                        stepStopwatch.Stop();
+                        await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP04_RESOLVE_HR", "Failed", "No valid HR user found", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                         return Json(new { success = false, error = "No valid HR user found to attribute this resume." });
+                    }
                 }
+                stepStopwatch.Stop();
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, null,
+                    "CP04_RESOLVE_HR", "Success",
+                    $"HR resolved: UserId={hrId}, Source={hrSource}",
+                    null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                 
                 int ingestedResumeId = 0;
-
-                // Use override datetime if provided by HR, otherwise use system-extracted datetime
                 var scheduledDateTime = request.OverrideInterviewDateTime ?? pending.ScheduledInterviewDateTime;
                 bool hasScheduleTime = request.AlsoSchedule && scheduledDateTime.HasValue;
 
-                // Insert into CandidateResume
+                // CP05: Insert CandidateResume
+                stepStopwatch.Restart();
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, null,
+                    "CP05_INSERT_RESUME", "Started",
+                    $"Inserting into CandidateResume. IRF={pending.ResolvedIRFId}, HasScheduleTime={hasScheduleTime}",
+                    JsonConvert.SerializeObject(new { pending.ResolvedIRFId, pending.ResumeUrl, hrId, hasScheduleTime, scheduledDateTime }),
+                    processedBy);
+
                 if (hasScheduleTime)
                 {
-                    // Use auto-schedule insert with metadata
                     ingestedResumeId = await _repository.InsertCandidateResumeForAutoScheduleAsync(
                         pending.ResolvedIRFId.Value,
                         pending.ResumeUrl,
-                        hrId > 0 ? hrId : 0,
+                        hrId,
                         pending.ResolvedHREmail,
                         pending.SupportTicketId,
                         pending.CandidateName,
@@ -1100,25 +1170,36 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    // Standard insert
                     ingestedResumeId = await _repository.InsertCandidateResumeAsync(
                         pending.ResolvedIRFId.Value,
                         pending.ResumeUrl,
-                        hrId > 0 ? hrId : 0,
+                        hrId,
                         pending.ResolvedHREmail,
                         pending.SupportTicketId);
                 }
+                stepStopwatch.Stop();
+                candidateResumeId = ingestedResumeId > 0 ? ingestedResumeId : null;
 
                 if (ingestedResumeId <= 0)
                 {
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP05_INSERT_RESUME", "Failed", "InsertCandidateResume returned 0 or negative ID", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                     await _repository.UpdatePendingResumeStatusAsync(pending.Id, "Failed", null, processedBy);
                     return Json(new { success = false, error = "Failed to insert into CandidateResume" });
                 }
 
-                // Update pending resume status
-                await _repository.UpdatePendingResumeStatusAsync(pending.Id, "Ingested", ingestedResumeId, processedBy);
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, candidateResumeId,
+                    "CP05_INSERT_RESUME", "Success",
+                    $"CandidateResume inserted with ID={ingestedResumeId}",
+                    null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
 
-                // Parse the resume inline if parser service is available
+                // CP06: Update Pending Status
+                stepStopwatch.Restart();
+                await _repository.UpdatePendingResumeStatusAsync(pending.Id, "Ingested", ingestedResumeId, processedBy);
+                stepStopwatch.Stop();
+                await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, candidateResumeId, "CP06_UPDATE_STATUS", "Success", "Pending resume status updated to Ingested", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+
+                // CP07: Parse Resume
                 string parseMessage = null;
                 string scheduleMessage = null;
                 bool parsingSuccess = false;
@@ -1126,48 +1207,77 @@ namespace Risebird.Web.Controllers
 
                 if (_resumeParser != null)
                 {
+                    stepStopwatch.Restart();
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, candidateResumeId, "CP07_PARSE_RESUME", "Started", "Starting resume parsing");
+                    
                     try
                     {
                         parseResult = await _resumeParser.ParseResumeAsync(ingestedResumeId);
+                        stepStopwatch.Stop();
                         parsingSuccess = parseResult.Success;
                         
                         if (parseResult.Success)
                         {
                             parseMessage = $"Resume parsed successfully. Candidate: {parseResult.CandidateName}, Email: {parseResult.CandidateEmail}";
+                            await _repository.LogProcessingCheckpointAsync(
+                                ticketId, pendingId, candidateResumeId,
+                                "CP07_PARSE_RESUME", "Success",
+                                parseMessage,
+                                JsonConvert.SerializeObject(new { parseResult.CandidateName, parseResult.CandidateEmail, parseResult.CandidatePhone, parseResult.CandidateId }),
+                                processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                         }
                         else
                         {
                             parseMessage = $"Resume parsing failed: {parseResult.ErrorMessage}";
+                            await _repository.LogProcessingCheckpointAsync(
+                                ticketId, pendingId, candidateResumeId,
+                                "CP07_PARSE_RESUME", "Failed",
+                                parseMessage,
+                                JsonConvert.SerializeObject(new { parseResult.ErrorMessage }),
+                                processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                         }
                     }
                     catch (Exception parseEx)
                     {
+                        stepStopwatch.Stop();
                         await _logger.LogMessage(LogLevelInfo.Exception, parseEx);
                         parseMessage = $"Resume parsing error: {parseEx.Message}";
+                        await _repository.LogProcessingCheckpointAsync(
+                            ticketId, pendingId, candidateResumeId,
+                            "CP07_PARSE_RESUME", "Failed",
+                            parseMessage,
+                            JsonConvert.SerializeObject(new { Exception = parseEx.Message, StackTrace = parseEx.StackTrace }),
+                            processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                     }
                 }
                 else
                 {
                     parseMessage = "Resume added. Parsing will be handled by background job.";
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, candidateResumeId, "CP07_PARSE_RESUME", "Warning", parseMessage + " (ResumeParser service not available)");
                 }
 
-                // If scheduling is requested AND parsing succeeded, call the schedule API
+                // CP08: Schedule Interview (if requested)
                 bool datetimeOverridden = request.OverrideInterviewDateTime.HasValue && 
                     request.OverrideInterviewDateTime != pending.ScheduledInterviewDateTime;
                 
                 if (request.AlsoSchedule && scheduledDateTime.HasValue)
                 {
+                    stepStopwatch.Restart();
+                    await _repository.LogProcessingCheckpointAsync(
+                        ticketId, pendingId, candidateResumeId,
+                        "CP08_SCHEDULE", "Started",
+                        $"Scheduling requested. DateTime={scheduledDateTime:yyyy-MM-dd HH:mm}, Overridden={datetimeOverridden}",
+                        JsonConvert.SerializeObject(new { scheduledDateTime, datetimeOverridden, parsingSuccess, CandidateEmail = parseResult?.CandidateEmail }),
+                        processedBy);
+
                     if (parsingSuccess && parseResult != null && !string.IsNullOrEmpty(parseResult.CandidateEmail))
                     {
                         try
                         {
-                            // Call the schedule API (same format as PlivoCXInterviewCallController)
                             const string apiUrl = "https://api.portal.risebird.io/api/Candidates/Schedule";
                             
-                            // Get tenant ID from client
                             var tenantId = await _repository.GetTenantIdForIRFAsync(pending.ResolvedIRFId.Value);
 
-                            // Build the schedule request DTO (same structure as PlivoCX)
                             var dto = new ScheduleCandidatesRequest
                             {
                                 skillChannelId = pending.ResolvedIRFStringId,
@@ -1183,6 +1293,13 @@ namespace Risebird.Web.Controllers
                                 Name          = parseResult.CandidateName ?? pending.CandidateName
                             });
 
+                            await _repository.LogProcessingCheckpointAsync(
+                                ticketId, pendingId, candidateResumeId,
+                                "CP08_SCHEDULE_API_CALL", "Started",
+                                $"Calling Schedule API. TenantId={tenantId}, SkillChannel={pending.ResolvedIRFStringId}",
+                                JsonConvert.SerializeObject(dto),
+                                processedBy);
+
                             var restClient = new RestClient(apiUrl);
                             var restRequest = new RestRequest(apiUrl, Method.Post);
                             restRequest.AddHeader("content-type", "application/json");
@@ -1191,31 +1308,69 @@ namespace Risebird.Web.Controllers
                             restRequest.AddParameter("application/json", JsonConvert.SerializeObject(dto), ParameterType.RequestBody);
 
                             var response = await restClient.ExecuteAsync(restRequest);
+                            stepStopwatch.Stop();
 
                             if (response.IsSuccessful)
                             {
                                 scheduleMessage = $"Interview scheduled for {scheduledDateTime.Value:dd MMM yyyy hh:mm tt} IST" +
                                     (datetimeOverridden ? " (time modified by HR)" : "");
+                                await _repository.LogProcessingCheckpointAsync(
+                                    ticketId, pendingId, candidateResumeId,
+                                    "CP08_SCHEDULE", "Success",
+                                    scheduleMessage,
+                                    JsonConvert.SerializeObject(new { response.StatusCode, ResponseContent = response.Content }),
+                                    processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                             }
                             else
                             {
                                 scheduleMessage = $"Scheduling failed: {response.Content ?? response.ErrorMessage}";
+                                await _repository.LogProcessingCheckpointAsync(
+                                    ticketId, pendingId, candidateResumeId,
+                                    "CP08_SCHEDULE", "Failed",
+                                    scheduleMessage,
+                                    JsonConvert.SerializeObject(new { response.StatusCode, response.ErrorMessage, ResponseContent = response.Content }),
+                                    processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                             }
                         }
                         catch (Exception schedEx)
                         {
+                            stepStopwatch.Stop();
                             await _logger.LogMessage(LogLevelInfo.Exception, schedEx);
                             scheduleMessage = $"Scheduling error: {schedEx.Message}";
+                            await _repository.LogProcessingCheckpointAsync(
+                                ticketId, pendingId, candidateResumeId,
+                                "CP08_SCHEDULE", "Failed",
+                                scheduleMessage,
+                                JsonConvert.SerializeObject(new { Exception = schedEx.Message, StackTrace = schedEx.StackTrace }),
+                                processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                         }
                     }
                     else
                     {
                         scheduleMessage = "Cannot schedule - resume parsing did not extract candidate email. Please schedule manually after parsing completes.";
+                        stepStopwatch.Stop();
+                        await _repository.LogProcessingCheckpointAsync(
+                            ticketId, pendingId, candidateResumeId,
+                            "CP08_SCHEDULE", "Warning",
+                            scheduleMessage,
+                            JsonConvert.SerializeObject(new { parsingSuccess, CandidateEmail = parseResult?.CandidateEmail }),
+                            processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                     }
                 }
 
-                // Refresh ticket's pending resume flag
+                // CP09: Refresh Ticket Flag
+                stepStopwatch.Restart();
                 await _repository.RefreshTicketPendingResumeFlagAsync(pending.SupportTicketId);
+                stepStopwatch.Stop();
+                await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, candidateResumeId, "CP09_REFRESH_FLAG", "Success", "Ticket pending resume flag refreshed", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+
+                // CP10: Complete
+                overallStopwatch.Stop();
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, candidateResumeId,
+                    "CP10_COMPLETE", "Success",
+                    $"Processing complete. IRF={pending.ResolvedIRFStringId}, IRFChanged={irfWasChanged}, Parsed={parsingSuccess}, Scheduled={!string.IsNullOrEmpty(scheduleMessage) && !scheduleMessage.Contains("failed") && !scheduleMessage.Contains("Cannot")}",
+                    null, processedBy, (int)overallStopwatch.ElapsedMilliseconds);
 
                 return Json(new
                 {
@@ -1233,7 +1388,14 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+                overallStopwatch.Stop();
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, candidateResumeId,
+                    "CP_EXCEPTION", "Failed",
+                    $"Unhandled exception: {ex.Message}",
+                    JsonConvert.SerializeObject(new { Exception = ex.Message, StackTrace = ex.StackTrace }),
+                    processedBy, (int)overallStopwatch.ElapsedMilliseconds);
                 return Json(new { success = false, error = ex.Message });
             }
         }
@@ -1371,6 +1533,25 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Gets processing logs for debugging ingestion/scheduling flow.
+        /// Optionally filter by ticket ID or pending resume ID.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetProcessingLogs(int? ticketId = null, int? pendingResumeId = null, int limit = 100)
+        {
+            try
+            {
+                var logs = await _repository.GetProcessingLogsAsync(ticketId, pendingResumeId, limit);
+                return Json(new { success = true, logs });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message, logs = new List<ProcessingLogVM>() });
             }
         }
     }

@@ -369,4 +369,20 @@ namespace Risebird.Entities.ViewModel
         // Interview datetime override (if HR wants to change the extracted time)
         public DateTime? OverrideInterviewDateTime { get; set; }
     }
+
+    /// <summary>Processing log entry for debugging resume ingestion/scheduling flow.</summary>
+    public class ProcessingLogVM
+    {
+        public int       Id                { get; set; }
+        public int?      SupportTicketId   { get; set; }
+        public int?      PendingResumeId   { get; set; }
+        public int?      CandidateResumeId { get; set; }
+        public string    Checkpoint        { get; set; }
+        public string    Status            { get; set; }
+        public string    Message           { get; set; }
+        public string    Details           { get; set; }
+        public string    ProcessedBy       { get; set; }
+        public DateTime  CreatedAt         { get; set; }
+        public int?      DurationMs        { get; set; }
+    }
 }

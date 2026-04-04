@@ -150,5 +150,24 @@ namespace Risebird.Repository.Interface
         /// Gets the tenant ID for a given IRF (from the associated client).
         /// </summary>
         Task<string> GetTenantIdForIRFAsync(int irfId);
+
+        /// <summary>
+        /// Logs a checkpoint during resume processing for debugging.
+        /// </summary>
+        Task<int> LogProcessingCheckpointAsync(
+            int? supportTicketId,
+            int? pendingResumeId,
+            int? candidateResumeId,
+            string checkpoint,
+            string status,
+            string message = null,
+            string details = null,
+            string processedBy = null,
+            int? durationMs = null);
+
+        /// <summary>
+        /// Gets processing logs for a ticket or pending resume.
+        /// </summary>
+        Task<List<ProcessingLogVM>> GetProcessingLogsAsync(int? supportTicketId = null, int? pendingResumeId = null, int limit = 100);
     }
 }
