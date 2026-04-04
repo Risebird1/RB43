@@ -247,6 +247,7 @@ builder.Services.AddScoped<IPlivoWhatsAppRepository, PlivoWhatsAppRepository>();
 // Relay.app Customer Support Tickets
 // ============================================
 builder.Services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
+builder.Services.AddScoped<IResumeParsingService, ResumeParsingService>();
 // ============================================
 
 var app = builder.Build();

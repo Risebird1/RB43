@@ -365,5 +365,8 @@ namespace Risebird.Entities.ViewModel
         // IRF override (if HR wants to change the resolved IRF)
         public int?   OverrideIRFId          { get; set; }
         public string IRFChangeReason        { get; set; }
+        
+        // Interview datetime override (if HR wants to change the extracted time)
+        public DateTime? OverrideInterviewDateTime { get; set; }
     }
 }
