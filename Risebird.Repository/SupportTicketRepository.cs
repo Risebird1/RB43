@@ -678,5 +678,66 @@ namespace Risebird.Repository
                 return string.Empty;
             }
         }
+
+        public async Task<int> LogProcessingCheckpointAsync(
+            int? supportTicketId,
+            int? pendingResumeId,
+            int? candidateResumeId,
+            string checkpoint,
+            string status,
+            string message = null,
+            string details = null,
+            string processedBy = null,
+            int? durationMs = null)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var logId = await conn.QueryFirstOrDefaultAsync<int>(
+                    "usp_InsertProcessingLog",
+                    new
+                    {
+                        SupportTicketId    = supportTicketId,
+                        PendingResumeId    = pendingResumeId,
+                        CandidateResumeId  = candidateResumeId,
+                        Checkpoint         = checkpoint,
+                        Status             = status,
+                        Message            = message,
+                        Details            = details,
+                        ProcessedBy        = processedBy,
+                        DurationMs         = durationMs
+                    },
+                    commandType: CommandType.StoredProcedure);
+                return logId;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<List<ProcessingLogVM>> GetProcessingLogsAsync(int? supportTicketId = null, int? pendingResumeId = null, int limit = 100)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var logs = await conn.QueryAsync<ProcessingLogVM>(
+                    "usp_GetProcessingLogs",
+                    new
+                    {
+                        SupportTicketId = supportTicketId,
+                        PendingResumeId = pendingResumeId,
+                        Limit           = limit
+                    },
+                    commandType: CommandType.StoredProcedure);
+                return logs.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<ProcessingLogVM>();
+            }
+        }
     }
 }
