@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -23,15 +24,18 @@ namespace Risebird.Web.Controllers
         private readonly ISupportTicketRepository _repository;
         private readonly IApplicationErrorLogger  _logger;
         private readonly IConfiguration           _configuration;
+        private readonly IResumeParsingService    _resumeParser;
 
         public SupportTicketController(
             ISupportTicketRepository repository,
             IApplicationErrorLogger  logger,
-            IConfiguration           configuration)
+            IConfiguration           configuration,
+            IResumeParsingService    resumeParser = null)
         {
             _repository    = repository;
             _logger        = logger;
             _configuration = configuration;
+            _resumeParser  = resumeParser;
         }
 
         // ── Dashboard ─────────────────────────────────────────────────────────
@@ -1076,8 +1080,12 @@ namespace Risebird.Web.Controllers
                 
                 int ingestedResumeId = 0;
 
+                // Use override datetime if provided by HR, otherwise use system-extracted datetime
+                var scheduledDateTime = request.OverrideInterviewDateTime ?? pending.ScheduledInterviewDateTime;
+                bool hasScheduleTime = request.AlsoSchedule && scheduledDateTime.HasValue;
+
                 // Insert into CandidateResume
-                if (pending.HasSchedulingData && pending.ScheduledInterviewDateTime.HasValue)
+                if (hasScheduleTime)
                 {
                     // Use auto-schedule insert with metadata
                     ingestedResumeId = await _repository.InsertCandidateResumeForAutoScheduleAsync(
@@ -1088,7 +1096,7 @@ namespace Risebird.Web.Controllers
                         pending.SupportTicketId,
                         pending.CandidateName,
                         pending.CandidateEmail,
-                        pending.ScheduledInterviewDateTime);
+                        scheduledDateTime);
                 }
                 else
                 {
@@ -1110,12 +1118,100 @@ namespace Risebird.Web.Controllers
                 // Update pending resume status
                 await _repository.UpdatePendingResumeStatusAsync(pending.Id, "Ingested", ingestedResumeId, processedBy);
 
-                // Check if scheduling is requested
+                // Parse the resume inline if parser service is available
+                string parseMessage = null;
                 string scheduleMessage = null;
-                if (request.AlsoSchedule && pending.HasSchedulingData && pending.ScheduledInterviewDateTime.HasValue)
+                bool parsingSuccess = false;
+                ResumeParseResult parseResult = null;
+
+                if (_resumeParser != null)
                 {
-                    // Wait for resume parsing before scheduling — schedule will be triggered separately
-                    scheduleMessage = "Resume ingested. Scheduling will be available after resume parsing completes.";
+                    try
+                    {
+                        parseResult = await _resumeParser.ParseResumeAsync(ingestedResumeId);
+                        parsingSuccess = parseResult.Success;
+                        
+                        if (parseResult.Success)
+                        {
+                            parseMessage = $"Resume parsed successfully. Candidate: {parseResult.CandidateName}, Email: {parseResult.CandidateEmail}";
+                        }
+                        else
+                        {
+                            parseMessage = $"Resume parsing failed: {parseResult.ErrorMessage}";
+                        }
+                    }
+                    catch (Exception parseEx)
+                    {
+                        await _logger.LogMessage(LogLevelInfo.Exception, parseEx);
+                        parseMessage = $"Resume parsing error: {parseEx.Message}";
+                    }
+                }
+                else
+                {
+                    parseMessage = "Resume added. Parsing will be handled by background job.";
+                }
+
+                // If scheduling is requested AND parsing succeeded, call the schedule API
+                bool datetimeOverridden = request.OverrideInterviewDateTime.HasValue && 
+                    request.OverrideInterviewDateTime != pending.ScheduledInterviewDateTime;
+                
+                if (request.AlsoSchedule && scheduledDateTime.HasValue)
+                {
+                    if (parsingSuccess && parseResult != null && !string.IsNullOrEmpty(parseResult.CandidateEmail))
+                    {
+                        try
+                        {
+                            // Call the schedule API (same format as PlivoCXInterviewCallController)
+                            const string apiUrl = "https://api.portal.risebird.io/api/Candidates/Schedule";
+                            
+                            // Get tenant ID from client
+                            var tenantId = await _repository.GetTenantIdForIRFAsync(pending.ResolvedIRFId.Value);
+
+                            // Build the schedule request DTO (same structure as PlivoCX)
+                            var dto = new ScheduleCandidatesRequest
+                            {
+                                skillChannelId = pending.ResolvedIRFStringId,
+                                requestedBy    = processedBy,
+                                requestType    = "schedule_supportTicket"
+                            };
+                            dto.CandidateList.Add(new ScheduleCandidateList
+                            {
+                                EmailId       = parseResult.CandidateEmail,
+                                Interviewdate = scheduledDateTime.Value,
+                                ResumeLink    = pending.ResumeUrl,
+                                Phone         = parseResult.CandidatePhone,
+                                Name          = parseResult.CandidateName ?? pending.CandidateName
+                            });
+
+                            var restClient = new RestClient(apiUrl);
+                            var restRequest = new RestRequest(apiUrl, Method.Post);
+                            restRequest.AddHeader("content-type", "application/json");
+                            restRequest.AddHeader("x-functions-key", "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==");
+                            restRequest.AddHeader("tenant-id", tenantId ?? string.Empty);
+                            restRequest.AddParameter("application/json", JsonConvert.SerializeObject(dto), ParameterType.RequestBody);
+
+                            var response = await restClient.ExecuteAsync(restRequest);
+
+                            if (response.IsSuccessful)
+                            {
+                                scheduleMessage = $"Interview scheduled for {scheduledDateTime.Value:dd MMM yyyy hh:mm tt} IST" +
+                                    (datetimeOverridden ? " (time modified by HR)" : "");
+                            }
+                            else
+                            {
+                                scheduleMessage = $"Scheduling failed: {response.Content ?? response.ErrorMessage}";
+                            }
+                        }
+                        catch (Exception schedEx)
+                        {
+                            await _logger.LogMessage(LogLevelInfo.Exception, schedEx);
+                            scheduleMessage = $"Scheduling error: {schedEx.Message}";
+                        }
+                    }
+                    else
+                    {
+                        scheduleMessage = "Cannot schedule - resume parsing did not extract candidate email. Please schedule manually after parsing completes.";
+                    }
                 }
 
                 // Refresh ticket's pending resume flag
@@ -1128,7 +1224,11 @@ namespace Risebird.Web.Controllers
                               (irfWasChanged ? " (IRF changed by HR)" : ""),
                     candidateResumeId = ingestedResumeId,
                     irfChanged = irfWasChanged,
-                    scheduleMessage
+                    parseMessage,
+                    scheduleMessage,
+                    parsingSuccess,
+                    candidateName = parseResult?.CandidateName,
+                    candidateEmail = parseResult?.CandidateEmail
                 });
             }
             catch (Exception ex)
