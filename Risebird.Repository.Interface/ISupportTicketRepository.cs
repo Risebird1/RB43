@@ -145,5 +145,10 @@ namespace Risebird.Repository.Interface
         /// Gets a fallback system user ID (for AddedBy when no HR found).
         /// </summary>
         Task<int> GetSystemUserIdAsync();
+
+        /// <summary>
+        /// Gets the tenant ID for a given IRF (from the associated client).
+        /// </summary>
+        Task<string> GetTenantIdForIRFAsync(int irfId);
     }
 }

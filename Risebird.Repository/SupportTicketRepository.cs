@@ -658,5 +658,25 @@ namespace Risebird.Repository
                 return 0;
             }
         }
+
+        public async Task<string> GetTenantIdForIRFAsync(int irfId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var tenantId = await conn.QueryFirstOrDefaultAsync<string>(
+                    @"SELECT c.tenantId 
+                      FROM dbo.IRF irf
+                      INNER JOIN dbo.Client c ON c.id = irf.ClientId
+                      WHERE irf.id = @IRFId",
+                    new { IRFId = irfId });
+                return tenantId ?? string.Empty;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
+        }
     }
 }

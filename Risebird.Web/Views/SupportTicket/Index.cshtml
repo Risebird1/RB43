@@ -332,6 +332,35 @@
     .irf-dropdown-cell .irf-select { font-size: 11px; }
     .irf-dropdown-cell .irf-preview { font-size: 10px; line-height: 1.3; }
     .text-decoration-line-through { text-decoration: line-through; }
+    /* Ticket status bar */
+    #ticketStatusBar {
+        background: linear-gradient(to right, #f8f9fa, #e9ecef) !important;
+    }
+    #ticketStatusActions .btn { 
+        font-size: 13px; 
+        padding: 6px 14px; 
+        font-weight: 500;
+    }
+    #ticketStatusActions .btn:hover { 
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    #currentTicketStatusBadge { 
+        font-size: 14px; 
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    /* Interview datetime picker */
+    .schedule-cell .interview-datetime {
+        font-size: 12px;
+        padding: 4px 8px;
+        width: 100%;
+        max-width: 185px;
+    }
+    .schedule-cell .interview-datetime:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
 </style>
 
 <!-- Loading Overlay -->
@@ -584,7 +613,7 @@
                                                  : tStatus == "closed"     ? "status-closed"
                                                  : "bg-light border";
                                 string driveLink = t.DriveFolderLink;
-                                <tr class="ticket-row">
+                                <tr class="ticket-row" data-ticket-id="@t.Id">
 
                                     <td class="col-num text-muted" style="font-size:12px">@t.Id</td>
 
@@ -778,7 +807,8 @@
                                             <button type="button" title="Review & Ingest Resumes"
                                                     class="btn btn-outline-warning btn-sm btn-review-resumes"
                                                     data-ticket-id="@t.Id"
-                                                    data-ticket-subject="@t.Subject">
+                                                    data-ticket-subject="@t.Subject"
+                                                    data-ticket-status="@t.Status">
                                                 <i class="fas fa-file-upload"></i>
                                             </button>
                                         }
@@ -912,6 +942,25 @@
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <!-- Ticket Status Bar -->
+            <div class="bg-light border-bottom px-4 py-2 d-flex align-items-center justify-content-between" id="ticketStatusBar">
+                <div class="d-flex align-items-center gap-2">
+                    <strong class="text-muted">Ticket Status:</strong>
+                    <span class="badge fs-6 px-3 py-2" id="currentTicketStatusBadge">Open</span>
+                </div>
+                <div class="d-flex align-items-center gap-2" id="ticketStatusActions">
+                    <span class="text-muted me-2">Change to:</span>
+                    <button type="button" class="btn btn-primary btn-change-ticket-status" data-status="InProgress" id="btnMarkInProgress">
+                        <i class="fas fa-hourglass-half me-1"></i>In Progress
+                    </button>
+                    <button type="button" class="btn btn-success btn-change-ticket-status" data-status="Closed" id="btnCloseTicket">
+                        <i class="fas fa-check-circle me-1"></i>Close Ticket
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-change-ticket-status" data-status="Open" id="btnReopenTicket">
+                        <i class="fas fa-redo me-1"></i>Reopen
+                    </button>
+                </div>
+            </div>
             <div class="modal-body pt-3" style="background:#f5f5f5">
                 <div class="text-center py-4 text-muted" id="pendingResumesLoading">
                     <i class="fas fa-spinner fa-spin me-2"></i>Loading resumes…
@@ -1010,7 +1059,7 @@
                                             <th style="min-width:140px">Candidate</th>
                                             <th style="min-width:180px">System Resolved IRF</th>
                                             <th style="min-width:220px">Change IRF (if needed)</th>
-                                            <th style="min-width:90px">Scheduling</th>
+                                            <th style="min-width:200px">Interview Time (IST)</th>
                                             <th style="width:70px">Status</th>
                                             <th style="min-width:180px">Actions</th>
                                         </tr>
@@ -1117,6 +1166,78 @@
             var t  = new bootstrap.Toast(el, { delay: 3500 });
             t.show();
             el.addEventListener('hidden.bs.toast', function () { $(this).remove(); });
+        }
+
+        function extractFileNameFromUrl(url) {
+            if (!url) return 'Unknown file';
+            try {
+                // Handle Google Drive URLs
+                if (url.includes('drive.google.com')) {
+                    var match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                    if (match) {
+                        return 'Google Drive file (ID: ' + match[1].substring(0, 8) + '...)';
+                    }
+                }
+                // Extract filename from path
+                var urlObj = new URL(url);
+                var path = urlObj.pathname;
+                var fileName = path.split('/').pop();
+                // Decode URL encoding
+                fileName = decodeURIComponent(fileName);
+                // Remove query params from filename
+                fileName = fileName.split('?')[0];
+                // If filename is empty or generic, try to extract from full path
+                if (!fileName || fileName === 'view' || fileName === 'edit') {
+                    // Return last meaningful path segment
+                    var segments = path.split('/').filter(function(s) { 
+                        return s && s !== 'view' && s !== 'edit' && s !== 'd' && s !== 'file'; 
+                    });
+                    fileName = segments.length > 0 ? segments[segments.length - 1] : 'Resume file';
+                }
+                return fileName || 'Resume file';
+            } catch (e) {
+                // If URL parsing fails, just return the URL truncated
+                return url.length > 50 ? url.substring(0, 50) + '...' : url;
+            }
+        }
+
+        function initResumeTooltips() {
+            // Dispose existing tooltips first
+            $('[data-bs-toggle="tooltip"]').each(function() {
+                var tooltip = bootstrap.Tooltip.getInstance(this);
+                if (tooltip) tooltip.dispose();
+            });
+            // Initialize new tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip({ trigger: 'hover' });
+        }
+
+        function formatDateTimeForInput(dateStr) {
+            // Convert datetime string to format required by datetime-local input (YYYY-MM-DDTHH:MM)
+            if (!dateStr) return '';
+            try {
+                var d = new Date(dateStr);
+                if (isNaN(d.getTime())) return '';
+                var year = d.getFullYear();
+                var month = String(d.getMonth() + 1).padStart(2, '0');
+                var day = String(d.getDate()).padStart(2, '0');
+                var hours = String(d.getHours()).padStart(2, '0');
+                var mins = String(d.getMinutes()).padStart(2, '0');
+                return year + '-' + month + '-' + day + 'T' + hours + ':' + mins;
+            } catch (e) {
+                return '';
+            }
+        }
+
+        function parseDateTimeFromInput(inputValue) {
+            // Parse datetime-local input value and return ISO string
+            if (!inputValue) return null;
+            try {
+                var d = new Date(inputValue);
+                if (isNaN(d.getTime())) return null;
+                return d.toISOString();
+            } catch (e) {
+                return null;
+            }
         }
 
         /* ── Button builders ─────────────────────────────────────────────── */
@@ -1403,16 +1524,20 @@
 
         /* ── Pending Resumes Review modal ───────────────────────────────── */
         var currentPendingResumesTicketId = null;
+        var currentTicketStatus = 'Open';
         var availableIRFs = [];  // Cache of IRF options for dropdown
         var currentSenderEmail = null;
 
         $(document).on('click', '.btn-review-resumes', function () {
             var ticketId = $(this).data('ticket-id');
             var subject  = $(this).data('ticket-subject') || ('Ticket #' + ticketId);
+            var status   = $(this).data('ticket-status') || 'Open';
             currentPendingResumesTicketId = ticketId;
+            currentTicketStatus = status;
             availableIRFs = [];
 
             $('#pendingResumesModalSubject').text('Ticket #' + ticketId);
+            updateTicketStatusBadge(status);
             $('#pendingResumesLoading').show();
             $('#emailContextSection').hide();
             $('#pendingResumesList').hide();
@@ -1423,6 +1548,80 @@
             modal.show();
 
             loadPendingResumes(ticketId);
+        });
+
+        function updateTicketStatusBadge(status) {
+            var $badge = $('#currentTicketStatusBadge');
+            var cls = status === 'Closed' ? 'bg-success' : 
+                      status === 'InProgress' ? 'bg-primary' : 'bg-secondary';
+            $badge.removeClass('bg-secondary bg-primary bg-success bg-dark bg-warning').addClass(cls);
+            $badge.text(status === 'InProgress' ? 'In Progress' : status);
+            
+            // Show/hide buttons based on current status
+            // Open: can go to InProgress or Closed
+            // InProgress: can go to Closed or back to Open (Reopen)
+            // Closed: can only Reopen
+            $('#btnMarkInProgress').toggle(status === 'Open');
+            $('#btnCloseTicket').toggle(status === 'Open' || status === 'InProgress');
+            $('#btnReopenTicket').toggle(status === 'Closed' || status === 'InProgress');
+            
+            // Update Reopen button text based on status
+            if (status === 'InProgress') {
+                $('#btnReopenTicket').html('<i class="fas fa-redo me-1"></i>Back to Open');
+            } else {
+                $('#btnReopenTicket').html('<i class="fas fa-redo me-1"></i>Reopen');
+            }
+        }
+
+        // Handle ticket status change from within the modal
+        $(document).on('click', '.btn-change-ticket-status', function () {
+            var $btn = $(this);
+            var newStatus = $btn.data('status');
+            
+            if (newStatus === currentTicketStatus) {
+                showToast('Ticket is already ' + newStatus, 'info');
+                return;
+            }
+            
+            if (!currentPendingResumesTicketId) {
+                showToast('No ticket selected', 'danger');
+                return;
+            }
+            
+            $btn.prop('disabled', true).prepend('<i class="fas fa-spinner fa-spin me-1"></i>');
+            
+            $.ajax({
+                url: '@Url.Action("UpdateStatus", "SupportTicket")',
+                type: 'POST',
+                headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+                data: {
+                    id: currentPendingResumesTicketId,
+                    status: newStatus
+                },
+                success: function (res) {
+                    $btn.prop('disabled', false).find('.fa-spinner').remove();
+                    if (res.success) {
+                        currentTicketStatus = newStatus;
+                        updateTicketStatusBadge(newStatus);
+                        showToast('Ticket status updated to ' + newStatus, 'success');
+                        
+                        // Update the status badge in the main table row
+                        var $row = $('tr[data-ticket-id="' + currentPendingResumesTicketId + '"]');
+                        if ($row.length) {
+                            var badgeClass = newStatus === 'Closed' ? 'bg-success' : 
+                                             newStatus === 'InProgress' ? 'bg-primary' : 'bg-secondary';
+                            $row.find('.status-badge').removeClass('bg-secondary bg-primary bg-success')
+                                .addClass(badgeClass).text(newStatus === 'InProgress' ? 'In Progress' : newStatus);
+                        }
+                    } else {
+                        showToast('Failed to update status: ' + (res.error || 'Unknown error'), 'danger');
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).find('.fa-spinner').remove();
+                    showToast('Error updating ticket status', 'danger');
+                }
+            });
         });
 
         function loadPendingResumes(ticketId) {
@@ -1451,6 +1650,8 @@
                         $('#pendingResumesLoading').hide();
                         $('#emailContextSection').show();
                         $('#pendingResumesList').show();
+                        // Initialize tooltips for resume links
+                        initResumeTooltips();
                     });
                 },
                 error: function () {
@@ -1525,11 +1726,13 @@
                 var rowClass = !hasIRF && r.status === 'Pending' ? 'no-irf-warning' : '';
                 var wasChanged = r.irfChangedByHR;
                 
-                // Candidate cell
+                // Candidate cell - extract filename from URL for tooltip
+                var fileName = extractFileNameFromUrl(r.resumeUrl);
                 var candidateHtml = '<div class="candidate-cell">' +
                     '<div class="name">' + escapeHtml(r.candidateName || 'Unknown') + '</div>' +
                     '<div class="email">' + escapeHtml(r.candidateEmail || '—') + '</div>' +
-                    '<a href="' + escapeHtml(r.resumeUrl || '#') + '" target="_blank" class="btn btn-outline-primary resume-link-btn mt-1">' +
+                    '<a href="' + escapeHtml(r.resumeUrl || '#') + '" target="_blank" class="btn btn-outline-primary resume-link-btn mt-1" ' +
+                    'title="' + escapeHtml(fileName) + '" data-bs-toggle="tooltip" data-bs-placement="right">' +
                     '<i class="fas fa-external-link-alt me-1"></i>Resume</a>' +
                 '</div>';
                 
@@ -1579,12 +1782,28 @@
                 }
                 irfDropdownHtml += '</div>';
                 
-                // Schedule cell
+                // Schedule cell - always show editable datetime picker for pending resumes
                 var scheduleHtml = '<div class="schedule-cell">';
-                if (hasScheduleData) {
-                    scheduleHtml += '<div class="datetime small"><i class="fas fa-calendar-check me-1"></i>' + 
+                if (r.status === 'Pending') {
+                    // Format datetime for input (YYYY-MM-DDTHH:MM) - pre-fill if extracted from email
+                    var dtValue = '';
+                    if (hasScheduleData && r.scheduledInterviewDateTime) {
+                        dtValue = formatDateTimeForInput(r.scheduledInterviewDateTime);
+                    }
+                    scheduleHtml += '<input type="datetime-local" class="form-control form-control-sm interview-datetime" ' +
+                        'data-pending-id="' + r.id + '" ' +
+                        'value="' + dtValue + '" ' +
+                        'title="Set interview date & time (IST) for scheduling">';
+                    scheduleHtml += '<div class="small text-muted mt-1"><i class="fas fa-clock me-1"></i>IST</div>';
+                    if (hasScheduleData) {
+                        scheduleHtml += '<div class="small text-info"><i class="fas fa-robot me-1"></i>Pre-filled from email</div>';
+                    } else {
+                        scheduleHtml += '<div class="small text-secondary"><i class="fas fa-edit me-1"></i>Set for scheduling</div>';
+                    }
+                } else if (hasScheduleData) {
+                    scheduleHtml += '<div class="datetime small"><i class="fas fa-calendar-check me-1 text-success"></i>' + 
                         formatShortDateTime(r.scheduledInterviewDateTime) + '</div>' +
-                        '<div class="timezone">' + escapeHtml(r.scheduleTimezone || 'IST') + '</div>';
+                        '<div class="timezone text-muted">' + escapeHtml(r.scheduleTimezone || 'IST') + '</div>';
                 } else {
                     scheduleHtml += '<span class="text-muted">—</span>';
                 }
@@ -1598,15 +1817,13 @@
                     statusHtml += '<br><span class="badge bg-info status-badge mt-1"><i class="fas fa-exchange-alt"></i></span>';
                 }
                 
-                // Actions cell
+                // Actions cell - always show both Ingest and Ingest+Schedule buttons for pending resumes
                 var actionsHtml = '<div class="action-cell" data-pending-id="' + r.id + '">';
                 if (r.status === 'Pending') {
-                    if (hasScheduleData) {
-                        actionsHtml += '<button type="button" class="btn btn-success btn-sm btn-ingest-resume" data-pending-id="' + r.id + '" data-schedule="true" title="Ingest & Schedule">' +
-                            '<i class="fas fa-calendar-plus me-1"></i>Ingest+Sched</button> ';
-                    }
-                    actionsHtml += '<button type="button" class="btn btn-primary btn-sm btn-ingest-resume" data-pending-id="' + r.id + '" data-schedule="false" title="Ingest Resume">' +
-                        '<i class="fas fa-file-import me-1"></i>Ingest</button> ';
+                    actionsHtml += '<button type="button" class="btn btn-primary btn-sm btn-ingest-resume mb-1" data-pending-id="' + r.id + '" data-schedule="false" title="Ingest Resume Only">' +
+                        '<i class="fas fa-file-import me-1"></i>Ingest</button><br>';
+                    actionsHtml += '<button type="button" class="btn btn-success btn-sm btn-ingest-resume" data-pending-id="' + r.id + '" data-schedule="true" title="Ingest, Parse & Schedule">' +
+                        '<i class="fas fa-calendar-plus me-1"></i>Ingest+Schedule</button> ';
                     actionsHtml += '<button type="button" class="btn btn-outline-danger btn-sm btn-reject-resume" data-pending-id="' + r.id + '" title="Reject">' +
                         '<i class="fas fa-times"></i></button>';
                 } else if (r.status === 'Ingested') {
@@ -1706,6 +1923,7 @@
                         renderPendingResumesTable(res.resumes);
                         $('#emailContextSection').show();
                         $('#pendingResumesList').show();
+                        initResumeTooltips();
                         showToast('Data refreshed', 'success');
                     },
                     error: function () {
@@ -1729,10 +1947,21 @@
             var selectedIRFId = $irfSelect.val() ? parseInt($irfSelect.val()) : null;
             var originalIRFId = $irfSelect.data('original-irf') ? parseInt($irfSelect.data('original-irf')) : null;
             
+            // Get interview datetime from picker (for scheduling)
+            var $datetimeInput = $row.find('.interview-datetime');
+            var interviewDateTime = $datetimeInput.val() ? parseDateTimeFromInput($datetimeInput.val()) : null;
+            
             // Validate IRF selection
             if (!selectedIRFId) {
                 showToast('Please select an IRF before ingesting.', 'warning');
                 $irfSelect.focus();
+                return;
+            }
+            
+            // Validate datetime if scheduling
+            if (alsoSchedule && !interviewDateTime) {
+                showToast('Please set an interview date & time before scheduling.', 'warning');
+                $datetimeInput.focus();
                 return;
             }
             
@@ -1747,6 +1976,7 @@
 
             $actionCell.find('button').prop('disabled', true);
             $row.find('.irf-select').prop('disabled', true);
+            $row.find('.interview-datetime').prop('disabled', true);
             $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Processing…');
 
             $.ajax({
@@ -1757,7 +1987,8 @@
                     pendingResumeId: pendingId,
                     alsoSchedule: alsoSchedule,
                     overrideIRFId: irfChanged ? selectedIRFId : null,
-                    irfChangeReason: changeReason || null
+                    irfChangeReason: changeReason || null,
+                    overrideInterviewDateTime: interviewDateTime
                 }),
                 success: function (res) {
                     if (res.success) {
@@ -1780,6 +2011,21 @@
                             );
                         }
                         
+                        // Update schedule cell to show final scheduled time
+                        var $scheduleCell = $row.find('.schedule-cell');
+                        if (alsoSchedule && interviewDateTime) {
+                            var scheduledDate = new Date(interviewDateTime);
+                            $scheduleCell.html(
+                                '<div class="datetime small text-success"><i class="fas fa-calendar-check me-1"></i>' + 
+                                formatShortDateTime(scheduledDate) + '</div>' +
+                                '<div class="timezone text-muted">IST</div>' +
+                                '<div class="small text-info mt-1"><i class="fas fa-clock me-1"></i>Scheduled</div>'
+                            );
+                        } else {
+                            // Just disable the datetime input
+                            $row.find('.interview-datetime').prop('disabled', true);
+                        }
+                        
                         // Remove warning class if present
                         $row.removeClass('no-irf-warning');
                         
@@ -1787,13 +2033,26 @@
                         var currentCount = parseInt($('#pendingCount').text()) || 0;
                         $('#pendingCount').text((currentCount - 1) + ' pending');
                         
+                        // Update candidate info if parsed
+                        if (res.candidateName || res.candidateEmail) {
+                            var $candidateCell = $row.find('.candidate-cell');
+                            $candidateCell.find('.name').text(res.candidateName || 'Unknown');
+                            if (res.candidateEmail) {
+                                $candidateCell.find('.email').text(res.candidateEmail);
+                            }
+                        }
+                        
                         showToast(res.message || 'Resume ingested successfully!', 'success');
+                        if (res.parseMessage) {
+                            showToast(res.parseMessage, res.parsingSuccess ? 'success' : 'warning');
+                        }
                         if (res.scheduleMessage) {
-                            showToast(res.scheduleMessage, 'info');
+                            showToast(res.scheduleMessage, res.scheduleMessage.includes('failed') || res.scheduleMessage.includes('Cannot') ? 'danger' : 'success');
                         }
                     } else {
                         $actionCell.find('button').prop('disabled', false);
                         $row.find('.irf-select').prop('disabled', false);
+                        $row.find('.interview-datetime').prop('disabled', false);
                         $btn.html('<i class="fas fa-file-import me-1"></i>Ingest');
                         showToast(res.error || 'Failed to ingest resume.', 'danger');
                     }
@@ -1801,6 +2060,7 @@
                 error: function () {
                     $actionCell.find('button').prop('disabled', false);
                     $row.find('.irf-select').prop('disabled', false);
+                    $row.find('.interview-datetime').prop('disabled', false);
                     $btn.html('<i class="fas fa-file-import me-1"></i>Ingest');
                     showToast('Failed to ingest resume. Please try again.', 'danger');
                 }

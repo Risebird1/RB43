@@ -2082,5 +2082,57 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<CandidateResume> GetCandidateResumeById(int candidateResumeId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryFirstOrDefaultAsync<CandidateResume>(
+                        @"SELECT cr.*, irf.IRFId AS SkillChannelName, irf.IsAffindaIndexCreated
+                          FROM dbo.CandidateResume cr
+                          LEFT JOIN dbo.IRF irf ON irf.id = cr.IRFId
+                          WHERE cr.id = @Id",
+                        new { Id = candidateResumeId });
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<CandidateResumeInfo> GetCandidateByResumeId(int candidateResumeId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryFirstOrDefaultAsync<CandidateResumeInfo>(
+                        @"SELECT 
+                            cr.id AS CandidateResumeId,
+                            c.id AS CandidateId,
+                            c.CandidateMasterId,
+                            ul.FirstName + ' ' + ul.LastName AS CandidateName,
+                            ul.EmailId AS CandidateEmail,
+                            c.Phone AS CandidatePhone
+                          FROM dbo.CandidateResume cr
+                          LEFT JOIN dbo.Candidate c ON c.IRFId = cr.IRFId AND c.ResumeLink = cr.ResumeLink
+                          LEFT JOIN dbo.CandidatesMaster cm ON cm.id = c.CandidateMasterId
+                          LEFT JOIN dbo.UserList ul ON ul.id = cm.UserId
+                          WHERE cr.id = @Id",
+                        new { Id = candidateResumeId });
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }
