@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -146,6 +146,7 @@ namespace Risebird.Repository
                 parameters.Add("@TimeManagement", model.TimeManagement);
                 parameters.Add("@PoorCommunicationSkills", model.PoorCommunicationSkills);
                 parameters.Add("@WeakInfrastructure", model.WeakInfrastructure);
+                parameters.Add("@InterviewerVideo", model.InterviewerVideo);
                 parameters.Add("@InterviewId", model.Interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
