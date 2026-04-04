@@ -1077,7 +1077,38 @@
                     <i class="fas fa-inbox me-2"></i>No pending resumes found for this ticket.
                 </div>
             </div>
+            <!-- Debug Logs Panel (hidden by default) -->
+            <div class="border-top bg-dark text-light p-3" id="debugLogsPanel" style="display: none; max-height: 300px; overflow-y: auto;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0"><i class="fas fa-bug me-2"></i>Processing Logs</h6>
+                    <button type="button" class="btn btn-sm btn-outline-light" id="closeDebugLogsBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="debugLogsContent">
+                    <div class="text-center py-3" id="debugLogsLoading">
+                        <div class="spinner-border spinner-border-sm text-light" role="status"></div>
+                        <span class="ms-2">Loading logs...</span>
+                    </div>
+                    <table class="table table-sm table-dark table-striped mb-0" id="debugLogsTable" style="display: none; font-size: 0.75rem;">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">Time</th>
+                                <th style="width: 180px;">Checkpoint</th>
+                                <th style="width: 80px;">Status</th>
+                                <th>Message</th>
+                                <th style="width: 70px;">Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody id="debugLogsTableBody"></tbody>
+                    </table>
+                    <p class="text-muted mb-0" id="debugLogsEmpty" style="display: none;">No logs found for this ticket.</p>
+                </div>
+            </div>
             <div class="modal-footer py-2">
+                <button type="button" class="btn btn-outline-info btn-sm" id="viewDebugLogsBtn">
+                    <i class="fas fa-bug me-1"></i>Debug Logs
+                </button>
                 <button type="button" class="btn btn-outline-primary btn-sm" id="refreshPendingResumesBtn">
                     <i class="fas fa-sync-alt me-1"></i>Refresh
                 </button>
@@ -1935,6 +1966,82 @@
             }
         });
 
+        // Debug Logs functionality
+        $('#viewDebugLogsBtn').on('click', function () {
+            var $panel = $('#debugLogsPanel');
+            if ($panel.is(':visible')) {
+                $panel.slideUp();
+                return;
+            }
+            
+            $panel.slideDown();
+            loadDebugLogs();
+        });
+        
+        $('#closeDebugLogsBtn').on('click', function () {
+            $('#debugLogsPanel').slideUp();
+        });
+        
+        function loadDebugLogs() {
+            var ticketId = currentPendingResumesTicketId;
+            if (!ticketId) return;
+            
+            $('#debugLogsLoading').show();
+            $('#debugLogsTable').hide();
+            $('#debugLogsEmpty').hide();
+            $('#debugLogsTableBody').empty();
+            
+            $.ajax({
+                url: '@Url.Action("GetProcessingLogs", "SupportTicket")',
+                type: 'GET',
+                data: { ticketId: ticketId, limit: 100 },
+                success: function (res) {
+                    $('#debugLogsLoading').hide();
+                    
+                    if (!res.success || !res.logs || res.logs.length === 0) {
+                        $('#debugLogsEmpty').show();
+                        return;
+                    }
+                    
+                    var $tbody = $('#debugLogsTableBody');
+                    res.logs.forEach(function (log) {
+                        var statusBadge = log.status === 'Success' ? 'bg-success' :
+                                          log.status === 'Failed' ? 'bg-danger' :
+                                          log.status === 'Warning' ? 'bg-warning text-dark' : 'bg-info';
+                        var timeStr = log.createdAt ? new Date(log.createdAt).toLocaleString() : '-';
+                        var duration = log.durationMs ? log.durationMs + 'ms' : '-';
+                        
+                        var $row = $('<tr>')
+                            .append($('<td>').text(timeStr).css('white-space', 'nowrap'))
+                            .append($('<td>').html('<code>' + escapeHtml(log.checkpoint || '-') + '</code>'))
+                            .append($('<td>').html('<span class="badge ' + statusBadge + '">' + escapeHtml(log.status || '-') + '</span>'))
+                            .append($('<td>').text(log.message || '-').attr('title', log.details || ''))
+                            .append($('<td>').text(duration).addClass('text-end'));
+                        
+                        // Add click handler to show details
+                        if (log.details) {
+                            $row.css('cursor', 'pointer').on('click', function () {
+                                try {
+                                    var detailsJson = JSON.parse(log.details);
+                                    alert('Details:\n' + JSON.stringify(detailsJson, null, 2));
+                                } catch (e) {
+                                    alert('Details:\n' + log.details);
+                                }
+                            });
+                        }
+                        
+                        $tbody.append($row);
+                    });
+                    
+                    $('#debugLogsTable').show();
+                },
+                error: function () {
+                    $('#debugLogsLoading').hide();
+                    $('#debugLogsEmpty').text('Could not load logs.').show();
+                }
+            });
+        }
+
         $(document).on('click', '.btn-ingest-resume', function () {
             var $btn = $(this);
             var pendingId = $btn.data('pending-id');
@@ -2049,12 +2156,20 @@
                         if (res.scheduleMessage) {
                             showToast(res.scheduleMessage, res.scheduleMessage.includes('failed') || res.scheduleMessage.includes('Cannot') ? 'danger' : 'success');
                         }
+                        // Auto-refresh debug logs if panel is visible
+                        if ($('#debugLogsPanel').is(':visible')) {
+                            loadDebugLogs();
+                        }
                     } else {
                         $actionCell.find('button').prop('disabled', false);
                         $row.find('.irf-select').prop('disabled', false);
                         $row.find('.interview-datetime').prop('disabled', false);
                         $btn.html('<i class="fas fa-file-import me-1"></i>Ingest');
                         showToast(res.error || 'Failed to ingest resume.', 'danger');
+                        // Auto-refresh debug logs on failure to show what went wrong
+                        if ($('#debugLogsPanel').is(':visible')) {
+                            loadDebugLogs();
+                        }
                     }
                 },
                 error: function () {
@@ -2063,6 +2178,10 @@
                     $row.find('.interview-datetime').prop('disabled', false);
                     $btn.html('<i class="fas fa-file-import me-1"></i>Ingest');
                     showToast('Failed to ingest resume. Please try again.', 'danger');
+                    // Auto-refresh debug logs on error
+                    if ($('#debugLogsPanel').is(':visible')) {
+                        loadDebugLogs();
+                    }
                 }
             });
         });
