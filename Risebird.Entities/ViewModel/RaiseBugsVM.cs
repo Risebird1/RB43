@@ -16,5 +16,6 @@ namespace Risebird.Entities.ViewModel
         public string Requester { get; set; }
         public string MobileNumber { get; set; }
         public string Name { get; set; }
+        public int interviewId { get; set; }
     }
 }

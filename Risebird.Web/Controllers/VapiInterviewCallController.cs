@@ -284,62 +284,66 @@ namespace Risebird.Web.Controllers
         /// <summary>
         /// Logs webhook debug information to database for troubleshooting
         /// </summary>
-        private async Task LogWebhookDebug(string rawPayload, string status, string errorMsg, string webhookType = null, string callId = null)
+        // Debug logging disabled — testing phase complete, no longer writing to VapiWebhookDebugLogs
+        private Task LogWebhookDebug(string rawPayload, string status, string errorMsg, string webhookType = null, string callId = null)
         {
-            try
-            {
-                using (var conn = new System.Data.SqlClient.SqlConnection(_configuration["ConnectionString:DBConnectionString"]))
-                {
-                    var sql = @"INSERT INTO VapiWebhookDebugLogs 
-                        (RequestTimestamp, WebhookType, CallId, RawPayload, ProcessingStatus, ErrorMessage)
-                        VALUES (@Timestamp, @Type, @CallId, @Payload, @Status, @Error)";
-
-                    await conn.ExecuteAsync(sql, new
-                    {
-                        Timestamp = DateTime.UtcNow,
-                        Type = webhookType,
-                        CallId = callId,
-                        Payload = rawPayload?.Length > 10000 ? rawPayload.Substring(0, 10000) : rawPayload,
-                        Status = status,
-                        Error = errorMsg
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
-                    new Exception($"Failed to log webhook debug: {ex.Message}"));
-            }
+            // try
+            // {
+            //     using (var conn = new System.Data.SqlClient.SqlConnection(_configuration["ConnectionString:DBConnectionString"]))
+            //     {
+            //         var sql = @"INSERT INTO VapiWebhookDebugLogs
+            //             (RequestTimestamp, WebhookType, CallId, RawPayload, ProcessingStatus, ErrorMessage)
+            //             VALUES (@Timestamp, @Type, @CallId, @Payload, @Status, @Error)";
+            //
+            //         await conn.ExecuteAsync(sql, new
+            //         {
+            //             Timestamp = DateTime.UtcNow,
+            //             Type = webhookType,
+            //             CallId = callId,
+            //             Payload = rawPayload?.Length > 10000 ? rawPayload.Substring(0, 10000) : rawPayload,
+            //             Status = status,
+            //             Error = errorMsg
+            //         });
+            //     }
+            // }
+            // catch (Exception ex)
+            // {
+            //     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+            //         new Exception($"Failed to log webhook debug: {ex.Message}"));
+            // }
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Logs checkpoint information to database for debugging webhook flow
         /// </summary>
-        private async Task LogCheckpoint(string checkpointName, string message, string callId = null, string toolCallName = null, string additionalData = null)
+        // Checkpoint logging disabled — testing phase complete, no longer writing to VapiWebhookCheckpoints
+        private Task LogCheckpoint(string checkpointName, string message, string callId = null, string toolCallName = null, string additionalData = null)
         {
-            try
-            {
-                using (var conn = new System.Data.SqlClient.SqlConnection(_configuration["ConnectionString:DBConnectionString"]))
-                {
-                    var sql = @"INSERT INTO VapiWebhookCheckpoints 
-                        (Timestamp, CheckpointName, Message, CallId, ToolCallName, AdditionalData)
-                        VALUES (@Timestamp, @CheckpointName, @Message, @CallId, @ToolCallName, @AdditionalData)";
-
-                    await conn.ExecuteAsync(sql, new
-                    {
-                        Timestamp = DateTime.UtcNow,
-                        CheckpointName = checkpointName,
-                        Message = message,
-                        CallId = callId,
-                        ToolCallName = toolCallName,
-                        AdditionalData = additionalData?.Length > 5000 ? additionalData.Substring(0, 5000) : additionalData
-                    });
-                }
-            }
-            catch
-            {
-                // Silently fail - don't want logging to break the webhook
-            }
+            // try
+            // {
+            //     using (var conn = new System.Data.SqlClient.SqlConnection(_configuration["ConnectionString:DBConnectionString"]))
+            //     {
+            //         var sql = @"INSERT INTO VapiWebhookCheckpoints
+            //             (Timestamp, CheckpointName, Message, CallId, ToolCallName, AdditionalData)
+            //             VALUES (@Timestamp, @CheckpointName, @Message, @CallId, @ToolCallName, @AdditionalData)";
+            //
+            //         await conn.ExecuteAsync(sql, new
+            //         {
+            //             Timestamp = DateTime.UtcNow,
+            //             CheckpointName = checkpointName,
+            //             Message = message,
+            //             CallId = callId,
+            //             ToolCallName = toolCallName,
+            //             AdditionalData = additionalData?.Length > 5000 ? additionalData.Substring(0, 5000) : additionalData
+            //         });
+            //     }
+            // }
+            // catch
+            // {
+            //     // Silently fail - don't want logging to break the webhook
+            // }
+            return Task.CompletedTask;
         }
 
         /// <summary>

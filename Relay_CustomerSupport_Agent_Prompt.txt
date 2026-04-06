@@ -279,12 +279,14 @@ Fields:
     "resume_associations": [
       {
         "resume_url": "https://drive.google.com/file/d/abc123/view",
+        "resume_filename": "John_Smith_Java_Developer.pdf",
         "skill_channel_id": "JavaDev123" or null,
         "job_title": "Java Developer",
         "candidate_name": "John Smith"
       },
       {
         "resume_url": "https://drive.google.com/file/d/def456/view",
+        "resume_filename": "Jane_Doe_Python.docx",
         "skill_channel_id": "PythDev98" or null,
         "job_title": "Python Developer",
         "candidate_name": "Jane Doe"
@@ -292,6 +294,7 @@ Fields:
     ]
 
     IMPORTANT RULES:
+    - `resume_filename` MUST be the ORIGINAL email attachment filename (NOT the Drive ID)
     - Parse the email body to understand which resume is for which role
     - Look for patterns like "Resume for Java Developer role: John Smith"
     - Look for skill channel IDs (10-char codes) mentioned near candidate names
@@ -361,9 +364,12 @@ Output format:
       "interview_time": "14:00",
       "timezone": "IST",
       "skill_channel_id": "QUADRJAVA5",
-      "resume_drive_url": "https://drive.google.com/file/d/xxx/view"
+      "resume_drive_url": "https://drive.google.com/file/d/xxx/view",
+      "resume_filename": "John_Doe_Java_Developer.pdf"
     }
   ]
+  
+  NOTE: `resume_filename` MUST be the ORIGINAL email attachment filename, NOT the Drive ID.
 
 Set to empty array [] if:
   - Intent is not "New candidate submission" or "New interview request"
@@ -411,6 +417,7 @@ PART 10  FINAL OUTPUT JSON  (*** UPDATED ***)
   "resume_associations":        [
     {
       "resume_url":        "<Google Drive URL>",
+      "resume_filename":   "<original attachment filename>",
       "skill_channel_id":  "<10-char string or null>",
       "job_title":         "<string or null>",
       "candidate_name":    "<string or null>"
@@ -427,7 +434,8 @@ PART 10  FINAL OUTPUT JSON  (*** UPDATED ***)
       "interview_time":      "<HH:MM>",
       "timezone":            "<string, default IST>",
       "skill_channel_id":    "<10-char string>",
-      "resume_drive_url":    "<string or null>"
+      "resume_drive_url":    "<string or null>",
+      "resume_filename":     "<original attachment filename>"
     }
   ]
 }

@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[RaisedIssues](
 	[ClosedBy] [varchar](200) NULL,
 	[ClosedOn] [datetime] NULL,
 	[Requester] [varchar](50) NULL,
+	[interviewId] [int] NULL,
  CONSTRAINT [PK_RaisedIssues] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -30,6 +31,15 @@ WHERE Name IN (N'Requester')
 BEGIN
 	ALTER TABLE RaisedIssues
 	Alter column Requester [varchar](50) NULL
+END
+IF EXISTS(
+SELECT *
+FROM sys.columns
+WHERE Name IN (N'interviewId')
+    AND Object_ID = Object_ID(N'RaisedIssues'))
+BEGIN
+	ALTER TABLE RaisedIssues
+	Alter column interviewId int null
 END
 
 END
