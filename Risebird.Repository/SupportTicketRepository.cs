@@ -741,5 +741,23 @@ namespace Risebird.Repository
                 return new List<ProcessingLogVM>();
             }
         }
+
+        public async Task<List<TemplateMatchVM>> GetTemplatesForSpecializationAsync(string primarySpecialization)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var templates = await conn.QueryAsync<TemplateMatchVM>(
+                    "usp_GetTemplatesForPrimarySpecialization",
+                    new { PrimarySpecialization = primarySpecialization },
+                    commandType: CommandType.StoredProcedure);
+                return templates.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<TemplateMatchVM>();
+            }
+        }
     }
 }
