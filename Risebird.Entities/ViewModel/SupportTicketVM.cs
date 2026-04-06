@@ -400,4 +400,44 @@ namespace Risebird.Entities.ViewModel
         public DateTime  CreatedAt         { get; set; }
         public int?      DurationMs        { get; set; }
     }
+
+    /// <summary>Template match for creating new skill channels from pending resumes modal.</summary>
+    public class TemplateMatchVM
+    {
+        public int       TemplateId           { get; set; }
+        public string    TemplateName         { get; set; }
+        public string    TemplateNameClean    { get; set; }
+        public int       AssessmentGroupId    { get; set; }
+        public string    AssessmentGroupName  { get; set; }
+        public string    MeetingPlatform      { get; set; }
+        public string    SourceIRFStringId    { get; set; }
+        public int       SourceIRFId          { get; set; }
+        public string    ChannelOwner         { get; set; }
+        public int       MatchScore           { get; set; }
+        public int       SkillChannelCounts   { get; set; }
+    }
+
+    /// <summary>Request model for creating a new skill channel from template.</summary>
+    public class CreateChannelFromTemplateRequest
+    {
+        public int     TemplateId         { get; set; }
+        public int     ClientId           { get; set; }
+        public string  JDTitle            { get; set; }
+        public int[]   ClientUserIds      { get; set; }
+        public int     BillingOwnerId     { get; set; }
+        public bool    IsAIInterview      { get; set; }
+        public int     AIInterviewType    { get; set; }
+        public string  CreatedByEmail     { get; set; }
+    }
+
+    /// <summary>Response model for create channel operation.</summary>
+    public class CreateChannelResponse
+    {
+        public bool    Success            { get; set; }
+        public int     NewIRFId           { get; set; }
+        public string  NewIRFStringId     { get; set; }
+        public string  JDTitle            { get; set; }
+        public string  SchedulingLink     { get; set; }
+        public string  Message            { get; set; }
+    }
 }
