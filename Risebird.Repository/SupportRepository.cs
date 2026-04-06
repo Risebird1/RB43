@@ -183,6 +183,7 @@ namespace Risebird.Repository
                 parameters.Add("@RequestedBy", model.RequestedBy);
                 parameters.Add("@RequestedOn", DateTime.Now);
                 parameters.Add("@Requester", model.Requester);
+                parameters.Add("@interviewId", model.interviewId);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
