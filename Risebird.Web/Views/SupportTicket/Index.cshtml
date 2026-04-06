@@ -2085,7 +2085,7 @@
             $row.find('.irf-select').prop('disabled', true);
             $row.find('.interview-datetime').prop('disabled', true);
             $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Processing…');
-
+            debugger;
             $.ajax({
                 url: '@Url.Action("IngestPendingResume", "SupportTicket")',
                 type: 'POST',
