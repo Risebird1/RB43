@@ -89,7 +89,7 @@
     }
 
     .nav-tabs > .nav-item > .nav-link{
-        padding:7px 23px;
+        padding:2px 23px;
     }
     /* ── Stat cards ─────────────────────────────────────────────────────────── */
     .st-stat .stat-value { font-size: 1.5rem; font-weight: 700; }
@@ -148,7 +148,13 @@
     .col-mail    { min-width: 160px; max-width: 260px; }
     .col-status  { width: 82px; white-space: nowrap; }
     .col-actions { width: 104px; white-space: nowrap; }
-    .col-irf     { min-width: 100px; max-width: 180px; }
+    .col-irf     {
+        min-width: 140px;
+        max-width: 280px;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        hyphens: auto;
+    }
 
     .st-email-ellipsis,
     .st-assign-ellipsis {
@@ -166,10 +172,11 @@
         min-width: 0;
     }
 
-    /* ── IRF badge (system tab) ───────────────────────────────────────────────── */
-    .irf-badge   { display: inline-block; font-size: 11px; padding: 0.25em 0.55em;
-                   border-radius: 4px; font-weight: 600; background: #e9ecef; color: #212529; }
-    .irf-badge .jd-title { font-weight: 400; font-style: italic; color: #666; margin-left: 4px; }
+    /* ── IRF badge (system / hybrid tab) ─────────────────────────────────────── */
+    .irf-badge   { display: block; font-size: 11px; padding: 0.35em 0.55em;
+                   border-radius: 4px; font-weight: 600; background: #e9ecef; color: #212529;
+                   white-space: normal; line-height: 1.4; max-width: 100%; box-sizing: border-box; }
+    .irf-badge .jd-title { font-weight: 400; font-style: italic; color: #666; display: inline; }
     .btn-resumes { font-size: 11px; padding: 3px 8px; }
 
     /* ── Mail preview ───────────────────────────────────────────────────────── */
@@ -183,9 +190,16 @@
          margin-top: 3px;
         white-space: nowrap; border-radius: 20px;
         background: transparent; border: 1px solid #dee2e6;
-        color: #868e96; letter-spacing: 0.2px; transition: all 0.15s ease;
+        color: #868e96 !important;
+        letter-spacing: 0.2px;
+        transition: all 0.15s ease;
     }
-    .btn-view-mail:hover { background: #f1f3f5; border-color: #adb5bd; color: #495057; }
+
+        .btn-view-mail:hover {
+            background: #f1f3f5 !important;
+            border-color: #f1f3f5;
+            color: #868e96!important;
+        }
 
     /* ── Attachment icons ───────────────────────────────────────────────────── */
     .attach-icons { display: flex; gap: 5px; justify-content: center; align-items: center; }
@@ -196,7 +210,16 @@
 
     /* ── Action buttons ─────────────────────────────────────────────────────── */
     .action-btns { display: flex; gap: 4px; justify-content: center; flex-wrap: nowrap; }
-    .btn.btn-sm  { font-size: 11px; padding: 3px 5px; background: #d4cece85; }
+
+    .btn.btn-sm {
+        font-size: 9px !important;
+        padding: 1px 5px;
+        background: #d4cece4f !important;
+        line-height: 13px;
+    }
+    .btn.btn-sm:hover{
+        color:#8e869e;
+    }
     .status-change-btn, .btn-history { font-size: 11px; padding: 2px 6px; line-height: 1.4; flex-shrink: 0; }
 
     /* ── Inline assignment editor ────────────────────────────────────────────── */
@@ -635,7 +658,8 @@
                                         <td class="col-irf">
                                             @if (t.IngestedIRFId.HasValue && !string.IsNullOrEmpty(t.IngestedIRFName))
                                             {
-                                                <span class="irf-badge">
+                                                var irfTitle = t.IngestedIRFName + (string.IsNullOrEmpty(t.IngestedIRFJDTitle) ? "" : " (" + t.IngestedIRFJDTitle.Trim() + ")");
+                                                <span class="irf-badge" title="@irfTitle">
                                                     @t.IngestedIRFName
                                                     @if (!string.IsNullOrEmpty(t.IngestedIRFJDTitle))
                                                     {
@@ -651,7 +675,7 @@
                                     }
 
                                     <td class="col-status">
-                                        <span class="intent-badge @statusCss">@(t.Status ?? "Open")</span>
+                                        <span style="word-break: normal; "class="intent-badge @statusCss">@(t.Status ?? "Open")</span>
                                     </td>
 
                                     <td class="col-actions">

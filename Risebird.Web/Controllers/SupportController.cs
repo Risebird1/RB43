@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
@@ -398,7 +398,7 @@ namespace Risebird.Web.Controllers
             return RedirectToAction("Alertmessage");
         }
         #region Raise Tickets
-        public async Task<IActionResult> RaiseBugRequest()
+        public async Task<IActionResult> RaiseBugRequest(int? interviewId = null, int? irfId = null, int? penaltyAmount = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -419,6 +419,19 @@ namespace Risebird.Web.Controllers
                 }
                 model.RequestedBy = emailId;
                 model.Requester = profileName;
+                if (interviewId.HasValue)
+                {
+                    model.Comment = $"Reclaim penalty request. Interview ID: {interviewId.Value}.";
+                    if (irfId.HasValue && irfId.Value > 0)
+                    {
+                        model.Comment += $" IRF ID: {irfId.Value}.";
+                    }
+                    if (penaltyAmount.HasValue && penaltyAmount.Value != 0)
+                    {
+                        model.Comment += $" Late report penalty amount: {penaltyAmount.Value}.";
+                    }
+                    model.Comment += " ";
+                }
                 return PartialView(model);
             }
             else
