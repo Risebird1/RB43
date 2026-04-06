@@ -1034,12 +1034,6 @@
                                         <div class="context-value"><span class="badge bg-primary" id="ctxPrimarySpec"></span></div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="context-field">
-                                        <label class="context-label">Job Title (Extracted)</label>
-                                        <div class="context-value" id="ctxJobTitle"></div>
-                                    </div>
-                                </div>
                                 <div class="col-12" id="ctxSummaryWrap" style="display:none">
                                     <div class="context-field">
                                         <label class="context-label">AI Summary</label>
@@ -1284,15 +1278,13 @@
         }
 
         function parseDateTimeFromInput(inputValue) {
-            // Parse datetime-local input value and return ISO string
+            // Return datetime-local value as-is (without timezone conversion)
+            // The datetime-local input gives YYYY-MM-DDTHH:mm format which is what the server expects
+            // DO NOT use toISOString() as it converts to UTC (subtracts IST offset of 5:30)
             if (!inputValue) return null;
-            try {
-                var d = new Date(inputValue);
-                if (isNaN(d.getTime())) return null;
-                return d.toISOString();
-            } catch (e) {
-                return null;
-            }
+            // Validate format: should be YYYY-MM-DDTHH:mm or YYYY-MM-DDTHH:mm:ss
+            if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(inputValue)) return null;
+            return inputValue; // Return as-is, server will parse it as local time
         }
 
         /* ── Button builders ─────────────────────────────────────────────── */
@@ -1741,7 +1733,6 @@
             $('#ctxIntent').text(r.ticketIntent || '—');
             $('#ctxSubject').text(r.ticketSubject || '—');
             $('#ctxPrimarySpec').text(r.ticketPrimarySpecialization || '—');
-            $('#ctxJobTitle').text(r.ticketJobTitle || '—');
             
             // Attachments
             var attachments = [];
@@ -1781,8 +1772,8 @@
                 var rowClass = !hasIRF && r.status === 'Pending' ? 'no-irf-warning' : '';
                 var wasChanged = r.irfChangedByHR;
                 
-                // Candidate cell - extract filename from URL for tooltip
-                var fileName = extractFileNameFromUrl(r.resumeUrl);
+                // Candidate cell - use stored filename if available, otherwise extract from URL
+                var fileName = r.resumeFileName || extractFileNameFromUrl(r.resumeUrl);
                 var candidateHtml = '<div class="candidate-cell">' +
                     '<div class="name">' + escapeHtml(r.candidateName || 'Unknown') + '</div>' +
                     '<div class="email">' + escapeHtml(r.candidateEmail || '—') + '</div>' +
@@ -2109,7 +2100,7 @@
             $row.find('.irf-select').prop('disabled', true);
             $row.find('.interview-datetime').prop('disabled', true);
             $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Processing…');
-
+            debugger;
             $.ajax({
                 url: '@Url.Action("IngestPendingResume", "SupportTicket")',
                 type: 'POST',

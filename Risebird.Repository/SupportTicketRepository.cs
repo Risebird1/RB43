@@ -409,6 +409,7 @@ namespace Risebird.Repository
         public async Task<int> InsertPendingResumeAsync(
             int supportTicketId,
             string resumeUrl,
+            string resumeFileName,
             string candidateName,
             string candidateEmail,
             int? resolvedIRFId,
@@ -428,6 +429,7 @@ namespace Risebird.Repository
                     {
                         SupportTicketId            = supportTicketId,
                         ResumeUrl                  = resumeUrl,
+                        ResumeFileName             = resumeFileName,
                         CandidateName              = candidateName,
                         CandidateEmail             = candidateEmail,
                         ResolvedIRFId              = resolvedIRFId,

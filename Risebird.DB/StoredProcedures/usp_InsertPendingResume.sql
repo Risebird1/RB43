@@ -5,6 +5,7 @@
 CREATE OR ALTER PROCEDURE [dbo].[usp_InsertPendingResume]
     @SupportTicketId            INT,
     @ResumeUrl                  NVARCHAR(1000),
+    @ResumeFileName             NVARCHAR(500)   = NULL,
     @CandidateName              NVARCHAR(200)   = NULL,
     @CandidateEmail             VARCHAR(150)    = NULL,
     @ResolvedIRFId              INT             = NULL,
@@ -19,14 +20,14 @@ BEGIN
     SET NOCOUNT ON;
     
     INSERT INTO dbo.SupportTicketPendingResumes (
-        SupportTicketId, ResumeUrl, CandidateName, CandidateEmail,
+        SupportTicketId, ResumeUrl, ResumeFileName, CandidateName, CandidateEmail,
         ResolvedIRFId, ResolvedIRFStringId, ResolvedJobTitle, ResolvedHREmail,
         OriginalResolvedIRFId, OriginalResolvedIRFStringId,
         HasSchedulingData, ScheduledInterviewDateTime, ScheduleTimezone,
         Status, IRFChangedByHR, CreatedAt
     )
     VALUES (
-        @SupportTicketId, @ResumeUrl, @CandidateName, @CandidateEmail,
+        @SupportTicketId, @ResumeUrl, @ResumeFileName, @CandidateName, @CandidateEmail,
         @ResolvedIRFId, @ResolvedIRFStringId, @ResolvedJobTitle, @ResolvedHREmail,
         @ResolvedIRFId, @ResolvedIRFStringId,  -- Store original values
         @HasSchedulingData, @ScheduledInterviewDateTime, @ScheduleTimezone,

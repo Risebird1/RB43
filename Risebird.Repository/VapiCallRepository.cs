@@ -44,11 +44,12 @@ namespace Risebird.Repository
         {
             try
             {
-                await LogRepositoryCheckpoint("REPO-A", $"SaveCallLogAsync called - VapiCallId: {callLog.VapiCallId}, RecipientPhone: {callLog.RecipientPhone}, RecipientName: {callLog.RecipientName}", callLog.VapiCallId);
+                // Checkpoint logging disabled — testing phase complete, no longer writing to VapiWebhookCheckpoints
+                // await LogRepositoryCheckpoint("REPO-A", $"SaveCallLogAsync called - VapiCallId: {callLog.VapiCallId}, RecipientPhone: {callLog.RecipientPhone}, RecipientName: {callLog.RecipientName}", callLog.VapiCallId);
 
                 using (var conn = new SqlConnection(_connectionString))
                 {
-                    await LogRepositoryCheckpoint("REPO-B", "Connection created, about to execute INSERT", callLog.VapiCallId);
+                    // await LogRepositoryCheckpoint("REPO-B", "Connection created, about to execute INSERT", callLog.VapiCallId);
 
                     var sql = @"
                         INSERT INTO VapiCallLogs (
@@ -67,46 +68,45 @@ namespace Risebird.Repository
 
                     var id = await conn.ExecuteScalarAsync<int>(sql, callLog);
 
-                    await LogRepositoryCheckpoint("REPO-C-SUCCESS", $"INSERT executed successfully - New ID: {id}", callLog.VapiCallId);
+                    // await LogRepositoryCheckpoint("REPO-C-SUCCESS", $"INSERT executed successfully - New ID: {id}", callLog.VapiCallId);
 
                     return id;
                 }
             }
             catch (Exception ex)
             {
-                await LogRepositoryCheckpoint("REPO-ERROR", $"SaveCallLogAsync failed - {ex.Message}", callLog?.VapiCallId, $"InnerException: {ex.InnerException?.Message}\nStackTrace: {ex.StackTrace}");
+                // await LogRepositoryCheckpoint("REPO-ERROR", $"SaveCallLogAsync failed - {ex.Message}", callLog?.VapiCallId, $"InnerException: {ex.InnerException?.Message}\nStackTrace: {ex.StackTrace}");
                 throw;
             }
         }
 
-        /// <summary>
-        /// Logs repository checkpoint to database
-        /// </summary>
-        private async Task LogRepositoryCheckpoint(string checkpointName, string message, string callId = null, string additionalData = null)
+        // Checkpoint logging disabled — testing phase complete, no longer writing to VapiWebhookCheckpoints
+        private Task LogRepositoryCheckpoint(string checkpointName, string message, string callId = null, string additionalData = null)
         {
-            try
-            {
-                using (var conn = new SqlConnection(_connectionString))
-                {
-                    var sql = @"INSERT INTO VapiWebhookCheckpoints 
-                        (Timestamp, CheckpointName, Message, CallId, ToolCallName, AdditionalData)
-                        VALUES (@Timestamp, @CheckpointName, @Message, @CallId, @ToolCallName, @AdditionalData)";
-
-                    await conn.ExecuteAsync(sql, new
-                    {
-                        Timestamp = DateTime.UtcNow,
-                        CheckpointName = checkpointName,
-                        Message = message,
-                        CallId = callId,
-                        ToolCallName = "Repository",
-                        AdditionalData = additionalData?.Length > 5000 ? additionalData.Substring(0, 5000) : additionalData
-                    });
-                }
-            }
-            catch
-            {
-                // Silently fail
-            }
+            // try
+            // {
+            //     using (var conn = new SqlConnection(_connectionString))
+            //     {
+            //         var sql = @"INSERT INTO VapiWebhookCheckpoints
+            //             (Timestamp, CheckpointName, Message, CallId, ToolCallName, AdditionalData)
+            //             VALUES (@Timestamp, @CheckpointName, @Message, @CallId, @ToolCallName, @AdditionalData)";
+            //
+            //         await conn.ExecuteAsync(sql, new
+            //         {
+            //             Timestamp = DateTime.UtcNow,
+            //             CheckpointName = checkpointName,
+            //             Message = message,
+            //             CallId = callId,
+            //             ToolCallName = "Repository",
+            //             AdditionalData = additionalData?.Length > 5000 ? additionalData.Substring(0, 5000) : additionalData
+            //         });
+            //     }
+            // }
+            // catch
+            // {
+            //     // Silently fail
+            // }
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -156,21 +156,21 @@ namespace Risebird.Repository
         {
             try
             {
-                await LogRepositoryCheckpoint("REPO-D", $"GetCallLogByVapiCallIdAsync called - Looking for VapiCallId: {vapiCallId}", vapiCallId);
+                // await LogRepositoryCheckpoint("REPO-D", $"GetCallLogByVapiCallIdAsync called - Looking for VapiCallId: {vapiCallId}", vapiCallId);
 
                 using (var conn = new SqlConnection(_connectionString))
                 {
                     var sql = "SELECT * FROM VapiCallLogs WHERE VapiCallId = @VapiCallId";
                     var result = await conn.QueryFirstOrDefaultAsync<VapiCallLog>(sql, new { VapiCallId = vapiCallId });
 
-                    await LogRepositoryCheckpoint("REPO-E", $"Query executed - Result found: {result != null}, Result ID: {result?.Id ?? 0}", vapiCallId);
+                    // await LogRepositoryCheckpoint("REPO-E", $"Query executed - Result found: {result != null}, Result ID: {result?.Id ?? 0}", vapiCallId);
 
                     return result;
                 }
             }
             catch (Exception ex)
             {
-                await LogRepositoryCheckpoint("REPO-ERROR", $"GetCallLogByVapiCallIdAsync failed - {ex.Message}", vapiCallId, ex.StackTrace);
+                // await LogRepositoryCheckpoint("REPO-ERROR", $"GetCallLogByVapiCallIdAsync failed - {ex.Message}", vapiCallId, ex.StackTrace);
                 return null;
             }
         }

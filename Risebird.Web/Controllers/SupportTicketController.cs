@@ -461,17 +461,28 @@ namespace Risebird.Web.Controllers
                 var isNewInterviewRequest = string.Equals(ticket.Intent, 
                     "New interview request", StringComparison.OrdinalIgnoreCase);
                 
-                // For "New interview request" with JD attached:
-                // This is a request to CREATE a new skill channel — no resume ingestion.
-                var isNewChannelRequest = isNewInterviewRequest && ticket.AttachmentJobDescription;
-                
                 // Check available resume data sources
                 var hasResumeAssociations = payload.ResumeAssociations != null && payload.ResumeAssociations.Count > 0;
                 var hasLegacyUrls = payload.ResumeDriveUrls != null && payload.ResumeDriveUrls.Count > 0;
                 var hasCandidateScheduleData = payload.CandidateScheduleData != null && payload.CandidateScheduleData.Count > 0;
-                
-                var isResumeIngestionIntent = isNewCandidateSubmission || (isNewInterviewRequest && !isNewChannelRequest);
                 var hasResumesToProcess = hasResumeAssociations || hasLegacyUrls || hasCandidateScheduleData;
+                
+                // Also check if AttachmentResumes flag indicates resumes exist in the drive folder
+                var hasResumeAttachments = ticket.AttachmentResumes;
+                
+                // For "New interview request" with JD attached BUT NO resumes:
+                // This is a request to CREATE a new skill channel — no resume ingestion needed.
+                // If there ARE resumes (in URLs or indicated by AttachmentResumes), process them.
+                var isNewChannelRequestOnly = isNewInterviewRequest && 
+                    ticket.AttachmentJobDescription && 
+                    !hasResumesToProcess && 
+                    !hasResumeAttachments;
+                
+                // Process resumes for:
+                // 1. "New candidate submission" intent
+                // 2. "New interview request" that has resumes (even if JD is also attached)
+                var isResumeIngestionIntent = isNewCandidateSubmission || 
+                    (isNewInterviewRequest && !isNewChannelRequestOnly);
                 
                 int pendingCount = 0;
                 string fallbackHR = null;
@@ -529,6 +540,7 @@ namespace Risebird.Web.Controllers
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
                                     candidate.ResumeDriveUrl.Trim(),
+                                    candidate.ResumeFileName?.Trim(),
                                     candidate.CandidateName?.Trim(),
                                     candidate.CandidateEmail?.Trim(),
                                     irfMatch?.Id,
@@ -595,6 +607,7 @@ namespace Risebird.Web.Controllers
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
                                     assoc.ResumeUrl.Trim(),
+                                    assoc.ResumeFileName?.Trim(),
                                     assoc.CandidateName?.Trim(),
                                     null, // no email in resume_associations
                                     irfMatch?.Id,
@@ -649,6 +662,7 @@ namespace Risebird.Web.Controllers
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
                                     url.Trim(),
+                                    null, // no filename available for legacy URLs
                                     null, // no candidate name
                                     null, // no email
                                     irfMatch?.Id,
@@ -683,9 +697,59 @@ namespace Risebird.Web.Controllers
                     pendingResumeResult.Append(
                         $"{pendingCount} resume(s) queued for HR review. Assigned to {hrEmail ?? "unassigned"}.");
                 }
-                else if (isNewChannelRequest)
+                else if (isResumeIngestionIntent && hasResumeAttachments && pendingCount == 0)
                 {
-                    // New channel request - assign to HR
+                    // Resumes exist in drive folder but we couldn't extract individual URLs
+                    // Create a placeholder pending resume pointing to the drive folder
+                    IrfMatchVM irfMatch = null;
+                    if (!string.IsNullOrWhiteSpace(ticket.PrimarySpecialization))
+                    {
+                        irfMatch = await MatchIRFAsync(
+                            ticket.SenderEmail,
+                            ticket.JobTitle ?? ticket.Subject,
+                            payload.SkillChannelId,
+                            ticket.PrimarySpecialization);
+                    }
+                    
+                    // Use drive folder link as the "resume URL" for placeholder
+                    var driveLink = ticket.DriveFolderLink;
+                    if (!string.IsNullOrWhiteSpace(driveLink))
+                    {
+                        try
+                        {
+                            await _repository.InsertPendingResumeAsync(
+                                newId,
+                                driveLink,
+                                "Drive Folder (multiple resumes)", // placeholder filename
+                                null, // no candidate name
+                                null, // no email
+                                irfMatch?.Id,
+                                irfMatch?.IRFStringId,
+                                irfMatch?.JDTiltle,
+                                irfMatch?.RisebirdHrEmail,
+                                false,
+                                null,
+                                null);
+                            pendingCount = 1;
+                        }
+                        catch (Exception ex)
+                        {
+                            await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                        }
+                    }
+                    
+                    var hrEmail = irfMatch?.RisebirdHrEmail ?? await _repository.GetHRForSenderAsync(ticket.SenderEmail);
+                    if (!string.IsNullOrWhiteSpace(hrEmail))
+                    {
+                        await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
+                    }
+                    
+                    pendingResumeResult.Append(
+                        $"Resumes detected in drive folder (URLs not extracted). Queued for HR review. Assigned to {hrEmail ?? "unassigned"}.");
+                }
+                else if (isNewChannelRequestOnly)
+                {
+                    // New channel request (JD only, no resumes) - assign to HR
                     var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
                     if (!string.IsNullOrWhiteSpace(hrEmail))
                     {
@@ -1158,11 +1222,12 @@ namespace Risebird.Web.Controllers
 
                 if (hasScheduleTime)
                 {
+                    // ClientHREmailId should be the SENDER (client HR who submitted), not the Risebird channel owner
                     ingestedResumeId = await _repository.InsertCandidateResumeForAutoScheduleAsync(
                         pending.ResolvedIRFId.Value,
                         pending.ResumeUrl,
                         hrId,
-                        pending.ResolvedHREmail,
+                        pending.TicketSenderEmail,  // Client HR email, not channel owner
                         pending.SupportTicketId,
                         pending.CandidateName,
                         pending.CandidateEmail,
@@ -1170,11 +1235,12 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
+                    // ClientHREmailId should be the SENDER (client HR who submitted), not the Risebird channel owner
                     ingestedResumeId = await _repository.InsertCandidateResumeAsync(
                         pending.ResolvedIRFId.Value,
                         pending.ResumeUrl,
                         hrId,
-                        pending.ResolvedHREmail,
+                        pending.TicketSenderEmail,  // Client HR email, not channel owner
                         pending.SupportTicketId);
                 }
                 stepStopwatch.Stop();
@@ -1310,20 +1376,62 @@ namespace Risebird.Web.Controllers
                             var response = await restClient.ExecuteAsync(restRequest);
                             stepStopwatch.Stop();
 
-                            if (response.IsSuccessful)
+                            // Parse response body to check actual scheduling status
+                            // The API returns 200 OK even when scheduling fails (e.g., no slot available)
+                            // We must check the onboardingStatus field to know the real outcome
+                            string actualStatus = null;
+                            string meetingLink = null;
+                            bool schedulingActuallySucceeded = false;
+
+                            if (response.IsSuccessful && !string.IsNullOrEmpty(response.Content))
+                            {
+                                try
+                                {
+                                    var scheduleResponse = JsonConvert.DeserializeObject<ScheduleCandidateResponse>(response.Content);
+                                    if (scheduleResponse?.list != null && scheduleResponse.list.Count > 0)
+                                    {
+                                        var candidateStatus = scheduleResponse.list[0];
+                                        actualStatus = candidateStatus.onboardingStatus;
+                                        meetingLink = candidateStatus.meetingLink;
+                                        
+                                        // Only consider it successful if onboardingStatus is "successful"
+                                        schedulingActuallySucceeded = string.Equals(actualStatus, "successful", StringComparison.OrdinalIgnoreCase);
+                                    }
+                                }
+                                catch (Exception parseEx)
+                                {
+                                    await _logger.LogMessage(LogLevelInfo.Warning, parseEx);
+                                    actualStatus = $"Parse error: {parseEx.Message}";
+                                }
+                            }
+
+                            if (schedulingActuallySucceeded)
                             {
                                 scheduleMessage = $"Interview scheduled for {scheduledDateTime.Value:dd MMM yyyy hh:mm tt} IST" +
-                                    (datetimeOverridden ? " (time modified by HR)" : "");
+                                    (datetimeOverridden ? " (time modified by HR)" : "") +
+                                    (!string.IsNullOrEmpty(meetingLink) && meetingLink != "NA" ? $" | Meeting: {meetingLink}" : "");
                                 await _repository.LogProcessingCheckpointAsync(
                                     ticketId, pendingId, candidateResumeId,
                                     "CP08_SCHEDULE", "Success",
                                     scheduleMessage,
-                                    JsonConvert.SerializeObject(new { response.StatusCode, ResponseContent = response.Content }),
+                                    JsonConvert.SerializeObject(new { response.StatusCode, actualStatus, meetingLink, ResponseContent = response.Content }),
+                                    processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                            }
+                            else if (response.IsSuccessful)
+                            {
+                                // API returned 200 but scheduling didn't actually succeed
+                                scheduleMessage = $"Scheduling not completed: {actualStatus ?? "Unknown status"}. Please check slot availability or try a different time.";
+                                await _repository.LogProcessingCheckpointAsync(
+                                    ticketId, pendingId, candidateResumeId,
+                                    "CP08_SCHEDULE", "Warning",
+                                    scheduleMessage,
+                                    JsonConvert.SerializeObject(new { response.StatusCode, actualStatus, meetingLink, ResponseContent = response.Content }),
                                     processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                             }
                             else
                             {
-                                scheduleMessage = $"Scheduling failed: {response.Content ?? response.ErrorMessage}";
+                                // HTTP error
+                                scheduleMessage = $"Scheduling failed (HTTP {(int)response.StatusCode}): {response.ErrorMessage ?? response.Content}";
                                 await _repository.LogProcessingCheckpointAsync(
                                     ticketId, pendingId, candidateResumeId,
                                     "CP08_SCHEDULE", "Failed",
@@ -1473,13 +1581,58 @@ namespace Risebird.Web.Controllers
 
                 var response = await restClient.ExecuteAsync(restRequest);
 
-                if (response.IsSuccessful)
+                // Parse response to check actual scheduling status
+                // API returns 200 OK even when scheduling fails (e.g., no slot available)
+                string actualStatus = null;
+                string meetingLink = null;
+                bool schedulingActuallySucceeded = false;
+
+                if (response.IsSuccessful && !string.IsNullOrEmpty(response.Content))
                 {
+                    try
+                    {
+                        var scheduleResponse = JsonConvert.DeserializeObject<ScheduleCandidateResponse>(response.Content);
+                        if (scheduleResponse?.list != null && scheduleResponse.list.Count > 0)
+                        {
+                            var candidateStatus = scheduleResponse.list[0];
+                            actualStatus = candidateStatus.onboardingStatus;
+                            meetingLink = candidateStatus.meetingLink;
+                            
+                            // Only consider successful if onboardingStatus is "successful"
+                            schedulingActuallySucceeded = string.Equals(actualStatus, "successful", StringComparison.OrdinalIgnoreCase);
+                        }
+                    }
+                    catch (Exception parseEx)
+                    {
+                        await _logger.LogMessage(LogLevelInfo.Warning, parseEx);
+                        actualStatus = $"Response parse error: {parseEx.Message}";
+                    }
+                }
+
+                if (schedulingActuallySucceeded)
+                {
+                    var successMsg = $"Interview scheduled for {candidateName} ({candidateEmail}) at {candidate.ScheduledInterviewDateTime:g}";
+                    if (!string.IsNullOrEmpty(meetingLink) && meetingLink != "NA")
+                        successMsg += $" | Meeting link: {meetingLink}";
+                    
                     return Json(new
                     {
                         success = true,
-                        message = $"Interview scheduled for {candidateName} ({candidateEmail}) at {candidate.ScheduledInterviewDateTime:g}",
+                        message = successMsg,
+                        onboardingStatus = actualStatus,
+                        meetingLink = meetingLink,
                         apiResponse = response.Content
+                    });
+                }
+                else if (response.IsSuccessful)
+                {
+                    // API returned 200 but scheduling didn't actually succeed
+                    return Json(new
+                    {
+                        success = false,
+                        error = $"Scheduling not completed: {actualStatus ?? "Unknown status"}. Please check slot availability or try a different time.",
+                        onboardingStatus = actualStatus,
+                        details = response.Content
                     });
                 }
                 else
@@ -1487,7 +1640,7 @@ namespace Risebird.Web.Controllers
                     return Json(new
                     {
                         success = false,
-                        error = $"Schedule API returned {response.StatusCode}",
+                        error = $"Schedule API returned HTTP {(int)response.StatusCode}: {response.ErrorMessage}",
                         details = response.Content
                     });
                 }
