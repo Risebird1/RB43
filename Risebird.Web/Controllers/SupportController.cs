@@ -421,16 +421,18 @@ namespace Risebird.Web.Controllers
                 model.Requester = profileName;
                 if (interviewId.HasValue)
                 {
-                    model.Comment = $"Reclaim penalty request. Interview ID: {interviewId.Value}.";
-                    if (irfId.HasValue && irfId.Value > 0)
-                    {
-                        model.Comment += $" IRF ID: {irfId.Value}.";
-                    }
-                    if (penaltyAmount.HasValue && penaltyAmount.Value != 0)
-                    {
-                        model.Comment += $" Late report penalty amount: {penaltyAmount.Value}.";
-                    }
-                    model.Comment += " ";
+                    //model.Comment = $"Reclaim penalty request. Interview ID: {interviewId.Value}.";
+                    //if (irfId.HasValue && irfId.Value > 0)
+                    //{
+                    //    model.Comment += $" IRF ID: {irfId.Value}.";
+                    //}
+                    //if (penaltyAmount.HasValue && penaltyAmount.Value != 0)
+                    //{
+                    //    model.Comment += $" Late report penalty amount: {penaltyAmount.Value}.";
+                    //}
+                    //model.Comment += " ";
+                    model.interviewId = interviewId.Value;
+                    model.RequestType = "Payment";
                 }
                 return PartialView(model);
             }
