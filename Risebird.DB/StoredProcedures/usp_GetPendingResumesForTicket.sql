@@ -13,6 +13,7 @@ BEGIN
         pr.Id,
         pr.SupportTicketId,
         pr.ResumeUrl,
+        pr.ResumeFileName,
         pr.CandidateName,
         pr.CandidateEmail,
         pr.ResolvedIRFId,

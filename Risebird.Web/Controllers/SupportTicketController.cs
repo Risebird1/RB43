@@ -461,17 +461,28 @@ namespace Risebird.Web.Controllers
                 var isNewInterviewRequest = string.Equals(ticket.Intent, 
                     "New interview request", StringComparison.OrdinalIgnoreCase);
                 
-                // For "New interview request" with JD attached:
-                // This is a request to CREATE a new skill channel — no resume ingestion.
-                var isNewChannelRequest = isNewInterviewRequest && ticket.AttachmentJobDescription;
-                
                 // Check available resume data sources
                 var hasResumeAssociations = payload.ResumeAssociations != null && payload.ResumeAssociations.Count > 0;
                 var hasLegacyUrls = payload.ResumeDriveUrls != null && payload.ResumeDriveUrls.Count > 0;
                 var hasCandidateScheduleData = payload.CandidateScheduleData != null && payload.CandidateScheduleData.Count > 0;
-                
-                var isResumeIngestionIntent = isNewCandidateSubmission || (isNewInterviewRequest && !isNewChannelRequest);
                 var hasResumesToProcess = hasResumeAssociations || hasLegacyUrls || hasCandidateScheduleData;
+                
+                // Also check if AttachmentResumes flag indicates resumes exist in the drive folder
+                var hasResumeAttachments = ticket.AttachmentResumes;
+                
+                // For "New interview request" with JD attached BUT NO resumes:
+                // This is a request to CREATE a new skill channel — no resume ingestion needed.
+                // If there ARE resumes (in URLs or indicated by AttachmentResumes), process them.
+                var isNewChannelRequestOnly = isNewInterviewRequest && 
+                    ticket.AttachmentJobDescription && 
+                    !hasResumesToProcess && 
+                    !hasResumeAttachments;
+                
+                // Process resumes for:
+                // 1. "New candidate submission" intent
+                // 2. "New interview request" that has resumes (even if JD is also attached)
+                var isResumeIngestionIntent = isNewCandidateSubmission || 
+                    (isNewInterviewRequest && !isNewChannelRequestOnly);
                 
                 int pendingCount = 0;
                 string fallbackHR = null;
@@ -529,6 +540,7 @@ namespace Risebird.Web.Controllers
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
                                     candidate.ResumeDriveUrl.Trim(),
+                                    candidate.ResumeFileName?.Trim(),
                                     candidate.CandidateName?.Trim(),
                                     candidate.CandidateEmail?.Trim(),
                                     irfMatch?.Id,
@@ -595,6 +607,7 @@ namespace Risebird.Web.Controllers
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
                                     assoc.ResumeUrl.Trim(),
+                                    assoc.ResumeFileName?.Trim(),
                                     assoc.CandidateName?.Trim(),
                                     null, // no email in resume_associations
                                     irfMatch?.Id,
@@ -649,6 +662,7 @@ namespace Risebird.Web.Controllers
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
                                     url.Trim(),
+                                    null, // no filename available for legacy URLs
                                     null, // no candidate name
                                     null, // no email
                                     irfMatch?.Id,
@@ -683,9 +697,59 @@ namespace Risebird.Web.Controllers
                     pendingResumeResult.Append(
                         $"{pendingCount} resume(s) queued for HR review. Assigned to {hrEmail ?? "unassigned"}.");
                 }
-                else if (isNewChannelRequest)
+                else if (isResumeIngestionIntent && hasResumeAttachments && pendingCount == 0)
                 {
-                    // New channel request - assign to HR
+                    // Resumes exist in drive folder but we couldn't extract individual URLs
+                    // Create a placeholder pending resume pointing to the drive folder
+                    IrfMatchVM irfMatch = null;
+                    if (!string.IsNullOrWhiteSpace(ticket.PrimarySpecialization))
+                    {
+                        irfMatch = await MatchIRFAsync(
+                            ticket.SenderEmail,
+                            ticket.JobTitle ?? ticket.Subject,
+                            payload.SkillChannelId,
+                            ticket.PrimarySpecialization);
+                    }
+                    
+                    // Use drive folder link as the "resume URL" for placeholder
+                    var driveLink = ticket.DriveFolderLink;
+                    if (!string.IsNullOrWhiteSpace(driveLink))
+                    {
+                        try
+                        {
+                            await _repository.InsertPendingResumeAsync(
+                                newId,
+                                driveLink,
+                                "Drive Folder (multiple resumes)", // placeholder filename
+                                null, // no candidate name
+                                null, // no email
+                                irfMatch?.Id,
+                                irfMatch?.IRFStringId,
+                                irfMatch?.JDTiltle,
+                                irfMatch?.RisebirdHrEmail,
+                                false,
+                                null,
+                                null);
+                            pendingCount = 1;
+                        }
+                        catch (Exception ex)
+                        {
+                            await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                        }
+                    }
+                    
+                    var hrEmail = irfMatch?.RisebirdHrEmail ?? await _repository.GetHRForSenderAsync(ticket.SenderEmail);
+                    if (!string.IsNullOrWhiteSpace(hrEmail))
+                    {
+                        await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
+                    }
+                    
+                    pendingResumeResult.Append(
+                        $"Resumes detected in drive folder (URLs not extracted). Queued for HR review. Assigned to {hrEmail ?? "unassigned"}.");
+                }
+                else if (isNewChannelRequestOnly)
+                {
+                    // New channel request (JD only, no resumes) - assign to HR
                     var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
                     if (!string.IsNullOrWhiteSpace(hrEmail))
                     {

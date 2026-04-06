@@ -58,3 +58,10 @@ BEGIN
     ALTER TABLE dbo.SupportTickets ADD [HasPendingResumes] BIT NOT NULL DEFAULT 0;
 END
 GO
+
+-- Add ResumeFileName column if not exists (stores original attachment filename)
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'ResumeFileName' AND Object_ID = Object_ID(N'SupportTicketPendingResumes'))
+BEGIN
+    ALTER TABLE dbo.SupportTicketPendingResumes ADD [ResumeFileName] NVARCHAR(500) NULL;
+END
+GO

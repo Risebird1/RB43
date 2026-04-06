@@ -38,11 +38,16 @@ NEW — PER-RESUME IRF ASSOCIATION (*** CRITICAL ***):
   "resume_associations": [
     {
       "resume_url": "<Google Drive URL>",
+      "resume_filename": "<original attachment filename>",   ← NEW
       "skill_channel_id": "<10-char code or null>",
       "job_title": "<role this resume is for>",
       "candidate_name": "<candidate name from filename/body>"
     }
   ]
+  
+  IMPORTANT: `resume_filename` must be the ORIGINAL attachment filename (e.g.,
+  "John_Smith_Java_Developer.pdf"), NOT the Google Drive file ID/URL. This is
+  displayed in the HR review modal when hovering over the resume link.
   
   The server will:
   1. Process each resume individually
@@ -61,7 +66,8 @@ NEW — CANDIDATE SCHEDULE DATA EXTRACTION (*** See Part 8 in prompt ***):
   
   - Extract candidate_schedule_data array with 100% CONFIDENCE ONLY
   - Each entry must have: candidate_name, interview_date, interview_time, 
-    skill_channel_id (10-char IRF ID), and resume_drive_url
+    skill_channel_id (10-char IRF ID), resume_drive_url, and resume_filename
+  - `resume_filename` = original attachment filename (NOT the Drive URL)
   - Server will:
     1. Validate all fields
     2. Insert resumes with auto-schedule flag and extracted data
