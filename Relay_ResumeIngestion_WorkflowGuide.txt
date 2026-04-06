@@ -130,11 +130,63 @@ The full updated JSON body must include these fields (in addition to existing):
   - attachment_resumes
   - drive_folder_link
   - resume_drive_urls         (JSON Array — unchanged)
+  - resume_filenames          ← NEW (see below)
   - summary_mail
   - summary_candidates
   - summary_interview_scores
 
 Save the step.
+
+================================================================================
+STEP 2B — ADD resume_filenames ARRAY (*** NEW - IMPORTANT ***)
+================================================================================
+
+The `resume_filenames` array stores ORIGINAL attachment filenames (e.g., 
+"John_Smith_Java.pdf") and is a PARALLEL array to `resume_drive_urls`.
+
+  Index 0 of resume_filenames = filename for index 0 of resume_drive_urls
+  Index 1 of resume_filenames = filename for index 1 of resume_drive_urls
+  ... and so on
+
+This array comes DIRECTLY from the attachment processing loop, NOT from GPT
+(since GPT doesn't have access to original filenames).
+
+HOW TO SET UP:
+
+1. Locate your "For each item in Attachments" loop (or similar)
+
+2. Inside the loop, you should already be:
+   - Uploading the file to Google Drive
+   - Collecting the Drive URL into `resume_drive_urls`
+
+3. In the SAME loop, also collect the original filename:
+   - Look for a data pill like: `{{current_item.filename}}` or `{{current_item.name}}`
+   - Add this to a new array variable called `resume_filenames`
+
+4. In the HTTP webhook step, add the new field:
+   
+   Property name:  resume_filenames
+   Type:           JSON Array (List of Strings)
+   Value:          [data pill from the collected filenames array]
+
+IMPORTANT:
+  - The arrays MUST be in the same order (parallel)
+  - If you upload 3 files, you should have 3 URLs and 3 filenames
+  - The filename should be the ORIGINAL name (e.g., "Resume_John.pdf"),
+    NOT the Google Drive file ID or URL
+
+EXAMPLE OUTPUT:
+  "resume_drive_urls": [
+    "https://drive.google.com/file/d/abc123/view",
+    "https://drive.google.com/file/d/def456/view"
+  ],
+  "resume_filenames": [
+    "John_Smith_Java_Developer.pdf",
+    "Jane_Doe_Python.docx"
+  ]
+
+If you cannot set this up, the system will fall back to extracting a name
+from the Drive URL (which is less readable but still works).
 
 ================================================================================
 STEP 3 — VERIFY THE "resume_drive_urls" LOOP CONDITION (*** CRITICAL ***)
