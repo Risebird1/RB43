@@ -7,13 +7,23 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_SaveAiContradictionDetails]
-    @qcEvaluationId INT,
-    @contradictionJson varchar(max)
-AS
-BEGIN
-        UPDATE [dbo].[QcInterviewAIevaluation]
-        SET [ContradictionJson]=@contradictionJson
-        WHERE [id] = @qcEvaluationId;
-END
+Create PROCEDURE [dbo].[usp_SaveAiContradictionDetails]  
+    @qcEvaluationId INT,  
+    @contradictionJson varchar(max)  
+AS  
+BEGIN  
+Declare @Count int=0
+Set @Count=(Select Count(*) from QcInterviewAIevaluation where interviewid=@qcEvaluationId)
+
+if(@Count>0)
+begin
+        UPDATE [dbo].[QcInterviewAIevaluation]  
+        SET [ContradictionJson]=@contradictionJson  
+        WHERE [interviewid] = @qcEvaluationId;  
+end
+else
+begin
+Insert into QcInterviewAIevaluation (InterviewId,ContradictionJson) values(@qcEvaluationId,@contradictionJson)
+end
+END 
 GO
