@@ -25,17 +25,26 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger  _logger;
         private readonly IConfiguration           _configuration;
         private readonly IResumeParsingService    _resumeParser;
+        private readonly IIRFService              _irfService;
+        private readonly IClonableSkillChannelTemplateService _templateService;
+        private readonly IClientService           _clientService;
 
         public SupportTicketController(
             ISupportTicketRepository repository,
             IApplicationErrorLogger  logger,
             IConfiguration           configuration,
-            IResumeParsingService    resumeParser = null)
+            IResumeParsingService    resumeParser = null,
+            IIRFService              irfService = null,
+            IClonableSkillChannelTemplateService templateService = null,
+            IClientService           clientService = null)
         {
-            _repository    = repository;
-            _logger        = logger;
-            _configuration = configuration;
-            _resumeParser  = resumeParser;
+            _repository      = repository;
+            _logger          = logger;
+            _configuration   = configuration;
+            _resumeParser    = resumeParser;
+            _irfService      = irfService;
+            _templateService = templateService;
+            _clientService   = clientService;
         }
 
         // ── Dashboard ─────────────────────────────────────────────────────────
@@ -1731,6 +1740,174 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, error = ex.Message, logs = new List<ProcessingLogVM>() });
+            }
+        }
+
+        // ── Create Channel from Template ───────────────────────────────────────
+
+        /// <summary>
+        /// Gets templates whose assessment group names match the given primary specialization.
+        /// Returns templates sorted by match score (best matches first).
+        /// If no matches, returns all active templates.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetTemplatesForSpecialization(string specialization)
+        {
+            try
+            {
+                var templates = await _repository.GetTemplatesForSpecializationAsync(specialization ?? "");
+                return Json(new { success = true, templates });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message, templates = new List<TemplateMatchVM>() });
+            }
+        }
+
+        /// <summary>
+        /// Creates a new skill channel from the selected template.
+        /// Uses the same flow as IRFController.CreateInterviewLinkV1.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateChannelFromTemplate([FromBody] CreateChannelFromTemplateRequest request)
+        {
+            try
+            {
+                if (_irfService == null || _templateService == null)
+                    return Json(new CreateChannelResponse { Success = false, Message = "Required services not available" });
+
+                if (request.TemplateId <= 0)
+                    return Json(new CreateChannelResponse { Success = false, Message = "Please select a template" });
+
+                if (request.ClientId <= 0)
+                    return Json(new CreateChannelResponse { Success = false, Message = "Please select a client" });
+
+                if (string.IsNullOrWhiteSpace(request.JDTitle))
+                    return Json(new CreateChannelResponse { Success = false, Message = "Please enter a JD title" });
+
+                var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "")
+                           ?? request.CreatedByEmail ?? "support-ticket-flow";
+
+                // Get template data
+                var templateData = await _templateService.GetTemplateDataForPopulatingSkillChannel(request.TemplateId);
+                if (templateData == null)
+                    return Json(new CreateChannelResponse { Success = false, Message = "Template not found" });
+
+                // Generate unique skill channel name
+                var clientName = await _clientService.GetClientName(request.ClientId);
+                var irfId = GenerateSkillChannelName(templateData.AssessmentGroupName, clientName);
+
+                // Build the IRF model
+                var irfModel = new IRFVm
+                {
+                    CreatedFromTemplateId = request.TemplateId,
+                    AssessmentGroupId     = templateData.AssessmentGroupId,
+                    ClientId              = request.ClientId,
+                    JDTiltle              = request.JDTitle,
+                    IRFId                 = irfId,
+                    MeetingPlatform       = templateData.MeetingPlatform ?? "Zoho",
+                    StartDate             = DateTime.Now,
+                    EndDate               = DateTime.Now.AddMonths(3),
+                    IsAIInterview         = request.IsAIInterview,
+                    AIInterviewType       = request.AIInterviewType,
+                    BillingOwner          = request.BillingOwnerId
+                };
+
+                // Generate scheduling link
+                var schedulingLink = await GenerateSchedulingLinkAsync(irfModel);
+                irfModel.CalendlyLink = schedulingLink;
+
+                // Create the skill channel
+                var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(irfModel, emailId, "SupportTicket");
+
+                if (result.Item1)
+                {
+                    // Get the created IRF details
+                    var newIrf = await _irfService.GetSkillChannelDetailsByName(irfId);
+
+                    return Json(new CreateChannelResponse
+                    {
+                        Success        = true,
+                        NewIRFId       = newIrf?.id ?? 0,
+                        NewIRFStringId = irfId,
+                        JDTitle        = request.JDTitle,
+                        SchedulingLink = schedulingLink,
+                        Message        = $"Skill Channel '{irfId}' created successfully!"
+                    });
+                }
+                else
+                {
+                    return Json(new CreateChannelResponse
+                    {
+                        Success = false,
+                        Message = $"Failed to create skill channel: {result.Item2}"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new CreateChannelResponse { Success = false, Message = "Error creating channel: " + ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Generates a unique 10-character skill channel name.
+        /// Format: 3 chars client + 2 chars assessment group + 5 chars date-based.
+        /// </summary>
+        private string GenerateSkillChannelName(string assessmentGroupName, string clientCompanyName)
+        {
+            bool flag = false;
+            string skillChannelName = string.Empty;
+
+            while (!flag)
+            {
+                if (!string.IsNullOrEmpty(clientCompanyName) && clientCompanyName.Length >= 3 &&
+                    !string.IsNullOrEmpty(assessmentGroupName) && assessmentGroupName.Replace(" ", "").Length >= 2)
+                {
+                    skillChannelName = clientCompanyName.Substring(0, 3);
+                    skillChannelName = skillChannelName + assessmentGroupName.Replace(" ", "").Substring(0, 2) + GenerateRandomString();
+                }
+                else
+                {
+                    skillChannelName = "SKC" + Guid.NewGuid().ToString("N").Substring(0, 7);
+                }
+
+                flag = _irfService?.CheckUniqueness(skillChannelName, false) ?? true;
+            }
+
+            skillChannelName = skillChannelName.Replace(".", "a").Replace(" ", "-").Replace("+", "s").Replace("&", "o");
+            return skillChannelName;
+        }
+
+        private string GenerateRandomString()
+        {
+            var now = DateTime.Now;
+            var day = now.Day.ToString("D2");
+            var month = now.Month.ToString("D2");
+            var sec = DigitalRoot(now.Second).ToString();
+            return day + month + sec;
+        }
+
+        private int DigitalRoot(int n)
+        {
+            if (n == 0) return 0;
+            return 1 + ((n - 1) % 9);
+        }
+
+        private async Task<string> GenerateSchedulingLinkAsync(IRFVm model)
+        {
+            try
+            {
+                var baseUrl = _configuration["SchedulerBaseUrl"] ?? "https://portal.risebird.io";
+                var uniqueId = Guid.NewGuid().ToString();
+                return $"{baseUrl}/InterviewScheduler/ScheduleEvent?id={uniqueId}";
+            }
+            catch
+            {
+                return $"https://portal.risebird.io/InterviewScheduler/ScheduleEvent?id={Guid.NewGuid()}";
             }
         }
     }
