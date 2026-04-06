@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -23,15 +24,18 @@ namespace Risebird.Web.Controllers
         private readonly ISupportTicketRepository _repository;
         private readonly IApplicationErrorLogger  _logger;
         private readonly IConfiguration           _configuration;
+        private readonly IResumeParsingService    _resumeParser;
 
         public SupportTicketController(
             ISupportTicketRepository repository,
             IApplicationErrorLogger  logger,
-            IConfiguration           configuration)
+            IConfiguration           configuration,
+            IResumeParsingService    resumeParser = null)
         {
             _repository    = repository;
             _logger        = logger;
             _configuration = configuration;
+            _resumeParser  = resumeParser;
         }
 
         // ── Dashboard ─────────────────────────────────────────────────────────
@@ -94,12 +98,10 @@ namespace Risebird.Web.Controllers
                     totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
                 }
 
-                // Fetch counts for tab badges
-                var systemTicketsForCount = await _repository.GetSystemAssignedTicketsAsync(1, 1);
-                int systemCount = systemTicketsForCount.Count > 0 ? systemTicketsForCount[0].TotalCount : 0;
-
-                var hybridTicketsForCount = await _repository.GetHybridTicketsAsync(1, 1);
-                int hybridCount = hybridTicketsForCount.Count > 0 ? hybridTicketsForCount[0].TotalCount : 0;
+                // Fetch counts for tab badges (optimized single query)
+                var counts = await _repository.GetTicketCountsAsync();
+                int systemCount = counts.SystemOnlyCount;
+                int hybridCount = counts.HybridCount;
 
                 ViewBag.Tab           = tab;
                 ViewBag.Page          = page;
@@ -449,8 +451,10 @@ namespace Risebird.Web.Controllers
 
                 var newId = await _repository.InsertTicketAsync(ticket);
 
-                // ── Resume ingestion logic ──
-                var resumeIngestionResult = new System.Text.StringBuilder();
+                // ── HUMAN-IN-THE-LOOP: Store pending resumes for HR review ──
+                // No automatic ingestion into CandidateResume table.
+                // All resumes are stored as pending and require HR to manually trigger ingestion.
+                var pendingResumeResult = new System.Text.StringBuilder();
                 
                 var isNewCandidateSubmission = string.Equals(ticket.Intent, 
                     "New candidate submission", StringComparison.OrdinalIgnoreCase);
@@ -458,376 +462,266 @@ namespace Risebird.Web.Controllers
                     "New interview request", StringComparison.OrdinalIgnoreCase);
                 
                 // For "New interview request" with JD attached:
-                // This is a request to CREATE a new skill channel — skip resume ingestion
-                // and assign to HR for manual channel creation.
+                // This is a request to CREATE a new skill channel — no resume ingestion.
                 var isNewChannelRequest = isNewInterviewRequest && ticket.AttachmentJobDescription;
                 
-                // Check if we have resume associations (per-resume IRF mapping) or legacy flat URLs
+                // Check available resume data sources
                 var hasResumeAssociations = payload.ResumeAssociations != null && payload.ResumeAssociations.Count > 0;
                 var hasLegacyUrls = payload.ResumeDriveUrls != null && payload.ResumeDriveUrls.Count > 0;
+                var hasCandidateScheduleData = payload.CandidateScheduleData != null && payload.CandidateScheduleData.Count > 0;
                 
-                // Resume ingestion applies to:
-                // 1. "New candidate submission" (always for existing channels)
-                // 2. "New interview request" WITHOUT JD attached (resumes for existing channel)
                 var isResumeIngestionIntent = isNewCandidateSubmission || (isNewInterviewRequest && !isNewChannelRequest);
-                var hasResumesToIngest = hasResumeAssociations || hasLegacyUrls;
+                var hasResumesToProcess = hasResumeAssociations || hasLegacyUrls || hasCandidateScheduleData;
                 
-                // ── CRITICAL: Skip ingestion if primary_specialization is null ───────────
-                // When we can't determine the specialization, we can't reliably match IRFs.
-                // Just assign to HR for manual review instead of risking wrong IRF assignment.
-                var skipDueToNullSpecialization = isResumeIngestionIntent 
-                    && hasResumesToIngest 
-                    && string.IsNullOrWhiteSpace(ticket.PrimarySpecialization);
+                int pendingCount = 0;
+                string fallbackHR = null;
                 
-                if (skipDueToNullSpecialization)
+                if (isResumeIngestionIntent && hasResumesToProcess)
                 {
-                    var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
+                    // Process candidate_schedule_data (with scheduling info)
+                    if (hasCandidateScheduleData)
+                    {
+                        foreach (var candidate in payload.CandidateScheduleData)
+                        {
+                            if (string.IsNullOrWhiteSpace(candidate.ResumeDriveUrl))
+                                continue;
+                            
+                            try
+                            {
+                                // Parse interview datetime if available
+                                DateTime? interviewDateTime = null;
+                                string timezone = candidate.Timezone ?? "IST";
+                                bool hasScheduling = false;
+                                
+                                if (!string.IsNullOrWhiteSpace(candidate.InterviewDate) &&
+                                    !string.IsNullOrWhiteSpace(candidate.InterviewTime))
+                                {
+                                    try
+                                    {
+                                        var dateStr = candidate.InterviewDate + " " + candidate.InterviewTime;
+                                        interviewDateTime = DateTime.Parse(dateStr);
+                                        hasScheduling = true;
+                                    }
+                                    catch { /* ignore parse errors */ }
+                                }
+                                
+                                // Resolve IRF for this resume
+                                IrfMatchVM irfMatch = null;
+                                
+                                // Try explicit skill_channel_id first
+                                if (!string.IsNullOrWhiteSpace(candidate.SkillChannelId) &&
+                                    candidate.SkillChannelId.Trim().Length == 10)
+                                {
+                                    irfMatch = await _repository.GetIRFByStringIdAsync(candidate.SkillChannelId.Trim());
+                                }
+                                
+                                // Fallback to job title matching
+                                if (irfMatch == null && !string.IsNullOrWhiteSpace(ticket.PrimarySpecialization))
+                                {
+                                    irfMatch = await MatchIRFAsync(
+                                        ticket.SenderEmail,
+                                        ticket.JobTitle ?? ticket.Subject,
+                                        payload.SkillChannelId,
+                                        ticket.PrimarySpecialization);
+                                }
+                                
+                                // Insert pending resume
+                                var pendingId = await _repository.InsertPendingResumeAsync(
+                                    newId,
+                                    candidate.ResumeDriveUrl.Trim(),
+                                    candidate.CandidateName?.Trim(),
+                                    candidate.CandidateEmail?.Trim(),
+                                    irfMatch?.Id,
+                                    irfMatch?.IRFStringId,
+                                    irfMatch?.JDTiltle,
+                                    irfMatch?.RisebirdHrEmail,
+                                    hasScheduling,
+                                    interviewDateTime,
+                                    timezone);
+                                
+                                if (pendingId > 0)
+                                {
+                                    pendingCount++;
+                                    if (fallbackHR == null && !string.IsNullOrWhiteSpace(irfMatch?.RisebirdHrEmail))
+                                        fallbackHR = irfMatch.RisebirdHrEmail;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                            }
+                        }
+                    }
+                    
+                    // Process resume_associations (per-resume IRF mapping)
+                    if (hasResumeAssociations)
+                    {
+                        foreach (var assoc in payload.ResumeAssociations)
+                        {
+                            if (string.IsNullOrWhiteSpace(assoc.ResumeUrl))
+                                continue;
+                            
+                            try
+                            {
+                                IrfMatchVM irfMatch = null;
+                                
+                                // Try explicit skill_channel_id
+                                if (!string.IsNullOrWhiteSpace(assoc.SkillChannelId) &&
+                                    assoc.SkillChannelId.Trim().Length == 10)
+                                {
+                                    irfMatch = await _repository.GetIRFByStringIdAsync(assoc.SkillChannelId.Trim());
+                                }
+                                
+                                // Try job_title from association
+                                if (irfMatch == null && !string.IsNullOrWhiteSpace(assoc.JobTitle))
+                                {
+                                    irfMatch = await MatchIRFAsync(
+                                        ticket.SenderEmail,
+                                        assoc.JobTitle,
+                                        null,
+                                        ticket.PrimarySpecialization);
+                                }
+                                
+                                // Fallback to global job title
+                                if (irfMatch == null && !string.IsNullOrWhiteSpace(ticket.PrimarySpecialization))
+                                {
+                                    irfMatch = await MatchIRFAsync(
+                                        ticket.SenderEmail,
+                                        ticket.JobTitle ?? ticket.Subject,
+                                        payload.SkillChannelId,
+                                        ticket.PrimarySpecialization);
+                                }
+                                
+                                var pendingId = await _repository.InsertPendingResumeAsync(
+                                    newId,
+                                    assoc.ResumeUrl.Trim(),
+                                    assoc.CandidateName?.Trim(),
+                                    null, // no email in resume_associations
+                                    irfMatch?.Id,
+                                    irfMatch?.IRFStringId,
+                                    irfMatch?.JDTiltle,
+                                    irfMatch?.RisebirdHrEmail,
+                                    false, // no scheduling data
+                                    null,
+                                    null);
+                                
+                                if (pendingId > 0)
+                                {
+                                    pendingCount++;
+                                    if (fallbackHR == null && !string.IsNullOrWhiteSpace(irfMatch?.RisebirdHrEmail))
+                                        fallbackHR = irfMatch.RisebirdHrEmail;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                            }
+                        }
+                    }
+                    
+                    // Process legacy resume_drive_urls (single IRF for all)
+                    if (hasLegacyUrls && !hasResumeAssociations && !hasCandidateScheduleData)
+                    {
+                        IrfMatchVM irfMatch = null;
+                        
+                        if (!string.IsNullOrWhiteSpace(ticket.PrimarySpecialization))
+                        {
+                            irfMatch = await MatchIRFAsync(
+                                ticket.SenderEmail,
+                                ticket.JobTitle ?? ticket.Subject,
+                                payload.SkillChannelId,
+                                ticket.PrimarySpecialization);
+                        }
+                        
+                        var individualUrls = payload.ResumeDriveUrls
+                            .Where(u => !string.IsNullOrWhiteSpace(u))
+                            .SelectMany(u => u.Split(
+                                new[] { ' ', '\n', '\r', '\t' },
+                                StringSplitOptions.RemoveEmptyEntries))
+                            .Where(u => u.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                            .Distinct()
+                            .ToList();
+                        
+                        foreach (var url in individualUrls)
+                        {
+                            try
+                            {
+                                var pendingId = await _repository.InsertPendingResumeAsync(
+                                    newId,
+                                    url.Trim(),
+                                    null, // no candidate name
+                                    null, // no email
+                                    irfMatch?.Id,
+                                    irfMatch?.IRFStringId,
+                                    irfMatch?.JDTiltle,
+                                    irfMatch?.RisebirdHrEmail,
+                                    false,
+                                    null,
+                                    null);
+                                
+                                if (pendingId > 0)
+                                {
+                                    pendingCount++;
+                                    if (fallbackHR == null && !string.IsNullOrWhiteSpace(irfMatch?.RisebirdHrEmail))
+                                        fallbackHR = irfMatch.RisebirdHrEmail;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                            }
+                        }
+                    }
+                    
+                    // Assign to HR for review
+                    var hrEmail = fallbackHR ?? await _repository.GetHRForSenderAsync(ticket.SenderEmail);
                     if (!string.IsNullOrWhiteSpace(hrEmail))
                     {
                         await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
-                        resumeIngestionResult.Append(
-                            $"Skipped ingestion (primary_specialization is null) — assigned to {hrEmail} for manual review.");
-                    }
-                    else
-                    {
-                        resumeIngestionResult.Append(
-                            "Skipped ingestion (primary_specialization is null) — no HR resolved; ticket left unassigned.");
-                    }
-                }
-                else if (isResumeIngestionIntent && hasResumeAssociations)
-                {
-                    // ── NEW: Per-resume IRF association logic ────────────────────────────
-                    // Each resume has its own intended IRF/job_title from the email context
-                    int inserted = 0;
-                    var irfResults = new List<string>();
-                    
-                    foreach (var assoc in payload.ResumeAssociations)
-                    {
-                        if (string.IsNullOrWhiteSpace(assoc.ResumeUrl))
-                            continue;
-                        
-                        try
-                        {
-                            IrfMatchVM irfMatch = null;
-                            
-                            // If explicit skill_channel_id provided, use it directly
-                            if (!string.IsNullOrWhiteSpace(assoc.SkillChannelId) &&
-                                assoc.SkillChannelId.Trim().Length == 10)
-                            {
-                                irfMatch = await _repository.GetIRFByStringIdAsync(assoc.SkillChannelId.Trim());
-                            }
-                            
-                            // Otherwise, match using job_title from this specific resume association
-                            if (irfMatch == null && !string.IsNullOrWhiteSpace(assoc.JobTitle))
-                            {
-                                irfMatch = await MatchIRFAsync(
-                                    ticket.SenderEmail,
-                                    assoc.JobTitle,
-                                    null,
-                                    ticket.PrimarySpecialization);
-                            }
-                            
-                            // Last resort: use global job_title from email
-                            if (irfMatch == null)
-                            {
-                                irfMatch = await MatchIRFAsync(
-                                    ticket.SenderEmail,
-                                    ticket.JobTitle ?? ticket.Subject,
-                                    payload.SkillChannelId,
-                                    ticket.PrimarySpecialization);
-                            }
-                            
-                            if (irfMatch != null)
-                            {
-                                var rid = await _repository.InsertCandidateResumeAsync(
-                                    irfMatch.Id,
-                                    assoc.ResumeUrl.Trim(),
-                                    irfMatch.RisebirdHrId,
-                                    ticket.SenderEmail,
-                                    newId);
-                                    
-                                if (rid > 0)
-                                {
-                                    inserted++;
-                                    irfResults.Add($"{assoc.CandidateName ?? "Unknown"} → {irfMatch.IRFStringId}");
-                                }
-                            }
-                        }
-                        catch (Exception rex)
-                        {
-                            await _logger.LogMessage(LogLevelInfo.Exception, rex);
-                        }
                     }
                     
-                    // Assign based on outcome
-                    if (inserted > 0)
-                    {
-                        await _repository.UpdateTicketAssignmentAsync(newId, "System", "System");
-                        await _repository.UpdateTicketStatusAsync(newId, "Closed", "System");
-                        resumeIngestionResult.Append(
-                            $"Resumes ingested: {inserted} ({string.Join(", ", irfResults)}), ticket auto-closed");
-                    }
-                    else
-                    {
-                        var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
-                        if (!string.IsNullOrWhiteSpace(hrEmail))
-                        {
-                            await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
-                            resumeIngestionResult.Append(
-                                $"Per-resume ingestion failed — assigned to {hrEmail} for manual review.");
-                        }
-                        else
-                        {
-                            resumeIngestionResult.Append(
-                                "Per-resume ingestion failed — no HR resolved; ticket left unassigned.");
-                        }
-                    }
-                }
-                else if (isResumeIngestionIntent && hasLegacyUrls)
-                {
-                    // ── LEGACY: Single IRF for all resumes (backward compatibility) ──────
-                    IrfMatchVM irfMatch = null;
-                    int        inserted = 0;
-
-                    try
-                    {
-                        irfMatch = await MatchIRFAsync(
-                            ticket.SenderEmail,
-                            ticket.JobTitle ?? ticket.Subject,
-                            payload.SkillChannelId,
-                            ticket.PrimarySpecialization);
-
-                        if (irfMatch != null)
-                        {
-                            var individualUrls = payload.ResumeDriveUrls
-                                .Where(u => !string.IsNullOrWhiteSpace(u))
-                                .SelectMany(u => u.Split(
-                                    new[] { ' ', '\n', '\r', '\t' },
-                                    StringSplitOptions.RemoveEmptyEntries))
-                                .Where(u => u.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-                                .Distinct()
-                                .ToList();
-
-                            foreach (var url in individualUrls)
-                            {
-                                var rid = await _repository.InsertCandidateResumeAsync(
-                                    irfMatch.Id,
-                                    url.Trim(),
-                                    irfMatch.RisebirdHrId,
-                                    ticket.SenderEmail,
-                                    newId);
-                                if (rid > 0) inserted++;
-                            }
-                        }
-                    }
-                    catch (Exception rex)
-                    {
-                        await _logger.LogMessage(LogLevelInfo.Exception, rex);
-                    }
-
-                    if (inserted > 0)
-                    {
-                        await _repository.UpdateTicketAssignmentAsync(newId, "System", "System");
-                        await _repository.UpdateTicketStatusAsync(newId, "Closed", "System");
-                        resumeIngestionResult.Append(
-                            $"Resumes ingested: {inserted}, IRF: {irfMatch.IRFStringId}, ticket auto-closed");
-                    }
-                    else
-                    {
-                        var fallbackHR = irfMatch?.RisebirdHrEmail;
-                        if (!string.IsNullOrWhiteSpace(fallbackHR))
-                        {
-                            await _repository.UpdateTicketAssignmentAsync(newId, fallbackHR, "System");
-                            resumeIngestionResult.Append(
-                                $"Ingestion failed — assigned to {fallbackHR} for manual review.");
-                        }
-                        else
-                        {
-                            resumeIngestionResult.Append(
-                                "Ingestion failed — no IRF or HR resolved; ticket left unassigned.");
-                        }
-                    }
+                    pendingResumeResult.Append(
+                        $"{pendingCount} resume(s) queued for HR review. Assigned to {hrEmail ?? "unassigned"}.");
                 }
                 else if (isNewChannelRequest)
                 {
-                    // "New interview request" with JD attached = request to CREATE a new skill channel
-                    // Don't attempt resume ingestion — assign directly to an HR for manual channel creation
-                    // No need to match an IRF (it doesn't exist yet) — just find the HR for this client
+                    // New channel request - assign to HR
                     var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
-
                     if (!string.IsNullOrWhiteSpace(hrEmail))
                     {
                         await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
-                        resumeIngestionResult.Append(
-                            $"New channel request (JD attached) — assigned to {hrEmail} for channel creation.");
+                        pendingResumeResult.Append($"New channel request — assigned to {hrEmail} for channel creation.");
                     }
                     else
                     {
-                        resumeIngestionResult.Append(
-                            "New channel request (JD attached) — no HR resolved; ticket left unassigned.");
+                        pendingResumeResult.Append("New channel request — no HR resolved; ticket left unassigned.");
                     }
                 }
                 else if (isNewCandidateSubmission || isNewInterviewRequest)
                 {
-                    // Resume ingestion intent but no resumes attached or no drive URLs
-                    // Still need to assign to an HR since the SP left it NULL
-                    // No IRF matching needed — just find the HR for this client directly
+                    // Intent but no resumes
                     var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
-
                     if (!string.IsNullOrWhiteSpace(hrEmail))
                     {
                         await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
-                        resumeIngestionResult.Append(
-                            $"No resumes to ingest — assigned to {hrEmail} for manual review.");
+                        pendingResumeResult.Append($"No resumes detected — assigned to {hrEmail} for manual review.");
                     }
                     else
                     {
-                        resumeIngestionResult.Append(
-                            "No resumes to ingest and no HR resolved; ticket left unassigned.");
+                        pendingResumeResult.Append("No resumes detected — ticket left unassigned.");
                     }
                 }
                 else
                 {
-                    // Non-resume-ingestion intents (e.g., "Candidate status update", "Stop interviews", etc.)
-                    // The SP already handled HR assignment for these intents.
-                    // No additional action needed here.
-                    resumeIngestionResult.Append("N/A");
-                }
-
-                // ── Auto-scheduling flow for candidates with slot data ────────────────
-                var autoScheduleResults = new List<CandidateScheduleResult>();
-                var hasAutoScheduleCandidates = payload.CandidateScheduleData != null 
-                                                && payload.CandidateScheduleData.Count > 0;
-
-                if (hasAutoScheduleCandidates && (isNewCandidateSubmission || isNewInterviewRequest))
-                {
-                    foreach (var candidate in payload.CandidateScheduleData)
-                    {
-                        var result = new CandidateScheduleResult
-                        {
-                            CandidateName    = candidate.CandidateName,
-                            CandidateEmail   = candidate.CandidateEmail,
-                            SkillChannelId   = candidate.SkillChannelId,
-                            Scheduled        = false
-                        };
-
-                        try
-                        {
-                            // Validate 100% confidence fields
-                            if (string.IsNullOrWhiteSpace(candidate.CandidateName))
-                            {
-                                result.Reason = "Candidate name missing — confidence < 100%";
-                                autoScheduleResults.Add(result);
-                                continue;
-                            }
-                            if (string.IsNullOrWhiteSpace(candidate.SkillChannelId) ||
-                                candidate.SkillChannelId.Trim().Length != 10)
-                            {
-                                result.Reason = "Invalid or missing skill_channel_id — confidence < 100%";
-                                autoScheduleResults.Add(result);
-                                continue;
-                            }
-                            if (string.IsNullOrWhiteSpace(candidate.InterviewDate) ||
-                                string.IsNullOrWhiteSpace(candidate.InterviewTime))
-                            {
-                                result.Reason = "Interview date/time missing — confidence < 100%";
-                                autoScheduleResults.Add(result);
-                                continue;
-                            }
-                            if (string.IsNullOrWhiteSpace(candidate.ResumeDriveUrl))
-                            {
-                                result.Reason = "Resume URL missing — cannot match candidate to resume";
-                                autoScheduleResults.Add(result);
-                                continue;
-                            }
-
-                            // Parse interview datetime
-                            DateTime? interviewDateTime = null;
-                            try
-                            {
-                                var dateStr = candidate.InterviewDate + " " + candidate.InterviewTime;
-                                interviewDateTime = DateTime.Parse(dateStr);
-                                result.InterviewDateTime = interviewDateTime;
-                            }
-                            catch
-                            {
-                                result.Reason = $"Could not parse interview datetime: {candidate.InterviewDate} {candidate.InterviewTime}";
-                                autoScheduleResults.Add(result);
-                                continue;
-                            }
-
-                            // Verify IRF exists
-                            var irf = await _repository.GetIRFByStringIdAsync(candidate.SkillChannelId.Trim());
-                            if (irf == null)
-                            {
-                                result.Reason = $"IRF '{candidate.SkillChannelId}' not found or inactive";
-                                autoScheduleResults.Add(result);
-                                continue;
-                            }
-
-                            // Insert candidate resume with auto-schedule metadata
-                            var resumeId = await _repository.InsertCandidateResumeForAutoScheduleAsync(
-                                irf.Id,
-                                candidate.ResumeDriveUrl.Trim(),
-                                irf.RisebirdHrId,
-                                ticket.SenderEmail,
-                                newId,
-                                candidate.CandidateName.Trim(),
-                                candidate.CandidateEmail?.Trim(),
-                                interviewDateTime);
-
-                            if (resumeId > 0)
-                            {
-                                result.CandidateResumeId = resumeId;
-                                result.Scheduled = true;
-                                result.Reason = $"Queued for auto-scheduling. Resume ID: {resumeId}, IRF: {irf.IRFStringId}. " +
-                                               "Will be scheduled after resume parsing and email verification.";
-                            }
-                            else
-                            {
-                                result.Reason = "Failed to insert candidate resume record";
-                            }
-                        }
-                        catch (Exception asEx)
-                        {
-                            result.Reason = $"Error processing candidate: {asEx.Message}";
-                            await _logger.LogMessage(LogLevelInfo.Exception, asEx);
-                        }
-
-                        autoScheduleResults.Add(result);
-                    }
-
-                    // Mark ticket as having auto-schedule candidates
-                    var queuedCount = autoScheduleResults.Count(r => r.Scheduled);
-                    if (queuedCount > 0)
-                    {
-                        await _repository.SetTicketHasAutoScheduleCandidatesAsync(newId, true);
-                    }
-
-                    // Always assign to HR for manual review (HR will verify and trigger scheduling)
-                    var hrEmail = await _repository.GetHRForSenderAsync(ticket.SenderEmail);
-                    if (!string.IsNullOrWhiteSpace(hrEmail))
-                    {
-                        await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
-                    }
+                    pendingResumeResult.Append("N/A");
                 }
 
                 return Ok(new
                 {
-                    success            = true,
-                    ticketId           = newId,
-                    resumeIngestion    = resumeIngestionResult.Length > 0
-                                         ? resumeIngestionResult.ToString()
-                                         : "N/A",
-                    autoScheduling     = hasAutoScheduleCandidates
-                                         ? new
-                                         {
-                                             candidatesProcessed = autoScheduleResults.Count,
-                                             candidatesQueued    = autoScheduleResults.Count(r => r.Scheduled),
-                                             candidatesFailed    = autoScheduleResults.Count(r => !r.Scheduled),
-                                             details             = autoScheduleResults
-                                         }
-                                         : null
+                    success         = true,
+                    ticketId        = newId,
+                    pendingResumes  = pendingCount,
+                    message         = pendingResumeResult.ToString()
                 });
             }
             catch (Exception ex)
@@ -837,19 +731,27 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        // ── Auto-Schedule Candidates API ─────────────────────────────────────
+        // ── Pending Resumes Review API ─────────────────────────────────────
 
         /// <summary>
-        /// Gets candidate data for HR review modal (auto-schedule flow).
-        /// Returns both extracted (from email) and parsed (from resume) data.
+        /// Gets pending resumes for HR review modal.
+        /// Returns all pending resumes with resolved IRF info.
+        /// Use ticketId = -1 for test data.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAutoScheduleCandidates(int ticketId)
+        public async Task<IActionResult> GetPendingResumes(int ticketId)
         {
             try
             {
-                var candidates = await _repository.GetAutoScheduleCandidatesForTicketAsync(ticketId);
-                return Json(new { success = true, candidates });
+                // TEST MODE: Return hardcoded data for ticketId = -1
+                if (ticketId == -1)
+                {
+                    var testResumes = GetTestPendingResumes();
+                    return Json(new { success = true, resumes = testResumes });
+                }
+
+                var resumes = await _repository.GetPendingResumesForTicketAsync(ticketId);
+                return Json(new { success = true, resumes });
             }
             catch (Exception ex)
             {
@@ -859,29 +761,672 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
-        /// Schedules an interview for a candidate from the auto-schedule flow.
-        /// Called from the HR review modal after parsing is complete.
+        /// Returns hardcoded test data for UI testing.
+        /// </summary>
+        private List<PendingResumeVM> GetTestPendingResumes()
+        {
+            var now = DateTime.UtcNow;
+            return new List<PendingResumeVM>
+            {
+                new PendingResumeVM
+                {
+                    Id = 1001,
+                    SupportTicketId = -1,
+                    ResumeUrl = "https://drive.google.com/file/d/abc123/view",
+                    CandidateName = "Rahul Sharma",
+                    CandidateEmail = "rahul.sharma@gmail.com",
+                    ResolvedIRFId = 24500,
+                    ResolvedIRFStringId = "AzureDevEn",
+                    ResolvedJobTitle = "Azure DevOps Engineer",
+                    ResolvedHREmail = "hr.lead@risebird.io",
+                    ResolvedHRName = "Priya Mehta",
+                    HasSchedulingData = true,
+                    ScheduledInterviewDateTime = now.AddDays(2).AddHours(10),
+                    ScheduleTimezone = "IST",
+                    Status = "Pending",
+                    CreatedAt = now.AddHours(-2),
+                    IRFJobTitle = "Azure DevOps Engineer",
+                    IRFSkillCluster = "Cloud & DevOps",
+                    IRFStartDate = now.AddMonths(-1),
+                    IRFEndDate = now.AddMonths(2),
+                    IRFPositions = 3,
+                    IRFJDLink = "https://risebirdportal.blob.core.windows.net/resumes/Azure_DevOps.docx",
+                    ClientName = "TechCorp Solutions",
+                    TenantId = "tenant-123",
+                    TicketSenderEmail = "recruiter@techcorp.com",
+                    TicketSubject = "Resume Submission - Azure DevOps Engineers for Q2 Hiring",
+                    TicketMailContent = "Hi Team,\n\nPlease find attached resumes for the Azure DevOps Engineer position.\n\nCandidate 1: Rahul Sharma - 5 years experience in Azure, CI/CD, Kubernetes\nAvailable: April 2nd, 10:00 AM IST\n\nCandidate 2: Ananya Patel - 4 years experience, strong in Terraform\nNo scheduling preference\n\nCandidate 3: Vikram Singh - 6 years, AWS + Azure certified\n\nPlease schedule interviews at the earliest.\n\nThanks,\nRecruiter Team",
+                    TicketIntent = "New candidate submission",
+                    TicketPrimarySpecialization = "Azure DevOps",
+                    TicketMailBodyIntent = "Resume submission with scheduling request",
+                    TicketJobTitle = "Azure DevOps Engineer",
+                    TicketReceivedAt = now.AddHours(-2),
+                    TicketDriveFolderLink = "https://drive.google.com/drive/folders/xyz789",
+                    TicketSummaryMail = "Recruiter from TechCorp submitting 3 candidates for Azure DevOps role. One candidate has specific availability for April 2nd morning.",
+                    TicketSummaryCandidates = "3 candidates submitted: Rahul Sharma (5 yrs), Ananya Patel (4 yrs), Vikram Singh (6 yrs)",
+                    TicketHasJD = false,
+                    TicketHasPdf = true,
+                    TicketHasResumes = true
+                },
+                new PendingResumeVM
+                {
+                    Id = 1002,
+                    SupportTicketId = -1,
+                    ResumeUrl = "https://drive.google.com/file/d/def456/view",
+                    CandidateName = "Ananya Patel",
+                    CandidateEmail = "ananya.patel@outlook.com",
+                    ResolvedIRFId = 24500,
+                    ResolvedIRFStringId = "AzureDevEn",
+                    ResolvedJobTitle = "Azure DevOps Engineer",
+                    ResolvedHREmail = "hr.lead@risebird.io",
+                    ResolvedHRName = "Priya Mehta",
+                    HasSchedulingData = false,
+                    Status = "Pending",
+                    CreatedAt = now.AddHours(-2),
+                    IRFJobTitle = "Azure DevOps Engineer",
+                    IRFSkillCluster = "Cloud & DevOps",
+                    IRFStartDate = now.AddMonths(-1),
+                    IRFEndDate = now.AddMonths(2),
+                    IRFPositions = 3,
+                    IRFJDLink = "https://risebirdportal.blob.core.windows.net/resumes/Azure_DevOps.docx",
+                    ClientName = "TechCorp Solutions",
+                    TenantId = "tenant-123",
+                    TicketSenderEmail = "recruiter@techcorp.com",
+                    TicketSubject = "Resume Submission - Azure DevOps Engineers for Q2 Hiring",
+                    TicketMailContent = "Hi Team,\n\nPlease find attached resumes for the Azure DevOps Engineer position.\n\nCandidate 1: Rahul Sharma - 5 years experience in Azure, CI/CD, Kubernetes\nAvailable: April 2nd, 10:00 AM IST\n\nCandidate 2: Ananya Patel - 4 years experience, strong in Terraform\nNo scheduling preference\n\nCandidate 3: Vikram Singh - 6 years, AWS + Azure certified\n\nPlease schedule interviews at the earliest.\n\nThanks,\nRecruiter Team",
+                    TicketIntent = "New candidate submission",
+                    TicketPrimarySpecialization = "Azure DevOps",
+                    TicketMailBodyIntent = "Resume submission with scheduling request",
+                    TicketJobTitle = "Azure DevOps Engineer",
+                    TicketReceivedAt = now.AddHours(-2),
+                    TicketDriveFolderLink = "https://drive.google.com/drive/folders/xyz789",
+                    TicketSummaryMail = "Recruiter from TechCorp submitting 3 candidates for Azure DevOps role. One candidate has specific availability for April 2nd morning.",
+                    TicketSummaryCandidates = "3 candidates submitted: Rahul Sharma (5 yrs), Ananya Patel (4 yrs), Vikram Singh (6 yrs)",
+                    TicketHasJD = false,
+                    TicketHasPdf = true,
+                    TicketHasResumes = true
+                },
+                new PendingResumeVM
+                {
+                    Id = 1003,
+                    SupportTicketId = -1,
+                    ResumeUrl = "https://drive.google.com/file/d/ghi789/view",
+                    CandidateName = "Vikram Singh",
+                    CandidateEmail = null,
+                    ResolvedIRFId = null,
+                    ResolvedIRFStringId = null,
+                    ResolvedJobTitle = null,
+                    ResolvedHREmail = null,
+                    HasSchedulingData = false,
+                    Status = "Pending",
+                    CreatedAt = now.AddHours(-2),
+                    ClientName = null,
+                    TicketSenderEmail = "recruiter@techcorp.com",
+                    TicketSubject = "Resume Submission - Azure DevOps Engineers for Q2 Hiring",
+                    TicketMailContent = "Hi Team,\n\nPlease find attached resumes for the Azure DevOps Engineer position.\n\nCandidate 1: Rahul Sharma - 5 years experience in Azure, CI/CD, Kubernetes\nAvailable: April 2nd, 10:00 AM IST\n\nCandidate 2: Ananya Patel - 4 years experience, strong in Terraform\nNo scheduling preference\n\nCandidate 3: Vikram Singh - 6 years, AWS + Azure certified\n\nPlease schedule interviews at the earliest.\n\nThanks,\nRecruiter Team",
+                    TicketIntent = "New candidate submission",
+                    TicketPrimarySpecialization = "Azure DevOps",
+                    TicketMailBodyIntent = "Resume submission with scheduling request",
+                    TicketJobTitle = "Azure DevOps Engineer",
+                    TicketReceivedAt = now.AddHours(-2),
+                    TicketDriveFolderLink = "https://drive.google.com/drive/folders/xyz789",
+                    TicketSummaryMail = "Recruiter from TechCorp submitting 3 candidates for Azure DevOps role. One candidate has specific availability for April 2nd morning.",
+                    TicketSummaryCandidates = "3 candidates submitted: Rahul Sharma (5 yrs), Ananya Patel (4 yrs), Vikram Singh (6 yrs)",
+                    TicketHasJD = false,
+                    TicketHasPdf = true,
+                    TicketHasResumes = true
+                },
+                new PendingResumeVM
+                {
+                    Id = 1004,
+                    SupportTicketId = -1,
+                    ResumeUrl = "https://drive.google.com/file/d/jkl012/view",
+                    CandidateName = "Sneha Reddy",
+                    CandidateEmail = "sneha.reddy@yahoo.com",
+                    ResolvedIRFId = 24501,
+                    ResolvedIRFStringId = "JavaSpring",
+                    ResolvedJobTitle = "Java Spring Boot Developer",
+                    ResolvedHREmail = "hr.lead@risebird.io",
+                    ResolvedHRName = "Priya Mehta",
+                    // IRF was changed by HR (example of tracking)
+                    OriginalResolvedIRFId = 24500,
+                    OriginalResolvedIRFStringId = "AzureDevEn",
+                    OriginalIRFJobTitle = "Azure DevOps Engineer",
+                    IRFChangedByHR = true,
+                    IRFChangedAt = now.AddMinutes(-35),
+                    IRFChangeReason = "Candidate has Java background, not DevOps",
+                    HasSchedulingData = true,
+                    ScheduledInterviewDateTime = now.AddDays(3).AddHours(14).AddMinutes(30),
+                    ScheduleTimezone = "IST",
+                    Status = "Ingested",
+                    IngestedResumeId = 55001,
+                    ProcessedAt = now.AddMinutes(-30),
+                    ProcessedBy = "reviewer@risebird.io",
+                    CreatedAt = now.AddHours(-3),
+                    IRFJobTitle = "Java Spring Boot Developer",
+                    IRFSkillCluster = "Backend Development",
+                    IRFStartDate = now.AddMonths(-2),
+                    IRFEndDate = now.AddMonths(1),
+                    IRFPositions = 2,
+                    ClientName = "TechCorp Solutions",
+                    ClientId = 100,
+                    TenantId = "tenant-456",
+                    TicketSenderEmail = "recruiter@techcorp.com",
+                    TicketSubject = "Resume Submission - Azure DevOps Engineers for Q2 Hiring",
+                    TicketMailContent = "Hi Team,\n\nPlease find attached resumes for the Azure DevOps Engineer position.\n\nCandidate 1: Rahul Sharma - 5 years experience in Azure, CI/CD, Kubernetes\nAvailable: April 2nd, 10:00 AM IST\n\nCandidate 2: Ananya Patel - 4 years experience, strong in Terraform\nNo scheduling preference\n\nCandidate 3: Vikram Singh - 6 years, AWS + Azure certified\n\nPlease schedule interviews at the earliest.\n\nThanks,\nRecruiter Team",
+                    TicketIntent = "New candidate submission",
+                    TicketPrimarySpecialization = "Azure DevOps",
+                    TicketMailBodyIntent = "Resume submission with scheduling request",
+                    TicketJobTitle = "Azure DevOps Engineer",
+                    TicketReceivedAt = now.AddHours(-2),
+                    TicketDriveFolderLink = "https://drive.google.com/drive/folders/xyz789",
+                    TicketSummaryMail = "Recruiter from TechCorp submitting 3 candidates for Azure DevOps role.",
+                    TicketHasJD = false,
+                    TicketHasPdf = true,
+                    TicketHasResumes = true
+                },
+                new PendingResumeVM
+                {
+                    Id = 1005,
+                    SupportTicketId = -1,
+                    ResumeUrl = "https://drive.google.com/file/d/mno345/view",
+                    CandidateName = "Arjun Kapoor",
+                    CandidateEmail = "arjun.k@gmail.com",
+                    ResolvedIRFId = 24502,
+                    ResolvedIRFStringId = "ReactFront",
+                    ResolvedJobTitle = "React Frontend Developer",
+                    ResolvedHREmail = "support@risebird.io",
+                    ResolvedHRName = "Amit Kumar",
+                    HasSchedulingData = false,
+                    Status = "Rejected",
+                    ProcessedAt = now.AddMinutes(-15),
+                    ProcessedBy = "reviewer@risebird.io",
+                    CreatedAt = now.AddHours(-4),
+                    IRFJobTitle = "React Frontend Developer",
+                    IRFSkillCluster = "Frontend Development",
+                    IRFStartDate = now.AddMonths(-3),
+                    IRFEndDate = now.AddDays(15),
+                    IRFPositions = 1,
+                    ClientName = "StartupXYZ",
+                    TenantId = "tenant-789",
+                    TicketSenderEmail = "recruiter@techcorp.com",
+                    TicketSubject = "Resume Submission - Azure DevOps Engineers for Q2 Hiring",
+                    TicketMailContent = "Hi Team,\n\nPlease find attached resumes for the Azure DevOps Engineer position.\n\nCandidate 1: Rahul Sharma - 5 years experience in Azure, CI/CD, Kubernetes\nAvailable: April 2nd, 10:00 AM IST\n\nCandidate 2: Ananya Patel - 4 years experience, strong in Terraform\nNo scheduling preference\n\nCandidate 3: Vikram Singh - 6 years, AWS + Azure certified\n\nPlease schedule interviews at the earliest.\n\nThanks,\nRecruiter Team",
+                    TicketIntent = "New candidate submission",
+                    TicketPrimarySpecialization = "Azure DevOps",
+                    TicketMailBodyIntent = "Resume submission with scheduling request",
+                    TicketJobTitle = "Azure DevOps Engineer",
+                    TicketReceivedAt = now.AddHours(-2),
+                    TicketDriveFolderLink = "https://drive.google.com/drive/folders/xyz789",
+                    TicketSummaryMail = "Recruiter from TechCorp submitting 3 candidates for Azure DevOps role.",
+                    TicketHasJD = false,
+                    TicketHasPdf = true,
+                    TicketHasResumes = true
+                }
+            };
+        }
+
+        /// <summary>
+        /// Gets all active IRFs for a client (for the IRF dropdown).
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetIRFsForClient(string senderEmail)
+        {
+            try
+            {
+                // TEST MODE
+                if (string.IsNullOrWhiteSpace(senderEmail) || senderEmail == "recruiter@techcorp.com")
+                {
+                    var testIRFs = GetTestIRFOptions();
+                    return Json(new { success = true, irfs = testIRFs });
+                }
+
+                var irfs = await _repository.GetIRFsForClientAsync(senderEmail);
+                return Json(new { success = true, irfs });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Returns test IRF options for UI testing.
+        /// </summary>
+        private List<IRFOptionVM> GetTestIRFOptions()
+        {
+            var now = DateTime.UtcNow;
+            return new List<IRFOptionVM>
+            {
+                new IRFOptionVM { Id = 24500, IRFStringId = "AzureDevEn", JDTitle = "Azure DevOps Engineer", SkillCluster = "Cloud & DevOps", StartDate = now.AddMonths(-1), EndDate = now.AddMonths(2), Positions = 3, RisebirdHrEmail = "hr.lead@risebird.io", RisebirdHrName = "Priya Mehta", ClientName = "TechCorp Solutions", ClientId = 100 },
+                new IRFOptionVM { Id = 24501, IRFStringId = "JavaSpring", JDTitle = "Java Spring Boot Developer", SkillCluster = "Backend Development", StartDate = now.AddMonths(-2), EndDate = now.AddMonths(1), Positions = 2, RisebirdHrEmail = "hr.lead@risebird.io", RisebirdHrName = "Priya Mehta", ClientName = "TechCorp Solutions", ClientId = 100 },
+                new IRFOptionVM { Id = 24502, IRFStringId = "ReactFront", JDTitle = "React Frontend Developer", SkillCluster = "Frontend Development", StartDate = now.AddMonths(-3), EndDate = now.AddDays(15), Positions = 1, RisebirdHrEmail = "support@risebird.io", RisebirdHrName = "Amit Kumar", ClientName = "TechCorp Solutions", ClientId = 100 },
+                new IRFOptionVM { Id = 24503, IRFStringId = "PythonML01", JDTitle = "Python ML Engineer", SkillCluster = "Machine Learning", StartDate = now.AddMonths(-1), EndDate = now.AddMonths(3), Positions = 4, RisebirdHrEmail = "hr.lead@risebird.io", RisebirdHrName = "Priya Mehta", ClientName = "TechCorp Solutions", ClientId = 100 },
+                new IRFOptionVM { Id = 24504, IRFStringId = "NodeBacken", JDTitle = "Node.js Backend Developer", SkillCluster = "Backend Development", StartDate = now.AddMonths(-2), EndDate = now.AddMonths(2), Positions = 2, RisebirdHrEmail = "support@risebird.io", RisebirdHrName = "Amit Kumar", ClientName = "TechCorp Solutions", ClientId = 100 },
+                new IRFOptionVM { Id = 24505, IRFStringId = "AWSArchite", JDTitle = "AWS Solutions Architect", SkillCluster = "Cloud & DevOps", StartDate = now.AddDays(-15), EndDate = now.AddMonths(3), Positions = 2, RisebirdHrEmail = "hr.lead@risebird.io", RisebirdHrName = "Priya Mehta", ClientName = "TechCorp Solutions", ClientId = 100 },
+            };
+        }
+
+        /// <summary>
+        /// Ingests a pending resume into CandidateResume table.
+        /// Optionally schedules the interview if scheduling data is present.
+        /// Supports IRF override by HR with change tracking.
+        /// Use PendingResumeId >= 1000 for test mode (returns mock success).
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> ScheduleCandidate([FromBody] ScheduleCandidateRequest request)
+        public async Task<IActionResult> IngestPendingResume([FromBody] IngestPendingResumeRequest request)
+        {
+            var overallStopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var stepStopwatch = new System.Diagnostics.Stopwatch();
+            int? ticketId = null;
+            int? pendingId = request?.PendingResumeId;
+            int? candidateResumeId = null;
+            var processedBy = "System";
+
+            try
+            {
+                // CP01: Request Received
+                stepStopwatch.Restart();
+                await _repository.LogProcessingCheckpointAsync(
+                    null, pendingId, null,
+                    "CP01_REQUEST_RECEIVED", "Started",
+                    $"Ingest request received. AlsoSchedule={request?.AlsoSchedule}, OverrideIRF={request?.OverrideIRFId}, OverrideTime={request?.OverrideInterviewDateTime}",
+                    JsonConvert.SerializeObject(request),
+                    processedBy);
+
+                if (request == null || request.PendingResumeId <= 0)
+                {
+                    await _repository.LogProcessingCheckpointAsync(null, pendingId, null, "CP01_REQUEST_RECEIVED", "Failed", "Invalid request - null or invalid PendingResumeId");
+                    return Json(new { success = false, error = "Invalid request" });
+                }
+
+                // TEST MODE: Return mock success for test IDs (>= 1000)
+                if (request.PendingResumeId >= 1000)
+                {
+                    await Task.Delay(500);
+                    var irfChanged = request.OverrideIRFId.HasValue;
+                    await _repository.LogProcessingCheckpointAsync(null, pendingId, null, "CP_TEST_MODE", "Success", "Test mode - mock response returned");
+                    return Json(new
+                    {
+                        success = true,
+                        message = $"[TEST] Resume #{request.PendingResumeId} ingested successfully!" + 
+                                  (irfChanged ? $" (IRF changed to #{request.OverrideIRFId})" : ""),
+                        candidateResumeId = 99000 + request.PendingResumeId,
+                        irfChanged = irfChanged,
+                        scheduleMessage = request.AlsoSchedule ? "[TEST] Interview scheduling queued." : null
+                    });
+                }
+
+                // CP02: Load Pending Resume
+                stepStopwatch.Restart();
+                var pending = await _repository.GetPendingResumeByIdAsync(request.PendingResumeId);
+                stepStopwatch.Stop();
+
+                if (pending == null)
+                {
+                    await _repository.LogProcessingCheckpointAsync(null, pendingId, null, "CP02_LOAD_PENDING", "Failed", "Pending resume not found", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                    return Json(new { success = false, error = "Pending resume not found" });
+                }
+
+                ticketId = pending.SupportTicketId;
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, null,
+                    "CP02_LOAD_PENDING", "Success",
+                    $"Loaded pending resume. IRF={pending.ResolvedIRFStringId}, ResumeUrl={pending.ResumeUrl}",
+                    JsonConvert.SerializeObject(new { pending.ResolvedIRFId, pending.ResolvedIRFStringId, pending.CandidateName, pending.CandidateEmail, pending.Status }),
+                    processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+
+                if (pending.Status != "Pending")
+                {
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP02_LOAD_PENDING", "Failed", $"Resume already processed (status: {pending.Status})");
+                    return Json(new { success = false, error = $"Resume already processed (status: {pending.Status})" });
+                }
+
+                processedBy = request.ProcessedByEmail ?? HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+
+                // CP03: IRF Override (if applicable)
+                bool irfWasChanged = false;
+                if (request.OverrideIRFId.HasValue && request.OverrideIRFId.Value != pending.ResolvedIRFId)
+                {
+                    stepStopwatch.Restart();
+                    await _repository.LogProcessingCheckpointAsync(
+                        ticketId, pendingId, null,
+                        "CP03_IRF_OVERRIDE", "Started",
+                        $"HR override IRF from {pending.ResolvedIRFId} to {request.OverrideIRFId}",
+                        JsonConvert.SerializeObject(new { OriginalIRF = pending.ResolvedIRFId, NewIRF = request.OverrideIRFId, Reason = request.IRFChangeReason }),
+                        processedBy);
+
+                    var updated = await _repository.UpdatePendingResumeIRFAsync(
+                        request.PendingResumeId,
+                        request.OverrideIRFId.Value,
+                        processedBy,
+                        request.IRFChangeReason ?? "HR override during review");
+                    stepStopwatch.Stop();
+                    
+                    if (!updated)
+                    {
+                        await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP03_IRF_OVERRIDE", "Failed", "Failed to update IRF in database", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                        return Json(new { success = false, error = "Failed to update IRF. Please try again." });
+                    }
+                    
+                    pending = await _repository.GetPendingResumeByIdAsync(request.PendingResumeId);
+                    irfWasChanged = true;
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP03_IRF_OVERRIDE", "Success", $"IRF updated to {pending.ResolvedIRFStringId}", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                }
+
+                if (!pending.ResolvedIRFId.HasValue)
+                {
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP04_VALIDATE_IRF", "Failed", "No IRF resolved for this resume");
+                    return Json(new { success = false, error = "No IRF resolved for this resume. Please select an IRF." });
+                }
+
+                // CP04: Resolve HR User ID
+                stepStopwatch.Restart();
+                int hrId = await _repository.GetHRUserIdForIRFAsync(pending.ResolvedIRFId.Value);
+                string hrSource = "IRF.RisebirdHr";
+                if (hrId <= 0)
+                {
+                    hrId = await _repository.GetSystemUserIdAsync();
+                    hrSource = "SystemFallback";
+                    if (hrId <= 0)
+                    {
+                        stepStopwatch.Stop();
+                        await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP04_RESOLVE_HR", "Failed", "No valid HR user found", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                        return Json(new { success = false, error = "No valid HR user found to attribute this resume." });
+                    }
+                }
+                stepStopwatch.Stop();
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, null,
+                    "CP04_RESOLVE_HR", "Success",
+                    $"HR resolved: UserId={hrId}, Source={hrSource}",
+                    null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                
+                int ingestedResumeId = 0;
+                var scheduledDateTime = request.OverrideInterviewDateTime ?? pending.ScheduledInterviewDateTime;
+                bool hasScheduleTime = request.AlsoSchedule && scheduledDateTime.HasValue;
+
+                // CP05: Insert CandidateResume
+                stepStopwatch.Restart();
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, null,
+                    "CP05_INSERT_RESUME", "Started",
+                    $"Inserting into CandidateResume. IRF={pending.ResolvedIRFId}, HasScheduleTime={hasScheduleTime}",
+                    JsonConvert.SerializeObject(new { pending.ResolvedIRFId, pending.ResumeUrl, hrId, hasScheduleTime, scheduledDateTime }),
+                    processedBy);
+
+                if (hasScheduleTime)
+                {
+                    ingestedResumeId = await _repository.InsertCandidateResumeForAutoScheduleAsync(
+                        pending.ResolvedIRFId.Value,
+                        pending.ResumeUrl,
+                        hrId,
+                        pending.ResolvedHREmail,
+                        pending.SupportTicketId,
+                        pending.CandidateName,
+                        pending.CandidateEmail,
+                        scheduledDateTime);
+                }
+                else
+                {
+                    ingestedResumeId = await _repository.InsertCandidateResumeAsync(
+                        pending.ResolvedIRFId.Value,
+                        pending.ResumeUrl,
+                        hrId,
+                        pending.ResolvedHREmail,
+                        pending.SupportTicketId);
+                }
+                stepStopwatch.Stop();
+                candidateResumeId = ingestedResumeId > 0 ? ingestedResumeId : null;
+
+                if (ingestedResumeId <= 0)
+                {
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP05_INSERT_RESUME", "Failed", "InsertCandidateResume returned 0 or negative ID", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                    await _repository.UpdatePendingResumeStatusAsync(pending.Id, "Failed", null, processedBy);
+                    return Json(new { success = false, error = "Failed to insert into CandidateResume" });
+                }
+
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, candidateResumeId,
+                    "CP05_INSERT_RESUME", "Success",
+                    $"CandidateResume inserted with ID={ingestedResumeId}",
+                    null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+
+                // CP06: Update Pending Status
+                stepStopwatch.Restart();
+                await _repository.UpdatePendingResumeStatusAsync(pending.Id, "Ingested", ingestedResumeId, processedBy);
+                stepStopwatch.Stop();
+                await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, candidateResumeId, "CP06_UPDATE_STATUS", "Success", "Pending resume status updated to Ingested", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+
+                // CP07: Parse Resume
+                string parseMessage = null;
+                string scheduleMessage = null;
+                bool parsingSuccess = false;
+                ResumeParseResult parseResult = null;
+
+                if (_resumeParser != null)
+                {
+                    stepStopwatch.Restart();
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, candidateResumeId, "CP07_PARSE_RESUME", "Started", "Starting resume parsing");
+                    
+                    try
+                    {
+                        parseResult = await _resumeParser.ParseResumeAsync(ingestedResumeId);
+                        stepStopwatch.Stop();
+                        parsingSuccess = parseResult.Success;
+                        
+                        if (parseResult.Success)
+                        {
+                            parseMessage = $"Resume parsed successfully. Candidate: {parseResult.CandidateName}, Email: {parseResult.CandidateEmail}";
+                            await _repository.LogProcessingCheckpointAsync(
+                                ticketId, pendingId, candidateResumeId,
+                                "CP07_PARSE_RESUME", "Success",
+                                parseMessage,
+                                JsonConvert.SerializeObject(new { parseResult.CandidateName, parseResult.CandidateEmail, parseResult.CandidatePhone, parseResult.CandidateId }),
+                                processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                        }
+                        else
+                        {
+                            parseMessage = $"Resume parsing failed: {parseResult.ErrorMessage}";
+                            await _repository.LogProcessingCheckpointAsync(
+                                ticketId, pendingId, candidateResumeId,
+                                "CP07_PARSE_RESUME", "Failed",
+                                parseMessage,
+                                JsonConvert.SerializeObject(new { parseResult.ErrorMessage }),
+                                processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                        }
+                    }
+                    catch (Exception parseEx)
+                    {
+                        stepStopwatch.Stop();
+                        await _logger.LogMessage(LogLevelInfo.Exception, parseEx);
+                        parseMessage = $"Resume parsing error: {parseEx.Message}";
+                        await _repository.LogProcessingCheckpointAsync(
+                            ticketId, pendingId, candidateResumeId,
+                            "CP07_PARSE_RESUME", "Failed",
+                            parseMessage,
+                            JsonConvert.SerializeObject(new { Exception = parseEx.Message, StackTrace = parseEx.StackTrace }),
+                            processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                    }
+                }
+                else
+                {
+                    parseMessage = "Resume added. Parsing will be handled by background job.";
+                    await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, candidateResumeId, "CP07_PARSE_RESUME", "Warning", parseMessage + " (ResumeParser service not available)");
+                }
+
+                // CP08: Schedule Interview (if requested)
+                bool datetimeOverridden = request.OverrideInterviewDateTime.HasValue && 
+                    request.OverrideInterviewDateTime != pending.ScheduledInterviewDateTime;
+                
+                if (request.AlsoSchedule && scheduledDateTime.HasValue)
+                {
+                    stepStopwatch.Restart();
+                    await _repository.LogProcessingCheckpointAsync(
+                        ticketId, pendingId, candidateResumeId,
+                        "CP08_SCHEDULE", "Started",
+                        $"Scheduling requested. DateTime={scheduledDateTime:yyyy-MM-dd HH:mm}, Overridden={datetimeOverridden}",
+                        JsonConvert.SerializeObject(new { scheduledDateTime, datetimeOverridden, parsingSuccess, CandidateEmail = parseResult?.CandidateEmail }),
+                        processedBy);
+
+                    if (parsingSuccess && parseResult != null && !string.IsNullOrEmpty(parseResult.CandidateEmail))
+                    {
+                        try
+                        {
+                            const string apiUrl = "https://api.portal.risebird.io/api/Candidates/Schedule";
+                            
+                            var tenantId = await _repository.GetTenantIdForIRFAsync(pending.ResolvedIRFId.Value);
+
+                            var dto = new ScheduleCandidatesRequest
+                            {
+                                skillChannelId = pending.ResolvedIRFStringId,
+                                requestedBy    = processedBy,
+                                requestType    = "schedule_supportTicket"
+                            };
+                            dto.CandidateList.Add(new ScheduleCandidateList
+                            {
+                                EmailId       = parseResult.CandidateEmail,
+                                Interviewdate = scheduledDateTime.Value,
+                                ResumeLink    = pending.ResumeUrl,
+                                Phone         = parseResult.CandidatePhone,
+                                Name          = parseResult.CandidateName ?? pending.CandidateName
+                            });
+
+                            await _repository.LogProcessingCheckpointAsync(
+                                ticketId, pendingId, candidateResumeId,
+                                "CP08_SCHEDULE_API_CALL", "Started",
+                                $"Calling Schedule API. TenantId={tenantId}, SkillChannel={pending.ResolvedIRFStringId}",
+                                JsonConvert.SerializeObject(dto),
+                                processedBy);
+
+                            var restClient = new RestClient(apiUrl);
+                            var restRequest = new RestRequest(apiUrl, Method.Post);
+                            restRequest.AddHeader("content-type", "application/json");
+                            restRequest.AddHeader("x-functions-key", "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==");
+                            restRequest.AddHeader("tenant-id", tenantId ?? string.Empty);
+                            restRequest.AddParameter("application/json", JsonConvert.SerializeObject(dto), ParameterType.RequestBody);
+
+                            var response = await restClient.ExecuteAsync(restRequest);
+                            stepStopwatch.Stop();
+
+                            if (response.IsSuccessful)
+                            {
+                                scheduleMessage = $"Interview scheduled for {scheduledDateTime.Value:dd MMM yyyy hh:mm tt} IST" +
+                                    (datetimeOverridden ? " (time modified by HR)" : "");
+                                await _repository.LogProcessingCheckpointAsync(
+                                    ticketId, pendingId, candidateResumeId,
+                                    "CP08_SCHEDULE", "Success",
+                                    scheduleMessage,
+                                    JsonConvert.SerializeObject(new { response.StatusCode, ResponseContent = response.Content }),
+                                    processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                            }
+                            else
+                            {
+                                scheduleMessage = $"Scheduling failed: {response.Content ?? response.ErrorMessage}";
+                                await _repository.LogProcessingCheckpointAsync(
+                                    ticketId, pendingId, candidateResumeId,
+                                    "CP08_SCHEDULE", "Failed",
+                                    scheduleMessage,
+                                    JsonConvert.SerializeObject(new { response.StatusCode, response.ErrorMessage, ResponseContent = response.Content }),
+                                    processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                            }
+                        }
+                        catch (Exception schedEx)
+                        {
+                            stepStopwatch.Stop();
+                            await _logger.LogMessage(LogLevelInfo.Exception, schedEx);
+                            scheduleMessage = $"Scheduling error: {schedEx.Message}";
+                            await _repository.LogProcessingCheckpointAsync(
+                                ticketId, pendingId, candidateResumeId,
+                                "CP08_SCHEDULE", "Failed",
+                                scheduleMessage,
+                                JsonConvert.SerializeObject(new { Exception = schedEx.Message, StackTrace = schedEx.StackTrace }),
+                                processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                        }
+                    }
+                    else
+                    {
+                        scheduleMessage = "Cannot schedule - resume parsing did not extract candidate email. Please schedule manually after parsing completes.";
+                        stepStopwatch.Stop();
+                        await _repository.LogProcessingCheckpointAsync(
+                            ticketId, pendingId, candidateResumeId,
+                            "CP08_SCHEDULE", "Warning",
+                            scheduleMessage,
+                            JsonConvert.SerializeObject(new { parsingSuccess, CandidateEmail = parseResult?.CandidateEmail }),
+                            processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+                    }
+                }
+
+                // CP09: Refresh Ticket Flag
+                stepStopwatch.Restart();
+                await _repository.RefreshTicketPendingResumeFlagAsync(pending.SupportTicketId);
+                stepStopwatch.Stop();
+                await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, candidateResumeId, "CP09_REFRESH_FLAG", "Success", "Ticket pending resume flag refreshed", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
+
+                // CP10: Complete
+                overallStopwatch.Stop();
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, candidateResumeId,
+                    "CP10_COMPLETE", "Success",
+                    $"Processing complete. IRF={pending.ResolvedIRFStringId}, IRFChanged={irfWasChanged}, Parsed={parsingSuccess}, Scheduled={!string.IsNullOrEmpty(scheduleMessage) && !scheduleMessage.Contains("failed") && !scheduleMessage.Contains("Cannot")}",
+                    null, processedBy, (int)overallStopwatch.ElapsedMilliseconds);
+
+                return Json(new
+                {
+                    success = true,
+                    message = $"Resume ingested successfully into IRF {pending.ResolvedIRFStringId}" +
+                              (irfWasChanged ? " (IRF changed by HR)" : ""),
+                    candidateResumeId = ingestedResumeId,
+                    irfChanged = irfWasChanged,
+                    parseMessage,
+                    scheduleMessage,
+                    parsingSuccess,
+                    candidateName = parseResult?.CandidateName,
+                    candidateEmail = parseResult?.CandidateEmail
+                });
+            }
+            catch (Exception ex)
+            {
+                overallStopwatch.Stop();
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                await _repository.LogProcessingCheckpointAsync(
+                    ticketId, pendingId, candidateResumeId,
+                    "CP_EXCEPTION", "Failed",
+                    $"Unhandled exception: {ex.Message}",
+                    JsonConvert.SerializeObject(new { Exception = ex.Message, StackTrace = ex.StackTrace }),
+                    processedBy, (int)overallStopwatch.ElapsedMilliseconds);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Schedules an interview for an already-ingested candidate resume.
+        /// Called after resume parsing is complete and HR verifies the data.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> ScheduleIngestedCandidate([FromBody] ScheduleCandidateRequest request)
         {
             try
             {
                 if (request == null || request.CandidateResumeId <= 0)
                     return Json(new { success = false, error = "Invalid request" });
 
-                // Get candidate data
+                // Get candidate data from auto-schedule view
                 var candidates = await _repository.GetAutoScheduleCandidatesForTicketAsync(request.TicketId);
                 var candidate = candidates.FirstOrDefault(c => c.CandidateResumeId == request.CandidateResumeId);
 
                 if (candidate == null)
-                    return Json(new { success = false, error = "Candidate not found" });
+                    return Json(new { success = false, error = "Candidate not found in CandidateResume" });
 
                 if (candidate.ParsingStatus != "Parsed")
                     return Json(new { success = false, error = "Resume parsing not complete. Please wait and try again." });
 
                 if (candidate.IsAlreadyScheduled)
                     return Json(new { success = false, error = "Interview already scheduled for this candidate." });
+
+                if (!candidate.ScheduledInterviewDateTime.HasValue)
+                    return Json(new { success = false, error = "No scheduled interview time available." });
 
                 var candidateEmail = !string.IsNullOrWhiteSpace(candidate.ParsedCandidateEmail)
                     ? candidate.ParsedCandidateEmail
@@ -894,17 +1439,17 @@ namespace Risebird.Web.Controllers
                     ? candidate.ParsedCandidateName
                     : candidate.ExtractedCandidateName;
 
-                // Call the Schedule API (same as PlivoCXInterviewCallController)
-                const string scheduleApiUrl = "https://api.portal.risebird.io/api/Candidates/Schedule";
-                const string scheduleApiKey = "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==";
-
                 if (string.IsNullOrWhiteSpace(candidate.TenantId))
                     return Json(new { success = false, error = "Client tenant ID not found" });
+
+                // Call the Schedule API
+                const string scheduleApiUrl = "https://api.portal.risebird.io/api/Candidates/Schedule";
+                const string scheduleApiKey = "SJJvpXEzy-1fOQN2mygBaTT6gXctL406VhpMwn0BqhKUAzFuBDDP5Q==";
 
                 var scheduleRequest = new
                 {
                     skillChannelId = candidate.SkillChannelId,
-                    requestedBy = "SupportTicketAutoSchedule",
+                    requestedBy = "SupportTicketManualSchedule",
                     requestType = "schedule_supportTicket",
                     CandidateList = new[]
                     {
@@ -927,24 +1472,23 @@ namespace Risebird.Web.Controllers
                 restRequest.AddParameter("application/json", JsonConvert.SerializeObject(scheduleRequest), ParameterType.RequestBody);
 
                 var response = await restClient.ExecuteAsync(restRequest);
-                var responseBody = response.Content;
 
                 if (response.IsSuccessful)
                 {
-                    return Json(new 
-                    { 
-                        success = true, 
+                    return Json(new
+                    {
+                        success = true,
                         message = $"Interview scheduled for {candidateName} ({candidateEmail}) at {candidate.ScheduledInterviewDateTime:g}",
-                        apiResponse = responseBody
+                        apiResponse = response.Content
                     });
                 }
                 else
                 {
-                    return Json(new 
-                    { 
-                        success = false, 
+                    return Json(new
+                    {
+                        success = false,
                         error = $"Schedule API returned {response.StatusCode}",
-                        details = responseBody
+                        details = response.Content
                     });
                 }
             }
@@ -952,6 +1496,62 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Rejects a pending resume (marks as Rejected, won't be ingested).
+        /// Use pendingResumeId >= 1000 for test mode.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> RejectPendingResume(int pendingResumeId)
+        {
+            try
+            {
+                // TEST MODE: Return mock success for test IDs (>= 1000)
+                if (pendingResumeId >= 1000)
+                {
+                    await Task.Delay(300); // Simulate processing
+                    return Json(new { success = true, message = $"[TEST] Resume #{pendingResumeId} rejected." });
+                }
+
+                var processedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                var pending = await _repository.GetPendingResumeByIdAsync(pendingResumeId);
+                
+                if (pending == null)
+                    return Json(new { success = false, error = "Pending resume not found" });
+
+                if (pending.Status != "Pending")
+                    return Json(new { success = false, error = $"Resume already processed (status: {pending.Status})" });
+
+                await _repository.UpdatePendingResumeStatusAsync(pendingResumeId, "Rejected", null, processedBy);
+                await _repository.RefreshTicketPendingResumeFlagAsync(pending.SupportTicketId);
+
+                return Json(new { success = true, message = "Resume rejected" });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Gets processing logs for debugging ingestion/scheduling flow.
+        /// Optionally filter by ticket ID or pending resume ID.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetProcessingLogs(int? ticketId = null, int? pendingResumeId = null, int limit = 100)
+        {
+            try
+            {
+                var logs = await _repository.GetProcessingLogsAsync(ticketId, pendingResumeId, limit);
+                return Json(new { success = true, logs });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message, logs = new List<ProcessingLogVM>() });
             }
         }
     }

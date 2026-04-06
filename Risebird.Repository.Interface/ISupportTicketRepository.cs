@@ -82,5 +82,92 @@ namespace Risebird.Repository.Interface
         /// Updates the HasAutoScheduleCandidates flag for a ticket.
         /// </summary>
         Task<bool> SetTicketHasAutoScheduleCandidatesAsync(int ticketId, bool value);
+
+        /// <summary>
+        /// Inserts a pending resume record for HR review.
+        /// </summary>
+        Task<int> InsertPendingResumeAsync(
+            int supportTicketId,
+            string resumeUrl,
+            string candidateName,
+            string candidateEmail,
+            int? resolvedIRFId,
+            string resolvedIRFStringId,
+            string resolvedJobTitle,
+            string resolvedHREmail,
+            bool hasSchedulingData,
+            DateTime? scheduledInterviewDateTime,
+            string scheduleTimezone);
+
+        /// <summary>
+        /// Gets all pending resumes for a support ticket.
+        /// </summary>
+        Task<List<PendingResumeVM>> GetPendingResumesForTicketAsync(int ticketId);
+
+        /// <summary>
+        /// Gets a single pending resume by ID.
+        /// </summary>
+        Task<PendingResumeVM> GetPendingResumeByIdAsync(int pendingResumeId);
+
+        /// <summary>
+        /// Updates a pending resume's status after HR action.
+        /// </summary>
+        Task<bool> UpdatePendingResumeStatusAsync(int pendingResumeId, string status, int? ingestedResumeId, string processedBy);
+
+        /// <summary>
+        /// Checks if a ticket still has any pending resumes and updates HasPendingResumes flag.
+        /// </summary>
+        Task RefreshTicketPendingResumeFlagAsync(int ticketId);
+
+        /// <summary>
+        /// Gets all active IRFs for a client (by sender email) for the IRF dropdown.
+        /// </summary>
+        Task<List<IRFOptionVM>> GetIRFsForClientAsync(string senderEmail);
+
+        /// <summary>
+        /// Updates the resolved IRF for a pending resume (when HR overrides system's choice).
+        /// Tracks the change for accuracy analysis.
+        /// </summary>
+        Task<bool> UpdatePendingResumeIRFAsync(int pendingResumeId, int newIRFId, string changedBy, string reason);
+
+        /// <summary>
+        /// Gets counts for all three tabs in a single optimized query.
+        /// Returns (ManualReviewCount, SystemOnlyCount, HybridCount).
+        /// </summary>
+        Task<(int ManualReviewCount, int SystemOnlyCount, int HybridCount)> GetTicketCountsAsync();
+
+        /// <summary>
+        /// Gets the RisebirdHr user ID for a given IRF.
+        /// </summary>
+        Task<int> GetHRUserIdForIRFAsync(int irfId);
+
+        /// <summary>
+        /// Gets a fallback system user ID (for AddedBy when no HR found).
+        /// </summary>
+        Task<int> GetSystemUserIdAsync();
+
+        /// <summary>
+        /// Gets the tenant ID for a given IRF (from the associated client).
+        /// </summary>
+        Task<string> GetTenantIdForIRFAsync(int irfId);
+
+        /// <summary>
+        /// Logs a checkpoint during resume processing for debugging.
+        /// </summary>
+        Task<int> LogProcessingCheckpointAsync(
+            int? supportTicketId,
+            int? pendingResumeId,
+            int? candidateResumeId,
+            string checkpoint,
+            string status,
+            string message = null,
+            string details = null,
+            string processedBy = null,
+            int? durationMs = null);
+
+        /// <summary>
+        /// Gets processing logs for a ticket or pending resume.
+        /// </summary>
+        Task<List<ProcessingLogVM>> GetProcessingLogsAsync(int? supportTicketId = null, int? pendingResumeId = null, int limit = 100);
     }
 }
