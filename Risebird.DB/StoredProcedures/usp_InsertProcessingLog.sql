@@ -15,7 +15,7 @@ BEGIN
     SET NOCOUNT ON;
     
     INSERT INTO [dbo].[SupportTicketProcessingLog]
-        (SupportTicketId, PendingResumeId, CandidateResumeId, Checkpoint, Status, Message, Details, ProcessedBy, DurationMs)
+        (SupportTicketId, PendingResumeId, CandidateResumeId, [Checkpoint], [Status], [Message], Details, ProcessedBy, DurationMs)
     VALUES
         (@SupportTicketId, @PendingResumeId, @CandidateResumeId, @Checkpoint, @Status, @Message, @Details, @ProcessedBy, @DurationMs);
     

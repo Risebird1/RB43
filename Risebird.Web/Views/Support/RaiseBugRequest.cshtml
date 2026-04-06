@@ -5,16 +5,21 @@
     <div class="row">
         @Html.HiddenFor(model=>model.RequestedBy)
         @Html.HiddenFor(model=>model.Requester)
+        @Html.HiddenFor(model=>model.interviewId)
         <div class="row col-md-12 col-sm-12" style="padding-bottom:2%">
             @if (Model.Requester == "Interviewer" || Model.Requester == "Client")
             {
-                <div class="col-md-6 col-sm-6">
-             
-                @Html.RadioButtonFor(model=>model.RequestType,"Operation") Operation
-                
-            </div>
+                <div class="col-md-4 col-sm-4">
+                  @Html.RadioButtonFor(model=>model.RequestType,"Operation") Operation
+               </div>
             }
-            <div class="col-md-6 col-sm-6">
+             @if (Model.Requester == "Interviewer")
+            {
+                <div class="col-md-4 col-sm-4">
+                  @Html.RadioButtonFor(model=>model.RequestType,"Payment") Payment
+               </div>
+            }
+            <div class="col-md-4 col-sm-4">
                 @Html.RadioButtonFor(model=>model.RequestType,"Technical") Technical
             </div>
         </div>

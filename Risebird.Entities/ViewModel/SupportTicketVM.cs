@@ -144,6 +144,9 @@ namespace Risebird.Entities.ViewModel
         [JsonProperty("resume_url")]
         public string ResumeUrl               { get; set; }
 
+        [JsonProperty("resume_filename")]
+        public string ResumeFileName          { get; set; }
+
         [JsonProperty("skill_channel_id")]
         public string SkillChannelId          { get; set; }
 
@@ -180,6 +183,9 @@ namespace Risebird.Entities.ViewModel
 
         [JsonProperty("resume_drive_url")]
         public string ResumeDriveUrl          { get; set; }
+
+        [JsonProperty("resume_filename")]
+        public string ResumeFileName          { get; set; }
     }
 
     /// <summary>
@@ -276,6 +282,7 @@ namespace Risebird.Entities.ViewModel
         public int       Id                          { get; set; }
         public int       SupportTicketId             { get; set; }
         public string    ResumeUrl                   { get; set; }
+        public string    ResumeFileName              { get; set; }
         public string    CandidateName               { get; set; }
         public string    CandidateEmail              { get; set; }
         

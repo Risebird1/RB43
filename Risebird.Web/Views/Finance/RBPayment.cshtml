@@ -89,6 +89,8 @@
                                                 <th>Amount</th>
                                                 <th>Payment Status</th>
                                                 <th>Expected Payment Date</th>
+                                                @if (ViewBag.Type == "Pending"){
+                                                <th>Action</th>}
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -111,6 +113,10 @@
                                                 <th>Amount</th>
                                                 <th>Payment Status</th>
                                                 <th>Expected Payment Date</th>
+                                                @if (ViewBag.Type == "Pending")
+                                                {
+                                                    <th>Action</th>
+                                                }
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -347,7 +353,7 @@
                                                             <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCMergedAIDetails", "Interview", new { interviewId = item.InterviewId })">
                                                                 <button type="button" aria-label="Payment Deduction Reasoning" style="position:relative;top:7px;font-size:11px;border: 0px;background: #fbefdf;">
                                                                     <span title="Payment Deduction Reasoning" class="mdc-fab__icon material-icons">
-                                                                        <i class="fas fa-code-branch" style="color: rgb(255, 255, 255);font-size: 16px;"></i>
+                                                                       Deduction Reasoning
                                                                     </span>
                                                                 </button>
                                                             </a>
@@ -357,6 +363,19 @@
                                                     <td>@item.Points</td>
                                                     <td>@item.Status</td>
                                                     <td>@item.ExpectedDate</td>
+                                                    @if (ViewBag.Type == "Pending")
+                                                    {
+                                                    <td style="white-space:nowrap;">
+                                                        @if (item.PaymentSLA > 0)
+                                                        {
+                                                            <span class="js-tr-window-trigger mdc-ripple-upgraded" style="cursor:pointer;display:inline-block;" data-panel="main" data-url="@Url.Action("RaiseBugRequest", "Support", new { interviewId = item.InterviewId, irfId = item.IRFinid, penaltyAmount = item.Penaltyamount })">
+                                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:12px;padding:0 10px;min-height:32px;" title="Open issue to reclaim late report penalty">
+                                                                    Reclaim Penalty
+                                                                </button>
+                                                            </span>
+                                                        }
+                                                    </td>
+                                                    }
                                                 </tr>
                                             }
 
