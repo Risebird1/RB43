@@ -89,7 +89,8 @@
                                                 <th>Amount</th>
                                                 <th>Payment Status</th>
                                                 <th>Expected Payment Date</th>
-                                                <th>Action</th>
+                                                @if (ViewBag.Type == "Pending"){
+                                                <th>Action</th>}
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -112,7 +113,10 @@
                                                 <th>Amount</th>
                                                 <th>Payment Status</th>
                                                 <th>Expected Payment Date</th>
-                                                <th>Action</th>
+                                                @if (ViewBag.Type == "Pending")
+                                                {
+                                                    <th>Action</th>
+                                                }
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -359,16 +363,18 @@
                                                     <td>@item.Points</td>
                                                     <td>@item.Status</td>
                                                     <td>@item.ExpectedDate</td>
+                                                    @if (ViewBag.Type == "Pending")
+                                                    {
                                                     <td style="white-space:nowrap;">
-                                                        @if (!string.IsNullOrEmpty(item.Status) && item.Status.Trim().Equals("Pending", System.StringComparison.OrdinalIgnoreCase))
-                                                        {
+                                                       
                                                             <span class="js-tr-window-trigger mdc-ripple-upgraded" style="cursor:pointer;display:inline-block;" data-panel="main" data-url="@Url.Action("RaiseBugRequest", "Support", new { interviewId = item.InterviewId, irfId = item.IRFinid, penaltyAmount = item.Penaltyamount })">
                                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:12px;padding:0 10px;min-height:32px;" title="Open issue to reclaim late report penalty">
                                                                     Reclaim Penalty
                                                                 </button>
                                                             </span>
-                                                        }
+                                                        
                                                     </td>
+                                                    }
                                                 </tr>
                                             }
 
