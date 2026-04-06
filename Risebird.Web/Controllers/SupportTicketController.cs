@@ -633,6 +633,7 @@ namespace Risebird.Web.Controllers
                     }
                     
                     // Process legacy resume_drive_urls (single IRF for all)
+                    // Uses parallel resume_filenames array if available
                     if (hasLegacyUrls && !hasResumeAssociations && !hasCandidateScheduleData)
                     {
                         IrfMatchVM irfMatch = null;
@@ -646,23 +647,48 @@ namespace Risebird.Web.Controllers
                                 ticket.PrimarySpecialization);
                         }
                         
-                        var individualUrls = payload.ResumeDriveUrls
-                            .Where(u => !string.IsNullOrWhiteSpace(u))
-                            .SelectMany(u => u.Split(
-                                new[] { ' ', '\n', '\r', '\t' },
-                                StringSplitOptions.RemoveEmptyEntries))
-                            .Where(u => u.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-                            .Distinct()
+                        // Build list of (url, filename) pairs
+                        // resume_filenames is a parallel array - index 0 filename goes with index 0 URL
+                        var urlFilePairs = new List<(string Url, string Filename)>();
+                        var filenames = payload.ResumeFilenames ?? new List<string>();
+                        
+                        for (int i = 0; i < payload.ResumeDriveUrls.Count; i++)
+                        {
+                            var rawUrl = payload.ResumeDriveUrls[i];
+                            var filename = i < filenames.Count ? filenames[i] : null;
+                            
+                            if (string.IsNullOrWhiteSpace(rawUrl))
+                                continue;
+                            
+                            // Handle case where URL field might contain multiple URLs (space/newline separated)
+                            var urls = rawUrl.Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries)
+                                .Where(u => u.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                                .ToList();
+                            
+                            foreach (var url in urls)
+                            {
+                                // If multiple URLs in one entry, only first gets the filename
+                                urlFilePairs.Add((url.Trim(), urls.IndexOf(url) == 0 ? filename?.Trim() : null));
+                            }
+                        }
+                        
+                        // Remove duplicates (keep first occurrence with filename if any)
+                        urlFilePairs = urlFilePairs
+                            .GroupBy(p => p.Url)
+                            .Select(g => {
+                                var withFilename = g.FirstOrDefault(p => !string.IsNullOrEmpty(p.Filename));
+                                return !string.IsNullOrEmpty(withFilename.Filename) ? withFilename : g.First();
+                            })
                             .ToList();
                         
-                        foreach (var url in individualUrls)
+                        foreach (var (url, filename) in urlFilePairs)
                         {
                             try
                             {
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
-                                    url.Trim(),
-                                    null, // no filename available for legacy URLs
+                                    url,
+                                    filename, // original filename from parallel array
                                     null, // no candidate name
                                     null, // no email
                                     irfMatch?.Id,

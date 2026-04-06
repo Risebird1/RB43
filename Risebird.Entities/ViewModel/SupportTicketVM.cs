@@ -119,6 +119,14 @@ namespace Risebird.Entities.ViewModel
         public List<string> ResumeDriveUrls         { get; set; }
 
         /// <summary>
+        /// Original attachment filenames - parallel array to resume_drive_urls.
+        /// Index 0 filename corresponds to index 0 URL, etc.
+        /// Comes directly from Relay attachment loop, NOT from GPT.
+        /// </summary>
+        [JsonProperty("resume_filenames")]
+        public List<string> ResumeFilenames         { get; set; }
+
+        /// <summary>
         /// Per-resume IRF associations. Each entry maps a resume URL to its intended
         /// skill channel/IRF based on context from the email body.
         /// Use this instead of the flat resume_drive_urls + single skill_channel_id.
