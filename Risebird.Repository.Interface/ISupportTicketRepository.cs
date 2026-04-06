@@ -170,5 +170,12 @@ namespace Risebird.Repository.Interface
         /// Gets processing logs for a ticket or pending resume.
         /// </summary>
         Task<List<ProcessingLogVM>> GetProcessingLogsAsync(int? supportTicketId = null, int? pendingResumeId = null, int limit = 100);
+
+        /// <summary>
+        /// Gets templates whose assessment group names match the primary specialization.
+        /// If no matches, returns all active templates.
+        /// Used for creating new skill channels from the pending resumes modal.
+        /// </summary>
+        Task<List<TemplateMatchVM>> GetTemplatesForSpecializationAsync(string primarySpecialization);
     }
 }
