@@ -1171,7 +1171,8 @@
                                         <div class="accordion-body">
                                             <div class="accordion-inner">
                                                 <div class="custom-select">
-                                                    @Html.DropDownListFor(model => model.PaymentDeduction, Model.PaymentDeductionList, new { @class = "pull-left", @style = "width:200px;" })
+                                                    @Html.TextBoxFor(model => model.PaymentDeduction, new { @class = "pull-left", @style = "width:200px;" })
+                                                    @* @Html.DropDownListFor(model => model.PaymentDeduction, Model.PaymentDeductionList, new { @class = "pull-left", @style = "width:200px;" }) *@
                                                 </div>
                                             </div>
                                         </div>

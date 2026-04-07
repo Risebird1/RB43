@@ -8295,7 +8295,7 @@ namespace Risebird.Web.Controllers
                         model.Recommendation = "Shortlist";
                 }
                 model.Pagetype = pagetype;
-                await SetPaymentSLADropDown(model);
+                //await SetPaymentSLADropDown(model);
                 await SetInitialValue(model);
                 return PartialView(model);
             }
