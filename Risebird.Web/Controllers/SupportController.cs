@@ -479,7 +479,7 @@ namespace Risebird.Web.Controllers
             {
                 if (string.IsNullOrWhiteSpace(type))
                 {
-                    type = "Open";
+                    type = "OpenPayment";
                 }
                 ViewBag.Type = type;
                 ViewBag.ReturnBack = returnBack;
