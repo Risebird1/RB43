@@ -28,6 +28,8 @@ namespace Risebird.Web.Controllers
         private readonly IIRFService              _irfService;
         private readonly IClonableSkillChannelTemplateService _templateService;
         private readonly IClientService           _clientService;
+        private readonly IAzureStorageHelper      _azureStorageHelper;
+        private readonly IFileMimeTypeHelper      _fileMimeTypeHelper;
 
         public SupportTicketController(
             ISupportTicketRepository repository,
@@ -36,15 +38,19 @@ namespace Risebird.Web.Controllers
             IResumeParsingService    resumeParser = null,
             IIRFService              irfService = null,
             IClonableSkillChannelTemplateService templateService = null,
-            IClientService           clientService = null)
+            IClientService           clientService = null,
+            IAzureStorageHelper      azureStorageHelper = null,
+            IFileMimeTypeHelper      fileMimeTypeHelper = null)
         {
-            _repository      = repository;
-            _logger          = logger;
-            _configuration   = configuration;
-            _resumeParser    = resumeParser;
-            _irfService      = irfService;
-            _templateService = templateService;
-            _clientService   = clientService;
+            _repository         = repository;
+            _logger             = logger;
+            _configuration      = configuration;
+            _resumeParser       = resumeParser;
+            _irfService         = irfService;
+            _templateService    = templateService;
+            _clientService      = clientService;
+            _azureStorageHelper = azureStorageHelper;
+            _fileMimeTypeHelper = fileMimeTypeHelper;
         }
 
         // ── Dashboard ─────────────────────────────────────────────────────────
@@ -545,11 +551,19 @@ namespace Risebird.Web.Controllers
                                         ticket.PrimarySpecialization);
                                 }
                                 
+                                // Handle case where resume_filename might contain multiple names concatenated
+                                var cleanFilename = candidate.ResumeFileName?.Trim();
+                                if (!string.IsNullOrWhiteSpace(cleanFilename) && cleanFilename.Contains('\n'))
+                                {
+                                    cleanFilename = cleanFilename.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                                        .FirstOrDefault()?.Trim();
+                                }
+                                
                                 // Insert pending resume
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
                                     candidate.ResumeDriveUrl.Trim(),
-                                    candidate.ResumeFileName?.Trim(),
+                                    cleanFilename,
                                     candidate.CandidateName?.Trim(),
                                     candidate.CandidateEmail?.Trim(),
                                     irfMatch?.Id,
@@ -613,10 +627,19 @@ namespace Risebird.Web.Controllers
                                         ticket.PrimarySpecialization);
                                 }
                                 
+                                // Handle case where resume_filename might contain multiple names concatenated
+                                // Just take the first one if there are newlines
+                                var cleanFilename = assoc.ResumeFileName?.Trim();
+                                if (!string.IsNullOrWhiteSpace(cleanFilename) && cleanFilename.Contains('\n'))
+                                {
+                                    cleanFilename = cleanFilename.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                                        .FirstOrDefault()?.Trim();
+                                }
+                                
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
                                     assoc.ResumeUrl.Trim(),
-                                    assoc.ResumeFileName?.Trim(),
+                                    cleanFilename,
                                     assoc.CandidateName?.Trim(),
                                     null, // no email in resume_associations
                                     irfMatch?.Id,
@@ -658,27 +681,57 @@ namespace Risebird.Web.Controllers
                         
                         // Build list of (url, filename) pairs
                         // resume_filenames is a parallel array - index 0 filename goes with index 0 URL
+                        // Also handle case where filenames are concatenated (space/newline separated)
                         var urlFilePairs = new List<(string Url, string Filename)>();
                         var filenames = payload.ResumeFilenames ?? new List<string>();
                         
-                        for (int i = 0; i < payload.ResumeDriveUrls.Count; i++)
+                        // First, flatten all URLs - some entries might have multiple URLs concatenated
+                        var allUrls = new List<string>();
+                        foreach (var rawUrl in payload.ResumeDriveUrls)
                         {
-                            var rawUrl = payload.ResumeDriveUrls[i];
-                            var filename = i < filenames.Count ? filenames[i] : null;
-                            
                             if (string.IsNullOrWhiteSpace(rawUrl))
                                 continue;
                             
-                            // Handle case where URL field might contain multiple URLs (space/newline separated)
                             var urls = rawUrl.Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries)
                                 .Where(u => u.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                                .Select(u => u.Trim())
+                                .ToList();
+                            allUrls.AddRange(urls);
+                        }
+                        
+                        // Similarly, flatten all filenames - some entries might have multiple names concatenated
+                        var allFilenames = new List<string>();
+                        foreach (var rawFilename in filenames)
+                        {
+                            if (string.IsNullOrWhiteSpace(rawFilename))
+                            {
+                                allFilenames.Add(null);
+                                continue;
+                            }
+                            
+                            // Split by newlines or common separators, but preserve filenames with spaces
+                            // Try newline first, then fall back to common patterns
+                            var splitNames = rawFilename.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                                .Select(n => n.Trim())
+                                .Where(n => !string.IsNullOrWhiteSpace(n))
                                 .ToList();
                             
-                            foreach (var url in urls)
+                            if (splitNames.Count > 0)
                             {
-                                // If multiple URLs in one entry, only first gets the filename
-                                urlFilePairs.Add((url.Trim(), urls.IndexOf(url) == 0 ? filename?.Trim() : null));
+                                allFilenames.AddRange(splitNames);
                             }
+                            else
+                            {
+                                allFilenames.Add(rawFilename.Trim());
+                            }
+                        }
+                        
+                        // Pair URLs with filenames by index
+                        for (int i = 0; i < allUrls.Count; i++)
+                        {
+                            var url = allUrls[i];
+                            var filename = i < allFilenames.Count ? allFilenames[i] : null;
+                            urlFilePairs.Add((url, filename));
                         }
                         
                         // Remove duplicates (keep first occurrence with filename if any)
@@ -834,7 +887,7 @@ namespace Risebird.Web.Controllers
 
         /// <summary>
         /// Gets pending resumes for HR review modal.
-        /// Returns all pending resumes with resolved IRF info.
+        /// Returns all pending resumes with resolved IRF info plus ticket metadata.
         /// Use ticketId = -1 for test data.
         /// </summary>
         [HttpGet]
@@ -846,11 +899,105 @@ namespace Risebird.Web.Controllers
                 if (ticketId == -1)
                 {
                     var testResumes = GetTestPendingResumes();
-                    return Json(new { success = true, resumes = testResumes });
+                    return Json(new { 
+                        success = true, 
+                        resumes = testResumes,
+                        ticket = new {
+                            id = -1,
+                            driveFolderLink = "https://drive.google.com/drive/folders/test123",
+                            attachmentResumes = true,
+                            primarySpecialization = "Test Specialization",
+                            senderEmail = "test@example.com"
+                        }
+                    });
                 }
 
                 var resumes = await _repository.GetPendingResumesForTicketAsync(ticketId);
-                return Json(new { success = true, resumes });
+                var ticket = await _repository.GetTicketByIdAsync(ticketId);
+                
+                return Json(new { 
+                    success = true, 
+                    resumes,
+                    ticket = ticket != null ? new {
+                        id = ticket.Id,
+                        driveFolderLink = ticket.DriveFolderLink,
+                        attachmentResumes = ticket.AttachmentResumes,
+                        primarySpecialization = ticket.PrimarySpecialization,
+                        senderEmail = ticket.SenderEmail,
+                        jobTitle = ticket.JobTitle,
+                        subject = ticket.Subject
+                    } : null
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Processes the drive folder for a ticket and creates pending resume records.
+        /// Called when user clicks "Process Drive Folder" in the modal.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ProcessDriveFolderForResumes(int ticketId)
+        {
+            try
+            {
+                var ticket = await _repository.GetTicketByIdAsync(ticketId);
+                if (ticket == null)
+                    return Json(new { success = false, error = "Ticket not found" });
+
+                if (string.IsNullOrWhiteSpace(ticket.DriveFolderLink))
+                    return Json(new { success = false, error = "No drive folder link available for this ticket" });
+
+                // Try to match an IRF for the resumes
+                IrfMatchVM irfMatch = null;
+                if (!string.IsNullOrWhiteSpace(ticket.PrimarySpecialization))
+                {
+                    irfMatch = await MatchIRFAsync(
+                        ticket.SenderEmail,
+                        ticket.JobTitle ?? ticket.Subject,
+                        null,
+                        ticket.PrimarySpecialization);
+                }
+
+                // Create a placeholder pending resume pointing to the drive folder
+                var pendingId = await _repository.InsertPendingResumeAsync(
+                    ticketId,
+                    ticket.DriveFolderLink,
+                    "Drive Folder (manual processing)", 
+                    null, 
+                    null, 
+                    irfMatch?.Id,
+                    irfMatch?.IRFStringId,
+                    irfMatch?.JDTiltle,
+                    irfMatch?.RisebirdHrEmail,
+                    false,
+                    null,
+                    null);
+
+                if (pendingId > 0)
+                {
+                    // Update ticket to indicate it has pending resumes
+                    await _repository.RefreshTicketPendingResumeFlagAsync(ticketId);
+                    
+                    // Fetch the newly created pending resume
+                    var resumes = await _repository.GetPendingResumesForTicketAsync(ticketId);
+                    
+                    return Json(new { 
+                        success = true, 
+                        message = "Drive folder queued for resume processing.",
+                        resumes,
+                        pendingCount = resumes.Count
+                    });
+                }
+                else
+                {
+                    return Json(new { success = false, error = "Failed to create pending resume record" });
+                }
             }
             catch (Exception ex)
             {
@@ -1257,12 +1404,11 @@ namespace Risebird.Web.Controllers
 
                 if (hasScheduleTime)
                 {
-                    // ClientHREmailId should be the SENDER (client HR who submitted), not the Risebird channel owner
                     ingestedResumeId = await _repository.InsertCandidateResumeForAutoScheduleAsync(
                         pending.ResolvedIRFId.Value,
                         pending.ResumeUrl,
                         hrId,
-                        pending.TicketSenderEmail,  // Client HR email, not channel owner
+                        processedBy,  
                         pending.SupportTicketId,
                         pending.CandidateName,
                         pending.CandidateEmail,
@@ -1275,7 +1421,7 @@ namespace Risebird.Web.Controllers
                         pending.ResolvedIRFId.Value,
                         pending.ResumeUrl,
                         hrId,
-                        pending.TicketSenderEmail,  // Client HR email, not channel owner
+                        processedBy,  
                         pending.SupportTicketId);
                 }
                 stepStopwatch.Stop();
@@ -1382,7 +1528,7 @@ namespace Risebird.Web.Controllers
                             var dto = new ScheduleCandidatesRequest
                             {
                                 skillChannelId = pending.ResolvedIRFStringId,
-                                requestedBy    = processedBy,
+                                requestedBy    = pending.TicketSenderEmail,
                                 requestType    = "schedule_supportTicket"
                             };
                             dto.CandidateList.Add(new ScheduleCandidateList
@@ -1768,51 +1914,83 @@ namespace Risebird.Web.Controllers
         /// <summary>
         /// Creates a new skill channel from the selected template.
         /// Uses the same flow as IRFController.CreateInterviewLinkV1.
+        /// Accepts form data with optional JD file upload.
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateChannelFromTemplate([FromBody] CreateChannelFromTemplateRequest request)
+        public async Task<IActionResult> CreateChannelFromTemplate(
+            int templateId,
+            int clientId,
+            string jdTitle,
+            int billingOwnerId,
+            bool isAIInterview,
+            int aiInterviewType,
+            int[] clientUserIds,
+            IFormFile jdFile = null)
         {
             try
             {
                 if (_irfService == null || _templateService == null)
                     return Json(new CreateChannelResponse { Success = false, Message = "Required services not available" });
 
-                if (request.TemplateId <= 0)
+                if (templateId <= 0)
                     return Json(new CreateChannelResponse { Success = false, Message = "Please select a template" });
 
-                if (request.ClientId <= 0)
+                if (clientId <= 0)
                     return Json(new CreateChannelResponse { Success = false, Message = "Please select a client" });
 
-                if (string.IsNullOrWhiteSpace(request.JDTitle))
+                if (string.IsNullOrWhiteSpace(jdTitle))
                     return Json(new CreateChannelResponse { Success = false, Message = "Please enter a JD title" });
 
                 var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "")
-                           ?? request.CreatedByEmail ?? "support-ticket-flow";
+                           ?? "support-ticket-flow";
 
                 // Get template data
-                var templateData = await _templateService.GetTemplateDataForPopulatingSkillChannel(request.TemplateId);
+                var templateData = await _templateService.GetTemplateDataForPopulatingSkillChannel(templateId);
                 if (templateData == null)
                     return Json(new CreateChannelResponse { Success = false, Message = "Template not found" });
 
                 // Generate unique skill channel name
-                var clientName = await _clientService.GetClientName(request.ClientId);
+                var clientName = await _clientService.GetClientName(clientId);
                 var irfId = GenerateSkillChannelName(templateData.AssessmentGroupName, clientName);
+
+                // Handle JD file upload if provided
+                string jdLink = null;
+                if (jdFile != null && jdFile.Length > 0 && _azureStorageHelper != null && _fileMimeTypeHelper != null)
+                {
+                    var filename = jdFile.FileName.Replace(" ", "_");
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(jdFile);
+                    
+                    var allowedTypes = new[] {
+                        "application/msword",
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        "application/pdf"
+                    };
+                    
+                    if (allowedTypes.Contains(fileMimeType))
+                    {
+                        await _azureStorageHelper.InsertBlob(filename, "resumes", jdFile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(filename);
+                        jdLink = blob.Uri.ToString();
+                    }
+                }
 
                 // Build the IRF model
                 var irfModel = new IRFVm
                 {
-                    CreatedFromTemplateId = request.TemplateId,
+                    CreatedFromTemplateId = templateId,
                     AssessmentGroupId     = templateData.AssessmentGroupId,
-                    ClientId              = request.ClientId,
-                    JDTiltle              = request.JDTitle,
+                    ClientId              = clientId,
+                    JDTiltle              = jdTitle,
+                    JDLink                = jdLink,
                     IRFId                 = irfId,
                     MeetingPlatform       = templateData.MeetingPlatform ?? "Zoho",
                     StartDate             = DateTime.Now,
                     EndDate               = DateTime.Now.AddMonths(3),
-                    IsAIInterview         = request.IsAIInterview,
-                    AIInterviewType       = request.AIInterviewType,
-                    BillingOwner          = request.BillingOwnerId
+                    IsAIInterview         = isAIInterview,
+                    AIInterviewType       = aiInterviewType,
+                    BillingOwner          = billingOwnerId
                 };
 
                 // Generate scheduling link
@@ -1832,7 +2010,7 @@ namespace Risebird.Web.Controllers
                         Success        = true,
                         NewIRFId       = newIrf?.id ?? 0,
                         NewIRFStringId = irfId,
-                        JDTitle        = request.JDTitle,
+                        JDTitle        = jdTitle,
                         SchedulingLink = schedulingLink,
                         Message        = $"Skill Channel '{irfId}' created successfully!"
                     });
