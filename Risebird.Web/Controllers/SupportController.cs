@@ -479,7 +479,7 @@ namespace Risebird.Web.Controllers
             {
                 if (string.IsNullOrWhiteSpace(type))
                 {
-                    type = "Open";
+                    type = "OpenPayment";
                 }
                 ViewBag.Type = type;
                 ViewBag.ReturnBack = returnBack;
@@ -489,6 +489,12 @@ namespace Risebird.Web.Controllers
                 if (type == "Open")
                 {
                     model = model.Where(x => x.Status == "Open").ToList();
+                    model = model.Where(x => x.RequestType != "Payment").ToList();
+                }
+                else if (type == "OpenPayment")
+                {
+                    model = model.Where(x => x.Status == "Open").ToList();
+                    model = model.Where(x => x.RequestType == "Payment").ToList();
                 }
                 else
                 {
