@@ -1,4 +1,4 @@
-﻿using Risebird.Entities.Data;
+using Risebird.Entities.Data;
 using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.ViewModel;
 using System;
@@ -57,5 +57,21 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveCandidateResumeSummaryAsJsonStringById(int candidateId, string resumeSummaryAsJsonString);
         Task<Candidate> GetDetailsForCandidateResumeScreeningByAI(int irfId, int candidateId);
         Task<bool> SaveCandidateOpenAIScreeningResultsV2(int irfId, int candidateMasterId, string screeningResponseJson, string verdict, int resumeScreeningScore);
+        
+        /// <summary>Gets a single CandidateResume by ID.</summary>
+        Task<CandidateResume> GetCandidateResumeById(int candidateResumeId);
+        
+        /// <summary>Gets candidate info by resume ID after parsing.</summary>
+        Task<CandidateResumeInfo> GetCandidateByResumeId(int candidateResumeId);
+    }
+
+    public class CandidateResumeInfo
+    {
+        public int CandidateResumeId { get; set; }
+        public int? CandidateId { get; set; }
+        public int? CandidateMasterId { get; set; }
+        public string CandidateName { get; set; }
+        public string CandidateEmail { get; set; }
+        public string CandidatePhone { get; set; }
     }
 }

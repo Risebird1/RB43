@@ -29,22 +29,55 @@ IMPORTANT — "New interview request" HANDLING:
   Make sure the AI correctly sets attachment_job_description based on
   whether a JD document is attached.
 
-CRITICAL — SENSITIVE EMAIL FILTERING (Privacy Protection):
-  The system blocks emails containing personal/confidential information:
+NEW — PER-RESUME IRF ASSOCIATION (*** CRITICAL ***):
+  When an email contains multiple resumes, they may be intended for DIFFERENT
+  skill channels/roles. The AI must now extract a `resume_associations` array
+  that maps EACH resume to its intended IRF.
   
-  - Salary slips, payroll notifications, bank statements
-  - Tax documents (Form 16, ITR, W2)
-  - Medical records, prescriptions
-  - Password reset emails, OTPs
-  - Identity documents (Aadhaar, PAN, SSN)
-  - Personal bills, credit card statements
+  Structure:
+  "resume_associations": [
+    {
+      "resume_url": "<Google Drive URL>",
+      "resume_filename": "<original attachment filename>",   ← NEW
+      "skill_channel_id": "<10-char code or null>",
+      "job_title": "<role this resume is for>",
+      "candidate_name": "<candidate name from filename/body>"
+    }
+  ]
   
-  When AI detects such emails:
-  - Set webhook_intent = "Sensitive personal email"
-  - Do NOT upload attachments to Google Drive
-  - Server will block and log these for audit
+  IMPORTANT: `resume_filename` must be the ORIGINAL attachment filename (e.g.,
+  "John_Smith_Java_Developer.pdf"), NOT the Google Drive file ID/URL. This is
+  displayed in the HR review modal when hovering over the resume link.
   
-  This is enforced at BOTH Relay and server levels for data protection.
+  The server will:
+  1. Process each resume individually
+  2. Match each resume to its specific IRF based on job_title or skill_channel_id
+  3. Different resumes can go to different skill channels
+  
+  The old `resume_drive_urls` field is deprecated (set to []).
+
+IMPORTANT — SKIP INGESTION WHEN primary_specialization IS NULL:
+  If the AI cannot determine the primary_specialization (it's null/empty),
+  the server will skip resume ingestion entirely and assign the ticket to an HR
+  for manual review. This prevents incorrect IRF matching when context is unclear.
+
+NEW — CANDIDATE SCHEDULE DATA EXTRACTION (*** See Part 8 in prompt ***):
+  When candidates' interview slots are mentioned in emails:
+  
+  - Extract candidate_schedule_data array with 100% CONFIDENCE ONLY
+  - Each entry must have: candidate_name, interview_date, interview_time, 
+    skill_channel_id (10-char IRF ID), resume_drive_url, and resume_filename
+  - `resume_filename` = original attachment filename (NOT the Drive URL)
+  - Server will:
+    1. Validate all fields
+    2. Insert resumes with auto-schedule flag and extracted data
+    3. Mark ticket as HasAutoScheduleCandidates = true
+    4. Assign ticket to HR for review (NOT auto-scheduled)
+  - HR reviews via "Review & Schedule" button on ticket dashboard
+  - HR sees extracted data (from email) vs parsed data (from resume)
+  - HR manually triggers scheduling after reviewing and validating
+  
+  This applies to "New candidate submission" and "New interview request" intents.
 
 Background: A Skill Channel ID is always exactly 10 alphanumeric characters
 (A-Z, a-z, 0-9). The server already validates it against the sender's eligible
@@ -97,11 +130,63 @@ The full updated JSON body must include these fields (in addition to existing):
   - attachment_resumes
   - drive_folder_link
   - resume_drive_urls         (JSON Array — unchanged)
+  - resume_filenames          ← NEW (see below)
   - summary_mail
   - summary_candidates
   - summary_interview_scores
 
 Save the step.
+
+================================================================================
+STEP 2B — ADD resume_filenames ARRAY (*** NEW - IMPORTANT ***)
+================================================================================
+
+The `resume_filenames` array stores ORIGINAL attachment filenames (e.g., 
+"John_Smith_Java.pdf") and is a PARALLEL array to `resume_drive_urls`.
+
+  Index 0 of resume_filenames = filename for index 0 of resume_drive_urls
+  Index 1 of resume_filenames = filename for index 1 of resume_drive_urls
+  ... and so on
+
+This array comes DIRECTLY from the attachment processing loop, NOT from GPT
+(since GPT doesn't have access to original filenames).
+
+HOW TO SET UP:
+
+1. Locate your "For each item in Attachments" loop (or similar)
+
+2. Inside the loop, you should already be:
+   - Uploading the file to Google Drive
+   - Collecting the Drive URL into `resume_drive_urls`
+
+3. In the SAME loop, also collect the original filename:
+   - Look for a data pill like: `{{current_item.filename}}` or `{{current_item.name}}`
+   - Add this to a new array variable called `resume_filenames`
+
+4. In the HTTP webhook step, add the new field:
+   
+   Property name:  resume_filenames
+   Type:           JSON Array (List of Strings)
+   Value:          [data pill from the collected filenames array]
+
+IMPORTANT:
+  - The arrays MUST be in the same order (parallel)
+  - If you upload 3 files, you should have 3 URLs and 3 filenames
+  - The filename should be the ORIGINAL name (e.g., "Resume_John.pdf"),
+    NOT the Google Drive file ID or URL
+
+EXAMPLE OUTPUT:
+  "resume_drive_urls": [
+    "https://drive.google.com/file/d/abc123/view",
+    "https://drive.google.com/file/d/def456/view"
+  ],
+  "resume_filenames": [
+    "John_Smith_Java_Developer.pdf",
+    "Jane_Doe_Python.docx"
+  ]
+
+If you cannot set this up, the system will fall back to extracting a name
+from the Drive URL (which is less readable but still works).
 
 ================================================================================
 STEP 3 — VERIFY THE "resume_drive_urls" LOOP CONDITION (*** CRITICAL ***)

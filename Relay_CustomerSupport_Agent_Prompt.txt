@@ -34,19 +34,6 @@ Do NOT process the email as a valid support request if ANY of the following are 
      subscription update, automated product update, or community update
   5. The email is clearly spam, irrelevant, unsolicited sales, bulk outreach,
      or non-actionable notification
-  6. *** CRITICAL *** The email contains SENSITIVE PERSONAL/CONFIDENTIAL information:
-     - Salary slips, payslips, salary credited notifications
-     - Bank account statements, transaction alerts, balance notifications
-     - Tax documents (Form 16, ITR, W2, 1099, tax returns)
-     - Insurance policies, claims, premium reminders
-     - Medical/health records, prescriptions, lab reports
-     - Password reset emails, OTPs, verification codes
-     - Personal identification documents (Aadhaar, PAN, SSN, passport)
-     - Credit card statements, loan documents
-     - Investment statements, mutual fund reports
-     - Personal bills (electricity, phone, utility)
-     - HR/Payroll system emails (GreytHR, Darwinbox, Keka, ADP, etc.)
-     - Any email that appears to be forwarded personal correspondence
 
 Examples of emails to EXCLUDE:
   - Internal Risebird emails
@@ -59,12 +46,6 @@ Examples of emails to EXCLUDE:
   - Promotional campaigns
   - Automated marketing mails
   - Spam / junk emails
-  - *** Salary/payroll notifications ***
-  - *** Bank transaction alerts ***
-  - *** Tax documents ***
-  - *** Medical records ***
-  - *** Password/OTP emails ***
-  - *** Any personal financial information ***
 
 If the email matches any exclusion rule:
   - Do NOT treat it as a valid support workflow email
@@ -78,19 +59,10 @@ If the email matches any exclusion rule:
   - Set attachment_resumes         = false  (unless a resume/CV actually exists)
   - Set drive_folder_link          = null   (unless attachments are intentionally processed)
   - Set resume_drive_urls          = []
+  - Set resume_associations        = []
   - Set summary_candidates         = null
   - Set summary_interview_scores   = null
   - Set summary_mail               = a brief reason for exclusion
-
-*** SPECIAL HANDLING FOR SENSITIVE PERSONAL EMAILS (Rule 6) ***
-If the email contains sensitive personal/confidential information:
-  - Set webhook_intent             = "Sensitive personal email"
-  - Set all other fields to null/false/[]
-  - Set summary_mail               = "BLOCKED: Sensitive personal email - [type]"
-    where [type] is one of: salary, bank, tax, medical, password, identification, etc.
-  - Do NOT upload any attachments to Google Drive
-  - Do NOT include any content in the webhook payload
-  - This is CRITICAL for privacy and data protection compliance
 
 Eligibility guidance:
   - Prefer exclusion when the message is clearly automated, internal,
@@ -286,34 +258,50 @@ Fields:
     Set this to the Google Drive folder link where the attachments were uploaded.
     If no attachments exist and no folder is created, set to null.
 
-  - resume_drive_urls  (*** UPDATED ***)
-    An array of individual Google Drive file URLs for files that are resumes or
-    CVs. Each element is the direct link to one uploaded resume file.
-    Populate this array when webhook_intent is "New candidate submission" OR
-    "New interview request" AND attachments exist.
-    Set to [] (empty array) if no attachments exist or the intent is neither
-    of those two.
+  - resume_drive_urls  (DEPRECATED - use resume_associations instead)
+    Legacy array of individual Google Drive file URLs for resume files.
+    Set to [] (empty array).
 
-    Example:
-    "resume_drive_urls": [
-      "https://drive.google.com/file/d/abc123/view",
-      "https://drive.google.com/file/d/def456/view"
+  - resume_associations  (*** NEW - REPLACES resume_drive_urls ***)
+    An array of objects where EACH resume is mapped to its intended IRF/skill channel.
+    This is CRITICAL: different resumes in the same email may be intended for 
+    DIFFERENT skill channels/roles. You MUST analyze the email body to determine
+    which resume belongs to which role.
+
+    For each uploaded resume:
+      1. Identify the candidate name from the filename or email body
+      2. Determine which skill channel / job title this resume is intended for
+         by reading the email body context
+      3. Extract the skill_channel_id (10-char alphanumeric code) if mentioned
+      4. Extract the job_title for this specific resume
+
+    Structure:
+    "resume_associations": [
+      {
+        "resume_url": "https://drive.google.com/file/d/abc123/view",
+        "skill_channel_id": "JavaDev123" or null,
+        "job_title": "Java Developer",
+        "candidate_name": "John Smith"
+      },
+      {
+        "resume_url": "https://drive.google.com/file/d/def456/view",
+        "skill_channel_id": "PythDev98" or null,
+        "job_title": "Python Developer",
+        "candidate_name": "Jane Doe"
+      }
     ]
 
-    HOW TO BUILD THIS IN RELAY:
-    Inside the "For each attachment" loop, after the Upload step, use the
-    uploaded file's Drive link.
-    
-    For "New candidate submission" or "New interview request" intents:
-      - Include ALL uploaded PDF/DOC/DOCX files in resume_drive_urls
-      - EXCLUDE only files where filename clearly contains "JD", "job description",
-        "requirement", or "hiring brief"
-    
-    For other intents:
-      - Only include files where filename contains "cv", "resume", "profile"
-    
-    After the loop ends, pass the collected list as resume_drive_urls in the
-    HTTP webhook body.
+    IMPORTANT RULES:
+    - Parse the email body to understand which resume is for which role
+    - Look for patterns like "Resume for Java Developer role: John Smith"
+    - Look for skill channel IDs (10-char codes) mentioned near candidate names
+    - If the email mentions multiple roles, each resume should be mapped to its role
+    - If you cannot determine the job_title for a specific resume, set it to null
+    - If all resumes are for the same role, they should all have the same job_title
+    - skill_channel_id should only be set if explicitly mentioned in the email
+
+    Set to [] (empty array) if no attachments exist or the intent is neither
+    "New candidate submission" nor "New interview request".
 
 Attachment handling rules:
   - Only upload .pdf, .doc, .docx files (enforced by loop filter)
@@ -322,7 +310,68 @@ Attachment handling rules:
   - If attachments exist for an eligible email, drive_folder_link must not be null
 
 --------------------------------------------------------------------------------
-PART 8  CLASSIFICATION FLOW
+PART 8  CANDIDATE SCHEDULING DATA EXTRACTION (*** NEW ***)
+--------------------------------------------------------------------------------
+
+When the email intent is "New candidate submission" or "New interview request",
+AND the email contains interview scheduling information (available slots/times),
+extract structured candidate scheduling data.
+
+CRITICAL: This data is used for AUTO-SCHEDULING interviews. Only extract when
+you have 100% CONFIDENCE in ALL fields for a candidate. If ANY field is uncertain
+for a candidate, DO NOT include that candidate in the array.
+
+Fields to extract for each candidate:
+
+  - candidate_name:       Full name of the candidate (REQUIRED - 100% confidence)
+  - candidate_email:      Email address if mentioned (null if not explicitly stated)
+  - interview_date:       Date in YYYY-MM-DD format (REQUIRED - 100% confidence)
+  - interview_time:       Time in HH:MM format, 24-hour (REQUIRED - 100% confidence)
+  - timezone:             Timezone code (default "IST" if not specified)
+  - skill_channel_id:     10-character IRF ID for THIS candidate (REQUIRED - 100% confidence)
+  - resume_drive_url:     The specific Google Drive URL for THIS candidate's resume
+
+Rules:
+  - Only extract candidates where you can CONFIDENTLY match:
+    * Name to a specific resume attachment
+    * Date and time slot to that candidate
+    * Skill Channel ID to that candidate (may be same for all or different)
+  
+  - If the email mentions multiple candidates with different slots/IRFs, extract each separately
+  
+  - If you CANNOT confidently associate a resume with a candidate, set resume_drive_url to null
+  
+  - Date/Time parsing examples:
+    * "available on 5th April at 2 PM IST" -> date: "2026-04-05", time: "14:00", timezone: "IST"
+    * "tomorrow 10:30 AM" -> calculate actual date, time: "10:30"
+    * "March 15, 2026 at 3:00 PM" -> date: "2026-03-15", time: "15:00"
+  
+  - If candidate has multiple available slots, pick the FIRST mentioned slot
+  
+  - If timezone is not specified, default to "IST"
+  
+  - NEVER guess or infer. Only extract with 100% certainty.
+
+Output format:
+  "candidate_schedule_data": [
+    {
+      "candidate_name": "John Doe",
+      "candidate_email": "john.doe@example.com",
+      "interview_date": "2026-04-05",
+      "interview_time": "14:00",
+      "timezone": "IST",
+      "skill_channel_id": "QUADRJAVA5",
+      "resume_drive_url": "https://drive.google.com/file/d/xxx/view"
+    }
+  ]
+
+Set to empty array [] if:
+  - Intent is not "New candidate submission" or "New interview request"
+  - No scheduling information is present in the email
+  - Cannot extract data with 100% confidence for any candidate
+
+--------------------------------------------------------------------------------
+PART 9  CLASSIFICATION FLOW
 --------------------------------------------------------------------------------
 
   1.  Read the email
@@ -336,11 +385,12 @@ PART 8  CLASSIFICATION FLOW
   9.  Generate summaries (Part 6)
   10. Process and upload attachments (Part 7)
   11. Collect individual resume Drive URLs into resume_drive_urls (Part 7)
-  12. Populate the final JSON (Part 9)
-  13. Send the webhook payload
+  12. Extract candidate scheduling data if applicable (Part 8) ? 100% CONFIDENCE ONLY
+  13. Populate the final JSON (Part 10)
+  14. Send the webhook payload
 
 --------------------------------------------------------------------------------
-PART 9  FINAL OUTPUT JSON  (*** UPDATED ***)
+PART 10  FINAL OUTPUT JSON  (*** UPDATED ***)
 --------------------------------------------------------------------------------
 
 {
@@ -357,10 +407,29 @@ PART 9  FINAL OUTPUT JSON  (*** UPDATED ***)
   "attachment_pdf":             <true|false>,
   "attachment_resumes":         <true|false>,
   "drive_folder_link":          "<string or null>",
-  "resume_drive_urls":          ["<url1>", "<url2>"],
+  "resume_drive_urls":          [],
+  "resume_associations":        [
+    {
+      "resume_url":        "<Google Drive URL>",
+      "skill_channel_id":  "<10-char string or null>",
+      "job_title":         "<string or null>",
+      "candidate_name":    "<string or null>"
+    }
+  ],
   "summary_mail":               "<string>",
   "summary_candidates":         "<string or null>",
-  "summary_interview_scores":   "<string or null>"
+  "summary_interview_scores":   "<string or null>",
+  "candidate_schedule_data":    [
+    {
+      "candidate_name":      "<string>",
+      "candidate_email":     "<string or null>",
+      "interview_date":      "<YYYY-MM-DD>",
+      "interview_time":      "<HH:MM>",
+      "timezone":            "<string, default IST>",
+      "skill_channel_id":    "<10-char string>",
+      "resume_drive_url":    "<string or null>"
+    }
+  ]
 }
 
 ================================================================================

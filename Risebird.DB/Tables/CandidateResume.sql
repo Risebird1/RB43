@@ -88,4 +88,36 @@ BEGIN
     ADD [SupportTicketId] INT NULL;
 END
 
+-- Column to track auto-scheduled resumes from email flow
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'IsAutoScheduled'
+    AND Object_ID = Object_ID(N'CandidateResume'))
+BEGIN
+    ALTER TABLE dbo.CandidateResume
+    ADD [IsAutoScheduled] BIT NOT NULL DEFAULT 0;
+END
+
+-- Scheduled interview date/time from email extraction
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'ScheduledInterviewDateTime'
+    AND Object_ID = Object_ID(N'CandidateResume'))
+BEGIN
+    ALTER TABLE dbo.CandidateResume
+    ADD [ScheduledInterviewDateTime] DATETIME NULL;
+END
+
+-- Candidate name extracted from email
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'ExtractedCandidateName'
+    AND Object_ID = Object_ID(N'CandidateResume'))
+BEGIN
+    ALTER TABLE dbo.CandidateResume
+    ADD [ExtractedCandidateName] NVARCHAR(200) NULL;
+END
+
+-- Candidate email extracted from email
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'ExtractedCandidateEmail'
+    AND Object_ID = Object_ID(N'CandidateResume'))
+BEGIN
+    ALTER TABLE dbo.CandidateResume
+    ADD [ExtractedCandidateEmail] VARCHAR(150) NULL;
+END
+
 Go

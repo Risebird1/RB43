@@ -1,4 +1,4 @@
-﻿<div class="cd-panel cd-panel--from-right js-tr-window-main">
+<div class="cd-panel cd-panel--from-right js-tr-window-main">
     <header class="cd-panel__header">
         <pra style="font-weight: bold !important;font-size: 16px !important;">Need Assistance?</pra>
         <a href="#0" class="cd-panel__close js-tr-close">Close</a>
@@ -11,30 +11,31 @@
 </div>
 <script>
     $(document).ready(function () {
-        var raiseBugTriggers = document.getElementsByClassName('js-tr-window-trigger');
-        if (raiseBugTriggers.length > 0) {
-            for (var i = 0; i < raiseBugTriggers.length; i++) {
-                var raiseBugClass = 'js-tr-window-' + raiseBugTriggers[i].getAttribute('data-panel');
-                var raiseBugpanel = document.getElementsByClassName(raiseBugClass)[0];
-                raiseBugTriggers[i].addEventListener('click', function (event) {
+        // Delegated so triggers inside DataTables (pagination, responsive child rows, AJAX refresh) keep working
+        $(document).off('click.rbRaiseBugOpen', '.js-tr-window-trigger').on('click.rbRaiseBugOpen', '.js-tr-window-trigger', function (event) {
+            event.preventDefault();
+            var $trigger = $(event.target).closest('.js-tr-window-trigger');
+            if (!$trigger.length) return;
+            var url = $trigger.data('url');
+            var panelAttr = $trigger.attr('data-panel') || 'main';
+            var raiseBugClass = 'js-tr-window-' + panelAttr;
+            var raiseBugpanel = document.getElementsByClassName(raiseBugClass)[0];
+            if (!raiseBugpanel || !url) return;
+            addClass(raiseBugpanel, 'cd-panel--is-visible');
+            $.get(url).done(function (data) {
+                $('#raiseRequest_Bugs').html(data);
+            });
+        });
+
+        var raiseBugpanel = document.getElementsByClassName('js-tr-window-main')[0];
+        if (raiseBugpanel) {
+            $(raiseBugpanel).off('click.rbRaiseBugClose').on('click.rbRaiseBugClose', function (event) {
+                if (hasClass(event.target, 'js-tr-close') || hasClass(event.target, 'js-tr-window-main')) {
                     event.preventDefault();
-                    var url = $(this).data('url');
-                    addClass(raiseBugpanel, 'cd-panel--is-visible');
-                    $.get(url).done(function (data) {
-                        $('#raiseRequest_Bugs').html('');
-                        $('#raiseRequest_Bugs').html(data);
-                    });
-                });
-
-                raiseBugpanel.addEventListener('click', function (event) {
-                    if (hasClass(event.target, 'js-tr-close') || hasClass(event.target, raiseBugClass)) {
-                        event.preventDefault();
-                        removeClass(raiseBugpanel, 'cd-panel--is-visible');
-                    }
-                });
-            }
+                    removeClass(raiseBugpanel, 'cd-panel--is-visible');
+                }
+            });
         }
-
     })
     function hasClass(el, className) {
         if (el.classList) return el.classList.contains(className);
