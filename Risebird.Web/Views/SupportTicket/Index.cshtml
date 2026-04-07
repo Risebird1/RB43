@@ -826,7 +826,7 @@
                                                 data-ticket-subject="@t.Subject">
                                             <i class="fas fa-history"></i>
                                         </button>
-                                        @if (t.HasPendingResumes)
+                                        @if (t.HasPendingResumes || t.AttachmentResumes)
                                         {
                                             <button type="button" title="Review & Ingest Resumes"
                                                     class="btn btn-outline-warning btn-sm btn-review-resumes"
@@ -1068,7 +1068,7 @@
                             <h6 class="mb-0 fw-bold"><i class="fas fa-file-alt me-2 text-success"></i>Pending Resumes</h6>
                             <div class="d-flex align-items-center gap-2">
                                 <span class="badge bg-warning text-dark" id="pendingCount"></span>
-                                <button type="button" class="btn btn-info btn-sm" id="btnOpenCreateChannel" title="Create a new skill channel from template">
+                                <button type="button" class="btn btn-info" id="btnOpenCreateChannel" title="Create a new skill channel from template" style="padding: 8px 16px; font-weight: 500;">
                                     <i class="fas fa-plus-circle me-1"></i>Create Channel
                                 </button>
                             </div>
@@ -1096,8 +1096,22 @@
                     </div>
                 </div>
                 
-                <div class="text-center py-4 text-muted" id="pendingResumesEmpty" style="display:none">
-                    <i class="fas fa-inbox me-2"></i>No pending resumes found for this ticket.
+                <div class="text-center py-5" id="pendingResumesEmpty" style="display:none">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-3">No pending resumes found for this ticket.</p>
+                    <div id="processDriveFolderSection" style="display:none">
+                        <p class="small text-info mb-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Resume attachments were detected. Click below to process the drive folder.
+                        </p>
+                        <button type="button" class="btn btn-warning" id="btnProcessDriveFolder">
+                            <i class="fas fa-folder-open me-2"></i>Process Drive Folder
+                        </button>
+                        <div id="processDriveProgress" style="display:none" class="mt-3">
+                            <div class="spinner-border spinner-border-sm text-warning me-2"></div>
+                            <span>Processing drive folder...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- Debug Logs Panel (hidden by default) -->
@@ -1226,6 +1240,12 @@
                             <div class="form-text">This will be the name of the new skill channel.</div>
                         </div>
                         
+                        <div class="col-12">
+                            <label for="ccJDFile" class="form-label fw-semibold">Job Description</label>
+                            <input type="file" class="form-control" id="ccJDFile" accept=".pdf,.doc,.docx">
+                            <div class="form-text">Optional: Upload a JD file (.pdf, .doc, .docx)</div>
+                        </div>
+                        
                         <div class="col-md-6">
                             <label for="ccClient" class="form-label fw-semibold">Client <span class="text-danger">*</span></label>
                             <select class="form-select" id="ccClient" required>
@@ -1248,18 +1268,21 @@
                         </div>
                         
                         <div class="col-12">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="ccIsAIInterview">
-                                <label class="form-check-label" for="ccIsAIInterview">AI Interview</label>
+                            <div class="form-check" style="padding-left: 1.5em;">
+                                <input type="checkbox" class="form-check-input" id="ccIsAIInterview" 
+                                       style="width: 1.2em; height: 1.2em; margin-left: -1.5em; cursor: pointer; border: 1px solid #adb5bd;">
+                                <label class="form-check-label" for="ccIsAIInterview" style="cursor: pointer;">Is AI Interview</label>
                             </div>
                         </div>
                         
                         <div class="col-12" id="ccAITypeWrapper" style="display:none">
-                            <label for="ccAIInterviewType" class="form-label">AI Interview Type</label>
+                            <label for="ccAIInterviewType" class="form-label fw-semibold">AI Interview Type <span class="text-danger">*</span></label>
                             <select class="form-select" id="ccAIInterviewType">
-                                <option value="Standard">Standard</option>
-                                <option value="Advanced">Advanced</option>
+                                <option value="">Select</option>
+                                <option value="1">Adaptive</option>
+                                <option value="2">Preset</option>
                             </select>
+                            <label id="error_ccAIInterviewType" class="text-danger small"></label>
                         </div>
                     </div>
                 </form>
@@ -1340,10 +1363,17 @@
             try {
                 // Handle Google Drive URLs
                 if (url.includes('drive.google.com')) {
+                    // Check if it's a folder link
+                    if (url.includes('/folders/')) {
+                        return 'Drive folder (click to open)';
+                    }
+                    // Check if it's a file link
                     var match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
                     if (match) {
-                        return 'Google Drive file (ID: ' + match[1].substring(0, 8) + '...)';
+                        return 'Google Drive file';
                     }
+                    // Generic drive link
+                    return 'Google Drive link';
                 }
                 // Extract filename from path
                 var urlObj = new URL(url);
@@ -1366,6 +1396,18 @@
                 // If URL parsing fails, just return the URL truncated
                 return url.length > 50 ? url.substring(0, 50) + '...' : url;
             }
+        }
+        
+        // Helper to clean up filename - handles multi-line or concatenated names
+        // (Mainly for backward compatibility with data created before the backend fix)
+        function cleanFileName(fileName) {
+            if (!fileName) return null;
+            // If filename contains newlines or multiple files, take just the first one
+            var lines = fileName.split(/[\r\n]+/).filter(function(l) { return l.trim(); });
+            if (lines.length > 0) {
+                return lines[0].trim();
+            }
+            return fileName.trim();
         }
 
         function initResumeTooltips() {
@@ -1789,6 +1831,8 @@
             });
         });
 
+        var currentTicketData = null; // Store ticket metadata for drive folder processing
+
         function loadPendingResumes(ticketId) {
             $.ajax({
                 url:  '@Url.Action("GetPendingResumes", "SupportTicket")',
@@ -1797,11 +1841,24 @@
                 success: function (res) {
                     if (!res.success) {
                         $('#pendingResumesLoading').hide();
-                        $('#pendingResumesEmpty').text('Error: ' + (res.error || 'Unknown error')).show();
+                        $('#pendingResumesEmpty').find('p.text-muted').first().text('Error: ' + (res.error || 'Unknown error'));
+                        $('#processDriveFolderSection').hide();
+                        $('#pendingResumesEmpty').show();
                         return;
                     }
+                    
+                    // Store ticket metadata
+                    currentTicketData = res.ticket;
+                    
                     if (!res.resumes || res.resumes.length === 0) {
                         $('#pendingResumesLoading').hide();
+                        
+                        // Check if we should show the "Process Drive Folder" option
+                        if (currentTicketData && currentTicketData.driveFolderLink && currentTicketData.attachmentResumes) {
+                            $('#processDriveFolderSection').show();
+                        } else {
+                            $('#processDriveFolderSection').hide();
+                        }
                         $('#pendingResumesEmpty').show();
                         return;
                     }
@@ -1821,7 +1878,9 @@
                 },
                 error: function () {
                     $('#pendingResumesLoading').hide();
-                    $('#pendingResumesEmpty').text('Could not load resumes. Please try again.').show();
+                    $('#processDriveFolderSection').hide();
+                    $('#pendingResumesEmpty').find('p.text-muted').first().text('Could not load resumes. Please try again.');
+                    $('#pendingResumesEmpty').show();
                 }
             });
         }
@@ -1891,7 +1950,9 @@
                 var wasChanged = r.irfChangedByHR;
                 
                 // Candidate cell - use stored filename if available, otherwise extract from URL
-                var fileName = r.resumeFileName || extractFileNameFromUrl(r.resumeUrl);
+                // Clean up the filename in case it has multiple files concatenated
+                var rawFileName = r.resumeFileName;
+                var fileName = cleanFileName(rawFileName) || extractFileNameFromUrl(r.resumeUrl);
                 var candidateHtml = '<div class="candidate-cell">' +
                     '<div class="name">' + escapeHtml(r.candidateName || 'Unknown') + '</div>' +
                     '<div class="email">' + escapeHtml(r.candidateEmail || '—') + '</div>' +
@@ -2114,6 +2175,81 @@
         $('#closeDebugLogsBtn').on('click', function () {
             $('#debugLogsPanel').slideUp();
         });
+
+        // Process Drive Folder button handler
+        $('#btnProcessDriveFolder').on('click', function () {
+            var ticketId = currentPendingResumesTicketId;
+            if (!ticketId) {
+                showToast('No ticket selected', 'danger');
+                return;
+            }
+
+            var $btn = $(this);
+            $btn.prop('disabled', true);
+            $('#processDriveProgress').show();
+
+            $.ajax({
+                url: '@Url.Action("ProcessDriveFolderForResumes", "SupportTicket")',
+                type: 'POST',
+                data: { ticketId: ticketId },
+                headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+                success: function (res) {
+                    $btn.prop('disabled', false);
+                    $('#processDriveProgress').hide();
+
+                    if (res.success) {
+                        showToast(res.message || 'Drive folder processed successfully!', 'success');
+                        
+                        // Hide the empty state and show the resumes
+                        $('#pendingResumesEmpty').hide();
+                        
+                        if (res.resumes && res.resumes.length > 0) {
+                            currentSenderEmail = currentTicketData ? currentTicketData.senderEmail : null;
+                            
+                            // Render email context from ticket data if available
+                            if (currentTicketData) {
+                                renderEmailContextFromTicket(currentTicketData);
+                            }
+                            
+                            loadIRFOptions(currentSenderEmail, function() {
+                                renderPendingResumesTable(res.resumes);
+                                $('#emailContextSection').show();
+                                $('#pendingResumesList').show();
+                                initResumeTooltips();
+                            });
+                        }
+                    } else {
+                        showToast('Error: ' + (res.error || 'Unknown error'), 'danger');
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false);
+                    $('#processDriveProgress').hide();
+                    showToast('Failed to process drive folder', 'danger');
+                }
+            });
+        });
+
+        // Helper function to render email context from ticket data (when no resumes exist yet)
+        function renderEmailContextFromTicket(ticket) {
+            $('#ctxSender').text(ticket.senderEmail || 'N/A');
+            $('#ctxSubject').text(ticket.subject || 'N/A');
+            $('#ctxSpecialization').text(ticket.primarySpecialization || 'N/A');
+            
+            var attachments = [];
+            if (ticket.attachmentJobDescription) attachments.push('<i class="fas fa-file-alt text-success me-1" title="JD"></i>JD');
+            if (ticket.attachmentPdf) attachments.push('<i class="fas fa-file-pdf text-success me-1" title="PDF"></i>PDF');
+            if (ticket.attachmentResumes) attachments.push('<i class="fas fa-user text-success me-1" title="Resumes"></i>Resumes');
+            $('#ctxAttachments').html(attachments.length > 0 ? attachments.join(' &nbsp; ') : '<span class="text-muted">None</span>');
+            
+            $('#ctxSummary').text('N/A');
+            
+            if (ticket.driveFolderLink) {
+                $('#ctxDriveLink').html('<a href="' + ticket.driveFolderLink + '" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fab fa-google-drive me-1"></i>Open Drive Folder</a>');
+            } else {
+                $('#ctxDriveLink').html('<span class="text-muted">N/A</span>');
+            }
+        }
         
         function loadDebugLogs() {
             var ticketId = currentPendingResumesTicketId;
@@ -2382,6 +2518,9 @@
             
             // Reset form
             $('#createChannelForm')[0].reset();
+            $('#ccJDFile').val(''); // Explicitly reset file input
+            $('#error_ccAIInterviewType').text(''); // Clear any error message
+            $('#ccAITypeWrapper').hide(); // Hide AI type dropdown initially
             
             // Destroy Select2 if previously initialized to reset it
             if (select2Initialized) {
@@ -2595,32 +2734,58 @@
                 return;
             }
             
+            var isAIInterview = $('#ccIsAIInterview').is(':checked');
+            var aiInterviewType = isAIInterview ? parseInt($('#ccAIInterviewType').val()) || 0 : 0;
+            
+            // Validate AI Interview Type when AI Interview is checked
+            if (isAIInterview && (!aiInterviewType || aiInterviewType === 0)) {
+                showToast('Please select an AI Interview Type.', 'warning');
+                $('#error_ccAIInterviewType').text('Interview Type is required for AI Interview.');
+                $('#ccAIInterviewType').focus();
+                return;
+            } else {
+                $('#error_ccAIInterviewType').text('');
+            }
+            
             // Get selected client users
             var clientUserIds = [];
             $('#ccClientUsers option:selected').each(function () {
                 clientUserIds.push(parseInt($(this).val()));
             });
             
-            var isAIInterview = $('#ccIsAIInterview').is(':checked');
-            var aiInterviewType = isAIInterview ? parseInt($('#ccAIInterviewType').val()) || 0 : 0;
+            // Get the JD file if uploaded
+            var jdFileInput = document.getElementById('ccJDFile');
+            var jdFile = jdFileInput && jdFileInput.files.length > 0 ? jdFileInput.files[0] : null;
             
             $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Creating...');
             $('#createChannelMessage').html('<span class="text-info"><i class="fas fa-spinner fa-spin me-1"></i>Creating skill channel...</span>');
             
+            // Use FormData to support file upload
+            var formData = new FormData();
+            formData.append('templateId', parseInt(templateId));
+            formData.append('clientId', parseInt(clientId));
+            formData.append('jdTitle', jdTitle);
+            formData.append('billingOwnerId', parseInt(billingOwnerId));
+            formData.append('isAIInterview', isAIInterview);
+            formData.append('aiInterviewType', aiInterviewType);
+            
+            // Add client user IDs
+            for (var i = 0; i < clientUserIds.length; i++) {
+                formData.append('clientUserIds', clientUserIds[i]);
+            }
+            
+            // Add JD file if present
+            if (jdFile) {
+                formData.append('jdFile', jdFile);
+            }
+            
             $.ajax({
                 url: '@Url.Action("CreateChannelFromTemplate", "SupportTicket")',
                 type: 'POST',
-                contentType: 'application/json',
+                processData: false,
+                contentType: false,
                 headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
-                data: JSON.stringify({
-                    templateId: parseInt(templateId),
-                    clientId: parseInt(clientId),
-                    jdTitle: jdTitle,
-                    clientUserIds: clientUserIds,
-                    billingOwnerId: parseInt(billingOwnerId),
-                    isAIInterview: isAIInterview,
-                    aiInterviewType: aiInterviewType
-                }),
+                data: formData,
                 success: function (res) {
                     $btn.prop('disabled', false).html('<i class="fas fa-plus-circle me-1"></i>Create Channel');
                     
