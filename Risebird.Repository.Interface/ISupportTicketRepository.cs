@@ -177,5 +177,10 @@ namespace Risebird.Repository.Interface
         /// Used for creating new skill channels from the pending resumes modal.
         /// </summary>
         Task<List<TemplateMatchVM>> GetTemplatesForSpecializationAsync(string primarySpecialization);
+
+        /// <summary>
+        /// Gets basic ticket info by ID (for modal context).
+        /// </summary>
+        Task<SupportTicketVM> GetTicketByIdAsync(int ticketId);
     }
 }
