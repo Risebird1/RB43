@@ -4,6 +4,7 @@
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
+@using System.Collections.Generic
 @using Risebird.Entities.Enum
 @using Risebird.CommonHelper
 @inject IHttpContextAccessor HttpContextAccessor
@@ -17,6 +18,7 @@
 }
 <input type="hidden" value="@ViewBag.actionstatus" id="hidactionstatus" />
 <input type="hidden" value="@ViewBag.returnBack" id="hidreturnBack" />
+<input type="hidden" value="@ViewBag.qcTab" id="hidqcTab" />
 @if (HttpContextAccessor.HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
 {
     filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContextAccessor.HttpContext.Session.GetString("PaymentSlaDetailsFilters"));
@@ -27,24 +29,26 @@
 <div class="main-panel" id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
-            <div class="card-header bg-w clearfix">
-                <div class="pull-left">
+            <div class="card-header bg-w clearfix payment-sla-911-header">
+                <div class="payment-sla-911-title">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title"> 911 Dashboard</h4></div>
+                    <div class="mobile-view"><h4 class="card-title">911 Dashboard</h4></div>
                 </div>
-                <div class="pull-left">
-                    @if (ViewBag.actionstatus == "SLACompleted")
-                    {
-                        <div class="feedback-tab" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment Compliance</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('SLACompleted','@ViewBag.ReturnBack')"><strong>SLA Completed</strong></div>
+                <div class="payment-sla-tabs-row">
+                    @{
+                        var sla911Action = ViewBag.actionstatus as string ?? "";
+                        var sla911OnQc = ViewBag.ShowQcMeetingGrid == true;
+                        var sla911SlaCompleted = sla911Action == "SLACompleted";
                     }
-                    else
-                    {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment Compliance</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('SLACompleted','@ViewBag.ReturnBack')"><strong>SLA Completed</strong></div>
-                    }
+                    <div class="@(!sla911SlaCompleted && !sla911OnQc ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment compliance</strong></div>
+                    <div class="@(sla911SlaCompleted && !sla911OnQc ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('SLACompleted','@ViewBag.ReturnBack')"><strong>SLA completed</strong></div>
+                    <span class="payment-sla-tab-sep" aria-hidden="true"></span>
+                    <div class="@(sla911OnQc && (ViewBag.qcTab as string) == "PropableRedo" ? "feedback-tab-ac" : "feedback-tab")" onclick="ChangePaymentSlaQcTab('PropableRedo')"><strong>High severity QC</strong></div>
+                    <div class="@(sla911OnQc && (ViewBag.qcTab as string) == "QCUnderReview" ? "feedback-tab-ac" : "feedback-tab")" onclick="ChangePaymentSlaQcTab('QCUnderReview')"><strong>Under review</strong></div>
+                    <div class="@(sla911OnQc && (ViewBag.qcTab as string) == "FakeReport" ? "feedback-tab-ac" : "feedback-tab")" onclick="ChangePaymentSlaQcTab('FakeReport')"><strong>Fake report</strong></div>
+                    <div class="@(sla911OnQc && (ViewBag.qcTab as string) == "RedoInterviewCount" ? "feedback-tab-ac" : "feedback-tab")" onclick="ChangePaymentSlaQcTab('RedoInterviewCount')"><strong>Redo requested</strong></div>
                 </div>
-                <div class="pull-right">
+                <div class="payment-sla-911-actions">
                     <div>
                         
                           
@@ -81,7 +85,8 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
 
-                                            <form action="@Url.Action("PaymentSlaDetails","Interview",new { actionstatus=ViewBag.actionstatus, returnBack = ViewBag.returnBack })" method="post" id="form" onsubmit="return checkfilterDate();">
+                                            <form action="@Url.Action("PaymentSlaDetails","Interview",new { actionstatus=ViewBag.actionstatus, returnBack = ViewBag.returnBack, qcTab = ViewBag.qcTab })" method="post" id="form" onsubmit="return checkfilterDate();">
+                                                <input type="hidden" name="qcTab" value="@ViewBag.qcTab" />
                                                 <div class="modal-body">
                                                     <div class="row">
                                                         <div class="col-md-6 col-sm-6 border-rv">
@@ -127,6 +132,12 @@
                                     </div>
 
                                 </div>
+                                @if (ViewBag.ShowQcMeetingGrid == true && ViewBag.QcMeetingList != null)
+                                {
+                                    @await Html.PartialAsync("_PaymentSlaDetailsQcMeetingGrid", (IEnumerable<Risebird.Entities.ViewModel.MeetingVM>)ViewBag.QcMeetingList)
+                                }
+                                else
+                                {
                                 <div style="overflow-x:scroll" class="scrollbar unassigned-int" id="style-2">
                                     <div id="tableID" class="second">
                                         <table id="meetingTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
@@ -393,6 +404,7 @@
                                         </table>
                                     </div>
                                 </div>
+                                }
                             </div>
                             <!-- end content-->
                         </div>
@@ -462,10 +474,29 @@
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 @await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")
 
+<div id="RedoRequestInterviewModel" class="modal modal-bg" style="z-index:5">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Redo Interview</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeRedoRequestInterviewModel()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" id="divredoRequestInterview">
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="~/js/TwilioCallMaker.js"></script>
 <script>
     function RefreshSearch() {
-        $('#meetingTable').DataTable().destroy();
+        var sel = $('#meetingTableQc').length ? '#meetingTableQc' : '#meetingTable';
+        $(sel).DataTable().destroy();
         setTimeout(function () {
             applyDataTable();
         }, 2000);
@@ -476,7 +507,8 @@
     });
 
     function applyDataTable() {
-        $('#meetingTable').DataTable({
+        var tbl = $('#meetingTableQc').length ? '#meetingTableQc' : '#meetingTable';
+        $(tbl).DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [
                 [10, 25, 50, -1],
@@ -531,6 +563,7 @@
             loader.style.display = "none";
             $(".dataloading").show();
             $("#meetingTable").show();
+            $("#meetingTableQc").show();
         }, 2000);
     };
     //// script for loader ends here
@@ -598,7 +631,35 @@
         $("#divcandidateskills").empty().html(html);
     }
     function Changeurldetails(type,returnBack) {
-        window.location.href = "/Interview/PaymentSlaDetails?actionstatus=" + type + "&returnBack=" + returnBack;
+        window.location.href = "/Interview/PaymentSlaDetails?actionstatus=" + encodeURIComponent(type || '') + "&returnBack=" + returnBack;
+    }
+    function ChangePaymentSlaQcTab(qcTab) {
+        var actionstatus = $("#hidactionstatus").val() || '';
+        var returnBack = $("#hidreturnBack").val() || '0';
+        var url = "/Interview/PaymentSlaDetails?actionstatus=" + encodeURIComponent(actionstatus) + "&returnBack=" + returnBack;
+        if (qcTab) {
+            url += "&qcTab=" + encodeURIComponent(qcTab);
+        }
+        window.location.href = url;
+    }
+    function OpenRedoRequestFormModel(interviewid, interviewstatus, type) {
+        $.ajax({
+            url: '/Interview/RedoInterviewDetails',
+            data: { 'interviewid': interviewid, 'interviewstatus': interviewstatus, 'type': type },
+            success: function (data) {
+                $('#divredoRequestInterview').html('');
+                $('#divredoRequestInterview').html(data);
+                openRedoRequestInterviewModel();
+            }
+        });
+    }
+    function openRedoRequestInterviewModel() {
+        var modal = document.getElementById("RedoRequestInterviewModel");
+        modal.style.display = "block";
+    }
+    function closeRedoRequestInterviewModel() {
+        var modal = document.getElementById("RedoRequestInterviewModel");
+        modal.style.display = "none";
     }
 </script>
 <script>
@@ -645,8 +706,12 @@
     function ResetFilter() {
         var actionstatus = $("#hidactionstatus").val();
         var returnBack = $("#hidreturnBack").val();
-        window.location.href = "/Interview/ResetPaymentSlaDetailsFilter?actionstatus=" + actionstatus + "&returnBack=" + returnBack;
-       
+        var qcTab = $("#hidqcTab").val() || '';
+        var url = "/Interview/ResetPaymentSlaDetailsFilter?actionstatus=" + encodeURIComponent(actionstatus || '') + "&returnBack=" + returnBack;
+        if (qcTab) {
+            url += "&qcTab=" + encodeURIComponent(qcTab);
+        }
+        window.location.href = url;
     }
 </script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -661,5 +726,69 @@
     #filterModal.modal.fade .modal-dialog {
         transition: transform .3s ease-out;
         transform: translate(0, -0px);
+    }
+
+    .payment-sla-911-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 10px;
+    }
+
+    .payment-sla-911-title {
+        flex: 0 0 auto;
+    }
+
+    .payment-sla-tabs-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 5px;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .payment-sla-911-actions {
+        flex: 0 0 auto;
+        margin-left: auto;
+    }
+
+    .payment-sla-tabs-row .feedback-tab,
+    .payment-sla-tabs-row .feedback-tab-ac {
+        float: none !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 9px !important;
+        font-size: 11px !important;
+        line-height: 1.25 !important;
+        border-radius: 14px;
+    }
+
+    .payment-sla-tabs-row .feedback-tab strong,
+    .payment-sla-tabs-row .feedback-tab-ac strong {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .payment-sla-tab-sep {
+        display: inline-block;
+        width: 1px;
+        height: 14px;
+        background: #bdbdbd;
+        margin: 0 3px;
+        flex-shrink: 0;
+        align-self: center;
+    }
+
+    @@media (max-width: 767px) {
+        .payment-sla-tabs-row {
+            flex-basis: 100%;
+            order: 3;
+        }
+
+        .payment-sla-911-actions {
+            margin-left: 0;
+        }
     }
 </style>

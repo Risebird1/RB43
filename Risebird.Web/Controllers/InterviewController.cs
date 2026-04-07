@@ -73,6 +73,7 @@ namespace Risebird.Web.Controllers
         private readonly IEncryptionHelper _encryptionHelper;
         private readonly IActivityTrackerService _activityTrackerService;
         private readonly IReportQCOptimizationHelper _reportQCOptimizationHelper;
+        private readonly IDashboardService _dashboardService;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -91,7 +92,8 @@ namespace Risebird.Web.Controllers
             IIRFService irfService, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor,
             IConverter converter, IAssistantServiceHelper assistantServiceHelper, IEncryptionHelper encryptionHelper, IActivityTrackerService activityTrackerService,
-            IReportQCOptimizationHelper reportQCOptimizationHelper)//IConverter converter,
+            IReportQCOptimizationHelper reportQCOptimizationHelper,
+            IDashboardService dashboardService)//IConverter converter,
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -123,6 +125,7 @@ namespace Risebird.Web.Controllers
             _encryptionHelper = encryptionHelper;
             _activityTrackerService = activityTrackerService;
             _reportQCOptimizationHelper = reportQCOptimizationHelper;
+            _dashboardService = dashboardService;
         }
 
 
@@ -8381,7 +8384,38 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<IActionResult> PaymentSlaDetails(string actionstatus, int returnBack)
+        private List<MeetingVM> FormatPaymentSlaQcMeetings(List<MeetingVM> modelList)
+        {
+            if (modelList == null)
+            {
+                return new List<MeetingVM>();
+            }
+            return modelList.Select(x =>
+            {
+                x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty;
+                return x;
+            }).OrderBy(x => x.interviewDate).ToList();
+        }
+
+        private async Task<List<MeetingVM>> FetchPaymentSlaQcMeetingsAsync(string emailId, string profileName, string qcTab)
+        {
+            // High Severity, Fake Report, Redo requested: show empty grid only (no Sensitive Data / dashboard queries).
+            if (qcTab == RibbonActionType.PropableRedo || qcTab == RibbonActionType.FakeReport || qcTab == RibbonActionType.RedoInterview)
+            {
+                return new List<MeetingVM>();
+            }
+            if (qcTab == RibbonActionType.QCUnderReview)
+            {
+                var modelList = await _dashboardService.FetchPropableRedoDetails(emailId, profileName, qcTab);
+                return FormatPaymentSlaQcMeetings(modelList ?? new List<MeetingVM>());
+            }
+            return new List<MeetingVM>();
+        }
+
+        public async Task<IActionResult> PaymentSlaDetails(string actionstatus, int returnBack, string qcTab)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -8390,6 +8424,8 @@ namespace Risebird.Web.Controllers
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
                 ViewBag.ReturnBack = returnBack;
+                ViewBag.ProfileName = profileName;
+                ViewBag.qcTab = qcTab;
                 if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "Finance")
                 {
                     if (string.IsNullOrWhiteSpace(actionstatus))
@@ -8397,6 +8433,35 @@ namespace Risebird.Web.Controllers
                         actionstatus = "";
                     }
                     ViewBag.actionstatus = actionstatus;
+
+                    var isPaymentSlaQcTab = !string.IsNullOrWhiteSpace(qcTab)
+                        && (qcTab == RibbonActionType.PropableRedo || qcTab == RibbonActionType.QCUnderReview
+                            || qcTab == RibbonActionType.FakeReport || qcTab == RibbonActionType.RedoInterview);
+                    ViewBag.ShowQcMeetingGrid = isPaymentSlaQcTab;
+
+                    if (isPaymentSlaQcTab)
+                    {
+                        var qcModel = await FetchPaymentSlaQcMeetingsAsync(emailId, profileName, qcTab);
+                        if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PaymentSlaDetailsFilters"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                var endD = filter.EndDate?.AddDays(1);
+                                qcModel = qcModel.Where(m => m.interviewDate >= filter.StartDate && m.interviewDate <= endD).ToList();
+                            }
+                        }
+                        else
+                        {
+                            DateTime StartDate = DateTime.Now.AddMonths(-1);
+                            DateTime EndDate = DateTime.Now.AddDays(1);
+                            qcModel = qcModel.Where(m => m.interviewDate >= StartDate && m.interviewDate <= EndDate).ToList();
+                        }
+                        ViewBag.QcActionStatus = qcTab;
+                        ViewBag.QcMeetingList = qcModel;
+                        return View(new List<PaymentSLAVM>());
+                    }
+
                     var model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
                     if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
                     {
@@ -8420,7 +8485,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PaymentSlaDetails(SkillChannelDetailsFilter filter, string actionstatus, int returnBack)
+        public async Task<IActionResult> PaymentSlaDetails(SkillChannelDetailsFilter filter, string actionstatus, int returnBack, string qcTab)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -8428,7 +8493,7 @@ namespace Risebird.Web.Controllers
                 {
                     HttpContext.Session.SetString("PaymentSlaDetailsFilters", JsonConvert.SerializeObject(filter));
                 }
-                return RedirectToAction("PaymentSlaDetails", new { actionstatus = actionstatus, returnBack = returnBack });
+                return RedirectToAction("PaymentSlaDetails", new { actionstatus = actionstatus, returnBack = returnBack, qcTab = qcTab });
             }
             else
             {
@@ -8437,14 +8502,14 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ResetPaymentSlaDetailsFilter(string actionstatus, int returnBack)
+        public async Task<IActionResult> ResetPaymentSlaDetailsFilter(string actionstatus, int returnBack, string qcTab)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     HttpContext.Session.Remove("PaymentSlaDetailsFilters");
-                    return RedirectToAction("PaymentSlaDetails", new { actionstatus = actionstatus, returnBack = returnBack });
+                    return RedirectToAction("PaymentSlaDetails", new { actionstatus = actionstatus, returnBack = returnBack, qcTab = qcTab });
                 }
                 else
                 {
