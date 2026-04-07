@@ -67,7 +67,8 @@ namespace Risebird.Entities.ViewModel
             if (qc.total_penalty.HasValue)
             {
                 if (!applyOnlyIfEmpty || model.PaymentDeduction == 0)
-                    model.PaymentDeduction = RoundToPaymentSlab(qc.total_penalty.Value);
+                    model.PaymentDeduction = qc.total_penalty.Value;
+                //model.PaymentDeduction = RoundToPaymentSlab(qc.total_penalty.Value);
             }
 
             var aiNoteParts = new List<string>();

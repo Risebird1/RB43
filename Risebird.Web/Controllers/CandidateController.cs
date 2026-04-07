@@ -3513,7 +3513,7 @@ namespace Risebird.Web.Controllers
                         var model = new ResumeListViewModel();
                         model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId))?.ToList();
                         model.ResumeList = model.ResumeList.OrderBy(x => x.IsProcessed).ToList();
-                        
+
                         // Categorize resumes into tabs
                         foreach (var resume in model.ResumeList)
                         {
@@ -3524,17 +3524,17 @@ namespace Risebird.Web.Controllers
                             }
                             else if (resume.IsProcessed == false || resume.IsProcessed == null)
                             {
-                                bool hasAttemptedProcessing = resume.IsResumeParsed != null || 
-                                                             resume.IsResumeParsingFailed != null || 
+                                bool hasAttemptedProcessing = resume.IsResumeParsed != null ||
+                                                             resume.IsResumeParsingFailed != null ||
                                                              !string.IsNullOrEmpty(resume.ReasonBehindNotProcessed);
-                                
+
                                 if (!hasAttemptedProcessing)
                                 {
                                     // Tab 1: Yet to be processed
                                     model.YetToBeProcessed.Add(resume);
                                 }
-                                else if (hasAttemptedProcessing && 
-                                        !string.IsNullOrEmpty(resume.ReasonBehindNotProcessed) && 
+                                else if (hasAttemptedProcessing &&
+                                        !string.IsNullOrEmpty(resume.ReasonBehindNotProcessed) &&
                                         resume.ReasonBehindNotProcessed.ToLower().Contains("duplicate"))
                                 {
                                     // Tab 3: Duplicates
@@ -3547,7 +3547,7 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
-                        
+
                         model.IRFName = irfName;
                         model.IRFId = irfId;
                         model.Profile = profileName;
@@ -3621,10 +3621,10 @@ namespace Risebird.Web.Controllers
         {
             if (string.IsNullOrEmpty(reason))
                 return "";
-                
+
             if (reason.StartsWith("Exception during processing:", StringComparison.OrdinalIgnoreCase))
                 return "An error occurred while processing this resume. Please contact support.";
-                
+
             return reason;
         }
 
@@ -3696,11 +3696,11 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 4].Value = "No Resume";
                         }
-                        
+
                         Sheet.Cells[i, 5].Value = item.IsProcessed == true ? "Yes" : "No";
                         Sheet.Cells[i, 6].Value = item.IsResumeParsed == null ? "" : (item.IsResumeParsed == true ? "Yes" : "No");
                         Sheet.Cells[i, 7].Value = GetUserFriendlyReason(item.ReasonBehindNotProcessed);
-                        
+
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -4897,7 +4897,7 @@ namespace Risebird.Web.Controllers
                 var model = new ResumeListViewModel();
                 model.ResumeList = (await _candidateService.GetCandidatesResumes(irfId, emailid))?.ToList();
                 model.ResumeList = model.ResumeList?.OrderBy(x => x.IsProcessed)?.ToList();
-                
+
                 // Categorize resumes into tabs
                 foreach (var resume in model.ResumeList)
                 {
@@ -4908,17 +4908,17 @@ namespace Risebird.Web.Controllers
                     }
                     else if (resume.IsProcessed == false || resume.IsProcessed == null)
                     {
-                        bool hasAttemptedProcessing = resume.IsResumeParsed != null || 
-                                                     resume.IsResumeParsingFailed != null || 
+                        bool hasAttemptedProcessing = resume.IsResumeParsed != null ||
+                                                     resume.IsResumeParsingFailed != null ||
                                                      !string.IsNullOrEmpty(resume.ReasonBehindNotProcessed);
-                        
+
                         if (!hasAttemptedProcessing)
                         {
                             // Tab 1: Yet to be processed
                             model.YetToBeProcessed.Add(resume);
                         }
-                        else if (hasAttemptedProcessing && 
-                                !string.IsNullOrEmpty(resume.ReasonBehindNotProcessed) && 
+                        else if (hasAttemptedProcessing &&
+                                !string.IsNullOrEmpty(resume.ReasonBehindNotProcessed) &&
                                 resume.ReasonBehindNotProcessed.ToLower().Contains("duplicate"))
                         {
                             // Tab 3: Duplicates
@@ -4931,7 +4931,7 @@ namespace Risebird.Web.Controllers
                         }
                     }
                 }
-                
+
                 model.IRFName = irfName;
                 model.IRFId = irfId;
                 model.Profile = "Client";
@@ -5610,7 +5610,7 @@ namespace Risebird.Web.Controllers
                 var endDate = today.AddDays(45);
 
                 data = data
-                    .Where(x => x.interviewDate >= startDate && x.interviewDate <= endDate)
+                    .Where(x => x.ColdMarkedDate >= startDate && x.ColdMarkedDate <= endDate)
                     .Select(x =>
                     {
                         x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
