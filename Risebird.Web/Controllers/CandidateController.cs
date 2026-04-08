@@ -5342,7 +5342,7 @@ namespace Risebird.Web.Controllers
             {
                 if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.confirmationStatus == "Confirmed")
                 {
-                    interviewid = item.Interviewid;
+                    interviewid = item.InterviewId;
                 }
             }
             ViewBag.Interviewid = interviewid;

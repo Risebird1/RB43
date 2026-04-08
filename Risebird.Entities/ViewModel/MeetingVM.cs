@@ -273,7 +273,6 @@ namespace Risebird.Entities.ViewModel
         public int VideoDuration { get; set; }
 
         public int DurationSelectedMin { get; set; }
-        public int Interviewid { get; set; }
         public string OldInterviewer { get; set; }
         public string OldQCInterviewer { get; set; }
         public string OldzoomLink { get; set; }
