@@ -420,6 +420,10 @@ namespace Risebird.Entities.ViewModel
         public bool isMultiLingual { get; set; }
         public string AIResumeScreeningVerdict { get; set; }
         public int AIResumeScreeningScore { get; set; }
+        public DateTime? CandidateAddedOn { get; set; }
+        public string ProjectTitle { get; set; }
+        public string HRFirstName { get; set; }
+        public string HRLastName { get; set; }
 
     }
 
