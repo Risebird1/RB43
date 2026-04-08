@@ -41,7 +41,7 @@ begin
  end as candidateName,           
  im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore,            
  im.JoiningBiometryScore, ca.Phone as MobileNumber, ca.ResumeLink as resumeLink, ic.*, irf.*, qcf.*,            
- ul.Isonline as IsOnline, ulh.Isonline as IsHrOnline, irf.IsQCRequired,im.RedoInterview,tr.ClientAction as ShortListstatus,ip.NickName as InterviewerName,im.SessionId,irf.IsAIInterview                    
+ ul.Isonline as IsOnline, ulh.Isonline as IsHrOnline, irf.IsQCRequired,im.RedoInterview,tr.ClientAction as ShortListstatus,ip.NickName as InterviewerName,im.SessionId,irf.IsAIInterview,irf.ClientId                    
  from InterviewMeetings im              
  left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId left join irf on IRF.IRFId = im.IRFId              
  left join QCFeedbackReport QCF on im.id=QCF.InterviewId            
@@ -67,7 +67,7 @@ begin
  end as candidateName,           
  im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore,            
  im.JoiningBiometryScore, ca.Phone as MobileNumber, ca.ResumeLink as resumeLink, ic.*, irf.*, qcf.*,            
- ul.Isonline as IsOnline, ulh.Isonline as IsHrOnline, irf.IsQCRequired,im.RedoInterview,tr.ClientAction as ShortListstatus,ip.NickName as InterviewerName,im.SessionId,irf.IsAIInterview                          
+ ul.Isonline as IsOnline, ulh.Isonline as IsHrOnline, irf.IsQCRequired,im.RedoInterview,tr.ClientAction as ShortListstatus,ip.NickName as InterviewerName,im.SessionId,irf.IsAIInterview,irf.ClientId                          
  from InterviewMeetings im              
  left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId left join irf on IRF.IRFId = im.IRFId              
  left join QCFeedbackReport QCF on im.id=QCF.InterviewId            
@@ -93,7 +93,7 @@ begin
  end as candidateName,           
  im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore,            
  im.JoiningBiometryScore, ca.Phone as MobileNumber, ca.ResumeLink as resumeLink, ic.*, irf.*, qcf.*,            
- ul.Isonline as IsOnline, ulh.Isonline as IsHrOnline, irf.IsQCRequired,im.RedoInterview,tr.ClientAction as ShortListstatus,ip.NickName as InterviewerName,im.SessionId,irf.IsAIInterview                          
+ ul.Isonline as IsOnline, ulh.Isonline as IsHrOnline, irf.IsQCRequired,im.RedoInterview,tr.ClientAction as ShortListstatus,ip.NickName as InterviewerName,im.SessionId,irf.IsAIInterview,irf.ClientId                          
  from InterviewMeetings im              
  left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId left join irf on IRF.IRFId = im.IRFId              
  left join QCFeedbackReport QCF on im.id=QCF.InterviewId            

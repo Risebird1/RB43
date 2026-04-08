@@ -74,6 +74,11 @@ namespace Risebird.Entities.ViewModel
         public string CancellationSource { get; set; }
         public int CandidateAging { get; set; }
         public string ResumeLink { get; set; }
+        public DateTime? CandidateAddedOn { get; set; }
+        public string ProjectTitle { get; set; }
+        public string ProjectUniqueid { get; set; }
+        public string HRFirstName { get; set; }
+        public string HRLastName { get; set; }
     }
 
     public class TimelineStatus

@@ -9947,6 +9947,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.id = uniqueid;
                 ViewBag.IRFintId = irfId;
                 ViewBag.meetingtype = meetingtype;
+                ViewBag.Clientid = meetings?.FirstOrDefault()?.ClientId;
                 if (meetingtype == "Select")
                 {
                     meetings = meetings?.Where(x => (x.InterviewStatus == 2 || x.InterviewStatus == 4) && !x.RedoInterview)?.ToList();
