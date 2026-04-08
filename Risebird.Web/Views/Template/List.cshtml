@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.ClonableTemplateListVM
+@model Risebird.Entities.ViewModel.ClonableTemplateListVM
 @using Risebird.Entities
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
@@ -102,7 +102,10 @@
                 </div>
 
                 <div class="pull-right">
-                    <div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button type="button" class="btn btn-success" id="btnCreateMissingTemplates" title="Create templates for all MAGs that don't have one" style="padding: 8px 16px; font-weight: 500;">
+                            <i class="fas fa-magic me-1"></i> Create Missing Templates
+                        </button>
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
@@ -1521,6 +1524,320 @@ else if (Model.Message != null)
             originalClientChanged(clientIdValue);
         }
     };
+</script>
+
+<!-- Modal for Bulk Template Creation -->
+<div class="modal fade" id="bulkTemplateModal" tabindex="-1" role="dialog" aria-labelledby="bulkTemplateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
+                <h5 class="modal-title" id="bulkTemplateModalLabel">
+                    <i class="fas fa-magic me-2"></i>Create Missing Templates
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="bulkTemplateForm">
+                @Html.AntiForgeryToken()
+            </form>
+            <div class="modal-body">
+                <!-- Preview Section -->
+                <div id="bulkTemplatePreview">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <strong>MAGs without Templates:</strong>
+                            <span id="magCount" class="badge bg-warning text-dark ms-2">Loading...</span>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnRefreshMAGs">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="magListContainer" style="max-height: 300px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 4px;">
+                        <table class="table table-sm table-hover mb-0" id="magListTable">
+                            <thead class="table-light" style="position: sticky; top: 0;">
+                                <tr>
+                                    <th style="width: 50%;">Assessment Group Name</th>
+                                    <th style="width: 50%;">Primary Skills</th>
+                                </tr>
+                            </thead>
+                            <tbody id="magListBody">
+                                <tr><td colspan="2" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="alert alert-info mt-3 mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> This will use AI to generate rubrics for each MAG and create templates. This process may take several minutes depending on the number of MAGs.
+                    </div>
+                </div>
+                
+                <!-- Progress Section (hidden initially) -->
+                <div id="bulkTemplateProgress" style="display: none;">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-cog fa-spin fa-3x text-primary"></i>
+                        <h5 class="mt-3">Creating Templates...</h5>
+                        <p class="text-muted">Please wait, this may take a while.</p>
+                    </div>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" id="bulkProgressBar">0%</div>
+                    </div>
+                </div>
+                
+                <!-- Results Section (hidden initially) -->
+                <div id="bulkTemplateResults" style="display: none;">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <div class="card bg-light">
+                                <div class="card-body py-2">
+                                    <h3 class="mb-0" id="resultTotal">0</h3>
+                                    <small class="text-muted">Total</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card bg-success text-white">
+                                <div class="card-body py-2">
+                                    <h3 class="mb-0" id="resultSuccess">0</h3>
+                                    <small>Success</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card bg-danger text-white">
+                                <div class="card-body py-2">
+                                    <h3 class="mb-0" id="resultFailure">0</h3>
+                                    <small>Failed</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="resultDetailsContainer" style="max-height: 250px; overflow-y: auto;">
+                        <table class="table table-sm table-bordered" id="resultDetailsTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Assessment Group</th>
+                                    <th>Status</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultDetailsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnCloseBulkModal">Close</button>
+                <button type="button" class="btn btn-success" id="btnStartBulkCreation">
+                    <i class="fas fa-play me-1"></i> Start Creation
+                </button>
+                <button type="button" class="btn btn-primary" id="btnReloadPage" style="display: none;">
+                    <i class="fas fa-sync-alt me-1"></i> Reload Page
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Bulk Template Creation functionality
+    $(document).ready(function () {
+        var magsData = [];
+        
+        console.log('Bulk Template Creation script loaded');
+        
+        // Open modal and load MAGs
+        $('#btnCreateMissingTemplates').click(function () {
+            console.log('Create Missing Templates button clicked');
+            loadMAGsWithoutTemplates();
+            $('#bulkTemplateModal').modal('show');
+        });
+        
+        // Refresh MAGs list
+        $('#btnRefreshMAGs').click(function () {
+            loadMAGsWithoutTemplates();
+        });
+        
+        // Start bulk creation
+        $('#btnStartBulkCreation').click(function () {
+            if (magsData.length === 0) {
+                swal.fire('No MAGs', 'There are no MAGs without templates.', 'info');
+                return;
+            }
+            
+            swal.fire({
+                title: 'Confirm Bulk Creation',
+                html: `<p>You are about to create templates for <strong>${magsData.length}</strong> MAG(s).</p>
+                       <p>This process may take several minutes. Do you want to continue?</p>`,
+                type: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, create templates!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.value) {
+                    startBulkCreation();
+                }
+            });
+        });
+        
+        // Reload page button
+        $('#btnReloadPage').click(function () {
+            location.reload(true);
+        });
+        
+        // Reset modal when closed
+        $('#bulkTemplateModal').on('hidden.bs.modal', function () {
+            resetModalState();
+        });
+        
+        function loadMAGsWithoutTemplates() {
+            $('#magListBody').html('<tr><td colspan="2" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>');
+            $('#magCount').text('Loading...').removeClass('bg-success bg-danger').addClass('bg-warning');
+            
+            $.ajax({
+                type: 'GET',
+                url: '/Template/GetMAGsWithoutTemplates',
+                success: function (response) {
+                    if (response.success && response.data) {
+                        magsData = response.data;
+                        renderMAGsList(magsData);
+                        
+                        var count = magsData.length;
+                        $('#magCount').text(count);
+                        
+                        if (count === 0) {
+                            $('#magCount').removeClass('bg-warning bg-danger').addClass('bg-success');
+                            $('#btnStartBulkCreation').prop('disabled', true);
+                        } else {
+                            $('#magCount').removeClass('bg-success bg-danger').addClass('bg-warning');
+                            $('#btnStartBulkCreation').prop('disabled', false);
+                        }
+                    } else {
+                        $('#magListBody').html('<tr><td colspan="2" class="text-center text-danger">Failed to load MAGs</td></tr>');
+                        $('#magCount').text('Error').removeClass('bg-warning bg-success').addClass('bg-danger');
+                    }
+                },
+                error: function () {
+                    $('#magListBody').html('<tr><td colspan="2" class="text-center text-danger">Error loading MAGs</td></tr>');
+                    $('#magCount').text('Error').removeClass('bg-warning bg-success').addClass('bg-danger');
+                }
+            });
+        }
+        
+        function renderMAGsList(mags) {
+            var html = '';
+            if (mags.length === 0) {
+                html = '<tr><td colspan="2" class="text-center text-success"><i class="fas fa-check-circle me-2"></i>All MAGs have templates!</td></tr>';
+            } else {
+                mags.forEach(function (mag) {
+                    html += `<tr>
+                        <td>${escapeHtml(mag.assessmentGroupName || mag.magName || '-')}</td>
+                        <td>${escapeHtml(mag.primarySkills || '-')}</td>
+                    </tr>`;
+                });
+            }
+            $('#magListBody').html(html);
+        }
+        
+        function startBulkCreation() {
+            console.log('Starting bulk creation...');
+            
+            // Hide preview, show progress
+            $('#bulkTemplatePreview').hide();
+            $('#bulkTemplateResults').hide();
+            $('#bulkTemplateProgress').show();
+            $('#btnStartBulkCreation').hide();
+            $('#btnCloseBulkModal').prop('disabled', true);
+            $('#bulkProgressBar').css('width', '0%').text('0%');
+            
+            // Simulate progress (since we don't have real-time updates)
+            var progressInterval = setInterval(function () {
+                var currentWidth = parseInt($('#bulkProgressBar').css('width')) / $('#bulkProgressBar').parent().width() * 100;
+                if (currentWidth < 90) {
+                    var newWidth = currentWidth + Math.random() * 5;
+                    $('#bulkProgressBar').css('width', newWidth + '%').text(Math.round(newWidth) + '%');
+                }
+            }, 500);
+            
+            var token = $('#bulkTemplateForm input[name="__RequestVerificationToken"]').val();
+            console.log('Anti-forgery token:', token ? 'Found' : 'NOT FOUND');
+            console.log('Making AJAX call to /Template/CreateTemplatesForAllMAGs');
+            
+            $.ajax({
+                type: 'POST',
+                url: '/Template/CreateTemplatesForAllMAGs',
+                data: { __RequestVerificationToken: token },
+                success: function (response) {
+                    console.log('AJAX success:', response);
+                    clearInterval(progressInterval);
+                    $('#bulkProgressBar').css('width', '100%').text('100%');
+
+                    setTimeout(function () {
+                        showResults(response);
+                    }, 500);
+                },
+                error: function (xhr, status, error) {
+                    console.log('AJAX error:', status, error);
+                    console.log('Response:', xhr.responseText);
+                    clearInterval(progressInterval);
+                    $('#bulkTemplateProgress').hide();
+                    $('#bulkTemplatePreview').show();
+                    $('#btnStartBulkCreation').show();
+                    $('#btnCloseBulkModal').prop('disabled', false);
+
+                    swal.fire('Error', 'Failed to create templates. Please try again.', 'error');
+                }
+            });
+        }
+        
+        function showResults(response) {
+            $('#bulkTemplateProgress').hide();
+            $('#bulkTemplateResults').show();
+            $('#btnCloseBulkModal').prop('disabled', false);
+            $('#btnReloadPage').show();
+            
+            if (response.success) {
+                $('#resultTotal').text(response.totalMAGs || 0);
+                $('#resultSuccess').text(response.successCount || 0);
+                $('#resultFailure').text(response.failureCount || 0);
+                
+                var detailsHtml = '';
+                if (response.details && response.details.length > 0) {
+                    response.details.forEach(function (detail) {
+                        var statusClass = detail.success ? 'text-success' : 'text-danger';
+                        var statusIcon = detail.success ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>';
+                        detailsHtml += `<tr>
+                            <td>${escapeHtml(detail.assessmentGroupName || '-')}</td>
+                            <td class="${statusClass}">${statusIcon}</td>
+                            <td>${escapeHtml(detail.message || '-')}</td>
+                        </tr>`;
+                    });
+                } else {
+                    detailsHtml = '<tr><td colspan="3" class="text-center">No details available</td></tr>';
+                }
+                $('#resultDetailsBody').html(detailsHtml);
+            } else {
+                swal.fire('Error', response.message || 'An error occurred', 'error');
+            }
+        }
+        
+        function resetModalState() {
+            $('#bulkTemplatePreview').show();
+            $('#bulkTemplateProgress').hide();
+            $('#bulkTemplateResults').hide();
+            $('#btnStartBulkCreation').show();
+            $('#btnReloadPage').hide();
+            $('#btnCloseBulkModal').prop('disabled', false);
+            $('#bulkProgressBar').css('width', '0%').text('0%');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(text));
+            return div.innerHTML;
+        }
+    });
 </script>
 
 
