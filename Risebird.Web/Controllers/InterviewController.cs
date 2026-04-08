@@ -8398,21 +8398,29 @@ namespace Risebird.Web.Controllers
                         actionstatus = "";
                     }
                     ViewBag.actionstatus = actionstatus;
-                    var model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
-                    if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
+                    IEnumerable<PaymentSLAVM> model;
+                    if (actionstatus == "HighSeverityPending" || actionstatus == "QCUnderReview" || actionstatus == "FakeReport" || actionstatus == "RedoRequested")
                     {
-                        var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PaymentSlaDetailsFilters"));
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            filter.EndDate = filter.EndDate?.AddDays(1);
-                            model = model.Where(m => m.CreatedOn >= filter.StartDate && m.CreatedOn <= filter.EndDate).ToList();
-                        }
+                        model = Array.Empty<PaymentSLAVM>();
                     }
                     else
                     {
-                        DateTime StartDate = DateTime.Now.AddMonths(-1);
-                        DateTime EndDate = DateTime.Now.AddDays(1);
-                        model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
+                        model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
+                        if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PaymentSlaDetailsFilters"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                filter.EndDate = filter.EndDate?.AddDays(1);
+                                model = model.Where(m => m.CreatedOn >= filter.StartDate && m.CreatedOn <= filter.EndDate).ToList();
+                            }
+                        }
+                        else
+                        {
+                            DateTime StartDate = DateTime.Now.AddMonths(-1);
+                            DateTime EndDate = DateTime.Now.AddDays(1);
+                            model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
+                        }
                     }
                     return View(model);
                 }
