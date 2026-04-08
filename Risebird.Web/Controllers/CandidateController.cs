@@ -3972,7 +3972,7 @@ namespace Risebird.Web.Controllers
             ExcelWorksheet SheetCold = Ep.Workbook.Worksheets.Add("Cold");
             ExcelWorksheet SheetNpr = Ep.Workbook.Worksheets.Add("Not Processed Resumes");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Status" + ".xlsx";
-
+            var client = await _userRepository.GetClientUserDetails(emailid);
             try
             {
                 var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
@@ -4046,7 +4046,7 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
-                var client = await _userRepository.GetClientUserDetails(emailid);
+                
                 var ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty);
 
                 Sheet.Cells["A1:U1"].Style.Font.Bold = true;
@@ -4075,6 +4075,14 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 13].Value = "QC status";
                 Sheet.Cells[1, 14].Value = "RedoInterview";
                 //Sheet.Cells[1, 13].Value = "Video Link";
+                if (client.ClientId == 262)
+                {
+                    Sheet.Cells[1, 15].Value = "Candidate AddedOn";
+                    Sheet.Cells[1, 16].Value = "Project Id";
+                    Sheet.Cells[1, 17].Value = "Project Title";
+                    Sheet.Cells[1, 18].Value = "Hr First Name";
+                    Sheet.Cells[1, 19].Value = "Hr Last Name";
+                }
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -4166,6 +4174,14 @@ namespace Risebird.Web.Controllers
                         }
                         // RedoInterview column
                         Sheet.Cells[i, 14].Value = item.RedoInterview ? "Yes" : "No";
+                        if (client.ClientId == 262)
+                        {
+                            Sheet.Cells[i, 15].Value = item.CandidateAddedOn;
+                            Sheet.Cells[i, 16].Value = item.ProjectUniqueid;
+                            Sheet.Cells[i, 17].Value = item.ProjectTitle;
+                            Sheet.Cells[i, 18].Value = item.HRFirstName;
+                            Sheet.Cells[i, 19].Value = item.HRLastName;
+                        }
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -4218,7 +4234,14 @@ namespace Risebird.Web.Controllers
                     //SheetNotScheduled.Cells[1, 5].Value = "Current Status";
 
                     SheetNotScheduled.Cells[1, 5].Value = "Client Hr";
-
+                    if (client.ClientId == 262)
+                    {
+                        SheetNotScheduled.Cells[1, 6].Value = "Candidate AddedOn";
+                        SheetNotScheduled.Cells[1, 7].Value = "Project Id";
+                        SheetNotScheduled.Cells[1, 8].Value = "Project Title";
+                        SheetNotScheduled.Cells[1, 9].Value = "Hr First Name";
+                        SheetNotScheduled.Cells[1, 10].Value = "Hr Last Name";
+                    }
                     int iNs = 2;
                     if (modelNotScheduled.Count() > 0)
                     {
@@ -4239,7 +4262,14 @@ namespace Risebird.Web.Controllers
                             //}
 
                             SheetNotScheduled.Cells[iNs, 5].Value = item.HREmail;
-
+                            if (client.ClientId == 262)
+                            {
+                                SheetNotScheduled.Cells[iNs, 6].Value = item.CandidateAddedOn;
+                                SheetNotScheduled.Cells[iNs, 7].Value = item.ProjectUniqueid;
+                                SheetNotScheduled.Cells[iNs, 8].Value = item.ProjectTitle;
+                                SheetNotScheduled.Cells[iNs, 9].Value = item.HRFirstName;
+                                SheetNotScheduled.Cells[iNs, 10].Value = item.HRLastName;
+                            }
                             iNs++;
                         }
                         //return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -4279,7 +4309,14 @@ namespace Risebird.Web.Controllers
                     SheetCold.Cells[1, 5].Value = "Current Status";
                     SheetCold.Cells[1, 6].Value = "Cold Marked By";
                     SheetCold.Cells[1, 7].Value = "Cold Marked Date";
-
+                    if (client.ClientId == 262)
+                    {
+                        SheetCold.Cells[1, 8].Value = "Candidate AddedOn";
+                        SheetCold.Cells[1, 9].Value = "Project Id";
+                        SheetCold.Cells[1, 10].Value = "Project Title";
+                        SheetCold.Cells[1, 11].Value = "Hr First Name";
+                        SheetCold.Cells[1, 12].Value = "Hr Last Name";
+                    }
                     int iCold = 2;
                     foreach (var item in coldCandidatesData)
                     {
@@ -4299,7 +4336,14 @@ namespace Risebird.Web.Controllers
 
                         SheetCold.Cells[iCold, 6].Value = item.ColdMarkedBY;
                         SheetCold.Cells[iCold, 7].Value = item.ColdMarkedDate.HasValue ? item.ColdMarkedDate.Value.ToString() : string.Empty;
-
+                        if (client.ClientId == 262)
+                        {
+                            SheetCold.Cells[iCold, 8].Value = item.CandidateAddedOn;
+                            SheetCold.Cells[iCold, 9].Value = item.ProjectUniqueid;
+                            SheetCold.Cells[iCold, 10].Value = item.ProjectTitle;
+                            SheetCold.Cells[iCold, 11].Value = item.HRFirstName;
+                            SheetCold.Cells[iCold, 12].Value = item.HRLastName;
+                        }
                         iCold++;
                     }
 
@@ -5342,7 +5386,7 @@ namespace Risebird.Web.Controllers
             {
                 if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.confirmationStatus == "Confirmed")
                 {
-                    interviewid = item.Interviewid;
+                    interviewid = item.InterviewId;
                 }
             }
             ViewBag.Interviewid = interviewid;

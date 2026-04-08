@@ -273,7 +273,6 @@ namespace Risebird.Entities.ViewModel
         public int VideoDuration { get; set; }
 
         public int DurationSelectedMin { get; set; }
-        public int Interviewid { get; set; }
         public string OldInterviewer { get; set; }
         public string OldQCInterviewer { get; set; }
         public string OldzoomLink { get; set; }
@@ -421,6 +420,10 @@ namespace Risebird.Entities.ViewModel
         public bool isMultiLingual { get; set; }
         public string AIResumeScreeningVerdict { get; set; }
         public int AIResumeScreeningScore { get; set; }
+        public DateTime? CandidateAddedOn { get; set; }
+        public string ProjectTitle { get; set; }
+        public string HRFirstName { get; set; }
+        public string HRLastName { get; set; }
 
     }
 
