@@ -1,4 +1,4 @@
-﻿using Risebird.Entities.ViewModel;
+using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,5 +20,15 @@ namespace Risebird.Business.Interface
         IEnumerable<ClonableSkillChannelVM> GetClonableTempStatsbyId(int id);
         Task<bool> CreateClonableSkillChannelFromMAG(int assessmentGroupId, string assessmentGroupName, string loggedInUser);
         Task<IList<SkillComment>> GetDeliveryHeadSampleQuestions(int id, string emailId = null);
+        
+        /// <summary>
+        /// Gets all MasterAssessmentGroups that don't have a template.
+        /// </summary>
+        Task<IEnumerable<MAGWithoutTemplateVM>> GetMAGsWithoutTemplatesAsync();
+        
+        /// <summary>
+        /// Creates templates for all MAGs that don't have one.
+        /// </summary>
+        Task<BulkTemplateCreationResult> CreateTemplatesForAllMAGsAsync(string loggedInUser);
     }
 }
