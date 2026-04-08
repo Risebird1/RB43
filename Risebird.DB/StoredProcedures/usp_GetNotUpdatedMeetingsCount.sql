@@ -274,12 +274,11 @@ set @RedoInterviewCount=(select Count(im.id)  from InterviewMeetings im
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId         
 where im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))        
         
-set  @ProbableNoShowCount =(select COUNT(pnc.id) from ProbableNoShowCandidates pnc          
+set  @ProbableNoShowCount =(select COUNT(distinct pnc.id) from ProbableNoShowCandidates pnc          
 join InterviewMeetings im on im.id = pnc.InterviewId          
-join UserList ul on ul.id = pnc.CandidateUserId          
 join InterviewComments ic on ic.Interviewid=im.id      
 inner join IRF on im.IRFId=irf.IRFId       
-left join UserList uli on uli.id=  irf.RisebirdHr)        
+where im.interviewDate >= dateadd(MINUTE, 330, getdate()))        
         
 set @PotentialRiskByClient =(select Count(distinct ccfr.id) from     
 ClientCommentsForReport ccfr     
