@@ -887,7 +887,7 @@ namespace Risebird.Repository
                             {
                                 listMeetings.Add(new MeetingVM
                                 {
-                                    Interviewid = !string.IsNullOrEmpty(dt.Rows[i]["Interviewid"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Interviewid"]) : 0,
+                                    InterviewId = !string.IsNullOrEmpty(dt.Rows[i]["Interviewid"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Interviewid"]) : 0,
                                     resumeLink = dt.Rows[i]["resumeLink"] != null ? dt.Rows[i]["resumeLink"].ToString() : null,
                                     zoomLink = dt.Rows[i]["zoomLink"] != null ? dt.Rows[i]["zoomLink"].ToString() : null,
                                     interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
