@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
+using System;
+using System.Collections.Generic;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -47,6 +49,43 @@ namespace Risebird.Entities.ViewModel
         //public string CompanyType { get; set; }
         new public bool IsDeleted { get; set; }
 
+    }
+
+    /// <summary>
+    /// Represents a MasterAssessmentGroup that doesn't have a template.
+    /// Used by the bulk template creation feature.
+    /// </summary>
+    public class MAGWithoutTemplateVM
+    {
+        public int MasterAssessmentGroupId { get; set; }
+        public string MAGName { get; set; }
+        public int AssessmentGroupId { get; set; }
+        public string AssessmentGroupName { get; set; }
+        public string PrimarySkills { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public string CreatedBy { get; set; }
+    }
+
+    /// <summary>
+    /// Result of bulk template creation operation.
+    /// </summary>
+    public class BulkTemplateCreationResult
+    {
+        public int TotalMAGs { get; set; }
+        public int SuccessCount { get; set; }
+        public int FailureCount { get; set; }
+        public List<BulkTemplateCreationDetail> Details { get; set; } = new List<BulkTemplateCreationDetail>();
+    }
+
+    /// <summary>
+    /// Detail of a single template creation attempt.
+    /// </summary>
+    public class BulkTemplateCreationDetail
+    {
+        public int AssessmentGroupId { get; set; }
+        public string AssessmentGroupName { get; set; }
+        public bool Success { get; set; }
+        public string Message { get; set; }
     }
 }
 

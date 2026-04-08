@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
@@ -769,6 +769,76 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
+        }
+
+        public async Task<IEnumerable<MAGWithoutTemplateVM>> GetMAGsWithoutTemplatesAsync()
+        {
+            try
+            {
+                return await _clonableSkillChannelTemplateRepository.GetMAGsWithoutTemplatesAsync();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<MAGWithoutTemplateVM>();
+            }
+        }
+
+        public async Task<BulkTemplateCreationResult> CreateTemplatesForAllMAGsAsync(string loggedInUser)
+        {
+            var result = new BulkTemplateCreationResult();
+            
+            try
+            {
+                // Get all MAGs without templates
+                var magsWithoutTemplates = await GetMAGsWithoutTemplatesAsync();
+                var magList = magsWithoutTemplates?.ToList() ?? new List<MAGWithoutTemplateVM>();
+                
+                result.TotalMAGs = magList.Count;
+                
+                foreach (var mag in magList)
+                {
+                    var detail = new BulkTemplateCreationDetail
+                    {
+                        AssessmentGroupId = mag.AssessmentGroupId,
+                        AssessmentGroupName = mag.AssessmentGroupName
+                    };
+                    
+                    try
+                    {
+                        // Use the existing method to create template from MAG
+                        var success = await CreateClonableSkillChannelFromMAG(
+                            mag.AssessmentGroupId, 
+                            mag.AssessmentGroupName, 
+                            loggedInUser);
+                        
+                        detail.Success = success;
+                        detail.Message = success 
+                            ? "Template created successfully" 
+                            : "Failed to create template";
+                        
+                        if (success)
+                            result.SuccessCount++;
+                        else
+                            result.FailureCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        detail.Success = false;
+                        detail.Message = $"Error: {ex.Message}";
+                        result.FailureCount++;
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                    
+                    result.Details.Add(detail);
+                }
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            
+            return result;
         }
     }
 }
