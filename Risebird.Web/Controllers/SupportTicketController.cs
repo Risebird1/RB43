@@ -915,17 +915,22 @@ namespace Risebird.Web.Controllers
                 var resumes = await _repository.GetPendingResumesForTicketAsync(ticketId);
                 var ticket = await _repository.GetTicketByIdAsync(ticketId);
                 
-                return Json(new { 
-                    success = true, 
+                return Json(new {
+                    success = true,
                     resumes,
                     ticket = ticket != null ? new {
                         id = ticket.Id,
-                        driveFolderLink = ticket.DriveFolderLink,
-                        attachmentResumes = ticket.AttachmentResumes,
-                        primarySpecialization = ticket.PrimarySpecialization,
                         senderEmail = ticket.SenderEmail,
+                        subject = ticket.Subject,
+                        intent = ticket.Intent,
+                        primarySpecialization = ticket.PrimarySpecialization,
+                        receivedAt = ticket.ReceivedAt,
+                        summaryMail = ticket.SummaryMail,
+                        driveFolderLink = ticket.DriveFolderLink,
                         jobTitle = ticket.JobTitle,
-                        subject = ticket.Subject
+                        attachmentJobDescription = ticket.AttachmentJobDescription,
+                        attachmentPdf = ticket.AttachmentPdf,
+                        attachmentResumes = ticket.AttachmentResumes
                     } : null
                 });
             }

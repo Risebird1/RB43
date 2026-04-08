@@ -765,26 +765,10 @@ namespace Risebird.Repository
             try
             {
                 using var conn = new SqlConnection(_connectionString);
-                const string sql = @"
-                    SELECT 
-                        t.Id,
-                        t.SenderEmail,
-                        t.Subject,
-                        t.Intent,
-                        t.PrimarySpecialization,
-                        t.AttachmentJobDescription,
-                        t.AttachmentPdf,
-                        t.AttachmentResumes,
-                        t.DriveFolderLink,
-                        t.SummaryMail,
-                        t.Status,
-                        t.AssignedTo,
-                        t.JobTitle,
-                        t.HasPendingResumes,
-                        t.ReceivedAt
-                    FROM SupportTicket t
-                    WHERE t.Id = @TicketId";
-                return await conn.QueryFirstOrDefaultAsync<SupportTicketVM>(sql, new { TicketId = ticketId });
+                return await conn.QueryFirstOrDefaultAsync<SupportTicketVM>(
+                    "usp_GetSupportTicketById",
+                    new { TicketId = ticketId },
+                    commandType: CommandType.StoredProcedure);
             }
             catch (Exception ex)
             {

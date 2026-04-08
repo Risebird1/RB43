@@ -1098,7 +1098,9 @@
                 
                 <div class="text-center py-5" id="pendingResumesEmpty" style="display:none">
                     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                    <p class="text-muted mb-3">No pending resumes found for this ticket.</p>
+                    <p class="text-muted mb-3" id="emptyStateMessage">No pending resumes found for this ticket.</p>
+                    
+                    <!-- Show when drive folder link exists -->
                     <div id="processDriveFolderSection" style="display:none">
                         <p class="small text-info mb-2">
                             <i class="fas fa-info-circle me-1"></i>
@@ -1111,6 +1113,17 @@
                             <div class="spinner-border spinner-border-sm text-warning me-2"></div>
                             <span>Processing drive folder...</span>
                         </div>
+                    </div>
+                    
+                    <!-- Show when attachments detected but no drive folder link -->
+                    <div id="noDriveLinkSection" style="display:none">
+                        <p class="small text-warning mb-2">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            Resume attachments were detected but no Drive folder link is available.
+                        </p>
+                        <p class="small text-muted">
+                            Please check the original email for attachments or contact the sender.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -1853,11 +1866,18 @@
                     if (!res.resumes || res.resumes.length === 0) {
                         $('#pendingResumesLoading').hide();
                         
-                        // Check if we should show the "Process Drive Folder" option
-                        if (currentTicketData && currentTicketData.driveFolderLink && currentTicketData.attachmentResumes) {
-                            $('#processDriveFolderSection').show();
-                        } else {
-                            $('#processDriveFolderSection').hide();
+                        // Check what options to show based on ticket data
+                        $('#processDriveFolderSection').hide();
+                        $('#noDriveLinkSection').hide();
+                        
+                        if (currentTicketData && currentTicketData.attachmentResumes) {
+                            if (currentTicketData.driveFolderLink) {
+                                // Has drive folder link - show process button
+                                $('#processDriveFolderSection').show();
+                            } else {
+                                // Has attachments but no drive link - show warning
+                                $('#noDriveLinkSection').show();
+                            }
                         }
                         $('#pendingResumesEmpty').show();
                         return;
@@ -2232,22 +2252,37 @@
 
         // Helper function to render email context from ticket data (when no resumes exist yet)
         function renderEmailContextFromTicket(ticket) {
-            $('#ctxSender').text(ticket.senderEmail || 'N/A');
-            $('#ctxSubject').text(ticket.subject || 'N/A');
-            $('#ctxSpecialization').text(ticket.primarySpecialization || 'N/A');
-            
+            // Use same element IDs as renderEmailContext for consistency
+            $('#ctxSenderEmail').text(ticket.senderEmail || '—');
+            $('#ctxReceivedAt').text(ticket.receivedAt ? formatDateTime(ticket.receivedAt) : '—');
+            $('#ctxIntent').text(ticket.intent || '—');
+            $('#ctxSubject').text(ticket.subject || '—');
+            $('#ctxPrimarySpec').text(ticket.primarySpecialization || '—');
+
+            // Attachments
             var attachments = [];
             if (ticket.attachmentJobDescription) attachments.push('<i class="fas fa-file-alt text-success me-1" title="JD"></i>JD');
             if (ticket.attachmentPdf) attachments.push('<i class="fas fa-file-pdf text-success me-1" title="PDF"></i>PDF');
             if (ticket.attachmentResumes) attachments.push('<i class="fas fa-user text-success me-1" title="Resumes"></i>Resumes');
             $('#ctxAttachments').html(attachments.length > 0 ? attachments.join(' &nbsp; ') : '<span class="text-muted">None</span>');
-            
-            $('#ctxSummary').text('N/A');
-            
-            if (ticket.driveFolderLink) {
-                $('#ctxDriveLink').html('<a href="' + ticket.driveFolderLink + '" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fab fa-google-drive me-1"></i>Open Drive Folder</a>');
+
+            // Summary
+            if (ticket.summaryMail) {
+                $('#ctxSummary').text(ticket.summaryMail);
+                $('#ctxSummaryWrap').show();
             } else {
-                $('#ctxDriveLink').html('<span class="text-muted">N/A</span>');
+                $('#ctxSummaryWrap').hide();
+            }
+
+            // Mail body - not available in basic ticket data
+            $('#ctxMailBody').text('(Open ticket to view full content)');
+
+            // Drive link
+            if (ticket.driveFolderLink) {
+                $('#ctxDriveLink').attr('href', ticket.driveFolderLink);
+                $('#ctxDriveLinkWrap').show();
+            } else {
+                $('#ctxDriveLinkWrap').hide();
             }
         }
         
