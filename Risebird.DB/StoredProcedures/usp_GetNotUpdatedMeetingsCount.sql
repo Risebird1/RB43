@@ -56,7 +56,7 @@ declare @MissingVideoLink int = (select Count(im.id) from InterviewMeetings im j
  left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid and IsNull(IRF.IsAIInterview,0)=0)        
         
 declare @NotProcessedCandidateResume int = (Select count(cr.id) from CandidateResume cr join irf on irf.id = cr.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId             
- left join UserList ulsh on ulsh.id=sh.Userid join UserList ulc on ulc.id=irf.RisebirdHr where IsnUll(cr.Isprocessed,0)=0 and ulc.Emailid= @Emailid)        
+ left join UserList ulsh on ulsh.id=sh.Userid join UserList ulc on ulc.id=irf.RisebirdHr where IsnUll(cr.Isprocessed,0)=0 and ulc.Emailid= @Emailid and (cr.ReasonBehindNotProcessed is null or cr.ReasonBehindNotProcessed not like '%duplicate%') and cr.AddedOn >= DATEADD(MONTH, -3, GETDATE()))        
         
 declare @QCPendingReportCount int = (Select Count(distinct im.id)  from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId join IRF on IRF.IRFId=im.IRFId            
 join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id 
@@ -239,7 +239,7 @@ where (ISNULL(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and dateadd(minu
         
 set @MissingVideoLink = (select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id Join IRF on IRF.IRFId=im.IRFId where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7 and IsNull(IRF.IsAIInterview,0)=0)       
         
-set @NotProcessedCandidateResume = (Select count(*) from CandidateResume where IsnUll(Isprocessed,0)=0)        
+set @NotProcessedCandidateResume = (Select count(*) from CandidateResume where IsnUll(Isprocessed,0)=0 and (ReasonBehindNotProcessed is null or ReasonBehindNotProcessed not like '%duplicate%') and AddedOn >= DATEADD(MONTH, -3, GETDATE()))        
         
 set @QCPendingReportCount = (Select Count(distinct im.id)  from InterviewMeetings im join IRF on im.IRFId=im.IRFId join InterviewComments ic on im.id=ic.InterviewId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id       
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 left join UserList ulco on IRF.RisebirdHr=ulco.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)    

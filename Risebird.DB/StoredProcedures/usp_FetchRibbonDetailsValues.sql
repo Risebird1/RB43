@@ -239,7 +239,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			cr.ClientHREmailId as CandidateResumeClientHREmailId
 			from IRF
 			join Client cl on cl.id=irf.ClientId join CandidateResume cr on cr.IRFId=IRF.id 
-			join UserList ulc on ulc.id=irf.RisebirdHr Where ISNULL(cr.IsProcessed,0)=0 and (irf.IsPaused = 0 or irf.IsPaused is null) and (irf.IsDeleted = 0 or irf.IsDeleted is null)
+			join UserList ulc on ulc.id=irf.RisebirdHr Where ISNULL(cr.IsProcessed,0)=0 and (irf.IsPaused = 0 or irf.IsPaused is null) and (irf.IsDeleted = 0 or irf.IsDeleted is null) and (cr.ReasonBehindNotProcessed is null or cr.ReasonBehindNotProcessed not like '%duplicate%') and cr.AddedOn >= DATEADD(MONTH, -3, GETDATE())
 			group by IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name,ulc.EmailId, --cr.AddedOn, 
 			irf.CreatedOn, cr.ClientHREmailId
 			order by irf.CreatedOn desc
@@ -253,13 +253,13 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			ulc.EmailId, irf.CreatedOn as SkillChannelCreatedOn, cr.ClientHREmailId as CandidateResumeClientHREmailId from  IRF 
 			join Client cl on irf.ClientId=cl.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId 
 			join Userlist ul on ul.id=HR.UserId join CandidateResume cr on cr.IRFId=IRF.id 
-			left join UserList ulc on ulc.id=irf.RisebirdHr where ISNULL(cr.IsProcessed,0)=0  and (irf.IsPaused = 0 or irf.IsPaused is null) and (irf.IsDeleted = 0 or irf.IsDeleted is null)
+			left join UserList ulc on ulc.id=irf.RisebirdHr where ISNULL(cr.IsProcessed,0)=0  and (irf.IsPaused = 0 or irf.IsPaused is null) and (irf.IsDeleted = 0 or irf.IsDeleted is null) and (cr.ReasonBehindNotProcessed is null or cr.ReasonBehindNotProcessed not like '%duplicate%') and cr.AddedOn >= DATEADD(MONTH, -3, GETDATE())
 			union 
 			Select IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name,cr.id as Candidateid,
 			ulc.EmailId, irf.CreatedOn as SkillChannelCreatedOn, cr.ClientHREmailId as CandidateResumeClientHREmailId from IRF 
 			join Client cl on irf.ClientId=cl.id
 			join CandidateResume cr on cr.IRFId=IRF.id
-			left join UserList ulc on ulc.id=irf.RisebirdHr where ISNULL(cr.IsProcessed,0)=0 and (irf.IsPaused = 0 or irf.IsPaused is null) and (irf.IsDeleted = 0 or irf.IsDeleted is null) ) as Cr 
+			left join UserList ulc on ulc.id=irf.RisebirdHr where ISNULL(cr.IsProcessed,0)=0 and (irf.IsPaused = 0 or irf.IsPaused is null) and (irf.IsDeleted = 0 or irf.IsDeleted is null) and (cr.ReasonBehindNotProcessed is null or cr.ReasonBehindNotProcessed not like '%duplicate%') and cr.AddedOn >= DATEADD(MONTH, -3, GETDATE()) ) as Cr 
 			Group By CR.id,CR.IRFId,CR.JDTiltle,CR.Name,Cr.PrimarySkillInvite,Cr.EmailId, 
 			cr.SkillChannelCreatedOn, cr.CandidateResumeClientHREmailId
 			order by cr.SkillChannelCreatedOn desc
