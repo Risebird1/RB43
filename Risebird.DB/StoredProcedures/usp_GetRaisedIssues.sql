@@ -9,21 +9,34 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create Procedure usp_GetRaisedIssues
-@profileName varchar(50)
-AS
-BEGIN
-If(@profileName='TechSupport')
-Begin
-Select rs.*,ul.MobileNumber,ul.FirstName as Name from RaisedIssues rs left join UserList ul on ul.EmailId=rs.RequestedBy where rs.Requester not in('Interviewer','Client') order by RequestedOn  desc
-END
-Else If(@profileName='Admin')
-Begin
-Select rs.*,ul.MobileNumber,ul.FirstName as Name from RaisedIssues rs left join UserList ul on ul.EmailId=rs.RequestedBy order by RequestedOn  desc
-End
-Else
-Begin
-Select rs.*,ul.MobileNumber,ul.FirstName as Name from RaisedIssues rs left join UserList ul on ul.EmailId=rs.RequestedBy where rs.Requester in('Interviewer','Client') order by RequestedOn  desc
-END
-END
+  
+Create Procedure usp_GetRaisedIssues  
+@profileName varchar(50)  
+AS  
+BEGIN  
+If(@profileName='TechSupport')  
+Begin  
+Select rs.*,ul.MobileNumber,ul.FirstName as Name,IRF.id as irfIntId,im.candidateEmail,im.Interviewer
+from RaisedIssues rs left join UserList ul on ul.EmailId=rs.RequestedBy 
+left join InterviewMeetings im  on im.Id=rs.interviewId
+left join IRF on IRF.IRFID=im.IRFId
+where rs.Requester not in('Interviewer','Client') order by RequestedOn  desc  
+END  
+Else If(@profileName='Admin')  
+Begin  
+Select rs.*,ul.MobileNumber,ul.FirstName as Name,IRF.id as irfIntId,im.candidateEmail,im.Interviewer
+from RaisedIssues rs left join UserList ul on ul.EmailId=rs.RequestedBy 
+left join InterviewMeetings im  on im.Id=rs.interviewId
+left join IRF on IRF.IRFID=im.IRFId
+order by RequestedOn  desc  
+End  
+Else  
+Begin  
+Select rs.*,ul.MobileNumber,ul.FirstName as Name,IRF.id as irfIntId,im.candidateEmail,im.Interviewer
+from RaisedIssues rs left join UserList ul on ul.EmailId=rs.RequestedBy 
+left join InterviewMeetings im  on im.Id=rs.interviewId
+left join IRF on IRF.IRFID=im.IRFId
+where rs.Requester in('Interviewer','Client') order by RequestedOn  desc  
+END  
+END   
 GO
