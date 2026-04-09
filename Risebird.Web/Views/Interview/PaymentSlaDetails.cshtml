@@ -158,6 +158,10 @@
                                                     {
                                                         <td>QC Status</td>
                                                     }
+                                                    @if (ViewBag.actionstatus == "FakeReport")
+                                                    {
+                                                        <th>Status</th>
+                                                    }
                                                     <td>QC RedFlags</td>
                                                     @if (ViewBag.actionstatus != "SLACompleted")
                                                     {
@@ -192,6 +196,10 @@
                                                     else
                                                     {
                                                         <td>QC Status</td>
+                                                    }
+                                                    @if (ViewBag.actionstatus == "FakeReport")
+                                                    {
+                                                        <th>Status</th>
                                                     }
                                                     <td>QC RedFlags</td>
                                                     @if (ViewBag.actionstatus != "SLACompleted")
@@ -308,6 +316,10 @@
                                                             {
                                                                 <td>Pending</td>
                                                             }
+                                                        }
+                                                        @if (ViewBag.actionstatus == "FakeReport")
+                                                        {
+                                                            <td>@item.StatusValue</td>
                                                         }
                                                         @if (item.Redflags > 0)
                                                         {
