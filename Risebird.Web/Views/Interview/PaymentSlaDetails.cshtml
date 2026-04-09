@@ -14,6 +14,7 @@
     dynamic filter = null;
     string strtDte = string.Empty;
     string endDte = string.Empty;
+    var slaActionTab = ViewBag.actionstatus as string ?? "";
 }
 <input type="hidden" value="@ViewBag.actionstatus" id="hidactionstatus" />
 <input type="hidden" value="@ViewBag.returnBack" id="hidreturnBack" />
@@ -32,17 +33,13 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> 911 Dashboard</h4></div>
                 </div>
-                <div class="pull-left">
-                    @if (ViewBag.actionstatus == "SLACompleted")
-                    {
-                        <div class="feedback-tab" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment Compliance</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('SLACompleted','@ViewBag.ReturnBack')"><strong>SLA Completed</strong></div>
-                    }
-                    else
-                    {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment Compliance</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('SLACompleted','@ViewBag.ReturnBack')"><strong>SLA Completed</strong></div>
-                    }
+                <div class="pull-left payment-sla-tabs" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:100%;">
+                    <div class="@(string.IsNullOrWhiteSpace(slaActionTab) || slaActionTab == "PaymentCompliance" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment Compliance</strong></div>
+                    <div class="@(slaActionTab == "HighSeverityPending" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('HighSeverityPending','@ViewBag.ReturnBack')"><strong>High severity pending</strong></div>
+                    <div class="@(slaActionTab == "QCUnderReview" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under review</strong></div>
+                    <div class="@(slaActionTab == "FakeReport" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('FakeReport','@ViewBag.ReturnBack')"><strong>Fake report</strong></div>
+                    <div class="@(slaActionTab == "RedoRequested" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('RedoRequested','@ViewBag.ReturnBack')"><strong>Redo Requested</strong></div>
+                    <div class="@(slaActionTab == "SLACompleted" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('SLACompleted','@ViewBag.ReturnBack')"><strong>SLA Completed</strong></div>
                 </div>
                 <div class="pull-right">
                     <div>

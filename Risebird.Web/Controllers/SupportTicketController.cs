@@ -22,33 +22,33 @@ namespace Risebird.Web.Controllers
     public class SupportTicketController : Controller
     {
         private readonly ISupportTicketRepository _repository;
-        private readonly IApplicationErrorLogger  _logger;
-        private readonly IConfiguration           _configuration;
-        private readonly IResumeParsingService    _resumeParser;
-        private readonly IIRFService              _irfService;
+        private readonly IApplicationErrorLogger _logger;
+        private readonly IConfiguration _configuration;
+        private readonly IResumeParsingService _resumeParser;
+        private readonly IIRFService _irfService;
         private readonly IClonableSkillChannelTemplateService _templateService;
-        private readonly IClientService           _clientService;
-        private readonly IAzureStorageHelper      _azureStorageHelper;
-        private readonly IFileMimeTypeHelper      _fileMimeTypeHelper;
+        private readonly IClientService _clientService;
+        private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
 
         public SupportTicketController(
             ISupportTicketRepository repository,
-            IApplicationErrorLogger  logger,
-            IConfiguration           configuration,
-            IResumeParsingService    resumeParser = null,
-            IIRFService              irfService = null,
+            IApplicationErrorLogger logger,
+            IConfiguration configuration,
+            IResumeParsingService resumeParser = null,
+            IIRFService irfService = null,
             IClonableSkillChannelTemplateService templateService = null,
-            IClientService           clientService = null,
-            IAzureStorageHelper      azureStorageHelper = null,
-            IFileMimeTypeHelper      fileMimeTypeHelper = null)
+            IClientService clientService = null,
+            IAzureStorageHelper azureStorageHelper = null,
+            IFileMimeTypeHelper fileMimeTypeHelper = null)
         {
-            _repository         = repository;
-            _logger             = logger;
-            _configuration      = configuration;
-            _resumeParser       = resumeParser;
-            _irfService         = irfService;
-            _templateService    = templateService;
-            _clientService      = clientService;
+            _repository = repository;
+            _logger = logger;
+            _configuration = configuration;
+            _resumeParser = resumeParser;
+            _irfService = irfService;
+            _templateService = templateService;
+            _clientService = clientService;
             _azureStorageHelper = azureStorageHelper;
             _fileMimeTypeHelper = fileMimeTypeHelper;
         }
@@ -57,19 +57,19 @@ namespace Risebird.Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Index(
-            string tab         = "all",
-            string status      = null,
-            string intent      = null,
+            string tab = "all",
+            string status = null,
+            string intent = null,
             string senderEmail = null,
-            string dateFrom    = null,
-            string dateTo      = null,
-            int    page        = 1,
-            int    pageSize    = 25)
+            string dateFrom = null,
+            string dateTo = null,
+            int page = 1,
+            int pageSize = 25)
         {
             try
             {
-                if (page     < 1)   page     = 1;
-                if (pageSize < 10)  pageSize = 10;
+                if (page < 1) page = 1;
+                if (pageSize < 10) pageSize = 10;
                 if (pageSize > 200) pageSize = 200;
 
                 List<SupportTicketVM> tickets;
@@ -79,7 +79,7 @@ namespace Risebird.Web.Controllers
                 if (tab == "system")
                 {
                     // System tab — tickets assigned ONLY to System (never to human HR)
-                    tickets    = await _repository.GetSystemAssignedTicketsAsync(page, pageSize);
+                    tickets = await _repository.GetSystemAssignedTicketsAsync(page, pageSize);
                     totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
                     totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
@@ -89,7 +89,7 @@ namespace Risebird.Web.Controllers
                 else if (tab == "hybrid")
                 {
                     // Hybrid tab — tickets assigned to BOTH System AND human HR
-                    tickets    = await _repository.GetHybridTicketsAsync(page, pageSize);
+                    tickets = await _repository.GetHybridTicketsAsync(page, pageSize);
                     totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
                     totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
@@ -100,14 +100,14 @@ namespace Risebird.Web.Controllers
                 {
                     // Manual Review tab — tickets never assigned to System
                     DateTime? dtFrom = null;
-                    DateTime? dtTo   = null;
+                    DateTime? dtTo = null;
 
                     if (!string.IsNullOrWhiteSpace(dateFrom) &&
                         DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                     if (!string.IsNullOrWhiteSpace(dateTo) &&
-                        DateTime.TryParse(dateTo,   out var pTo))   dtTo   = pTo;
+                        DateTime.TryParse(dateTo, out var pTo)) dtTo = pTo;
 
-                    tickets    = await _repository.GetTicketsAsync(
+                    tickets = await _repository.GetTicketsAsync(
                         status, intent, senderEmail, dtFrom, dtTo, page, pageSize);
                     totalCount = tickets.Count > 0 ? tickets[0].TotalCount : 0;
                     totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
@@ -118,18 +118,18 @@ namespace Risebird.Web.Controllers
                 int systemCount = counts.SystemOnlyCount;
                 int hybridCount = counts.HybridCount;
 
-                ViewBag.Tab           = tab;
-                ViewBag.Page          = page;
-                ViewBag.PageSize      = pageSize;
-                ViewBag.TotalCount    = totalCount;
-                ViewBag.TotalPages    = totalPages;
-                ViewBag.SystemCount   = systemCount;
-                ViewBag.HybridCount   = hybridCount;
-                ViewBag.Status        = status      ?? string.Empty;
-                ViewBag.Intent        = intent      ?? string.Empty;
-                ViewBag.SenderEmail   = senderEmail ?? string.Empty;
-                ViewBag.DateFrom      = dateFrom    ?? string.Empty;
-                ViewBag.DateTo        = dateTo      ?? string.Empty;
+                ViewBag.Tab = tab;
+                ViewBag.Page = page;
+                ViewBag.PageSize = pageSize;
+                ViewBag.TotalCount = totalCount;
+                ViewBag.TotalPages = totalPages;
+                ViewBag.SystemCount = systemCount;
+                ViewBag.HybridCount = hybridCount;
+                ViewBag.Status = status ?? string.Empty;
+                ViewBag.Intent = intent ?? string.Empty;
+                ViewBag.SenderEmail = senderEmail ?? string.Empty;
+                ViewBag.DateFrom = dateFrom ?? string.Empty;
+                ViewBag.DateTo = dateTo ?? string.Empty;
 
                 return View(tickets);
             }
@@ -145,15 +145,15 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateStatus(
-            int    id,
+            int id,
             string status,
-            string returnStatus      = null,
-            string returnIntent      = null,
+            string returnStatus = null,
+            string returnIntent = null,
             string returnSenderEmail = null,
-            string returnDateFrom    = null,
-            string returnDateTo      = null,
-            int    returnPage        = 1,
-            int    returnPageSize    = 25)
+            string returnDateFrom = null,
+            string returnDateTo = null,
+            int returnPage = 1,
+            int returnPageSize = 25)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -174,19 +174,43 @@ namespace Risebird.Web.Controllers
 
                 return RedirectToAction("Index", new
                 {
-                    status      = returnStatus,
-                    intent      = returnIntent,
+                    status = returnStatus,
+                    intent = returnIntent,
                     senderEmail = returnSenderEmail,
-                    dateFrom    = returnDateFrom,
-                    dateTo      = returnDateTo,
-                    page        = returnPage,
-                    pageSize    = returnPageSize
+                    dateFrom = returnDateFrom,
+                    dateTo = returnDateTo,
+                    page = returnPage,
+                    pageSize = returnPageSize
                 });
             }
             else
             {
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        /// <summary>
+        /// JSON status update for the Review Resumes modal. Returns JSON only (no redirect) so $.ajax success runs reliably.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateTicketStatusModal(int id, string status)
+        {
+            if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            var allowed = new[] { "Open", "InProgress", "Closed" };
+            if (id <= 0 || string.IsNullOrWhiteSpace(status) || !Array.Exists(allowed, s => s == status))
+                return Json(new { success = false, error = "Invalid status update request." });
+
+            var changedBy = HttpContext.Session.GetString("email").Trim('"');
+            var ok = await _repository.UpdateTicketStatusAsync(id, status, changedBy);
+            return Json(new
+            {
+                success = ok,
+                status,
+                error = ok ? null : "Could not update ticket status."
+            });
         }
 
         // ── Eligible assignees (JSON) ──────────────────────────────────────────
@@ -223,7 +247,7 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Invalid request." });
 
                 var changedBy = HttpContext.Session.GetString("email").Trim('"');
-                var ok        = await _repository.UpdateTicketAssignmentAsync(id, assignedTo.Trim(), changedBy);
+                var ok = await _repository.UpdateTicketAssignmentAsync(id, assignedTo.Trim(), changedBy);
                 return Json(new { success = ok });
             }
             else
@@ -245,10 +269,10 @@ namespace Risebird.Web.Controllers
                     h.Id,
                     h.TicketId,
                     fromStatus = h.FromStatus ?? "—",
-                    toStatus   = h.ToStatus,
-                    changedBy  = h.ChangedBy,
-                    changedAt  = h.ChangedAt.ToString("dd MMM yyyy, HH:mm") + " UTC",
-                    eventType  = h.EventType ?? "StatusChange"
+                    toStatus = h.ToStatus,
+                    changedBy = h.ChangedBy,
+                    changedAt = h.ChangedAt.ToString("dd MMM yyyy, HH:mm") + " UTC",
+                    eventType = h.EventType ?? "StatusChange"
                 }));
             }
             catch (Exception ex)
@@ -288,22 +312,22 @@ namespace Risebird.Web.Controllers
             }
 
             var irfs = await _repository.GetIRFsForSenderAsync(senderEmail);
-            
+
             // If no existing mappings found, try auto-mapping based on client and job title
             if (irfs == null || irfs.Count == 0)
             {
                 // Attempt to auto-map: finds matching IRF for user's client and creates mapping
                 var autoMapped = await _repository.AutoMapUserToIRFAsync(
-                    senderEmail, 
-                    jobTitle, 
+                    senderEmail,
+                    jobTitle,
                     specialization);
-                
+
                 if (autoMapped != null)
                 {
                     // Auto-mapping succeeded — return the newly mapped IRF
                     return autoMapped;
                 }
-                
+
                 // Auto-mapping failed — no matching IRF found
                 return null;
             }
@@ -322,7 +346,7 @@ namespace Risebird.Web.Controllers
 
             // Score each mapped IRF: combine JDTiltle and SkillCluster into one field to match against
             const int StrongMatchThreshold = 80; // Score >= 70 = confident match
-            
+
             var scored = irfs
                 .Select(irf => new
                 {
@@ -378,13 +402,13 @@ namespace Risebird.Web.Controllers
             if (string.IsNullOrWhiteSpace(irfField) || string.IsNullOrWhiteSpace(jobTitle))
                 return 0;
 
-            var f  = irfField.ToLowerInvariant();
+            var f = irfField.ToLowerInvariant();
             var jt = jobTitle.ToLowerInvariant();
 
             if (jt.Contains(f) || f.Contains(jt)) return 100;
 
-            var sep     = new[] { ' ', ',', '/', '+', '-', '.', '_', '(', ')' };
-            var fWords  = f.Split(sep,  StringSplitOptions.RemoveEmptyEntries)
+            var sep = new[] { ' ', ',', '/', '+', '-', '.', '_', '(', ')' };
+            var fWords = f.Split(sep, StringSplitOptions.RemoveEmptyEntries)
                            .Where(w => w.Length > 2).ToHashSet();
             var jtWords = jt.Split(sep, StringSplitOptions.RemoveEmptyEntries)
                             .Where(w => w.Length > 2).ToHashSet();
@@ -436,21 +460,21 @@ namespace Risebird.Web.Controllers
 
                 var ticket = new SupportTicket
                 {
-                    SenderEmail              = payload.SenderEmail?.Trim(),
-                    Subject                  = payload.Subject?.Trim(),
-                    MailContent              = payload.MailContent?.Trim(),
-                    ReceivedAt               = receivedAt ?? DateTime.UtcNow,
-                    Intent                   = payload.WebhookIntent?.Trim(),
-                    PrimarySpecialization    = payload.PrimarySpecialization?.Trim(),
-                    MailBodyIntent           = payload.MailBodyIntent?.Trim(),
+                    SenderEmail = payload.SenderEmail?.Trim(),
+                    Subject = payload.Subject?.Trim(),
+                    MailContent = payload.MailContent?.Trim(),
+                    ReceivedAt = receivedAt ?? DateTime.UtcNow,
+                    Intent = payload.WebhookIntent?.Trim(),
+                    PrimarySpecialization = payload.PrimarySpecialization?.Trim(),
+                    MailBodyIntent = payload.MailBodyIntent?.Trim(),
                     AttachmentJobDescription = payload.AttachmentJobDescription,
-                    AttachmentPdf            = payload.AttachmentPdf,
-                    AttachmentResumes        = payload.AttachmentResumes,
-                    DriveFolderLink          = payload.DriveFolderLink?.Trim(),
-                    SummaryMail              = payload.SummaryMail?.Trim(),
-                    SummaryCandidates        = payload.SummaryCandidates?.Trim(),
-                    SummaryInterviewScores   = payload.SummaryInterviewScores?.Trim(),
-                    JobTitle                 = payload.JobTitle?.Trim()
+                    AttachmentPdf = payload.AttachmentPdf,
+                    AttachmentResumes = payload.AttachmentResumes,
+                    DriveFolderLink = payload.DriveFolderLink?.Trim(),
+                    SummaryMail = payload.SummaryMail?.Trim(),
+                    SummaryCandidates = payload.SummaryCandidates?.Trim(),
+                    SummaryInterviewScores = payload.SummaryInterviewScores?.Trim(),
+                    JobTitle = payload.JobTitle?.Trim()
                 };
 
                 // Correct attachment flags based on actual resume_drive_urls content
@@ -470,38 +494,38 @@ namespace Risebird.Web.Controllers
                 // No automatic ingestion into CandidateResume table.
                 // All resumes are stored as pending and require HR to manually trigger ingestion.
                 var pendingResumeResult = new System.Text.StringBuilder();
-                
-                var isNewCandidateSubmission = string.Equals(ticket.Intent, 
+
+                var isNewCandidateSubmission = string.Equals(ticket.Intent,
                     "New candidate submission", StringComparison.OrdinalIgnoreCase);
-                var isNewInterviewRequest = string.Equals(ticket.Intent, 
+                var isNewInterviewRequest = string.Equals(ticket.Intent,
                     "New interview request", StringComparison.OrdinalIgnoreCase);
-                
+
                 // Check available resume data sources
                 var hasResumeAssociations = payload.ResumeAssociations != null && payload.ResumeAssociations.Count > 0;
                 var hasLegacyUrls = payload.ResumeDriveUrls != null && payload.ResumeDriveUrls.Count > 0;
                 var hasCandidateScheduleData = payload.CandidateScheduleData != null && payload.CandidateScheduleData.Count > 0;
                 var hasResumesToProcess = hasResumeAssociations || hasLegacyUrls || hasCandidateScheduleData;
-                
+
                 // Also check if AttachmentResumes flag indicates resumes exist in the drive folder
                 var hasResumeAttachments = ticket.AttachmentResumes;
-                
+
                 // For "New interview request" with JD attached BUT NO resumes:
                 // This is a request to CREATE a new skill channel — no resume ingestion needed.
                 // If there ARE resumes (in URLs or indicated by AttachmentResumes), process them.
-                var isNewChannelRequestOnly = isNewInterviewRequest && 
-                    ticket.AttachmentJobDescription && 
-                    !hasResumesToProcess && 
+                var isNewChannelRequestOnly = isNewInterviewRequest &&
+                    ticket.AttachmentJobDescription &&
+                    !hasResumesToProcess &&
                     !hasResumeAttachments;
-                
+
                 // Process resumes for:
                 // 1. "New candidate submission" intent
                 // 2. "New interview request" that has resumes (even if JD is also attached)
-                var isResumeIngestionIntent = isNewCandidateSubmission || 
+                var isResumeIngestionIntent = isNewCandidateSubmission ||
                     (isNewInterviewRequest && !isNewChannelRequestOnly);
-                
+
                 int pendingCount = 0;
                 string fallbackHR = null;
-                
+
                 if (isResumeIngestionIntent && hasResumesToProcess)
                 {
                     // Process candidate_schedule_data (with scheduling info)
@@ -511,14 +535,14 @@ namespace Risebird.Web.Controllers
                         {
                             if (string.IsNullOrWhiteSpace(candidate.ResumeDriveUrl))
                                 continue;
-                            
+
                             try
                             {
                                 // Parse interview datetime if available
                                 DateTime? interviewDateTime = null;
                                 string timezone = candidate.Timezone ?? "IST";
                                 bool hasScheduling = false;
-                                
+
                                 if (!string.IsNullOrWhiteSpace(candidate.InterviewDate) &&
                                     !string.IsNullOrWhiteSpace(candidate.InterviewTime))
                                 {
@@ -530,17 +554,17 @@ namespace Risebird.Web.Controllers
                                     }
                                     catch { /* ignore parse errors */ }
                                 }
-                                
+
                                 // Resolve IRF for this resume
                                 IrfMatchVM irfMatch = null;
-                                
+
                                 // Try explicit skill_channel_id first
                                 if (!string.IsNullOrWhiteSpace(candidate.SkillChannelId) &&
                                     candidate.SkillChannelId.Trim().Length == 10)
                                 {
                                     irfMatch = await _repository.GetIRFByStringIdAsync(candidate.SkillChannelId.Trim());
                                 }
-                                
+
                                 // Fallback to job title matching
                                 if (irfMatch == null && !string.IsNullOrWhiteSpace(ticket.PrimarySpecialization))
                                 {
@@ -550,7 +574,7 @@ namespace Risebird.Web.Controllers
                                         payload.SkillChannelId,
                                         ticket.PrimarySpecialization);
                                 }
-                                
+
                                 // Handle case where resume_filename might contain multiple names concatenated
                                 var cleanFilename = candidate.ResumeFileName?.Trim();
                                 if (!string.IsNullOrWhiteSpace(cleanFilename) && cleanFilename.Contains('\n'))
@@ -558,7 +582,7 @@ namespace Risebird.Web.Controllers
                                     cleanFilename = cleanFilename.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
                                         .FirstOrDefault()?.Trim();
                                 }
-                                
+
                                 // Insert pending resume
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
@@ -573,7 +597,7 @@ namespace Risebird.Web.Controllers
                                     hasScheduling,
                                     interviewDateTime,
                                     timezone);
-                                
+
                                 if (pendingId > 0)
                                 {
                                     pendingCount++;
@@ -587,7 +611,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
                     }
-                    
+
                     // Process resume_associations (per-resume IRF mapping)
                     if (hasResumeAssociations)
                     {
@@ -595,18 +619,18 @@ namespace Risebird.Web.Controllers
                         {
                             if (string.IsNullOrWhiteSpace(assoc.ResumeUrl))
                                 continue;
-                            
+
                             try
                             {
                                 IrfMatchVM irfMatch = null;
-                                
+
                                 // Try explicit skill_channel_id
                                 if (!string.IsNullOrWhiteSpace(assoc.SkillChannelId) &&
                                     assoc.SkillChannelId.Trim().Length == 10)
                                 {
                                     irfMatch = await _repository.GetIRFByStringIdAsync(assoc.SkillChannelId.Trim());
                                 }
-                                
+
                                 // Try job_title from association
                                 if (irfMatch == null && !string.IsNullOrWhiteSpace(assoc.JobTitle))
                                 {
@@ -616,7 +640,7 @@ namespace Risebird.Web.Controllers
                                         null,
                                         ticket.PrimarySpecialization);
                                 }
-                                
+
                                 // Fallback to global job title
                                 if (irfMatch == null && !string.IsNullOrWhiteSpace(ticket.PrimarySpecialization))
                                 {
@@ -626,7 +650,7 @@ namespace Risebird.Web.Controllers
                                         payload.SkillChannelId,
                                         ticket.PrimarySpecialization);
                                 }
-                                
+
                                 // Handle case where resume_filename might contain multiple names concatenated
                                 // Just take the first one if there are newlines
                                 var cleanFilename = assoc.ResumeFileName?.Trim();
@@ -635,7 +659,7 @@ namespace Risebird.Web.Controllers
                                     cleanFilename = cleanFilename.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
                                         .FirstOrDefault()?.Trim();
                                 }
-                                
+
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
                                     assoc.ResumeUrl.Trim(),
@@ -649,7 +673,7 @@ namespace Risebird.Web.Controllers
                                     false, // no scheduling data
                                     null,
                                     null);
-                                
+
                                 if (pendingId > 0)
                                 {
                                     pendingCount++;
@@ -663,13 +687,13 @@ namespace Risebird.Web.Controllers
                             }
                         }
                     }
-                    
+
                     // Process legacy resume_drive_urls (single IRF for all)
                     // Uses parallel resume_filenames array if available
                     if (hasLegacyUrls && !hasResumeAssociations && !hasCandidateScheduleData)
                     {
                         IrfMatchVM irfMatch = null;
-                        
+
                         if (!string.IsNullOrWhiteSpace(ticket.PrimarySpecialization))
                         {
                             irfMatch = await MatchIRFAsync(
@@ -678,27 +702,27 @@ namespace Risebird.Web.Controllers
                                 payload.SkillChannelId,
                                 ticket.PrimarySpecialization);
                         }
-                        
+
                         // Build list of (url, filename) pairs
                         // resume_filenames is a parallel array - index 0 filename goes with index 0 URL
                         // Also handle case where filenames are concatenated (space/newline separated)
                         var urlFilePairs = new List<(string Url, string Filename)>();
                         var filenames = payload.ResumeFilenames ?? new List<string>();
-                        
+
                         // First, flatten all URLs - some entries might have multiple URLs concatenated
                         var allUrls = new List<string>();
                         foreach (var rawUrl in payload.ResumeDriveUrls)
                         {
                             if (string.IsNullOrWhiteSpace(rawUrl))
                                 continue;
-                            
+
                             var urls = rawUrl.Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries)
                                 .Where(u => u.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                                 .Select(u => u.Trim())
                                 .ToList();
                             allUrls.AddRange(urls);
                         }
-                        
+
                         // Similarly, flatten all filenames - some entries might have multiple names concatenated
                         var allFilenames = new List<string>();
                         foreach (var rawFilename in filenames)
@@ -708,14 +732,14 @@ namespace Risebird.Web.Controllers
                                 allFilenames.Add(null);
                                 continue;
                             }
-                            
+
                             // Split by newlines or common separators, but preserve filenames with spaces
                             // Try newline first, then fall back to common patterns
                             var splitNames = rawFilename.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
                                 .Select(n => n.Trim())
                                 .Where(n => !string.IsNullOrWhiteSpace(n))
                                 .ToList();
-                            
+
                             if (splitNames.Count > 0)
                             {
                                 allFilenames.AddRange(splitNames);
@@ -725,7 +749,7 @@ namespace Risebird.Web.Controllers
                                 allFilenames.Add(rawFilename.Trim());
                             }
                         }
-                        
+
                         // Pair URLs with filenames by index
                         for (int i = 0; i < allUrls.Count; i++)
                         {
@@ -733,7 +757,7 @@ namespace Risebird.Web.Controllers
                             var filename = i < allFilenames.Count ? allFilenames[i] : null;
                             urlFilePairs.Add((url, filename));
                         }
-                        
+
                         // Remove duplicates (keep first occurrence with filename if any)
                         urlFilePairs = urlFilePairs
                             .GroupBy(p => p.Url)
@@ -742,7 +766,7 @@ namespace Risebird.Web.Controllers
                                 return !string.IsNullOrEmpty(withFilename.Filename) ? withFilename : g.First();
                             })
                             .ToList();
-                        
+
                         foreach (var (url, filename) in urlFilePairs)
                         {
                             try
@@ -760,7 +784,7 @@ namespace Risebird.Web.Controllers
                                     false,
                                     null,
                                     null);
-                                
+
                                 if (pendingId > 0)
                                 {
                                     pendingCount++;
@@ -774,14 +798,14 @@ namespace Risebird.Web.Controllers
                             }
                         }
                     }
-                    
+
                     // Assign to HR for review
                     var hrEmail = fallbackHR ?? await _repository.GetHRForSenderAsync(ticket.SenderEmail);
                     if (!string.IsNullOrWhiteSpace(hrEmail))
                     {
                         await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
                     }
-                    
+
                     pendingResumeResult.Append(
                         $"{pendingCount} resume(s) queued for HR review. Assigned to {hrEmail ?? "unassigned"}.");
                 }
@@ -798,7 +822,7 @@ namespace Risebird.Web.Controllers
                             payload.SkillChannelId,
                             ticket.PrimarySpecialization);
                     }
-                    
+
                     // Use drive folder link as the "resume URL" for placeholder
                     var driveLink = ticket.DriveFolderLink;
                     if (!string.IsNullOrWhiteSpace(driveLink))
@@ -825,13 +849,13 @@ namespace Risebird.Web.Controllers
                             await _logger.LogMessage(LogLevelInfo.Exception, ex);
                         }
                     }
-                    
+
                     var hrEmail = irfMatch?.RisebirdHrEmail ?? await _repository.GetHRForSenderAsync(ticket.SenderEmail);
                     if (!string.IsNullOrWhiteSpace(hrEmail))
                     {
                         await _repository.UpdateTicketAssignmentAsync(newId, hrEmail, "System");
                     }
-                    
+
                     pendingResumeResult.Append(
                         $"Resumes detected in drive folder (URLs not extracted). Queued for HR review. Assigned to {hrEmail ?? "unassigned"}.");
                 }
@@ -870,10 +894,10 @@ namespace Risebird.Web.Controllers
 
                 return Ok(new
                 {
-                    success         = true,
-                    ticketId        = newId,
-                    pendingResumes  = pendingCount,
-                    message         = pendingResumeResult.ToString()
+                    success = true,
+                    ticketId = newId,
+                    pendingResumes = pendingCount,
+                    message = pendingResumeResult.ToString()
                 });
             }
             catch (Exception ex)
@@ -899,11 +923,14 @@ namespace Risebird.Web.Controllers
                 if (ticketId == -1)
                 {
                     var testResumes = GetTestPendingResumes();
-                    return Json(new { 
-                        success = true, 
+                    return Json(new
+                    {
+                        success = true,
                         resumes = testResumes,
-                        ticket = new {
+                        ticket = new
+                        {
                             id = -1,
+                            status = "Open",
                             driveFolderLink = "https://drive.google.com/drive/folders/test123",
                             attachmentResumes = true,
                             primarySpecialization = "Test Specialization",
@@ -914,12 +941,15 @@ namespace Risebird.Web.Controllers
 
                 var resumes = await _repository.GetPendingResumesForTicketAsync(ticketId);
                 var ticket = await _repository.GetTicketByIdAsync(ticketId);
-                
-                return Json(new {
+
+                return Json(new
+                {
                     success = true,
                     resumes,
-                    ticket = ticket != null ? new {
+                    ticket = ticket != null ? new
+                    {
                         id = ticket.Id,
+                        status = ticket.Status,
                         senderEmail = ticket.SenderEmail,
                         subject = ticket.Subject,
                         intent = ticket.Intent,
@@ -973,9 +1003,9 @@ namespace Risebird.Web.Controllers
                 var pendingId = await _repository.InsertPendingResumeAsync(
                     ticketId,
                     ticket.DriveFolderLink,
-                    "Drive Folder (manual processing)", 
-                    null, 
-                    null, 
+                    "Drive Folder (manual processing)",
+                    null,
+                    null,
                     irfMatch?.Id,
                     irfMatch?.IRFStringId,
                     irfMatch?.JDTiltle,
@@ -988,12 +1018,13 @@ namespace Risebird.Web.Controllers
                 {
                     // Update ticket to indicate it has pending resumes
                     await _repository.RefreshTicketPendingResumeFlagAsync(ticketId);
-                    
+
                     // Fetch the newly created pending resume
                     var resumes = await _repository.GetPendingResumesForTicketAsync(ticketId);
-                    
-                    return Json(new { 
-                        success = true, 
+
+                    return Json(new
+                    {
+                        success = true,
                         message = "Drive folder queued for resume processing.",
                         resumes,
                         pendingCount = resumes.Count
@@ -1301,7 +1332,7 @@ namespace Risebird.Web.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = $"[TEST] Resume #{request.PendingResumeId} ingested successfully!" + 
+                        message = $"[TEST] Resume #{request.PendingResumeId} ingested successfully!" +
                                   (irfChanged ? $" (IRF changed to #{request.OverrideIRFId})" : ""),
                         candidateResumeId = 99000 + request.PendingResumeId,
                         irfChanged = irfChanged,
@@ -1354,13 +1385,13 @@ namespace Risebird.Web.Controllers
                         processedBy,
                         request.IRFChangeReason ?? "HR override during review");
                     stepStopwatch.Stop();
-                    
+
                     if (!updated)
                     {
                         await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP03_IRF_OVERRIDE", "Failed", "Failed to update IRF in database", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
                         return Json(new { success = false, error = "Failed to update IRF. Please try again." });
                     }
-                    
+
                     pending = await _repository.GetPendingResumeByIdAsync(request.PendingResumeId);
                     irfWasChanged = true;
                     await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, null, "CP03_IRF_OVERRIDE", "Success", $"IRF updated to {pending.ResolvedIRFStringId}", null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
@@ -1393,7 +1424,7 @@ namespace Risebird.Web.Controllers
                     "CP04_RESOLVE_HR", "Success",
                     $"HR resolved: UserId={hrId}, Source={hrSource}",
                     null, processedBy, (int)stepStopwatch.ElapsedMilliseconds);
-                
+
                 int ingestedResumeId = 0;
                 var scheduledDateTime = request.OverrideInterviewDateTime ?? pending.ScheduledInterviewDateTime;
                 bool hasScheduleTime = request.AlsoSchedule && scheduledDateTime.HasValue;
@@ -1413,7 +1444,7 @@ namespace Risebird.Web.Controllers
                         pending.ResolvedIRFId.Value,
                         pending.ResumeUrl,
                         hrId,
-                        processedBy,  
+                        processedBy,
                         pending.SupportTicketId,
                         pending.CandidateName,
                         pending.CandidateEmail,
@@ -1426,7 +1457,7 @@ namespace Risebird.Web.Controllers
                         pending.ResolvedIRFId.Value,
                         pending.ResumeUrl,
                         hrId,
-                        processedBy,  
+                        processedBy,
                         pending.SupportTicketId);
                 }
                 stepStopwatch.Stop();
@@ -1461,13 +1492,13 @@ namespace Risebird.Web.Controllers
                 {
                     stepStopwatch.Restart();
                     await _repository.LogProcessingCheckpointAsync(ticketId, pendingId, candidateResumeId, "CP07_PARSE_RESUME", "Started", "Starting resume parsing");
-                    
+
                     try
                     {
                         parseResult = await _resumeParser.ParseResumeAsync(ingestedResumeId);
                         stepStopwatch.Stop();
                         parsingSuccess = parseResult.Success;
-                        
+
                         if (parseResult.Success)
                         {
                             parseMessage = $"Resume parsed successfully. Candidate: {parseResult.CandidateName}, Email: {parseResult.CandidateEmail}";
@@ -1509,9 +1540,9 @@ namespace Risebird.Web.Controllers
                 }
 
                 // CP08: Schedule Interview (if requested)
-                bool datetimeOverridden = request.OverrideInterviewDateTime.HasValue && 
+                bool datetimeOverridden = request.OverrideInterviewDateTime.HasValue &&
                     request.OverrideInterviewDateTime != pending.ScheduledInterviewDateTime;
-                
+
                 if (request.AlsoSchedule && scheduledDateTime.HasValue)
                 {
                     stepStopwatch.Restart();
@@ -1527,22 +1558,22 @@ namespace Risebird.Web.Controllers
                         try
                         {
                             const string apiUrl = "https://api.portal.risebird.io/api/Candidates/Schedule";
-                            
+
                             var tenantId = await _repository.GetTenantIdForIRFAsync(pending.ResolvedIRFId.Value);
 
                             var dto = new ScheduleCandidatesRequest
                             {
                                 skillChannelId = pending.ResolvedIRFStringId,
-                                requestedBy    = pending.TicketSenderEmail,
-                                requestType    = "schedule_supportTicket"
+                                requestedBy = pending.TicketSenderEmail,
+                                requestType = "schedule_supportTicket"
                             };
                             dto.CandidateList.Add(new ScheduleCandidateList
                             {
-                                EmailId       = parseResult.CandidateEmail,
+                                EmailId = parseResult.CandidateEmail,
                                 Interviewdate = scheduledDateTime.Value,
-                                ResumeLink    = pending.ResumeUrl,
-                                Phone         = parseResult.CandidatePhone,
-                                Name          = parseResult.CandidateName ?? pending.CandidateName
+                                ResumeLink = pending.ResumeUrl,
+                                Phone = parseResult.CandidatePhone,
+                                Name = parseResult.CandidateName ?? pending.CandidateName
                             });
 
                             await _repository.LogProcessingCheckpointAsync(
@@ -1579,7 +1610,7 @@ namespace Risebird.Web.Controllers
                                         var candidateStatus = scheduleResponse.list[0];
                                         actualStatus = candidateStatus.onboardingStatus;
                                         meetingLink = candidateStatus.meetingLink;
-                                        
+
                                         // Only consider it successful if onboardingStatus is "successful"
                                         schedulingActuallySucceeded = string.Equals(actualStatus, "successful", StringComparison.OrdinalIgnoreCase);
                                     }
@@ -1783,7 +1814,7 @@ namespace Risebird.Web.Controllers
                             var candidateStatus = scheduleResponse.list[0];
                             actualStatus = candidateStatus.onboardingStatus;
                             meetingLink = candidateStatus.meetingLink;
-                            
+
                             // Only consider successful if onboardingStatus is "successful"
                             schedulingActuallySucceeded = string.Equals(actualStatus, "successful", StringComparison.OrdinalIgnoreCase);
                         }
@@ -1800,7 +1831,7 @@ namespace Risebird.Web.Controllers
                     var successMsg = $"Interview scheduled for {candidateName} ({candidateEmail}) at {candidate.ScheduledInterviewDateTime:g}";
                     if (!string.IsNullOrEmpty(meetingLink) && meetingLink != "NA")
                         successMsg += $" | Meeting link: {meetingLink}";
-                    
+
                     return Json(new
                     {
                         success = true,
@@ -1856,7 +1887,7 @@ namespace Risebird.Web.Controllers
 
                 var processedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                 var pending = await _repository.GetPendingResumeByIdAsync(pendingResumeId);
-                
+
                 if (pending == null)
                     return Json(new { success = false, error = "Pending resume not found" });
 
@@ -1965,13 +1996,13 @@ namespace Risebird.Web.Controllers
                 {
                     var filename = jdFile.FileName.Replace(" ", "_");
                     var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(jdFile);
-                    
+
                     var allowedTypes = new[] {
                         "application/msword",
                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                         "application/pdf"
                     };
-                    
+
                     if (allowedTypes.Contains(fileMimeType))
                     {
                         await _azureStorageHelper.InsertBlob(filename, "resumes", jdFile);
@@ -1985,17 +2016,17 @@ namespace Risebird.Web.Controllers
                 var irfModel = new IRFVm
                 {
                     CreatedFromTemplateId = templateId,
-                    AssessmentGroupId     = templateData.AssessmentGroupId,
-                    ClientId              = clientId,
-                    JDTiltle              = jdTitle,
-                    JDLink                = jdLink,
-                    IRFId                 = irfId,
-                    MeetingPlatform       = templateData.MeetingPlatform ?? "Zoho",
-                    StartDate             = DateTime.Now,
-                    EndDate               = DateTime.Now.AddMonths(3),
-                    IsAIInterview         = isAIInterview,
-                    AIInterviewType       = aiInterviewType,
-                    BillingOwner          = billingOwnerId
+                    AssessmentGroupId = templateData.AssessmentGroupId,
+                    ClientId = clientId,
+                    JDTiltle = jdTitle,
+                    JDLink = jdLink,
+                    IRFId = irfId,
+                    MeetingPlatform = templateData.MeetingPlatform ?? "Zoho",
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now.AddMonths(3),
+                    IsAIInterview = isAIInterview,
+                    AIInterviewType = aiInterviewType,
+                    BillingOwner = billingOwnerId
                 };
 
                 // Generate scheduling link
@@ -2012,12 +2043,12 @@ namespace Risebird.Web.Controllers
 
                     return Json(new CreateChannelResponse
                     {
-                        Success        = true,
-                        NewIRFId       = newIrf?.id ?? 0,
+                        Success = true,
+                        NewIRFId = newIrf?.id ?? 0,
                         NewIRFStringId = irfId,
-                        JDTitle        = jdTitle,
+                        JDTitle = jdTitle,
                         SchedulingLink = schedulingLink,
-                        Message        = $"Skill Channel '{irfId}' created successfully!"
+                        Message = $"Skill Channel '{irfId}' created successfully!"
                     });
                 }
                 else
