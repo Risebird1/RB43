@@ -14,5 +14,7 @@ namespace Risebird.Entities.ViewModel
         public string ContradictionJson { get; set; }
         public DateTime interviewDate { get; set; }
         public DateTime? Joinedon { get; set; }
+        public int ActualDuration { get; set; }
+        public int RequiredDuration { get; set; }
     }
 }
