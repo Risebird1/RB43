@@ -96,6 +96,7 @@ namespace Risebird.Entities.ViewModel
         public string FeedBackComment{ get; set; }
         public bool IsAIInterview { get; set; }
         public string SessionId { get; set; }
+        public string StatusValue { get; set; }
     }
     public class PaymentSlabsVM
     {
