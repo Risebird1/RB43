@@ -7905,7 +7905,7 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             try
             {
                 const string query = @"SELECT TOP 1 id, InterviewId, ReportAI, TranscritAi, PenalityApplied, QCDone, QCDoneOn,
-                    ReportAIDetails, TranscritAiDetails, MergedAIQCDetails, AIMergeTotalPenalty, AIMergeInterviewerSuspicious, AIMergeRedoInterview
+                    ReportAIDetails, TranscritAiDetails, MergedAIQCDetails, ContradictionJson, AIMergeTotalPenalty, AIMergeInterviewerSuspicious, AIMergeRedoInterview
                     FROM dbo.QcInterviewAIevaluation WHERE InterviewId = @interviewId ORDER BY id DESC";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
