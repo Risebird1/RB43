@@ -88,7 +88,7 @@
                                             <tbody>
                                                 @foreach (var item in Model)
                                                 {
-                                                    <tr id=@item.Interviewid>
+                                                    <tr id=@item.InterviewId>
                                                         <td title=@item.IRFId> @item.IRFId </td>
                                                         <td> @item.interviewDate </td>
                                                         <td style="color: #0b8c0b;">
@@ -101,10 +101,10 @@
                                                                             <p style="margin-bottom:0px;">
                                                                                 @item.WhoJoined.Substring(0, 30)
                                                                             </p>
-                                                                            <p class="moretext_@item.Interviewid moretext">
+                                                                            <p class="moretext_@item.InterviewId moretext">
                                                                                 @item.WhoJoined.Substring(30, @item.WhoJoined.Length - 30)
                                                                             </p>
-                                                                            <a onclick="moreless(@item.Interviewid)" class="moreless-button" value="Readmore" id="read_@item.Interviewid" href="#">Read more</a>
+                                                                            <a onclick="moreless(@item.InterviewId)" class="moreless-button" value="Readmore" id="read_@item.InterviewId" href="#">Read more</a>
 
                                                                         </div>
                                                                     }
