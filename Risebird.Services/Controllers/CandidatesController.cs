@@ -262,6 +262,7 @@ namespace Risebird.Services.Controllers
                                         var interviewdatecheck = await CheckInterviewDateMeetingSchedule(item.Interviewdate.Day, item.Interviewdate.Month, item.Interviewdate.Year, Uniqueid, item.Interviewdate);
                                         if (interviewdatecheck)
                                         {
+                                            var meetingplatform = "Zoho";
                                             var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(item.Interviewdate, reqData.skillChannelId, Uniqueid);
                                             if (_checkdetails)
                                             {
@@ -288,15 +289,17 @@ namespace Risebird.Services.Controllers
                                                     zoomLink.meetingid = "";
                                                     zoomLink.join_url = "";
                                                     zoomLink.accountemail = "AI";
+                                                    meetingplatform = "AI";
                                                 }
                                                 string textreminder = string.Empty;
                                                 textreminder = item.Phone;
                                                 int interviewId = 0;
+                                                
                                                 if (string.IsNullOrWhiteSpace(reqData.requestType))
                                                 {
                                                     reqData.requestType = "API";
                                                 }
-                                                var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.EmailId, item.ResumeLink, zoomLink.join_url, reqData.skillChannelId, zoomLink.meetingid, interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, "Zoho", out interviewId, zoomLink.accountemail, reqData.requestType);
+                                                var result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", item.Name, item.EmailId, item.ResumeLink, zoomLink.join_url, reqData.skillChannelId, zoomLink.meetingid, interviewOnDevice, textreminder, reqData.requestedBy, reqData.requestedBy, TimeZoneoffset, TimeZonesValue, meetingplatform, out interviewId, zoomLink.accountemail, reqData.requestType);
                                                 if (result)
                                                 {
                                                     _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(Uniqueid);
