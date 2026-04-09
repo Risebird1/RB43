@@ -30,7 +30,6 @@ end
   if(@clientRole = 4) -- staffing agency                      
 begin       
 ;with CTE as (Select ca.id as CandidateId,IRF.id as imid,IRF.id as IRFId,ul.Emailid,IRF.IRFId as IRFname,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as Name,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' 
-  
 and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,ul.MobileNumber,ca.resumeLink,    
 ca.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,IRF.JobCountry,ca.CandidateMasterId,    
 ca.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,    
@@ -41,12 +40,12 @@ Candidate ca on ca.IRFId=IRF.id
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId    
 join UserList ul on ul.id=cm.UserId    
 join TransClientUser tcu on tcu.IRFId=IRF.id                                
- left join Userlist tcul on tcul.id=tcu.ClientUserId                       
+left join Userlist tcul on tcul.id=tcu.ClientUserId                       
 left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId        
 left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId=IRF.IRFId    
 left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and cs.Status=12                                  
 left join UserList ulh on ulh.EmailId=ca.ClientHRAttemptContact  
- outer apply(Select pr.ProjectUniqueid,pr.ProjectTitle From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId join IRF on IRF.id=pim.IRFId where IRF.IRFId=im.IRFId) as projectdetails  
+outer apply(Select pr.ProjectUniqueid,pr.ProjectTitle From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId where IRF.id=pim.IRFId) as projectdetails  
 where tcul.EmailId=@Emailid and ca.ProfileSource=@Emailid and cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and im.id is null)    
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,    
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,    
@@ -76,7 +75,7 @@ left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId=IRF.IRFId    
 left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and cs.Status=12                                  
 left join UserList ulh on ulh.EmailId=ca.ClientHRAttemptContact  
-outer apply(Select pr.ProjectUniqueid,pr.ProjectTitle From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId join IRF on IRF.id=pim.IRFId where IRF.IRFId=im.IRFId) as projectdetails  
+outer apply(Select pr.ProjectUniqueid,pr.ProjectTitle From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId where IRF.id=pim.IRFId) as projectdetails  
 where tcul.EmailId=@Emailid and ca.ClientHRAttemptContact=@Emailid and cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and im.id is null)    
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,    
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,    
@@ -103,7 +102,7 @@ left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId=IRF.IRFId    
 left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and cs.Status=12                                  
 left join UserList ulh on ulh.EmailId=ca.ClientHRAttemptContact  
-outer apply(Select pr.ProjectUniqueid,pr.ProjectTitle From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId join IRF on IRF.id=pim.IRFId where IRF.IRFId=im.IRFId) as projectdetails  
+outer apply(Select pr.ProjectUniqueid,pr.ProjectTitle From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId where IRF.id=pim.IRFId) as projectdetails  
 where cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and IRF.ClientId=@Clientid and im.id is null)    
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,    
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,    
@@ -133,7 +132,7 @@ left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 left join InterviewMeetings im on im.candidateEmail=ul.EmailId and im.IRFId=IRF.IRFId    
 left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=ca.IRFId and cs.Status=12                                  
 left join UserList ulh on ulh.EmailId=ca.ClientHRAttemptContact  
-outer apply(Select pr.ProjectUniqueid,pr.ProjectTitle From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId join IRF on IRF.id=pim.IRFId where IRF.IRFId=im.IRFId) as projectdetails  
+outer apply(Select pr.ProjectUniqueid,pr.ProjectTitle From ProjectIRFMapping pim join Project pr on pr.id=pim.ProjectId where IRF.id=pim.IRFId) as projectdetails  
 where tcul.EmailId=@Emailid and cs.Date>=@startDate and cs.Date<@endDate and ISNULL(cci.IsColdCandidate,0) !=1 and im.id is null)    
 Select CTE.CandidateId,CTE.CandidateMasterId,CTE.IRFId,CTE.EmailId as CandidateEmailId,CTE.Name as CandidateName,CTE.IRFname,CTE.JDTiltle as PrimarySkill,    
 CTE.MobileNumber as Phone,CTE.ResumeLink,CTE.ClientHrContact as HREmail,CTE.dtCreatedOn as interviewDate,CTE.CalendlyLink,CTE.JobCountry,    

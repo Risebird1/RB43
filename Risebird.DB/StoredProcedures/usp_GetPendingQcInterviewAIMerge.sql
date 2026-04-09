@@ -26,11 +26,14 @@ BEGIN
 		ic.[TranscriptSummary],
 		q.[ContradictionJson],
 		imj.[Joinedon],
-		im.interviewDate
+		im.interviewDate,
+		ic.VideoDuration as ActualDuration,
+		pt.DurationSelectedMin as RequiredDuration
     FROM [dbo].[QcInterviewAIevaluation] q  
 	join InterviewMeetings im on im.id=q.InterviewId
 	join InterviewComments ic on ic.InterviewId=q.InterviewId
 	join IRF on IRF.IRFId=im.IRFId
+	Left JOIN PlanTypeChargesMaster pt ON pt.CountryType = IRF.JobCountry AND pt.PlanTypeEnumValue = IRF.Heuristicsscore AND IRF.CompanyType = pt.CompanyType
 	outer Apply(Select Min(Joinedon) as JoinedOn From InterviewMeetingsJoinTime where Interviewid=q.InterviewId and interviewer=im.Interviewer) imj
     WHERE (q.[QCDone] IS NULL OR q.[QCDone] = 0)  
       AND q.[ReportAIDetails] IS NOT NULL AND LEN(LTRIM(RTRIM(q.[ReportAIDetails]))) > 0  
