@@ -158,7 +158,7 @@
                                                     {
                                                         <td>QC Status</td>
                                                     }
-                                                    @if (ViewBag.actionstatus == "FakeReport")
+                                                    @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>Status</th>
                                                     }
@@ -197,7 +197,7 @@
                                                     {
                                                         <td>QC Status</td>
                                                     }
-                                                    @if (ViewBag.actionstatus == "FakeReport")
+                                                   @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview")
                                                     {
                                                         <th>Status</th>
                                                     }
@@ -317,7 +317,7 @@
                                                                 <td>Pending</td>
                                                             }
                                                         }
-                                                        @if (ViewBag.actionstatus == "FakeReport")
+                                                        @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview")
                                                         {
                                                             <td>@item.StatusValue</td>
                                                         }
