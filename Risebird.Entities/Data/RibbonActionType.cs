@@ -1,4 +1,4 @@
-﻿namespace Risebird.Entities.Data
+namespace Risebird.Entities.Data
 {
     public static class RibbonActionType
     {
@@ -26,5 +26,7 @@
         public static readonly string QCAIInterview = "QCAIInterview";
         public static readonly string AIMeetingStatus = "AIMeetingStatus";
         public static readonly string FakeReport = "FakeReport";
+        public static readonly string HighSeverityPending = "HighSeverityPending";
+        public static readonly string RedoRequested = "RedoRequested";
     }
 }
