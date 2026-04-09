@@ -586,7 +586,7 @@ else
                                                         <button type="button" class="btn-act" title="Send Invite" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">
                                                             <svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                                                         </button>
-                                                        <button type="button" class="btn-act btn-act-cold" title="Mark Cold Candidate" onclick="MarkedColdCandidateForClient('@item.CandidateId','@item.IRFId', '@item.candidateEmail','@item.Interviewid','@item.imid','@ViewBag.ClientEmail',2);">
+                                                        <button type="button" class="btn-act btn-act-cold" title="Mark Cold Candidate" onclick="MarkedColdCandidateForClient('@item.CandidateId','@item.IRFId', '@item.candidateEmail','@item.InterviewId','@item.imid','@ViewBag.ClientEmail',2);">
                                                             <img class="icon-m icon-img" src="~/img/approve-blk.png" alt="Cold"/>
                                                         </button>
                                                         <button type="button" class="btn-act" title="Candidate Status" onclick="PublicStatusList('@item.imid','@item.CandidateMasterId', '@item.IRFId','@item.candidateName')">

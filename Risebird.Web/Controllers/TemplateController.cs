@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -1523,6 +1523,73 @@ namespace Risebird.Web.Controllers
         //        return RedirectToAction("SignOut", "Session");
         //    }
         //}
+
+        #endregion
+
+        #region Bulk Template Creation
+
+        /// <summary>
+        /// Gets all MAGs that don't have a template.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetMAGsWithoutTemplates()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var mags = await _clonableSkillChannelTemplateService.GetMAGsWithoutTemplatesAsync();
+                        return Json(new { success = true, data = mags });
+                    }
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                return Json(new { success = false, message = "Session expired" });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred" });
+            }
+        }
+
+        /// <summary>
+        /// Creates templates for all MAGs that don't have one.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateTemplatesForAllMAGs()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+                    
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var result = await _clonableSkillChannelTemplateService.CreateTemplatesForAllMAGsAsync(emailId);
+                        return Json(new { 
+                            success = true, 
+                            totalMAGs = result.TotalMAGs,
+                            successCount = result.SuccessCount,
+                            failureCount = result.FailureCount,
+                            details = result.Details 
+                        });
+                    }
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                return Json(new { success = false, message = "Session expired" });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
 
         #endregion
 

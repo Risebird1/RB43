@@ -1,4 +1,4 @@
-﻿using Risebird.Entities.ViewModel;
+using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,5 +16,10 @@ namespace Risebird.Repository.Interface
         Task<bool> RenewTemplateRubrics(List<TransSkill> techRubrics, int templateId);
         Task<bool> CreateTemplateFromMAG(List<TransSkill> techRubrics, int assessmentGroupId, string loggedInUser);
         Task<IEnumerable<SkillComment>> GetDeliveryHeadSampleQuestions(int id, string emailId = null);
+        
+        /// <summary>
+        /// Gets all MasterAssessmentGroups that don't have a template.
+        /// </summary>
+        Task<IEnumerable<MAGWithoutTemplateVM>> GetMAGsWithoutTemplatesAsync();
     }
 }
