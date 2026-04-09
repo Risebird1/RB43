@@ -8399,12 +8399,12 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.actionstatus = actionstatus;
                     IEnumerable<PaymentSLAVM> model;
-                    if (actionstatus == "HighSeverityPending" || actionstatus == "QCUnderReview" || actionstatus == "FakeReport" || actionstatus == "RedoRequested")
-                    {
-                        model = Array.Empty<PaymentSLAVM>();
-                    }
-                    else
-                    {
+                    //if (actionstatus == "HighSeverityPending" || actionstatus == "QCUnderReview" || actionstatus == "FakeReport" || actionstatus == "RedoRequested")
+                    //{
+                    //    model = Array.Empty<PaymentSLAVM>();
+                    //}
+                    //else
+                    //{
                         model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
                         if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
                         {
@@ -8421,7 +8421,7 @@ namespace Risebird.Web.Controllers
                             DateTime EndDate = DateTime.Now.AddDays(1);
                             model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
                         }
-                    }
+                    //}
                     return View(model);
                 }
             }
