@@ -73,7 +73,7 @@ namespace Risebird.AzureTimerFunctions
                 {
                     try
                     {
-                        var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails, row.ContradictionJson, row.interviewDate, row.Joinedon);
+                        var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails, row.ContradictionJson, row.interviewDate, row.Joinedon, row.ActualDuration, row.RequiredDuration);
                         var runResult = await _assistantServiceHelper.GenerateQcAnalysisInterviewAIMerge(userMessage, assistantId, useJsonResponseFormat: true);
                         var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value?.Replace("```json", "").Replace("```", "");
                         if (string.IsNullOrWhiteSpace(rawText))
@@ -115,7 +115,7 @@ namespace Risebird.AzureTimerFunctions
 
             _log.LogInformation("QcInterviewAIMergeJob finished at {Time}", DateTime.Now);
         }
-        private static string BuildMergeUserMessage(string reportJson, string transcriptJson, string contradictionJson, DateTime interviewdate, DateTime? Joinedon)
+        private static string BuildMergeUserMessage(string reportJson, string transcriptJson, string contradictionJson, DateTime interviewdate, DateTime? Joinedon, int ActualDuration, int RequiredDuration)
         {
             var message =
                 "You are given JSON evaluations for the same interview: Report AI, Transcript AI, and optionally Contradiction AI. " +
@@ -132,6 +132,10 @@ namespace Risebird.AzureTimerFunctions
             if (Joinedon.HasValue)
             {
                 message += "\n\nInterview Datetime: " + interviewdate + " and interviewer join the meeting at " + Joinedon.Value;
+            }
+            if (ActualDuration > 0)
+            {
+                message += "\n\nInterview Duration Required: " + RequiredDuration + " and Interview Duration Actual " + ActualDuration;
             }
             return message;
         }
