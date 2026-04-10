@@ -564,6 +564,11 @@
     }
 
     /* ── History modal — match pendingResumesModal (PRM / Roboto / slate) ── */
+    /* Stack above #pendingResumesModal: both use BS default z-index 1055; later DOM / higher z-index wins */
+    #historyModal.modal {
+        z-index: 1080;
+    }
+
     #historyModal .modal-dialog {
         margin: 0.75rem auto;
         max-width: 560px;
@@ -1043,7 +1048,8 @@
         animation: prm-ticket-badge-pulse 0.55s ease;
     }
     /* PublicCandidateStatus-style .pcs-filter-btn (scoped; page does not load PCS stylesheet) */
-    #pendingResumesModal #ticketStatusActions .pcs-filter-btn {
+    #pendingResumesModal #ticketStatusActions .pcs-filter-btn,
+    #pendingResumesModal #btnPrmViewHistory {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -1065,19 +1071,22 @@
         box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset;
     }
 
-        #pendingResumesModal #ticketStatusActions .pcs-filter-btn i {
+        #pendingResumesModal #ticketStatusActions .pcs-filter-btn i,
+        #pendingResumesModal #btnPrmViewHistory i {
             flex-shrink: 0;
             color: #64748b;
             font-size: 11px;
         }
 
-        #pendingResumesModal #ticketStatusActions .pcs-filter-btn:hover {
+        #pendingResumesModal #ticketStatusActions .pcs-filter-btn:hover,
+        #pendingResumesModal #btnPrmViewHistory:hover {
             background: #f1f5f9;
             border-color: #94a3b8;
             color: #1e293b;
         }
 
-            #pendingResumesModal #ticketStatusActions .pcs-filter-btn:hover i {
+            #pendingResumesModal #ticketStatusActions .pcs-filter-btn:hover i,
+            #pendingResumesModal #btnPrmViewHistory:hover i {
                 color: #334155;
             }
 
@@ -1460,6 +1469,15 @@
             border-color: #94a3b8;
             box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
             outline: none;
+        }
+
+    #pendingResumesModal #prmAssigneeBar {
+        border-color: #e2e8f0 !important;
+    }
+
+        #pendingResumesModal #prmAssigneeBar .context-label {
+            margin-bottom: 0;
+            padding-top: 2px;
         }
 
     #pendingResumesModal #prmAssigneeBlock {
@@ -2360,7 +2378,7 @@
                                             : tStatus == "closed" ? "status-closed"
                                             : "bg-light border";
                                             string driveLink = t.DriveFolderLink;
-                                            <tr class="ticket-row" data-ticket-id="@t.Id">
+                                            <tr class="ticket-row" data-ticket-id="@t.Id" data-resume-review="@( (t.HasPendingResumes || t.AttachmentResumes) ? "true" : "false")">
 
                                                 <td class="col-num text-muted" style="font-size:12px">@t.Id</td>
 
@@ -2524,57 +2542,15 @@
                                                 </td>
 
                                                 <td class="col-actions">
-                                                    <div class="action-btns">
-                                                        @if (tStatus == "open")
-                                                        {
-                                                            <button type="button" title="Mark In Progress"
-                                                                    class="btn btn-outline-primary btn-sm status-change-btn"
-                                                                    data-ticket-id="@t.Id" data-new-status="InProgress">
-                                                                <i class="fas fa-play"></i>
-                                                            </button>
-                                                            <button type="button" title="Close Ticket"
-                                                                    class="btn btn-outline-success btn-sm status-change-btn"
-                                                                    data-ticket-id="@t.Id" data-new-status="Closed">
-                                                                <i class="fas fa-check"></i>
-                                                            </button>
-                                                        }
-                                                        else if (tStatus == "inprogress")
-                                                        {
-                                                            <button type="button" title="Mark Open"
-                                                                    class="btn btn-outline-warning btn-sm status-change-btn"
-                                                                    data-ticket-id="@t.Id" data-new-status="Open">
-                                                                <i class="fas fa-undo"></i>
-                                                            </button>
-                                                            <button type="button" title="Close Ticket"
-                                                                    class="btn btn-outline-success btn-sm status-change-btn"
-                                                                    data-ticket-id="@t.Id" data-new-status="Closed">
-                                                                <i class="fas fa-check"></i>
-                                                            </button>
-                                                        }
-                                                        else
-                                                        {
-                                                            <button type="button" title="Reopen Ticket"
-                                                                    class="btn btn-outline-warning btn-sm status-change-btn"
-                                                                    data-ticket-id="@t.Id" data-new-status="Open">
-                                                                <i class="fas fa-undo"></i>
-                                                            </button>
-                                                        }
-                                                        <button type="button" title="View History"
-                                                                class="btn btn-outline-secondary btn-sm btn-history"
+                                                    <div class="action-btns d-flex align-items-center flex-wrap gap-1">
+                                                        <button type="button" title="Open ticket — status, history, email &amp; resume review"
+                                                                class="btn btn-primary btn-sm btn-ticket-hub"
                                                                 data-ticket-id="@t.Id"
-                                                                data-ticket-subject="@t.Subject">
-                                                            <i class="fas fa-history"></i>
+                                                                data-ticket-subject="@t.Subject"
+                                                                data-ticket-status="@(t.Status ?? "Open")"
+                                                                data-resume-review="@( (t.HasPendingResumes || t.AttachmentResumes) ? "true" : "false")">
+                                                            <i class="fas fa-bars me-1"></i>Manage
                                                         </button>
-                                                        @if (t.HasPendingResumes || t.AttachmentResumes)
-                                                        {
-                                                            <button type="button" title="Review & Ingest Resumes"
-                                                                    class="btn btn-outline-warning btn-sm btn-review-resumes"
-                                                                    data-ticket-id="@t.Id"
-                                                                    data-ticket-subject="@t.Subject"
-                                                                    data-ticket-status="@t.Status">
-                                                                <i class="fas fa-file-upload"></i>
-                                                            </button>
-                                                        }
                                                         @if (showIrfCol && t.IngestedIRFId.HasValue && !string.IsNullOrEmpty(t.IngestedIRFName))
                                                         {
                                                             <a href="@Url.Action("Resumes", "Candidate", new { irfId = t.IngestedIRFId.Value, irfName = t.IngestedIRFName })"
@@ -2700,45 +2676,15 @@
 <!-- Toast container -->
 <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1100"></div>
 
-<!-- Ticket History Modal -->
-<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header prm-modal-header border-0 align-items-start">
-                <div class="min-w-0 flex-grow-1 pe-2">
-                    <p class="prm-modal-eyebrow">Audit trail</p>
-                    <h2 class="prm-modal-title mb-0">
-                        <i class="fas fa-history me-2"></i>Ticket history
-                    </h2>
-                    <small class="text-muted" id="historyModalSubject"></small>
-                </div>
-                <button type="button" class="btn-close prm-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body prm-modal-body pt-3">
-                <div class="text-center py-4" id="historyLoading">
-                    <i class="fas fa-spinner fa-spin me-2"></i>Loading history…
-                </div>
-                <ul class="history-timeline mb-0" id="historyList" style="display:none"></ul>
-                <div class="text-center py-4" id="historyEmpty" style="display:none">
-                    <i class="fas fa-inbox me-2"></i>No status changes recorded yet.
-                </div>
-            </div>
-            <div class="modal-footer prm-modal-footer border-0">
-                <button type="button" class="prm-footer-btn prm-footer-btn-outline" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Pending Resumes Review Modal -->
 <div class="modal fade" id="pendingResumesModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header prm-modal-header border-0 align-items-start">
                 <div class="min-w-0 flex-grow-1 pe-2">
-                    <p class="prm-modal-eyebrow">Resume intake</p>
+                    <p class="prm-modal-eyebrow" id="prmModalEyebrow">Resume intake</p>
                     <h2 class="prm-modal-title mb-0">
-                        <i class="fas fa-file-import me-2"></i>Review &amp; ingest resumes
+                        <i class="fas fa-file-import me-2" id="prmModalTitleIcon"></i><span id="prmModalTitleText">Review &amp; ingest resumes</span>
                     </h2>
                 </div>
                 <div class="d-flex align-items-start gap-2 gap-md-3 flex-shrink-0 ms-auto">
@@ -2749,10 +2695,41 @@
                     <button type="button" class="btn-close prm-modal-close mt-0" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
             </div>
+            <div class="border-bottom bg-white px-3 px-md-4 py-2 d-flex flex-wrap align-items-center gap-2 gap-md-3" id="prmAssigneeBar">
+                <span class="context-label mb-0 flex-shrink-0" style="font-size:12px;">Assigned To</span>
+                <div id="prmAssigneeBlock" class="flex-grow-1 min-w-0" style="max-width:auto;">
+                    <div class="assign-view prm-assign-view" id="prm-assign-view">
+                        <span class="assign-name text-muted fst-italic" id="prm-assign-name-wrap" style="font-size:12px">
+                            <i class="fas fa-user-slash me-1" style="font-size:11px"></i>Unassigned
+                        </span>
+                        <button type="button" class="btn btn-outline-secondary btn-sm btn-prm-edit-assign" title="Change assignee">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                    <div class="assign-edit-form prm-assign-edit-form" id="prm-assign-edit">
+                        <select class="form-select" id="prm-assign-select">
+                            <option value="">Loading…</option>
+                        </select>
+                        <div class="assign-edit-row">
+                            <button style="background: #489d48;padding: 1px 5px;" type="button"
+                                    class="btn btn-success btn-sm btn-prm-assign-ok" title="Save assignment">
+                                <i class="fas fa-check me-1"></i>Save
+                            </button>
+                            <button style="background:#eb4d4d;color:#fff;padding: 1px 5px;" type="button"
+                                    class="btn btn-outline-secondary btn-sm btn-prm-assign-x" title="Cancel">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="bg-light border-bottom px-3 px-md-4 py-2 d-flex align-items-center justify-content-between flex-wrap gap-2" id="ticketStatusBar">
                 <div class="d-flex align-items-center gap-2 flex-wrap">
                     <strong class="text-muted">Ticket status:</strong>
                     <span class="badge fs-6 px-3 py-2" id="currentTicketStatusBadge" role="status" aria-live="polite">Open</span>
+                    <button type="button" class="pcs-filter-btn pcs-prm-history" id="btnPrmViewHistory" title="View status &amp; assignment history">
+                        <i class="fas fa-history"></i>History
+                    </button>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-wrap" id="ticketStatusActions">
                     <span class="text-muted small me-1">Change to:</span>
@@ -2814,36 +2791,6 @@
                                     <div class="context-field">
                                         <label class="context-label">Primary Specialization</label>
                                         <div class="context-value"><span class="prm-soft-badge" id="ctxPrimarySpec"></span></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="context-field">
-                                        <label class="context-label">Assigned To</label>
-                                        <div id="prmAssigneeBlock">
-                                            <div class="assign-view prm-assign-view" id="prm-assign-view">
-                                                <span class="assign-name text-muted fst-italic" id="prm-assign-name-wrap" style="font-size:12px">
-                                                    <i class="fas fa-user-slash me-1" style="font-size:11px"></i>Unassigned
-                                                </span>
-                                                <button type="button" class="btn btn-outline-secondary btn-sm btn-prm-edit-assign" title="Change assignee">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </button>
-                                            </div>
-                                            <div class="assign-edit-form prm-assign-edit-form" id="prm-assign-edit">
-                                                <select class="form-select" id="prm-assign-select">
-                                                    <option value="">Loading…</option>
-                                                </select>
-                                                <div class="assign-edit-row">
-                                                    <button style="background: #489d48;padding: 1px 5px;" type="button"
-                                                            class="btn btn-success btn-sm btn-prm-assign-ok" title="Save assignment">
-                                                        <i class="fas fa-check me-1"></i>Save
-                                                    </button>
-                                                    <button style="background:#eb4d4d;color:#fff;padding: 1px 5px;" type="button"
-                                                            class="btn btn-outline-secondary btn-sm btn-prm-assign-x" title="Cancel">
-                                                        Cancel
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-12" id="ctxSummaryWrap" style="display:none">
@@ -2982,10 +2929,34 @@
     </div>
 </div>
 
-<!-- Toast container (bottom-right) -->
-<div id="toastContainer"
-     class="toast-container position-fixed bottom-0 end-0 p-3"
-     style="z-index:1100">
+<!-- Ticket History Modal (after pendingResumesModal in DOM so it stacks above at equal z-index; also see #historyModal z-index in CSS) -->
+<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header prm-modal-header border-0 align-items-start">
+                <div class="min-w-0 flex-grow-1 pe-2">
+                    <p class="prm-modal-eyebrow">Audit trail</p>
+                    <h2 class="prm-modal-title mb-0">
+                        <i class="fas fa-history me-2"></i>Ticket history
+                    </h2>
+                    <small class="text-muted" id="historyModalSubject"></small>
+                </div>
+                <button type="button" class="btn-close prm-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body prm-modal-body pt-3">
+                <div class="text-center py-4" id="historyLoading">
+                    <i class="fas fa-spinner fa-spin me-2"></i>Loading history…
+                </div>
+                <ul class="history-timeline mb-0" id="historyList" style="display:none"></ul>
+                <div class="text-center py-4" id="historyEmpty" style="display:none">
+                    <i class="fas fa-inbox me-2"></i>No status changes recorded yet.
+                </div>
+            </div>
+            <div class="modal-footer prm-modal-footer border-0">
+                <button type="button" class="prm-footer-btn prm-footer-btn-outline" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Mail Detail Modal -->
@@ -3338,6 +3309,20 @@
                 .html('<i class="fas fa-history"></i>');
         }
 
+        /** Single “Manage” action — opens pendingResumesModal (resume review section only if data-resume-review). */
+        function makeTicketHubBtn(id, subject, status, resumeReview) {
+            return $('<button>').attr({
+                type: 'button',
+                title: 'Open ticket — status, history, email & resume review'
+            })
+                .addClass('btn btn-primary btn-sm btn-ticket-hub')
+                .attr('data-ticket-id', id)
+                .attr('data-ticket-subject', subject || '')
+                .attr('data-ticket-status', status || 'Open')
+                .attr('data-resume-review', resumeReview ? 'true' : 'false')
+                .html('<i class="fas fa-bars me-1"></i>Manage');
+        }
+
         /* ── Status maps ─────────────────────────────────────────────────── */
         var statusCssMap = { open: 'status-open', inprogress: 'status-inprogress', closed: 'status-closed' };
         var iconMap = { InProgress: 'fa-play', Closed: 'fa-check', Open: 'fa-undo' };
@@ -3375,19 +3360,15 @@
                         .removeClass('status-open status-inprogress status-closed')
                         .addClass(statusCssMap[key] || 'bg-light border')
                         .text(newStatus);
-                    /* rebuild action buttons */
+                    /* rebuild action buttons — single Manage + optional IRF link preserved */
                     var subject = row.find('.col-subject').text().trim();
+                    var resumeReview = row.attr('data-resume-review') === 'true';
+                    var $resumesLink = row.find('a.btn-resumes').clone(true);
                     var $cell = row.find('.action-btns').empty();
-                    if (key === 'open') {
-                        $cell.append(makeBtn(ticketId, 'InProgress', 'btn-outline-primary', 'fa-play', 'Mark In Progress'));
-                        $cell.append(makeBtn(ticketId, 'Closed', 'btn-outline-success', 'fa-check', 'Close Ticket'));
-                    } else if (key === 'inprogress') {
-                        $cell.append(makeBtn(ticketId, 'Open', 'btn-outline-warning', 'fa-undo', 'Mark Open'));
-                        $cell.append(makeBtn(ticketId, 'Closed', 'btn-outline-success', 'fa-check', 'Close Ticket'));
-                    } else {
-                        $cell.append(makeBtn(ticketId, 'Open', 'btn-outline-warning', 'fa-undo', 'Reopen Ticket'));
+                    $cell.append(makeTicketHubBtn(ticketId, subject, newStatus, resumeReview));
+                    if ($resumesLink.length) {
+                        $cell.append($resumesLink);
                     }
-                    $cell.append(makeHistoryBtn(ticketId, subject));
                     showToast('Ticket #' + ticketId + ' marked as ' + newStatus + '.', 'success');
                 },
                 error: function () {
@@ -3611,11 +3592,10 @@
         /* ── History modal ───────────────────────────────────────────────── */
         var dotClass = { open: 'open', inprogress: 'inprogress', closed: 'closed' };
 
-        $(document).on('click', '.btn-history', function () {
-            var ticketId = $(this).data('ticket-id');
-            var subject = $(this).data('ticket-subject') || ('Ticket #' + ticketId);
-
-            $('#historyModalSubject').text(subject);
+        function openTicketHistoryModal(ticketId, subject) {
+            if (!ticketId) return;
+            var subj = subject || ('Ticket #' + ticketId);
+            $('#historyModalSubject').text(subj);
             $('#historyLoading').show();
             $('#historyList').hide().empty();
             $('#historyEmpty').hide();
@@ -3624,7 +3604,17 @@
             var modal = (typeof bootstrap !== 'undefined' && bootstrap.Modal)
                 ? (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl))
                 : null;
-            if (modal) modal.show(); else $(modalEl).modal('show');
+            if (modal) {
+                $(modalEl).one('shown.bs.modal', function () {
+                    var backs = document.querySelectorAll('.modal-backdrop.show');
+                    if (backs.length > 1) {
+                        backs[backs.length - 1].style.zIndex = '1075';
+                    }
+                });
+                modal.show();
+            } else {
+                $(modalEl).modal('show');
+            }
 
             $.ajax({
                 url: '@Url.Action("GetHistory", "SupportTicket")',
@@ -3667,6 +3657,17 @@
                     $('#historyEmpty').text('Could not load history. Please try again.').show();
                 }
             });
+        }
+
+        $(document).on('click', '.btn-history', function () {
+            openTicketHistoryModal($(this).data('ticket-id'), $(this).data('ticket-subject'));
+        });
+
+        $(document).on('click', '#btnPrmViewHistory', function () {
+            var tid = currentPendingResumesTicketId;
+            if (!tid) return;
+            var subj = (currentTicketData && currentTicketData.subject) ? currentTicketData.subject : '';
+            openTicketHistoryModal(tid, subj);
         });
 
         /* ── Mail modal ──────────────────────────────────────────────────── */
@@ -3722,6 +3723,8 @@
         var currentTicketStatus = 'Open';
         var availableIRFs = [];  // Cache of IRF options for dropdown
         var currentSenderEmail = null;
+        /** True when the row had resume review (HasPendingResumes || AttachmentResumes); controls pendingResumesList visibility. */
+        var prmResumeReviewEnabled = false;
 
         /** Map server / UI status strings to Open | InProgress | Closed */
         function normalizeTicketStatus(s) {
@@ -3732,16 +3735,28 @@
             return 'Open';
         }
 
-        $(document).on('click', '.btn-review-resumes', function () {
-            var ticketId = $(this).data('ticket-id');
-            var subject = $(this).data('ticket-subject') || ('Ticket #' + ticketId);
-            var status = normalizeTicketStatus($(this).attr('data-ticket-status'));
-            currentPendingResumesTicketId = ticketId;
-            currentTicketStatus = status;
-            availableIRFs = [];
+        function setPrmModalChrome(resumeReviewMode) {
+            if (resumeReviewMode) {
+                $('#prmModalEyebrow').text('Resume intake');
+                $('#prmModalTitleIcon').attr('class', 'fas fa-file-import me-2');
+                $('#prmModalTitleText').text('Review & ingest resumes');
+                $('#refreshPendingResumesBtn').show();
+            } else {
+                $('#prmModalEyebrow').text('Support ticket');
+                $('#prmModalTitleIcon').attr('class', 'fas fa-headset me-2');
+                $('#prmModalTitleText').text('Ticket overview');
+                $('#refreshPendingResumesBtn').hide();
+            }
+        }
 
+        function openTicketHubModal(ticketId, subject, status, resumeReview) {
+            prmResumeReviewEnabled = resumeReview === true || resumeReview === 'true';
+            currentPendingResumesTicketId = ticketId;
+            currentTicketStatus = normalizeTicketStatus(status);
+            availableIRFs = [];
+            setPrmModalChrome(prmResumeReviewEnabled);
             $('#pendingResumesModalTicketNo').text('#' + ticketId);
-            updateTicketStatusBadge(status);
+            updateTicketStatusBadge(currentTicketStatus);
             $('#prm-assign-edit').hide();
             $('#prm-assign-view').show();
             $('#pendingResumesLoading').show();
@@ -3754,6 +3769,26 @@
             modal.show();
 
             loadPendingResumes(ticketId);
+        }
+
+        $(document).on('click', '.btn-ticket-hub', function () {
+            var $b = $(this);
+            openTicketHubModal(
+                $b.data('ticket-id'),
+                $b.data('ticket-subject'),
+                $b.attr('data-ticket-status'),
+                $b.attr('data-resume-review')
+            );
+        });
+
+        $(document).on('click', '.btn-review-resumes', function () {
+            var $b = $(this);
+            openTicketHubModal(
+                $b.data('ticket-id'),
+                $b.data('ticket-subject'),
+                $b.attr('data-ticket-status'),
+                'true'
+            );
         });
 
         function ticketStatusLabel(status) {
@@ -3830,10 +3865,11 @@
 
                     var $row = $('tr[data-ticket-id="' + tid + '"]');
                     if ($row.length) {
-                        var badgeClass = applied === 'Closed' ? 'bg-success' :
-                            applied === 'InProgress' ? 'bg-primary' : 'bg-secondary';
-                        $row.find('.status-badge').removeClass('bg-secondary bg-primary bg-success')
-                            .addClass(badgeClass).text(ticketStatusLabel(applied));
+                        var stCss = applied === 'Closed' ? 'status-closed'
+                            : applied === 'InProgress' ? 'status-inprogress' : 'status-open';
+                        $row.find('.intent-badge').removeClass('status-open status-inprogress status-closed')
+                            .addClass(stCss).text(ticketStatusLabel(applied));
+                        $row.find('.btn-ticket-hub').attr('data-ticket-status', applied);
                     }
                 },
                 error: function (xhr) {
@@ -3912,17 +3948,30 @@
 
                     if (!res.resumes || res.resumes.length === 0) {
                         $('#pendingResumesLoading').hide();
+                        $('#pendingResumesList').hide();
 
-                        // Check what options to show based on ticket data
+                        if (!prmResumeReviewEnabled) {
+                            $('#processDriveFolderSection').hide();
+                            $('#noDriveLinkSection').hide();
+                            $('#pendingResumesEmpty').hide();
+                            if (currentTicketData) {
+                                renderEmailContextFromTicket(currentTicketData);
+                                syncPrmAssigneeFromTicket();
+                                $('#emailContextSection').show();
+                            } else {
+                                $('#emailContextSection').hide();
+                            }
+                            return;
+                        }
+
+                        // Resume-review mode: offer process drive / empty states
                         $('#processDriveFolderSection').hide();
                         $('#noDriveLinkSection').hide();
 
                         if (currentTicketData && currentTicketData.attachmentResumes) {
                             if (currentTicketData.driveFolderLink) {
-                                // Has drive folder link - show process button
                                 $('#processDriveFolderSection').show();
                             } else {
-                                // Has attachments but no drive link - show warning
                                 $('#noDriveLinkSection').show();
                             }
                         }
@@ -3934,13 +3983,19 @@
                     renderEmailContext(res.resumes[0]);
                     syncPrmAssigneeFromTicket();
 
-                    // Load IRF options for dropdown
+                    if (!prmResumeReviewEnabled) {
+                        $('#pendingResumesLoading').hide();
+                        $('#emailContextSection').show();
+                        $('#pendingResumesList').hide();
+                        return;
+                    }
+
+                    // Load IRF options for dropdown (resume review only)
                     loadIRFOptions(currentSenderEmail, function () {
                         renderPendingResumesTable(res.resumes);
                         $('#pendingResumesLoading').hide();
                         $('#emailContextSection').show();
                         $('#pendingResumesList').show();
-                        // Initialize tooltips for resume links
                         initResumeTooltips();
                     });
                 },
@@ -4193,6 +4248,10 @@
 
         $('#refreshPendingResumesBtn').on('click', function () {
             if (currentPendingResumesTicketId) {
+                if (!prmResumeReviewEnabled) {
+                    showToast('Refresh applies to resume review tickets only.', 'info');
+                    return;
+                }
                 var $btn = $(this);
                 $btn.prop('disabled', true).find('i').addClass('fa-spin');
 
@@ -4221,7 +4280,9 @@
                         syncPrmAssigneeFromTicket();
                         renderPendingResumesTable(res.resumes);
                         $('#emailContextSection').show();
-                        $('#pendingResumesList').show();
+                        if (prmResumeReviewEnabled) {
+                            $('#pendingResumesList').show();
+                        }
                         initResumeTooltips();
                         showToast('Data refreshed', 'success');
                     },
@@ -4288,7 +4349,9 @@
                             loadIRFOptions(currentSenderEmail, function () {
                                 renderPendingResumesTable(res.resumes);
                                 $('#emailContextSection').show();
-                                $('#pendingResumesList').show();
+                                if (prmResumeReviewEnabled) {
+                                    $('#pendingResumesList').show();
+                                }
                                 initResumeTooltips();
                             });
                         }
