@@ -270,6 +270,11 @@
                                                         }
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
+                                                        @if(ViewBag.actionstatus == "AIQCPending")
+                                                        {
+                                                            <th>Report AI</th>
+                                                            <th>TranScript AI</th>
+                                                        }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
                                                             <th>Red Flags</th>
@@ -311,6 +316,11 @@
                                                         }
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
+                                                        @if(ViewBag.actionstatus == "AIQCPending")
+                                                        {
+                                                            <th>Report AI</th>
+                                                            <th>TranScript AI</th>
+                                                        }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
                                                             <th>Red Flags</th>
@@ -328,7 +338,7 @@
 
                                                         <tr id=@item.InterviewId>
 
-                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport"  || ViewBag.actionstatus == "AIQCPending")
                                                             {
                                                                 <td>
                                                                     <span>
@@ -826,6 +836,11 @@
                                                             else
                                                             {
                                                                 <td></td>
+                                                            }
+                                                            @if(ViewBag.actionstatus == "AIQCPending")
+                                                            {
+                                                                <td>@item.ReportAI</td>
+                                                                <td>@item.TranscritAi</td>
                                                             }
                                                             @if (ViewBag.actionstatus == "QCReport")
                                                             {

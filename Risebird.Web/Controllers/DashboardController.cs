@@ -3935,7 +3935,7 @@ NEVER:
                         if (HttpContext.Session.GetString("SensitiveDataFilters") != null)
                             HttpContext.Session.Remove("SensitiveDataFilters");
                         var modelList = new List<MeetingVM>();
-                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview)
+                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview || actionstatus == RibbonActionType.AIQCPending)
                         {
                             modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
                         }
