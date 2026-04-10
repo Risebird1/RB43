@@ -1961,6 +1961,12 @@
         border-radius: 8px;
         font-size: 13px;
     }
+    .btn.btn-primary.btn-ticket-hub{
+    height: 22px;
+    padding: 2px 4px;
+    color:#fff!important;
+    background: #aec2d4 !important;
+    }
 </style>
 
 <!-- Loading Overlay -->
@@ -2544,7 +2550,7 @@
                                                 <td class="col-actions">
                                                     <div class="action-btns d-flex align-items-center flex-wrap gap-1">
                                                         <button type="button" title="Open ticket — status, history, email &amp; resume review"
-                                                                class="btn btn-primary btn-sm btn-ticket-hub"
+                                                                class="btn btn-primary  btn-ticket-hub"
                                                                 data-ticket-id="@t.Id"
                                                                 data-ticket-subject="@t.Subject"
                                                                 data-ticket-status="@(t.Status ?? "Open")"
