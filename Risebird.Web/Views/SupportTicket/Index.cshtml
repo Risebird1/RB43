@@ -1244,7 +1244,8 @@
         border-radius: 10px;
         background: #fff;
         box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-        overflow: hidden;
+        /* visible so native <select> lists (IRF, assignee) are not clipped */
+        overflow: visible;
     }
 
     #pendingResumesModal .prm-panel-header {
@@ -1461,6 +1462,40 @@
             outline: none;
         }
 
+    #pendingResumesModal #prmAssigneeBlock {
+        position: relative;
+        z-index: 2;
+        min-width: 0;
+    }
+
+    #pendingResumesModal #prm-assign-select {
+        font-size: 12px;
+        max-width: 100%;
+    }
+
+    #pendingResumesModal .prm-assign-edit-form {
+        z-index: 3;
+    }
+
+    #pendingResumesModal .btn-prm-edit-assign {
+        font-size: 10px;
+        padding: 2px 6px;
+        opacity: 0.35;
+        flex-shrink: 0;
+        border-radius: 3px;
+        line-height: 1.4;
+        background: transparent;
+        border-color: #dee2e6;
+        color: #6c757d;
+    }
+
+        #pendingResumesModal .btn-prm-edit-assign:hover {
+            opacity: 1;
+            background: #f1f3f5;
+            border-color: #adb5bd;
+            color: #495057;
+        }
+
     .schedule-cell .interview-datetime {
         font-size: 12px;
         font-family: 'Roboto', sans-serif;
@@ -1621,6 +1656,10 @@
 
     .irf-dropdown-cell {
         min-width: 200px;
+    }
+
+    #pendingResumesModal .irf-dropdown-cell {
+        min-width: 280px;
     }
 
         .irf-dropdown-cell .irf-preview {
@@ -2777,6 +2816,36 @@
                                         <div class="context-value"><span class="prm-soft-badge" id="ctxPrimarySpec"></span></div>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="context-field">
+                                        <label class="context-label">Assigned To</label>
+                                        <div id="prmAssigneeBlock">
+                                            <div class="assign-view prm-assign-view" id="prm-assign-view">
+                                                <span class="assign-name text-muted fst-italic" id="prm-assign-name-wrap" style="font-size:12px">
+                                                    <i class="fas fa-user-slash me-1" style="font-size:11px"></i>Unassigned
+                                                </span>
+                                                <button type="button" class="btn btn-outline-secondary btn-sm btn-prm-edit-assign" title="Change assignee">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </button>
+                                            </div>
+                                            <div class="assign-edit-form prm-assign-edit-form" id="prm-assign-edit">
+                                                <select class="form-select" id="prm-assign-select">
+                                                    <option value="">Loading…</option>
+                                                </select>
+                                                <div class="assign-edit-row">
+                                                    <button style="background: #489d48;padding: 1px 5px;" type="button"
+                                                            class="btn btn-success btn-sm btn-prm-assign-ok" title="Save assignment">
+                                                        <i class="fas fa-check me-1"></i>Save
+                                                    </button>
+                                                    <button style="background:#eb4d4d;color:#fff;padding: 1px 5px;" type="button"
+                                                            class="btn btn-outline-secondary btn-sm btn-prm-assign-x" title="Cancel">
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-12" id="ctxSummaryWrap" style="display:none">
                                     <div class="context-field">
                                         <label class="context-label">AI Summary</label>
@@ -3376,6 +3445,112 @@
             }
         }
 
+        /** Pending resumes modal — assignee display (Email context block) */
+        function setPrmAssigneeDisplay(email) {
+            var $w = $('#prm-assign-name-wrap');
+            if (!$w.length) return;
+            if (!email || String(email).trim() === '') {
+                $w.addClass('text-muted fst-italic').html('<i class="fas fa-user-slash me-1" style="font-size:11px"></i>Unassigned');
+                return;
+            }
+            email = String(email).trim();
+            var safe = $('<div>').text(email).html();
+            $w.removeClass('text-muted fst-italic').html(
+                '<a href="mailto:' + safe + '" class="text-decoration-none assign-name text-dark" title="' + safe + '">' +
+                '<i class="fas fa-user-circle text-secondary me-1" style="font-size:11px"></i>' + safe + '</a>'
+            );
+        }
+
+        function syncPrmAssigneeFromTicket() {
+            if (!currentTicketData) return;
+            setPrmAssigneeDisplay(currentTicketData.assignedTo || '');
+        }
+
+        $(document).on('click', '.btn-prm-edit-assign', function () {
+            var ticketId = currentPendingResumesTicketId;
+            if (!ticketId) return;
+            var $view = $('#prm-assign-view');
+            var $edit = $('#prm-assign-edit');
+            var $select = $('#prm-assign-select');
+            $view.hide();
+            $edit.css('display', 'flex').show();
+            if (assigneeCache[ticketId]) {
+                populateSelect($select, assigneeCache[ticketId]);
+                if (currentTicketData && currentTicketData.assignedTo) {
+                    $select.val(currentTicketData.assignedTo);
+                }
+                return;
+            }
+            $select.html('<option value="">Loading…</option>');
+            $.ajax({
+                url: '@Url.Action("GetEligibleAssignees", "SupportTicket")',
+                type: 'GET',
+                data: { id: ticketId },
+                success: function (data) {
+                    assigneeCache[ticketId] = data || [];
+                    populateSelect($select, assigneeCache[ticketId]);
+                    if (currentTicketData && currentTicketData.assignedTo) {
+                        $select.val(currentTicketData.assignedTo);
+                    }
+                },
+                error: function () {
+                    $select.html('<option value="">Error loading</option>');
+                    showToast('Could not load eligible assignees.', 'danger');
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-prm-assign-x', function () {
+            $('#prm-assign-edit').hide();
+            $('#prm-assign-view').show();
+        });
+
+        $(document).on('click', '.btn-prm-assign-ok', function () {
+            var btn = $(this);
+            var ticketId = currentPendingResumesTicketId;
+            if (!ticketId) return;
+            var $select = $('#prm-assign-select');
+            var newAssign = $select.val();
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            if (!newAssign) { showToast('Please select an assignee.', 'warning'); return; }
+            btn.find('i').removeClass().addClass('fas fa-spinner fa-spin');
+            btn.prop('disabled', true);
+            $('.btn-prm-assign-x').prop('disabled', true);
+            $.ajax({
+                url: '@Url.Action("UpdateAssignment", "SupportTicket")',
+                type: 'POST',
+                data: { __RequestVerificationToken: token, id: ticketId, assignedTo: newAssign },
+                success: function (resp) {
+                    if (resp && resp.success) {
+                        if (currentTicketData) currentTicketData.assignedTo = newAssign;
+                        setPrmAssigneeDisplay(newAssign);
+                        $('#prm-assign-edit').hide();
+                        $('#prm-assign-view').show();
+                        var $rowView = $('#assign-view-' + ticketId);
+                        if ($rowView.length) {
+                            $rowView.find('a, span.assign-name').replaceWith(
+                                $('<a>').attr({ href: 'mailto:' + newAssign, title: newAssign })
+                                    .addClass('text-decoration-none assign-name text-dark st-assign-ellipsis')
+                                    .text(newAssign)
+                            );
+                        }
+                        showToast('Ticket #' + ticketId + ' reassigned to ' + newAssign + '.', 'success');
+                    } else {
+                        showToast(resp && resp.message ? resp.message : 'Failed to update assignment.', 'danger');
+                    }
+                    btn.find('i').removeClass().addClass('fas fa-check me-1');
+                    btn.prop('disabled', false);
+                    $('.btn-prm-assign-x').prop('disabled', false);
+                },
+                error: function () {
+                    showToast('Failed to update assignment. Please try again.', 'danger');
+                    btn.find('i').removeClass().addClass('fas fa-check me-1');
+                    btn.prop('disabled', false);
+                    $('.btn-prm-assign-x').prop('disabled', false);
+                }
+            });
+        });
+
         $(document).on('click', '.btn-assign-ok', function () {
             var btn = $(this);
             var ticketId = btn.data('ticket-id');
@@ -3404,6 +3579,12 @@
                         );
                         $('#assign-edit-' + ticketId).hide();
                         $view.show();
+                        if (typeof currentPendingResumesTicketId !== 'undefined' && currentPendingResumesTicketId == ticketId && typeof currentTicketData !== 'undefined' && currentTicketData) {
+                            currentTicketData.assignedTo = newAssign;
+                            setPrmAssigneeDisplay(newAssign);
+                            $('#prm-assign-edit').hide();
+                            $('#prm-assign-view').show();
+                        }
                         showToast('Ticket #' + ticketId + ' reassigned to ' + newAssign + '.', 'success');
                     } else {
                         showToast(resp && resp.message ? resp.message : 'Failed to update assignment.', 'danger');
@@ -3561,6 +3742,8 @@
 
             $('#pendingResumesModalTicketNo').text('#' + ticketId);
             updateTicketStatusBadge(status);
+            $('#prm-assign-edit').hide();
+            $('#prm-assign-view').show();
             $('#pendingResumesLoading').show();
             $('#emailContextSection').hide();
             $('#pendingResumesList').hide();
@@ -3749,6 +3932,7 @@
 
                     currentSenderEmail = res.resumes[0].ticketSenderEmail;
                     renderEmailContext(res.resumes[0]);
+                    syncPrmAssigneeFromTicket();
 
                     // Load IRF options for dropdown
                     loadIRFOptions(currentSenderEmail, function () {
@@ -4032,7 +4216,9 @@
                             $('#pendingResumesEmpty').show();
                             return;
                         }
+                        if (res.ticket) currentTicketData = res.ticket;
                         renderEmailContext(res.resumes[0]);
+                        syncPrmAssigneeFromTicket();
                         renderPendingResumesTable(res.resumes);
                         $('#emailContextSection').show();
                         $('#pendingResumesList').show();
@@ -4152,6 +4338,8 @@
             } else {
                 $('#ctxDriveLinkWrap').hide();
             }
+
+            setPrmAssigneeDisplay(ticket.assignedTo || '');
         }
 
         function loadDebugLogs() {
