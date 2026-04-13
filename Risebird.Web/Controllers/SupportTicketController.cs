@@ -927,15 +927,16 @@ namespace Risebird.Web.Controllers
                     {
                         success = true,
                         resumes = testResumes,
-                        ticket = new
-                        {
-                            id = -1,
-                            status = "Open",
-                            driveFolderLink = "https://drive.google.com/drive/folders/test123",
-                            attachmentResumes = true,
-                            primarySpecialization = "Test Specialization",
-                            senderEmail = "test@example.com"
-                        }
+                    ticket = new
+                    {
+                        id = -1,
+                        status = "Open",
+                        assignedTo = "hr@risebird.test",
+                        driveFolderLink = "https://drive.google.com/drive/folders/test123",
+                        attachmentResumes = true,
+                        primarySpecialization = "Test Specialization",
+                        senderEmail = "test@example.com"
+                    }
                     });
                 }
 
@@ -950,6 +951,7 @@ namespace Risebird.Web.Controllers
                     {
                         id = ticket.Id,
                         status = ticket.Status,
+                        assignedTo = ticket.AssignedTo,
                         senderEmail = ticket.SenderEmail,
                         subject = ticket.Subject,
                         intent = ticket.Intent,
