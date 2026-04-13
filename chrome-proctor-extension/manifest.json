@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Risebird Proctoring Assistant",
+  "description": "Interview/exam proctoring extension with capture, monitoring, control, and reporting flows.",
+  "version": "1.2.0",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "tabCapture",
+    "windows",
+    "webNavigation",
+    "storage",
+    "notifications",
+    "browsingData",
+    "scripting",
+    "webRequest",
+    "clipboardRead",
+    "clipboardWrite",
+    "declarativeNetRequest",
+    "identity",
+    "cookies",
+    "desktopCapture"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "core_proctoring_rules",
+        "enabled": true,
+        "path": "rules/restricted-sites.json"
+      }
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-monitor.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Proctoring Controls"
+  }
+}

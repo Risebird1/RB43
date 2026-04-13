@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Proctoring Controls</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <h1>Risebird Proctoring</h1>
+
+    <section>
+      <div>Session: <strong id="status">—</strong></div>
+      <div>Violations: <strong id="violations">0</strong></div>
+      <div id="message"></div>
+    </section>
+
+    <section>
+      <button type="button" id="startSession">Start session</button>
+      <button type="button" id="stopSession" class="secondary">Stop session</button>
+    </section>
+
+    <section>
+      <button type="button" id="startCapture">Start capture check</button>
+      <button type="button" id="stopCapture" class="secondary">Stop capture check</button>
+    </section>
+
+    <section>
+      <label for="hours">Clear browsing data (last N hours)</label>
+      <input type="number" id="hours" value="1" min="1" max="168" />
+      <button type="button" id="clearData" class="warning">Clear data</button>
+    </section>
+
+    <section>
+      <label for="restrictedDomains">Restricted domains (comma-separated)</label>
+      <textarea id="restrictedDomains" rows="3" spellcheck="false"></textarea>
+      <button type="button" id="saveSettings">Save rules</button>
+    </section>
+
+    <section>
+      <button type="button" id="clearEvents" class="secondary">Clear event log</button>
+      <button type="button" id="downloadReport">Download report</button>
+      <button type="button" id="refresh" class="secondary">Refresh</button>
+    </section>
+
+    <section>
+      <div class="events-label">Recent events</div>
+      <div id="events"></div>
+    </section>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
