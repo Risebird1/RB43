@@ -81,7 +81,7 @@ namespace Risebird.Web.Controllers
         private readonly IPlivoWhatsAppService _plivoWhatsAppService;
         private readonly IPlivoWhatsAppRepository _plivoWhatsAppRepository;
         private readonly ISupportTicketRepository _repository;
-
+        private readonly ITranscriptOptimizationHelper _transcriptOptimizationHelper;
 
         //private readonly IIRFService _irfService;
 
@@ -100,7 +100,7 @@ namespace Risebird.Web.Controllers
             IPhoneNumberHelper phoneNumberHelper,
             IPlivoService plivoService, IPlivoCallRepository plivoCallRepository,
             IPlivoCXService plivoCXService, IPlivoCXCallRepository plivoCXCallRepository,
-            IPlivoWhatsAppService plivoWhatsAppService, IPlivoWhatsAppRepository plivoWhatsAppRepository, ISupportTicketRepository repository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IPlivoWhatsAppService plivoWhatsAppService, IPlivoWhatsAppRepository plivoWhatsAppRepository, ISupportTicketRepository repository, ITranscriptOptimizationHelper transcriptOptimizationHelper)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -140,6 +140,7 @@ namespace Risebird.Web.Controllers
             _plivoWhatsAppService = plivoWhatsAppService;
             _plivoWhatsAppRepository = plivoWhatsAppRepository;
             _repository = repository;
+            _transcriptOptimizationHelper = transcriptOptimizationHelper;
         }
 
         [Authorize]
@@ -7552,6 +7553,79 @@ NEVER:
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        public async Task<IActionResult> GenerateTranscriptAiEvaluation(int interviewid)
+        {
+            try
+            {
+                var item = await _meetingService.GetPendingQcInterviewAIMergeById(interviewid);
+                try
+                {
+                    // OPTIMIZATION: Validate transcript link before attempting download
+                    if (string.IsNullOrEmpty(item.AudioTranscriptFileLink))
+                    {
+                        // Mark as failed - could add a method to update status if needed
+                        return Json("Missing transcript link");
+                    }
 
+                    //ScreeningRequest requestMode
+                    //var aiAnalysis = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { TranscriptLink = item.AudioTranscriptFileLink, Type = ProfileNames.TranscriptAnalysisAIAssistant });
+                    string transcriptText;
+                    using (HttpClient client = new HttpClient())
+                    {
+                        transcriptText = await client.GetStringAsync(item.AudioTranscriptFileLink);
+                    }
+
+                    // OPTIMIZATION: Pre-screen transcript for validity (saves API calls on corrupted/empty transcripts)
+                    if (!string.IsNullOrEmpty(transcriptText))
+                    {
+                        var (isValid, validationReason) = _transcriptOptimizationHelper.ValidateTranscriptForAnalysis(transcriptText);
+                        if (!isValid)
+                        {
+                            // Mark as failed - could add a method to update status if needed
+                            return Json("Transcript validation failed");
+                        }
+
+                        // OPTIMIZATION: Reduce token usage by removing filler words, timestamps, and excessive whitespace
+                        var estimatedTokensBefore = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
+                        transcriptText = _transcriptOptimizationHelper.OptimizeTranscriptText(transcriptText);
+                        var estimatedTokensAfter = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
+                    }
+                    else
+                    {
+                        return Json("Transcript is empty or could not be downloaded");
+                    }
+
+                    var aiAnalysis = await _assistantServiceHelper.GenerateTranscriptAnalysis(transcriptText);
+                    if (aiAnalysis != null)
+                    {
+                        var model = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                        if (model != null)
+                        {
+                            await _meetingService.SaveAITranscriptAnalysis(item.InterviewId, model);
+                        }
+                        try
+                        {
+                            var jsonToProcess = aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
+                            var modelset = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(jsonToProcess);
+                            //TransScript Analysis save to db
+                            bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(item.InterviewId, modelset, jsonToProcess, true);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return Json("Successfully generated the AI evaluation");
+        }
     }
 }
