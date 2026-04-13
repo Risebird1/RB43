@@ -356,11 +356,11 @@
 
                                                                     @*  <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
 
-                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
-                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
+                                                            <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
 
-                                                        </button>
-                                                        </a> *@
+                                                            </button>
+                                                            </a> *@
 
                                                                     @if (item.IsAIInterview && item.AICandidateResponseVideoCount > 0)
                                                                     {
@@ -440,10 +440,10 @@
                                                                     }
 
                                                                     @* <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
-                                                                        <span title="AI Client Interview Report" class="mdc-fab__icon material-icons"><img src="~/img/Ai-logo.png" style="width:18px;" /></span>
-                                                                    </button>
-                                                                </a> *@
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
+                                                            <span title="AI Client Interview Report" class="mdc-fab__icon material-icons"><img src="~/img/Ai-logo.png" style="width:18px;" /></span>
+                                                            </button>
+                                                            </a> *@
 
                                                                     <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
                                                                         <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer',false,'QCPendingReport',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
@@ -476,10 +476,10 @@
                                                                 <td>
 
                                                                     @* <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
-                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
-                                                        <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                        </button>
-                                                        </a> *@
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
+                                                            <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
+                                                            </button>
+                                                            </a> *@
                                                                     @if (item.IsAIInterview)
                                                                     {
                                                                         <span class="interview_9">
@@ -515,7 +515,7 @@
                                                                             </button>
                                                                         </a>
                                                                     }
-                                                                    
+
                                                                     <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
                                                                         <span onclick="OpenRedoRequestFormModel('@item.imid','@item.intervieweStatusStatDesc','QCPendingReport')" title="ReDo Interview" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
@@ -565,7 +565,7 @@
                                                                                         <span>
                                                                                             <div class="bubble">
 
-                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-40px;top:-3px;color: #000;font-size: 14px;">Not recommended</font>
+                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-37px;top:-3px;color: #000;font-size: 14px;">Not recommended</font>
 
                                                                                                 <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
                                                                                                     <tr>
@@ -667,7 +667,7 @@
                                                                                         <span>
                                                                                             <div class="bubble">
 
-                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-51px;color: #000;font-size: 14px;">Not recommended</font>
+                                                                                                <i class='fa fa-exclamation-circle' style='color:#f2c750;font-size:23px;position:absolute;top:6px;left: 17px;'></i><font style="position:relative;left:-37px;top:-3px;color: #000;font-size: 14px;">Not recommended</font>
 
                                                                                                 <table class="table" cellspacing="0" width="100%" style="border:1px #ccc solid;margin:5px 0px 0px 0px">
                                                                                                     <tr>
@@ -786,9 +786,9 @@
                                                                     {
                                                                         <div style="position:relative;z-index:10;width: fit-content">
                                                                             <div class="absCenter">
-                                                                                <button class="infoButton" style="top:12px;left:-16px;">
+                                                                                <button class="infoButton" style="top:8px;left:-16px;">
                                                                                     <div class="infoButton-btn" style="width:15px;height:15px;">
-                                                                                        <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
+                                                                                        <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left: -7px;top: 0px;">i</span>
                                                                                     </div>
                                                                                     <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
                                                                                         <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div>
@@ -1060,35 +1060,35 @@
 </script>
 
 <script type="text/javascript">
-        //// script for loader starts here
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meetingTable").hide();
+    var loader;
+    function ShowProgress() {
         $(".dataloading").hide();
         $("#meetingTable").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $("#meetingTable").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
 
-        window.onload = function () {
-            setTimeout(function () {
-                loader.style.display = "none";
-                $(".dataloading").show();
-                $("#meetingTable").show();
-            }, 2000);
-        };
-        //// script for loader ends here
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meetingTable").show();
+        }, 2000);
+    };
+    //// script for loader ends here
 
 
     function Changeurldetails(type) {
-    var actiontype = $("#hidactiontype").val();
-    window.location.href = "/DashBoard/SensitiveData?actionstatus=" + type + "&actiontype=" + actiontype;
+        var actiontype = $("#hidactiontype").val();
+        window.location.href = "/DashBoard/SensitiveData?actionstatus=" + type + "&actiontype=" + actiontype;
     }
 
 </script>
