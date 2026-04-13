@@ -18,7 +18,6 @@ namespace Risebird.CommonHelper
 {
     public class AssistantServiceHelper : IAssistantServiceHelper
     {
-        private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IOpenAIApiLogger _openAIApiLogger;
@@ -44,7 +43,6 @@ namespace Risebird.CommonHelper
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IOpenAIApiLogger openAIApiLogger)
         {
-            _httpClient = new HttpClient();
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _openAIApiLogger = openAIApiLogger;
@@ -677,6 +675,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                HttpClient client = new HttpClient();
 
                 var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/threads")
                 {
@@ -806,7 +805,7 @@ namespace Risebird.CommonHelper
                 request.Content = content;
 
                 var sw = System.Diagnostics.Stopwatch.StartNew();
-                var response = await _httpClient.SendAsync(request);
+                var response = await client.SendAsync(request);
                 sw.Stop();
 
                 var responseContent = await response.Content.ReadAsStringAsync();
