@@ -451,6 +451,25 @@
                                                                             </button>
                                                                         </span>
                                                                     }
+                                                                    @if (ViewBag.actionstatus == "QCPendingReport")
+                                                                    {
+                                                                        @if(!item.ReportAI)
+                                                                        {
+                                                                            <span>
+                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Report AI Evaluation">
+                                                                                    <span onclick="javascript:ReportAIEvaluation('@item.interviewer');" title="Report AI Evaluation" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
+                                                                        @if(!item.TranscritAi)
+                                                                        {
+                                                                            <span>
+                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Transcript AI Evaluation">
+                                                                                    <span onclick="javascript:TranscriptAIEvaluation('@item.interviewer');" title="Transcript AI Evaluation" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
+                                                                    }
                                                                 </td>
 
                                                             }
@@ -1129,6 +1148,24 @@
     }
 </script>
 <script>
+    function ReportAIEvaluation(interviewid) {
+        $.ajax({
+            url: '/Interview/AIClientReport',
+            data: { 'interviewId': interviewid, 'isOpenAIQC': true, 'isBackgroudJobRequest': true },
+            success: function (data) {
+                alert(data);
+            }
+        });
+    }
+    function TranscriptAIEvaluation(interviewid) {
+        $.ajax({
+            url: '/Interview/GenerateTranscriptAiEvaluation',
+            data: { 'interviewId': interviewid },
+            success: function (data) {
+                alert(data);
+            }
+        });
+    }
 </script>
 <script>
     var actionclick = 1;
