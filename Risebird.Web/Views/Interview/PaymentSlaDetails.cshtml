@@ -39,6 +39,7 @@
                     <div class="@(slaActionTab == "QCUnderReview" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under review</strong></div>
                     <div class="@(slaActionTab == "FakeReport" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('FakeReport','@ViewBag.ReturnBack')"><strong>Fake report</strong></div>
                     <div class="@(slaActionTab == "RedoRequested" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('RedoRequested','@ViewBag.ReturnBack')"><strong>Redo Requested</strong></div>
+                    <div class="@(slaActionTab == "QCSelectPending" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('QCSelectPending','@ViewBag.ReturnBack')"><strong>QC Select</strong></div>
                     <div class="@(slaActionTab == "SLACompleted" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('SLACompleted','@ViewBag.ReturnBack')"><strong>SLA Completed</strong></div>
                 </div>
                 <div class="pull-right">
@@ -158,7 +159,7 @@
                                                     {
                                                         <td>QC Status</td>
                                                     }
-                                                    @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview")
+                                                    @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelectPending")
                                                     {
                                                         <th>Status</th>
                                                     }
@@ -197,7 +198,7 @@
                                                     {
                                                         <td>QC Status</td>
                                                     }
-                                                   @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview")
+                                                   @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelectPending")
                                                     {
                                                         <th>Status</th>
                                                     }
@@ -317,7 +318,7 @@
                                                                 <td>Pending</td>
                                                             }
                                                         }
-                                                        @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview")
+                                                        @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelectPending")
                                                         {
                                                             <td>@item.StatusValue</td>
                                                         }
