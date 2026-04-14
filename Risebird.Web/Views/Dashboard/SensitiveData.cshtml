@@ -44,7 +44,7 @@
                     <div class="mobile-view"> <h4 class="card-title"> Sensitive Data</h4></div>
                 </div>
                 <div class="pull-left">
-                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "AIQCPending")
+                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "FakeReport")
                     {
                         if (ViewBag.actionstatus == "QCPendingReport")
                         {
@@ -54,7 +54,6 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('AIQCPending')"><strong>AI QC Pending</strong></div>
                         }
                         else if (ViewBag.actionstatus == "QCReport")
                         {
@@ -64,7 +63,6 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('AIQCPending')"><strong>AI QC Pending</strong></div>
                         }
                         else if (ViewBag.actionstatus == "PropableRedo")
                         {
@@ -74,7 +72,6 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('AIQCPending')"><strong>AI QC Pending</strong></div>
                         }
                         else if (ViewBag.actionstatus == "QCAIInterview")
                         {
@@ -84,7 +81,6 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('AIQCPending')"><strong>AI QC Pending</strong></div>
                         }
                         else if (ViewBag.actionstatus == "FakeReport")
                         {
@@ -94,17 +90,6 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab-ac" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('AIQCPending')"><strong>AI QC Pending</strong></div>
-                        }
-                        else if (ViewBag.actionstatus == "AIQCPending")
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('AIQCPending')"><strong>AI QC Pending</strong></div>
                         }
                         else
                         {
@@ -114,7 +99,6 @@
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('AIQCPending')"><strong>AI QC Pending</strong></div>
                         }
                     }
 
@@ -270,7 +254,7 @@
                                                         }
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
-                                                        @if(ViewBag.actionstatus == "AIQCPending")
+                                                        @if(ViewBag.actionstatus == "QCPendingReport")
                                                         {
                                                             <th>Report AI</th>
                                                             <th>TranScript AI</th>
@@ -316,7 +300,7 @@
                                                         }
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
-                                                        @if(ViewBag.actionstatus == "AIQCPending")
+                                                        @if(ViewBag.actionstatus == "QCPendingReport")
                                                         {
                                                             <th>Report AI</th>
                                                             <th>TranScript AI</th>
@@ -338,7 +322,7 @@
 
                                                         <tr id=@item.InterviewId>
 
-                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport"  || ViewBag.actionstatus == "AIQCPending")
+                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
                                                             {
                                                                 <td>
                                                                     <span>
@@ -837,7 +821,7 @@
                                                             {
                                                                 <td></td>
                                                             }
-                                                            @if(ViewBag.actionstatus == "AIQCPending")
+                                                            @if(ViewBag.actionstatus == "QCPendingReport")
                                                             {
                                                                 <td>@item.ReportAI</td>
                                                                 <td>@item.TranscritAi</td>
