@@ -1496,22 +1496,21 @@
     }
 
     #pendingResumesModal .btn-prm-edit-assign {
-        font-size: 10px;
-        padding: 2px 6px;
-        opacity: 0.35;
+        font-size: 11px;
+        padding: 3px 8px;
         flex-shrink: 0;
-        border-radius: 3px;
+        border-radius: 4px;
         line-height: 1.4;
-        background: transparent;
-        border-color: #dee2e6;
-        color: #6c757d;
+        background: #fff;
+        border: 1px solid #adb5bd;
+        color: #495057;
+        transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
 
         #pendingResumesModal .btn-prm-edit-assign:hover {
-            opacity: 1;
-            background: #f1f3f5;
-            border-color: #adb5bd;
-            color: #495057;
+            background: #e9ecef;
+            border-color: #6c757d;
+            color: #212529;
         }
 
     .schedule-cell .interview-datetime {
@@ -2704,24 +2703,24 @@
             <div class="border-bottom bg-white px-3 px-md-4 py-2 d-flex flex-wrap align-items-center gap-2 gap-md-3" id="prmAssigneeBar">
                 <span class="context-label mb-0 flex-shrink-0" style="font-size:12px;">Assigned To</span>
                 <div id="prmAssigneeBlock" class="flex-grow-1 min-w-0" style="max-width:auto;">
-                    <div class="assign-view prm-assign-view" id="prm-assign-view">
-                        <span class="assign-name text-muted fst-italic" id="prm-assign-name-wrap" style="font-size:12px">
+                    <div class="assign-view prm-assign-view d-flex align-items-center gap-2" id="prm-assign-view">
+                        <span class="assign-name text-muted fst-italic" id="prm-assign-name-wrap" style="font-size:13px">
                             <i class="fas fa-user-slash me-1" style="font-size:11px"></i>Unassigned
                         </span>
-                        <button type="button" class="btn btn-outline-secondary btn-sm btn-prm-edit-assign" title="Change assignee">
-                            <i class="fas fa-pencil-alt"></i>
+                        <button type="button" class="btn btn-outline-secondary btn-sm btn-prm-edit-assign" title="Reassign ticket">
+                            <i class="fas fa-pencil-alt me-1"></i>Reassign
                         </button>
                     </div>
-                    <div class="assign-edit-form prm-assign-edit-form" id="prm-assign-edit">
-                        <select class="form-select" id="prm-assign-select">
+                    <div class="assign-edit-form prm-assign-edit-form" id="prm-assign-edit" style="display:none;">
+                        <select class="form-select form-select-sm" id="prm-assign-select" style="min-width:220px;">
                             <option value="">Loading…</option>
                         </select>
                         <div class="assign-edit-row">
-                            <button style="background: #489d48;padding: 1px 5px;" type="button"
+                            <button style="background: #489d48;padding: 2px 8px;" type="button"
                                     class="btn btn-success btn-sm btn-prm-assign-ok" title="Save assignment">
                                 <i class="fas fa-check me-1"></i>Save
                             </button>
-                            <button style="background:#eb4d4d;color:#fff;padding: 1px 5px;" type="button"
+                            <button style="background:#eb4d4d;color:#fff;padding: 2px 8px;" type="button"
                                     class="btn btn-outline-secondary btn-sm btn-prm-assign-x" title="Cancel">
                                 Cancel
                             </button>
@@ -3912,9 +3911,9 @@
             }
 
             Swal.fire({
-                title: 'Ticket Status ',
+                title: 'Ticket Status',
                 html: html,
-                icon: newStatus === 'Closed' ? 'warning' : 'question',
+                type: newStatus === 'Closed' ? 'warning' : 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, continue',
                 cancelButtonText: 'Cancel',
@@ -3922,7 +3921,7 @@
                 cancelButtonColor: '#64748b',
                 focusCancel: true
             }).then(function (result) {
-                if (result.isConfirmed) {
+                if (result.value) {
                     performTicketStatusChange($btn, newStatus);
                 }
             });
