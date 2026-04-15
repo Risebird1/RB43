@@ -188,5 +188,26 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> DeleteEmailAvailabilityAsync(int id)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var parameters = new DynamicParameters();
+                parameters.Add("@Id", id);
+
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_DeleteInterviewerEmailAvailability", parameters,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
