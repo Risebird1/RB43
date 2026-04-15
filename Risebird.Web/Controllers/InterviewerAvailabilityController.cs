@@ -90,6 +90,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ResumeFitment = resumeFitment  ?? string.Empty;
                 ViewBag.DateFrom      = dateFrom      ?? string.Empty;
                 ViewBag.DateTo        = dateTo        ?? string.Empty;
+                ViewBag.ProfileName   = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
 
                 return View(records);
             }
@@ -99,6 +100,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
                 ViewBag.Status = status; ViewBag.SenderEmail = senderEmail; ViewBag.ResumeFitment = resumeFitment;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
+                ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
                 return View(new List<InterviewerEmailAvailabilityVM>());
             }
         }
@@ -193,58 +195,24 @@ namespace Risebird.Web.Controllers
             return Json(new { success = ok, status, error = ok ? null : "Could not update status." });
         }
 
-        // ── Verify Employment (AJAX) ────────────────────────────────────────────────
+        // ── Delete Record (AJAX — Admin / SupportAdmin only) ────────────────────────
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> VerifyEmployment(int id)
+        public async Task<IActionResult> DeleteRecord(int id)
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
-            try
-            {
-                var record = await _repository.GetEmailAvailabilityByIdAsync(id);
-                if (record == null)
-                    return Json(new { success = false, error = "Record not found." });
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
+            if (profileName != "Admin" && profileName != "SupportAdmin")
+                return Json(new { success = false, error = "You are not authorised to delete records." });
 
-                if (record.EmploymentVerified == true)
-                    return Json(new { success = true, alreadyVerified = true, message = "Employment already verified." });
+            if (id <= 0)
+                return Json(new { success = false, error = "Invalid record." });
 
-                if (!record.InterviewerProfileId.HasValue)
-                    return Json(new { success = false, error = "Interviewer not found in system. Cannot verify employment." });
-
-                bool isEmployed = record.IsEmployed == true;
-                string companyName = record.CompanyName ?? "Unknown";
-
-                if (!isEmployed)
-                    return Json(new
-                    {
-                        success = false,
-                        error = $"Interviewer is not marked as employed in the system. Company: {companyName}. " +
-                                "Please verify their employment status in the Interviewer Profile first."
-                    });
-
-                var ok = await _repository.UpdateEmailAvailabilityVerificationAsync(
-                    id, employmentVerified: true, resumeAIAnalysisCompleted: null,
-                    resumeAIAnalysisResult: null, newStatus: "InProgress");
-
-                return Json(new
-                {
-                    success = ok,
-                    employmentVerified = true,
-                    companyName,
-                    isProfileVerified = record.IsProfileVerified,
-                    message = ok
-                        ? $"Employment verified. Company: {companyName}"
-                        : "Failed to update verification status."
-                });
-            }
-            catch (Exception ex)
-            {
-                await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false, error = ex.Message });
-            }
+            var ok = await _repository.DeleteEmailAvailabilityAsync(id);
+            return Json(new { success = ok, error = ok ? null : "Could not delete record." });
         }
 
         // ── Analyze Resume (AJAX) ───────────────────────────────────────────────────
@@ -270,9 +238,6 @@ namespace Risebird.Web.Controllers
                         message = "Resume already analyzed.",
                         analysisResult = record.ResumeAIAnalysisResult
                     });
-
-                if (record.EmploymentVerified != true)
-                    return Json(new { success = false, error = "Employment must be verified before resume analysis." });
 
                 string resumeUrl = record.ResumeLink;
                 if (string.IsNullOrWhiteSpace(resumeUrl) || string.Equals(resumeUrl, "None", StringComparison.OrdinalIgnoreCase))
@@ -341,9 +306,6 @@ namespace Risebird.Web.Controllers
                 var record = await _repository.GetEmailAvailabilityByIdAsync(id);
                 if (record == null)
                     return Json(new { success = false, error = "Record not found." });
-
-                if (record.EmploymentVerified != true)
-                    return Json(new { success = false, error = "Employment must be verified first." });
 
                 if (record.ResumeAIAnalysisCompleted != true)
                     return Json(new { success = false, error = "Resume analysis must be completed first." });
