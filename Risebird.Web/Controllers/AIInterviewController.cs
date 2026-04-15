@@ -17,6 +17,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
+using Risebird.Web.Services.Proctoring;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,6 +52,7 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IIRFRepository _irfRepository;
         private readonly IOpenAIInterviewerAssistantHelper _openAIAssistantHelper;
+        private readonly IProctoringTokenService _proctoringTokenService;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
@@ -58,7 +60,8 @@ namespace Risebird.Web.Controllers
             ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
             ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper,
             IIRFService iRFService, IAWSRekognitionService aWSRekognitionService, ICandidateService candidateService,
-            IIRFRepository irfRepository, IOpenAIInterviewerAssistantHelper openAIAssistantHelper)
+            IIRFRepository irfRepository, IOpenAIInterviewerAssistantHelper openAIAssistantHelper,
+            IProctoringTokenService proctoringTokenService)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -75,6 +78,7 @@ namespace Risebird.Web.Controllers
             _candidateService = candidateService;
             _irfRepository = irfRepository;
             _openAIAssistantHelper = openAIAssistantHelper;
+            _proctoringTokenService = proctoringTokenService;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -92,6 +96,7 @@ namespace Risebird.Web.Controllers
                 //two scenarios possible, one where the interview hasnt started as yet. The second where the interview has already started.
                 if (meetingDetails != null)
                 {
+                    ApplyAiProctoringViewBag(meetingDetails, sid);
                     if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                     {
                         var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
@@ -782,6 +787,12 @@ namespace Risebird.Web.Controllers
                 };
                 return View("ExitModalPartial", exitModelError);
             }
+        }
+
+        /// <summary>Chrome extension: session token + policy for AI interview page (meeting not in a terminal state).</summary>
+        private void ApplyAiProctoringViewBag(MeetingVM meetingDetails, Guid sid)
+        {
+            ProctoringViewBagHelper.ApplyForMeeting(this, meetingDetails, _proctoringTokenService, _configuration, sid.ToString());
         }
 
         [HttpPost]

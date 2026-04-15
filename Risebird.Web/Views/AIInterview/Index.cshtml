@@ -2407,6 +2407,9 @@
         if (!timerStopped && totalSecondsLeft > 0) {
             totalSecondsLeft--;
             updateTimerUI();
+            if (totalSecondsLeft === 0 && typeof window.risebirdNotifyProctoringInterviewTimerEnded === 'function') {
+                window.risebirdNotifyProctoringInterviewTimerEnded();
+            }
 
             if (totalSecondsLeft % 60 === 0) {
                 postTimeLeftToServer(totalSecondsLeft);
@@ -2728,6 +2731,7 @@
                 };
 
                 mediaRecorderAudio.start();
+                if (typeof window.risebirdNotifyProctoringRecordingStart === 'function') window.risebirdNotifyProctoringRecordingStart();
                 startRecording();
                 // Enable CodeMirror editor when recording starts
                 if (typeof codeEditor !== 'undefined' && codeEditor) {
@@ -3020,6 +3024,7 @@
         }
         mediaRecorder.start();
         isRecording = true;
+        if (typeof window.risebirdNotifyProctoringRecordingStart === 'function') window.risebirdNotifyProctoringRecordingStart();
         showRecordingOverlay();
         // Enable CodeMirror editor when recording starts
         if (typeof codeEditor !== 'undefined' && codeEditor) {
@@ -4733,3 +4738,4 @@
 
     })();
 </script>
+@await Html.PartialAsync("_RisebirdProctoringAiInterview")

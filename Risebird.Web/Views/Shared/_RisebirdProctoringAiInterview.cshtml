@@ -1,0 +1,88 @@
+@* Proctoring bootstrap for AI / interview pages — extension wiring only (no visible page chrome). *@
+@if (ViewBag.ProctoringToken != null && ViewBag.ProctoringInterviewId != null)
+{
+    <script type="application/json" id="risebird-proctoring-bootstrap">
+@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new {
+            interviewId = ViewBag.ProctoringInterviewId,
+            sessionToken = ViewBag.ProctoringToken,
+            name = ViewBag.ProctoringCandidateName ?? "",
+            email = ViewBag.ProctoringCandidateEmail ?? "",
+            restrictedDomains = ViewBag.ProctoringRestrictedDomains,
+            allowedExamHosts = ViewBag.ProctoringAllowedExamHosts,
+            clipboardBlocking = ViewBag.ProctoringClipboardBlocking,
+            meetingStartIso = ViewBag.ProctoringMeetingStartIso,
+            meetingEndIso = ViewBag.ProctoringMeetingEndIso
+        }))
+    </script>
+    <div id="risebird-proctoring-panel" hidden aria-hidden="true"></div>
+    <script type="text/javascript">
+        (function () {
+            var cfg = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new {
+                interviewId = ViewBag.ProctoringInterviewId,
+                sessionToken = ViewBag.ProctoringToken,
+                name = ViewBag.ProctoringCandidateName ?? "",
+                email = ViewBag.ProctoringCandidateEmail ?? "",
+                restrictedDomains = ViewBag.ProctoringRestrictedDomains,
+                allowedExamHosts = ViewBag.ProctoringAllowedExamHosts,
+                clipboardBlocking = ViewBag.ProctoringClipboardBlocking
+            }));
+            var meetingStartMs = Date.parse('@Html.Raw(ViewBag.ProctoringMeetingStartIso ?? "")');
+            var meetingEndMs = Date.parse('@Html.Raw(ViewBag.ProctoringMeetingEndIso ?? "")');
+            if (isNaN(meetingStartMs)) meetingStartMs = 0;
+            if (isNaN(meetingEndMs)) meetingEndMs = Number.MAX_SAFE_INTEGER;
+            var stopExtensionAfterMs = meetingEndMs + 5 * 60 * 1000;
+            function origin() { return window.location.origin; }
+            var joinSent = false;
+            var monitoringStarted = false;
+            var meetingEndNotified = false;
+            function endProctoringSession() {
+                if (meetingEndNotified) return;
+                meetingEndNotified = true;
+                try {
+                    window.postMessage({ source: 'risebird-proctor-extension', type: 'RB_PROCTORING_MEETING_END' }, origin());
+                } catch (e) { }
+            }
+            function tryStartMonitoring(reason) {
+                if (monitoringStarted) return;
+                if (!joinSent) return;
+                var now = Date.now();
+                if (now > meetingEndMs) return;
+                var byRecording = reason === 'recording';
+                var bySchedule = now >= meetingStartMs;
+                if (!byRecording && !bySchedule) return;
+                monitoringStarted = true;
+                window.postMessage({ type: 'RB_COMPLETE_TEST_SETUP' }, origin());
+            }
+            function onExtensionReady() {
+                if (joinSent) return;
+                joinSent = true;
+                window.postMessage({ type: 'RB_PROCTORING_JOIN', payload: cfg }, origin());
+                tryStartMonitoring('schedule');
+            }
+            function wire() {
+                window.addEventListener('message', function (ev) {
+                    if (ev.source !== window || ev.origin !== origin()) return;
+                    if (ev.data && ev.data.type === 'RB_PROCTORING_EXTENSION_READY') onExtensionReady();
+                });
+                window.postMessage({ type: 'RB_PROCTORING_HELLO' }, origin());
+                document.addEventListener('risebird-proctoring-recording-started', function () {
+                    tryStartMonitoring('recording');
+                });
+                window.risebirdNotifyProctoringRecordingStart = function () {
+                    document.dispatchEvent(new CustomEvent('risebird-proctoring-recording-started', { bubbles: true }));
+                };
+                window.risebirdNotifyProctoringInterviewTimerEnded = function () {
+                    endProctoringSession();
+                };
+                window.setInterval(function () {
+                    tryStartMonitoring('schedule');
+                    if (Date.now() > stopExtensionAfterMs && joinSent) endProctoringSession();
+                }, 2000);
+                window.addEventListener('pagehide', endProctoringSession);
+                window.addEventListener('beforeunload', endProctoringSession);
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+            else wire();
+        })();
+    </script>
+}

@@ -1,0 +1,52 @@
+Risebird Proctoring Assistant — Load unpacked in Chrome
+=======================================================
+
+1. Open Chrome and go to: chrome://extensions
+
+2. Turn ON "Developer mode" (top right).
+
+3. Click "Load unpacked".
+
+4. IMPORTANT: Select THIS folder (the one containing manifest.json):
+   ...\Risebird-mvp-v2\chrome-proctor-extension
+
+   Do NOT select the parent folder "Risebird-mvp-v2" only — Chrome will error
+   because manifest.json is inside chrome-proctor-extension, not at repo root.
+
+5. After loading, pin the extension if you want.
+
+--- Candidate flow (AI Interview only) ---
+
+1. From the dashboard, open the AI Interview (session link), e.g.
+   .../AIInterview/Index?sid=...
+2. The content script runs only on URLs whose path includes /AIInterview.
+   The page passes the server-issued session token to the extension automatically.
+3. Monitoring (screen capture + logging) starts when the interview window logic
+   on that page says so (scheduled time and/or recording), not on the dashboard.
+
+The extension popup "Join session" / "Start session" only work while the active
+tab is the AI Interview page (same URL rule).
+
+If Chrome still errors, check that these files exist next to manifest.json:
+  service-worker.js, content-monitor.js, popup.html, popup.js, popup.css,
+  rules\restricted-sites.json
+
+--- Where event logs are saved ---
+
+1) In the extension (candidate machine)
+   - chrome.storage.local key: proctoringEvents (also shown in the popup list).
+   - Use "Download report" in the popup for a JSON export of the same events.
+
+2) On the Risebird API (when the browser can reach your site)
+   - POST /api/proctoring/session/event — persisted only inside the configured
+     interview time window (see server ProctoringSessionEligibilityService).
+
+3) Service worker console (developers only)
+   - chrome://extensions → Risebird Proctoring Assistant → "service worker"
+     (Inspect) — look for warnings if the event POST fails; events are still
+     kept locally via proctoringEvents.
+
+Tab-switch hostnames and restricted-domain blocks require: Join session first,
+and Chrome 121+ with declarativeNetRequestFeedback (already in manifest).
+Restricted-domain events fire while joined OR while the exam session is active,
+after DNR rules are applied from the join handshake.

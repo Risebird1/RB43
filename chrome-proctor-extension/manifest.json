@@ -1,0 +1,68 @@
+{
+  "manifest_version": 3,
+  "name": "Risebird Proctoring Assistant",
+  "description": "Interview/exam proctoring extension with capture, monitoring, control, and reporting flows.",
+  "version": "1.3.0",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "tabCapture",
+    "windows",
+    "webNavigation",
+    "storage",
+    "notifications",
+    "browsingData",
+    "scripting",
+    "webRequest",
+    "clipboardRead",
+    "clipboardWrite",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "identity",
+    "cookies",
+    "desktopCapture"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "https://tests.mettl.com/*",
+    "https://portal.risebird.io/*",
+    "https://*.risebird.io/*",
+    "http://localhost/*",
+    "https://localhost/*",
+    "https://localhost:44329/*",
+    "http://127.0.0.1/*",
+    "https://127.0.0.1/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "core_proctoring_rules",
+        "enabled": true,
+        "path": "rules/restricted-sites.json"
+      }
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://portal.risebird.io/AIInterview/*",
+        "https://*.risebird.io/AIInterview/*",
+        "http://localhost/AIInterview/*",
+        "https://localhost/AIInterview/*",
+        "http://127.0.0.1/AIInterview/*",
+        "https://127.0.0.1/AIInterview/*",
+        "http://localhost:44329/AIInterview/*",
+        "https://localhost:44329/AIInterview/*"
+      ],
+      "js": ["content-monitor.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Proctoring Controls"
+  }
+}
