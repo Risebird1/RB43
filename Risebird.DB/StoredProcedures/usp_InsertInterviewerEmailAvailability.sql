@@ -32,7 +32,7 @@ BEGIN
     SELECT TOP 1 @UserId = ul.id, @InterviewerProfileId = ip.Id
     FROM UserList ul
     LEFT JOIN InterviewerProfile ip ON ip.UserId = ul.id
-    WHERE ul.EmailId = @SenderEmail AND (ul.IsDeleted IS NULL OR ul.IsDeleted = 0)
+    WHERE ul.EmailId = @SenderEmail AND ul.IsActive = 1
 
     INSERT INTO InterviewerEmailAvailability
         (SenderEmail, UserId, InterviewerProfileId, Subject, MailContent, ReceivedAt,
