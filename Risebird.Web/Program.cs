@@ -250,6 +250,12 @@ builder.Services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
 builder.Services.AddScoped<IResumeParsingService, ResumeParsingService>();
 // ============================================
 
+// ============================================
+// Relay.app Interviewer Email Availability
+// ============================================
+builder.Services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerEmailAvailabilityRepository>();
+// ============================================
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
