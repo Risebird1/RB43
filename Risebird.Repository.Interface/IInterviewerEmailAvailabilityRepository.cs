@@ -24,5 +24,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AssignInterviewerToAssessmentGroupAsync(
             int emailAvailabilityId, int interviewerProfileId,
             int assessmentGroupId, string assignedBy);
+
+        Task<bool> DeleteEmailAvailabilityAsync(int id);
     }
 }
