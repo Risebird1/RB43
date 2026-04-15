@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE Procedure usp_propableRedoInterview      
+Create Procedure usp_propableRedoInterview      
 @emailid varchar(200),    
 @actionstatus varchar(50)    
 AS      
@@ -113,7 +113,6 @@ ic.AudioTranscriptFileLink,ic.AITranscriptAnalysisScore,ic.AIVerdict,
 cfd.Rating,(pm.DurationSelectedMin-ic.VideoDuration),    
 IRF.IsAIInterview, im.SessionId, a.VideoCount     
 order by Interviewdate desc     
-end    
+end
 END    
-  
 GO

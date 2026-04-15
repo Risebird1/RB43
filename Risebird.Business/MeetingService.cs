@@ -4573,6 +4573,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<QcInterviewAIMergePendingRow> GetPendingQcInterviewAIMergeById(int interviewid)
+        {
+            try
+            {
+                return await _meetingRespository.GetPendingQcInterviewAIMergeById(interviewid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
         public async Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId)
         {
