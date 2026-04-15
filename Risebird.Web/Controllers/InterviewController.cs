@@ -8405,22 +8405,26 @@ namespace Risebird.Web.Controllers
                     //}
                     //else
                     //{
-                        model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
-                        if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
+                    model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
+                    if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PaymentSlaDetailsFilters"));
+                        if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PaymentSlaDetailsFilters"));
-                            if (filter.StartDate != null && filter.EndDate != null)
-                            {
-                                filter.EndDate = filter.EndDate?.AddDays(1);
-                                model = model.Where(m => m.CreatedOn >= filter.StartDate && m.CreatedOn <= filter.EndDate).ToList();
-                            }
+                            filter.EndDate = filter.EndDate?.AddDays(1);
+                            model = model.Where(m => m.CreatedOn >= filter.StartDate && m.CreatedOn <= filter.EndDate).ToList();
                         }
-                        else
+                    }
+                    else
+                    {
+                        DateTime StartDate = DateTime.Now.AddMonths(-1);
+                        DateTime EndDate = DateTime.Now.AddDays(1);
+                        if (actionstatus == "QCSelectPending")
                         {
-                            DateTime StartDate = DateTime.Now.AddMonths(-1);
-                            DateTime EndDate = DateTime.Now.AddDays(1);
-                            model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
+                            StartDate = DateTime.Now.AddDays(-10);
                         }
+                        model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
+                    }
                     //}
                     return View(model);
                 }
