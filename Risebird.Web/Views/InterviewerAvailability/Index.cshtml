@@ -144,17 +144,17 @@
                             <div class="d-flex align-items-center gap-2" style="flex-wrap:nowrap;width:100%;">
                                 <select name="status" class="form-select ia-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All statuses</option>
-                                    <option value="Open" @(selStatus=="Open"?"selected":"")>Open</option>
-                                    <option value="InProgress" @(selStatus=="InProgress"?"selected":"")>In Progress</option>
-                                    <option value="Verified" @(selStatus=="Verified"?"selected":"")>Verified</option>
-                                    <option value="Closed" @(selStatus=="Closed"?"selected":"")>Closed</option>
+                                    @if (selStatus == "Open") { <option value="Open" selected>Open</option> } else { <option value="Open">Open</option> }
+                                    @if (selStatus == "InProgress") { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option> }
+                                    @if (selStatus == "Verified") { <option value="Verified" selected>Verified</option> } else { <option value="Verified">Verified</option> }
+                                    @if (selStatus == "Closed") { <option value="Closed" selected>Closed</option> } else { <option value="Closed">Closed</option> }
                                 </select>
                                 <select name="resumeFitment" class="form-select ia-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All fitment</option>
-                                    <option value="Strong Fit" @(selFitment=="Strong Fit"?"selected":"")>Strong Fit</option>
-                                    <option value="Moderate Fit" @(selFitment=="Moderate Fit"?"selected":"")>Moderate Fit</option>
-                                    <option value="Weak Fit" @(selFitment=="Weak Fit"?"selected":"")>Weak Fit</option>
-                                    <option value="N/A" @(selFitment=="N/A"?"selected":"")>N/A</option>
+                                    @if (selFitment == "Strong Fit") { <option value="Strong Fit" selected>Strong Fit</option> } else { <option value="Strong Fit">Strong Fit</option> }
+                                    @if (selFitment == "Moderate Fit") { <option value="Moderate Fit" selected>Moderate Fit</option> } else { <option value="Moderate Fit">Moderate Fit</option> }
+                                    @if (selFitment == "Weak Fit") { <option value="Weak Fit" selected>Weak Fit</option> } else { <option value="Weak Fit">Weak Fit</option> }
+                                    @if (selFitment == "N/A") { <option value="N/A" selected>N/A</option> } else { <option value="N/A">N/A</option> }
                                 </select>
                                 <input type="text" name="senderEmail" class="form-control ia-filter-control" placeholder="Sender email..." style="flex:1 1 0;min-width:130px;" value="@selEmail" />
                                 <input type="date" name="dateFrom" class="form-control ia-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
