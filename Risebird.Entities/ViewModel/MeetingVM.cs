@@ -424,6 +424,8 @@ namespace Risebird.Entities.ViewModel
         public string ProjectTitle { get; set; }
         public string HRFirstName { get; set; }
         public string HRLastName { get; set; }
+        public bool ReportAI { get; set; }
+        public bool TranscritAi { get; set; }
 
     }
 
