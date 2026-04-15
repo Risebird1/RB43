@@ -1,0 +1,507 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+using Risebird.Business.Interface;
+using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Risebird.Web.Controllers
+{
+    [Authorize]
+    public class InterviewerAvailabilityController : Controller
+    {
+        private readonly IInterviewerEmailAvailabilityRepository _repository;
+        private readonly IApplicationErrorLogger                 _logger;
+        private readonly IConfiguration                          _configuration;
+        private readonly IAssistantServiceHelper                 _assistantServiceHelper;
+        private readonly IPdfReaderHelper                        _pdfReaderHelper;
+        private readonly INotificationHelper                     _notificationHelper;
+        private readonly IInterviewerService                     _interviewerService;
+        private readonly IClientService                          _clientService;
+        private readonly IIRFService                             _irfService;
+
+        public InterviewerAvailabilityController(
+            IInterviewerEmailAvailabilityRepository repository,
+            IApplicationErrorLogger                 logger,
+            IConfiguration                          configuration,
+            IAssistantServiceHelper                 assistantServiceHelper,
+            IPdfReaderHelper                        pdfReaderHelper,
+            INotificationHelper                     notificationHelper,
+            IInterviewerService                     interviewerService,
+            IClientService                          clientService,
+            IIRFService                             irfService)
+        {
+            _repository             = repository;
+            _logger                 = logger;
+            _configuration          = configuration;
+            _assistantServiceHelper = assistantServiceHelper;
+            _pdfReaderHelper        = pdfReaderHelper;
+            _notificationHelper     = notificationHelper;
+            _interviewerService     = interviewerService;
+            _clientService          = clientService;
+            _irfService             = irfService;
+        }
+
+        // ── Dashboard ───────────────────────────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> Index(
+            string status        = null,
+            string senderEmail   = null,
+            string resumeFitment = null,
+            string dateFrom      = null,
+            string dateTo        = null,
+            int    page          = 1,
+            int    pageSize      = 25)
+        {
+            try
+            {
+                if (page < 1)       page     = 1;
+                if (pageSize < 10)  pageSize = 10;
+                if (pageSize > 200) pageSize = 200;
+
+                DateTime? dtFrom = null, dtTo = null;
+                if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
+                if (!string.IsNullOrWhiteSpace(dateTo)   && DateTime.TryParse(dateTo,   out var pTo))   dtTo   = pTo;
+
+                var records = await _repository.GetEmailAvailabilityAsync(
+                    status, senderEmail, resumeFitment, dtFrom, dtTo, page, pageSize);
+
+                var first      = records.FirstOrDefault();
+                int totalCount = first?.TotalCount ?? 0;
+                int totalPages = totalCount > 0 ? (int)Math.Ceiling((double)totalCount / pageSize) : 1;
+
+                ViewBag.Page          = page;
+                ViewBag.PageSize      = pageSize;
+                ViewBag.TotalCount    = totalCount;
+                ViewBag.TotalPages    = totalPages;
+                ViewBag.Status        = status        ?? string.Empty;
+                ViewBag.SenderEmail   = senderEmail   ?? string.Empty;
+                ViewBag.ResumeFitment = resumeFitment  ?? string.Empty;
+                ViewBag.DateFrom      = dateFrom      ?? string.Empty;
+                ViewBag.DateTo        = dateTo        ?? string.Empty;
+
+                return View(records);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
+                ViewBag.Status = status; ViewBag.SenderEmail = senderEmail; ViewBag.ResumeFitment = resumeFitment;
+                ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
+                return View(new List<InterviewerEmailAvailabilityVM>());
+            }
+        }
+
+        // ── Get record details (AJAX - for Manage modal) ────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetRecordDetails(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetEmailAvailabilityByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                return Json(new
+                {
+                    success = true,
+                    record = new
+                    {
+                        record.Id,
+                        record.SenderEmail,
+                        record.UserId,
+                        record.InterviewerProfileId,
+                        record.Subject,
+                        record.MailContent,
+                        receivedAt = record.ReceivedAt?.ToString("dd MMM yyyy, HH:mm"),
+                        record.JobTitle,
+                        record.InterviewerName,
+                        record.Phone,
+                        record.MagName,
+                        record.IRFReference,
+                        record.HasLoginCredentials,
+                        record.SlotsPerDay,
+                        record.TimeFrame,
+                        record.AvailabilityIntent,
+                        record.MailBodyIntent,
+                        record.ConcernsOrNotInterested,
+                        record.ResumeFitment,
+                        record.ResumeLink,
+                        record.HasAttachment,
+                        record.Status,
+                        record.EmploymentVerified,
+                        record.ResumeAIAnalysisCompleted,
+                        record.ResumeAIAnalysisResult,
+                        record.AssessmentGroupId,
+                        assessmentGroupAssignedAt = record.AssessmentGroupAssignedAt?.ToString("dd MMM yyyy, HH:mm"),
+                        record.ProcessedBy,
+                        record.InterviewerNickName,
+                        record.CurrentRole,
+                        record.Experience,
+                        record.IsProfileVerified,
+                        record.IsEmployed,
+                        record.CompanyName,
+                        record.ProfileResumeLink,
+                        record.ExistingAssessmentGroupIds,
+                        record.UserEmail,
+                        record.MasterAssessmentGroupName,
+                        record.ResolvedAssessmentGroupId,
+                        record.AssessmentGroupName,
+                        hasResumeLink = !string.IsNullOrEmpty(record.ResumeLink)
+                                        && !string.Equals(record.ResumeLink, "None", StringComparison.OrdinalIgnoreCase),
+                        hasProfileResumeLink = !string.IsNullOrEmpty(record.ProfileResumeLink)
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Status update (AJAX) ────────────────────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStatusModal(int id, string status)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            var allowed = new[] { "Open", "InProgress", "Verified", "Closed" };
+            if (id <= 0 || !Array.Exists(allowed, s => s == status))
+                return Json(new { success = false, error = "Invalid status update request." });
+
+            var changedBy = HttpContext.Session.GetString("email").Trim('"');
+            var ok = await _repository.UpdateEmailAvailabilityStatusAsync(id, status, changedBy);
+            return Json(new { success = ok, status, error = ok ? null : "Could not update status." });
+        }
+
+        // ── Verify Employment (AJAX) ────────────────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyEmployment(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetEmailAvailabilityByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                if (record.EmploymentVerified == true)
+                    return Json(new { success = true, alreadyVerified = true, message = "Employment already verified." });
+
+                if (!record.InterviewerProfileId.HasValue)
+                    return Json(new { success = false, error = "Interviewer not found in system. Cannot verify employment." });
+
+                bool isEmployed = record.IsEmployed == true;
+                string companyName = record.CompanyName ?? "Unknown";
+
+                if (!isEmployed)
+                    return Json(new
+                    {
+                        success = false,
+                        error = $"Interviewer is not marked as employed in the system. Company: {companyName}. " +
+                                "Please verify their employment status in the Interviewer Profile first."
+                    });
+
+                var ok = await _repository.UpdateEmailAvailabilityVerificationAsync(
+                    id, employmentVerified: true, resumeAIAnalysisCompleted: null,
+                    resumeAIAnalysisResult: null, newStatus: "InProgress");
+
+                return Json(new
+                {
+                    success = ok,
+                    employmentVerified = true,
+                    companyName,
+                    isProfileVerified = record.IsProfileVerified,
+                    message = ok
+                        ? $"Employment verified. Company: {companyName}"
+                        : "Failed to update verification status."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Analyze Resume (AJAX) ───────────────────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AnalyzeResume(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetEmailAvailabilityByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                if (record.ResumeAIAnalysisCompleted == true)
+                    return Json(new
+                    {
+                        success = true,
+                        alreadyAnalyzed = true,
+                        message = "Resume already analyzed.",
+                        analysisResult = record.ResumeAIAnalysisResult
+                    });
+
+                if (record.EmploymentVerified != true)
+                    return Json(new { success = false, error = "Employment must be verified before resume analysis." });
+
+                string resumeUrl = record.ResumeLink;
+                if (string.IsNullOrWhiteSpace(resumeUrl) || string.Equals(resumeUrl, "None", StringComparison.OrdinalIgnoreCase))
+                    resumeUrl = record.ProfileResumeLink;
+
+                if (string.IsNullOrWhiteSpace(resumeUrl))
+                    return Json(new { success = false, error = "No resume link available for analysis." });
+
+                string jobTitle = record.AssessmentGroupName ?? record.MagName ?? record.JobTitle ?? "General";
+
+                var resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl);
+                if (string.IsNullOrWhiteSpace(resumeText))
+                    return Json(new { success = false, error = "Could not read resume PDF from the provided link." });
+
+                var aiResponse = await _assistantServiceHelper.GenerateResumeAnalysis(resumeText, jobTitle);
+                if (aiResponse == null)
+                    return Json(new { success = false, error = "AI analysis returned no response." });
+
+                var analysisJson = aiResponse.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value;
+                if (string.IsNullOrWhiteSpace(analysisJson))
+                    return Json(new { success = false, error = "AI analysis returned empty result." });
+
+                var analysis = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(analysisJson);
+                bool isPositiveVerdict = analysis != null
+                    && !string.IsNullOrEmpty(analysis.verdict)
+                    && analysis.verdict.Equals("yes", StringComparison.OrdinalIgnoreCase);
+
+                string newStatus = isPositiveVerdict ? "Verified" : "InProgress";
+
+                var ok = await _repository.UpdateEmailAvailabilityVerificationAsync(
+                    id, employmentVerified: null, resumeAIAnalysisCompleted: true,
+                    resumeAIAnalysisResult: analysisJson, newStatus: newStatus);
+
+                return Json(new
+                {
+                    success = ok,
+                    resumeAIAnalysisCompleted = true,
+                    verdict = analysis?.verdict,
+                    fitmentScore = analysis?.fitmentScore,
+                    completeFitmentAnalysis = analysis?.completeFitmentAnalysis,
+                    isPositiveVerdict,
+                    analysisResult = analysisJson,
+                    message = ok
+                        ? $"Resume analysis complete. Verdict: {analysis?.verdict}, Score: {analysis?.fitmentScore}"
+                        : "Failed to save analysis result."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Assign Assessment Group (AJAX) ──────────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignAssessmentGroup(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetEmailAvailabilityByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                if (record.EmploymentVerified != true)
+                    return Json(new { success = false, error = "Employment must be verified first." });
+
+                if (record.ResumeAIAnalysisCompleted != true)
+                    return Json(new { success = false, error = "Resume analysis must be completed first." });
+
+                if (!record.InterviewerProfileId.HasValue)
+                    return Json(new { success = false, error = "Interviewer profile not found in system." });
+
+                if (!record.ResolvedAssessmentGroupId.HasValue || record.ResolvedAssessmentGroupId.Value <= 0)
+                    return Json(new { success = false, error = $"No assessment group found for MAG name '{record.MagName}'. Please check the MAG configuration." });
+
+                if (record.AssessmentGroupId.HasValue && record.AssessmentGroupId.Value > 0)
+                    return Json(new { success = true, alreadyAssigned = true, message = "Interviewer already assigned to the assessment group." });
+
+                int agId = record.ResolvedAssessmentGroupId.Value;
+                int profileId = record.InterviewerProfileId.Value;
+                string assignedBy = HttpContext.Session.GetString("email").Trim('"');
+
+                var ok = await _repository.AssignInterviewerToAssessmentGroupAsync(
+                    id, profileId, agId, assignedBy);
+
+                if (!ok)
+                    return Json(new { success = false, error = "Failed to assign interviewer to assessment group." });
+
+                try
+                {
+                    string emailId = record.SenderEmail;
+                    var upcomingInterviews = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified", null, agId);
+                    var interviewerItem = upcomingInterviews?.FirstOrDefault(x => x.EmailId == emailId);
+
+                    if (interviewerItem != null && !string.IsNullOrEmpty(interviewerItem.EmailId))
+                    {
+                        string sendReportUrl;
+                        if (string.IsNullOrEmpty(interviewerItem.uniqueid))
+                        {
+                            var uniqueId = Guid.NewGuid();
+                            var savedId = await _clientService.PublicInterviewerUrlSave(interviewerItem.EmailId, uniqueId.ToString());
+                            sendReportUrl = "https://" + Request.Host.ToString() +
+                                "/Interview/PublicOpenInterviewInvite?id=" +
+                                (string.IsNullOrEmpty(savedId) ? uniqueId.ToString() : savedId);
+                        }
+                        else
+                        {
+                            sendReportUrl = "https://" + Request.Host.ToString() +
+                                "/Interview/PublicOpenInterviewInvite?id=" + interviewerItem.uniqueid;
+                        }
+
+                        var mail = new Mail
+                        {
+                            TO = interviewerItem.EmailId,
+                            CC = "talent@risebird.io",
+                            Subject = "New interviews have come up! Please assign."
+                        };
+
+                        await _notificationHelper.SendInterviewerCommonInterviewNotification(
+                            mail, sendReportUrl, interviewerItem.Total,
+                            interviewerItem.uniqueid, agId: agId);
+                    }
+                }
+                catch (Exception notifEx)
+                {
+                    await _logger.LogMessage(LogLevelInfo.Exception, notifEx);
+                }
+
+                string agName = record.AssessmentGroupName ?? "Assessment Group #" + agId;
+                return Json(new
+                {
+                    success = true,
+                    assessmentGroupId = agId,
+                    assessmentGroupName = agName,
+                    message = $"Interviewer assigned to {agName}. Open interview notification sent."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Relay webhook (Relay.app → our server) ──────────────────────────────────
+
+        [AllowAnonymous]
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> Webhook()
+        {
+            try
+            {
+                var expectedSecret = _configuration["RelayWebhook:InterviewerAvailabilitySecret"];
+                if (!string.IsNullOrWhiteSpace(expectedSecret))
+                {
+                    var incoming = Request.Headers["X-Relay-Secret"].ToString();
+                    if (incoming != expectedSecret)
+                        return Unauthorized(new { error = "Invalid secret." });
+                }
+
+                string rawBody;
+                using (var reader = new StreamReader(Request.Body))
+                    rawBody = await reader.ReadToEndAsync();
+
+                if (string.IsNullOrWhiteSpace(rawBody))
+                    return BadRequest(new { error = "Empty request body." });
+
+                var payload = JsonConvert.DeserializeObject<RelayInterviewerAvailabilityPayload>(rawBody,
+                    new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore });
+
+                if (payload == null || string.IsNullOrWhiteSpace(payload.SenderEmail))
+                    return BadRequest(new { error = "Missing required field: sender_email." });
+
+                DateTime? receivedAt = null;
+                if (!string.IsNullOrWhiteSpace(payload.ReceivedAt) &&
+                    DateTime.TryParse(payload.ReceivedAt, null,
+                        System.Globalization.DateTimeStyles.RoundtripKind, out var parsed))
+                    receivedAt = parsed;
+
+                if (receivedAt.HasValue && receivedAt.Value < DateTime.UtcNow.AddHours(-46))
+                    return Ok(new { success = false, skipped = true, reason = "Email older than 46 hours — skipped." });
+
+                var systemSenders = new[] { "mailer-daemon@googlemail.com", "workspace-noreply@google.com" };
+                if (systemSenders.Any(s => string.Equals(payload.SenderEmail?.Trim(), s, StringComparison.OrdinalIgnoreCase)))
+                    return Ok(new { success = false, skipped = true, reason = "System email — skipped." });
+
+                var record = new InterviewerEmailAvailability
+                {
+                    SenderEmail             = payload.SenderEmail?.Trim(),
+                    Subject                 = payload.Subject?.Trim(),
+                    MailContent             = payload.MailContent?.Trim(),
+                    ReceivedAt              = receivedAt ?? DateTime.UtcNow,
+                    JobTitle                = payload.JobTitle?.Trim(),
+                    InterviewerName         = payload.Name?.Trim(),
+                    Phone                   = payload.Phone?.Trim(),
+                    MagName                 = payload.MagName?.Trim(),
+                    IRFReference            = payload.IRFId?.Trim(),
+                    HasLoginCredentials     = payload.HasLoginCredentials?.Trim(),
+                    SlotsPerDay             = payload.SlotsPerDay?.Trim(),
+                    TimeFrame               = payload.TimeFrame?.Trim(),
+                    AvailabilityIntent      = payload.AvailabilityIntent?.Trim(),
+                    MailBodyIntent          = payload.MailBodyIntent?.Trim(),
+                    ConcernsOrNotInterested = payload.ConcernsOrNotInterested?.Trim(),
+                    ResumeFitment           = payload.ResumeFitment?.Trim(),
+                    ResumeLink              = payload.ResumeLink?.Trim(),
+                    HasAttachment           = payload.HasAttachment
+                };
+
+                var newId = await _repository.InsertEmailAvailabilityAsync(record);
+
+                return Ok(new
+                {
+                    success = true,
+                    id      = newId,
+                    message = $"Interviewer availability record created (#{newId}) for {record.SenderEmail}."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+    }
+}
