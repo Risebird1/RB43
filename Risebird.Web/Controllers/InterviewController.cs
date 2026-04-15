@@ -9851,6 +9851,45 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ContradictionReport(int interviewId)
+        {
+            string emailId = string.Empty;
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+                emailId = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+                var evaluation = await _meetingService.GetQcInterviewAIevaluationByInterviewId(interviewId);
+                if (evaluation == null)
+                {
+                    ViewBag.Message = "QC AI evaluation was not found for this interview.";
+                    return View(new QcContradictionReportVM { InterviewId = interviewId });
+                }
+
+                var vm = new QcContradictionReportVM
+                {
+                    InterviewId = interviewId,
+                    ContradictionJson = evaluation.ContradictionJson
+                };
+                if (string.IsNullOrWhiteSpace(vm.ContradictionJson))
+                {
+                    ViewBag.Message = "Contradiction report has not been generated yet for this interview.";
+                }
+
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; userEmailId : {emailId}");
+                return null;
+            }
+        }
+
         public async Task<JsonResult> GetQuestionSkillById(string questionText, int irfId)//,int techSkillCommentId
         {
             if (HttpContext.Session.GetString("email") != null)
