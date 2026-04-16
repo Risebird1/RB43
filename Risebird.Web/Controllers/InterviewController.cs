@@ -9147,7 +9147,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool? isOpenAIQC = null, bool? isBackgroudJobRequest = null, bool? regenerateAIQC = null, bool IsContradictionAI = false)
+        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool? isOpenAIQC = null, bool? isBackgroudJobRequest = null, bool? regenerateAIQC = null, bool IsContradictionAI = false, string sourcetype = null)
         {
             try
             {
@@ -9249,13 +9249,35 @@ namespace Risebird.Web.Controllers
                 if (IsContradictionAI)
                 {
                     //generate the Contradiction 
-                    await GenerateContradictionAI(model, interviewId);
+                    var resultcontradication = await GenerateContradictionAI(model, interviewId);
+                    if (sourcetype == "PaymentSla")
+                    {
+                        if (resultcontradication)
+                        {
+                            return Json("Generate Contradiction AI Successfully.");
+                        }
+                        if (model == null)
+                        {
+                            return Json("Report not found.");
+                        }else
+                        {
+                            return Json("Transcript summary not found.");
+                        }
+                    }
                 }
 
                 if (isOpenAIQC.HasValue && isOpenAIQC.Value)
                 {
                     //write code to return QC results
                     var qcResult = await PerformQualityCheck(model, regenerateAIQC, isBackgroudJobRequest);
+                    if (sourcetype == "PaymentSla")
+                    {
+                        if (!string.IsNullOrWhiteSpace(qcResult.verdict))
+                        {
+                            return Json("Generate Report AI Successfully.");
+                        }
+                        return Json("Report not found.");
+                    }
                     if (isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value)
                     {
                         return new OkResult();
@@ -9277,6 +9299,10 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+                if (sourcetype == "PaymentSla")
+                {
+                    return Json("Report not found.");
+                }
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
@@ -9914,13 +9940,18 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
-        public async Task GenerateContradictionAI(InterviewReport model, int interviewId)
+        public async Task<bool> GenerateContradictionAI(InterviewReport model, int interviewId)
         {
             try
             {
+                var modelset = await _meetingService.CheckForAiContradiction(interviewId);
+                if (modelset == null)
+                {
+                    modelset = new QcInterviewAIMergePendingRow();
+                }
                 string contradictionJson = null;
                 var transcriptSummary = model.TranscriptSummary;
-                if (!string.IsNullOrWhiteSpace(transcriptSummary))
+                if (!string.IsNullOrWhiteSpace(transcriptSummary) && string.IsNullOrWhiteSpace(modelset.ContradictionJson) && (model.MeetingStatus == 4 || model.MeetingStatus == 6 || model.MeetingStatus == 7 || model.MeetingStatus == 8))
                 {
                     // Render the partial view to a string
                     var htmlContent = await RenderToStringAsync("AIClientReport", model);
@@ -9940,13 +9971,15 @@ namespace Risebird.Web.Controllers
                     var contradictionReportMessage = BuildContradictionReportMessage(transcriptSummary, reportStringContent);
                     var runcontradictionResult = await _assistantServiceHelper.GeneratecontradictionReport(contradictionReportMessage);
                     contradictionJson = runcontradictionResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value?.Replace("```json", "").Replace("```", "");
-                    await _meetingService.SaveAiContradictionDetails(interviewId, contradictionJson: contradictionJson);
+                    var result = await _meetingService.SaveAiContradictionDetails(interviewId, contradictionJson: contradictionJson);
+                    return result;
                 }
             }
             catch (Exception contradictionEx)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, contradictionEx);
             }
+            return false;
         }
         private static string BuildContradictionReportMessage(string transcriptSummary, string reportStringContent)
         {

@@ -7565,6 +7565,10 @@ NEVER:
             try
             {
                 var item = await _meetingService.GetPendingQcInterviewAIMergeById(interviewid);
+                if (item == null)
+                {
+                    item = new QcInterviewAIMergePendingRow();
+                }
                 try
                 {
                     // OPTIMIZATION: Validate transcript link before attempting download
@@ -7616,6 +7620,14 @@ NEVER:
                             var modelset = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(jsonToProcess);
                             //TransScript Analysis save to db
                             bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(item.InterviewId, modelset, jsonToProcess, true);
+                            if (serviceResult)
+                            {
+                                return Json("Successfully generated the AI evaluation");
+                            }
+                            else
+                            {
+                                return Json("Fail to generate the AI evaluation");
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -7632,7 +7644,7 @@ NEVER:
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return Json("Successfully generated the AI evaluation");
+            return Json("Fail to generate the AI evaluation");
         }
     }
 }
