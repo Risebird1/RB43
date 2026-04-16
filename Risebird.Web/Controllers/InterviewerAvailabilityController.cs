@@ -29,6 +29,7 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewerService                     _interviewerService;
         private readonly IClientService                          _clientService;
         private readonly IIRFService                             _irfService;
+        private readonly IWhatsAppHelper                         _whatsAppHelper;
 
         public InterviewerAvailabilityController(
             IInterviewerEmailAvailabilityRepository repository,
@@ -39,7 +40,8 @@ namespace Risebird.Web.Controllers
             INotificationHelper                     notificationHelper,
             IInterviewerService                     interviewerService,
             IClientService                          clientService,
-            IIRFService                             irfService)
+            IIRFService                             irfService,
+            IWhatsAppHelper                         whatsAppHelper)
         {
             _repository             = repository;
             _logger                 = logger;
@@ -50,6 +52,7 @@ namespace Risebird.Web.Controllers
             _interviewerService     = interviewerService;
             _clientService          = clientService;
             _irfService             = irfService;
+            _whatsAppHelper         = whatsAppHelper;
         }
 
         // ── Dashboard ───────────────────────────────────────────────────────────────
@@ -215,6 +218,47 @@ namespace Risebird.Web.Controllers
             return Json(new { success = ok, error = ok ? null : "Could not delete record." });
         }
 
+        // ── Drop Interviewer Profile (AJAX) ─────────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DropProfile(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetEmailAvailabilityByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                if (!record.InterviewerProfileId.HasValue)
+                    return Json(new { success = false, error = "Interviewer not found in system. Cannot drop profile." });
+
+                var modifiedBy = HttpContext.Session.GetString("email").Trim('"');
+                var ok = await _repository.DropInterviewerProfileAsync(record.InterviewerProfileId.Value, modifiedBy);
+
+                if (ok)
+                {
+                    await _repository.UpdateEmailAvailabilityStatusAsync(id, "Closed", modifiedBy);
+                }
+
+                return Json(new
+                {
+                    success = ok,
+                    message = ok
+                        ? "Interviewer profile dropped (Isavailable = 4). Record closed."
+                        : "Failed to drop interviewer profile."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
         // ── Analyze Resume (AJAX) ───────────────────────────────────────────────────
 
         [HttpPost]
@@ -329,6 +373,7 @@ namespace Risebird.Web.Controllers
                 if (!ok)
                     return Json(new { success = false, error = "Failed to assign interviewer to assessment group." });
 
+                // Send notification (email + WhatsApp) matching InterviewerCommonInterviewNotification pattern
                 try
                 {
                     string emailId = record.SenderEmail;
@@ -337,7 +382,7 @@ namespace Risebird.Web.Controllers
 
                     if (interviewerItem != null && !string.IsNullOrEmpty(interviewerItem.EmailId))
                     {
-                        string sendReportUrl;
+                        string sendReportUrl = string.Empty;
                         if (string.IsNullOrEmpty(interviewerItem.uniqueid))
                         {
                             var uniqueId = Guid.NewGuid();
@@ -345,6 +390,8 @@ namespace Risebird.Web.Controllers
                             sendReportUrl = "https://" + Request.Host.ToString() +
                                 "/Interview/PublicOpenInterviewInvite?id=" +
                                 (string.IsNullOrEmpty(savedId) ? uniqueId.ToString() : savedId);
+                            if (!string.IsNullOrEmpty(savedId))
+                                interviewerItem.uniqueid = savedId;
                         }
                         else
                         {
@@ -362,6 +409,25 @@ namespace Risebird.Web.Controllers
                         await _notificationHelper.SendInterviewerCommonInterviewNotification(
                             mail, sendReportUrl, interviewerItem.Total,
                             interviewerItem.uniqueid, agId: agId);
+
+                        try
+                        {
+                            var whatsAppVM = new WhatsAppVM
+                            {
+                                Emailid = interviewerItem.EmailId,
+                                MessageValue = interviewerItem.Total.ToString(),
+                                buttonlink = !string.IsNullOrEmpty(sendReportUrl)
+                                    ? sendReportUrl.Replace("https://" + Request.Host.ToString() + "/", "")
+                                    : "",
+                                Event = "Interviewer Common Interview",
+                                irfId = interviewerItem.irfIntId.HasValue ? interviewerItem.irfIntId.Value : 0
+                            };
+                            await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(whatsAppVM);
+                        }
+                        catch (Exception waEx)
+                        {
+                            await _logger.LogMessage(LogLevelInfo.Exception, waEx);
+                        }
                     }
                 }
                 catch (Exception notifEx)
@@ -375,7 +441,7 @@ namespace Risebird.Web.Controllers
                     success = true,
                     assessmentGroupId = agId,
                     assessmentGroupName = agName,
-                    message = $"Interviewer assigned to {agName}. Open interview notification sent."
+                    message = $"Interviewer assigned to {agName} and mapped to active skill channels. Notification sent."
                 });
             }
             catch (Exception ex)
