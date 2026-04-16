@@ -44,7 +44,7 @@
                     <div class="mobile-view"> <h4 class="card-title"> Sensitive Data</h4></div>
                 </div>
                 <div class="pull-left">
-                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "FakeReport")
+                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
                     {
                         if (ViewBag.actionstatus == "QCPendingReport")
                         {
@@ -54,6 +54,7 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
                         }
                         else if (ViewBag.actionstatus == "QCReport")
                         {
@@ -63,6 +64,7 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
                         }
                         else if (ViewBag.actionstatus == "PropableRedo")
                         {
@@ -72,6 +74,7 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
                         }
                         else if (ViewBag.actionstatus == "QCAIInterview")
                         {
@@ -81,6 +84,7 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
                         }
                         else if (ViewBag.actionstatus == "FakeReport")
                         {
@@ -90,6 +94,17 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab-ac" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
+                        }
+                        else if (ViewBag.actionstatus == "QCSelect")
+                        {
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
                         }
                         else
                         {
@@ -116,7 +131,7 @@
                                 <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("MyInterviews", "HR")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                             </button>
                         }
-                        @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
+                        @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelect")
                         {
                             <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard", new { actionstatus = ViewBag.actionstatus, actiontype = ViewBag.Actiontype })'"></i></span>
                         }
@@ -237,7 +252,7 @@
                                                         {
                                                             <th>Join Time</th>
                                                         }
-                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
                                                         {
                                                             <th>Interviewer Issues found in the Transcript</th>
                                                             <th>AI Transcript analysis score</th>
@@ -254,7 +269,7 @@
                                                         }
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
-                                                        @if(ViewBag.actionstatus == "QCPendingReport")
+                                                        @if(ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect") 
                                                         {
                                                             <th>Report AI</th>
                                                             <th>TranScript AI</th>
@@ -282,7 +297,7 @@
                                                             <th>Join Time</th>
                                                         }
 
-                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
                                                         {
                                                             <th>Interviewer Issues found in the Transcript</th>
                                                             <th>AI Transcript analysis score</th>
@@ -300,7 +315,7 @@
                                                         }
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
-                                                        @if(ViewBag.actionstatus == "QCPendingReport")
+                                                        @if(ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                         {
                                                             <th>Report AI</th>
                                                             <th>TranScript AI</th>
@@ -322,7 +337,7 @@
 
                                                         <tr id=@item.InterviewId>
 
-                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
                                                             {
                                                                 <td>
                                                                     <span>
@@ -451,13 +466,13 @@
                                                                             </button>
                                                                         </span>
                                                                     }
-                                                                    @if (ViewBag.actionstatus == "QCPendingReport")
+                                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                                     {
                                                                         @if(!item.ReportAI)
                                                                         {
                                                                             <span>
                                                                                 <button class="mdc-fab app-fab--absolute " aria-label="Report AI Evaluation">
-                                                                                    <span onclick="javascript:ReportAIEvaluation('@item.interviewer');" title="Report AI Evaluation" class="mdc-fab__icon touch material-icons">
+                                                                                    <span onclick="javascript:ReportAIEvaluation('@item.imid','@item.irfIntId');" title="Report AI Evaluation" class="mdc-fab__icon touch material-icons">
                                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z" /><path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" /></svg>
                                                                                     </span>
                                                                                 </button>
@@ -467,8 +482,18 @@
                                                                         {
                                                                             <span>
                                                                                 <button class="mdc-fab app-fab--absolute " aria-label="Transcript AI Evaluation">
-                                                                                    <span onclick="javascript:TranscriptAIEvaluation('@item.interviewer');" title="Transcript AI Evaluation" class="mdc-fab__icon touch material-icons">
+                                                                                    <span onclick="javascript:TranscriptAIEvaluation('@item.imid');" title="Transcript AI Evaluation" class="mdc-fab__icon touch material-icons">
                                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-left-text" viewBox="0 0 16 16" aria-hidden="true"><path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" /><path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z" /></svg>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
+                                                                        @if(!item.TranscritAi)
+                                                                        {
+                                                                            <span>
+                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Contradiction AI Evaluation">
+                                                                                    <span onclick="javascript:ContradictionAIEvaluation('@item.imid','@item.irfIntId');" title="Contradiction AI Evaluation" class="mdc-fab__icon touch material-icons">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-git-compare" viewBox="0 0 16 16" aria-hidden="true"><path d="M7.5 2.5a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V3.707L3.707 8.5H6.5a.5.5 0 0 1 0 1H2.5a.5.5 0 0 1-.5-.5V4.5a.5.5 0 0 1 1 0v2.793L8.293 2.5H7.5z" /><path d="M12.5 13.5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5v-5a.5.5 0 0 1 1 0v2.793l4.793-4.793H9.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V7.707l-4.793 4.793H12.5z" /></svg>
                                                                                     </span>
                                                                                 </button>
                                                                             </span>
@@ -542,7 +567,7 @@
                                                             <td>
                                                                 <span style="display:block;font-size:14px;">@item.candidateName</span>
 
-                                                                @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                                @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
                                                                 {
                                                                     <div>
 
@@ -709,7 +734,7 @@
                                                             {
                                                                 <td>@item.Joinedon</td>
                                                             }
-                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport")
+                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
                                                             {
                                                                 <td style="text-align:center">
 
@@ -844,7 +869,7 @@
                                                             {
                                                                 <td></td>
                                                             }
-                                                            @if(ViewBag.actionstatus == "QCPendingReport")
+                                                            @if(ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                             {
                                                                 <td>@item.ReportAI</td>
                                                                 <td>@item.TranscritAi</td>
@@ -1152,10 +1177,10 @@
     }
 </script>
 <script>
-    function ReportAIEvaluation(interviewid) {
+    function ReportAIEvaluation(interviewid,irfId) {
         $.ajax({
             url: '/Interview/AIClientReport',
-            data: { 'interviewId': interviewid, 'isOpenAIQC': true, 'isBackgroudJobRequest': true },
+            data: { 'interviewId': interviewid,'irfId':irfId, 'isOpenAIQC': true, 'isBackgroudJobRequest': true,'sourcetype':'PaymentSla' },
             success: function (data) {
                 alert(data);
             }
@@ -1163,8 +1188,17 @@
     }
     function TranscriptAIEvaluation(interviewid) {
         $.ajax({
-            url: '/Interview/GenerateTranscriptAiEvaluation',
+            url: '/Dashboard/GenerateTranscriptAiEvaluation',
             data: { 'interviewId': interviewid },
+            success: function (data) {
+                alert(data);
+            }
+        });
+    }
+    function ContradictionAIEvaluation(interviewid,irfId) {
+        $.ajax({
+            url: '/Interview/AIClientReport',
+            data: { 'interviewId': interviewid,'irfId':irfId, 'IsContradictionAI': true,'sourcetype':'PaymentSla' },
             success: function (data) {
                 alert(data);
             }
