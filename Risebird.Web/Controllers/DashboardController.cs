@@ -3936,7 +3936,7 @@ NEVER:
                         if (HttpContext.Session.GetString("SensitiveDataFilters") != null)
                             HttpContext.Session.Remove("SensitiveDataFilters");
                         var modelList = new List<MeetingVM>();
-                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview)
+                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview || actionstatus == RibbonActionType.QCSelect)
                         {
                             modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
                         }
@@ -3975,6 +3975,10 @@ NEVER:
                         else if (actionstatus == RibbonActionType.QCAIInterview)
                         {
                             ViewBag.PageHeader = "AI Interviews";
+                        }
+                        else if (actionstatus == RibbonActionType.QCSelect)
+                        {
+                            ViewBag.PageHeader = "Select Pending";
                         }
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
@@ -4041,9 +4045,12 @@ NEVER:
                         {
                             ViewBag.PageHeader = "AI Interviews";
                         }
-
+                        else if (actionstatus == RibbonActionType.QCSelect)
+                        {
+                            ViewBag.PageHeader = "Select Pending";
+                        }
                         var modelList = new List<MeetingVM>();
-                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview || actionstatus == RibbonActionType.AIQCPending)
+                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview || actionstatus == RibbonActionType.QCSelect)
                         {
                             modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
                         }
@@ -7558,6 +7565,10 @@ NEVER:
             try
             {
                 var item = await _meetingService.GetPendingQcInterviewAIMergeById(interviewid);
+                if (item == null)
+                {
+                    item = new QcInterviewAIMergePendingRow();
+                }
                 try
                 {
                     // OPTIMIZATION: Validate transcript link before attempting download
@@ -7609,6 +7620,14 @@ NEVER:
                             var modelset = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(jsonToProcess);
                             //TransScript Analysis save to db
                             bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(item.InterviewId, modelset, jsonToProcess, true);
+                            if (serviceResult)
+                            {
+                                return Json("Successfully generated the AI evaluation");
+                            }
+                            else
+                            {
+                                return Json("Fail to generate the AI evaluation");
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -7625,7 +7644,7 @@ NEVER:
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return Json("Successfully generated the AI evaluation");
+            return Json("Fail to generate the AI evaluation");
         }
     }
 }

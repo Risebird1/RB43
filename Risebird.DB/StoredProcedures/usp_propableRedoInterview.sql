@@ -114,5 +114,17 @@ cfd.Rating,(pm.DurationSelectedMin-ic.VideoDuration),
 IRF.IsAIInterview, im.SessionId, a.VideoCount     
 order by Interviewdate desc     
 end
+else if(@actionstatus='QCSelect')
+begin
+Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,ic.AIVerdict,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber,ulco.EmailId as ChannelOwner
+from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+join InterviewComments ic on ic.InterviewId=im.id 
+join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id 
+join Candidate ca on ca.CandidateMasterId=cm.id 
+left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
+left join UserList ulco on IRF.RisebirdHr=ulco.id
+where IsNull(IsProctor,0)=0 and DateDiff(Day,im.interviewDate,Getdate())<30 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and ISNULL(im.RedoInterview,0)=0 and ISNULL(IRF.IsAIInterview,0)=0
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=2 or InterviewStatus=4)
+end
 END    
 GO

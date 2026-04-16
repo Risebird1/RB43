@@ -7861,7 +7861,7 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                     parameters.Add("@interviewId", interviewid);
                     var result = await SqlMapper.QueryAsync<QcInterviewAIMergePendingRow>(con, "usp_GetPendingQcInterviewAIMergeById", null, commandTimeout: 120,
                         commandType: CommandType.StoredProcedure);
-                    return result.FirstOrDefault();
+                    return result?.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
@@ -7917,6 +7917,25 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<QcInterviewAIMergePendingRow> CheckForAiContradiction(int qcEvaluationId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@qcEvaluationId", qcEvaluationId);
+                    var result = await SqlMapper.QueryAsync<QcInterviewAIMergePendingRow>(con, "usp_CheckAiContradictionDetails", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
 
         public async Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId)

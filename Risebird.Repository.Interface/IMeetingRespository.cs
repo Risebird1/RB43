@@ -305,6 +305,7 @@ namespace Risebird.Repository.Interface
         Task<QcInterviewAIMergePendingRow> GetPendingQcInterviewAIMergeById(int interviewid);
         Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null);
         Task<bool> SaveAiContradictionDetails(int qcEvaluationId, string contradictionJson = null);
+        Task<QcInterviewAIMergePendingRow> CheckForAiContradiction(int qcEvaluationId);
         Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId);
         Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);
         Task<UnassignedInterviewVM> GetInterviewerInterviewDetails(int interviewId);
