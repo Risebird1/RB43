@@ -209,5 +209,27 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> DropInterviewerProfileAsync(int interviewerProfileId, string modifiedBy)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewerProfileId", interviewerProfileId);
+                parameters.Add("@ModifiedBy", modifiedBy);
+
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_DropInterviewerProfileFromAvailability", parameters,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
