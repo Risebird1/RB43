@@ -249,6 +249,15 @@
                                                                 data-record-id="@r.Id">
                                                             <i class="fas fa-bars me-1"></i>Manage
                                                         </button>
+                                                        @if (r.InterviewerProfileId.HasValue)
+                                                        {
+                                                            <button type="button" title="Drop the profile — sets interviewer as unavailable"
+                                                                    class="btn btn-warning btn-sm btn-drop-profile"
+                                                                    data-record-id="@r.Id"
+                                                                    style="font-size:9px !important;color:#664d03;">
+                                                                <i class="fas fa-user-slash"></i>
+                                                            </button>
+                                                        }
                                                         @if (canDelete)
                                                         {
                                                             <button type="button" title="Delete this record"
@@ -433,6 +442,25 @@
                 else { alert(res.error || 'Could not delete record.'); }
             },
             error: function () { alert('Delete request failed.'); }
+        });
+    });
+
+    $(document).on('click', '.btn-drop-profile', function () {
+        var id = $(this).data('record-id');
+        if (!confirm('Drop profile for record #' + id + '? This will mark the interviewer as unavailable (Isavailable = 4) and close this record.')) return;
+        var btn = $(this);
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+        $.ajax({
+            url: '@Url.Action("DropProfile", "InterviewerAvailability")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: id },
+            success: function (res) {
+                if (res.success) {
+                    btn.replaceWith('<span class="badge bg-secondary" style="font-size:9px;">Dropped</span>');
+                    var row = $('#row-' + id);
+                    row.find('.col-status .intent-badge').first().removeClass('status-open status-inprogress status-verified').addClass('status-closed').text('Closed');
+                } else { alert(res.error || 'Could not drop profile.'); btn.prop('disabled', false).html('<i class="fas fa-user-slash"></i>'); }
+            },
+            error: function () { alert('Drop profile request failed.'); btn.prop('disabled', false).html('<i class="fas fa-user-slash"></i>'); }
         });
     });
 
