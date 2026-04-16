@@ -28,6 +28,6 @@ namespace Risebird.Entities.Data
         public static readonly string FakeReport = "FakeReport";
         public static readonly string HighSeverityPending = "HighSeverityPending";
         public static readonly string RedoRequested = "RedoRequested";
-        public static readonly string AIQCPending = "AIQCPending";
+        public static readonly string QCSelect = "QCSelect";
     }
 }

@@ -6925,6 +6925,10 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("PublicCandidateFeedback", "Survey", new { emailid = model.ModifiedBy, uniqueid = model.uniqueid });
             }
+            else if (model.type == "PaymentSLA")
+            {
+                return RedirectToAction("PaymentSlaDetails");
+            }
             return RedirectToAction("CompletedInterviews");
         }
         [HttpGet]
@@ -8397,6 +8401,11 @@ namespace Risebird.Web.Controllers
                     {
                         actionstatus = "";
                     }
+                    if (TempData["SuccessErrorMessageQCForm"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                        TempData.Remove("SuccessErrorMessageQCForm");
+                    }
                     ViewBag.actionstatus = actionstatus;
                     IEnumerable<PaymentSLAVM> model;
                     //if (actionstatus == "HighSeverityPending" || actionstatus == "QCUnderReview" || actionstatus == "FakeReport" || actionstatus == "RedoRequested")
@@ -8419,10 +8428,6 @@ namespace Risebird.Web.Controllers
                     {
                         DateTime StartDate = DateTime.Now.AddMonths(-1);
                         DateTime EndDate = DateTime.Now.AddDays(1);
-                        if (actionstatus == "QCSelectPending")
-                        {
-                            StartDate = DateTime.Now.AddDays(-10);
-                        }
                         model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
                     }
                     //}
