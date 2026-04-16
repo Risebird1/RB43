@@ -12,9 +12,12 @@ BEGIN
     SET NOCOUNT ON;
 
     DECLARE @CurrentAGIds VARCHAR(500)
-    SELECT @CurrentAGIds = ISNULL(AssessmentGroupId, '') FROM InterviewerProfile WHERE Id = @InterviewerProfileId
+    DECLARE @UserId INT
 
-    -- Use string_split for accurate matching (CHARINDEX can false-positive, e.g. '1' in '12')
+    SELECT @CurrentAGIds = ISNULL(AssessmentGroupId, ''), @UserId = UserId
+    FROM InterviewerProfile WHERE Id = @InterviewerProfileId
+
+    -- 1. Update InterviewerProfile.AssessmentGroupId (comma-separated)
     IF NOT EXISTS (
         SELECT 1 FROM string_split(@CurrentAGIds, ',')
         WHERE LTRIM(RTRIM(value)) = CAST(@AssessmentGroupId AS VARCHAR)
@@ -32,6 +35,7 @@ BEGIN
         WHERE Id = @InterviewerProfileId
     END
 
+    -- 2. Insert into AssessmentGroupInterviewers if not already present
     IF NOT EXISTS (
         SELECT 1 FROM AssessmentGroupInterviewers
         WHERE AssessmentGroupId = @AssessmentGroupId AND InterviewerProfileId = @InterviewerProfileId
@@ -41,6 +45,27 @@ BEGIN
         VALUES (@AssessmentGroupId, @InterviewerProfileId, 0, ISNULL(@AssignedBy, 'System'), GETDATE())
     END
 
+    -- 3. Map interviewer to all active IRFs belonging to this AssessmentGroupId
+    INSERT INTO TransInterviewer (IRFId, InterviewerId, UserId, IsActive, IsAvailable, PerSuccessRate, [Source], AddedAt)
+    SELECT
+        irf.id,
+        @InterviewerProfileId,
+        @UserId,
+        0,
+        1,
+        ISNULL(irf.FlatRate, 0),
+        'EmailAvailability',
+        GETDATE()
+    FROM IRF irf
+    WHERE irf.AssessmentGroupId = CAST(@AssessmentGroupId AS VARCHAR)
+      AND ISNULL(irf.IsPaused, 0) = 0
+      AND irf.EndDate >= GETDATE()
+      AND NOT EXISTS (
+          SELECT 1 FROM TransInterviewer ti
+          WHERE ti.IRFId = irf.id AND ti.UserId = @UserId
+      )
+
+    -- 4. Update the email availability record
     UPDATE InterviewerEmailAvailability
     SET AssessmentGroupId          = @AssessmentGroupId,
         AssessmentGroupAssignedAt  = GETUTCDATE(),
