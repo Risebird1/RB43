@@ -278,7 +278,30 @@
                                                 </td>
                                                 <td class="col-status">
                                                     <span class="intent-badge @statusCss" style="word-break:normal;">@(r.Status ?? "Open")</span>
-                                                    @if (r.ResumeAIAnalysisCompleted == true) { <br /><span style="font-size:9px;" class="text-info"><i class="fas fa-robot"></i> AI</span> }
+                                                    @if (r.ResumeAIAnalysisCompleted == true)
+                                                    {
+                                                        string aiVerdictText = "AI";
+                                                        string aiScoreText = "";
+                                                        string aiBadgeClass = "text-info";
+                                                        try
+                                                        {
+                                                            if (!string.IsNullOrWhiteSpace(r.ResumeAIAnalysisResult))
+                                                            {
+                                                                var aiData = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(r.ResumeAIAnalysisResult);
+                                                                string verdict = aiData?.verdict;
+                                                                string score = aiData?.fitmentScore?.ToString();
+                                                                if (!string.IsNullOrEmpty(verdict))
+                                                                {
+                                                                    bool isYes = verdict.Equals("yes", StringComparison.OrdinalIgnoreCase);
+                                                                    aiBadgeClass = isYes ? "text-success" : "text-danger";
+                                                                    aiVerdictText = isYes ? "Yes" : "No";
+                                                                }
+                                                                if (!string.IsNullOrEmpty(score)) aiScoreText = score;
+                                                            }
+                                                        }
+                                                        catch { }
+                                                        <br /><span style="font-size:9px;" class="@aiBadgeClass" title="AI Verdict: @aiVerdictText@(aiScoreText != "" ? " | Score: " + aiScoreText : "")"><i class="fas fa-robot"></i> @aiVerdictText@(aiScoreText != "" ? " · " + aiScoreText : "")</span>
+                                                    }
                                                     @if (r.AssessmentGroupId.HasValue) { <span style="font-size:9px;" class="text-primary"><i class="fas fa-users"></i> AG</span> }
                                                 </td>
                                                 <td class="col-actions">
@@ -434,6 +457,16 @@
                                         <button type="button" class="btn btn-info btn-sm mgm-action-btn text-white" id="btnAnalyzeResume"><i class="fas fa-robot me-1"></i>Analyze Resume</button>
                                     </div>
                                 </div>
+                                <div id="resumeUploadArea" style="display:none;" class="mt-2 p-2 border rounded bg-light">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input type="file" id="resumeFileInput" accept=".pdf,.doc,.docx" class="form-control form-control-sm" style="max-width:300px;font-size:11px;" />
+                                        <button type="button" class="btn btn-sm btn-success" id="btnConfirmUpload" style="font-size:11px;padding:3px 10px;"><i class="fas fa-cloud-upload-alt me-1"></i>Upload</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" id="btnCancelUpload" style="font-size:11px;padding:3px 8px;">Cancel</button>
+                                    </div>
+                                    <div class="text-muted mt-1" style="font-size:10px;">Accepts PDF, DOC, DOCX files.</div>
+                                    <div id="uploadProgress" style="display:none;" class="mt-1"><i class="fas fa-spinner fa-spin me-1"></i><span style="font-size:11px;">Uploading...</span></div>
+                                    <div id="uploadResult" style="display:none;" class="mt-1"></div>
+                                </div>
                                 <div class="mgm-result-block" id="step1Result" style="display:none;"></div>
                             </div>
                         </div>
@@ -518,13 +551,19 @@
     }
 
     function loadRecordDetails(id) {
-        $.ajax({ url: '@Url.Action("GetRecordDetails", "InterviewerAvailability")', type: 'GET', data: { id: id },
+        $.ajax({
+            url: '@Url.Action("GetRecordDetails", "InterviewerAvailability")', type: 'GET', data: { id: id },
+            timeout: 30000,
             success: function (res) {
                 $('#mgmLoading').hide();
-                if (!res.success) { $('#mgmEmailContext').html('<div class="alert alert-danger">' + (res.error || 'Unknown error') + '</div>').show(); return; }
+                if (!res.success) { $('#mgmEmailContext').html('<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>' + (res.error || 'Unknown error') + '</div>').show(); return; }
                 currentRecord = res.record; populateModal(res.record); $('#mgmEmailContext').show();
             },
-            error: function () { $('#mgmLoading').hide(); $('#mgmEmailContext').html('<div class="alert alert-danger">Failed to load record.</div>').show(); }
+            error: function (xhr, status) {
+                $('#mgmLoading').hide();
+                var msg = status === 'timeout' ? 'Request timed out. Please try again.' : 'Failed to load record details.';
+                $('#mgmEmailContext').html('<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>' + msg + ' <button class="btn btn-sm btn-outline-danger ms-2" onclick="loadRecordDetails(' + id + ');$(\'#mgmLoading\').show();$(\'#mgmEmailContext\').hide();">Retry</button></div>').show();
+            }
         });
     }
 
@@ -532,7 +571,7 @@
         $('#mgmFrom').text(r.senderEmail || '—'); $('#mgmReceived').text(r.receivedAt || '—');
         $('#mgmPhone').text(r.phone || '—'); $('#mgmIrf').text(r.irfReference || '—'); $('#mgmCredentials').text(r.hasLoginCredentials || '—');
         $('#mgmName').text(r.interviewerName || r.interviewerNickName || '—'); $('#mgmJobTitle').text(r.jobTitle || '—');
-        $('#mgmMag').text((r.magName || '—') + (r.assessmentGroupName ? ' → ' + r.assessmentGroupName : ''));
+        $('#mgmMag').text((r.magName || '—') + (r.assessmentGroupName ? ' \u2192 ' + r.assessmentGroupName : ''));
         $('#mgmSlots').text(r.slotsPerDay || '—'); $('#mgmTimeFrame').text(r.timeFrame || '—');
         $('#mgmMailIntent').text(r.mailBodyIntent || '—'); $('#mgmAvailIntent').text(r.availabilityIntent || '—');
         $('#mgmConcerns').text(r.concernsOrNotInterested || 'None'); $('#mgmMailBody').text(r.mailContent || '');
@@ -560,6 +599,9 @@
         $('#step1Result, #step2Result').hide().empty();
         $('#btnAnalyzeResume').prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Analyze Resume');
         $('#btnAssignAG').prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Assign to AG');
+        $('#resumeUploadArea').hide();
+        $('#resumeFileInput').val('');
+        $('#uploadProgress, #uploadResult').hide();
     }
 
     function syncPipeline(r) {
@@ -567,11 +609,20 @@
             var html = r.resumeAIAnalysisResult || 'Analysis complete.';
             try { var p = JSON.parse(r.resumeAIAnalysisResult); html = '<strong>Verdict:</strong> ' + (p.verdict||'—') + ' | <strong>Score:</strong> ' + (p.fitmentScore||'—') + '<br/>' + (p.completeFitmentAnalysis||''); } catch(e){}
             markStep(1, 'completed', html);
-        } else if (!r.hasResumeLink && !r.hasProfileResumeLink) { $('#step1Subtitle').text('No resume available for analysis.'); $('#btnAnalyzeResume').prop('disabled', true); }
+        } else if (!r.hasResumeLink && !r.hasProfileResumeLink) {
+            $('#step1Subtitle').html('No resume available for analysis. <strong>Upload a resume to proceed.</strong>');
+            $('#btnAnalyzeResume').prop('disabled', true);
+        }
 
         if (r.assessmentGroupId && r.assessmentGroupId > 0) {
             markStep(2, 'completed', 'Assigned to ' + (r.assessmentGroupName || 'AG #' + r.assessmentGroupId) + (r.assessmentGroupAssignedAt ? ' on ' + r.assessmentGroupAssignedAt : ''));
-        } else if (!r.resolvedAssessmentGroupId) { $('#step2Subtitle').text('No assessment group found for MAG: ' + (r.magName || '—')); $('#btnAssignAG').prop('disabled', true); }
+        } else if (!r.interviewerProfileId) {
+            $('#step2Subtitle').html('<span class="text-danger">Sender is not a known interviewer in the system. Cannot assign AG.</span>');
+            $('#btnAssignAG').prop('disabled', true);
+        } else if (!r.resolvedAssessmentGroupId) {
+            $('#step2Subtitle').html('<span class="text-warning">No assessment group found for MAG: <strong>' + (r.magName || '—') + '</strong>. Check MAG name in MasterAssessmentGroup table.</span>');
+            $('#btnAssignAG').prop('disabled', true);
+        }
     }
 
     function markStep(step, state, message) {
@@ -595,29 +646,85 @@
         });
     });
 
+    // Resume Upload
+    $('#btnUploadResume').on('click', function () { $('#resumeUploadArea').toggle(); });
+    $('#btnCancelUpload').on('click', function () { $('#resumeUploadArea').hide(); $('#resumeFileInput').val(''); $('#uploadResult').hide(); });
+
+    $('#btnConfirmUpload').on('click', function () {
+        if (!currentRecordId) return;
+        var fileInput = document.getElementById('resumeFileInput');
+        if (!fileInput.files || fileInput.files.length === 0) { alert('Please select a file.'); return; }
+
+        var formData = new FormData();
+        formData.append('id', currentRecordId);
+        formData.append('resumeFile', fileInput.files[0]);
+        formData.append('__RequestVerificationToken', verificationToken);
+
+        $('#uploadProgress').show(); $('#uploadResult').hide();
+        $('#btnConfirmUpload').prop('disabled', true);
+
+        $.ajax({
+            url: '@Url.Action("UploadResume", "InterviewerAvailability")',
+            type: 'POST', data: formData, processData: false, contentType: false, timeout: 120000,
+            success: function (res) {
+                $('#uploadProgress').hide(); $('#btnConfirmUpload').prop('disabled', false);
+                if (res.success) {
+                    $('#uploadResult').html('<span class="text-success" style="font-size:11px;"><i class="fas fa-check-circle me-1"></i>Uploaded successfully.</span>').show();
+                    $('#btnViewResume').attr('href', res.resumeLink).show();
+                    $('#btnAnalyzeResume').prop('disabled', false);
+                    $('#step1Subtitle').text('Resume uploaded. Click Analyze Resume to proceed.');
+                    if (currentRecord) { currentRecord.resumeLink = res.resumeLink; currentRecord.hasResumeLink = true; }
+                    setTimeout(function(){ $('#resumeUploadArea').hide(); }, 2000);
+                } else {
+                    $('#uploadResult').html('<span class="text-danger" style="font-size:11px;"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Upload failed.') + '</span>').show();
+                }
+            },
+            error: function () {
+                $('#uploadProgress').hide(); $('#btnConfirmUpload').prop('disabled', false);
+                $('#uploadResult').html('<span class="text-danger" style="font-size:11px;"><i class="fas fa-times-circle me-1"></i>Upload request failed.</span>').show();
+            }
+        });
+    });
+
     $('#btnAnalyzeResume').on('click', function () {
         if (!currentRecordId) return; var btn = $(this);
         btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Analyzing...'); $('#step1Number').removeClass('pending').addClass('running');
-        $('#step1Subtitle').text('AI analysis in progress — this may take 30–60 seconds...');
+        $('#step1Subtitle').text('AI analysis in progress \u2014 this may take 30\u201360 seconds...');
         $.ajax({ url: '@Url.Action("AnalyzeResume", "InterviewerAvailability")', type: 'POST', timeout: 180000,
             data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
             success: function (res) {
-                if (res.success) { var h='<strong>Verdict:</strong> '+(res.verdict||'—')+' | <strong>Score:</strong> '+(res.fitmentScore||'—');
+                if (res.success) {
+                    var h='<strong>Verdict:</strong> '+(res.verdict||'—')+' | <strong>Score:</strong> '+(res.fitmentScore||'—');
                     if(res.completeFitmentAnalysis) h+='<br/><div class="mt-1" style="white-space:pre-wrap;">'+res.completeFitmentAnalysis+'</div>';
-                    markStep(1,'completed',h); if(currentRecord){currentRecord.resumeAIAnalysisCompleted=true;currentRecord.resumeAIAnalysisResult=res.analysisResult;} if(res.isPositiveVerdict) updateStatusBadge('Verified');
-                } else { markStep(1,'failed',res.error||'Analysis failed.'); btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry'); $('#step1Subtitle').text('Runs the resume through AI to evaluate fitment for the specialization'); }
+                    markStep(1,'completed',h);
+                    if(currentRecord){currentRecord.resumeAIAnalysisCompleted=true;currentRecord.resumeAIAnalysisResult=res.analysisResult;}
+                    if(res.isPositiveVerdict) updateStatusBadge('Verified');
+                } else {
+                    var errHtml = res.error || 'Analysis failed.';
+                    if (res.needsUpload) errHtml += ' <br/><em style="font-size:11px;">Use the Upload Resume button to upload a valid PDF.</em>';
+                    markStep(1,'failed',errHtml);
+                    btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry');
+                    $('#step1Subtitle').text('Runs the resume through AI to evaluate fitment for the specialization');
+                }
             },
-            error: function () { markStep(1,'failed','Request timed out or failed.'); btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry'); $('#step1Subtitle').text('Runs the resume through AI to evaluate fitment for the specialization'); }
+            error: function (xhr, status) {
+                var msg = status === 'timeout' ? 'Request timed out. The analysis may still be running — try refreshing in a minute.' : 'Request failed. Please try again.';
+                markStep(1,'failed',msg);
+                btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry');
+                $('#step1Subtitle').text('Runs the resume through AI to evaluate fitment for the specialization');
+            }
         });
     });
 
     $('#btnAssignAG').on('click', function () {
         if (!currentRecordId) return; var btn = $(this);
         btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Assigning...'); $('#step2Number').removeClass('pending').addClass('running');
-        $.ajax({ url: '@Url.Action("AssignAssessmentGroup", "InterviewerAvailability")', type: 'POST',
+        $.ajax({ url: '@Url.Action("AssignAssessmentGroup", "InterviewerAvailability")', type: 'POST', timeout: 60000,
             data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
-            success: function (res) { if (res.success) { markStep(2,'completed',res.message||'Assessment group assigned.'); updateStatusBadge('Closed'); }
-                else { markStep(2,'failed',res.error||'Assignment failed.'); btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry'); } },
+            success: function (res) {
+                if (res.success) { markStep(2,'completed',res.message||'Assessment group assigned.'); updateStatusBadge('Closed'); }
+                else { markStep(2,'failed',res.error||'Assignment failed.'); btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry'); }
+            },
             error: function () { markStep(2,'failed','Request failed.'); btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry'); }
         });
     });

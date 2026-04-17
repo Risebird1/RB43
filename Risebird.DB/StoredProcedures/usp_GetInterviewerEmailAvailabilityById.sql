@@ -35,7 +35,9 @@ BEGIN
     FROM InterviewerEmailAvailability ea
     LEFT JOIN InterviewerProfile ip ON ip.Id = ea.InterviewerProfileId
     LEFT JOIN UserList ul ON ul.id = ea.UserId
-    LEFT JOIN MasterAssessmentGroup mag ON mag.MAGName = ea.MagName AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
+    LEFT JOIN MasterAssessmentGroup mag
+        ON LTRIM(RTRIM(LOWER(mag.MAGName))) = LTRIM(RTRIM(LOWER(ea.MagName)))
+        AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
     LEFT JOIN AssessmentGroup ag ON ag.id = mag.AssessmentGroupId
     WHERE ea.Id = @Id
 END
