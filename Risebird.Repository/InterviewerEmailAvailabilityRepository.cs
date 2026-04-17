@@ -210,6 +210,28 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> UpdateResumeLinkAsync(int id, string resumeLink)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var parameters = new DynamicParameters();
+                parameters.Add("@Id", id);
+                parameters.Add("@ResumeLink", resumeLink);
+
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateInterviewerEmailAvailabilityResumeLink", parameters,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<bool> DropInterviewerProfileAsync(int interviewerProfileId, string modifiedBy)
         {
             try

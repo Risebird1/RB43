@@ -30,6 +30,8 @@ namespace Risebird.Web.Controllers
         private readonly IClientService                          _clientService;
         private readonly IIRFService                             _irfService;
         private readonly IWhatsAppHelper                         _whatsAppHelper;
+        private readonly IAzureStorageHelper                     _azureStorageHelper;
+        private readonly IFileMimeTypeHelper                     _fileMimeTypeHelper;
 
         public InterviewerAvailabilityController(
             IInterviewerEmailAvailabilityRepository repository,
@@ -41,7 +43,9 @@ namespace Risebird.Web.Controllers
             IInterviewerService                     interviewerService,
             IClientService                          clientService,
             IIRFService                             irfService,
-            IWhatsAppHelper                         whatsAppHelper)
+            IWhatsAppHelper                         whatsAppHelper,
+            IAzureStorageHelper                     azureStorageHelper,
+            IFileMimeTypeHelper                     fileMimeTypeHelper)
         {
             _repository             = repository;
             _logger                 = logger;
@@ -53,6 +57,8 @@ namespace Risebird.Web.Controllers
             _clientService          = clientService;
             _irfService             = irfService;
             _whatsAppHelper         = whatsAppHelper;
+            _azureStorageHelper     = azureStorageHelper;
+            _fileMimeTypeHelper     = fileMimeTypeHelper;
         }
 
         // ── Dashboard ───────────────────────────────────────────────────────────────
@@ -259,6 +265,61 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ── Upload Resume (AJAX) ────────────────────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadResume(int id, IFormFile resumeFile)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                if (resumeFile == null || resumeFile.Length == 0)
+                    return Json(new { success = false, error = "No file selected." });
+
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(resumeFile);
+                var allowedTypes = new[]
+                {
+                    "application/pdf",
+                    "application/msword",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                };
+
+                if (!allowedTypes.Contains(fileMimeType))
+                    return Json(new { success = false, error = "Only PDF, DOC, and DOCX files are allowed." });
+
+                var record = await _repository.GetEmailAvailabilityByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                var fileName = $"EA_{id}_{DateTime.UtcNow:yyyyMMddHHmmss}_{resumeFile.FileName.Replace(" ", "_")}";
+
+                await _azureStorageHelper.InsertBlob(fileName, "resumes", resumeFile);
+                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                var blob = containerRef.GetBlockBlobReference(fileName);
+                string uploadedUrl = blob.Uri.ToString();
+
+                if (string.IsNullOrEmpty(uploadedUrl))
+                    return Json(new { success = false, error = "Upload failed — could not retrieve blob URL." });
+
+                var ok = await _repository.UpdateResumeLinkAsync(id, uploadedUrl);
+
+                return Json(new
+                {
+                    success = ok,
+                    resumeLink = uploadedUrl,
+                    message = ok ? "Resume uploaded successfully." : "Upload succeeded but could not update record."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = "Upload failed: " + ex.Message });
+            }
+        }
+
         // ── Analyze Resume (AJAX) ───────────────────────────────────────────────────
 
         [HttpPost]
@@ -288,21 +349,58 @@ namespace Risebird.Web.Controllers
                     resumeUrl = record.ProfileResumeLink;
 
                 if (string.IsNullOrWhiteSpace(resumeUrl))
-                    return Json(new { success = false, error = "No resume link available for analysis." });
+                    return Json(new { success = false, error = "No resume link available. Please upload a resume first using the upload button.", needsUpload = true });
 
                 string jobTitle = record.AssessmentGroupName ?? record.MagName ?? record.JobTitle ?? "General";
 
-                var resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl);
+                string resumeText = null;
+
+                // Try reading as PDF first
+                try
+                {
+                    resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl);
+                }
+                catch (Exception pdfEx)
+                {
+                    await _logger.LogMessage(LogLevelInfo.Warning, pdfEx);
+                }
+
+                // If PDF reading failed, try DOC-to-PDF conversion
                 if (string.IsNullOrWhiteSpace(resumeText))
-                    return Json(new { success = false, error = "Could not read resume PDF from the provided link." });
+                {
+                    try
+                    {
+                        bool isDoc = await _azureStorageHelper.IsDocFileAsync(resumeUrl);
+                        if (isDoc)
+                        {
+                            string convertedPdfUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
+                            if (!string.IsNullOrWhiteSpace(convertedPdfUrl))
+                            {
+                                resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedPdfUrl);
+                            }
+                        }
+                    }
+                    catch (Exception docEx)
+                    {
+                        await _logger.LogMessage(LogLevelInfo.Warning, docEx);
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(resumeText))
+                    return Json(new
+                    {
+                        success = false,
+                        error = "Could not read the resume. The file may be corrupted, password-protected, or in an unsupported format. Please upload a valid PDF resume using the upload button.",
+                        needsUpload = true
+                    });
 
                 var aiResponse = await _assistantServiceHelper.GenerateResumeAnalysis(resumeText, jobTitle);
                 if (aiResponse == null)
-                    return Json(new { success = false, error = "AI analysis returned no response." });
+                    return Json(new { success = false, error = "AI analysis returned no response. Please try again." });
 
                 var analysisJson = aiResponse.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value;
                 if (string.IsNullOrWhiteSpace(analysisJson))
-                    return Json(new { success = false, error = "AI analysis returned empty result." });
+                    return Json(new { success = false, error = "AI analysis returned empty result. Please try again." });
 
                 var analysis = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(analysisJson);
                 bool isPositiveVerdict = analysis != null
@@ -332,7 +430,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false, error = ex.Message });
+                return Json(new { success = false, error = "Analysis failed: " + ex.Message });
             }
         }
 
