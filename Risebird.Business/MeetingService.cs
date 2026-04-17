@@ -4623,6 +4623,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<QcInterviewAIMergePendingRow> CheckForAiContradiction(int qcEvaluationId)
+        {
+            try
+            {
+                return await _meetingRespository.CheckForAiContradiction(qcEvaluationId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public async Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId)
         {
             return await _meetingRespository.GetCandidateInterviewDetails(uniqueId, irfId, interviewId, candidateId);

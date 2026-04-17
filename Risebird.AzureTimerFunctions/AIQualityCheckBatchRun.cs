@@ -54,6 +54,21 @@ namespace Risebird.AzureTimerFunctions
                             log.LogInformation($"AIQualityCheckBatchRun : C# Timer trigger {ex.Message}");
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         }
+                        try
+                        {
+                            using (HttpClient client = new HttpClient())
+                            {
+                                client.Timeout = TimeSpan.FromMinutes(3);
+                                var request = new HttpRequestMessage(HttpMethod.Get, $"https://portal.risebird.io/Interview/AIClientReport?interviewId={item.id}&irfId={item.irfIntId}&IsContradictionAI={true}");
+                                var response = await client.SendAsync(request);
+                                response.EnsureSuccessStatusCode();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            log.LogInformation($"AIQualityCheckBatchRun : API Call For transcriptSummaryCleanedJson {ex.Message}");
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        }
 
                     }
 
