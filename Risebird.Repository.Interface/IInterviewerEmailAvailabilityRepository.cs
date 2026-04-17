@@ -28,5 +28,7 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteEmailAvailabilityAsync(int id);
 
         Task<bool> DropInterviewerProfileAsync(int interviewerProfileId, string modifiedBy);
+
+        Task<bool> UpdateResumeLinkAsync(int id, string resumeLink);
     }
 }
