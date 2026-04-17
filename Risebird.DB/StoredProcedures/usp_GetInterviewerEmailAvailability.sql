@@ -37,7 +37,9 @@ BEGIN
         COUNT(*) OVER()       AS TotalCount
     FROM InterviewerEmailAvailability ea
     LEFT JOIN InterviewerProfile ip ON ip.Id = ea.InterviewerProfileId
-    LEFT JOIN MasterAssessmentGroup mag ON mag.MAGName = ea.MagName AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
+    LEFT JOIN MasterAssessmentGroup mag
+        ON LTRIM(RTRIM(LOWER(mag.MAGName))) = LTRIM(RTRIM(LOWER(ea.MagName)))
+        AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
     LEFT JOIN AssessmentGroup ag ON ag.id = mag.AssessmentGroupId
     WHERE
         (@Status IS NULL OR ea.Status = @Status)

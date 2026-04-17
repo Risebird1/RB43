@@ -51,13 +51,13 @@ BEGIN
         irf.id,
         @InterviewerProfileId,
         @UserId,
-        0,
+        1,
         1,
         ISNULL(irf.FlatRate, 0),
         'EmailAvailability',
         GETDATE()
     FROM IRF irf
-    WHERE irf.AssessmentGroupId = CAST(@AssessmentGroupId AS VARCHAR)
+    WHERE LTRIM(RTRIM(irf.AssessmentGroupId)) = CAST(@AssessmentGroupId AS VARCHAR)
       AND ISNULL(irf.IsPaused, 0) = 0
       AND irf.EndDate >= GETDATE()
       AND NOT EXISTS (
