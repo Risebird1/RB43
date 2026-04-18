@@ -1,37 +1,18 @@
 {
   "manifest_version": 3,
   "name": "Risebird Proctoring Assistant",
-  "description": "Interview/exam proctoring extension with capture, monitoring, control, and reporting flows.",
-  "version": "1.3.0",
+  "description": "Risebird Proctoring for AI Interview: join; tab/window monitoring; DNR-blocked sites; screenshots; violation logging. Risebird API.",
+  "version": "1.3.1",
+  "minimum_chrome_version": "121",
   "permissions": [
-    "activeTab",
     "tabs",
-    "tabCapture",
     "windows",
     "webNavigation",
     "storage",
-    "notifications",
-    "browsingData",
-    "webRequest",
-    "clipboardRead",
-    "clipboardWrite",
     "declarativeNetRequest",
-    "declarativeNetRequestFeedback",
-    "identity",
-    "cookies",
-    "desktopCapture"
+    "declarativeNetRequestFeedback"
   ],
-  "host_permissions": [
-    "<all_urls>",
-    "https://tests.mettl.com/*",
-    "https://portal.risebird.io/*",
-    "https://*.risebird.io/*",
-    "http://localhost/*",
-    "https://localhost/*",
-    "https://localhost:44329/*",
-    "http://127.0.0.1/*",
-    "https://127.0.0.1/*"
-  ],
+  "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "service-worker.js"
   },

@@ -31,6 +31,17 @@ If Chrome still errors, check that these files exist next to manifest.json:
   service-worker.js, content-monitor.js, popup.html, popup.js, popup.css,
   rules\restricted-sites.json
 
+Chrome Web Store (publishing)
+-------------------------------
+- Manifest keeps only APIs used in code: tabs, windows, webNavigation, storage,
+  declarativeNetRequest + declarativeNetRequestFeedback (for onRuleMatched).
+- Host access is "<all_urls>" so the service worker can read tab URLs during
+  proctoring, capture screenshots, and apply dynamic DNR rules from the server.
+  Explain this clearly in the store listing and link your privacy policy.
+- Optional: add icons (16 / 48 / 128 PNG) under icons\ and an "icons" entry in
+  manifest.json for toolbar + listing polish; the dashboard also accepts promo
+  images separately.
+
 --- Where event logs are saved ---
 
 1) In the extension (candidate machine)
