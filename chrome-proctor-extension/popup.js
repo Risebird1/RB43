@@ -8,6 +8,26 @@ function showMessage(text, isError = false) {
   messageEl.style.color = isError ? '#b42318' : '#1f6feb';
 }
 
+/** Optional broad http(s) hosts — requested on user click so Chrome shows the permission dialog (store-friendly vs static broad host_permissions). */
+async function ensureWebAccessForProctoring() {
+  const origins = ['http://*/*', 'https://*/*'];
+  try {
+    if (await chrome.permissions.contains({ origins })) return true;
+  } catch (e) {
+    console.warn('ensureWebAccessForProctoring contains', e);
+  }
+  return new Promise((resolve) => {
+    chrome.permissions.request({ origins }, (granted) => {
+      if (chrome.runtime.lastError) {
+        console.warn(chrome.runtime.lastError);
+        resolve(false);
+        return;
+      }
+      resolve(!!granted);
+    });
+  });
+}
+
 function sendMessage(payload) {
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage(payload, (response) => {
@@ -95,7 +115,12 @@ async function applySavedJoinFields() {
 async function refreshState() {
   await applySavedJoinFields();
   const { state } = await sendMessage({ type: 'GET_STATE' });
-  statusEl.textContent = state.sessionActive ? 'Running' : state.joined ? 'Joined' : 'Idle';
+  let status =
+    state.sessionActive ? 'Running' : state.joined ? 'Joined' : 'Idle';
+  if (state.joined && state.hasWebMonitoringAccess === false) {
+    status += ' — allow “all websites” for full monitoring';
+  }
+  statusEl.textContent = status;
   violationsEl.textContent = String(state.violations);
   document.getElementById('clipboardBlocking').checked = Boolean(state.settings.clipboardBlocking);
   renderEvents(state.events);
@@ -114,6 +139,12 @@ document.getElementById('joinSession').addEventListener('click', async () => {
       throw new Error('Session Token and Interview ID are required.');
     }
 
+    if (!(await ensureWebAccessForProctoring())) {
+      throw new Error(
+        'Allow access to all websites when Chrome prompts — required to monitor tabs and block restricted sites during the exam.'
+      );
+    }
+
     await sendMessage({ type: 'JOIN_SESSION', payload });
     await applySavedJoinFields();
     showMessage('Session joined — name, email, token, and interview ID are saved for next time.');
@@ -125,6 +156,11 @@ document.getElementById('joinSession').addEventListener('click', async () => {
 
 document.getElementById('startSession').addEventListener('click', async () => {
   try {
+    if (!(await ensureWebAccessForProctoring())) {
+      throw new Error(
+        'Allow access to all websites when Chrome prompts — required for tab monitoring and screenshots during the exam.'
+      );
+    }
     await sendMessage({ type: 'START_SESSION' });
     showMessage('Exam monitoring started.');
     await refreshState();

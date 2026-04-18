@@ -31,16 +31,59 @@ If Chrome still errors, check that these files exist next to manifest.json:
   service-worker.js, content-monitor.js, popup.html, popup.js, popup.css,
   rules\restricted-sites.json
 
-Chrome Web Store (publishing)
--------------------------------
-- Manifest keeps only APIs used in code: tabs, windows, webNavigation, storage,
-  declarativeNetRequest + declarativeNetRequestFeedback (for onRuleMatched).
-- Host access is "<all_urls>" so the service worker can read tab URLs during
-  proctoring, capture screenshots, and apply dynamic DNR rules from the server.
-  Explain this clearly in the store listing and link your privacy policy.
-- Optional: add icons (16 / 48 / 128 PNG) under icons\ and an "icons" entry in
-  manifest.json for toolbar + listing polish; the dashboard also accepts promo
-  images separately.
+Chrome Web Store — smoother review (do this before submit)
+------------------------------------------------------------
+A) Account & package
+  1. Use a dedicated Chrome Web Store developer account (one-time fee if needed).
+  2. Zip ONLY the extension folder contents (manifest.json, JS, HTML, CSS, rules\).
+     Do NOT include: _metadata, .git, .vs, or the whole repo — Chrome rejects junk.
+  3. Load the same zip via "Pack extension" or unzip and "Load unpacked" once
+     to confirm it runs.
+
+B) Privacy & trust (required for broad host access)
+  1. Publish a privacy policy URL (your site) that states: what you collect during
+     proctoring (name, email, interview id, tab URLs/titles/hosts, events,
+     heartbeats, visible-tab screenshots), why, retention, and contact.
+  2. Use the SAME policy URL in the store listing field.
+
+C) Listing text (reduces back-and-forth with reviewers)
+  1. Single purpose: one sentence — proctoring for Risebird AI Interview only.
+  2. Short description: use manifest description or expand slightly; no unrelated
+     marketing.
+  3. Permission justifications: for EACH permission, one sentence tied to a real
+     feature (tabs = read active URL/title for tab-switch events; windows = blur;
+     webNavigation = blocked-nav fallback; storage = local session + event log;
+     declarativeNetRequest = block restricted URLs; declarativeNetRequestFeedback =
+     log when a block rule matched).
+  4. Host permission ("Read and change all your data on all websites" or similar):
+     paste a paragraph that http+https access is required to (1) read which site
+     is active when the candidate switches tabs during an exam, (2) capture
+     optional screenshots of the visible tab, (3) apply server-provided block
+     lists to any hostname. State you do not inject ads or unrelated scripts.
+
+D) Optional but helpful
+  1. Screenshots (1280x800 or store-required sizes) showing: popup, join flow,
+     violation list — so reviewers see the UI matches the description.
+  2. A short screen recording (if the form asks) walking through join + one tab
+     switch — speeds trust.
+  3. If review asks for a test login, provide a time-limited test interview link
+     and steps in "Notes to reviewer".
+
+E) Manifest note (this repo) — broad host access & store review
+  - Default host_permissions are NARROW: Risebird (*.risebird.io), localhost /
+    127.0.0.1 (incl. port 44329), and Mettl (tests.mettl.com + *.mettl.com).
+  - Full cross-site proctoring uses optional_host_permissions: "http://*/*" and
+    "https://*/*". Chrome prompts the candidate to allow this when they Join or
+    Start exam (popup or dashboard handshake). This matches Chrome’s guidance to
+    avoid static broad host_permissions where possible.
+  - activeTab is included for toolbar / explicit-tab flows per Chrome guidance.
+  - APIs: activeTab, tabs, windows, webNavigation, storage, declarativeNetRequest,
+    declarativeNetRequestFeedback.
+  - Store listing: explain that optional “all websites” access is requested at
+    join/start for tab monitoring, screenshots, and dynamic URL blocking — not at
+    install.
+  - Optional: add icons (16 / 48 / 128 PNG) under icons\ and an "icons" entry in
+    manifest.json for toolbar + listing polish.
 
 --- Where event logs are saved ---
 

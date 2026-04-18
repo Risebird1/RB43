@@ -43,6 +43,31 @@ const state = {
 let tabActivatedListener = null;
 let windowFocusListener = null;
 
+/** Broad http(s) access — optional; requested at join/start (user gesture). Required for tab URL logging & screenshots on arbitrary sites during proctoring. */
+const OPTIONAL_WEB_ORIGINS = ['http://*/*', 'https://*/*'];
+
+async function hasOptionalWebOrigins() {
+  try {
+    return await chrome.permissions.contains({ origins: OPTIONAL_WEB_ORIGINS });
+  } catch {
+    return false;
+  }
+}
+
+async function requestOptionalWebOrigins() {
+  try {
+    return await chrome.permissions.request({ origins: OPTIONAL_WEB_ORIGINS });
+  } catch {
+    return false;
+  }
+}
+
+/** Call from handlers tied to user action (popup click or content-script message). */
+async function ensureOptionalWebOriginsForProctoring() {
+  if (await hasOptionalWebOrigins()) return true;
+  return requestOptionalWebOrigins();
+}
+
 function pushEvent(entry) {
   state.events.push(entry);
   if (entry.level === 'violation') state.violations += 1;
@@ -501,6 +526,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ ok: false, error: 'Missing session token from dashboard.' });
         return;
       }
+      if (!(await ensureOptionalWebOriginsForProctoring())) {
+        sendResponse({
+          ok: false,
+          error:
+            'Allow “all websites” access when Chrome prompts (needed to monitor tabs and enforce blocked sites during the exam), then try again.',
+        });
+        return;
+      }
       state.sessionToken = p.sessionToken || null;
       state.interviewId = interviewId;
       state.name = p.name || '';
@@ -561,6 +594,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ ok: false, error: 'Session token is required.' });
         return;
       }
+      if (!(await ensureOptionalWebOriginsForProctoring())) {
+        sendResponse({
+          ok: false,
+          error:
+            'Allow “all websites” access when Chrome prompts (needed to monitor tabs during the exam), then click Join again.',
+        });
+        return;
+      }
       state.sessionToken = p.sessionToken;
       state.interviewId = interviewId;
       state.name = p.name || '';
@@ -615,6 +656,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return;
       }
+      if (!(await ensureOptionalWebOriginsForProctoring())) {
+        sendResponse({
+          ok: false,
+          error:
+            'Allow “all websites” access when Chrome prompts (needed for full proctoring), then try starting the exam again.',
+        });
+        return;
+      }
       if (!state.joined || !state.sessionToken) {
         sendResponse({ ok: false, error: 'Join session first (reload dashboard or use extension popup).' });
         return;
@@ -660,6 +709,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message?.type === 'START_SESSION') {
+      if (!(await ensureOptionalWebOriginsForProctoring())) {
+        sendResponse({
+          ok: false,
+          error:
+            'Allow “all websites” access when Chrome prompts (needed to monitor tabs and capture during the exam), then try again.',
+        });
+        return;
+      }
       await resolveApiOrigin(sender.tab);
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       const tab = tabs[0];
@@ -735,6 +792,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           violations: state.violations,
           settings: { clipboardBlocking: state.settings.clipboardBlocking },
           events: state.events,
+          hasWebMonitoringAccess: await hasOptionalWebOrigins(),
         },
       });
       return;
