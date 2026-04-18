@@ -113,17 +113,39 @@ async function applySavedJoinFields() {
 }
 
 async function refreshState() {
-  await applySavedJoinFields();
-  const { state } = await sendMessage({ type: 'GET_STATE' });
-  let status =
-    state.sessionActive ? 'Running' : state.joined ? 'Joined' : 'Idle';
-  if (state.joined && state.hasWebMonitoringAccess === false) {
-    status += ' — allow “all websites” for full monitoring';
+  try {
+    await applySavedJoinFields();
+    const { state } = await sendMessage({ type: 'GET_STATE' });
+    const needWebAccess =
+      state.joined === true && state.hasWebMonitoringAccess !== true;
+
+    let status =
+      state.sessionActive ? 'Running' : state.joined ? 'Joined' : 'Idle';
+    if (needWebAccess) {
+      status += ' — click “Allow full tab monitoring” below';
+    }
+    statusEl.textContent = status;
+    violationsEl.textContent = String(state.violations);
+
+    const banner = document.getElementById('webAccessBanner');
+    const enableBtn = document.getElementById('enableWebMonitoring');
+    if (banner) {
+      banner.hidden = !needWebAccess;
+      if (needWebAccess && enableBtn) {
+        requestAnimationFrame(() => {
+          try {
+            enableBtn.focus();
+          } catch (_) {
+            /* ignore */
+          }
+        });
+      }
+    }
+    document.getElementById('clipboardBlocking').checked = Boolean(state.settings.clipboardBlocking);
+    renderEvents(state.events);
+  } catch (e) {
+    showMessage(e.message || String(e), true);
   }
-  statusEl.textContent = status;
-  violationsEl.textContent = String(state.violations);
-  document.getElementById('clipboardBlocking').checked = Boolean(state.settings.clipboardBlocking);
-  renderEvents(state.events);
 }
 
 document.getElementById('joinSession').addEventListener('click', async () => {
@@ -213,6 +235,23 @@ document.getElementById('downloadReport').addEventListener('click', async () => 
 document.getElementById('refresh').addEventListener('click', () =>
   refreshState().catch((e) => showMessage(e.message, true))
 );
+
+const enableWebBtn = document.getElementById('enableWebMonitoring');
+if (enableWebBtn) {
+  enableWebBtn.addEventListener('click', async () => {
+    try {
+      const ok = await ensureWebAccessForProctoring();
+      if (!ok) {
+        showMessage('Permission was not granted. Click the button again and allow access in Chrome.', true);
+        return;
+      }
+      showMessage('Full tab monitoring enabled.');
+      await refreshState();
+    } catch (e) {
+      showMessage(e.message || String(e), true);
+    }
+  });
+}
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== 'local' || !changes.proctoringLastJoin) return;

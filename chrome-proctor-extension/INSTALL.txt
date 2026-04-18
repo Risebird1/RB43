@@ -73,9 +73,9 @@ E) Manifest note (this repo) — broad host access & store review
   - Default host_permissions are NARROW: Risebird (*.risebird.io), localhost /
     127.0.0.1 (incl. port 44329), and Mettl (tests.mettl.com + *.mettl.com).
   - Full cross-site proctoring uses optional_host_permissions: "http://*/*" and
-    "https://*/*". Chrome prompts the candidate to allow this when they Join or
-    Start exam (popup or dashboard handshake). This matches Chrome’s guidance to
-    avoid static broad host_permissions where possible.
+    "https://*/*". The popup shows “Allow full tab monitoring” after join if needed;
+    do not call chrome.permissions.request from the service worker on dashboard
+    handshake (no user gesture — join would fail before the popup opened; fixed v1.4.1).
   - activeTab is included for toolbar / explicit-tab flows per Chrome guidance.
   - APIs: activeTab, tabs, windows, webNavigation, storage, declarativeNetRequest,
     declarativeNetRequestFeedback.

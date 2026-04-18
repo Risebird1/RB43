@@ -35,6 +35,31 @@ button.secondary {
   background: #6c757d;
 }
 
+.web-access-banner {
+  background: #fff8e6;
+  border: 1px solid #e6c200;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.web-access-banner strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.web-access-hint {
+  margin: 0 0 8px 0;
+  color: #333;
+  line-height: 1.35;
+}
+
+.web-access-banner button {
+  width: 100%;
+  margin-top: 4px;
+  background: #b45309;
+}
+
 input[type='text'],
 input[type='email'] {
   width: 100%;

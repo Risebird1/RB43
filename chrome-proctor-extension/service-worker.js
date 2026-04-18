@@ -54,19 +54,7 @@ async function hasOptionalWebOrigins() {
   }
 }
 
-async function requestOptionalWebOrigins() {
-  try {
-    return await chrome.permissions.request({ origins: OPTIONAL_WEB_ORIGINS });
-  } catch {
-    return false;
-  }
-}
-
-/** Call from handlers tied to user action (popup click or content-script message). */
-async function ensureOptionalWebOriginsForProctoring() {
-  if (await hasOptionalWebOrigins()) return true;
-  return requestOptionalWebOrigins();
-}
+/** Optional web hosts are requested from the popup (user gesture); see popup.js. */
 
 function pushEvent(entry) {
   state.events.push(entry);
@@ -526,14 +514,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ ok: false, error: 'Missing session token from dashboard.' });
         return;
       }
-      if (!(await ensureOptionalWebOriginsForProctoring())) {
-        sendResponse({
-          ok: false,
-          error:
-            'Allow “all websites” access when Chrome prompts (needed to monitor tabs and enforce blocked sites during the exam), then try again.',
-        });
-        return;
-      }
+      /* Do not call chrome.permissions.request here — it requires a user gesture and
+         will fail from the service worker, blocking join before the popup opens. */
       state.sessionToken = p.sessionToken || null;
       state.interviewId = interviewId;
       state.name = p.name || '';
@@ -594,14 +576,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ ok: false, error: 'Session token is required.' });
         return;
       }
-      if (!(await ensureOptionalWebOriginsForProctoring())) {
-        sendResponse({
-          ok: false,
-          error:
-            'Allow “all websites” access when Chrome prompts (needed to monitor tabs during the exam), then click Join again.',
-        });
-        return;
-      }
+      /* Optional web access is requested from the popup (user gesture), not here. */
       state.sessionToken = p.sessionToken;
       state.interviewId = interviewId;
       state.name = p.name || '';
@@ -656,14 +631,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return;
       }
-      if (!(await ensureOptionalWebOriginsForProctoring())) {
-        sendResponse({
-          ok: false,
-          error:
-            'Allow “all websites” access when Chrome prompts (needed for full proctoring), then try starting the exam again.',
-        });
-        return;
-      }
+      /* No permissions.request here — page-driven; optional access via popup if needed. */
       if (!state.joined || !state.sessionToken) {
         sendResponse({ ok: false, error: 'Join session first (reload dashboard or use extension popup).' });
         return;
@@ -709,14 +677,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message?.type === 'START_SESSION') {
-      if (!(await ensureOptionalWebOriginsForProctoring())) {
-        sendResponse({
-          ok: false,
-          error:
-            'Allow “all websites” access when Chrome prompts (needed to monitor tabs and capture during the exam), then try again.',
-        });
-        return;
-      }
+      /* Popup already requests optional hosts on button click before this message. */
       await resolveApiOrigin(sender.tab);
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       const tab = tabs[0];
