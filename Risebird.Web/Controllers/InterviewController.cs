@@ -9272,7 +9272,7 @@ namespace Risebird.Web.Controllers
                     var qcResult = await PerformQualityCheck(model, regenerateAIQC, isBackgroudJobRequest);
                     if (sourcetype == "PaymentSla")
                     {
-                        if (!string.IsNullOrWhiteSpace(qcResult.verdict))
+                        if (!string.IsNullOrWhiteSpace(qcResult.final_verdict))
                         {
                             return Json("Generate Report AI Successfully.");
                         }
@@ -9287,8 +9287,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.InterviewDate = model.interviewDate;
                     ViewBag.IRFName = model.IRFName;
                     ViewBag.JdTitle = model.JDTiltle;
-                    ViewBag.AIVerdict = qcResult.verdict;
-                    ViewBag.AIScore = qcResult.score;
+                    ViewBag.AIVerdict = qcResult.final_verdict;
+                    ViewBag.AIScore = qcResult.final_score;
                     //return View("PerformQualityCheck", qcResult);
                     return View("PerformQualityCheckV2", qcResult.completeAnalysis);
                 }

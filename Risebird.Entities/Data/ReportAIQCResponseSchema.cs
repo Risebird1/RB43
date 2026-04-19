@@ -23,7 +23,7 @@ namespace Risebird.Entities.Data
 
     public class DerivedMetrics
     {
-        public int tech_skill_percentage { get; set; }
+        public double tech_skill_percentage { get; set; }
         public int skill_coverage_percentage { get; set; }
         public int score_mismatch { get; set; }
         public string status_band_from_score { get; set; }

@@ -1477,6 +1477,7 @@
             data: { 'interviewId': interviewid, 'irfId': irfId, 'isOpenAIQC': true, 'isBackgroudJobRequest': true, 'sourcetype': 'PaymentSla' },
             success: function (data) {
                 alert(data);
+                location.reload();
             },
             error: function () {
                 alert('Report AI evaluation could not be completed. Please try again.');
@@ -1493,6 +1494,7 @@
             data: { 'interviewId': interviewid },
             success: function (data) {
                 alert(data);
+                location.reload();
             },
             error: function () {
                 alert('Transcript AI evaluation could not be completed. Please try again.');
@@ -1509,6 +1511,7 @@
             data: { 'interviewId': interviewid, 'irfId': irfId, 'IsContradictionAI': true, 'sourcetype': 'PaymentSla' },
             success: function (data) {
                 alert(data);
+                location.reload();
             },
             error: function () {
                 alert('Contradiction AI evaluation could not be completed. Please try again.');
