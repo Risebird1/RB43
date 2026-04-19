@@ -7672,8 +7672,8 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                     var parameters = new DynamicParameters();
                     parameters.Add("@interviewId", interviewId);
                     parameters.Add("@completeAnalysis", model.completeAnalysis);
-                    parameters.Add("@score", model.score);
-                    parameters.Add("@verdict", model.verdict);
+                    parameters.Add("@score", model.final_score);
+                    parameters.Add("@verdict", model.final_verdict);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveOpenAIReportQCV2", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return true;
