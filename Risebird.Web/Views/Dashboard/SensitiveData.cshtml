@@ -513,6 +513,7 @@
                                                     <tr>
                                                         <th>Action</th>
                                                         <th>IRF ID</th>
+                                                        <th>Priority</th>
                                                         <th>Interview Date</th>
                                                         <th>Candidate</th>
                                                         @if (ViewBag.actionstatus == "QCReport")
@@ -540,6 +541,7 @@
                                                         {
                                                             <th>Report AI</th>
                                                             <th>TranScript AI</th>
+                                                            <th>TranScript Missing</th>
                                                         }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
@@ -557,6 +559,7 @@
 
                                                         <th>Action</th>
                                                         <th>IRF ID</th>
+                                                        <th>Priority</th>
                                                         <th>Interview Date</th>
                                                         <th>Candidate Name</th>
                                                         @if (ViewBag.actionstatus == "QCReport")
@@ -586,6 +589,7 @@
                                                         {
                                                             <th>Report AI</th>
                                                             <th>TranScript AI</th>
+                                                            <th>TranScript Missing</th>
                                                         }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
@@ -735,6 +739,10 @@
                                                                     }
                                                                     @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                                     {
+                                                                        @if (string.IsNullOrEmpty(item.AudioTranscriptFileLink))
+                                                                        {
+                                                                            //Upload Transcript button with popup
+                                                                        }
                                                                         @if(!item.ReportAI)
                                                                         {
                                                                             <span>
@@ -830,6 +838,7 @@
 
 
                                                             <td title=@item.IRFId> @item.IRFId </td>
+                                                            <td> @item.PriorityLevelDesc </td>
                                                             <td> @item.interviewDate </td>
                                                             <td>
                                                                 <span style="display:block;font-size:14px;">@item.candidateName</span>
@@ -1140,6 +1149,15 @@
                                                             {
                                                                 <td>@item.ReportAI</td>
                                                                 <td>@item.TranscritAi</td>
+                                                                @if (string.IsNullOrEmpty(item.AudioTranscriptFileLink))
+                                                                {
+                                                                     <td> Yes</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                     <td> No</td>
+                                                                }
+                                                                
                                                             }
                                                             @if (ViewBag.actionstatus == "QCReport")
                                                             {
