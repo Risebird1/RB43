@@ -272,7 +272,7 @@
                                                                 data-record-id="@r.Id">
                                                             <i class="fas fa-bars me-1"></i>Manage
                                                         </button>
-                                                        @if (r.InterviewerProfileId.HasValue)
+                                                        @if (r.InterviewerProfileId.HasValue && canDelete)
                                                         {
                                                             <button type="button" title="Drop the profile — sets interviewer as unavailable"
                                                                     class="btn btn-warning btn-sm btn-drop-profile"

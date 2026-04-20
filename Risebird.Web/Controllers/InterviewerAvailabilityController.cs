@@ -233,6 +233,10 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
+            if (profileName != "Admin" && profileName != "SupportAdmin")
+                return Json(new { success = false, error = "You are not authorised to drop interviewer profiles." });
+
             try
             {
                 var record = await _repository.GetEmailAvailabilityByIdAsync(id);
