@@ -7646,5 +7646,80 @@ NEVER:
             }
             return Json("Fail to generate the AI evaluation");
         }
+
+        [HttpPost]
+        [Authorize]
+        [RequestFormLimits(MultipartBodyLengthLimit = 15728640)]
+        public async Task<IActionResult> UploadQcAiTranscript(int interviewId, IFormFile transcriptFile)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                {
+                    return Json(new { ok = false, message = "Session expired. Please sign in again." });
+                }
+
+                var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profile != ProfileNames.Admin && profile != ProfileNames.SupportAdmin && profile != ProfileNames.QualityController)
+                {
+                    return Json(new { ok = false, message = "You are not allowed to upload transcripts." });
+                }
+
+                if (transcriptFile == null || transcriptFile.Length == 0)
+                {
+                    return Json(new { ok = false, message = "Please select a file." });
+                }
+
+                const long maxBytes = 15 * 1024 * 1024;
+                if (transcriptFile.Length > maxBytes)
+                {
+                    return Json(new { ok = false, message = "File is too large. Maximum size is 15 MB." });
+                }
+
+                var ext = Path.GetExtension(transcriptFile.FileName)?.ToLowerInvariant() ?? string.Empty;
+                if (ext != ".txt" && ext != ".vtt" && ext != ".json")
+                {
+                    return Json(new { ok = false, message = "Invalid file type. Use .txt, .vtt, or .json." });
+                }
+
+                var safeBase = Path.GetFileNameWithoutExtension(transcriptFile.FileName);
+                if (string.IsNullOrWhiteSpace(safeBase))
+                {
+                    safeBase = "transcript";
+                }
+
+                foreach (var c in Path.GetInvalidFileNameChars())
+                {
+                    safeBase = safeBase.Replace(c, '_');
+                }
+
+                var blobName = $"{interviewId}_{Guid.NewGuid():N}_{safeBase}{ext}";
+                var contentType = ext == ".json" ? "application/json" : (ext == ".vtt" ? "text/vtt" : "text/plain");
+
+                string blobUrl;
+                using (var stream = transcriptFile.OpenReadStream())
+                {
+                    blobUrl = await _azureStorageHelper.InsertBlobCloudCompare(blobName, "transcripts", null, stream, null, contentType, null);
+                }
+
+                if (string.IsNullOrEmpty(blobUrl))
+                {
+                    return Json(new { ok = false, message = "Could not store the file. Please try again." });
+                }
+
+                var updated = await _meetingRespository.UpdateTranscriptLink(interviewId, blobUrl, null);
+                if (!updated)
+                {
+                    return Json(new { ok = false, message = "Could not update the interview. Please try again." });
+                }
+
+                return Json(new { ok = true, message = "Transcript uploaded successfully." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Upload failed. Please try again." });
+            }
+        }
     }
 }
