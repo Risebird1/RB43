@@ -28,6 +28,7 @@ BEGIN
         ip.ResumeLink         AS ProfileResumeLink,
         ip.AssessmentGroupId  AS ExistingAssessmentGroupIds,
         ul.EmailId            AS UserEmail,
+        ul.MobileNumber       AS UserMobileNumber,
         mag.MAGName           AS MasterAssessmentGroupName,
         mag.AssessmentGroupId AS ResolvedAssessmentGroupId,
         ag.AssessmentGroup    AS AssessmentGroupName,
