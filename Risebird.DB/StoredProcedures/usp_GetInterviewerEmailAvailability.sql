@@ -32,11 +32,13 @@ BEGIN
         ip.IsEmployed,
         ip.CompanyName,
         ip.ResumeLink         AS ProfileResumeLink,
+        ul.MobileNumber       AS UserMobileNumber,
         mag.MAGName           AS MasterAssessmentGroupName,
         ag.AssessmentGroup    AS AssessmentGroupName,
         COUNT(*) OVER()       AS TotalCount
     FROM InterviewerEmailAvailability ea
     LEFT JOIN InterviewerProfile ip ON ip.Id = ea.InterviewerProfileId
+    LEFT JOIN UserList ul ON ul.id = ea.UserId
     LEFT JOIN MasterAssessmentGroup mag
         ON LTRIM(RTRIM(LOWER(mag.MAGName))) = LTRIM(RTRIM(LOWER(ea.MagName)))
         AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
