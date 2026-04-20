@@ -110,6 +110,7 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IWalletService, WalletService>();
 builder.Services.AddScoped<IMeetingService, MeetingService>();
+builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IGeneralSkillMatrixService, GeneralSkillMatrixService>();
 builder.Services.AddScoped<IJoinabilityMatrixService, JoinabilityMatrixService>();

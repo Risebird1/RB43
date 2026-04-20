@@ -254,7 +254,7 @@
                                                     @if (r.InterviewerProfileId.HasValue) { <span class="badge bg-success" style="font-size:9px;" title="Known interviewer">RB</span> }
                                                 </td>
                                                 <td class="col-name">
-                                                    <span class="fw-semibold" style="font-size:12px;">@(r.InterviewerName ?? r.InterviewerNickName ?? "—")</span>
+                                                    <span class="fw-semibold" style="font-size:12px;white-space:break-spaces;">@(r.InterviewerName ?? r.InterviewerNickName ?? "—")</span>
                                                     @if (r.Experience.HasValue) { <br /><span class="text-muted" style="font-size:10px;">@r.Experience yr exp</span> }
                                                 </td>
                                                 <td class="col-phone" style="font-size:12px;">
@@ -262,7 +262,7 @@
                                                     @(displayPhone ?? "—")
                                                 </td>
                                                 <td class="col-job" style="font-size:12px;">
-                                                    @(r.JobTitle ?? "—")
+                                                    <span style="white-space: break-spaces;"> @(r.JobTitle ?? "—")</span>
                                                     @if (!string.IsNullOrEmpty(r.MagName)) { <br /><span class="text-muted" style="font-size:10px;">@r.MagName</span> }
                                                 </td>
                                                 <td class="col-employed" style="font-size:12px;">
@@ -274,7 +274,7 @@
                                                     { <span class="text-muted">—</span> }
                                                 </td>
                                                 <td class="col-company" style="font-size:12px;" title="@(r.CompanyName ?? "")">@(r.CompanyName ?? "—")</td>
-                                                <td class="col-fitment"><span class="intent-badge @fitCss">@(r.ResumeFitment ?? "N/A")</span></td>
+                                                <td class="col-fitment"><span style="white-space:nowrap;" class="intent-badge @fitCss">@(r.ResumeFitment ?? "N/A")</span></td>
                                                 <td class="col-slots text-center" style="font-size:12px;">@(r.SlotsPerDay ?? "—")</td>
                                                 <td class="col-timeframe" style="font-size:11px;">@(r.TimeFrame ?? "—")</td>
                                                 <td class="col-intent-summary">
