@@ -7859,7 +7859,7 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@interviewId", interviewid);
-                    var result = await SqlMapper.QueryAsync<QcInterviewAIMergePendingRow>(con, "usp_GetPendingQcInterviewAIMergeById", null, commandTimeout: 120,
+                    var result = await SqlMapper.QueryAsync<QcInterviewAIMergePendingRow>(con, "usp_GetPendingQcInterviewAIMergeById", parameters, commandTimeout: 120,
                         commandType: CommandType.StoredProcedure);
                     return result?.FirstOrDefault();
                 }
