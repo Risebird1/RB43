@@ -81,6 +81,7 @@
 
     .col-num { width:34px; } .col-date { width:108px; white-space:nowrap; } .col-email { width:170px; max-width:200px; }
     .col-name { max-width:140px; } .col-job { min-width:100px; max-width:160px; } .col-fitment { width:90px; }
+    .col-phone { width:110px; white-space:nowrap; }
     .col-timeframe { min-width:100px; max-width:180px; } .col-slots { width:50px; text-align:center; }
     .col-intent-summary { min-width:120px; max-width:220px; } .col-status { width:100px; white-space:nowrap; }
     .col-actions { width:100px; white-space:nowrap; }
@@ -231,7 +232,7 @@
                                     <thead class="table-light">
                                         <tr>
                                             <th class="col-num">#</th><th class="col-date">Received</th><th class="col-email">Email</th>
-                                            <th class="col-name">Name</th><th class="col-job">Job Title</th>
+                                            <th class="col-name">Name</th><th class="col-phone">Phone</th><th class="col-job">Job Title</th>
                                             <th class="col-employed">Employed</th><th class="col-company">Company</th>
                                             <th class="col-fitment">Fitment</th>
                                             <th class="col-slots">Slots</th><th class="col-timeframe">Time Frame</th>
@@ -255,6 +256,10 @@
                                                 <td class="col-name">
                                                     <span class="fw-semibold" style="font-size:12px;">@(r.InterviewerName ?? r.InterviewerNickName ?? "—")</span>
                                                     @if (r.Experience.HasValue) { <br /><span class="text-muted" style="font-size:10px;">@r.Experience yr exp</span> }
+                                                </td>
+                                                <td class="col-phone" style="font-size:12px;">
+                                                    @{ string displayPhone = r.UserMobileNumber.HasValue ? r.UserMobileNumber.Value.ToString() : r.Phone; }
+                                                    @(displayPhone ?? "—")
                                                 </td>
                                                 <td class="col-job" style="font-size:12px;">
                                                     @(r.JobTitle ?? "—")
@@ -311,7 +316,7 @@
                                                                 data-record-id="@r.Id">
                                                             <i class="fas fa-bars me-1"></i>Manage
                                                         </button>
-                                                        @if (r.InterviewerProfileId.HasValue)
+                                                        @if (r.InterviewerProfileId.HasValue && canDelete)
                                                         {
                                                             <button type="button" title="Drop profile — mark interviewer unavailable"
                                                                     class="btn btn-warning btn-sm btn-drop-profile"
@@ -569,7 +574,8 @@
 
     function populateModal(r) {
         $('#mgmFrom').text(r.senderEmail || '—'); $('#mgmReceived').text(r.receivedAt || '—');
-        $('#mgmPhone').text(r.phone || '—'); $('#mgmIrf').text(r.irfReference || '—'); $('#mgmCredentials').text(r.hasLoginCredentials || '—');
+        var phoneDisplay = r.userMobileNumber ? r.userMobileNumber.toString() : (r.phone || '—');
+        $('#mgmPhone').text(phoneDisplay); $('#mgmIrf').text(r.irfReference || '—'); $('#mgmCredentials').text(r.hasLoginCredentials || '—');
         $('#mgmName').text(r.interviewerName || r.interviewerNickName || '—'); $('#mgmJobTitle').text(r.jobTitle || '—');
         $('#mgmMag').text((r.magName || '—') + (r.assessmentGroupName ? ' \u2192 ' + r.assessmentGroupName : ''));
         $('#mgmSlots').text(r.slotsPerDay || '—'); $('#mgmTimeFrame').text(r.timeFrame || '—');
