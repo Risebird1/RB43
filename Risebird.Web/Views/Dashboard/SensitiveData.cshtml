@@ -260,6 +260,206 @@
             opacity: 1;
         }
     }
+
+    .qc-ai-actions-cell {
+        vertical-align: middle;
+        min-width: 180px;
+        background: linear-gradient(180deg, #fafbfc 0%, #fff 100%);
+    }
+
+        .qc-ai-actions-cell .qc-ai-actions-inner {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+    .qc-upload-ai-transcript-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        margin-top: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+        font-size: 13px;
+    }
+
+        .qc-upload-ai-transcript-row .qc-upload-filename {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+            color: #0f172a;
+        }
+
+        .qc-upload-ai-transcript-row .qc-upload-remove {
+            cursor: pointer;
+            color: #64748b;
+            padding: 4px 8px;
+            border: 0;
+            background: #f1f5f9;
+            border-radius: 6px;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+            .qc-upload-ai-transcript-row .qc-upload-remove:hover {
+                color: #b91c1c;
+                background: #fee2e2;
+            }
+
+    /* Upload AI transcript modal */
+    #uploadAiTranscriptModal .qc-upload-modal-content {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.22);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+    }
+
+    #uploadAiTranscriptModal .filavatar.qc-upload-modal-avatar span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(145deg, #2563eb, #1d4ed8);
+        color: #fff;
+        font-size: 18px;
+    }
+
+    #uploadAiTranscriptModal .qc-upload-modal-body {
+        padding: 20px 24px 24px;
+        background: linear-gradient(180deg, #f8fafc 0%, #fff 48%);
+    }
+
+    #uploadAiTranscriptModal .qc-upload-modal-lead {
+        font-size: 14px;
+        line-height: 1.55;
+        color: #475569;
+        margin: 0 0 12px;
+    }
+
+    #uploadAiTranscriptModal .qc-upload-modal-hints {
+        margin: 0 0 18px;
+        padding-left: 18px;
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.5;
+    }
+
+        #uploadAiTranscriptModal .qc-upload-modal-hints li {
+            margin-bottom: 4px;
+        }
+
+    #uploadAiTranscriptModal .qc-upload-dropzone {
+        position: relative;
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 28px 20px;
+        text-align: center;
+        background: #fff;
+        transition: border-color 0.2s ease, background 0.2s ease;
+        margin-bottom: 8px;
+        overflow: hidden;
+    }
+
+        #uploadAiTranscriptModal .qc-upload-dropzone:hover,
+        #uploadAiTranscriptModal .qc-upload-dropzone.qc-upload-dropzone--drag {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+    #uploadAiTranscriptModal .qc-upload-dropzone-inner {
+        position: relative;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    #uploadAiTranscriptModal .qc-upload-modal-file-input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+        font-size: 0;
+    }
+
+    #uploadAiTranscriptModal .qc-upload-dropzone-icon {
+        display: block;
+        font-size: 36px;
+        color: #2563eb;
+        margin: 0 auto 10px;
+        opacity: 0.9;
+    }
+
+    #uploadAiTranscriptModal .qc-upload-dropzone strong {
+        display: block;
+        font-size: 15px;
+        color: #0f172a;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    #uploadAiTranscriptModal .qc-upload-dropzone .qc-upload-sub {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    #uploadAiTranscriptModal .qc-upload-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        margin-top: 16px;
+        padding-top: 4px;
+    }
+
+    #uploadAiTranscriptModal .qc-upload-modal-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        color: #475569;
+        cursor: pointer;
+        transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+        #uploadAiTranscriptModal .qc-upload-modal-btn:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+    #uploadAiTranscriptModal .qc-upload-modal-btn--primary {
+        background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+        border-color: #1d4ed8;
+        color: #fff;
+    }
+
+        #uploadAiTranscriptModal .qc-upload-modal-btn--primary:hover {
+            background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+            border-color: #1e40af;
+            color: #fff;
+        }
+
+    #uploadAiTranscriptModal .qc-upload-modal-btn .fa,
+    #uploadAiTranscriptModal .qc-upload-modal-btn .fas {
+        font-size: 14px;
+    }
 </style>
 <input type="hidden" id="txtrate" value="@Model.Count()" />
 
@@ -552,6 +752,10 @@
                                                         {
                                                             <th>Status</th>
                                                         }
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
+                                                        {
+                                                            <th>AI actions</th>
+                                                        }
                                                     </tr>
                                                 </thead>
                                                 <tfoot>
@@ -599,6 +803,10 @@
                                                         @if (ViewBag.actionstatus == "FakeReport")
                                                         {
                                                             <th>Status</th>
+                                                        }
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
+                                                        {
+                                                            <th>AI actions</th>
                                                         }
                                                     </tr>
                                                 </tfoot>
@@ -736,43 +944,6 @@
                                                                                 <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
                                                                             </button>
                                                                         </span>
-                                                                    }
-                                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
-                                                                    {
-                                                                        @if (string.IsNullOrEmpty(item.AudioTranscriptFileLink))
-                                                                        {
-                                                                            //Upload Transcript button with popup
-                                                                        }
-                                                                        @if(!item.ReportAI)
-                                                                        {
-                                                                            <span>
-                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Report AI Evaluation">
-                                                                                    <span onclick="javascript:ReportAIEvaluation('@item.imid','@item.irfIntId');" title="Report AI Evaluation" class="mdc-fab__icon touch material-icons">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z" /><path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" /></svg>
-                                                                                    </span>
-                                                                                </button>
-                                                                            </span>
-                                                                        }
-                                                                        @if(!item.TranscritAi)
-                                                                        {
-                                                                            <span>
-                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Transcript AI Evaluation">
-                                                                                    <span onclick="javascript:TranscriptAIEvaluation('@item.imid');" title="Transcript AI Evaluation" class="mdc-fab__icon touch material-icons">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-left-text" viewBox="0 0 16 16" aria-hidden="true"><path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" /><path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z" /></svg>
-                                                                                    </span>
-                                                                                </button>
-                                                                            </span>
-                                                                        }
-                                                                        @if(!item.TranscritAi)
-                                                                        {
-                                                                            <span>
-                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Contradiction AI Evaluation">
-                                                                                    <span onclick="javascript:ContradictionAIEvaluation('@item.imid','@item.irfIntId');" title="Contradiction AI Evaluation" class="mdc-fab__icon touch material-icons">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-git-compare" viewBox="0 0 16 16" aria-hidden="true"><path d="M7.5 2.5a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V3.707L3.707 8.5H6.5a.5.5 0 0 1 0 1H2.5a.5.5 0 0 1-.5-.5V4.5a.5.5 0 0 1 1 0v2.793L8.293 2.5H7.5z" /><path d="M12.5 13.5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5v-5a.5.5 0 0 1 1 0v2.793l4.793-4.793H9.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V7.707l-4.793 4.793H12.5z" /></svg>
-                                                                                    </span>
-                                                                                </button>
-                                                                            </span>
-                                                                        }
                                                                     }
                                                                 </td>
 
@@ -1177,6 +1348,46 @@
                                                             {
                                                                 <td>@item.StatusValue</td>
                                                             }
+                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
+                                                            {
+                                                                <td class="qc-ai-actions-cell">
+                                                                    <div class="qc-ai-actions-inner">
+                                                                        @if (!item.ReportAI)
+                                                                        {
+                                                                            <span>
+                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Report AI Evaluation">
+                                                                                    <span onclick="javascript:ReportAIEvaluation('@item.imid','@item.irfIntId');" title="Report AI Evaluation" class="mdc-fab__icon touch material-icons">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-text" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z" /><path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" /></svg>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
+                                                                        @if (!item.TranscritAi)
+                                                                        {
+                                                                            <span>
+                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Transcript AI Evaluation">
+                                                                                    <span onclick="javascript:TranscriptAIEvaluation('@item.imid');" title="Transcript AI Evaluation" class="mdc-fab__icon touch material-icons">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-left-text" viewBox="0 0 16 16" aria-hidden="true"><path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" /><path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z" /></svg>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
+                                                                        @if (!item.TranscritAi)
+                                                                        {
+                                                                            <span>
+                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Contradiction AI Evaluation">
+                                                                                    <span onclick="javascript:ContradictionAIEvaluation('@item.imid','@item.irfIntId');" title="Contradiction AI Evaluation" class="mdc-fab__icon touch material-icons">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-git-compare" viewBox="0 0 16 16" aria-hidden="true"><path d="M7.5 2.5a.5.5 0 0 1 0-1h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V3.707L3.707 8.5H6.5a.5.5 0 0 1 0 1H2.5a.5.5 0 0 1-.5-.5V4.5a.5.5 0 0 1 1 0v2.793L8.293 2.5H7.5z" /><path d="M12.5 13.5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5v-5a.5.5 0 0 1 1 0v2.793l4.793-4.793H9.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V7.707l-4.793 4.793H12.5z" /></svg>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
+                                                                        <button type="button" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Upload AI transcript" onclick="openUploadAiTranscriptModal('@item.imid');" title="Upload AI transcript">
+                                                                            <span class="mdc-fab__icon touch"><i class="fas fa-cloud-upload-alt" style="font-size:15px;" aria-hidden="true"></i></span>
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            }
                                                         </tr>
                                                     }
                                                 </tbody>
@@ -1217,6 +1428,47 @@
                 <span onclick="closeRedoRequestInterviewModel()" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body" id="divredoRequestInterview">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="uploadAiTranscriptModal" class="modal modal-bg" style="z-index:1032">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:560px;">
+        <div class="modal-content qc-upload-modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><i style="font-size:25px; color:#fff;position:relative;top:10px;" class="fas fa-file-alt" aria-hidden="true"></i></span>
+                </div>
+                <h5 class="modal-title pull-left">Upload AI transcript</h5>
+            </div>
+            <button type="button" class="close" aria-label="Close">
+                <span onclick="closeUploadAiTranscriptModal()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body qc-upload-modal-body">
+                <input type="hidden" id="uploadAiTranscriptInterviewId" value="" />
+                <p class="qc-upload-modal-lead">Add or replace the interview transcript file used for AI analysis. The file is stored securely and linked to this interview.</p>
+                <ul class="qc-upload-modal-hints">
+                    <li>Accepted formats: <strong>.txt</strong>, <strong>.vtt</strong>, or <strong>.json</strong></li>
+                    <li>Maximum file size: <strong>15 MB</strong></li>
+                </ul>
+                <div class="qc-upload-dropzone" id="uploadAiTranscriptDropzone">
+                    <input type="file" id="uploadAiTranscriptFileInput" class="qc-upload-modal-file-input" accept=".txt,.vtt,.json,text/plain,application/json" onchange="onUploadAiTranscriptFileSelected(this);" title="Choose transcript file" />
+                    <div class="qc-upload-dropzone-inner">
+                        <i class="fas fa-cloud-upload-alt qc-upload-dropzone-icon" aria-hidden="true"></i>
+                        <strong>Choose a transcript file</strong>
+                        <span class="qc-upload-sub">Click or drag a file here — selection appears below</span>
+                    </div>
+                </div>
+                <div id="uploadAiTranscriptFileList"></div>
+                <div class="qc-upload-modal-actions">
+                    <button type="button" class="qc-upload-modal-btn" onclick="closeUploadAiTranscriptModal();">
+                        <i class="fas fa-times" aria-hidden="true"></i> Cancel
+                    </button>
+                    <button type="button" class="qc-upload-modal-btn qc-upload-modal-btn--primary" onclick="submitUploadAiTranscript();">
+                        <i class="fas fa-upload" aria-hidden="true"></i> Upload
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1536,6 +1788,132 @@
             },
             complete: function () {
                 hideAiEvaluationLoader();
+            }
+        });
+    }
+
+    function openUploadAiTranscriptModal(interviewId) {
+        document.getElementById('uploadAiTranscriptInterviewId').value = interviewId;
+        var input = document.getElementById('uploadAiTranscriptFileInput');
+        if (input) input.value = '';
+        var list = document.getElementById('uploadAiTranscriptFileList');
+        if (list) list.innerHTML = '';
+        var dz = document.getElementById('uploadAiTranscriptDropzone');
+        if (dz) dz.classList.remove('qc-upload-dropzone--drag');
+        var modal = document.getElementById('uploadAiTranscriptModal');
+        if (modal) modal.style.display = 'block';
+    }
+
+    function closeUploadAiTranscriptModal() {
+        var modal = document.getElementById('uploadAiTranscriptModal');
+        if (modal) modal.style.display = 'none';
+        var dz = document.getElementById('uploadAiTranscriptDropzone');
+        if (dz) dz.classList.remove('qc-upload-dropzone--drag');
+    }
+
+    var _uploadAiTranscriptDropzoneBound = false;
+    function bindUploadAiTranscriptDropzoneOnce() {
+        if (_uploadAiTranscriptDropzoneBound) return;
+        var input = document.getElementById('uploadAiTranscriptFileInput');
+        var dz = document.getElementById('uploadAiTranscriptDropzone');
+        if (!input || !dz) return;
+        _uploadAiTranscriptDropzoneBound = true;
+        input.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dz.classList.add('qc-upload-dropzone--drag');
+        });
+        input.addEventListener('dragleave', function (e) {
+            e.preventDefault();
+            dz.classList.remove('qc-upload-dropzone--drag');
+        });
+        input.addEventListener('drop', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dz.classList.remove('qc-upload-dropzone--drag');
+            var files = e.dataTransfer && e.dataTransfer.files;
+            if (!files || !files.length) return;
+            try {
+                var dt = new DataTransfer();
+                dt.items.add(files[0]);
+                input.files = dt.files;
+                onUploadAiTranscriptFileSelected(input);
+            } catch (err) { }
+        });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindUploadAiTranscriptDropzoneOnce);
+    } else {
+        bindUploadAiTranscriptDropzoneOnce();
+    }
+
+    function removeUploadAiTranscriptSelection() {
+        var input = document.getElementById('uploadAiTranscriptFileInput');
+        if (input) input.value = '';
+        var list = document.getElementById('uploadAiTranscriptFileList');
+        if (list) list.innerHTML = '';
+    }
+
+    function onUploadAiTranscriptFileSelected(inputEl) {
+        var list = document.getElementById('uploadAiTranscriptFileList');
+        if (!list || !inputEl || !inputEl.files || !inputEl.files.length) {
+            if (list) list.innerHTML = '';
+            return;
+        }
+        var f = inputEl.files[0];
+        list.innerHTML = '';
+        var row = document.createElement('div');
+        row.className = 'qc-upload-ai-transcript-row';
+        var span = document.createElement('span');
+        span.className = 'qc-upload-filename';
+        span.title = f.name || '';
+        span.textContent = f.name || 'file';
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'qc-upload-remove';
+        btn.title = 'Remove';
+        btn.setAttribute('aria-label', 'Remove file');
+        btn.innerHTML = '&times;';
+        btn.onclick = function () { removeUploadAiTranscriptSelection(); };
+        row.appendChild(span);
+        row.appendChild(btn);
+        list.appendChild(row);
+    }
+
+    function submitUploadAiTranscript() {
+        var interviewId = document.getElementById('uploadAiTranscriptInterviewId').value;
+        var input = document.getElementById('uploadAiTranscriptFileInput');
+        if (!interviewId || !input || !input.files || !input.files.length) {
+            alert('Please select a transcript file.');
+            return;
+        }
+        var fd = new FormData();
+        fd.append('interviewId', interviewId);
+        fd.append('transcriptFile', input.files[0]);
+        $.ajax({
+            url: '/Dashboard/UploadQcAiTranscript',
+            type: 'POST',
+            data: fd,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function (res) {
+                if (res && res.ok) {
+                    alert(res.message || 'Transcript uploaded successfully.');
+                    closeUploadAiTranscriptModal();
+                    location.reload();
+                } else {
+                    alert((res && res.message) ? res.message : 'Upload failed.');
+                }
+            },
+            error: function (xhr) {
+                var t = 'Upload failed. Please try again.';
+                try {
+                    var j = xhr.responseJSON;
+                    if (j && j.message) t = j.message;
+                    else if (xhr.responseText && xhr.responseText.length < 500) t = xhr.responseText;
+                } catch (e) { }
+                alert(t);
             }
         });
     }
