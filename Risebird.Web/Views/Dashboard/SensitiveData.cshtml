@@ -33,6 +33,234 @@
 
 
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<style>
+    /* AI evaluation loaders — distinct visuals per action */
+    #aiEvaluationLoaderOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 10050;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+        #aiEvaluationLoaderOverlay.is-visible {
+            display: flex;
+        }
+
+        #aiEvaluationLoaderOverlay .ai-eval-loader-dialog {
+            width: 100%;
+            max-width: 400px;
+            background: linear-gradient(155deg, #ffffff 0%, #f1f5f9 100%);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+            padding: 28px 32px 32px;
+            text-align: center;
+        }
+
+        #aiEvaluationLoaderOverlay.ai-eval-mode--report .ai-eval-loader-dialog {
+            border-top: 4px solid #2563eb;
+        }
+
+        #aiEvaluationLoaderOverlay.ai-eval-mode--transcript .ai-eval-loader-dialog {
+            border-top: 4px solid #0d9488;
+        }
+
+        #aiEvaluationLoaderOverlay.ai-eval-mode--contradiction .ai-eval-loader-dialog {
+            border-top: 4px solid #7c3aed;
+        }
+
+    .ai-eval-loader-section {
+        display: none;
+    }
+
+    #aiEvaluationLoaderOverlay.ai-eval-mode--report .ai-eval-loader-section--report {
+        display: block;
+    }
+
+    #aiEvaluationLoaderOverlay.ai-eval-mode--transcript .ai-eval-loader-section--transcript {
+        display: block;
+    }
+
+    #aiEvaluationLoaderOverlay.ai-eval-mode--contradiction .ai-eval-loader-section--contradiction {
+        display: block;
+    }
+
+    .ai-eval-loader-heading {
+        margin: 20px 0 8px;
+        font-size: 17px;
+        font-weight: 600;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+        font-family: Roboto, "Segoe UI", system-ui, sans-serif;
+    }
+
+    .ai-eval-loader-text {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #64748b;
+        font-family: Roboto, "Segoe UI", system-ui, sans-serif;
+    }
+
+    /* Report: document lines + shimmer */
+    .ai-eval-anim-report {
+        display: flex;
+        justify-content: center;
+        padding: 8px 0 4px;
+    }
+
+    .ai-eval-doc {
+        width: 88px;
+        height: 72px;
+        border-radius: 10px;
+        background: #e2e8f0;
+        padding: 14px 12px;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .ai-eval-doc::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.85) 50%, transparent 60%);
+            background-size: 200% 100%;
+            animation: ai-eval-shimmer 1.4s ease-in-out infinite;
+        }
+
+    .ai-eval-doc-line {
+        display: block;
+        height: 8px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #93c5fd, #2563eb);
+        margin-bottom: 8px;
+        opacity: 0.9;
+    }
+
+        .ai-eval-doc-line--short {
+            width: 55%;
+        }
+
+    @@keyframes ai-eval-shimmer {
+        0% {
+            background-position: 100% 0;
+        }
+
+        100% {
+            background-position: -100% 0;
+        }
+    }
+
+    /* Transcript: typing dots */
+    .ai-eval-anim-transcript {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        height: 72px;
+        padding-top: 4px;
+    }
+
+    .ai-eval-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #14b8a6, #0d9488);
+        box-shadow: 0 2px 8px rgba(13, 148, 136, 0.4);
+        animation: ai-eval-bounce 1.05s ease-in-out infinite;
+    }
+
+        .ai-eval-dot:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .ai-eval-dot:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+    @@keyframes ai-eval-bounce {
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        30% {
+            transform: translateY(-14px);
+            opacity: 0.85;
+        }
+    }
+
+    /* Contradiction: dual pulse compare */
+    .ai-eval-anim-contradiction {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 72px;
+        gap: 12px;
+        padding-top: 4px;
+    }
+
+    .ai-eval-compare-node {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 3px solid #7c3aed;
+        background: rgba(124, 58, 237, 0.08);
+        animation: ai-eval-pulse-a 1.1s ease-in-out infinite;
+    }
+
+        .ai-eval-compare-node--b {
+            animation: ai-eval-pulse-b 1.1s ease-in-out infinite;
+        }
+
+    .ai-eval-compare-bar {
+        width: 28px;
+        height: 4px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, #a78bfa, #7c3aed);
+        animation: ai-eval-bar-glow 1.1s ease-in-out infinite;
+    }
+
+    @@keyframes ai-eval-pulse-a {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.35);
+        }
+
+        50% {
+            transform: scale(1.06);
+            box-shadow: 0 0 0 10px rgba(124, 58, 237, 0);
+        }
+    }
+
+    @@keyframes ai-eval-pulse-b {
+        0%, 100% {
+            transform: scale(1.06);
+            box-shadow: 0 0 0 10px rgba(124, 58, 237, 0);
+        }
+
+        50% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.35);
+        }
+    }
+
+    @@keyframes ai-eval-bar-glow {
+        0%, 100% {
+            opacity: 0.5;
+        }
+
+        50% {
+            opacity: 1;
+        }
+    }
+</style>
 <input type="hidden" id="txtrate" value="@Model.Count()" />
 
 <div class="main-panel" id="main-panel">
@@ -146,6 +374,45 @@
                         <div class="mdc-card-wrapper__text-section">
                             <div class="loader text-center">
                                 <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+                            <div id="aiEvaluationLoaderOverlay" class="ai-eval-mode--report" aria-hidden="true" role="status" aria-live="polite" aria-busy="false">
+                                <div class="ai-eval-loader-dialog">
+                                    <section class="ai-eval-loader-section ai-eval-loader-section--report" aria-labelledby="aiEvalHeadingReport">
+                                        <div class="ai-eval-anim-report">
+                                           
+                                                    <span style="margin-right: 5px;" class="ai-eval-dot"></span>
+                                            <span style="margin-right: 5px;" class="ai-eval-dot"></span>
+                                                    <span class="ai-eval-dot"></span>
+                                               
+                                            
+                                        </div>
+                                        <h4 class="ai-eval-loader-heading" id="aiEvalHeadingReport">Report AI evaluation</h4>
+                                        <p class="ai-eval-loader-text">Analyzing the client report and running the AI quality pass. This may take a moment.</p>
+                                    </section>
+                                    <section class="ai-eval-loader-section ai-eval-loader-section--transcript" aria-labelledby="aiEvalHeadingTranscript">
+                                        <div class="ai-eval-anim-transcript">
+                                            <span class="ai-eval-dot"></span>
+                                            <span class="ai-eval-dot"></span>
+                                            <span class="ai-eval-dot"></span>
+                                        </div>
+                                        <h4 class="ai-eval-loader-heading" id="aiEvalHeadingTranscript">Transcript AI evaluation</h4>
+                                        <p class="ai-eval-loader-text">Processing the interview transcript with AI. Please keep this window open.</p>
+                                    </section>
+                                    <section class="ai-eval-loader-section ai-eval-loader-section--contradiction" aria-labelledby="aiEvalHeadingContradiction">
+                                        <div class="ai-eval-anim-contradiction">
+                                            
+                                            <span class="ai-eval-dot"></span>
+                                            <span class="ai-eval-dot"></span>
+                                            <span class="ai-eval-dot"></span>
+                                      
+                                           @*  <div class="ai-eval-compare-node" aria-hidden="true"></div>
+                                            <div class="ai-eval-compare-bar" aria-hidden="true"></div>
+                                            <div class="ai-eval-compare-node ai-eval-compare-node--b" aria-hidden="true"></div> *@
+                                        </div>
+                                        <h4 class="ai-eval-loader-heading" id="aiEvalHeadingContradiction">Contradiction AI evaluation</h4>
+                                        <p class="ai-eval-loader-text">Cross-checking transcript and report for contradictions.</p>
+                                    </section>
+                                </div>
                             </div>
                             <div class="dataloading">
 
@@ -1177,30 +1444,80 @@
     }
 </script>
 <script>
-    function ReportAIEvaluation(interviewid,irfId) {
+    var _aiEvalAriaLabels = {
+        report: 'Report AI evaluation in progress.',
+        transcript: 'Transcript AI evaluation in progress.',
+        contradiction: 'Contradiction AI evaluation in progress.'
+    };
+    function showAiEvaluationLoader(mode) {
+        var overlay = document.getElementById('aiEvaluationLoaderOverlay');
+        if (!overlay) return;
+        overlay.classList.remove('ai-eval-mode--report', 'ai-eval-mode--transcript', 'ai-eval-mode--contradiction');
+        overlay.classList.add('ai-eval-mode--' + mode);
+        overlay.classList.add('is-visible');
+        overlay.setAttribute('aria-hidden', 'false');
+        overlay.setAttribute('aria-busy', 'true');
+        overlay.setAttribute('aria-label', _aiEvalAriaLabels[mode] || 'Loading.');
+        document.body.style.overflow = 'hidden';
+    }
+    function hideAiEvaluationLoader() {
+        var overlay = document.getElementById('aiEvaluationLoaderOverlay');
+        if (!overlay) return;
+        overlay.classList.remove('is-visible');
+        overlay.setAttribute('aria-hidden', 'true');
+        overlay.setAttribute('aria-busy', 'false');
+        overlay.removeAttribute('aria-label');
+        document.body.style.overflow = '';
+    }
+
+    function ReportAIEvaluation(interviewid, irfId) {
+        showAiEvaluationLoader('report');
         $.ajax({
             url: '/Interview/AIClientReport',
-            data: { 'interviewId': interviewid,'irfId':irfId, 'isOpenAIQC': true, 'isBackgroudJobRequest': true,'sourcetype':'PaymentSla' },
+            data: { 'interviewId': interviewid, 'irfId': irfId, 'isOpenAIQC': true, 'isBackgroudJobRequest': true, 'sourcetype': 'PaymentSla' },
             success: function (data) {
                 alert(data);
+                location.reload();
+            },
+            error: function () {
+                alert('Report AI evaluation could not be completed. Please try again.');
+            },
+            complete: function () {
+                hideAiEvaluationLoader();
             }
         });
     }
     function TranscriptAIEvaluation(interviewid) {
+        showAiEvaluationLoader('transcript');
         $.ajax({
             url: '/Dashboard/GenerateTranscriptAiEvaluation',
             data: { 'interviewId': interviewid },
             success: function (data) {
                 alert(data);
+                location.reload();
+            },
+            error: function () {
+                alert('Transcript AI evaluation could not be completed. Please try again.');
+            },
+            complete: function () {
+                hideAiEvaluationLoader();
             }
         });
     }
-    function ContradictionAIEvaluation(interviewid,irfId) {
+    function ContradictionAIEvaluation(interviewid, irfId) {
+        showAiEvaluationLoader('contradiction');
         $.ajax({
             url: '/Interview/AIClientReport',
-            data: { 'interviewId': interviewid,'irfId':irfId, 'IsContradictionAI': true,'sourcetype':'PaymentSla' },
+            data: { 'interviewId': interviewid, 'irfId': irfId, 'IsContradictionAI': true, 'sourcetype': 'PaymentSla' },
             success: function (data) {
                 alert(data);
+                location.reload();
+            },
+            error: function () {
+                alert('Contradiction AI evaluation could not be completed. Please try again.');
+            },
+            complete: function () {
+                hideAiEvaluationLoader();
             }
         });
     }

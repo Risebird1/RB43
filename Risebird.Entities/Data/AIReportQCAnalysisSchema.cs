@@ -8,8 +8,8 @@ namespace Risebird.Entities.Data
 {
     public class AIReportQCAnalysisSchema
     {
-        public int score { get; set; }
+        public int final_score { get; set; }
         public string completeAnalysis { get; set; }
-        public string verdict { get; set; }
+        public string final_verdict { get; set; }
     }
 }
