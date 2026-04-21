@@ -4707,6 +4707,36 @@ namespace Risebird.Repository
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
+        public string ReassignMeetingByTeam(int id, string interviewerMail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //var result = SqlMapper.Query<int>(con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1,IsEmergency=1 Output inserted.id where id = @meetingid and ISNULL(EIAssigned,0)!=1", new { value = interviewerMail, meetingid = id }, commandType: Text);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@meetingid", id);
+                    parameters.Add("@interviewer", interviewerMail);
+                    var result = SqlMapper.Query<int>(con, "usp_reassignByTeamInterview", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    if (result?.FirstOrDefault() > 0)
+                    {
+                        return "Interview assigned Successfully.";
+                    }
+                    return "Interview already assigned to someone else.";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+        }
         public async Task<InterviewerDetails> FetchInterviewerCodedName(string emailId)
         {
             try

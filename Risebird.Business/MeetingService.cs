@@ -3008,6 +3008,23 @@ namespace Risebird.Business
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
+        public string ReassignMeetingByTeam(string id, string meetingid, string Emailid)
+        {
+            try
+            {
+                var assignedMeeting = _meetingRespository.CheckMeetingAssignationValidation(Emailid);
+                if (assignedMeeting != "Valid")
+                {
+                    return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
+                }
+                return _meetingRespository.ReassignMeetingByTeam(Convert.ToInt32(id), Emailid);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+        }
         public async Task<InterviewerDetails> FetchInterviewerCodedName(string emailID)
         {
             try
