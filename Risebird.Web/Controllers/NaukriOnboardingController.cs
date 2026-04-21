@@ -1,4 +1,3 @@
-using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +11,6 @@ using Risebird.Business.Interface;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -449,13 +447,7 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, error = errMsg });
                 }
 
-                int? profileId = null;
-                try
-                {
-                    var checkRecord = await _repository.GetByIdAsync(id);
-                    profileId = checkRecord?.OnboardedProfileId;
-                }
-                catch { }
+                int? profileId = await _repository.GetInterviewerProfileIdByUserIdAsync(userId);
 
                 bool ackSent = false;
                 try
@@ -569,11 +561,7 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrEmpty(uploadedUrl))
                     return Json(new { success = false, error = "Upload failed." });
 
-                using var con = new System.Data.SqlClient.SqlConnection(_configuration["ConnectionString:DBConnectionString"]);
-                await con.OpenAsync();
-                await con.ExecuteAsync(
-                    "UPDATE NaukriProspectiveInterviewer SET ResumeLink = @Link, HasAttachment = 1, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
-                    new { Link = uploadedUrl, Id = id });
+                await _repository.UpdateResumeLinkAsync(id, uploadedUrl);
 
                 return Json(new { success = true, resumeLink = uploadedUrl, message = "Resume uploaded." });
             }
