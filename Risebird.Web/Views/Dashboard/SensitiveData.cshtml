@@ -74,6 +74,10 @@
             border-top: 4px solid #7c3aed;
         }
 
+        #aiEvaluationLoaderOverlay.ai-eval-mode--qc .ai-eval-loader-dialog {
+            border-top: 4px solid #0284c7;
+        }
+
     .ai-eval-loader-section {
         display: none;
     }
@@ -87,6 +91,10 @@
     }
 
     #aiEvaluationLoaderOverlay.ai-eval-mode--contradiction .ai-eval-loader-section--contradiction {
+        display: block;
+    }
+
+    #aiEvaluationLoaderOverlay.ai-eval-mode--qc .ai-eval-loader-section--qc {
         display: block;
     }
 
@@ -612,6 +620,15 @@
                                         <h4 class="ai-eval-loader-heading" id="aiEvalHeadingContradiction">Contradiction AI evaluation</h4>
                                         <p class="ai-eval-loader-text">Cross-checking transcript and report for contradictions.</p>
                                     </section>
+                                    <section class="ai-eval-loader-section ai-eval-loader-section--qc" aria-labelledby="aiEvalHeadingQc">
+                                        <div class="ai-eval-anim-transcript">
+                                            <span class="ai-eval-dot"></span>
+                                            <span class="ai-eval-dot"></span>
+                                            <span class="ai-eval-dot"></span>
+                                        </div>
+                                        <h4 class="ai-eval-loader-heading" id="aiEvalHeadingQc">QC AI evaluation</h4>
+                                        <p class="ai-eval-loader-text">Merging report and transcript AI results for this interview’s quality review. This may take up to a minute.</p>
+                                    </section>
                                 </div>
                             </div>
                             <div class="dataloading">
@@ -716,6 +733,11 @@
                                                         <th>Priority</th>
                                                         <th>Interview Date</th>
                                                         <th>Candidate</th>
+                                                        @if (ViewBag.actionstatus == "QCPendingReport")
+                                                        {
+                                                            <th>Non AI Reasoning</th>
+                                                            <th>Risk Category</th>
+                                                        }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
                                                             <th>Join Time</th>
@@ -762,7 +784,12 @@
                                                         <th>IRF ID</th>
                                                         <th>Priority</th>
                                                         <th>Interview Date</th>
-                                                        <th>Candidate Name</th>
+                                                        <th>Candidate</th>
+                                                         @if (ViewBag.actionstatus == "QCPendingReport")
+                                                        {
+                                                            <th>Non AI Reasoning</th>
+                                                            <th>Risk Category</th>
+                                                        }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
                                                             <th>Join Time</th>
@@ -1171,6 +1198,11 @@
                                                                 }
 
                                                             </td>
+                                                             @if (ViewBag.actionstatus == "QCPendingReport")
+                                                            {
+                                                                <td>@item.NonAIreasoning</td>
+                                                                <td>@item.Riskcategory</td>
+                                                             }
                                                             @if (ViewBag.actionstatus == "QCReport")
                                                             {
                                                                 <td>@item.Joinedon</td>
@@ -1721,12 +1753,13 @@
     var _aiEvalAriaLabels = {
         report: 'Report AI evaluation in progress.',
         transcript: 'Transcript AI evaluation in progress.',
-        contradiction: 'Contradiction AI evaluation in progress.'
+        contradiction: 'Contradiction AI evaluation in progress.',
+        qc: 'QC AI evaluation in progress. Merging report and transcript AI results.'
     };
     function showAiEvaluationLoader(mode) {
         var overlay = document.getElementById('aiEvaluationLoaderOverlay');
         if (!overlay) return;
-        overlay.classList.remove('ai-eval-mode--report', 'ai-eval-mode--transcript', 'ai-eval-mode--contradiction');
+        overlay.classList.remove('ai-eval-mode--report', 'ai-eval-mode--transcript', 'ai-eval-mode--contradiction', 'ai-eval-mode--qc');
         overlay.classList.add('ai-eval-mode--' + mode);
         overlay.classList.add('is-visible');
         overlay.setAttribute('aria-hidden', 'false');
@@ -1796,7 +1829,7 @@
         });
     }
     function QCAIEvaluation(interviewid) {
-        showAiEvaluationLoader('report');
+        showAiEvaluationLoader('qc');
         $.ajax({
             url: '/Dashboard/RunQcInterviewAiMerge',
             data: { 'interviewId': interviewid },
