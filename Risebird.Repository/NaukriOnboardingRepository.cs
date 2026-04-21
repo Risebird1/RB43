@@ -271,5 +271,38 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> UpdateResumeLinkAsync(int id, string resumeLink)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.ExecuteAsync(
+                    "UPDATE NaukriProspectiveInterviewer SET ResumeLink = @Link, HasAttachment = 1, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
+                    new { Link = resumeLink, Id = id }, commandTimeout: 30);
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<int?> GetInterviewerProfileIdByUserIdAsync(int userId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                return await con.QueryFirstOrDefaultAsync<int?>(
+                    "SELECT Id FROM InterviewerProfile WHERE UserId = @UserId",
+                    new { UserId = userId }, commandTimeout: 30);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

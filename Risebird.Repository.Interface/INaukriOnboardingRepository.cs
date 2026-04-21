@@ -33,5 +33,9 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateAckEmailSentAsync(int id);
 
         Task<bool> DeleteAsync(int id);
+
+        Task<int?> GetInterviewerProfileIdByUserIdAsync(int userId);
+
+        Task<bool> UpdateResumeLinkAsync(int id, string resumeLink);
     }
 }
