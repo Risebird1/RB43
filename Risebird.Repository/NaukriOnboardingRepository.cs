@@ -289,6 +289,46 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<List<MagDropdownItem>> GetAllMasterAssessmentGroupsAsync()
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var result = await con.QueryAsync<MagDropdownItem>(
+                    "usp_GetAllMasterAssessmentGroups",
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<MagDropdownItem>();
+            }
+        }
+
+        public async Task<dynamic> SaveManualOverrideAsync(int id, string fieldName, string oldValue, string newValue, string changedBy)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Id", id);
+                p.Add("@FieldName", fieldName);
+                p.Add("@OldValue", oldValue);
+                p.Add("@NewValue", newValue);
+                p.Add("@ChangedBy", changedBy);
+
+                return await con.QueryFirstOrDefaultAsync<dynamic>(
+                    "usp_UpdateNaukriManualOverride", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<int?> GetInterviewerProfileIdByUserIdAsync(int userId)
         {
             try
