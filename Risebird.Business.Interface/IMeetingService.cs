@@ -139,6 +139,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<Meeting>> FetchOpenMeetingById(string id);
         string ReassignMeeting(string id, string meetingid, string Emailid);
+        string ReassignMeetingByTeam(string id, string meetingid, string Emailid);
         Task<InterviewerDetails> FetchInterviewerCodedName(string emailID);
         Task<SelectList> GetIRFInterviewingMembersEmails(string irfId);
         Task<SelectList> GetIRFQualityControllersEmails(string irfId);

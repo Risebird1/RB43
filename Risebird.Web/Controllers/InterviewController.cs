@@ -9755,7 +9755,8 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
                 var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                var result = _meetingService.ReassignMeeting(interviewId.ToString(), Meetingid, interviewer);
+                //var result = _meetingService.ReassignMeeting(interviewId.ToString(), Meetingid, interviewer);
+                var result = _meetingService.ReassignMeetingByTeam(interviewId.ToString(), Meetingid, interviewer);
                 if (result.Contains("Successfully"))
                 {
                     var currenturl = Request.Host + "/Interview/AssignEmergencyInterviewer?interviewid=" + interviewId;
