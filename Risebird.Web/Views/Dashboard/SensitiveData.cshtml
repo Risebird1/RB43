@@ -733,6 +733,11 @@
                                                         <th>Priority</th>
                                                         <th>Interview Date</th>
                                                         <th>Candidate</th>
+                                                        @if (ViewBag.actionstatus == "QCPendingReport")
+                                                        {
+                                                            <th>Non AI Reasoning</th>
+                                                            <th>Risk Category</th>
+                                                        }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
                                                             <th>Join Time</th>
@@ -779,7 +784,12 @@
                                                         <th>IRF ID</th>
                                                         <th>Priority</th>
                                                         <th>Interview Date</th>
-                                                        <th>Candidate Name</th>
+                                                        <th>Candidate</th>
+                                                         @if (ViewBag.actionstatus == "QCPendingReport")
+                                                        {
+                                                            <th>Non AI Reasoning</th>
+                                                            <th>Risk Category</th>
+                                                        }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
                                                             <th>Join Time</th>
@@ -1188,6 +1198,11 @@
                                                                 }
 
                                                             </td>
+                                                             @if (ViewBag.actionstatus == "QCPendingReport")
+                                                            {
+                                                                <td>@item.NonAIreasoning</td>
+                                                                <td>@item.Riskcategory</td>
+                                                             }
                                                             @if (ViewBag.actionstatus == "QCReport")
                                                             {
                                                                 <td>@item.Joinedon</td>
