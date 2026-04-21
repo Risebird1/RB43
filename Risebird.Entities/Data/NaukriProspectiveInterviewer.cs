@@ -51,5 +51,6 @@ namespace Risebird.Entities.Data
         public string   ProcessedBy                 { get; set; }
         public DateTime CreatedAt                   { get; set; }
         public DateTime? UpdatedAt                  { get; set; }
+        public string   ModificationLog             { get; set; }
     }
 }

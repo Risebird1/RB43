@@ -531,6 +531,82 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ── Get all MAGs for searchable dropdown ──────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllMags()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var mags = await _repository.GetAllMasterAssessmentGroupsAsync();
+                return Json(new { success = true, data = mags });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Save manual override (MAG, email, phone) with audit ──────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveManualOverride(int id, string fieldName, string oldValue, string newValue)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            var allowedFields = new[] { "MagName", "ParsedEmail", "ParsedPhone" };
+            if (string.IsNullOrWhiteSpace(fieldName) || !Array.Exists(allowedFields, f => f == fieldName))
+                return Json(new { success = false, error = "Invalid field." });
+
+            if (string.IsNullOrWhiteSpace(newValue))
+                return Json(new { success = false, error = "New value cannot be empty." });
+
+            try
+            {
+                var changedBy = HttpContext.Session.GetString("email").Trim('"');
+                var result = await _repository.SaveManualOverrideAsync(id, fieldName, oldValue, newValue.Trim(), changedBy);
+                if (result == null)
+                    return Json(new { success = false, error = "Update failed." });
+
+                if (fieldName == "ParsedEmail")
+                {
+                    bool isEx = false;
+                    int? exUserId = null, exProfileId = null;
+                    try
+                    {
+                        isEx = (bool)(result.IsExisting ?? false);
+                        exUserId = (int?)result.ExistingUserId;
+                        exProfileId = (int?)result.ExistingProfileId;
+                    }
+                    catch { }
+
+                    return Json(new
+                    {
+                        success = true,
+                        isExistingInterviewer = isEx,
+                        existingUserId = exUserId,
+                        existingProfileId = exProfileId,
+                        message = isEx
+                            ? $"Email updated. This interviewer already exists (UserId: {exUserId})."
+                            : "Email updated. Interviewer is new to the system."
+                    });
+                }
+
+                return Json(new { success = true, message = $"{fieldName} updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
         // ── Upload Resume (AJAX) ────────────────────────────────────────────────────
 
         [HttpPost]
