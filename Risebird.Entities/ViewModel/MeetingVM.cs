@@ -429,6 +429,8 @@ namespace Risebird.Entities.ViewModel
         public bool ContradictionAi { get; set; }
         public int PriorityLevel { get; set; }
         public string PriorityLevelDesc { get; set; }
+        public string Riskcategory { get; set; }
+        public string NonAIreasoning { get; set; }
 
     }
 
