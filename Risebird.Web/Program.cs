@@ -257,6 +257,11 @@ builder.Services.AddScoped<IResumeParsingService, ResumeParsingService>();
 builder.Services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerEmailAvailabilityRepository>();
 // ============================================
 
+// Naukri Prospective Interviewer Onboarding
+// ============================================
+builder.Services.AddScoped<INaukriOnboardingRepository, NaukriOnboardingRepository>();
+// ============================================
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
