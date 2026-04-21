@@ -37,5 +37,17 @@ namespace Risebird.Repository.Interface
         Task<int?> GetInterviewerProfileIdByUserIdAsync(int userId);
 
         Task<bool> UpdateResumeLinkAsync(int id, string resumeLink);
+
+        Task<List<MagDropdownItem>> GetAllMasterAssessmentGroupsAsync();
+
+        Task<dynamic> SaveManualOverrideAsync(int id, string fieldName, string oldValue, string newValue, string changedBy);
+    }
+
+    public class MagDropdownItem
+    {
+        public int MagId { get; set; }
+        public string MagName { get; set; }
+        public int AssessmentGroupId { get; set; }
+        public string AssessmentGroupName { get; set; }
     }
 }

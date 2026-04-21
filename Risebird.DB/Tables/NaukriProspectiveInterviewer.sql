@@ -57,7 +57,16 @@ CREATE TABLE [dbo].[NaukriProspectiveInterviewer](
     [CreatedAt]                 [datetime] NOT NULL DEFAULT GETUTCDATE(),
     [UpdatedAt]                 [datetime] NULL,
 
+    -- Audit log for manual overrides (JSON array)
+    [ModificationLog]           [nvarchar](MAX) NULL,
+
     CONSTRAINT [PK_NaukriProspectiveInterviewer] PRIMARY KEY CLUSTERED ([Id] ASC)
 )
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'ModificationLog' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [ModificationLog] NVARCHAR(MAX) NULL
 END
 GO

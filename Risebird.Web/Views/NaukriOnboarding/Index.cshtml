@@ -118,6 +118,23 @@
     .employed-yes { color:#198754; font-weight:600; }
     .employed-no { color:#dc3545; font-weight:600; }
     .skills-wrap { font-size:11px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; word-break:break-word; }
+
+    .inline-edit-btn { background:none; border:none; color:#6c757d; padding:2px 4px; cursor:pointer; font-size:11px; vertical-align:middle; transition:color .15s; }
+    .inline-edit-btn:hover { color:#0d6efd; }
+    .inline-edit-group { display:inline-flex; align-items:center; gap:4px; }
+    .inline-edit-group input { font-size:12px; padding:2px 8px; height:28px; border-radius:4px; border:1px solid #ced4da; min-width:160px; }
+    .inline-edit-group .btn { font-size:10px; padding:2px 8px; line-height:1.4; border-radius:4px; }
+
+    .mag-dropdown-wrap { position:relative; display:inline-block; }
+    #magDropdown { display:none; position:absolute; z-index:1060; background:#fff; border:1px solid #dee2e6; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,.18); width:380px; max-height:360px; left:0; top:100%; margin-top:4px; }
+    #magDropdown .mag-search-wrap { padding:8px 10px; border-bottom:1px solid #eee; }
+    #magDropdown .mag-search-wrap input { font-size:12px; }
+    #magList { max-height:270px; overflow-y:auto; padding:4px; }
+    #magList .mag-item { padding:6px 10px; font-size:12px; cursor:pointer; border-radius:4px; transition:background .12s; display:flex; justify-content:space-between; align-items:center; }
+    #magList .mag-item:hover { background:#e9ecef; }
+    #magList .mag-item.active { background:#0d6efd; color:#fff; }
+    #magList .mag-item .mag-ag { font-size:10px; opacity:.7; }
+    #magList .mag-no-results { padding:12px; text-align:center; color:#6c757d; font-size:12px; }
 </style>
 
 <div id="loadingOverlay">
@@ -356,7 +373,16 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mgm-meta">
-                                <span><strong>MAG:</strong> <span id="mgmMag"></span></span><br/>
+                                <span><strong>MAG:</strong>
+                                    <span class="mag-dropdown-wrap">
+                                        <span id="mgmMag"></span>
+                                        <button type="button" class="inline-edit-btn" id="btnEditMag" title="Change MAG"><i class="fas fa-pencil-alt"></i></button>
+                                        <div id="magDropdown">
+                                            <div class="mag-search-wrap"><input type="text" id="magSearch" class="form-control form-control-sm" placeholder="Search MAG name..." autocomplete="off" /></div>
+                                            <div id="magList"></div>
+                                        </div>
+                                    </span>
+                                </span><br/>
                                 <span><strong>Education:</strong> <span id="mgmEducation"></span></span><br/>
                                 <span><strong>Salary:</strong> <span id="mgmSalary"></span></span><br/>
                                 <span><strong>Past Exp:</strong> <span id="mgmPastExp"></span></span><br/>
@@ -606,16 +632,17 @@
         $('#btnResendAck').hide();
         $('#resumeUploadArea').hide(); $('#resumeFileInput').val(''); $('#uploadProgress, #uploadResult').hide();
         $('#mgmParsedEmail').text('\u2014'); $('#mgmParsedPhone').text('\u2014');
+        closeMagDropdown();
         $('#mgmCompany').text('\u2014'); $('#mgmEmployed').text('\u2014');
     }
 
     function syncPipeline(r) {
         // Step 1: Parse
         if (r.resumeParseCompleted === true) {
-            var html1 = '<strong>Email:</strong> ' + (r.parsedEmail || '\u2014') + ' | <strong>Phone:</strong> ' + (r.parsedPhone || '\u2014');
-            if (r.isExistingInterviewer === true) html1 += '<br/><span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Already exists in the system (UserId: ' + r.existingUserId + '). Cannot onboard again.</span>';
-            else html1 += '<br/><span class="text-success"><i class="fas fa-check-circle me-1"></i>New prospect \u2014 ready for verification.</span>';
-            markStep(1, 'completed', html1);
+            var statusMsg = '';
+            if (r.isExistingInterviewer === true) statusMsg = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Already exists in the system (UserId: ' + r.existingUserId + '). Cannot onboard again.</span>';
+            else statusMsg = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>New prospect \u2014 ready for verification.</span>';
+            markStep(1, 'completed', buildStep1Html(r.parsedEmail, r.parsedPhone, statusMsg));
         } else if (!r.hasResumeLink) {
             $('#step1Subtitle').html('No resume available. <strong>Upload a resume to proceed.</strong>');
             $('#btnParseResume').prop('disabled', true);
@@ -644,13 +671,13 @@
 
         // Block onboarding if existing interviewer
         if (r.isExistingInterviewer === true && r.onboardingCompleted !== true) {
-            $('#step4Subtitle').html('<span class="text-danger">Cannot onboard \u2014 interviewer already exists in the system.</span>');
+            $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">Cannot onboard \u2014 interviewer already exists in the system.</span>');
             $('#btnOnboard').prop('disabled', true);
         }
 
         // Block if no AG resolved
         if (!r.resolvedAssessmentGroupId && r.onboardingCompleted !== true) {
-            $('#step4Subtitle').html('<span class="text-warning">No assessment group found for MAG: <strong>' + (r.magName || '\u2014') + '</strong>.</span>');
+            $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">No assessment group found for MAG: <strong>' + (r.magName || '\u2014') + '</strong>. Use the edit button next to MAG above to select the correct one.</span>');
             $('#btnOnboard').prop('disabled', true);
         }
     }
@@ -735,15 +762,15 @@
             data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
             success: function (res) {
                 if (res.success) {
-                    var h = '<strong>Email:</strong> ' + (res.parsedEmail||'\u2014') + ' | <strong>Phone:</strong> ' + (res.parsedPhone||'\u2014');
+                    var statusMsg = '';
                     if (res.isExistingInterviewer) {
-                        h += '<br/><span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Already exists (UserId: ' + res.existingUserId + '). Cannot onboard.</span>';
-                        markStep(1, 'completed', h);
-                        $('#step4Subtitle').html('<span class="text-danger">Cannot onboard \u2014 interviewer already in system.</span>');
+                        statusMsg = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Already exists (UserId: ' + res.existingUserId + '). Cannot onboard.</span>';
+                        markStep(1, 'completed', buildStep1Html(res.parsedEmail, res.parsedPhone, statusMsg));
+                        $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">Cannot onboard \u2014 interviewer already exists in the system.</span>');
                         $('#btnOnboard').prop('disabled', true);
                     } else {
-                        h += '<br/><span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message||'New prospect.') + '</span>';
-                        markStep(1, 'completed', h);
+                        statusMsg = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message||'New prospect.') + '</span>';
+                        markStep(1, 'completed', buildStep1Html(res.parsedEmail, res.parsedPhone, statusMsg));
                     }
                     $('#mgmParsedEmail').text(res.parsedEmail || '\u2014');
                     $('#mgmParsedPhone').text(res.parsedPhone || '\u2014');
@@ -882,6 +909,178 @@
                 else { alert(res.error || 'Failed to send.'); btn.prop('disabled',false).html('<i class="fas fa-envelope me-1"></i>Resend Ack'); }
             },
             error: function () { alert('Request failed.'); btn.prop('disabled',false).html('<i class="fas fa-envelope me-1"></i>Resend Ack'); }
+        });
+    });
+
+    /* ── Step 1 editable result builder ──────────────────────── */
+
+    function buildStep1Html(email, phone, statusMsg) {
+        var e = email || '\u2014', p = phone || '\u2014';
+        return '<div class="d-flex align-items-center flex-wrap gap-2 mb-1">'
+            + '<span><strong>Email:</strong> <span class="s1-email-val">' + e + '</span>'
+            + ' <button type="button" class="inline-edit-btn btn-s1-edit" data-field="email" title="Edit email"><i class="fas fa-pencil-alt"></i></button></span>'
+            + '<span class="text-muted">|</span>'
+            + '<span><strong>Phone:</strong> <span class="s1-phone-val">' + p + '</span>'
+            + ' <button type="button" class="inline-edit-btn btn-s1-edit" data-field="phone" title="Edit phone"><i class="fas fa-pencil-alt"></i></button></span>'
+            + '</div>'
+            + '<div class="s1-edit-area" style="display:none;margin-bottom:6px;"></div>'
+            + (statusMsg ? '<div class="s1-status-msg">' + statusMsg + '</div>' : '');
+    }
+
+    /* ── Inline Edit: Email & Phone (delegated from Step 1 result) ── */
+
+    $(document).on('click', '.btn-s1-edit', function () {
+        var field = $(this).data('field');
+        var current = field === 'email'
+            ? ((currentRecord && currentRecord.parsedEmail) || '')
+            : ((currentRecord && currentRecord.parsedPhone) || '');
+        var label = field === 'email' ? 'Email' : 'Phone';
+        var inputType = field === 'email' ? 'email' : 'tel';
+
+        var editHtml = '<div class="inline-edit-group">'
+            + '<strong style="font-size:12px;min-width:48px;">' + label + ':</strong> '
+            + '<input type="' + inputType + '" class="s1-edit-input" data-field="' + field + '" value="' + current.replace(/"/g, '&quot;') + '" />'
+            + '<button type="button" class="btn btn-sm btn-primary btn-s1-save" data-field="' + field + '"><i class="fas fa-check"></i></button>'
+            + '<button type="button" class="btn btn-sm btn-outline-secondary btn-s1-cancel"><i class="fas fa-times"></i></button>'
+            + '</div>';
+        $('#step1Result .s1-edit-area').html(editHtml).show();
+        $('#step1Result .s1-edit-area .s1-edit-input').focus();
+    });
+
+    $(document).on('click', '.btn-s1-cancel', function () {
+        $('#step1Result .s1-edit-area').hide().empty();
+    });
+
+    $(document).on('click', '.btn-s1-save', function () {
+        var field = $(this).data('field');
+        var fieldName = field === 'email' ? 'ParsedEmail' : 'ParsedPhone';
+        var newVal = $('#step1Result .s1-edit-input[data-field="' + field + '"]').val().trim();
+        if (!newVal) { alert((field === 'email' ? 'Email' : 'Phone') + ' cannot be empty.'); return; }
+
+        var oldVal = field === 'email'
+            ? ((currentRecord && currentRecord.parsedEmail) || '')
+            : ((currentRecord && currentRecord.parsedPhone) || '');
+        if (newVal === oldVal) { $('#step1Result .s1-edit-area').hide().empty(); return; }
+
+        var btn = $(this); btn.prop('disabled', true);
+        $.ajax({
+            url: '@Url.Action("SaveManualOverride", "NaukriOnboarding")', type: 'POST', timeout: 30000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, fieldName: fieldName, oldValue: oldVal, newValue: newVal },
+            success: function (res) {
+                btn.prop('disabled', false);
+                if (res.success) {
+                    $('#step1Result .s1-edit-area').hide().empty();
+                    if (field === 'email') {
+                        currentRecord.parsedEmail = newVal;
+                        currentRecord.isExistingInterviewer = res.isExistingInterviewer;
+                        currentRecord.existingUserId = res.existingUserId;
+                        $('#step1Result .s1-email-val').text(newVal);
+                        $('#mgmParsedEmail').text(newVal);
+                        var newStatusMsg = '';
+                        if (res.isExistingInterviewer) {
+                            newStatusMsg = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Already exists (UserId: ' + res.existingUserId + '). Cannot onboard.</span>';
+                            $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">Cannot onboard \u2014 interviewer already exists (UserId: ' + res.existingUserId + ').</span>');
+                            $('#btnOnboard').prop('disabled', true);
+                        } else {
+                            newStatusMsg = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message || 'Email updated. Interviewer is new to the system.') + '</span>';
+                            if (currentRecord.onboardingCompleted !== true && currentRecord.resolvedAssessmentGroupId) {
+                                $('#step4Subtitle').text('Creates the interviewer profile, maps to AG + channels, and sends acknowledgement email');
+                                $('#btnOnboard').prop('disabled', false);
+                            }
+                        }
+                        $('#step1Result .s1-status-msg').html(newStatusMsg);
+                    } else {
+                        currentRecord.parsedPhone = newVal;
+                        $('#step1Result .s1-phone-val').text(newVal);
+                        $('#mgmParsedPhone').text(newVal);
+                    }
+                } else { alert(res.error || 'Failed to update.'); }
+            },
+            error: function () { btn.prop('disabled', false); alert('Request failed.'); }
+        });
+    });
+
+    /* ── MAG Searchable Dropdown ─────────────────────────────── */
+
+    var magCache = null;
+    function closeMagDropdown() { $('#magDropdown').hide(); $('#magSearch').val(''); }
+
+    $(document).on('click', function (e) { if (!$(e.target).closest('.mag-dropdown-wrap').length) closeMagDropdown(); });
+
+    $('#btnEditMag').on('click', function () {
+        if ($('#magDropdown').is(':visible')) { closeMagDropdown(); return; }
+        if (magCache) { renderMagList(magCache, ''); $('#magDropdown').show(); $('#magSearch').focus(); return; }
+        $('#magList').html('<div class="mag-no-results"><i class="fas fa-spinner fa-spin me-1"></i>Loading...</div>');
+        $('#magDropdown').show();
+        $.ajax({
+            url: '@Url.Action("GetAllMags", "NaukriOnboarding")', type: 'GET', timeout: 30000,
+            success: function (res) {
+                if (res.success && res.data) { magCache = res.data; renderMagList(magCache, ''); $('#magSearch').focus(); }
+                else { $('#magList').html('<div class="mag-no-results">Failed to load MAGs.</div>'); }
+            },
+            error: function () { $('#magList').html('<div class="mag-no-results">Failed to load MAGs.</div>'); }
+        });
+    });
+
+    $('#magSearch').on('input', function () {
+        var q = $(this).val().toLowerCase();
+        if (magCache) renderMagList(magCache, q);
+    });
+
+    function renderMagList(data, query) {
+        var html = '';
+        var currentMag = (currentRecord && currentRecord.magName) || '';
+        var filtered = data.filter(function (m) {
+            return !query || m.magName.toLowerCase().indexOf(query) !== -1 || (m.assessmentGroupName && m.assessmentGroupName.toLowerCase().indexOf(query) !== -1);
+        });
+        if (filtered.length === 0) { html = '<div class="mag-no-results">No MAGs found.</div>'; }
+        else {
+            filtered.slice(0, 100).forEach(function (m) {
+                var isActive = m.magName === currentMag ? ' active' : '';
+                html += '<div class="mag-item' + isActive + '" data-mag-name="' + m.magName.replace(/"/g, '&quot;') + '" data-ag-id="' + m.assessmentGroupId + '" data-ag-name="' + (m.assessmentGroupName || '').replace(/"/g, '&quot;') + '">'
+                       + '<span>' + m.magName + '</span><span class="mag-ag">' + (m.assessmentGroupName || '') + '</span></div>';
+            });
+            if (filtered.length > 100) html += '<div class="mag-no-results">' + (filtered.length - 100) + ' more \u2014 refine your search.</div>';
+        }
+        $('#magList').html(html);
+    }
+
+    $(document).on('click', '.mag-item', function () {
+        var newMag = $(this).data('mag-name');
+        var agId = $(this).data('ag-id');
+        var agName = $(this).data('ag-name');
+        var oldMag = (currentRecord && currentRecord.magName) || '';
+        if (newMag === oldMag) { closeMagDropdown(); return; }
+
+        closeMagDropdown();
+        $('#mgmMag').html('<i class="fas fa-spinner fa-spin me-1 text-muted"></i>Saving...');
+
+        $.ajax({
+            url: '@Url.Action("SaveManualOverride", "NaukriOnboarding")', type: 'POST', timeout: 30000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, fieldName: 'MagName', oldValue: oldMag, newValue: newMag },
+            success: function (res) {
+                if (res.success) {
+                    currentRecord.magName = newMag;
+                    currentRecord.resolvedAssessmentGroupId = agId;
+                    currentRecord.assessmentGroupName = agName;
+                    $('#mgmMag').text(newMag + (agName ? ' \u2192 ' + agName : ''));
+                    if (agId && currentRecord.isExistingInterviewer !== true && currentRecord.onboardingCompleted !== true) {
+                        $('#step4Subtitle').text('Creates the interviewer profile, maps to AG + channels, and sends acknowledgement email');
+                        $('#btnOnboard').prop('disabled', false);
+                        $('#step4Card').removeClass('failed');
+                    } else if (!agId) {
+                        $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">No assessment group found for MAG: <strong>' + newMag + '</strong>.</span>');
+                        $('#btnOnboard').prop('disabled', true);
+                    }
+                } else {
+                    alert(res.error || 'Failed to update MAG.');
+                    $('#mgmMag').text(oldMag + (currentRecord.assessmentGroupName ? ' \u2192 ' + currentRecord.assessmentGroupName : ''));
+                }
+            },
+            error: function () {
+                alert('Request failed.');
+                $('#mgmMag').text(oldMag + (currentRecord.assessmentGroupName ? ' \u2192 ' + currentRecord.assessmentGroupName : ''));
+            }
         });
     });
 
