@@ -268,5 +268,6 @@ namespace Risebird.Business.Interface
         Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model);
         Task<IEnumerable<ZohoParticipantList>> GetZohoLiveMeetingInfomation();
         Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId);
+        Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId);
     }
 }

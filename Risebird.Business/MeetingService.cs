@@ -4706,6 +4706,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId)
+        {
+            try
+            {
+                return await _meetingRespository.FetchMoreDetailsInterview(interviewId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
