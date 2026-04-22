@@ -9985,6 +9985,12 @@ namespace Risebird.Web.Controllers
             }
             return false;
         }
+        public async Task<JsonResult> FetchMoreDetailsOfInterview(int interviewId)
+        {
+            var model = await _meetingService.FetchMoreDetailsInterview(interviewId);
+            model = model.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; x.PriorityLevelDesc = x.PriorityLevel > 0 ? ((PriorityLevel)x.PriorityLevel).GetDescription() : string.Empty; return x; }).ToList();
+            return Json(model);
+        }
         private static string BuildContradictionReportMessage(string transcriptSummary, string reportStringContent)
         {
             var message =
@@ -9993,12 +9999,6 @@ namespace Risebird.Web.Controllers
                 "AI Report JSON:\n" + (transcriptSummary ?? "") + "\n\n" +
                 "Human Report JSON:\n" + (reportStringContent ?? "");
             return message;
-        }
-        public async Task<JsonResult> FetchMoreDetailsOfInterview(int interviewId)
-        {
-            var model = await _meetingService.FetchMoreDetailsInterview(interviewId);
-            //model = model.Select(x => { x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.PriorityLevelDesc = x.PriorityLevel > 0 ? ((PriorityLevel)x.PriorityLevel).GetDescription() : string.Empty; return x; }).ToList();
-            return Json(model);
         }
     }
 }
