@@ -4701,11 +4701,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<MeetingVM>> FetchMoreDetailsOfInterview(int interviewId)
+        public async Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId)
         {
             try
             {
-                return await _meetingRespository.FetchMoreDetailsOfInterview(interviewId);
+                return await _meetingRespository.FetchMoreDetailsInterview(interviewId);
             }
             catch (Exception ex)
             {

@@ -8123,7 +8123,7 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             }
             return null;
         }
-        public async Task<IEnumerable<MeetingVM>> FetchMoreDetailsOfInterview(int interviewId)
+        public async Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId)
         {
             try
             {
@@ -8135,7 +8135,6 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                          commandType: CommandType.StoredProcedure);
                     return data;
                 }
-
             }
             catch (SqlException ex)
             {
