@@ -97,6 +97,10 @@ namespace Risebird.Entities.ViewModel
         public bool IsAIInterview { get; set; }
         public string SessionId { get; set; }
         public string StatusValue { get; set; }
+        public int PriorityLevel { get; set; }
+        public string PriorityLevelDesc { get; set; }
+        public string NonAIreasoning { get; set; }
+        public string Riskcategory { get; set; }
     }
     public class PaymentSlabsVM
     {
