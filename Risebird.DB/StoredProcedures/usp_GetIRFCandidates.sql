@@ -60,7 +60,7 @@ outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From Cand
 where ca.IRFId = @IRFId and (ca.ClientHRAttemptContact = @emailId or ca.AddedByUserId =(select id from UserList where EmailId =@emailId))) Cnd        
 left join (select im.id as imid,im.interviewDate, im.SessionId,im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
 ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join      
-(select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered      
+(select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName and Isnull(Isdeleted,0)=0 group by candidateEmail) Filtered      
 on im.candidateEmail= Filtered.candidateEmail and im.interviewDate=Filtered.intereviewDate      
 left join InterviewComments ic on ic.InterviewId = im.id) ims on ims.candidateEmail= Cnd.EmailId and Cnd.IRFName = ims.IRFId      
 end  
@@ -95,7 +95,7 @@ outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From Cand
 where ca.IRFId = @IRFId and (ca.ProfileSource = @emailId or ca.AddedByUserId =(select id from UserList where EmailId =@emailId))) Cnd        
 left join (select im.id as imid,im.interviewDate,im.SessionId, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
 ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join      
-(select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered      
+(select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName and Isnull(Isdeleted,0)=0 group by candidateEmail) Filtered      
 on im.candidateEmail= Filtered.candidateEmail and im.interviewDate=Filtered.intereviewDate      
 left join InterviewComments ic on ic.InterviewId = im.id) ims on ims.candidateEmail= Cnd.EmailId and Cnd.IRFName = ims.IRFId      
 end  
@@ -132,7 +132,7 @@ outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From Cand
 where ca.IRFId = @IRFId) Cnd        
 left join (select im.id as imid,im.interviewDate,im.SessionId, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,      
 ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join      
-(select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered      
+(select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName and Isnull(Isdeleted,0)=0 group by candidateEmail) Filtered      
 on im.candidateEmail= Filtered.candidateEmail and im.interviewDate=Filtered.intereviewDate      
 left join InterviewComments ic on ic.InterviewId = im.id) ims on ims.candidateEmail= Cnd.EmailId and Cnd.IRFName = ims.IRFId     
   
