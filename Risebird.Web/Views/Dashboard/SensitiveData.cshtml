@@ -484,15 +484,15 @@
                     {
                         if (ViewBag.actionstatus == "QCPendingReport")
                         {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCPendingReport')"><strong>Reject Pending</strong></div>
+                            @* <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div> *@
                             <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
                         }
-                        else if (ViewBag.actionstatus == "QCReport")
+                        @* else if (ViewBag.actionstatus == "QCReport")
                         {
                             <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
@@ -531,18 +531,18 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab-ac" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
-                        }
+                        } *@
                         else if (ViewBag.actionstatus == "QCSelect")
                         {
-                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>Reject Pending</strong></div>
+                            @* <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div> *@
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
                         }
-                        else
+                        @* else
                         {
                             <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
@@ -550,16 +550,16 @@
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                        }
+                        } *@
                     }
 
                 </div>
                 <div class="pull-right">
                     <div>
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                       @*  <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
-                        </button>
+                        </button> *@
 
                         @if (ViewBag.Actiontype != 0)
                         {
@@ -567,10 +567,10 @@
                                 <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("MyInterviews", "HR")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                             </button>
                         }
-                        @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelect")
+                        @* @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelect")
                         {
                             <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard", new { actionstatus = ViewBag.actionstatus, actiontype = ViewBag.Actiontype })'"></i></span>
-                        }
+                        } *@
                     </div>
                 </div>
             </div>
@@ -733,7 +733,7 @@
                                                         <th>Priority</th>
                                                         <th>Interview Date</th>
                                                         <th>Candidate</th>
-                                                        @if (ViewBag.actionstatus == "QCPendingReport")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                         {
                                                             <th>Non AI Reasoning</th>
                                                             <th>Risk Category</th>
@@ -785,7 +785,7 @@
                                                         <th>Priority</th>
                                                         <th>Interview Date</th>
                                                         <th>Candidate</th>
-                                                         @if (ViewBag.actionstatus == "QCPendingReport")
+                                                         @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                         {
                                                             <th>Non AI Reasoning</th>
                                                             <th>Risk Category</th>
@@ -1198,7 +1198,7 @@
                                                                 }
 
                                                             </td>
-                                                             @if (ViewBag.actionstatus == "QCPendingReport")
+                                                             @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                             {
                                                                 <td>@item.NonAIreasoning</td>
                                                                 <td>@item.Riskcategory</td>
