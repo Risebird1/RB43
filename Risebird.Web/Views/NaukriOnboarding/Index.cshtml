@@ -35,6 +35,10 @@
 }
 
 <style>
+    .text-muted {
+        --bs-text-opacity: 1;
+        color: #1f2326 !important;
+    }
     #loadingOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:9999; justify-content:center; align-items:center; }
     #loadingOverlay.show { display:flex; }
     #loadingOverlay .spinner-content { text-align:center; background:#fff; padding:30px 50px; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.15); }
@@ -79,7 +83,7 @@
 
     .mgm-header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); color:#fff; border:0; padding:1rem 1.25rem; flex-wrap:wrap; gap:0.75rem; align-items:flex-start; }
     .mgm-header .modal-title-wrap { flex:1 1 220px; min-width:0; }
-    .mgm-header .modal-title { font-size:1.05rem; font-weight:600; line-height:1.35; margin:0; word-wrap:break-word; }
+    .mgm-header .modal-title { font-size:1.05rem; color:#fff;font-weight:600; line-height:1.35; margin:0; word-wrap:break-word; }
     .mgm-header .btn-close { filter:invert(1) grayscale(100%) brightness(200%); opacity:.85; }
     #manageModal .modal-content { border:none; border-radius:12px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,.18),0 0 1px rgba(0,0,0,.08); }
     #manageModal .modal-body { font-size:12.5px; background:#fafbfc; }
@@ -394,13 +398,13 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="mgm-info-row">
-                                <span class="label"><i class="fas fa-envelope me-1"></i>Parsed Email:</span>
+                                <span><i class="fas fa-envelope me-1"></i>Parsed Email:</span>
                                 <span class="value" id="mgmParsedEmail">\u2014</span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mgm-info-row">
-                                <span class="label"><i class="fas fa-phone me-1"></i>Parsed Phone:</span>
+                                <span><i class="fas fa-phone me-1"></i>Parsed Phone:</span>
                                 <span class="value" id="mgmParsedPhone">\u2014</span>
                             </div>
                         </div>
@@ -409,13 +413,13 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="mgm-info-row">
-                                <span class="label"><i class="fas fa-building me-1"></i>Company:</span>
+                                <span><i class="fas fa-building me-1"></i>Company:</span>
                                 <span class="value" id="mgmCompany">\u2014</span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mgm-info-row">
-                                <span class="label"><i class="fas fa-briefcase me-1"></i>Employed:</span>
+                                <span><i class="fas fa-briefcase me-1"></i>Employed:</span>
                                 <span class="value" id="mgmEmployed">\u2014</span>
                             </div>
                         </div>
@@ -636,6 +640,12 @@
         $('#mgmCompany').text('\u2014'); $('#mgmEmployed').text('\u2014');
     }
 
+    function evPassed(r) { return r.employmentVerified === true && r.employmentIsEmployed === true && !!r.employmentCompanyName; }
+    function aiPassed(r) {
+        if (r.resumeAIAnalysisCompleted !== true) return false;
+        try { var p = JSON.parse(r.resumeAIAnalysisResult); return p && p.verdict && p.verdict.toLowerCase().indexOf('yes') !== -1; } catch(e){ return false; }
+    }
+
     function syncPipeline(r) {
         // Step 1: Parse
         if (r.resumeParseCompleted === true) {
@@ -651,34 +661,71 @@
         // Step 2: Employment
         if (r.employmentVerified === true) {
             var html2 = '<strong>Company:</strong> ' + (r.employmentCompanyName || '\u2014') + ' | <strong>Employed:</strong> ' + (r.employmentIsEmployed ? 'Yes' : 'No');
-            markStep(2, 'completed', html2);
+            if (evPassed(r)) {
+                markStep(2, 'completed', html2);
+            } else {
+                html2 += '<br/><span style="color:#842029;font-weight:500;"><i class="fas fa-times-circle me-1"></i>EV failed \u2014 no employment found. Edit email/phone above and retry.</span>';
+                markStep(2, 'failed', html2);
+                $('#btnVerifyEmployment').prop('disabled', false).html('<i class="fas fa-id-badge me-1"></i>Retry EV');
+            }
         }
 
-        // Step 3: AI
+        // Step 3: AI — only enable if EV passed
         if (r.resumeAIAnalysisCompleted === true) {
             var html3 = r.resumeAIAnalysisResult || 'Analysis complete.';
-            try { var p = JSON.parse(r.resumeAIAnalysisResult); html3 = '<strong>Verdict:</strong> ' + (p.verdict||'\u2014') + ' | <strong>Score:</strong> ' + (p.fitmentScore||'\u2014') + '<br/>' + (p.completeFitmentAnalysis||''); } catch(e){}
-            markStep(3, 'completed', html3);
+            var aiPositive = false;
+            try { var p = JSON.parse(r.resumeAIAnalysisResult); aiPositive = p && p.verdict && p.verdict.toLowerCase().indexOf('yes') !== -1; html3 = '<strong>Verdict:</strong> ' + (p.verdict||'\u2014') + ' | <strong>Score:</strong> ' + (p.fitmentScore||'\u2014') + '<br/>' + (p.completeFitmentAnalysis||''); } catch(e){}
+            if (aiPositive) {
+                markStep(3, 'completed', html3);
+            } else {
+                html3 += '<br/><span style="color:#842029;font-weight:500;"><i class="fas fa-times-circle me-1"></i>AI fitment negative \u2014 cannot proceed to onboarding.</span>';
+                markStep(3, 'failed', html3);
+            }
+        }
+        if (!evPassed(r) && r.onboardingCompleted !== true) {
+            $('#step3Card').addClass('disabled');
+            if (r.employmentVerified === true) {
+                $('#step3Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 employment verification did not pass.</span>');
+            }
         }
 
-        // Step 4: Onboard
+        // Step 4: Onboard — only enable if EV passed AND AI passed
         if (r.onboardingCompleted === true) {
             var html4 = 'Onboarded as UserId: ' + (r.onboardedUserId || '\u2014');
             if (r.acknowledgementEmailSent === true) html4 += ' | <span class="text-success">Ack email sent</span>';
             else { html4 += ' | <span class="text-danger">Ack email NOT sent</span>'; $('#btnResendAck').show(); }
             markStep(4, 'completed', html4);
-        }
+        } else {
+            var canOnboard = true;
+            var blockReasons = [];
 
-        // Block onboarding if existing interviewer
-        if (r.isExistingInterviewer === true && r.onboardingCompleted !== true) {
-            $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">Cannot onboard \u2014 interviewer already exists in the system.</span>');
-            $('#btnOnboard').prop('disabled', true);
-        }
+            if (r.isExistingInterviewer === true) {
+                blockReasons.push('Interviewer already exists in the system.');
+                canOnboard = false;
+            }
+            if (!r.resolvedAssessmentGroupId) {
+                blockReasons.push('No assessment group found for MAG: <strong>' + (r.magName || '\u2014') + '</strong>. Edit the MAG above.');
+                canOnboard = false;
+            }
+            if (!evPassed(r)) {
+                blockReasons.push('Employment verification has not passed.');
+                canOnboard = false;
+            }
+            if (r.resumeAIAnalysisCompleted === true && !aiPassed(r)) {
+                blockReasons.push('AI resume fitment is negative.');
+                canOnboard = false;
+            }
+            if (r.resumeAIAnalysisCompleted !== true) {
+                canOnboard = false;
+            }
 
-        // Block if no AG resolved
-        if (!r.resolvedAssessmentGroupId && r.onboardingCompleted !== true) {
-            $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">No assessment group found for MAG: <strong>' + (r.magName || '\u2014') + '</strong>. Use the edit button next to MAG above to select the correct one.</span>');
-            $('#btnOnboard').prop('disabled', true);
+            if (!canOnboard) {
+                $('#step4Card').addClass('disabled');
+                if (blockReasons.length > 0) {
+                    $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">' + blockReasons.join('<br/>') + '</span>');
+                }
+                $('#btnOnboard').prop('disabled', true);
+            }
         }
     }
 
@@ -695,10 +742,10 @@
         else if (state === 'running') { num.addClass('running'); }
         if (message) result.html(message).show();
 
-        // Enable next step
         if (step === 1 && state === 'completed') { $('#step2Card').removeClass('disabled'); }
         if (step === 2 && state === 'completed') { $('#step3Card').removeClass('disabled'); }
         if (step === 3 && state === 'completed') { $('#step4Card').removeClass('disabled'); }
+        // failed EV/AI keeps next steps disabled (handled by syncPipeline / inline handlers)
     }
 
     /* ── Status change ──────────────────────────────────────── */
@@ -810,8 +857,8 @@
                 var companyName = '', isEmployed = false, verified = true;
                 try {
                     if (evResult) {
-                        companyName = evResult.CompanyName || evResult.companyName || '';
-                        isEmployed = evResult.IsEmployed || evResult.isEmployed || false;
+                        companyName = evResult.companyName || evResult.CompanyName || '';
+                        isEmployed = evResult.isemployed || evResult.Isemployed || evResult.isEmployed || evResult.IsEmployed || false;
                     }
                 } catch(e){}
 
@@ -820,11 +867,22 @@
                     data: { __RequestVerificationToken: verificationToken, id: currentRecordId, verified: verified, companyName: companyName, isEmployed: isEmployed, details: JSON.stringify(evResult) },
                     success: function (saveRes) {
                         var h = '<strong>Company:</strong> ' + (companyName||'\u2014') + ' | <strong>Employed:</strong> ' + (isEmployed?'Yes':'No');
-                        markStep(2, 'completed', h);
                         $('#mgmCompany').text(companyName || '\u2014');
                         if (isEmployed) { $('#mgmEmployed').html('<span class="employed-yes"><i class="fas fa-check-circle me-1"></i>Yes</span>'); }
                         else { $('#mgmEmployed').html('<span class="employed-no"><i class="fas fa-times-circle me-1"></i>No</span>'); }
                         if (currentRecord) { currentRecord.employmentVerified = true; currentRecord.employmentCompanyName = companyName; currentRecord.employmentIsEmployed = isEmployed; }
+
+                        if (isEmployed && companyName) {
+                            markStep(2, 'completed', h);
+                        } else {
+                            h += '<br/><span style="color:#842029;font-weight:500;"><i class="fas fa-times-circle me-1"></i>EV failed \u2014 no employment found. Edit email/phone and retry.</span>';
+                            markStep(2, 'failed', h);
+                            btn.prop('disabled', false).html('<i class="fas fa-id-badge me-1"></i>Retry EV');
+                            $('#step3Card').addClass('disabled');
+                            $('#step3Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 employment verification did not pass.</span>');
+                            $('#step4Card').addClass('disabled');
+                            $('#btnOnboard').prop('disabled', true);
+                        }
                     },
                     error: function () { markStep(2, 'failed', 'Failed to save verification result.'); btn.prop('disabled',false).html('<i class="fas fa-id-badge me-1"></i>Retry'); }
                 });
@@ -851,9 +909,19 @@
                 if (res.success) {
                     var h = '<strong>Verdict:</strong> ' + (res.verdict||'\u2014') + ' | <strong>Score:</strong> ' + (res.fitmentScore||'\u2014');
                     if (res.completeFitmentAnalysis) h += '<br/><div class="mt-1" style="white-space:pre-wrap;">' + res.completeFitmentAnalysis + '</div>';
-                    markStep(3, 'completed', h);
                     if (currentRecord) { currentRecord.resumeAIAnalysisCompleted = true; currentRecord.resumeAIAnalysisResult = res.analysisResult; }
-                    if (res.isPositiveVerdict) updateStatusBadge('Verified');
+
+                    if (res.isPositiveVerdict) {
+                        markStep(3, 'completed', h);
+                        updateStatusBadge('Verified');
+                        $('#step4Card').removeClass('disabled');
+                    } else {
+                        h += '<br/><span style="color:#842029;font-weight:500;"><i class="fas fa-times-circle me-1"></i>AI fitment negative \u2014 cannot proceed to onboarding.</span>';
+                        markStep(3, 'failed', h);
+                        $('#step4Card').addClass('disabled');
+                        $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 AI resume fitment is negative.</span>');
+                        $('#btnOnboard').prop('disabled', true);
+                    }
                 } else {
                     var errHtml = res.error || 'Analysis failed.';
                     if (res.needsUpload) errHtml += '<br/><em style="font-size:11px;">Upload a valid resume PDF to proceed.</em>';
@@ -983,16 +1051,20 @@
                             $('#btnOnboard').prop('disabled', true);
                         } else {
                             newStatusMsg = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message || 'Email updated. Interviewer is new to the system.') + '</span>';
-                            if (currentRecord.onboardingCompleted !== true && currentRecord.resolvedAssessmentGroupId) {
-                                $('#step4Subtitle').text('Creates the interviewer profile, maps to AG + channels, and sends acknowledgement email');
-                                $('#btnOnboard').prop('disabled', false);
-                            }
                         }
                         $('#step1Result .s1-status-msg').html(newStatusMsg);
                     } else {
                         currentRecord.parsedPhone = newVal;
                         $('#step1Result .s1-phone-val').text(newVal);
                         $('#mgmParsedPhone').text(newVal);
+                    }
+                    // After editing email or phone, re-enable EV retry
+                    if (currentRecord.employmentVerified === true && !evPassed(currentRecord)) {
+                        $('#step2Card').removeClass('completed disabled').addClass('pending');
+                        $('#step2Number').removeClass('completed failed').addClass('pending');
+                        $('#btnVerifyEmployment').prop('disabled', false).html('<i class="fas fa-id-badge me-1"></i>Retry EV');
+                        $('#step2Subtitle').text('Email/phone updated \u2014 click Retry EV to re-verify with the corrected details.');
+                        $('#step2Result').hide();
                     }
                 } else { alert(res.error || 'Failed to update.'); }
             },

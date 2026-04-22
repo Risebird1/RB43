@@ -35,10 +35,8 @@
                 </div>
                 <div class="pull-left payment-sla-tabs" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:100%;">
                     <div class="@(string.IsNullOrWhiteSpace(slaActionTab) || slaActionTab == "PaymentCompliance" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment Compliance</strong></div>
-                    <div class="@(slaActionTab == "HighSeverityPending" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('HighSeverityPending','@ViewBag.ReturnBack')"><strong>High severity pending</strong></div>
-                    <div class="@(slaActionTab == "QCUnderReview" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('QCUnderReview','@ViewBag.ReturnBack')"><strong>Under review</strong></div>
-                    <div class="@(slaActionTab == "FakeReport" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('FakeReport','@ViewBag.ReturnBack')"><strong>Fake report</strong></div>
-                    <div class="@(slaActionTab == "RedoRequested" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('RedoRequested','@ViewBag.ReturnBack')"><strong>Redo Requested</strong></div>
+                    @* <div class="@(slaActionTab == "RedoRequested" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('RedoRequested','@ViewBag.ReturnBack')"><strong>Redo Requested</strong></div> *@
+                    <div class="@(slaActionTab == "QCRejectPending" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('QCRejectPending','@ViewBag.ReturnBack')"><strong>QC Reject</strong></div>
                     <div class="@(slaActionTab == "QCSelectPending" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('QCSelectPending','@ViewBag.ReturnBack')"><strong>QC Select</strong></div>
                     <div class="@(slaActionTab == "SLACompleted" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('SLACompleted','@ViewBag.ReturnBack')"><strong>SLA Completed</strong></div>
                 </div>
@@ -131,6 +129,7 @@
                                             <thead>
                                                 <tr>
                                                     <td>Skill Channel</td>
+                                                    <td>Priority</td>
                                                     <td>Interview Date</td>
                                                     <td>Join Date</td>
                                                     <td>JD Skills</td>
@@ -157,13 +156,15 @@
                                                     }
                                                     else
                                                     {
+                                                        <td>Non AI Reasoning</td>
+                                                        <td>Risk Category</td>
                                                         <td>QC Status</td>
                                                     }
-                                                    @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelectPending")
+                                                    @if (ViewBag.actionstatus == "QCSelectPending" || ViewBag.actionstatus == "QCRejectPending")
                                                     {
                                                         <th>Status</th>
                                                     }
-                                                    <td>QC RedFlags</td>
+                                                    @* <td>QC RedFlags</td> *@
                                                     @if (ViewBag.actionstatus != "SLACompleted")
                                                     {
                                                         <td>Action</td>
@@ -173,6 +174,7 @@
                                             <tfoot>
                                                 <tr>
                                                     <td>Skill Channel</td>
+                                                    <td>Priority</td>
                                                     <td>Interview Date</td>
                                                     <td>Join Date</td>
                                                     <td>JD Skills</td>
@@ -196,13 +198,15 @@
                                                     }
                                                     else
                                                     {
+                                                        <td>Non AI Reasoning</td>
+                                                        <td>Risk Category</td>
                                                         <td>QC Status</td>
                                                     }
-                                                   @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelectPending")
+                                                   @if (ViewBag.actionstatus == "QCSelectPending" || ViewBag.actionstatus == "QCRejectPending")
                                                     {
                                                         <th>Status</th>
                                                     }
-                                                    <td>QC RedFlags</td>
+                                                    @* <td>QC RedFlags</td> *@
                                                     @if (ViewBag.actionstatus != "SLACompleted")
                                                     {
                                                         <td>Action</td>
@@ -214,6 +218,7 @@
                                                 {
                                                     <tr>
                                                         <td>@item.IRFId</td>
+                                                        <td>@item.PriorityLevelDesc</td>
                                                         <td>@item.InterviewDate</td>
                                                         <td>@item.Joinedon</td>
                                                         <td>
@@ -309,6 +314,8 @@
                                                         }
                                                         else
                                                         {
+                                                            <td>@item.NonAIreasoning</td>
+                                                            <td>@item.Riskcategory</td>
                                                             if (item.QCStatus)
                                                             {
                                                                 <td>Completed</td>
@@ -318,18 +325,18 @@
                                                                 <td>Pending</td>
                                                             }
                                                         }
-                                                        @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "HighSeverityPending" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelectPending")
+                                                        @if (ViewBag.actionstatus == "QCSelectPending" || ViewBag.actionstatus == "QCRejectPending")
                                                         {
                                                             <td>@item.StatusValue</td>
                                                         }
-                                                        @if (item.Redflags > 0)
+                                                       @*  @if (item.Redflags > 0)
                                                         {
                                                             <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="GetRedFlagsModal('@item.Interviewid')">@item.Redflags</a></td>
                                                         }
                                                         else
                                                         {
                                                             <td class="text-center">0</td>
-                                                        }
+                                                        } *@
                                                         @if (ViewBag.actionstatus != "SLACompleted")
                                                         {
                                                             <td>
