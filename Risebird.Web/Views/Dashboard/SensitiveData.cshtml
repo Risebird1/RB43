@@ -322,16 +322,47 @@
                 background: #fee2e2;
             }
 
-    /* QC interview detail modal — two rows: 3 + 2 fields */
+    /* QC interview detail modal */
     #qcInterviewDetailModal .modal-dialog {
-        max-width: 720px;
+        max-width: 880px;
     }
 
     #qcInterviewDetailModal .qc-interview-detail-body {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 10px;
     }
+
+    #qcInterviewDetailModal .qc-interview-detail-row--full {
+        grid-template-columns: 1fr;
+    }
+
+    #qcInterviewDetailModal .qc-interview-detail-cell--issues {
+        max-height: none;
+        min-height: 56px;
+        align-items: flex-start;
+    }
+
+        #qcInterviewDetailModal .qc-interview-detail-cell--issues .qc-interview-detail-value {
+            text-align: left;
+            flex-wrap: wrap;
+        }
+
+        #qcInterviewDetailModal .qc-interview-detail-value .qc-detail-issue-link {
+            display: inline-block;
+            margin: 0 4px 8px 0;
+        }
+
+        #qcInterviewDetailModal .qc-interview-detail-value .count {
+            display: inline-block;
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+            border-radius: 50%;
+            background: #e2e8f0;
+            font-weight: 600;
+        }
 
     #qcInterviewDetailModal .qc-interview-detail-row {
         display: grid;
@@ -354,7 +385,7 @@
     border: 1px solid #e2e8f0;
     border-radius: 2px;
     background: #fff;
-    max-height: 42px;
+    height:100%!important;
     }
 
     #qcInterviewDetailModal .qc-interview-detail-cell--multiline {
@@ -364,7 +395,7 @@
 
     #qcInterviewDetailModal .qc-interview-detail-label {
         flex: 0 0 auto;
-        max-width: 46%;
+        max-width:60%;
         font-size: 12px;
         font-weight: 600;
         color: #64748b;
@@ -376,7 +407,7 @@
     #qcInterviewDetailModal .qc-interview-detail-value {
         flex: 1 1 auto;
         min-width: 0;
-        font-size: 15px;
+        font-size: 12px;
         color: #0f172a;
         line-height: 1.45;
         word-break: break-word;
@@ -805,8 +836,11 @@
                                                         }
                                                         @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
                                                         {
-                                                            <th>Interviewer Issues found in the Transcript</th>
-                                                            <th>AI Transcript analysis score</th>
+                                                            @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
+                                                            {
+                                                                <th>Interviewer Issues found in the Transcript</th>
+                                                                <th>AI Transcript analysis score</th>
+                                                            }
                                                             @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
                                                             {
                                                                 <th>Interview Duration</th>
@@ -824,13 +858,10 @@
                                                                 <th>Interviewer Late join</th>
                                                             }
                                                         }
-                                                        <th>Meeting Status</th>
-                                                        <th>Interview Status</th>
-                                                        @if(ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect") 
+                                                        @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
                                                         {
-                                                            <th>Report AI</th>
-                                                            <th>TranScript AI</th>
-                                                            <th>TranScript Missing</th>
+                                                            <th>Meeting Status</th>
+                                                            <th>Interview Status</th>
                                                         }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
@@ -867,8 +898,11 @@
 
                                                         @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
                                                         {
-                                                            <th>Interviewer Issues found in the Transcript</th>
-                                                            <th>AI Transcript analysis score</th>
+                                                            @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
+                                                            {
+                                                                <th>Interviewer Issues found in the Transcript</th>
+                                                                <th>AI Transcript analysis score</th>
+                                                            }
                                                             @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
                                                             {
                                                                 <th>Interview Duration</th>
@@ -887,13 +921,10 @@
                                                             }
 
                                                         }
-                                                        <th>Meeting Status</th>
-                                                        <th>Interview Status</th>
-                                                        @if(ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
+                                                        @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
                                                         {
-                                                            <th>Report AI</th>
-                                                            <th>TranScript AI</th>
-                                                            <th>TranScript Missing</th>
+                                                            <th>Meeting Status</th>
+                                                            <th>Interview Status</th>
                                                         }
                                                         @if (ViewBag.actionstatus == "QCReport")
                                                         {
@@ -1288,6 +1319,8 @@
                                                             }
                                                             @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
                                                             {
+                                                                @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
+                                                                {
                                                                 <td style="text-align:center">
 
                                                                     @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != "")
@@ -1324,6 +1357,7 @@
                                                                         <span class="count" style="width:26px;height:26px;line-height:26px;">@item.AITranscriptAnalysisScore</span>
                                                                     }
                                                                 </td>
+                                                                }
                                                                 @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
                                                                 {
                                                                     @if (item.interviewDuration != null)
@@ -1339,11 +1373,11 @@
                                                                         <div class="interviewer">
                                                                             @if (@item.Rating != 0)
                                                                             {
-                                                                                <label style="color:#42a5f5;font-size:15px;" onClick="PaymentComplianceDetails('@item.InterviewId','Candidate')">@item.Rating<span style="color:grey;text-transform:lowercase;"> Out of 5</span></label>
+                                                                                <label style="color:#42a5f5;font-size:1px;" onClick="PaymentComplianceDetails('@item.InterviewId','Candidate')">@item.Rating<span style="color:grey;text-transform:lowercase;"> Out of 5</span></label>
                                                                             }
                                                                             else
                                                                             {
-                                                                                <label style="font-size:15px;color:grey">NA</label>
+                                                                                <label style="font-size:12px;color:grey">NA</label>
                                                                             }
                                                                         </div>
                                                                     </td>
@@ -1404,42 +1438,31 @@
                                                                     </td>
                                                                 }
                                                             }
-                                                            @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
+                                                            @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
                                                             {
-                                                                <td>Scheduled</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                @if (item.MeetingStatusStatusDesc != "0")
+                                                                @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                                                                 {
-                                                                    <td> @item.MeetingStatusStatusDesc</td>
+                                                                    <td>Scheduled</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    @if (item.MeetingStatusStatusDesc != "0")
+                                                                    {
+                                                                        <td> @item.MeetingStatusStatusDesc</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+                                                                }
+                                                                @if (item.intervieweStatusStatDesc != "0")
+                                                                {
+                                                                    <td> @item.intervieweStatusStatDesc</td>
                                                                 }
                                                                 else
                                                                 {
                                                                     <td></td>
                                                                 }
-                                                            }
-                                                            @if (item.intervieweStatusStatDesc != "0")
-                                                            {
-                                                                <td> @item.intervieweStatusStatDesc</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-                                                            @if(ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
-                                                            {
-                                                                <td>@item.ReportAI</td>
-                                                                <td>@item.TranscritAi</td>
-                                                                @if (string.IsNullOrEmpty(item.AudioTranscriptFileLink))
-                                                                {
-                                                                     <td> Yes</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                     <td> No</td>
-                                                                }
-                                                                
                                                             }
                                                             @if (ViewBag.actionstatus == "QCReport")
                                                             {
@@ -1473,6 +1496,16 @@
                                                                                     data-joined="@(item.Joinedon?.ToString("g") ?? "")"
                                                                                     data-late="@(item.InterviewerLateJoin != 0 ? "1" : "0")"
                                                                                     data-video="@(item.IsVideoRequired ? "1" : "0")"
+                                                                                    data-url-transcript-analysis="@Url.Action("TransciptAnalysis", "AIScreener", new { interviewId = item.InterviewId, irfId = item.irfIntId })"
+                                                                                    data-url-ai-client-report="@Url.Action("AIClientReport", "Interview", new { InterviewId = item.InterviewId, irfId = item.irfIntId, isOpenAIQC = true })"
+                                                                                    data-ai-transcript-verdict="@(item.AITranscriptVerdict ?? "")"
+                                                                                    data-ai-verdict="@(item.AIVerdict ?? "")"
+                                                                                    data-ai-transcript-score="@item.AITranscriptAnalysisScore"
+                                                                                    data-meeting-status="@(item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled" ? "Scheduled" : (item.MeetingStatusStatusDesc != "0" ? item.MeetingStatusStatusDesc : ""))"
+                                                                                    data-interview-status="@(item.intervieweStatusStatDesc != "0" ? item.intervieweStatusStatDesc : "")"
+                                                                                    data-report-ai="@item.ReportAI.ToString().ToLowerInvariant()"
+                                                                                    data-transcript-ai="@item.TranscritAi.ToString().ToLowerInvariant()"
+                                                                                    data-transcript-missing="@(string.IsNullOrEmpty(item.AudioTranscriptFileLink) ? "Yes" : "No")"
                                                                                     onclick="openQcInterviewDetailModal(this);">
                                                                                 <span class="mdc-fab__icon touch"><i class="fas fa-info-circle" style="font-size:15px;" aria-hidden="true"></i></span>
                                                                             </button>
@@ -1640,7 +1673,7 @@
                             <div id="qcDetailCandidateRating" class="qc-interview-detail-value"></div>
                         </div>
                     </div>
-                    <div class="qc-interview-detail-row qc-interview-detail-row--two">
+                    <div class="qc-interview-detail-row">
                         <div class="qc-interview-detail-cell qc-interview-detail-cell--multiline">
                             <div class="qc-interview-detail-label">Interviewer join</div>
                             <div id="qcDetailInterviewerJoin" class="qc-interview-detail-value"></div>
@@ -1649,7 +1682,42 @@
                             <div class="qc-interview-detail-label">Interviewer late join</div>
                             <div id="qcDetailInterviewerLateJoin" class="qc-interview-detail-value"></div>
                         </div>
+                        <div class="qc-interview-detail-cell qc-interview-detail-cell--issues qc-interview-detail-cell--multiline">
+                            <div class="qc-interview-detail-label">Interviewer issues in transcript</div>
+                            <div id="qcDetailIssues" class="qc-interview-detail-value"></div>
+                        </div>
+
+                    
                     </div>
+                    <div class="qc-interview-detail-row">
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Meeting status</div>
+                            <div id="qcDetailMeetingStatus" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Interview status</div>
+                            <div id="qcDetailInterviewStatus" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">AI transcript analysis score</div>
+                            <div id="qcDetailAiTranscriptScore" class="qc-interview-detail-value"></div>
+                        </div>
+                    </div>
+                    <div class="qc-interview-detail-row">
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Report AI</div>
+                            <div id="qcDetailReportAi" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Transcript AI</div>
+                            <div id="qcDetailTranscriptAi" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Transcript missing</div>
+                            <div id="qcDetailTranscriptMissing" class="qc-interview-detail-value"></div>
+                        </div>
+                    </div>
+                 
                 </div>
             </div>
         </div>
@@ -2011,6 +2079,40 @@
         if (dz) dz.classList.remove('qc-upload-dropzone--drag');
     }
 
+    function qcPopulateTranscriptIssueLinks(el, urlT, urlR, verdictT, verdictR) {
+        if (!el) return;
+        el.innerHTML = '';
+        var tv = (verdictT || '').trim();
+        var av = (verdictR || '').trim();
+        var spanStyle = 'background:#abadabe3;padding:0px 10px 3px 10px;border-radius:4px;color:#fff;font-size:15px;font-weight:700;text-transform:capitalize;display:inline-block;';
+        var svg = '<svg style="color:white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg>';
+        if (tv) {
+            var a = document.createElement('a');
+            a.className = 'qc-detail-issue-link';
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            a.href = urlT || '#';
+            a.title = 'Transcript Analysis';
+            a.style.textDecoration = 'none';
+            a.innerHTML = '<span style="' + spanStyle + '"><span style="font-weight:400;text-transform:none;">check transcript quality details </span>' + svg + '</span>';
+            el.appendChild(a);
+            el.appendChild(document.createElement('br'));
+            el.appendChild(document.createElement('br'));
+        }
+        if (av) {
+            var a2 = document.createElement('a');
+            a2.className = 'qc-detail-issue-link';
+            a2.target = '_blank';
+            a2.rel = 'noopener noreferrer';
+            a2.href = urlR || '#';
+            a2.title = 'AI QC Report';
+            a2.style.textDecoration = 'none';
+            var reportLabel = av.toLowerCase().indexOf('yes') >= 0 ? 'check report quality details ' : ' check report quality details';
+            a2.innerHTML = '<span style="' + spanStyle + '"><span style="font-weight:400;text-transform:none;">' + reportLabel + '</span>' + svg + '</span>';
+            el.appendChild(a2);
+        }
+    }
+
     function openQcInterviewDetailModal(btn) {
         if (!btn || !btn.dataset) return;
         var d = btn.dataset;
@@ -2084,6 +2186,38 @@
                 elLate.appendChild(n);
             }
         }
+
+        var elMeeting = document.getElementById('qcDetailMeetingStatus');
+        var elInterviewSt = document.getElementById('qcDetailInterviewStatus');
+        var elAiScore = document.getElementById('qcDetailAiTranscriptScore');
+        var elReportAi = document.getElementById('qcDetailReportAi');
+        var elTranscriptAi = document.getElementById('qcDetailTranscriptAi');
+        var elTranscriptMissing = document.getElementById('qcDetailTranscriptMissing');
+        var elIssues = document.getElementById('qcDetailIssues');
+
+        if (elMeeting) elMeeting.textContent = d.meetingStatus || '';
+        if (elInterviewSt) elInterviewSt.textContent = d.interviewStatus || '';
+
+        if (elAiScore) {
+            elAiScore.innerHTML = '';
+            var sc = parseInt(d.aiTranscriptScore, 10);
+            if (isNaN(sc) || sc === 0) {
+                var naSc = document.createElement('span');
+                naSc.textContent = 'NA';
+                elAiScore.appendChild(naSc);
+            } else {
+                var sp = document.createElement('span');
+                sp.className = 'count';
+                sp.textContent = String(sc);
+                elAiScore.appendChild(sp);
+            }
+        }
+
+        if (elReportAi) elReportAi.textContent = d.reportAi === 'true' ? 'True' : 'False';
+        if (elTranscriptAi) elTranscriptAi.textContent = d.transcriptAi === 'true' ? 'True' : 'False';
+        if (elTranscriptMissing) elTranscriptMissing.textContent = d.transcriptMissing || '';
+
+        qcPopulateTranscriptIssueLinks(elIssues, d.urlTranscriptAnalysis, d.urlAiClientReport, d.aiTranscriptVerdict, d.aiVerdict);
 
         var modal = document.getElementById('qcInterviewDetailModal');
         if (modal) modal.style.display = 'block';
