@@ -122,15 +122,23 @@ order by Interviewdate desc
 end
 else if(@actionstatus='QCSelect')
 begin
-Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,ic.AIVerdict,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber,ulco.EmailId as ChannelOwner,
-qia.ReportAI,qia.TranscritAi,Case when IsNull(qia.ContradictionJson,'')='' then 0 else 1 end ContradictionAi,ic.AudioTranscriptFileLink,ic.TranscriptSummary,IRF.PriorityLevel,d.NonAIreasoning,d.Riskcategory
+Select distinct im.IRFId,im.ClientHrContact,ic.InterviewId,ic.AIVerdict,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber,ulco.EmailId as ChannelOwner,
+qia.ReportAI,qia.TranscritAi,Case when IsNull(qia.ContradictionJson,'')='' then 0 else 1 end ContradictionAi,ic.AudioTranscriptFileLink,ic.TranscriptSummary,IRF.PriorityLevel,d.NonAIreasoning,d.Riskcategory,pm.DurationSelectedMin as interviewDuration,(pm.DurationSelectedMin-ic.VideoDuration) as deficit,
+im.interviewer,Isnull(ulim.FirstName,'') as InterviewerName,CASE  WHEN DATEDIFF(MINUTE, im.interviewDate,imjf.FirstJoinedon) >= 5 THEN 1  ELSE 0  END AS InterviewerLateJoin,imjt.Joinedon,imjf.FirstJoinedon,
+ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AITranscriptAnalysisScore,ic.AIVerdict,cfd.Rating
 from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 join InterviewComments ic on ic.InterviewId=im.id 
 join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id 
 join Candidate ca on ca.CandidateMasterId=cm.id 
+left join UserList ulim on ulim.EmailId=im.interviewer
 left join QcInterviewAIevaluation qia on qia.InterviewId=im.id
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
 left join UserList ulco on IRF.RisebirdHr=ulco.id
+left join CandidateFeedbackDetails cfd on cfd.Interviewid=im.id 
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.CompanyType=IRF.CompanyType and pm.PlanTypeEnumValue=IRF.Heuristicsscore
+Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime 
+left join UserList ulco on IRF.RisebirdHr=ulco.id where im.interviewer=interviewer and im.id=interviewid) imjt 
+Outer Apply(Select min(Joinedon) FirstJoinedon from  InterviewMeetingsJoinTime where im.id=interviewid) imjf
 LEFT JOIN (SELECT InterviewId,STRING_AGG(Type, ',') AS NonAIreasoning,STRING_AGG(Riskcategory, ',') AS Riskcategory FROM (
 Select im.id as InterviewId,'deficitmorethan10' as Type,'High Severity' as Riskcategory      
 from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id      
@@ -171,15 +179,23 @@ and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) a
 end
 else if(@actionstatus='QCPendingReport')
 begin
-Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,ic.AIVerdict,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber,ulco.EmailId as ChannelOwner,
-qia.ReportAI,qia.TranscritAi,Case when IsNull(qia.ContradictionJson,'')='' then 0 else 1 end ContradictionAi,ic.AudioTranscriptFileLink,ic.TranscriptSummary,IRF.PriorityLevel,d.NonAIreasoning,d.Riskcategory
+Select distinct im.IRFId,im.ClientHrContact,ic.InterviewId,ic.AIVerdict,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber,ulco.EmailId as ChannelOwner,
+qia.ReportAI,qia.TranscritAi,Case when IsNull(qia.ContradictionJson,'')='' then 0 else 1 end ContradictionAi,ic.AudioTranscriptFileLink,ic.TranscriptSummary,IRF.PriorityLevel,d.NonAIreasoning,d.Riskcategory,pm.DurationSelectedMin as interviewDuration,(pm.DurationSelectedMin-ic.VideoDuration) as deficit,
+im.interviewer,Isnull(ulim.FirstName,'') as InterviewerName,CASE  WHEN DATEDIFF(MINUTE, im.interviewDate,imjf.FirstJoinedon) >= 5 THEN 1  ELSE 0  END AS InterviewerLateJoin,imjt.Joinedon,imjf.FirstJoinedon,
+ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AITranscriptAnalysisScore,ic.AIVerdict,cfd.Rating
 from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 join InterviewComments ic on ic.InterviewId=im.id 
 join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id 
 join Candidate ca on ca.CandidateMasterId=cm.id 
+left join UserList ulim on ulim.EmailId=im.interviewer
 left join QcInterviewAIevaluation qia on qia.InterviewId=im.id
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
 left join UserList ulco on IRF.RisebirdHr=ulco.id
+left join CandidateFeedbackDetails cfd on cfd.Interviewid=im.id 
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.CompanyType=IRF.CompanyType and pm.PlanTypeEnumValue=IRF.Heuristicsscore
+Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime 
+left join UserList ulco on IRF.RisebirdHr=ulco.id where im.interviewer=interviewer and im.id=interviewid) imjt 
+Outer Apply(Select min(Joinedon) FirstJoinedon from  InterviewMeetingsJoinTime where im.id=interviewid) imjf
 LEFT JOIN (SELECT InterviewId,STRING_AGG(Type, ',') AS NonAIreasoning,STRING_AGG(Riskcategory, ',') AS Riskcategory FROM (
 Select im.id as InterviewId,'deficitmorethan10' as Type,'High Severity' as Riskcategory      
 from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id      
