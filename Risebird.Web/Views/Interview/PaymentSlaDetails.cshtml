@@ -34,7 +34,7 @@
                     <div class="mobile-view"> <h4 class="card-title"> 911 Dashboard</h4></div>
                 </div>
                 <div class="pull-left payment-sla-tabs" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:100%;">
-                    <div class="@(string.IsNullOrWhiteSpace(slaActionTab) || slaActionTab == "PaymentCompliance" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment Compliance</strong></div>
+                    @* <div class="@(string.IsNullOrWhiteSpace(slaActionTab) || slaActionTab == "PaymentCompliance" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment Compliance</strong></div> *@
                     @* <div class="@(slaActionTab == "RedoRequested" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('RedoRequested','@ViewBag.ReturnBack')"><strong>Redo Requested</strong></div> *@
                     <div class="@(slaActionTab == "QCRejectPending" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('QCRejectPending','@ViewBag.ReturnBack')"><strong>QC Reject</strong></div>
                     <div class="@(slaActionTab == "QCSelectPending" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('QCSelectPending','@ViewBag.ReturnBack')"><strong>QC Select</strong></div>
@@ -159,10 +159,6 @@
                                                         <td>Risk Category</td>
                                                         <td>QC Status</td>
                                                     }
-                                                    @if (ViewBag.actionstatus == "QCSelectPending" || ViewBag.actionstatus == "QCRejectPending")
-                                                    {
-                                                        <th>Status</th>
-                                                    }
                                                     @* <td>QC RedFlags</td> *@
                                                     @if (ViewBag.actionstatus != "SLACompleted")
                                                     {
@@ -199,10 +195,6 @@
                                                         <td>Non AI Reasoning</td>
                                                         <td>Risk Category</td>
                                                         <td>QC Status</td>
-                                                    }
-                                                   @if (ViewBag.actionstatus == "QCSelectPending" || ViewBag.actionstatus == "QCRejectPending")
-                                                    {
-                                                        <th>Status</th>
                                                     }
                                                     @* <td>QC RedFlags</td> *@
                                                     @if (ViewBag.actionstatus != "SLACompleted")
@@ -321,10 +313,6 @@
                                                             {
                                                                 <td>Pending</td>
                                                             }
-                                                        }
-                                                        @if (ViewBag.actionstatus == "QCSelectPending" || ViewBag.actionstatus == "QCRejectPending")
-                                                        {
-                                                            <td>@item.StatusValue</td>
                                                         }
                                                        @*  @if (item.Redflags > 0)
                                                         {

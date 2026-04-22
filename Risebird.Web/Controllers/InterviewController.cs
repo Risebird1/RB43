@@ -38,7 +38,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList.Extensions;
 
-
 namespace Risebird.Web.Controllers
 {
 
@@ -8399,7 +8398,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(actionstatus))
                     {
-                        actionstatus = "";
+                        actionstatus = "QCRejectPending";
                     }
                     if (TempData["SuccessErrorMessageQCForm"] != null)
                     {
@@ -9260,7 +9259,8 @@ namespace Risebird.Web.Controllers
                         if (model == null)
                         {
                             return Json("Report not found.");
-                        }else
+                        }
+                        else
                         {
                             return Json("Transcript summary not found.");
                         }
@@ -9982,6 +9982,13 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, contradictionEx);
             }
             return false;
+        }
+        [HttpGet]
+        public async Task<JsonResult> FetchMoreDetailsInterview(int interviewId)
+        {
+            var model = await _meetingService.FetchMoreDetailsInterview(interviewId);
+            model = model.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; x.PriorityLevelDesc = x.PriorityLevel > 0 ? ((PriorityLevel)x.PriorityLevel).GetDescription() : string.Empty; return x; }).ToList();
+            return Json(model);
         }
         private static string BuildContradictionReportMessage(string transcriptSummary, string reportStringContent)
         {
