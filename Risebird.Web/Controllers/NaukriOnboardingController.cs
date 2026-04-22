@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -30,6 +31,7 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewerService          _interviewerService;
         private readonly IAzureStorageHelper           _azureStorageHelper;
         private readonly IFileMimeTypeHelper           _fileMimeTypeHelper;
+        private readonly IHttpClientFactory            _httpClientFactory;
 
         public NaukriOnboardingController(
             INaukriOnboardingRepository  repository,
@@ -40,7 +42,8 @@ namespace Risebird.Web.Controllers
             INotificationHelper          notificationHelper,
             IInterviewerService          interviewerService,
             IAzureStorageHelper           azureStorageHelper,
-            IFileMimeTypeHelper           fileMimeTypeHelper)
+            IFileMimeTypeHelper           fileMimeTypeHelper,
+            IHttpClientFactory            httpClientFactory)
         {
             _repository             = repository;
             _logger                 = logger;
@@ -51,6 +54,7 @@ namespace Risebird.Web.Controllers
             _interviewerService     = interviewerService;
             _azureStorageHelper     = azureStorageHelper;
             _fileMimeTypeHelper     = fileMimeTypeHelper;
+            _httpClientFactory      = httpClientFactory;
         }
 
         // ── Dashboard ───────────────────────────────────────────────────────────────
@@ -218,6 +222,47 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(resumeUrl))
                     return Json(new { success = false, error = "No resume link available. Upload a resume first.", needsUpload = true });
 
+                // For old records that still have a Google Drive URL, re-upload to blob first
+                if (resumeUrl.Contains("drive.google.com", StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        string directUrl = ConvertToDirectDownloadUrl(resumeUrl);
+                        var httpClient = _httpClientFactory.CreateClient();
+                        using var dlResp = await httpClient.GetAsync(directUrl);
+                        if (dlResp.IsSuccessStatusCode)
+                        {
+                            var bytes = await dlResp.Content.ReadAsByteArrayAsync();
+                            var ct = dlResp.Content.Headers.ContentType?.MediaType ?? "";
+                            bool isHtml = ct.Contains("text/html")
+                                || (bytes.Length > 5 && System.Text.Encoding.UTF8
+                                    .GetString(bytes, 0, Math.Min(50, bytes.Length))
+                                    .TrimStart().StartsWith("<", StringComparison.Ordinal));
+
+                            if (bytes.Length > 0 && !isHtml)
+                            {
+                                string ext = ".pdf";
+                                if (ct.Contains("msword") || resumeUrl.EndsWith(".doc", StringComparison.OrdinalIgnoreCase)) ext = ".doc";
+                                else if (ct.Contains("wordprocessingml") || resumeUrl.EndsWith(".docx", StringComparison.OrdinalIgnoreCase)) ext = ".docx";
+
+                                string blobName = $"NK_{id}_{DateTime.UtcNow:yyyyMMddHHmmss}{ext}";
+                                using var ms = new MemoryStream(bytes);
+                                var blobUrl = await _azureStorageHelper.InsertBlobCloudCompare(
+                                    blobName, "resumes", blobFIleStream: ms, contentType: ct);
+                                if (!string.IsNullOrWhiteSpace(blobUrl))
+                                {
+                                    resumeUrl = blobUrl;
+                                    await _repository.UpdateResumeLinkAsync(id, blobUrl);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception dlEx)
+                    {
+                        await _logger.LogMessage(LogLevelInfo.Exception, dlEx);
+                    }
+                }
+
                 string resumeText = null;
                 try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
                 catch { }
@@ -226,19 +271,15 @@ namespace Risebird.Web.Controllers
                 {
                     try
                     {
-                        bool isDoc = await _azureStorageHelper.IsDocFileAsync(resumeUrl);
-                        if (isDoc)
-                        {
-                            string convertedUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
-                            if (!string.IsNullOrWhiteSpace(convertedUrl))
-                                resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedUrl);
-                        }
+                        string convertedUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
+                        if (!string.IsNullOrWhiteSpace(convertedUrl))
+                            resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedUrl);
                     }
                     catch { }
                 }
 
                 if (string.IsNullOrWhiteSpace(resumeText))
-                    return Json(new { success = false, error = "Could not read the resume. Upload a valid PDF.", needsUpload = true });
+                    return Json(new { success = false, error = "Could not read the resume. The file may be corrupted or in an unsupported format. Try uploading a valid PDF.", needsUpload = true });
 
                 string parsedEmail = ExtractEmail(resumeText);
                 string parsedPhone = ExtractPhone(resumeText);
@@ -317,19 +358,15 @@ namespace Risebird.Web.Controllers
                 {
                     try
                     {
-                        bool isDoc = await _azureStorageHelper.IsDocFileAsync(resumeUrl);
-                        if (isDoc)
-                        {
-                            string convertedUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
-                            if (!string.IsNullOrWhiteSpace(convertedUrl))
-                                resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedUrl);
-                        }
+                        string convertedUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
+                        if (!string.IsNullOrWhiteSpace(convertedUrl))
+                            resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedUrl);
                     }
                     catch { }
                 }
 
                 if (string.IsNullOrWhiteSpace(resumeText))
-                    return Json(new { success = false, error = "Could not read resume. Upload a valid PDF.", needsUpload = true });
+                    return Json(new { success = false, error = "Could not read resume. The file may be corrupted or unsupported. Try uploading a valid PDF.", needsUpload = true });
 
                 string specialization = record.AssessmentGroupName ?? record.MagName ?? record.KeySkills ?? "General";
 
@@ -344,7 +381,7 @@ namespace Risebird.Web.Controllers
                 var analysis = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(analysisJson);
                 bool isPositive = analysis != null
                     && !string.IsNullOrEmpty(analysis.verdict)
-                    && analysis.verdict.Equals("yes", StringComparison.OrdinalIgnoreCase);
+                    && analysis.verdict.ToLower().Contains("yes");
 
                 int? score = analysis?.fitmentScore;
 
@@ -684,6 +721,46 @@ namespace Risebird.Web.Controllers
                         System.Globalization.DateTimeStyles.RoundtripKind, out var parsed))
                     receivedAt = parsed;
 
+                string blobResumeUrl = null;
+                string sourceResumeUrl = payload.ResumeLink?.Trim();
+
+                if (!string.IsNullOrWhiteSpace(sourceResumeUrl)
+                    && !sourceResumeUrl.Equals("None", StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        string downloadUrl = ConvertToDirectDownloadUrl(sourceResumeUrl);
+                        var httpClient = _httpClientFactory.CreateClient();
+                        using var response = await httpClient.GetAsync(downloadUrl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var contentBytes = await response.Content.ReadAsByteArrayAsync();
+                            var ct = response.Content.Headers.ContentType?.MediaType ?? "";
+
+                            bool isHtml = ct.Contains("text/html")
+                                || (contentBytes.Length > 5
+                                    && System.Text.Encoding.UTF8.GetString(contentBytes, 0, Math.Min(50, contentBytes.Length))
+                                        .TrimStart().StartsWith("<", StringComparison.Ordinal));
+
+                            if (contentBytes.Length > 0 && !isHtml)
+                            {
+                                string ext = ".pdf";
+                                if (ct.Contains("msword") || sourceResumeUrl.EndsWith(".doc", StringComparison.OrdinalIgnoreCase)) ext = ".doc";
+                                else if (ct.Contains("wordprocessingml") || sourceResumeUrl.EndsWith(".docx", StringComparison.OrdinalIgnoreCase)) ext = ".docx";
+
+                                string blobName = $"NK_{DateTime.UtcNow:yyyyMMddHHmmss}_{Guid.NewGuid():N}{ext}";
+                                using var ms = new MemoryStream(contentBytes);
+                                blobResumeUrl = await _azureStorageHelper.InsertBlobCloudCompare(
+                                    blobName, "resumes", blobFIleStream: ms, contentType: ct);
+                            }
+                        }
+                    }
+                    catch (Exception dlEx)
+                    {
+                        await _logger.LogMessage(LogLevelInfo.Exception, dlEx);
+                    }
+                }
+
                 var record = new NaukriProspectiveInterviewer
                 {
                     SenderEmail     = payload.SenderEmail?.Trim(),
@@ -700,8 +777,8 @@ namespace Risebird.Web.Controllers
                     ExperienceYears = payload.ExperienceYears?.Trim(),
                     Salary          = payload.Salary?.Trim(),
                     MagName         = payload.MagName?.Trim(),
-                    ResumeLink      = payload.ResumeLink?.Trim(),
-                    HasAttachment   = payload.HasAttachment
+                    ResumeLink      = blobResumeUrl ?? sourceResumeUrl,
+                    HasAttachment   = !string.IsNullOrWhiteSpace(blobResumeUrl) || payload.HasAttachment
                 };
 
                 var newId = await _repository.InsertAsync(record);
@@ -710,7 +787,8 @@ namespace Risebird.Web.Controllers
                 {
                     success = true,
                     id = newId,
-                    message = $"Naukri prospect created (#{newId}) for {record.CandidateName}."
+                    message = $"Naukri prospect created (#{newId}) for {record.CandidateName}.",
+                    resumeUploaded = !string.IsNullOrWhiteSpace(blobResumeUrl)
                 });
             }
             catch (Exception ex)
@@ -721,6 +799,23 @@ namespace Risebird.Web.Controllers
         }
 
         // ── Helpers ─────────────────────────────────────────────────────────────────
+
+        private static string ConvertToDirectDownloadUrl(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url)) return url;
+
+            // Google Drive: /file/d/{ID}/... → /uc?export=download&id={ID}
+            var match = Regex.Match(url, @"drive\.google\.com/file/d/([^/]+)");
+            if (match.Success)
+                return $"https://drive.google.com/uc?export=download&id={match.Groups[1].Value}";
+
+            // Google Drive: open?id={ID}
+            match = Regex.Match(url, @"drive\.google\.com/open\?id=([^&]+)");
+            if (match.Success)
+                return $"https://drive.google.com/uc?export=download&id={match.Groups[1].Value}";
+
+            return url;
+        }
 
         private static string ExtractEmail(string text)
         {
