@@ -35,7 +35,7 @@
                 </div>
                 <div class="pull-left payment-sla-tabs" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:100%;">
                     <div class="@(string.IsNullOrWhiteSpace(slaActionTab) || slaActionTab == "PaymentCompliance" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment Compliance</strong></div>
-                    <div class="@(slaActionTab == "RedoRequested" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('RedoRequested','@ViewBag.ReturnBack')"><strong>Redo Requested</strong></div>
+                    @* <div class="@(slaActionTab == "RedoRequested" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('RedoRequested','@ViewBag.ReturnBack')"><strong>Redo Requested</strong></div> *@
                     <div class="@(slaActionTab == "QCRejectPending" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('QCRejectPending','@ViewBag.ReturnBack')"><strong>QC Reject</strong></div>
                     <div class="@(slaActionTab == "QCSelectPending" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('QCSelectPending','@ViewBag.ReturnBack')"><strong>QC Select</strong></div>
                     <div class="@(slaActionTab == "SLACompleted" ? "feedback-tab-ac" : "feedback-tab")" onclick="Changeurldetails('SLACompleted','@ViewBag.ReturnBack')"><strong>SLA Completed</strong></div>
