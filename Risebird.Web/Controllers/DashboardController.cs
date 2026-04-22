@@ -3939,7 +3939,7 @@ NEVER:
                         if (HttpContext.Session.GetString("SensitiveDataFilters") != null)
                             HttpContext.Session.Remove("SensitiveDataFilters");
                         var modelList = new List<MeetingVM>();
-                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview || actionstatus == RibbonActionType.QCSelect)
+                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview || actionstatus == RibbonActionType.QCSelect || actionstatus == RibbonActionType.QCPendingReport)
                         {
                             modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
                         }
@@ -3965,7 +3965,8 @@ NEVER:
                         }
                         else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
                         {
-                            ViewBag.PageHeader = "QC Report";
+                            //ViewBag.PageHeader = "QC Report";
+                            ViewBag.PageHeader = "Reject Pending";
                         }
                         else if (actionstatus == RibbonActionType.PropableRedo)
                         {

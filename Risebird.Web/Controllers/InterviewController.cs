@@ -8430,6 +8430,7 @@ namespace Risebird.Web.Controllers
                         DateTime EndDate = DateTime.Now.AddDays(1);
                         model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
                     }
+                    model = model.Select(x => { x.PriorityLevelDesc = x.PriorityLevel > 0 ? ((PriorityLevel)x.PriorityLevel).GetDescription() : string.Empty; return x; }).ToList();
                     //}
                     return View(model);
                 }

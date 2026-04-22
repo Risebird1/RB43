@@ -322,6 +322,67 @@
                 background: #fee2e2;
             }
 
+    /* QC interview detail modal — two rows: 3 + 2 fields */
+    #qcInterviewDetailModal .modal-dialog {
+        max-width: 720px;
+    }
+
+    #qcInterviewDetailModal .qc-interview-detail-body {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    #qcInterviewDetailModal .qc-interview-detail-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px 4px;
+        align-items: start;
+    }
+
+        #qcInterviewDetailModal .qc-interview-detail-row.qc-interview-detail-row--two {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    #qcInterviewDetailModal .qc-interview-detail-cell {
+        display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 2px;
+    background: #fff;
+    max-height: 42px;
+    }
+
+    #qcInterviewDetailModal .qc-interview-detail-cell--multiline {
+        align-items: flex-start;
+        height: 42px;
+    }
+
+    #qcInterviewDetailModal .qc-interview-detail-label {
+        flex: 0 0 auto;
+        max-width: 46%;
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        letter-spacing: 0.02em;
+        margin-bottom: 0;
+        line-height: 1.35;
+    }
+
+    #qcInterviewDetailModal .qc-interview-detail-value {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-size: 15px;
+        color: #0f172a;
+        line-height: 1.45;
+        word-break: break-word;
+        text-align: right;
+    }
+
     /* Upload AI transcript modal */
     #uploadAiTranscriptModal .qc-upload-modal-content {
         border-radius: 12px;
@@ -484,15 +545,15 @@
                     {
                         if (ViewBag.actionstatus == "QCPendingReport")
                         {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCPendingReport')"><strong>Reject Pending</strong></div>
+                            @* <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div> *@
                             <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
                         }
-                        else if (ViewBag.actionstatus == "QCReport")
+                        @* else if (ViewBag.actionstatus == "QCReport")
                         {
                             <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
@@ -531,18 +592,18 @@
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab-ac" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
-                        }
+                        } *@
                         else if (ViewBag.actionstatus == "QCSelect")
                         {
-                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>Reject Pending</strong></div>
+                            @* <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div> *@
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
                         }
-                        else
+                        @* else
                         {
                             <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
@@ -550,16 +611,16 @@
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
                             <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                        }
+                        } *@
                     }
 
                 </div>
                 <div class="pull-right">
                     <div>
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                       @*  <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
-                        </button>
+                        </button> *@
 
                         @if (ViewBag.Actiontype != 0)
                         {
@@ -567,10 +628,10 @@
                                 <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("MyInterviews", "HR")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                             </button>
                         }
-                        @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelect")
+                        @* @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelect")
                         {
                             <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard", new { actionstatus = ViewBag.actionstatus, actiontype = ViewBag.Actiontype })'"></i></span>
-                        }
+                        } *@
                     </div>
                 </div>
             </div>
@@ -733,7 +794,7 @@
                                                         <th>Priority</th>
                                                         <th>Interview Date</th>
                                                         <th>Candidate</th>
-                                                        @if (ViewBag.actionstatus == "QCPendingReport")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                         {
                                                             <th>Non AI Reasoning</th>
                                                             <th>Risk Category</th>
@@ -746,16 +807,22 @@
                                                         {
                                                             <th>Interviewer Issues found in the Transcript</th>
                                                             <th>AI Transcript analysis score</th>
-                                                            <th>Interview Duration</th>
-                                                            <th>Deficit Duration</th>
-                                                            <th>Candidate Rating</th>
+                                                            @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
+                                                            {
+                                                                <th>Interview Duration</th>
+                                                                <th>Deficit Duration</th>
+                                                                <th>Candidate Rating</th>
+                                                            }
                                                             if (ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                             {
                                                                 <th>Reason</th>
                                                             }
                                                             <th>Interviewer</th>
-                                                            <th>Interviewer Joinedon</th>
-                                                            <th>Interviewer Late join</th>
+                                                            @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
+                                                            {
+                                                                <th>Interviewer Joinedon</th>
+                                                                <th>Interviewer Late join</th>
+                                                            }
                                                         }
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
@@ -774,7 +841,10 @@
                                                         {
                                                             <th>Status</th>
                                                         }
-                                                        <th>AI actions</th>
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
+                                                        {
+                                                            <th>AI actions</th>
+                                                        }
                                                     </tr>
                                                 </thead>
                                                 <tfoot>
@@ -785,7 +855,7 @@
                                                         <th>Priority</th>
                                                         <th>Interview Date</th>
                                                         <th>Candidate</th>
-                                                         @if (ViewBag.actionstatus == "QCPendingReport")
+                                                         @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                         {
                                                             <th>Non AI Reasoning</th>
                                                             <th>Risk Category</th>
@@ -799,16 +869,22 @@
                                                         {
                                                             <th>Interviewer Issues found in the Transcript</th>
                                                             <th>AI Transcript analysis score</th>
-                                                            <th>Interview Duration</th>
-                                                            <th>Deficit Duration</th>
-                                                            <th>Candidate Rating</th>
+                                                            @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
+                                                            {
+                                                                <th>Interview Duration</th>
+                                                                <th>Deficit Duration</th>
+                                                                <th>Candidate Rating</th>
+                                                            }
                                                             if (ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                             {
                                                                 <th>Reason</th>
                                                             }
                                                             <th>Interviewer</th>
-                                                            <th>Interviewer Joinedon</th>
-                                                            <th>Interviewer Late join</th>
+                                                            @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
+                                                            {
+                                                                <th>Interviewer Joinedon</th>
+                                                                <th>Interviewer Late join</th>
+                                                            }
 
                                                         }
                                                         <th>Meeting Status</th>
@@ -828,7 +904,10 @@
                                                         {
                                                             <th>Status</th>
                                                         }
-                                                        <th>AI actions</th>
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
+                                                        {
+                                                            <th>AI actions</th>
+                                                        }
                                                     </tr>
                                                 </tfoot>
                                                 <tbody>
@@ -1198,7 +1277,7 @@
                                                                 }
 
                                                             </td>
-                                                             @if (ViewBag.actionstatus == "QCPendingReport")
+                                                             @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                             {
                                                                 <td>@item.NonAIreasoning</td>
                                                                 <td>@item.Riskcategory</td>
@@ -1245,27 +1324,30 @@
                                                                         <span class="count" style="width:26px;height:26px;line-height:26px;">@item.AITranscriptAnalysisScore</span>
                                                                     }
                                                                 </td>
-                                                                @if (item.interviewDuration != null)
+                                                                @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
                                                                 {
-                                                                    <td>  @item.interviewDuration (mins)</td>
+                                                                    @if (item.interviewDuration != null)
+                                                                    {
+                                                                        <td>  @item.interviewDuration (mins)</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+                                                                    <td>@item.deficit (mins)</td>
+                                                                    <td>
+                                                                        <div class="interviewer">
+                                                                            @if (@item.Rating != 0)
+                                                                            {
+                                                                                <label style="color:#42a5f5;font-size:15px;" onClick="PaymentComplianceDetails('@item.InterviewId','Candidate')">@item.Rating<span style="color:grey;text-transform:lowercase;"> Out of 5</span></label>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <label style="font-size:15px;color:grey">NA</label>
+                                                                            }
+                                                                        </div>
+                                                                    </td>
                                                                 }
-                                                                else
-                                                                {
-                                                                    <td></td>
-                                                                }
-                                                                <td>@item.deficit (mins)</td>
-                                                                <td>
-                                                                    <div class="interviewer">
-                                                                        @if (@item.Rating != 0)
-                                                                        {
-                                                                            <label style="color:#42a5f5;font-size:15px;" onClick="PaymentComplianceDetails('@item.InterviewId','Candidate')">@item.Rating<span style="color:grey;text-transform:lowercase;"> Out of 5</span></label>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <label style="font-size:15px;color:grey">NA</label>
-                                                                        }
-                                                                    </div>
-                                                                </td>
                                                                 if (ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview")
                                                                 {
                                                                     <td>@item.StatusValue</td>
@@ -1286,38 +1368,41 @@
 
                                                                     }
                                                                 </td>
-                                                                <td class="intime-on" style="padding-left:30px;">
-                                                                    @if (item.IsVideoRequired == true)
-                                                                    {
-                                                                        <div style="position:relative;z-index:10;width: fit-content">
-                                                                            <div class="absCenter">
-                                                                                <button class="infoButton" style="top:8px;left:-16px;">
-                                                                                    <div class="infoButton-btn" style="width:15px;height:15px;">
-                                                                                        <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left: -7px;top: 0px;">i</span>
-                                                                                    </div>
-                                                                                    <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
-                                                                                        <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div>
-                                                                                    </div>
-                                                                                </button>
+                                                                @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
+                                                                {
+                                                                    <td class="intime-on" style="padding-left:30px;">
+                                                                        @if (item.IsVideoRequired == true)
+                                                                        {
+                                                                            <div style="position:relative;z-index:10;width: fit-content">
+                                                                                <div class="absCenter">
+                                                                                    <button class="infoButton" style="top:8px;left:-16px;">
+                                                                                        <div class="infoButton-btn" style="width:15px;height:15px;">
+                                                                                            <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left: -7px;top: 0px;">i</span>
+                                                                                        </div>
+                                                                                        <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
+                                                                                            <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div>
+                                                                                        </div>
+                                                                                    </button>
+                                                                                </div>
                                                                             </div>
+                                                                        }
+                                                                        <div style="float:left">@item.Joinedon </div>
+
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">
+
+                                                                            @if (item.InterviewerLateJoin != 0)
+                                                                            {
+                                                                                <span style="color:green">Yes</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span style="color:#000;font-weight:400">No</span>
+                                                                            }
                                                                         </div>
-                                                                    }
-                                                                    <div style="float:left">@item.Joinedon </div>
-
-                                                                </td>
-                                                                <td>
-                                                                    <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">
-
-                                                                        @if (item.InterviewerLateJoin != 0)
-                                                                        {
-                                                                            <span style="color:green">Yes</span>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <span style="color:#000;font-weight:400">No</span>
-                                                                        }
-                                                                    </div>
-                                                                </td>
+                                                                    </td>
+                                                                }
                                                             }
                                                             @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                                                             {
@@ -1374,8 +1459,24 @@
                                                             {
                                                                 <td>@item.StatusValue</td>
                                                             }
+                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCSelect")
+                                                            {
                                                                 <td class="qc-ai-actions-cell">
                                                                     <div class="qc-ai-actions-inner">
+                                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
+                                                                        {
+                                                                            <button type="button" class="mdc-fab app-fab--absolute" aria-label="Interview details" title="Interview details"
+                                                                                    data-interview-id="@item.InterviewId"
+                                                                                    data-duration="@item.interviewDuration"
+                                                                                    data-deficit="@item.deficit"
+                                                                                    data-rating="@item.Rating"
+                                                                                    data-joined="@(item.Joinedon?.ToString("g") ?? "")"
+                                                                                    data-late="@(item.InterviewerLateJoin != 0 ? "1" : "0")"
+                                                                                    data-video="@(item.IsVideoRequired ? "1" : "0")"
+                                                                                    onclick="openQcInterviewDetailModal(this);">
+                                                                                <span class="mdc-fab__icon touch"><i class="fas fa-info-circle" style="font-size:15px;" aria-hidden="true"></i></span>
+                                                                            </button>
+                                                                        }
                                                                         @if (!item.ReportAI)
                                                                         {
                                                                             <span>
@@ -1424,6 +1525,7 @@
                                                                         }
                                                                     </div>
                                                                 </td>
+                                                            }
                                                         </tr>
                                                     }
                                                 </tbody>
@@ -1504,6 +1606,50 @@
                     <button type="button" class="qc-upload-modal-btn qc-upload-modal-btn--primary" onclick="submitUploadAiTranscript();">
                         <i class="fas fa-upload" aria-hidden="true"></i> Upload
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="qcInterviewDetailModal" class="modal modal-bg" style="z-index:1033">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content qc-upload-modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><i style="font-size:22px; color:#fff;position:relative;top:10px;" class="fas fa-info-circle" aria-hidden="true"></i></span>
+                </div>
+                <h5 class="modal-title pull-left">Interview details</h5>
+            </div>
+            <button type="button" class="close" aria-label="Close">
+                <span onclick="closeQcInterviewDetailModal()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body qc-upload-modal-body">
+                <div class="qc-interview-detail-body">
+                    <div class="qc-interview-detail-row">
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Interview duration</div>
+                            <div id="qcDetailInterviewDuration" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Deficit duration</div>
+                            <div id="qcDetailDeficitDuration" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Candidate rating</div>
+                            <div id="qcDetailCandidateRating" class="qc-interview-detail-value"></div>
+                        </div>
+                    </div>
+                    <div class="qc-interview-detail-row qc-interview-detail-row--two">
+                        <div class="qc-interview-detail-cell qc-interview-detail-cell--multiline">
+                            <div class="qc-interview-detail-label">Interviewer join</div>
+                            <div id="qcDetailInterviewerJoin" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Interviewer late join</div>
+                            <div id="qcDetailInterviewerLateJoin" class="qc-interview-detail-value"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1863,6 +2009,89 @@
         if (modal) modal.style.display = 'none';
         var dz = document.getElementById('uploadAiTranscriptDropzone');
         if (dz) dz.classList.remove('qc-upload-dropzone--drag');
+    }
+
+    function openQcInterviewDetailModal(btn) {
+        if (!btn || !btn.dataset) return;
+        var d = btn.dataset;
+        var interviewId = d.interviewId || '';
+        var dur = d.duration;
+        var deficit = d.deficit;
+        var rating = parseInt(d.rating, 10);
+        var joined = d.joined || '';
+        var late = d.late === '1';
+        var video = d.video === '1';
+
+        var elDur = document.getElementById('qcDetailInterviewDuration');
+        var elDef = document.getElementById('qcDetailDeficitDuration');
+        var elRat = document.getElementById('qcDetailCandidateRating');
+        var elJoin = document.getElementById('qcDetailInterviewerJoin');
+        var elLate = document.getElementById('qcDetailInterviewerLateJoin');
+
+        if (elDur) {
+            elDur.textContent = (dur !== undefined && dur !== '') ? (dur + ' (mins)') : '';
+        }
+        if (elDef) {
+            elDef.textContent = (deficit !== undefined && deficit !== '') ? (deficit + ' (mins)') : '';
+        }
+        if (elRat) {
+            elRat.innerHTML = '';
+            if (!isNaN(rating) && rating !== 0) {
+                var lbl = document.createElement('label');
+                lbl.style.cssText = 'color:#42a5f5;font-size:15px;cursor:pointer;margin:0;';
+                lbl.textContent = rating + ' ';
+                var span = document.createElement('span');
+                span.style.cssText = 'color:grey;text-transform:lowercase;';
+                span.textContent = 'out of 5';
+                lbl.appendChild(span);
+                lbl.addEventListener('click', function () {
+                    PaymentComplianceDetails(String(interviewId), 'Candidate');
+                });
+                elRat.appendChild(lbl);
+            } else {
+                var na = document.createElement('span');
+                na.style.cssText = 'font-size:15px;color:grey';
+                na.textContent = 'NA';
+                elRat.appendChild(na);
+            }
+        }
+        if (elJoin) {
+            elJoin.innerHTML = '';
+            if (video) {
+                var wrap = document.createElement('div');
+                wrap.style.cssText = 'position:relative;z-index:10;width:fit-content;margin-bottom:6px;';
+                var inner = document.createElement('div');
+                inner.className = 'absCenter';
+                inner.innerHTML = '<button class="infoButton" style="top:8px;left:-16px;"><div class="infoButton-btn" style="width:15px;height:15px;"><span class="infoButton-btn-text" style="position:relative;font-size:13px;width:10px;height:21px;left:-7px;top:0px;">i</span></div><div class="infoButton-container" style="bottom:calc(-100% + 35px);"><div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div></div></button>';
+                wrap.appendChild(inner);
+                elJoin.appendChild(wrap);
+            }
+            var div = document.createElement('div');
+            div.textContent = joined;
+            elJoin.appendChild(div);
+        }
+        if (elLate) {
+            elLate.innerHTML = '';
+            if (late) {
+                var y = document.createElement('span');
+                y.style.color = 'green';
+                y.textContent = 'Yes';
+                elLate.appendChild(y);
+            } else {
+                var n = document.createElement('span');
+                n.style.cssText = 'color:#000;font-weight:400';
+                n.textContent = 'No';
+                elLate.appendChild(n);
+            }
+        }
+
+        var modal = document.getElementById('qcInterviewDetailModal');
+        if (modal) modal.style.display = 'block';
+    }
+
+    function closeQcInterviewDetailModal() {
+        var modal = document.getElementById('qcInterviewDetailModal');
+        if (modal) modal.style.display = 'none';
     }
 
     var _uploadAiTranscriptDropzoneBound = false;
