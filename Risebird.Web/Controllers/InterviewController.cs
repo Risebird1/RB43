@@ -37,6 +37,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList.Extensions;
+using System.Web.Helpers;
 
 
 namespace Risebird.Web.Controllers
@@ -8399,7 +8400,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(actionstatus))
                     {
-                        actionstatus = "";
+                        actionstatus = "QCRejectPending";
                     }
                     if (TempData["SuccessErrorMessageQCForm"] != null)
                     {
@@ -9260,7 +9261,8 @@ namespace Risebird.Web.Controllers
                         if (model == null)
                         {
                             return Json("Report not found.");
-                        }else
+                        }
+                        else
                         {
                             return Json("Transcript summary not found.");
                         }
@@ -9991,6 +9993,12 @@ namespace Risebird.Web.Controllers
                 "AI Report JSON:\n" + (transcriptSummary ?? "") + "\n\n" +
                 "Human Report JSON:\n" + (reportStringContent ?? "");
             return message;
+        }
+        public async Task<JsonResult> FetchMoreDetailsOfInterview(int interviewId)
+        {
+            var model = await _meetingService.FetchMoreDetailsOfInterview(interviewId);
+            model = model.Select(x => { x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; x.PriorityLevelDesc = x.PriorityLevel > 0 ? ((PriorityLevel)x.PriorityLevel).GetDescription() : string.Empty; return x; }).ToList();
+            return Json(model);
         }
     }
 }

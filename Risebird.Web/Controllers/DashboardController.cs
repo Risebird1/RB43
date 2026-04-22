@@ -3947,10 +3947,10 @@ NEVER:
                         {
                             modelList = await _dashboardService.FetchMissingParticipantFakeReporting(emailid, profileName, actionstatus, null);
                         }
-                        else
-                        {
-                            modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype, profileName);
-                        }
+                        //else
+                        //{
+                        //    modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype, profileName);
+                        //}
                         if (modelList == null)
                         {
                             modelList = new List<MeetingVM>();

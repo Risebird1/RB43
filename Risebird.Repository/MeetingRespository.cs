@@ -8123,6 +8123,30 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             }
             return null;
         }
+        public async Task<IEnumerable<MeetingVM>> FetchMoreDetailsOfInterview(int interviewId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Interviewid", interviewId);
+                    var data = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_interviewrelatredmoredetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return data;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
         public async Task<int> GetAIInterviewVideoCount(string sessionId)
         {
