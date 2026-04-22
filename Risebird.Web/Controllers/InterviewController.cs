@@ -37,8 +37,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList.Extensions;
-using System.Web.Helpers;
-
 
 namespace Risebird.Web.Controllers
 {
@@ -9985,7 +9983,8 @@ namespace Risebird.Web.Controllers
             }
             return false;
         }
-        public async Task<JsonResult> FetchMoreDetailsOfInterview(int interviewId)
+        [HttpGet]
+        public async Task<JsonResult> FetchMoreDetailsInterview(int interviewId)
         {
             var model = await _meetingService.FetchMoreDetailsInterview(interviewId);
             model = model.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; x.PriorityLevelDesc = x.PriorityLevel > 0 ? ((PriorityLevel)x.PriorityLevel).GetDescription() : string.Empty; return x; }).ToList();
