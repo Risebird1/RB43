@@ -640,7 +640,7 @@
         $('#mgmCompany').text('\u2014'); $('#mgmEmployed').text('\u2014');
     }
 
-    function evPassed(r) { return r.employmentVerified === true && r.employmentIsEmployed === true && !!r.employmentCompanyName; }
+    function evPassed(r) { return r.employmentVerified === true && !!r.employmentCompanyName; }
     function aiPassed(r) {
         if (r.resumeAIAnalysisCompleted !== true) return false;
         try { var p = JSON.parse(r.resumeAIAnalysisResult); return p && p.verdict && p.verdict.toLowerCase().indexOf('yes') !== -1; } catch(e){ return false; }
@@ -872,10 +872,10 @@
                         else { $('#mgmEmployed').html('<span class="employed-no"><i class="fas fa-times-circle me-1"></i>No</span>'); }
                         if (currentRecord) { currentRecord.employmentVerified = true; currentRecord.employmentCompanyName = companyName; currentRecord.employmentIsEmployed = isEmployed; }
 
-                        if (isEmployed && companyName) {
+                        if (companyName) {
                             markStep(2, 'completed', h);
                         } else {
-                            h += '<br/><span style="color:#842029;font-weight:500;"><i class="fas fa-times-circle me-1"></i>EV failed \u2014 no employment found. Edit email/phone and retry.</span>';
+                            h += '<br/><span style="color:#842029;font-weight:500;"><i class="fas fa-times-circle me-1"></i>EV failed \u2014 no company found. Edit email/phone and retry.</span>';
                             markStep(2, 'failed', h);
                             btn.prop('disabled', false).html('<i class="fas fa-id-badge me-1"></i>Retry EV');
                             $('#step3Card').addClass('disabled');
