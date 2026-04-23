@@ -436,9 +436,13 @@ namespace Risebird.Web.Controllers
                 int agId = record.ResolvedAssessmentGroupId.Value;
                 string loggedInUser = HttpContext.Session.GetString("email").Trim('"');
 
-                string[] nameParts = (record.CandidateName ?? "Interviewer").Trim().Split(' ', 2);
+                string candidateName = (record.CandidateName ?? "").Trim();
+                if (string.IsNullOrWhiteSpace(candidateName)) candidateName = "Interviewer";
+                string[] nameParts = candidateName.Split(' ', 2);
                 string firstName = nameParts[0];
                 string lastName = nameParts.Length > 1 ? nameParts[1] : "";
+
+                if (firstName.Length < 2) firstName = firstName.PadRight(2, 'x');
 
                 decimal experience = 0;
                 if (!string.IsNullOrWhiteSpace(record.ExperienceYears))
@@ -447,12 +451,16 @@ namespace Risebird.Web.Controllers
                     if (numMatch.Success) decimal.TryParse(numMatch.Value, out experience);
                 }
 
+                string phone = record.ParsedPhone ?? "";
+                if (phone.Length > 0 && phone.Length < 10)
+                    phone = phone.PadRight(10, '0');
+
                 var profileVM = new InterviewerProfileVM
                 {
                     EmailId = record.ParsedEmail.Trim().ToLower(),
                     FirstName = firstName,
                     LastName = lastName,
-                    MobileNumber = record.ParsedPhone ?? "",
+                    MobileNumber = phone,
                     Country = "26",
                     City = record.Location ?? "",
                     Experience = experience,
@@ -472,15 +480,35 @@ namespace Risebird.Web.Controllers
                     ResourceUrl = $"https://{Request.Host}/NaukriOnboarding/Index"
                 };
 
-                bool addResult = _interviewerService.AddInterviewerProfile(
-                    profileVM, loggedInUser,
-                    out string assessmentGroupList, out int userId, out string uniqueid);
+                bool addResult;
+                string assessmentGroupList = null;
+                int userId = 0;
+                string uniqueid = null;
+                try
+                {
+                    addResult = _interviewerService.AddInterviewerProfile(
+                        profileVM, loggedInUser,
+                        out assessmentGroupList, out userId, out uniqueid);
+                }
+                catch (Exception svcEx)
+                {
+                    await _logger.LogMessage(LogLevelInfo.Exception, svcEx);
+                    return Json(new { success = false, error = $"Failed to create interviewer profile: {svcEx.Message}" });
+                }
 
                 if (!addResult || userId <= 0)
                 {
-                    string errMsg = !string.IsNullOrEmpty(assessmentGroupList)
-                        ? $"AG capacity issue: {assessmentGroupList}"
-                        : "Failed to create interviewer profile.";
+                    string errMsg;
+                    if (!string.IsNullOrEmpty(assessmentGroupList))
+                    {
+                        errMsg = $"AG capacity issue: {assessmentGroupList}";
+                    }
+                    else
+                    {
+                        var innerEx = _interviewerService.LastAddProfileException;
+                        string detail = innerEx != null ? innerEx.Message : "Unknown reason";
+                        errMsg = $"Failed to create interviewer profile. Reason: {detail} [Email: {profileVM.EmailId}, Phone: {profileVM.MobileNumber}, AG: {agId}]";
+                    }
                     return Json(new { success = false, error = errMsg });
                 }
 

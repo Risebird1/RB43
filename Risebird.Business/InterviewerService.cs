@@ -214,9 +214,13 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                LastAddProfileException = e;
                 return false;
             }
         }
+
+        public Exception LastAddProfileException { get; private set; }
+
         //public async Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser)
         //{
         //    try
