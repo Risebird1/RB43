@@ -26,6 +26,21 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Duplicate check: same sender + subject already exists
+    IF EXISTS (
+        SELECT 1 FROM InterviewerEmailAvailability
+        WHERE LOWER(LTRIM(RTRIM(SenderEmail))) = LOWER(LTRIM(RTRIM(@SenderEmail)))
+          AND LOWER(LTRIM(RTRIM(ISNULL(Subject,'')))) = LOWER(LTRIM(RTRIM(ISNULL(@Subject,''))))
+    )
+    BEGIN
+        SELECT TOP 1 @NewId = Id FROM InterviewerEmailAvailability
+        WHERE LOWER(LTRIM(RTRIM(SenderEmail))) = LOWER(LTRIM(RTRIM(@SenderEmail)))
+          AND LOWER(LTRIM(RTRIM(ISNULL(Subject,'')))) = LOWER(LTRIM(RTRIM(ISNULL(@Subject,''))))
+        ORDER BY Id DESC
+
+        RETURN
+    END
+
     DECLARE @UserId INT = NULL
     DECLARE @InterviewerProfileId INT = NULL
 
