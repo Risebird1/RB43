@@ -24,6 +24,31 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Duplicate check: same candidate + subject already exists
+    IF EXISTS (
+        SELECT 1 FROM NaukriProspectiveInterviewer
+        WHERE LOWER(LTRIM(RTRIM(ISNULL(CandidateName,'')))) = LOWER(LTRIM(RTRIM(ISNULL(@CandidateName,''))))
+          AND LOWER(LTRIM(RTRIM(ISNULL(Subject,'')))) = LOWER(LTRIM(RTRIM(ISNULL(@Subject,''))))
+    )
+    BEGIN
+        SELECT @NewId = Id FROM NaukriProspectiveInterviewer
+        WHERE LOWER(LTRIM(RTRIM(ISNULL(CandidateName,'')))) = LOWER(LTRIM(RTRIM(ISNULL(@CandidateName,''))))
+          AND LOWER(LTRIM(RTRIM(ISNULL(Subject,'')))) = LOWER(LTRIM(RTRIM(ISNULL(@Subject,''))))
+        ORDER BY Id DESC
+
+        -- Update resume link if a newer/better one was provided
+        IF @ResumeLink IS NOT NULL AND LEN(LTRIM(RTRIM(@ResumeLink))) > 0
+           AND @ResumeLink <> 'None'
+        BEGIN
+            UPDATE NaukriProspectiveInterviewer
+            SET ResumeLink = @ResumeLink, HasAttachment = @HasAttachment, UpdatedAt = GETUTCDATE()
+            WHERE Id = @NewId
+              AND (ResumeLink IS NULL OR ResumeLink = 'None' OR LEN(LTRIM(RTRIM(ResumeLink))) = 0)
+        END
+
+        RETURN
+    END
+
     INSERT INTO NaukriProspectiveInterviewer
         (SenderEmail, Subject, MailContent, ReceivedAt,
          CandidateName, Location, PastExperience, NoticePeriod, Education,

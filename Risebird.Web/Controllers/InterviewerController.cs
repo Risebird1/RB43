@@ -441,6 +441,8 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrEmpty(interviewerProfile.FirstName))
                         {
                             interviewerProfile.FirstName = interviewerProfile.FirstName.Trim();
+                            if (interviewerProfile.FirstName.Length < 2)
+                                interviewerProfile.FirstName = interviewerProfile.FirstName.PadRight(2, 'x');
                         }
                         if (!string.IsNullOrEmpty(interviewerProfile.LastName))
                         {
@@ -449,6 +451,12 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrEmpty(interviewerProfile.EmailId))
                         {
                             interviewerProfile.EmailId = interviewerProfile.EmailId.Trim().ToLower();
+                        }
+                        if (!string.IsNullOrEmpty(interviewerProfile.MobileNumber))
+                        {
+                            interviewerProfile.MobileNumber = interviewerProfile.MobileNumber.Trim();
+                            if (interviewerProfile.MobileNumber.Length < 10)
+                                interviewerProfile.MobileNumber = interviewerProfile.MobileNumber.PadRight(10, '0');
                         }
                         string assessmentGroupList;
                         int userId;
@@ -478,15 +486,18 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
+                                var innerEx = _interviewerService.LastAddProfileException;
+                                string failureDetail = innerEx != null ? innerEx.Message : "Unknown reason";
+                                string descriptiveMsg = $"Failed to add Interviewer Profile. Reason: {failureDetail} [Email: {interviewerProfile.EmailId}, Phone: {interviewerProfile.MobileNumber}]";
+
                                 if (profileName == "InterviewerManagement")
                                 {
-                                    //TempData["MessageAddInterviewer"] = "Failed to add Interviewer Profile.";
-                                    ViewBag.Message = "Failed to add Interviewer Profile.";
+                                    ViewBag.Message = descriptiveMsg;
                                     return View(interviewerProfile);
                                 }
                                 else
                                 {
-                                    TempData["MessageInterviewer"] = "Failed to add Interviewer Profile.";
+                                    TempData["MessageInterviewer"] = descriptiveMsg;
                                 }
                             }
 
@@ -506,7 +517,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["MessageInterviewer"] = "Interviewer Profile addition is Failed";
+                TempData["MessageInterviewer"] = $"Interviewer Profile addition failed. Reason: {ex.Message} [Email: {interviewerProfile?.EmailId}, Phone: {interviewerProfile?.MobileNumber}]";
                 return RedirectToAction("Index");
             }
         }
