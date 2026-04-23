@@ -5815,11 +5815,11 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> PublicOpenInterviewInvite(string id, string Emailid)
         {
-            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
-            HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Interviewer"));
             var role = await _meetingService.GetUniqueInterviewerByEmailId(Emailid, id);
             if (role > 0)
             {
+                HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+                HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Interviewer"));
                 return Json("success");
             }
             else
@@ -5876,12 +5876,27 @@ namespace Risebird.Web.Controllers
             try
             {
                 var Emailid = string.Empty;
+                var profileName = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
                 }
+                if (HttpContext.Session.GetString("profileName") != null)
+                {
+                    profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                }
                 if (Emailid != emailid)
+                {
+                    return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
+                }
+                if (profileName != "Interviewer" && profileName != "Admin" && profileName != "HR" && profileName != "InterviewerManagement")
+                {
+                    return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
+                }
+                var interviewerCheck = await _meetingService.GetUniqueInterviewerByEmailId(emailid, uniqueid);
+                if (interviewerCheck <= 0)
                 {
                     return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
                 }
