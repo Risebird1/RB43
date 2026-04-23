@@ -459,6 +459,7 @@
                                     <div class="flex-grow-1" style="min-width:180px;"><strong style="font-size:13px;">Resume Fitment Analysis</strong><div class="text-muted mt-1" style="font-size:11.5px;" id="step1Subtitle">Runs the resume through AI to evaluate fitment for the specialization</div></div>
                                     <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
                                         <a href="#" target="_blank" class="btn btn-outline-secondary btn-sm mgm-btn-view-resume" id="btnViewResume" style="display:none;"><i class="fas fa-file-alt me-1"></i>View Resume</a>
+                                        <button type="button" class="btn btn-outline-success btn-sm" id="btnUploadResume" style="font-size:11px;"><i class="fas fa-upload me-1"></i>Upload Resume</button>
                                         <button type="button" class="btn btn-info btn-sm mgm-action-btn text-white" id="btnAnalyzeResume"><i class="fas fa-robot me-1"></i>Analyze Resume</button>
                                     </div>
                                 </div>
@@ -605,6 +606,7 @@
         $('#step1Result, #step2Result').hide().empty();
         $('#btnAnalyzeResume').prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Analyze Resume');
         $('#btnAssignAG').prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Assign to AG');
+        $('#btnUploadResume').show();
         $('#resumeUploadArea').hide();
         $('#resumeFileInput').val('');
         $('#uploadProgress, #uploadResult').hide();
@@ -618,6 +620,7 @@
         } else if (!r.hasResumeLink && !r.hasProfileResumeLink) {
             $('#step1Subtitle').html('No resume available for analysis. <strong>Upload a resume to proceed.</strong>');
             $('#btnAnalyzeResume').prop('disabled', true);
+            $('#resumeUploadArea').show();
         }
 
         if (r.assessmentGroupId && r.assessmentGroupId > 0) {
@@ -636,7 +639,7 @@
         card.removeClass('pending completed failed disabled'); num.removeClass('pending completed failed running');
         if (state === 'completed') {
             card.addClass('completed'); num.addClass('completed');
-            if (step===1) $('#btnAnalyzeResume').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed');
+            if (step===1) { $('#btnAnalyzeResume').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed'); $('#btnUploadResume').hide(); $('#resumeUploadArea').hide(); }
             if (step===2) $('#btnAssignAG').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Assigned');
         } else if (state === 'failed') { card.addClass('failed'); num.addClass('failed'); }
         else if (state === 'running') { num.addClass('running'); }
@@ -707,7 +710,10 @@
                     if(res.isPositiveVerdict) updateStatusBadge('Verified');
                 } else {
                     var errHtml = res.error || 'Analysis failed.';
-                    if (res.needsUpload) errHtml += ' <br/><em style="font-size:11px;">Use the Upload Resume button to upload a valid PDF.</em>';
+                    if (res.needsUpload) {
+                        errHtml += ' <br/><em style="font-size:11px;">Use the Upload Resume button to upload a valid PDF.</em>';
+                        $('#resumeUploadArea').show();
+                    }
                     markStep(1,'failed',errHtml);
                     btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry');
                     $('#step1Subtitle').text('Runs the resume through AI to evaluate fitment for the specialization');
