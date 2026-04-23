@@ -4727,6 +4727,11 @@ namespace Risebird.Web.Controllers
                 ViewBag.id = id;
                 ViewBag.emailid = emailid;
                 ViewBag.IsClientLogin = isClientLogin;
+                if (!string.IsNullOrWhiteSpace(emailid))
+                {
+                    HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+                    HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
+                }
                 if (string.IsNullOrWhiteSpace(type))
                 {
                     type = "SkillChannel";
@@ -4821,6 +4826,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
         [RequestSizeLimit(1048576000)]
@@ -4829,7 +4835,11 @@ namespace Risebird.Web.Controllers
             try
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
-                emailId = emailId.Replace("\"", "");
+                emailId = emailId?.Replace("\"", "");
+                if (string.IsNullOrWhiteSpace(emailId))
+                {
+                    return Json("Session expired. Please refresh the page and try again.");
+                }
                 if (model != null && Request.Form.Files.Count() > 0)
                 {
                     var clienthrcontact = model.ClientHREmailId;
@@ -4837,8 +4847,6 @@ namespace Risebird.Web.Controllers
                     {
                         clienthrcontact = emailId;
                     }
-                    // model.IRFId = Convert.ToInt32(Request.Form["IRFId"].ToString());
-                    // model.IRFName = Request.Form["IRFName"].ToString();
                     var addedByUserId = _irfService.GetUserId(emailId);
                     if (addedByUserId > 0)
                     {
@@ -4871,7 +4879,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 else
                                 {
-                                    return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                                    return Json("Please select valid file for import(.pdf, .doc, .docx)! Detected type: " + fileMimeType);
                                 }
                             }
                             else
@@ -4883,16 +4891,15 @@ namespace Risebird.Web.Controllers
                         if (result)
                         {
                             return Json("Resume(s) uploaded Successfully!");
-
                         }
                         else
                         {
-                            return Json("Failed to upload Resume(s)!");
+                            return Json("Failed to save Resume(s) to database.");
                         }
                     }
                     else
                     {
-                        return Json("Failed to upload Resume(s)!");
+                        return Json("Failed to upload Resume(s): user not found for " + emailId);
                     }
                 }
                 else
@@ -4903,7 +4910,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json("Failed to upload Resume(s)!");
+                return Json("Failed to upload Resume(s): " + ex.Message);
             }
         }
         [HttpGet]

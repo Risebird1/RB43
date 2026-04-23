@@ -369,19 +369,16 @@ namespace Risebird.Web.Controllers
                     await _logger.LogMessage(LogLevelInfo.Warning, pdfEx);
                 }
 
-                // If PDF reading failed, try DOC-to-PDF conversion
+                // If PDF reading failed, always attempt DOC/DOCX-to-PDF conversion
+                // (the file may be a DOC/DOCX even if the URL ends in .pdf)
                 if (string.IsNullOrWhiteSpace(resumeText))
                 {
                     try
                     {
-                        bool isDoc = await _azureStorageHelper.IsDocFileAsync(resumeUrl);
-                        if (isDoc)
+                        string convertedPdfUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
+                        if (!string.IsNullOrWhiteSpace(convertedPdfUrl))
                         {
-                            string convertedPdfUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
-                            if (!string.IsNullOrWhiteSpace(convertedPdfUrl))
-                            {
-                                resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedPdfUrl);
-                            }
+                            resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedPdfUrl);
                         }
                     }
                     catch (Exception docEx)
@@ -409,7 +406,7 @@ namespace Risebird.Web.Controllers
                 var analysis = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(analysisJson);
                 bool isPositiveVerdict = analysis != null
                     && !string.IsNullOrEmpty(analysis.verdict)
-                    && analysis.verdict.Equals("yes", StringComparison.OrdinalIgnoreCase);
+                    && analysis.verdict.ToLower().Contains("yes");
 
                 string newStatus = isPositiveVerdict ? "Verified" : "InProgress";
 
