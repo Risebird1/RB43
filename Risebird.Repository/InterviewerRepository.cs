@@ -402,7 +402,7 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 userId = 0;
                 isInsertOperation = false;
-                return false;
+                throw;
             }
 
             catch (Exception e)
@@ -410,7 +410,7 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 userId = 0;
                 isInsertOperation = false;
-                return false;
+                throw;
             }
         }
 
