@@ -9,6 +9,8 @@ namespace Risebird.Repository.Interface
     {
         Task InsertHistoryAsync(int recordId, string eventType, string fromValue, string toValue, string changedBy);
         Task<List<InterviewerEmailAvailabilityHistory>> GetHistoryAsync(int recordId);
+        Task<bool> UpdateMagNameAsync(int id, string magName);
+        Task<List<MagDropdownItem>> GetAllMasterAssessmentGroupsAsync();
 
         Task<int> InsertEmailAvailabilityAsync(InterviewerEmailAvailability record);
 

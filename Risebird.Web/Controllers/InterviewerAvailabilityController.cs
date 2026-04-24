@@ -237,7 +237,8 @@ namespace Risebird.Web.Controllers
                 return Json(new { success = false, error = "Not signed in." });
 
             var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
-            if (profileName != "Admin" && profileName != "SupportAdmin")
+            var dropAllowed = new[] { "Admin", "SupportAdmin", "HR", "SeniorHR", "InterviewerManagement", "SeniorInterviewerManagement" };
+            if (!Array.Exists(dropAllowed, p => p == profileName))
                 return Json(new { success = false, error = "You are not authorised to drop interviewer profiles." });
 
             try
@@ -565,6 +566,52 @@ namespace Risebird.Web.Controllers
                     assessmentGroupName = agName,
                     message = $"Interviewer assigned to {agName} and mapped to active skill channels. Notification sent."
                 });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── MAG dropdown + override ───────────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllMags()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var mags = await _repository.GetAllMasterAssessmentGroupsAsync();
+                return Json(new { success = true, data = mags });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveMagOverride(int id, string oldValue, string newValue)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            if (string.IsNullOrWhiteSpace(newValue))
+                return Json(new { success = false, error = "MAG name cannot be empty." });
+
+            try
+            {
+                var changedBy = HttpContext.Session.GetString("email").Trim('"');
+                var ok = await _repository.UpdateMagNameAsync(id, newValue.Trim());
+                if (ok)
+                    await _repository.InsertHistoryAsync(id, "MagChange", oldValue ?? "—", newValue.Trim(), changedBy);
+
+                return Json(new { success = ok, error = ok ? null : "Failed to update MAG name." });
             }
             catch (Exception ex)
             {

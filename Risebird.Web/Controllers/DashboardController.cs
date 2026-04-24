@@ -150,7 +150,8 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false, bool testPlivoRescheduleCalls = false,
             bool testPlivoWhatsAppSchedule = false, bool testPlivoWhatsAppReschedule = false,
-            bool diagnoseWhatsApp = false, string waRunId = null, string waFlowId = null)
+            bool diagnoseWhatsApp = false, string waRunId = null, string waFlowId = null,
+            bool testSurepassWorkflow = false)
         {
             try
             {
@@ -172,6 +173,15 @@ namespace Risebird.Web.Controllers
                         if (diagnoseWhatsApp)
                         {
                             return await DiagnoseWhatsAppAsync(waRunId, waFlowId);
+                        }
+
+                        // ========================================
+                        // SUREPASS WORKFLOW — TEST MODE
+                        // Access via: /Dashboard/Index?testSurepassWorkflow=true
+                        // ========================================
+                        if (testSurepassWorkflow)
+                        {
+                            return await RunSurepassWorkflowTestAsync(Emailid);
                         }
 
                         // ========================================
@@ -1124,6 +1134,98 @@ namespace Risebird.Web.Controllers
                 ViewBag.PlivoTestResults = testResults;
                 return View("VapiTestResults");
             }
+        }
+
+        // ─── Surepass Workflow test ─────────────────────────────────────────────────
+
+        /// <summary>
+        /// Calls the Surepass Superflow sandbox API to initialize a workflow.
+        /// Access via GET /Dashboard/Index?testSurepassWorkflow=true
+        /// </summary>
+        private async Task<IActionResult> RunSurepassWorkflowTestAsync(string triggeredByEmail)
+        {
+            var testResults = new List<string>();
+            var currentTime = DateTime.Now;
+
+            testResults.Add($"[Surepass Workflow] Test initiated at: {currentTime:yyyy-MM-dd HH:mm:ss}");
+            testResults.Add($"Triggered by: {triggeredByEmail}");
+            testResults.Add("");
+
+            var token = _configuration["Surepass:BearerToken"];
+            if (string.IsNullOrEmpty(token))
+            {
+                testResults.Add("⚠ Surepass:BearerToken is not set in appsettings.json.");
+                testResults.Add("  Add the following to appsettings.json:");
+                testResults.Add("  \"Surepass\": { \"BearerToken\": \"<your-token>\" }");
+                ViewBag.PlivoTestResults = testResults;
+                return View("VapiTestResults");
+            }
+
+            try
+            {
+                var apiUrl = "https://superflow-sandbox.surepass.app/api/v1/workflows/initialize-workflow";
+                var workflowId = _configuration["Surepass:WorkflowId"] ?? "workflow_3CiBVnvlqqnMyJWASBaR7N5JNHW";
+                var mobileNumber = _configuration["Surepass:TestMobileNumber"] ?? "9999999999";
+
+                testResults.Add($"API URL:       {apiUrl}");
+                testResults.Add($"Workflow ID:   {workflowId}");
+                testResults.Add($"Mobile Number: {mobileNumber}");
+                testResults.Add("");
+
+                var requestBody = new
+                {
+                    workflow_id = workflowId,
+                    interface_type = "detached",
+                    advance_parameters = new
+                    {
+                        mobile_number = mobileNumber
+                    }
+                };
+
+                var jsonBody = JsonConvert.SerializeObject(requestBody, Formatting.Indented);
+                testResults.Add("Request Body:");
+                testResults.Add(jsonBody);
+                testResults.Add("");
+
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+
+                    var content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+                    var response = await httpClient.PostAsync(apiUrl, content);
+                    var responseBody = await response.Content.ReadAsStringAsync();
+
+                    testResults.Add($"HTTP Status: {(int)response.StatusCode} {response.StatusCode}");
+                    testResults.Add("");
+
+                    try
+                    {
+                        var formatted = JToken.Parse(responseBody).ToString(Formatting.Indented);
+                        testResults.Add("Response Body:");
+                        testResults.Add(formatted);
+                    }
+                    catch
+                    {
+                        testResults.Add("Response Body (raw):");
+                        testResults.Add(responseBody);
+                    }
+
+                    testResults.Add("");
+                    testResults.Add("═══════════════════════════════════");
+                    testResults.Add(response.IsSuccessStatusCode ? "RESULT: SUCCESS" : "RESULT: FAILED");
+                    testResults.Add("═══════════════════════════════════");
+                }
+            }
+            catch (Exception ex)
+            {
+                testResults.Add($"CRITICAL ERROR: {ex.Message}");
+                if (ex.InnerException != null)
+                    testResults.Add($"Inner: {ex.InnerException.Message}");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            ViewBag.PlivoTestResults = testResults;
+            return View("VapiTestResults");
         }
 
         // ─── Plivo WhatsApp Reschedule trigger ────────────────────────────────────

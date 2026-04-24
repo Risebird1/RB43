@@ -286,5 +286,40 @@ namespace Risebird.Repository
                 return new List<InterviewerEmailAvailabilityHistory>();
             }
         }
+
+        public async Task<bool> UpdateMagNameAsync(int id, string magName)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateInterviewerEmailAvailabilityMagName",
+                    new { Id = id, MagName = magName },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<List<MagDropdownItem>> GetAllMasterAssessmentGroupsAsync()
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var result = await con.QueryAsync<MagDropdownItem>(
+                    "usp_GetAllMasterAssessmentGroups",
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<MagDropdownItem>();
+            }
+        }
     }
 }
