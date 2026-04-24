@@ -5,28 +5,31 @@
     ViewData["Title"] = "AI Interview";
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
 }
+@await Html.PartialAsync("_RisebirdProctoringAiInterview")
 <!-- CodeMirror CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-    .shift-Chat{
-        margin-left:200px;
-        max-width:410px;
+    .shift-Chat {
+        margin-left: 200px;
+        max-width: 410px;
     }
-   .CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like {
-    padding:0 8px;
-    height: auto;
-    min-height: auto;
-    line-height: 1.5;
+
+    .CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like {
+        padding: 0 8px;
+        height: auto;
+        min-height: auto;
+        line-height: 1.5;
     }
+
     .CodeMirror-lines {
-    padding: 0px 0;
+        padding: 0px 0;
         height: 238px;
         background: #e8f2ff;
+    }
 
-}
-.CodeMirror-code{
-    width:325px;
-}
+    .CodeMirror-code {
+        width: 325px;
+    }
 
     .message-content-discourageCopyPaste {
         user-select: none; /* disable text selection */
@@ -172,9 +175,9 @@
         transform: translateX(-115%);
         display: inline;
         align-items: center;
-        
     }
-    .rb-chatbox-inputrow-box{
+
+    .rb-chatbox-inputrow-box {
         background: #fff;
         border-radius: 24px;
         border: 1.5px solid #eee;
@@ -184,8 +187,8 @@
         gap: 8px;
         width: 100%;
         max-width: 550px;
-        height:190px;
-       /*  min-height: 260px; */
+        height: 190px;
+        /*  min-height: 260px; */
         margin-top: 20px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         z-index: 10;
@@ -212,11 +215,11 @@
         font-size: 14px;
     }
 
-    .rb-chatbox-expand-btn:hover {
-        background: #e6f9f2;
-        color: #4eda92;
-        transform: scale(1.1);
-    }
+        .rb-chatbox-expand-btn:hover {
+            background: #e6f9f2;
+            color: #4eda92;
+            transform: scale(1.1);
+        }
 
     /* Chat box popup overlay */
     .rb-chatbox-popup-overlay {
@@ -231,12 +234,11 @@
         align-items: center;
         justify-content: center;
         animation: fadeInPopup 0.3s ease;
-       
     }
 
-    .rb-chatbox-popup-overlay.show {
-        display: flex;
-    }
+        .rb-chatbox-popup-overlay.show {
+            display: flex;
+        }
 
     /* Chat box popup container */
     .rb-chatbox-popup {
@@ -286,11 +288,11 @@
         font-size: 16px;
     }
 
-    .rb-chatbox-popup-close:hover {
-        background: #ff516b;
-        color: #fff;
-        transform: scale(1.1);
-    }
+        .rb-chatbox-popup-close:hover {
+            background: #ff516b;
+            color: #fff;
+            transform: scale(1.1);
+        }
 
     .rb-chatbox-popup-content {
         flex: 1;
@@ -360,6 +362,7 @@
         from {
             opacity: 0;
         }
+
         to {
             opacity: 1;
         }
@@ -370,11 +373,13 @@
             opacity: 0;
             transform: translateY(20px) scale(0.95);
         }
+
         to {
             opacity: 1;
             transform: translateY(0) scale(1);
         }
     }
+
     .rb-footer {
         position: relative;
     }
@@ -473,9 +478,10 @@
     }
 
     /* CodeMirror Editor Styles */
-    .CodeMirror-sizer{
-        height:240px
+    .CodeMirror-sizer {
+        height: 240px
     }
+
     .CodeMirror {
         flex: 1;
         border: none;
@@ -485,11 +491,11 @@
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
         height: auto;
         min-height: 36px;
-        max-height:175px;
+        max-height: 175px;
         /* max-height: 300px; */
         color: #222;
         line-height: 1.5;
-        float:left;
+        float: left;
     }
 
     /* Disabled CodeMirror styles */
@@ -499,9 +505,9 @@
         background-color: #f5f5f5;
     }
 
-    .CodeMirror-readonly .CodeMirror-cursor {
-        display: none !important;
-    }
+        .CodeMirror-readonly .CodeMirror-cursor {
+            display: none !important;
+        }
 
     /* Fix cursor height to normal size */
     .CodeMirror-cursor {
@@ -509,9 +515,9 @@
         border-left-width: 2px !important;
     }
 
-    .CodeMirror-cursor:after {
-        height: 1.5em !important;
-    }
+        .CodeMirror-cursor:after {
+            height: 1.5em !important;
+        }
 
     .CodeMirror-scroll {
         max-height: 300px;
@@ -527,8 +533,8 @@
 
     .rb-chatbox-inputrow .CodeMirror {
         padding: 0px 0;
-        height:238px!important;
-       /*  overflow-y:scroll; */
+        height: 238px !important;
+        /*  overflow-y:scroll; */
     }
 
     /* Language selector button */
@@ -547,9 +553,10 @@
         margin-top: 8px;
     }
 
-    CodeMirror-linenumber{
-        left:-4px;
+    CodeMirror-linenumber {
+        left: -4px;
     }
+
     .code-lang-selector:hover {
         background: #e6f9f2;
         border-color: #4eda92;
@@ -586,19 +593,20 @@
         max-width: 100%;
     }
 
-    .code-lang-warning.show {
-        display: block;
-    }
+        .code-lang-warning.show {
+            display: block;
+        }
 
-    .code-lang-warning i {
-        margin-right: 6px;
-    }
+        .code-lang-warning i {
+            margin-right: 6px;
+        }
 
     @@keyframes slideDown {
         from {
             opacity: 0;
             transform: translateY(-10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -611,58 +619,58 @@
 
     /* Note text styling */
     .note-text {
-    background: linear-gradient(135deg, #fff3cd 0%, #fff3cd 100%);
-    border-left: 4px solid #ffc107;
-    border-radius: 8px;
-    padding: 9px 18px;
-    margin-bottom: 16px;
-    font-size: 13px;
-    line-height: 1.6;
-    color: #2d5016;
-    box-shadow: 0 2px 8px rgba(78, 218, 146, 0.15);
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    transition: all 0.3s ease;
-}
-
-    .note-text:hover {
-        box-shadow: 0 4px 12px rgba(78, 218, 146, 0.25);
-        transform: translateY(-1px);
-    }
-
-    .note-text i {
-        color: #4eda92;
-        font-size: 1.2rem;
-        margin-top: 2px;
-        flex-shrink: 0;
-    }
-
-    .note-text strong {
+        background: linear-gradient(135deg, #fff3cd 0%, #fff3cd 100%);
+        border-left: 4px solid #ffc107;
+        border-radius: 8px;
+        padding: 9px 18px;
+        margin-bottom: 16px;
+        font-size: 13px;
+        line-height: 1.6;
         color: #2d5016;
-        font-weight: 600;
-        margin-right: 4px;
+        box-shadow: 0 2px 8px rgba(78, 218, 146, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        transition: all 0.3s ease;
     }
 
-        .rb-chatbox-textarea:focus {
-            outline: none !important;
-            border: 0px !important;
-            box-shadow: none !important; /* Optional: removes any box-shadow highlight */
+        .note-text:hover {
+            box-shadow: 0 4px 12px rgba(78, 218, 146, 0.25);
+            transform: translateY(-1px);
         }
 
-        .rb-chatbox-textarea::placeholder {
-            color: #bdbdbd;
-            font-size: 16px;
-            font-style: normal;
-            font-weight: 500;
-            opacity: 1;
-            letter-spacing: 0.1px;
-            transition: color 0.2s;
+        .note-text i {
+            color: #4eda92;
+            font-size: 1.2rem;
+            margin-top: 2px;
+            flex-shrink: 0;
         }
 
-        .rb-chatbox-textarea:focus::placeholder {
-            color: #e0e0e0;
+        .note-text strong {
+            color: #2d5016;
+            font-weight: 600;
+            margin-right: 4px;
         }
+
+    .rb-chatbox-textarea:focus {
+        outline: none !important;
+        border: 0px !important;
+        box-shadow: none !important; /* Optional: removes any box-shadow highlight */
+    }
+
+    .rb-chatbox-textarea::placeholder {
+        color: #bdbdbd;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        opacity: 1;
+        letter-spacing: 0.1px;
+        transition: color 0.2s;
+    }
+
+    .rb-chatbox-textarea:focus::placeholder {
+        color: #e0e0e0;
+    }
 
     .rb-chatbox-micbtn {
         background: none;
@@ -1208,12 +1216,14 @@
     .min-vh {
         min-height: 300px;
     }
-    .min-vh.min-vh--audio {
-        min-height: auto;
-    }
-    .min-vh.min-vh--video {
-        min-height: 300px;
-    }
+
+        .min-vh.min-vh--audio {
+            min-height: auto;
+        }
+
+        .min-vh.min-vh--video {
+            min-height: 300px;
+        }
 
     @@media only screen and (max-width: 992px) {
         .rb-chatbox-inputrow {
@@ -1288,6 +1298,7 @@
             width: 100%;
             justify-content: space-between;
         }
+
         .rb-header-controls--audio {
             display: none !important;
         }
@@ -1303,15 +1314,17 @@
 
     @@media (max-width: 600px) {
         .rb-phone-question-preview {
-    font-size: 0.9rem!important;
+            font-size: 0.9rem !important;
         }
+
         .rb-chatbox-container {
             padding: 12px 4px 8px 4px;
         }
-        .shift-Chat{
-        margin-left:0px;
-        max-width:300px;
-    }
+
+        .shift-Chat {
+            margin-left: 0px;
+            max-width: 300px;
+        }
 
         .rb-chatbox-inputrow {
             padding: 4px 6px;
@@ -1342,6 +1355,7 @@
             flex-direction: column;
             gap: 8px;
         }
+
         .rb-header-controls--audio {
             display: none !important;
         }
@@ -1362,9 +1376,10 @@
         .min-vh {
             min-height: 0px !important;
         }
-        .min-vh.min-vh--audio {
-            min-height: auto !important;
-        }
+
+            .min-vh.min-vh--audio {
+                min-height: auto !important;
+            }
     }
 
     @@media (max-width: 480px) {
@@ -1414,8 +1429,8 @@
     }
 
     /* =============================
-       Audio Phone UI Styles
-       ============================= */
+           Audio Phone UI Styles
+           ============================= */
 
     .rb-audio-phone-section {
         flex: 1.8;
@@ -1486,29 +1501,29 @@
         overflow: hidden;
     }
 
-    .rb-phone-avatar-area::before {
-        content: '';
-        position: absolute;
-        top: 15%;
-        left: 15%;
-        width: 180px;
-        height: 180px;
-        background: radial-gradient(circle, rgba(78,218,146,0.12) 0%, transparent 70%);
-        border-radius: 50%;
-        pointer-events: none;
-    }
+        .rb-phone-avatar-area::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(78,218,146,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
 
-    .rb-phone-avatar-area::after {
-        content: '';
-        position: absolute;
-        bottom: 10%;
-        right: 10%;
-        width: 130px;
-        height: 130px;
-        background: radial-gradient(circle, rgba(86,224,203,0.09) 0%, transparent 70%);
-        border-radius: 50%;
-        pointer-events: none;
-    }
+        .rb-phone-avatar-area::after {
+            content: '';
+            position: absolute;
+            bottom: 10%;
+            right: 10%;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(86,224,203,0.09) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
 
     /* AI interviewer block: avatar + waves below, positioned toward top so not hidden by candidate video */
     .rb-phone-ai-block {
@@ -1539,16 +1554,23 @@
         transition: box-shadow 0.4s ease, transform 0.3s ease;
     }
 
-    /* Meet-style strong highlight when AI is speaking - clearly visible */
-    .rb-ai-interviewer-avatar.speaking {
-        box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 4px rgba(78,218,146,0.9), 0 0 0 12px rgba(78,218,146,0.5), 0 0 24px 8px rgba(78,218,146,0.35);
-        animation: avatarPulse 1.5s ease-in-out infinite;
-        transform: scale(1.02);
-    }
+        /* Meet-style strong highlight when AI is speaking - clearly visible */
+        .rb-ai-interviewer-avatar.speaking {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 4px rgba(78,218,146,0.9), 0 0 0 12px rgba(78,218,146,0.5), 0 0 24px 8px rgba(78,218,146,0.35);
+            animation: avatarPulse 1.5s ease-in-out infinite;
+            transform: scale(1.02);
+        }
 
     @@keyframes avatarPulse {
-        0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 4px rgba(78,218,146,0.9), 0 0 0 12px rgba(78,218,146,0.5), 0 0 24px 8px rgba(78,218,146,0.35); transform: scale(1.02); }
-        50% { box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 6px rgba(78,218,146,0.85), 0 0 0 18px rgba(78,218,146,0.45), 0 0 32px 12px rgba(78,218,146,0.4); transform: scale(1.03); }
+        0%, 100% {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 4px rgba(78,218,146,0.9), 0 0 0 12px rgba(78,218,146,0.5), 0 0 24px 8px rgba(78,218,146,0.35);
+            transform: scale(1.02);
+        }
+
+        50% {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 0 6px rgba(78,218,146,0.85), 0 0 0 18px rgba(78,218,146,0.45), 0 0 32px 12px rgba(78,218,146,0.4);
+            transform: scale(1.03);
+        }
     }
 
     .rb-phone-inner-header {
@@ -1578,9 +1600,14 @@
         transition: background 0.2s;
     }
 
-    .rb-phone-nav-back:hover { background: rgba(255,255,255,0.25); }
+        .rb-phone-nav-back:hover {
+            background: rgba(255,255,255,0.25);
+        }
 
-    .rb-phone-nav-avatars { display: flex; align-items: center; }
+    .rb-phone-nav-avatars {
+        display: flex;
+        align-items: center;
+    }
 
     .rb-phone-nav-avatar-item {
         width: 32px;
@@ -1596,8 +1623,14 @@
         margin-left: -8px;
     }
 
-    .rb-phone-nav-avatar-item:first-child { margin-left: 0; background: linear-gradient(135deg, #4eda92, #56e0cb); }
-    .rb-phone-nav-avatar-item:last-child  {     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .rb-phone-nav-avatar-item:first-child {
+            margin-left: 0;
+            background: linear-gradient(135deg, #4eda92, #56e0cb);
+        }
+
+        .rb-phone-nav-avatar-item:last-child {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
 
     .rb-phone-mini-candidate {
         position: absolute;
@@ -1630,10 +1663,12 @@
         z-index: 1;
         background: #1a1a2e;
     }
+
     .rb-phone-mini-candidate .rb-phone-candidate-fallback-icon {
         position: relative;
         z-index: 0;
     }
+
     .rb-phone-mini-candidate.has-video .rb-phone-candidate-fallback-icon {
         display: none;
     }
@@ -1646,8 +1681,13 @@
     }
 
     @@keyframes candidateAvatarPulse {
-        0%, 100% { box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 0 4px rgba(102,126,234,0.5), 0 0 0 10px rgba(118,75,162,0.25); }
-        50% { box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 0 6px rgba(102,126,234,0.4), 0 0 0 14px rgba(118,75,162,0.2); }
+        0%, 100% {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 0 4px rgba(102,126,234,0.5), 0 0 0 10px rgba(118,75,162,0.25);
+        }
+
+        50% {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 0 6px rgba(102,126,234,0.4), 0 0 0 14px rgba(118,75,162,0.2);
+        }
     }
 
     /* Candidate audio waves (shown when candidate is recording) */
@@ -1664,19 +1704,33 @@
         pointer-events: none;
     }
 
-    .rb-candidate-audio-waves .wave-bar {
-        width: 2px;
-        height: 12px;
-        background: rgba(255,255,255,0.95);
-        border-radius: 1px;
-        animation: waveAnimation 1.2s ease-in-out infinite;
-    }
+        .rb-candidate-audio-waves .wave-bar {
+            width: 2px;
+            height: 12px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 1px;
+            animation: waveAnimation 1.2s ease-in-out infinite;
+        }
 
-    .rb-candidate-audio-waves .wave-bar:nth-child(1) { animation-delay: 0s; }
-    .rb-candidate-audio-waves .wave-bar:nth-child(2) { animation-delay: 0.1s; }
-    .rb-candidate-audio-waves .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-    .rb-candidate-audio-waves .wave-bar:nth-child(4) { animation-delay: 0.3s; }
-    .rb-candidate-audio-waves .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+            .rb-candidate-audio-waves .wave-bar:nth-child(1) {
+                animation-delay: 0s;
+            }
+
+            .rb-candidate-audio-waves .wave-bar:nth-child(2) {
+                animation-delay: 0.1s;
+            }
+
+            .rb-candidate-audio-waves .wave-bar:nth-child(3) {
+                animation-delay: 0.2s;
+            }
+
+            .rb-candidate-audio-waves .wave-bar:nth-child(4) {
+                animation-delay: 0.3s;
+            }
+
+            .rb-candidate-audio-waves .wave-bar:nth-child(5) {
+                animation-delay: 0.4s;
+            }
 
     /* AI waves: just below AI interviewer circle (when inside .rb-phone-ai-block) - visible when AI is speaking */
     .rb-phone-ai-block .rb-phone-audio-waves-wrap {
@@ -1686,6 +1740,7 @@
         transform: none;
         z-index: 3;
     }
+
     .rb-phone-ai-block .rb-audio-waves {
         display: flex;
         align-items: center;
@@ -1693,14 +1748,16 @@
         gap: 4px;
         margin-left: 0;
     }
-    .rb-phone-ai-block .rb-audio-waves .wave-bar {
-        width: 4px;
-        height: 18px;
-        background: #4eda92;
-        border-radius: 2px;
-        animation: waveAnimation 1.2s ease-in-out infinite;
-        box-shadow: 0 0 8px rgba(78,218,146,0.5);
-    }
+
+        .rb-phone-ai-block .rb-audio-waves .wave-bar {
+            width: 4px;
+            height: 18px;
+            background: #4eda92;
+            border-radius: 2px;
+            animation: waveAnimation 1.2s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(78,218,146,0.5);
+        }
+
     .rb-phone-audio-waves-wrap {
         position: absolute;
         bottom: 22px;
@@ -1730,17 +1787,22 @@
         margin-bottom: 10px;
     }
 
-    .rb-phone-interview-badge .badge-dot {
-        width: 7px;
-        height: 7px;
-        background: #4eda92;
-        border-radius: 50%;
-        animation: badgeBlink 1.2s ease-in-out infinite;
-    }
+        .rb-phone-interview-badge .badge-dot {
+            width: 7px;
+            height: 7px;
+            background: #4eda92;
+            border-radius: 50%;
+            animation: badgeBlink 1.2s ease-in-out infinite;
+        }
 
     @@keyframes badgeBlink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.2; }
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.2;
+        }
     }
 
     .rb-phone-question-dots {
@@ -1766,19 +1828,19 @@
         border: 1.5px solid #e0e0e0;
     }
 
-    .rb-phone-q-dot.rb-q-dot-active {
-        background: #4eda92;
-        color: white;
-        border-color: #4eda92;
-        box-shadow: 0 3px 10px rgba(78,218,146,0.4);
-        transform: scale(1.12);
-    }
+        .rb-phone-q-dot.rb-q-dot-active {
+            background: #4eda92;
+            color: white;
+            border-color: #4eda92;
+            box-shadow: 0 3px 10px rgba(78,218,146,0.4);
+            transform: scale(1.12);
+        }
 
-    .rb-phone-q-dot.rb-q-dot-done {
-        background: #d0f5e7;
-        color: #2dba74;
-        border-color: #a8edce;
-    }
+        .rb-phone-q-dot.rb-q-dot-done {
+            background: #d0f5e7;
+            color: #2dba74;
+            border-color: #a8edce;
+        }
 
     .rb-phone-question-preview {
         font-size: 0.8rem;
@@ -1809,9 +1871,11 @@
         justify-content: center;
         overflow: hidden;
     }
-    .rb-phone-question-full-overlay.is-visible {
-        display: flex;
-    }
+
+        .rb-phone-question-full-overlay.is-visible {
+            display: flex;
+        }
+
     .rb-phone-question-full-content {
         font-size: 0.9rem;
         color: #fff;
@@ -1822,6 +1886,7 @@
         width: 100%;
         -webkit-overflow-scrolling: touch;
     }
+
     .rb-phone-question-full-hint {
         font-size: 0.7rem;
         color: rgba(255,255,255,0.7);
@@ -1862,24 +1927,30 @@
         position: relative;
     }
 
-    .rb-mic-record-btn:hover {
-        transform: scale(1.08);
-        box-shadow: 0 8px 28px rgba(238,67,67,0.55);
-    }
+        .rb-mic-record-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 28px rgba(238,67,67,0.55);
+        }
 
-    .rb-mic-record-btn.rb-mic-active {
-        background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%);
-        box-shadow: 0 6px 24px rgba(78,218,146,0.45);
-        animation: micRecordPulse 1.5s ease-in-out infinite;
-    }
+        .rb-mic-record-btn.rb-mic-active {
+            background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%);
+            box-shadow: 0 6px 24px rgba(78,218,146,0.45);
+            animation: micRecordPulse 1.5s ease-in-out infinite;
+        }
 
-    .rb-mic-record-btn.rb-mic-active:hover {
-        box-shadow: 0 8px 28px rgba(78,218,146,0.55);
-    }
+            .rb-mic-record-btn.rb-mic-active:hover {
+                box-shadow: 0 8px 28px rgba(78,218,146,0.55);
+            }
 
     @@keyframes micRecordPulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.06); box-shadow: 0 8px 30px rgba(78,218,146,0.55); }
+        0%, 100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.06);
+            box-shadow: 0 8px 30px rgba(78,218,146,0.55);
+        }
     }
 
     .rb-mic-record-status {
@@ -1892,10 +1963,10 @@
         min-width: 130px;
     }
 
-    .rb-mic-record-status.recording {
-        color: #4eda92;
-        font-weight: 600;
-    }
+        .rb-mic-record-status.recording {
+            color: #4eda92;
+            font-weight: 600;
+        }
 
     .rb-audio-util-btn {
         width: 48px;
@@ -1913,14 +1984,37 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    .rb-audio-util-btn:hover { background: #e6f9f2; color: #4eda92; }
+        .rb-audio-util-btn:hover {
+            background: #e6f9f2;
+            color: #4eda92;
+        }
 
     @@media (max-width: 768px) {
-        .rb-phone-card { width: 240px; min-height: 450px; }
-        .rb-phone-ai-block { top: 64px; gap: 6px; }
-        .rb-ai-interviewer-avatar { width: 64px; height: 64px; font-size: 1.5rem; }
-        .rb-phone-mini-candidate { width: 133px; height: 130px; font-size: 1.3rem; }
-        .rb-audio-phone-section { padding-top: 4px; }
+        .rb-phone-card {
+            width: 240px;
+            min-height: 450px;
+        }
+
+        .rb-phone-ai-block {
+            top: 64px;
+            gap: 6px;
+        }
+
+        .rb-ai-interviewer-avatar {
+            width: 64px;
+            height: 64px;
+            font-size: 1.5rem;
+        }
+
+        .rb-phone-mini-candidate {
+            width: 133px;
+            height: 130px;
+            font-size: 1.3rem;
+        }
+
+        .rb-audio-phone-section {
+            padding-top: 4px;
+        }
     }
 </style>
 <div class="rb-aiinterview-container">
@@ -1937,7 +2031,7 @@
                 </div>
 
                 @*    <div style="position: fixed; top: 10px; right: 20px; background: #222; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 1.2rem;">
-                    ⏳ Time Left: <span id="timer">--:--</span>
+                ⏳ Time Left: <span id="timer">--:--</span>
                 </div> *@
             </span>
             @* <button class="rb-extend-time">Extend Time</button> *@
@@ -1962,8 +2056,8 @@
             </div>
             <!-- Footer -->
             <div class="rb-footer">
-                @*  <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button> *@  
-                 <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video">
+                @*  <button class="rb-footer-btn" title="End"><i class="fa fa-sign-out"></i></button> *@
+                <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video">
                     <i id="footerVideoIcon" class="fa fa-video-camera"></i>
                 </button>
                 @* recordBtn only rendered here for video mode; audio mode renders it inside the phone UI *@
@@ -1981,8 +2075,8 @@
         </div>
 
         @* ============================================================
-           AUDIO INTERVIEW PHONE UI — rendered only when IsAdaptive
-           ============================================================ *@
+        AUDIO INTERVIEW PHONE UI — rendered only when IsAdaptive
+        ============================================================ *@
         @if (Model.IsAdaptive == true)
         {
             int botMsgCount = 0;
@@ -2024,11 +2118,11 @@
                                 <i class="fa fa-chevron-left"></i>
                             </button>
                             @* <div class="rb-phone-nav-avatars">
-                                <div class="rb-phone-nav-avatar-item" title="AI Interviewer">AI</div>
-                                <div class="rb-phone-nav-avatar-item" title="@Model.candidateName">
-                                    @(!string.IsNullOrEmpty(Model.candidateName) ? Model.candidateName[0].ToString().ToUpper() : "C")
-                                </div>
-                            </div> *@
+                        <div class="rb-phone-nav-avatar-item" title="AI Interviewer">AI</div>
+                        <div class="rb-phone-nav-avatar-item" title="@Model.candidateName">
+                        @(!string.IsNullOrEmpty(Model.candidateName) ? Model.candidateName[0].ToString().ToUpper() : "C")
+                        </div>
+                        </div> *@
                         </div>
 
                         <!-- AI Interviewer block: avatar + waves just below (positioned toward top so not hidden by candidate video) -->
@@ -2061,11 +2155,10 @@
                         </div>
 
                     </div><!-- /rb-phone-avatar-area -->
-
                     <!-- Bottom panel -->
                     <div class="rb-phone-bottom-panel">
 
-                       
+
                         <!-- Question progress dots (window of 5: 1-5, then 6-10, then 11-15, etc.) -->
                         <div class="rb-phone-question-dots">
                             @for (int i = 0; i < totalQuestions; i++)
@@ -2088,7 +2181,6 @@
                     </div><!-- /rb-phone-bottom-panel -->
 
                 </div><!-- /rb-phone-card -->
-
                 <!-- Controls below the phone card -->
                 <div class="rb-audio-phone-controls">
 
@@ -2115,7 +2207,9 @@
 
                 </div><!-- /rb-audio-phone-controls -->
 
-            </div><!-- /rb-audio-phone-section -->
+            </div>
+
+            <!-- /rb-audio-phone-section -->
         }
 
         <!-- Right: Chat and Interviewer Info -->
@@ -2155,51 +2249,51 @@
                                 </div>
 
                                 <div class="rb-chatbox-inputrow-box">
-                                <!-- Expand button -->
-                                <button type="button" class="rb-chatbox-expand-btn" id="expandChatBtn" title="Expand Chat Box">
-                                    <i class="fa fa-expand"></i>
-                                </button>
-                                
-                                <!-- Language warning message -->
-                                <div id="codeLangWarning" class="code-lang-warning">
-                                    <i class="fa fa-exclamation-triangle"></i> Code doesn't match selected language. Switch to "Plain Text" to use any language.
-                                </div>
-                                
-                                <!-- Hidden textarea for form submission -->
-                                <textarea asp-for="Message" value="@Model.Message" id="messageTextarea" style="display: none;"></textarea>
-                                
-                                <!-- CodeMirror editor container -->
-                                <div id="codeEditor" style="flex: 1; min-height: 36px;"></div>
-                                
-                                <!-- Language selector -->
-                                <select id="codeLanguage" class="code-lang-selector" title="Select Programming Language">
-                                    <option value="text">Plain Text</option>
-                                    <option value="javascript">JavaScript</option>
-                                    <option value="python">Python</option>
-                                    <option value="java">Java</option>
-                                    <option value="csharp">C#</option>
-                                    <option value="cpp">C++</option>
-                                    <option value="htmlmixed">HTML</option>
-                                    <option value="css">CSS</option>
-                                    <option value="sql">SQL</option>
-                                    <option value="xml">XML</option>
-                                    <option value="json">JSON</option>
-                                </select>
+                                    <!-- Expand button -->
+                                    <button type="button" class="rb-chatbox-expand-btn" id="expandChatBtn" title="Expand Chat Box">
+                                        <i class="fa fa-expand"></i>
+                                    </button>
 
-                                <button type="submit" class="rb-chatbox-sendbtn" title="Send" hidden>
-                                    <i class="fa fa-arrow-up"></i>
-                                    <div class="rb-loading-spinner"></div>
-                                </button>
+                                    <!-- Language warning message -->
+                                    <div id="codeLangWarning" class="code-lang-warning">
+                                        <i class="fa fa-exclamation-triangle"></i> Code doesn't match selected language. Switch to "Plain Text" to use any language.
+                                    </div>
+
+                                    <!-- Hidden textarea for form submission -->
+                                    <textarea asp-for="Message" value="@Model.Message" id="messageTextarea" style="display: none;"></textarea>
+
+                                    <!-- CodeMirror editor container -->
+                                    <div id="codeEditor" style="flex: 1; min-height: 36px;"></div>
+
+                                    <!-- Language selector -->
+                                    <select id="codeLanguage" class="code-lang-selector" title="Select Programming Language">
+                                        <option value="text">Plain Text</option>
+                                        <option value="javascript">JavaScript</option>
+                                        <option value="python">Python</option>
+                                        <option value="java">Java</option>
+                                        <option value="csharp">C#</option>
+                                        <option value="cpp">C++</option>
+                                        <option value="htmlmixed">HTML</option>
+                                        <option value="css">CSS</option>
+                                        <option value="sql">SQL</option>
+                                        <option value="xml">XML</option>
+                                        <option value="json">JSON</option>
+                                    </select>
+
+                                    <button type="submit" class="rb-chatbox-sendbtn" title="Send" hidden>
+                                        <i class="fa fa-arrow-up"></i>
+                                        <div class="rb-loading-spinner"></div>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        
+
                         }
                         else
                         {
                             <!-- Hidden Message field for when showChatBox is false -->
                             <textarea asp-for="Message" value="@Model.Message" id="messageTextarea" style="display: none;"></textarea>
                         }
-                        
+
                         <!-- Chat Box Popup (only shown when showChatBox is true) -->
                         @if (Model.showChatBox == true)
                         {
@@ -2221,10 +2315,10 @@
                                             <div id="codeLangWarningPopup" class="code-lang-warning">
                                                 <i class="fa fa-exclamation-triangle"></i> Code doesn't match selected language. Switch to "Plain Text" to use any language.
                                             </div>
-                                            
+
                                             <!-- CodeMirror editor container for popup -->
                                             <div id="codeEditorPopup" style="flex: 1; min-height: 400px; width: 100%;"></div>
-                                            
+
                                             <!-- Language selector for popup -->
                                             <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
                                                 <select id="codeLanguagePopup" class="code-lang-selector" title="Select Programming Language">
@@ -2250,12 +2344,12 @@
                                 </div>
                             </div>
                         }
-                        
+
                         <div class="min-vh @(Model.IsAdaptive == true ? "min-vh--audio" : "min-vh--video")">
                             @if (Model.IsAdaptive == true)
                             {
                                 @* Audio mode: avatar, waves, and progress are rendered in the phone UI on the left.
-                                   Only the hidden <audio> element is needed here for playback. *@
+                            Only the hidden <audio> element is needed here for playback. *@
                                 <audio autoplay id="assistantAudio" controls hidden></audio>
                             }
                             else
@@ -2301,7 +2395,7 @@
                     </div>
                     <div class="rb-interview-actions">
                         @* <a target="_blank" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId})" class="rb-action-btn rb-back-btn">
-                                Generate AIInterview Report <i class="fa fa-arrow-right"></i>
+                        Generate AIInterview Report <i class="fa fa-arrow-right"></i>
                         </a> *@
                         @* option to the candidate to exit the interview here *@
 
@@ -2309,7 +2403,7 @@
                             Exit Interview <i class="fa fa-sign-out"></i>
                         </a>
                         @* <a target="_self" href="@Url.Action("Report", "AIInterview" , new { seId = Model.SessionId, isExit = true})" class="rb-action-btn rb-back-btn">
-                            Exit Interview <i class="fa fa-sign-out" "></i>
+                        Exit Interview <i class="fa fa-sign-out" "></i>
                         </a> *@
                     </div>
                 </div>
@@ -2407,6 +2501,9 @@
         if (!timerStopped && totalSecondsLeft > 0) {
             totalSecondsLeft--;
             updateTimerUI();
+            if (totalSecondsLeft === 0 && typeof window.risebirdNotifyProctoringInterviewTimerEnded === 'function') {
+                window.risebirdNotifyProctoringInterviewTimerEnded();
+            }
 
             if (totalSecondsLeft % 60 === 0) {
                 postTimeLeftToServer(totalSecondsLeft);
@@ -2728,6 +2825,7 @@
                 };
 
                 mediaRecorderAudio.start();
+                if (typeof window.risebirdNotifyProctoringRecordingStart === 'function') window.risebirdNotifyProctoringRecordingStart();
                 startRecording();
                 // Enable CodeMirror editor when recording starts
                 if (typeof codeEditor !== 'undefined' && codeEditor) {
@@ -2794,7 +2892,7 @@
     function updateSendButton() {
         const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
         const messageTextarea = document.getElementById('messageTextarea');
-        
+
         if (sendBtn && messageTextarea) {
             const hasContent = messageTextarea.value.trim().length > 0;
             sendBtn.disabled = !hasContent;
@@ -2868,7 +2966,7 @@
             if (typeof codeEditor !== 'undefined' && codeEditor && messageTextarea) {
                 messageTextarea.value = codeEditor.getValue();
             }
-            
+
             if (messageTextarea && messageTextarea.value.trim().length > 0 && form) {
                 // Show confirmation dialog before submitting text answer
                 Swal.fire({
@@ -2982,7 +3080,7 @@
             let blob = new Blob(chunks, { 'type': 'video/mp4;' });
             let videoURL = window.URL.createObjectURL(blob);
             const filevideo = new File([blob], "videoinput.mp4", { type: 'video/mp4' });
-            
+
             // Check if videoInput exists before setting files
             if (videoInput) {
                 const dataTransfervideo = new DataTransfer();
@@ -2992,7 +3090,7 @@
                 console.error("videoInput element not found. Cannot submit video recording.");
                 return;
             }
-            
+
             chunks = [];
           // hideRecordingOverlay();
             // Show loading state to indicate response is being submitted
@@ -3020,6 +3118,7 @@
         }
         mediaRecorder.start();
         isRecording = true;
+        if (typeof window.risebirdNotifyProctoringRecordingStart === 'function') window.risebirdNotifyProctoringRecordingStart();
         showRecordingOverlay();
         // Enable CodeMirror editor when recording starts
         if (typeof codeEditor !== 'undefined' && codeEditor) {
@@ -3403,7 +3502,7 @@
     let currentLanguage = 'text';
     let languageValidationEnabled = true;
     let validationTimeout;
-    
+
     // Language-specific patterns for validation
     const languagePatterns = {
         'javascript': {
@@ -3501,7 +3600,7 @@
         for (let otherLang of otherLanguages) {
             const otherPatterns = languagePatterns[otherLang];
             let otherKeywordsFound = 0;
-            
+
             otherPatterns.keywords.slice(0, 3).forEach(keyword => {
                 const regex = new RegExp('\\b' + keyword.toLowerCase() + '\\b', 'g');
                 if (regex.test(codeLower)) {
@@ -3542,13 +3641,13 @@
         const editorContainer = document.getElementById('codeEditor');
         const messageTextarea = document.getElementById('messageTextarea');
         const langSelector = document.getElementById('codeLanguage');
-        
+
         // Check if CodeMirror is loaded
         if (typeof CodeMirror === 'undefined') {
             console.error('CodeMirror library not loaded. Please check CDN links.');
             return;
         }
-        
+
         if (editorContainer && messageTextarea) {
             try {
                 // Initialize CodeMirror - disabled by default until recording starts
@@ -3588,25 +3687,25 @@
                     "Cmd-X": function() { return false; }
                 }
             });
-            
+
             // Disable right-click context menu (which contains copy/paste options)
             codeEditor.on('contextmenu', function(cm, event) {
                 event.preventDefault();
                 return false;
             });
-            
+
             // Prevent paste events
             codeEditor.on('paste', function(cm, event) {
                 event.preventDefault();
                 return false;
             });
-            
+
             // Prevent copy events
             codeEditor.on('copy', function(cm, event) {
                 event.preventDefault();
                 return false;
             });
-            
+
             // Prevent cut events
             codeEditor.on('cut', function(cm, event) {
                 event.preventDefault();
@@ -3618,7 +3717,7 @@
                 const code = codeEditor.getValue();
                 messageTextarea.value = code;
                 updateSendButton();
-                
+
                 // Debounce validation to avoid performance issues
                 clearTimeout(validationTimeout);
                 validationTimeout = setTimeout(function() {
@@ -3645,21 +3744,21 @@
                     e.stopPropagation();
                     return false;
                 }, true);
-                
+
                 // Prevent paste via context menu
                 editorWrapper.addEventListener('contextmenu', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
                     return false;
                 }, true);
-                
+
                 // Prevent copy
                 editorWrapper.addEventListener('copy', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
                     return false;
                 }, true);
-                
+
                 // Prevent cut
                 editorWrapper.addEventListener('cut', function(e) {
                     e.preventDefault();
@@ -3667,7 +3766,7 @@
                     return false;
                 }, true);
             }
-            
+
             // Disable language selector by default (will be enabled when recording starts)
             if (langSelector) {
                 langSelector.disabled = true;
@@ -3678,7 +3777,7 @@
                 langSelector.addEventListener('change', function() {
                     const mode = this.value;
                     currentLanguage = mode;
-                    
+
                     // Map language names to CodeMirror modes
                     const modeMap = {
                         'javascript': 'javascript',
@@ -3693,11 +3792,11 @@
                         'json': { name: 'javascript', json: true },
                         'text': 'text'
                     };
-                    
+
                     if (modeMap[mode]) {
                         codeEditor.setOption('mode', modeMap[mode]);
                     }
-                    
+
                     // Sync to popup editor if it exists
                     const popupLangSelector = document.getElementById('codeLanguagePopup');
                     if (popupLangSelector) {
@@ -3706,10 +3805,10 @@
                     if (typeof codeEditorPopupInstance !== 'undefined' && codeEditorPopupInstance) {
                         codeEditorPopupInstance.setOption('mode', modeMap[mode]);
                     }
-                    
+
                     // Clear warning when switching languages
                     hideLanguageWarning();
-                    
+
                     // Validate existing code when language changes
                     const code = codeEditor.getValue();
                     if (mode !== 'text' && languageValidationEnabled && code.trim().length > 0) {
@@ -3732,7 +3831,7 @@
 
             codeEditor.on('change', autoResizeEditor);
             codeEditor.on('focus', autoResizeEditor);
-            
+
             // Initial resize
             setTimeout(autoResizeEditor, 100);
 
@@ -3810,19 +3909,19 @@
         const codeLanguagePopup = document.getElementById('codeLanguagePopup');
         const messageTextarea = document.getElementById('messageTextarea');
         let codeEditorPopupInstance = null;
-        
+
         // Only proceed if popup elements exist (when showChatBox is true)
         if (!expandBtn || !chatBoxPopup) {
             return;
         }
-        
+
         // Initialize popup CodeMirror editor if it doesn't exist
         function initializePopupEditor() {
             if (!codeEditorPopupInstance && codeEditorPopup && typeof CodeMirror !== 'undefined') {
                 // Clear any existing content
                 codeEditorPopup.innerHTML = '';
                 const existingCode = typeof codeEditor !== 'undefined' && codeEditor ? codeEditor.getValue() : '';
-                
+
                 codeEditorPopupInstance = CodeMirror(codeEditorPopup, {
                     value: existingCode || messageTextarea.value || '',
                     mode: typeof codeEditor !== 'undefined' && codeEditor ? codeEditor.getOption('mode') : 'text',
@@ -3872,12 +3971,12 @@
                         }
                     }
                 });
-                
+
                 // Sync popup editor to main editor and textarea
                 codeEditorPopupInstance.on('change', function() {
                     syncPopupToMain();
                 });
-                
+
                 // Auto-resize popup editor
                 codeEditorPopupInstance.on('change', function() {
                     setTimeout(function() {
@@ -3890,7 +3989,7 @@
                         }
                     }, 50);
                 });
-                
+
                 // Language selector change handler for popup
                 if (codeLanguagePopup) {
                     codeLanguagePopup.addEventListener('change', function() {
@@ -3908,11 +4007,11 @@
                             'json': { name: 'javascript', json: true },
                             'text': 'text'
                         };
-                        
+
                         if (modeMap[mode]) {
                             codeEditorPopupInstance.setOption('mode', modeMap[mode]);
                         }
-                        
+
                         // Sync language selection to main editor
                         const mainLangSelector = document.getElementById('codeLanguage');
                         if (mainLangSelector && typeof codeEditor !== 'undefined' && codeEditor) {
@@ -3923,69 +4022,69 @@
                 }
             }
         }
-        
+
         // Sync popup editor content to main editor and textarea
         function syncPopupToMain() {
             if (codeEditorPopupInstance && messageTextarea) {
                 const popupContent = codeEditorPopupInstance.getValue();
                 messageTextarea.value = popupContent;
-                
+
                 // Sync to main editor if it exists
                 if (typeof codeEditor !== 'undefined' && codeEditor) {
                     codeEditor.setValue(popupContent);
                 }
-                
+
                 if (typeof updateSendButton === 'function') {
                     updateSendButton();
                 }
             }
         }
-        
+
         // Sync main editor to popup editor
         function syncMainToPopup() {
             if (codeEditorPopupInstance && typeof codeEditor !== 'undefined' && codeEditor) {
                 const mainContent = codeEditor.getValue();
                 codeEditorPopupInstance.setValue(mainContent);
-                
+
                 // Sync language selection
                 const mainLangSelector = document.getElementById('codeLanguage');
                 const popupLangSelector = document.getElementById('codeLanguagePopup');
                 if (mainLangSelector && popupLangSelector) {
                     popupLangSelector.value = mainLangSelector.value;
                 }
-                
+
                 // Sync read-only state
                 const isReadOnly = codeEditor.getOption('readOnly');
                 codeEditorPopupInstance.setOption('readOnly', isReadOnly);
-                
+
                 // Sync language mode
                 const currentMode = codeEditor.getOption('mode');
                 codeEditorPopupInstance.setOption('mode', currentMode);
-                
+
                 // Sync placeholder
                 const placeholder = codeEditor.getOption('placeholder');
                 codeEditorPopupInstance.setOption('placeholder', placeholder);
             }
         }
-        
+
         // Open popup
         function openChatPopup() {
             if (!chatBoxPopup) {
                 return;
             }
-            
+
             // Show popup first
             chatBoxPopup.classList.add('show');
             document.body.style.overflow = 'hidden';
-            
+
             // Initialize editor if not already initialized
             if (!codeEditorPopupInstance) {
                 initializePopupEditor();
             }
-            
+
             // Sync content from main editor
             syncMainToPopup();
-            
+
             // Refresh popup editor after a short delay to ensure proper rendering
             setTimeout(function() {
                 if (codeEditorPopupInstance) {
@@ -4008,7 +4107,7 @@
                 }
             }, 150);
         }
-        
+
         // Close popup
         function closeChatPopupFunc() {
             if (chatBoxPopup) {
@@ -4018,7 +4117,7 @@
                 document.body.style.overflow = '';
             }
         }
-        
+
         // Event listeners
         if (expandBtn) {
             expandBtn.addEventListener('click', function(e) {
@@ -4036,7 +4135,7 @@
                 }
             });
         }
-        
+
         if (closeChatPopup) {
             closeChatPopup.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -4044,7 +4143,7 @@
                 closeChatPopupFunc();
             });
         }
-        
+
         // Close popup when clicking outside
         if (chatBoxPopup) {
             chatBoxPopup.addEventListener('click', function(e) {
@@ -4053,14 +4152,14 @@
                 }
             });
         }
-        
+
         // Close popup on Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && chatBoxPopup && chatBoxPopup.classList.contains('show')) {
                 closeChatPopupFunc();
             }
         });
-        
+
         // Handle window resize for popup editor
         window.addEventListener('resize', function() {
             if (chatBoxPopup && chatBoxPopup.classList.contains('show') && codeEditorPopupInstance) {
@@ -4075,17 +4174,17 @@
                 }, 100);
             }
         });
-        
+
         // Sync popup editor state when main editor state changes (e.g., when recording starts/stops)
         // This will be called from the recording start/stop functions
         window.syncEditorStateToPopup = function() {
             if (codeEditorPopupInstance && typeof codeEditor !== 'undefined' && codeEditor) {
                 const isReadOnly = codeEditor.getOption('readOnly');
                 codeEditorPopupInstance.setOption('readOnly', isReadOnly);
-                
+
                 const placeholder = codeEditor.getOption('placeholder');
                 codeEditorPopupInstance.setOption('placeholder', placeholder);
-                
+
                 // Sync language selector state
                 const mainLangSelector = document.getElementById('codeLanguage');
                 const popupLangSelector = document.getElementById('codeLanguagePopup');
@@ -4093,11 +4192,11 @@
                     popupLangSelector.disabled = mainLangSelector.disabled;
                     popupLangSelector.value = mainLangSelector.value;
                 }
-                
+
                 // Sync editor content
                 const mainContent = codeEditor.getValue();
                 codeEditorPopupInstance.setValue(mainContent);
-                
+
                 // Sync language mode
                 const currentMode = codeEditor.getOption('mode');
                 codeEditorPopupInstance.setOption('mode', currentMode);
@@ -4110,18 +4209,18 @@
     // ===============================================
     (function() {
         const isTypingSpeedQuestion = @Json.Serialize(Model.IsTypingSpeedQuestion);
-        
+
         if (!isTypingSpeedQuestion) {
             return; // Not a typing speed question, skip this functionality
         }
 
         // Get sample text from database (fetched in controller)
         const sampleText = @Html.Raw(Json.Serialize(Model.TypingSampleTextFromDB ?? ""));
-        
+
         // Debug: Log sample text to console
         console.log('Typing Assessment - Sample Text Length:', sampleText ? sampleText.length : 0);
         console.log('Typing Assessment - Sample Text:', sampleText);
-        
+
         // Validate sample text exists
         if (!sampleText || sampleText.trim() === '') {
             console.error('ERROR: No sample text available for typing assessment!');
@@ -4133,7 +4232,7 @@
             });
             return; // Exit if no sample text
         }
-        
+
         // Store typing assessment data
         let typingStartTime = null;
         let typingEndTime = null;
@@ -4143,13 +4242,13 @@
         function calculateAccuracy(originalText, typedText) {
             let correctChars = 0;
             const minLength = Math.min(originalText.length, typedText.length);
-            
+
             for (let i = 0; i < minLength; i++) {
                 if (originalText[i] === typedText[i]) {
                     correctChars++;
                 }
             }
-            
+
             return {
                 correctChars: correctChars,
                 totalChars: originalText.length,
@@ -4168,7 +4267,7 @@
         function showTypingTestModal() {
             let timerInterval = null;
             let startTime = null;
-            
+
             Swal.fire({
                 title: 'Typing Speed Assessment',
                 html: `
@@ -4194,8 +4293,8 @@
                         <div id="typingTimerDisplay" style="display: none; text-align: center; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #4eda92;">
                             Time Remaining: <span id="typingTimerValue">2:00</span>
                         </div>
-                        <textarea id="typingInputArea" 
-                                  placeholder="Start typing here after clicking 'Start'..." 
+                        <textarea id="typingInputArea"
+                                  placeholder="Start typing here after clicking 'Start'..."
                                   style="width: 100%; height: 150px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 14px; resize: vertical; display: none;"
                                   disabled></textarea>
                     </div>
@@ -4219,7 +4318,7 @@
                         typingInProgress = true;
                         typingStartTime = new Date();
                         startTime = Date.now();
-                        
+
                         // Update UI
                         instructions.style.display = 'none';
                         sampleTextContainer.style.display = 'block';
@@ -4227,7 +4326,7 @@
                         inputArea.style.display = 'block';
                         inputArea.disabled = false;
                         inputArea.focus();
-                        
+
                         // Prevent cheating: Disable paste, cut, copy, and right-click
                         inputArea.addEventListener('paste', function(e) {
                             e.preventDefault();
@@ -4242,22 +4341,22 @@
                                 timerProgressBar: true
                             });
                         });
-                        
+
                         inputArea.addEventListener('cut', function(e) {
                             e.preventDefault();
                             console.log('Cut is disabled during typing assessment');
                         });
-                        
+
                         inputArea.addEventListener('copy', function(e) {
                             e.preventDefault();
                             console.log('Copy is disabled during typing assessment');
                         });
-                        
+
                         inputArea.addEventListener('contextmenu', function(e) {
                             e.preventDefault();
                             console.log('Right-click is disabled during typing assessment');
                         });
-                        
+
                         // Also prevent keyboard shortcuts for paste (Ctrl+V, Cmd+V)
                         inputArea.addEventListener('keydown', function(e) {
                             // Prevent Ctrl+V (Windows/Linux) and Cmd+V (Mac)
@@ -4285,18 +4384,18 @@
                                 console.log('Cut shortcut is disabled during typing assessment');
                             }
                         });
-                        
+
                         // Change button to Submit
                         confirmBtn.innerHTML = '<i class="fa fa-check"></i> Submit';
                         confirmBtn.style.backgroundColor = '#28a745';
-                        
+
                         // Start 2-minute countdown timer
                         const maxDuration = 120; // 2 minutes in seconds
                         timerInterval = setInterval(() => {
                             const elapsed = Math.floor((Date.now() - startTime) / 1000);
                             const remaining = maxDuration - elapsed;
                             const timerValueElement = document.getElementById('typingTimerValue');
-                            
+
                             if (remaining <= 0) {
                                 // Time's up - auto-submit
                                 if (timerValueElement) {
@@ -4330,7 +4429,7 @@
                         } else {
                             console.error('✗ startRecording function not found');
                         }
-                        
+
                         // Return false to prevent modal from closing
                         return false;
                     } else {
@@ -4338,18 +4437,18 @@
                         if (timerInterval) {
                             clearInterval(timerInterval);
                         }
-                        
+
                         // Stop video recording when typing test is submitted
                         if (typeof stopRecording === 'function') {
                             stopRecording();
                         }
-                        
+
                         typingEndTime = new Date();
                         const typedText = inputArea.value;
-                        
+
                         // Calculate basic metrics for display
                         const timeTaken = (typingEndTime - typingStartTime) / 1000; // in seconds
-                        
+
                         // Store raw data in hidden form fields (OpenAI will analyze it)
                         document.getElementById('TypingSampleText').value = sampleText;
                         document.getElementById('TypedText').value = typedText;
@@ -4357,7 +4456,7 @@
                         document.getElementById('TypingEndTime').value = typingEndTime.toISOString();
                         document.getElementById('TypingTimeTaken').value = timeTaken.toFixed(2);
                         document.getElementById('TypingTotalMinutes').value = '2.00';
-                        
+
                         // Set placeholder values for compatibility (actual analysis by OpenAI)
                         document.getElementById('TypingTotalChars').value = typedText.length;
                         document.getElementById('TypingCorrectChars').value = '0';
@@ -4366,7 +4465,7 @@
                         document.getElementById('TypingPassingWPM').value = '30.00';
                         document.getElementById('TypingPassingAccuracy').value = '97.00';
                         document.getElementById('TypingIsPassed').value = 'false';
-                        
+
                         // Show processing message
                         Swal.fire({
                             title: 'Typing Test Complete!',
@@ -4380,7 +4479,7 @@
                                         <strong>Time Taken:</strong> ${timeTaken.toFixed(2)} seconds
                                     </p>
                                     <p style="font-size: 14px; color: #888;">
-                                        Your typing assessment will be analyzed using AI to provide detailed accuracy metrics and feedback. 
+                                        Your typing assessment will be analyzed using AI to provide detailed accuracy metrics and feedback.
                                         The results will be available in your assessment report.
                                     </p>
                                 </div>
@@ -4416,7 +4515,7 @@
                                 });
                             }
                         });
-                        
+
                         // Return true to allow the modal to close
                         return true;
                     }
@@ -4469,7 +4568,7 @@
     // ===============================================
     (function() {
         const isListeningComprehensionQuestion = @Json.Serialize(Model.IsListeningComprehensionQuestion);
-        
+
         if (!isListeningComprehensionQuestion) {
             return; // Not a listening comprehension question, skip this functionality
         }
@@ -4477,7 +4576,7 @@
         // Get audio URL and transcription from model
         const audioUrl = @Json.Serialize(Model.ListeningAudioUrl);
         const audioTranscription = @Json.Serialize(Model.ListeningAudioTranscription);
-        
+
         // Store listening assessment data
         let listeningStartTime = null;
         let listeningEndTime = null;
@@ -4490,7 +4589,7 @@
             let timerInterval = null;
             let startTime = null;
             let audioElement = null;
-            
+
             Swal.fire({
                 title: 'Listening Comprehension Assessment',
                 html: `
@@ -4519,8 +4618,8 @@
                         <div id="listeningTimerDisplay" style="display: none; text-align: center; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #4eda92;">
                             Time: <span id="listeningTimerValue">0:00</span>
                         </div>
-                        <textarea id="listeningSummaryArea" 
-                                  placeholder="Write your summary here after listening to the audio..." 
+                        <textarea id="listeningSummaryArea"
+                                  placeholder="Write your summary here after listening to the audio..."
                                   style="width: 100%; height: 150px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; resize: vertical; display: none;"
                                   disabled></textarea>
                     </div>
@@ -4542,16 +4641,16 @@
                     if (!listeningInProgress) {
                         // Start the listening comprehension test
                         listeningInProgress = true;
-                        
+
                         // Update UI
                         instructions.style.display = 'none';
                         audioContainer.style.display = 'block';
                         summaryArea.style.display = 'block';
-                        
+
                         // Setup audio element
                         audioElement = document.getElementById('listeningAudio');
                         audioElement.src = audioUrl;
-                        
+
                         // Track play count and control replays
                         audioElement.addEventListener('play', function() {
                             if (audioPlayCount >= 2) {
@@ -4560,10 +4659,10 @@
                                 Swal.showValidationMessage('Audio can only be played 2 times!');
                             }
                         });
-                        
+
                         audioElement.addEventListener('ended', function() {
                             audioPlayCount++;
-                            
+
                             const playsRemainingElement = document.getElementById('playsRemaining');
                             if (playsRemainingElement) {
                                 const remaining = 2 - audioPlayCount;
@@ -4578,7 +4677,7 @@
                                     audioElement.style.opacity = '0.6';
                                 }
                             }
-                            
+
                             // After first playback, start timer and enable text area
                             if (audioPlayCount === 1) {
                                 // Start timer only after first playback
@@ -4587,7 +4686,7 @@
                                     listeningStartTime = new Date();
                                     startTime = Date.now();
                                     timerDisplay.style.display = 'block';
-                                    
+
                                     timerInterval = setInterval(() => {
                                         const elapsed = Math.floor((Date.now() - startTime) / 1000);
                                         const minutes = Math.floor(elapsed / 60);
@@ -4598,13 +4697,13 @@
                                         }
                                     }, 1000);
                                 }
-                                
+
                                 // Enable text area after first playback
                                 summaryArea.disabled = false;
                                 summaryArea.focus();
                             }
                         });
-                        
+
                         // Change button to Submit
                         confirmBtn.innerHTML = '<i class="fa fa-check"></i> Submit';
                         confirmBtn.style.backgroundColor = '#28a745';
@@ -4613,9 +4712,9 @@
                         if (typeof startRecording === 'function') {
                             startRecording();
                         }
-                        
+
                         // Do NOT auto-play audio - let candidate control it
-                        
+
                         // Return false to prevent modal from closing
                         return false;
                     } else {
@@ -4623,24 +4722,24 @@
                         if (timerInterval) {
                             clearInterval(timerInterval);
                         }
-                        
+
                         // Stop video recording when test is submitted
                         if (typeof stopRecording === 'function') {
                             stopRecording();
                         }
-                        
+
                         listeningEndTime = new Date();
                         const candidateSummary = summaryArea.value;
-                        
+
                         // Validate that candidate wrote something
                         if (!candidateSummary || candidateSummary.trim().length === 0) {
                             Swal.showValidationMessage('Please write a summary before submitting!');
                             return false;
                         }
-                        
+
                         // Calculate time taken
                         const timeTaken = (listeningEndTime - listeningStartTime) / 1000; // in seconds
-                        
+
                         // Store data in hidden form fields
                         document.getElementById('ListeningAudioUrl').value = audioUrl;
                         document.getElementById('ListeningAudioTranscription').value = audioTranscription;
@@ -4648,7 +4747,7 @@
                         document.getElementById('ListeningStartTime').value = listeningStartTime.toISOString();
                         document.getElementById('ListeningEndTime').value = listeningEndTime.toISOString();
                         document.getElementById('ListeningTimeTaken').value = timeTaken.toFixed(2);
-                        
+
                         // Show confirmation and submit
                         Swal.fire({
                             title: 'Assessment Complete!',
@@ -4692,7 +4791,7 @@
                                 });
                             }
                         });
-                        
+
                         // Return true to allow the modal to close
                         return true;
                     }

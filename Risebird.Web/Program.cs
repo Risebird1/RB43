@@ -17,6 +17,7 @@ using Risebird.Entities;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Extensions;
+using Risebird.Web.Services.Proctoring;
 using System;
 using System.IO.Compression;
 
@@ -94,6 +95,9 @@ builder.Services.AddControllers(options =>
 {
     options.MaxModelBindingCollectionSize = 5000;
 });
+builder.Services.AddDataProtection();
+builder.Services.AddSingleton<IProctoringTokenService, ProctoringTokenService>();
+builder.Services.AddScoped<IProctoringSessionEligibilityService, ProctoringSessionEligibilityService>();
 
 
 
@@ -216,6 +220,7 @@ builder.Services.AddScoped<IAIInterviewerService, AIInterviewerService>();
 builder.Services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();
 builder.Services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
 builder.Services.AddScoped<IAWSRekognitionService, AWSRekognitionService>();
+builder.Services.AddScoped<IProctoringSessionEventRepository, ProctoringSessionEventRepository>();
 builder.Services.AddScoped<IOpenAIApiLogRepository, OpenAIApiLogRepository>();
 builder.Services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
 builder.Services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
@@ -513,6 +518,7 @@ app.UseStaticFiles();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllers();
 
 //app.UseMiddleware<ValidateAntiForgeryTokenMiddleware>();
 
