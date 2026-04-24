@@ -139,6 +139,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<Meeting>> FetchOpenMeetingById(string id);
         string ReassignMeeting(string id, string meetingid, string Emailid);
+        string ReassignMeetingByTeam(string id, string meetingid, string Emailid);
         Task<InterviewerDetails> FetchInterviewerCodedName(string emailID);
         Task<SelectList> GetIRFInterviewingMembersEmails(string irfId);
         Task<SelectList> GetIRFQualityControllersEmails(string irfId);
@@ -256,13 +257,16 @@ namespace Risebird.Business.Interface
         Task<bool> SaveAITranscriptAnalysis(int interviewId, TranscriptAnalysisSchema model);
         Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null, bool transcritAi = true, string reportAIJsonResponse = null);
         Task<IEnumerable<QcInterviewAIMergePendingRow>> GetPendingQcInterviewAIMerge();
+        Task<QcInterviewAIMergePendingRow> GetPendingQcInterviewAIMergeById(int interviewid);
         Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null);
         Task<bool> SaveAiContradictionDetails(int qcEvaluationId, string contradictionJson = null);
+        Task<QcInterviewAIMergePendingRow> CheckForAiContradiction(int qcEvaluationId);
         Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId);
         Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, string cancellationreason);
         Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);
         Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model);
         Task<IEnumerable<ZohoParticipantList>> GetZohoLiveMeetingInfomation();
         Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId);
+        Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId);
     }
 }

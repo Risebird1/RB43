@@ -38,7 +38,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList.Extensions;
 
-
 namespace Risebird.Web.Controllers
 {
 
@@ -5816,11 +5815,11 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> PublicOpenInterviewInvite(string id, string Emailid)
         {
-            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
-            HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Interviewer"));
             var role = await _meetingService.GetUniqueInterviewerByEmailId(Emailid, id);
             if (role > 0)
             {
+                HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+                HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Interviewer"));
                 return Json("success");
             }
             else
@@ -5877,12 +5876,27 @@ namespace Risebird.Web.Controllers
             try
             {
                 var Emailid = string.Empty;
+                var profileName = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
                 }
+                if (HttpContext.Session.GetString("profileName") != null)
+                {
+                    profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                }
                 if (Emailid != emailid)
+                {
+                    return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
+                }
+                if (profileName != "Interviewer" && profileName != "Admin" && profileName != "HR" && profileName != "InterviewerManagement")
+                {
+                    return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
+                }
+                var interviewerCheck = await _meetingService.GetUniqueInterviewerByEmailId(emailid, uniqueid);
+                if (interviewerCheck <= 0)
                 {
                     return RedirectToAction("PublicOpenInterviewInvite", new { id = id });
                 }
@@ -6924,6 +6938,10 @@ namespace Risebird.Web.Controllers
             else if (model.type == "PublicFeedbackCandidate")
             {
                 return RedirectToAction("PublicCandidateFeedback", "Survey", new { emailid = model.ModifiedBy, uniqueid = model.uniqueid });
+            }
+            else if (model.type == "PaymentSLA")
+            {
+                return RedirectToAction("PaymentSlaDetails");
             }
             return RedirectToAction("CompletedInterviews");
         }
@@ -8395,7 +8413,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(actionstatus))
                     {
-                        actionstatus = "";
+                        actionstatus = "QCRejectPending";
+                    }
+                    if (TempData["SuccessErrorMessageQCForm"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                        TempData.Remove("SuccessErrorMessageQCForm");
                     }
                     ViewBag.actionstatus = actionstatus;
                     IEnumerable<PaymentSLAVM> model;
@@ -8405,22 +8428,23 @@ namespace Risebird.Web.Controllers
                     //}
                     //else
                     //{
-                        model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
-                        if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
+                    model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
+                    if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PaymentSlaDetailsFilters"));
+                        if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PaymentSlaDetailsFilters"));
-                            if (filter.StartDate != null && filter.EndDate != null)
-                            {
-                                filter.EndDate = filter.EndDate?.AddDays(1);
-                                model = model.Where(m => m.CreatedOn >= filter.StartDate && m.CreatedOn <= filter.EndDate).ToList();
-                            }
+                            filter.EndDate = filter.EndDate?.AddDays(1);
+                            model = model.Where(m => m.CreatedOn >= filter.StartDate && m.CreatedOn <= filter.EndDate).ToList();
                         }
-                        else
-                        {
-                            DateTime StartDate = DateTime.Now.AddMonths(-1);
-                            DateTime EndDate = DateTime.Now.AddDays(1);
-                            model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
-                        }
+                    }
+                    else
+                    {
+                        DateTime StartDate = DateTime.Now.AddMonths(-1);
+                        DateTime EndDate = DateTime.Now.AddDays(1);
+                        model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
+                    }
+                    model = model.Select(x => { x.PriorityLevelDesc = x.PriorityLevel > 0 ? ((PriorityLevel)x.PriorityLevel).GetDescription() : string.Empty; return x; }).ToList();
                     //}
                     return View(model);
                 }
@@ -9138,7 +9162,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool? isOpenAIQC = null, bool? isBackgroudJobRequest = null, bool? regenerateAIQC = null, bool IsContradictionAI = false)
+        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool? isOpenAIQC = null, bool? isBackgroudJobRequest = null, bool? regenerateAIQC = null, bool IsContradictionAI = false, string sourcetype = null)
         {
             try
             {
@@ -9240,13 +9264,36 @@ namespace Risebird.Web.Controllers
                 if (IsContradictionAI)
                 {
                     //generate the Contradiction 
-                    await GenerateContradictionAI(model, interviewId);
+                    var resultcontradication = await GenerateContradictionAI(model, interviewId);
+                    if (sourcetype == "PaymentSla")
+                    {
+                        if (resultcontradication)
+                        {
+                            return Json("Generate Contradiction AI Successfully.");
+                        }
+                        if (model == null)
+                        {
+                            return Json("Report not found.");
+                        }
+                        else
+                        {
+                            return Json("Transcript summary not found.");
+                        }
+                    }
                 }
 
                 if (isOpenAIQC.HasValue && isOpenAIQC.Value)
                 {
                     //write code to return QC results
                     var qcResult = await PerformQualityCheck(model, regenerateAIQC, isBackgroudJobRequest);
+                    if (sourcetype == "PaymentSla")
+                    {
+                        if (!string.IsNullOrWhiteSpace(qcResult.final_verdict))
+                        {
+                            return Json("Generate Report AI Successfully.");
+                        }
+                        return Json("Report not found.");
+                    }
                     if (isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value)
                     {
                         return new OkResult();
@@ -9256,8 +9303,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.InterviewDate = model.interviewDate;
                     ViewBag.IRFName = model.IRFName;
                     ViewBag.JdTitle = model.JDTiltle;
-                    ViewBag.AIVerdict = qcResult.verdict;
-                    ViewBag.AIScore = qcResult.score;
+                    ViewBag.AIVerdict = qcResult.final_verdict;
+                    ViewBag.AIScore = qcResult.final_score;
                     //return View("PerformQualityCheck", qcResult);
                     return View("PerformQualityCheckV2", qcResult.completeAnalysis);
                 }
@@ -9268,6 +9315,10 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+                if (sourcetype == "PaymentSla")
+                {
+                    return Json("Report not found.");
+                }
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
@@ -9720,7 +9771,8 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
                 var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                var result = _meetingService.ReassignMeeting(interviewId.ToString(), Meetingid, interviewer);
+                //var result = _meetingService.ReassignMeeting(interviewId.ToString(), Meetingid, interviewer);
+                var result = _meetingService.ReassignMeetingByTeam(interviewId.ToString(), Meetingid, interviewer);
                 if (result.Contains("Successfully"))
                 {
                     var currenturl = Request.Host + "/Interview/AssignEmergencyInterviewer?interviewid=" + interviewId;
@@ -9905,13 +9957,18 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
-        public async Task GenerateContradictionAI(InterviewReport model, int interviewId)
+        public async Task<bool> GenerateContradictionAI(InterviewReport model, int interviewId)
         {
             try
             {
+                var modelset = await _meetingService.CheckForAiContradiction(interviewId);
+                if (modelset == null)
+                {
+                    modelset = new QcInterviewAIMergePendingRow();
+                }
                 string contradictionJson = null;
                 var transcriptSummary = model.TranscriptSummary;
-                if (!string.IsNullOrWhiteSpace(transcriptSummary))
+                if (!string.IsNullOrWhiteSpace(transcriptSummary) && string.IsNullOrWhiteSpace(modelset.ContradictionJson) && (model.MeetingStatus == 4 || model.MeetingStatus == 6 || model.MeetingStatus == 7 || model.MeetingStatus == 8))
                 {
                     // Render the partial view to a string
                     var htmlContent = await RenderToStringAsync("AIClientReport", model);
@@ -9931,13 +9988,44 @@ namespace Risebird.Web.Controllers
                     var contradictionReportMessage = BuildContradictionReportMessage(transcriptSummary, reportStringContent);
                     var runcontradictionResult = await _assistantServiceHelper.GeneratecontradictionReport(contradictionReportMessage);
                     contradictionJson = runcontradictionResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value?.Replace("```json", "").Replace("```", "");
-                    await _meetingService.SaveAiContradictionDetails(interviewId, contradictionJson: contradictionJson);
+                    var result = await _meetingService.SaveAiContradictionDetails(interviewId, contradictionJson: contradictionJson);
+                    return result;
                 }
             }
             catch (Exception contradictionEx)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, contradictionEx);
             }
+            return false;
+        }
+        [HttpGet]
+        public async Task<JsonResult> FetchMoreDetailsInterview(int interviewId)
+        {
+            var model = await _meetingService.FetchMoreDetailsInterview(interviewId) ?? Enumerable.Empty<MeetingVM>();
+            var transformed = model.Select(x =>
+            {
+                x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty;
+                x.PriorityLevelDesc = x.PriorityLevel > 0 ? ((PriorityLevel)x.PriorityLevel).GetDescription() : string.Empty;
+                return x;
+            }).ToList();
+            // Project to JSON-safe DTO (MeetingVM includes non-serializable members such as SelectList / IFormFile).
+            var payload = transformed.Select(x => new
+            {
+                interviewDuration = x.interviewDuration,
+                deficit = x.deficit,
+                rating = x.Rating,
+                joinedon = x.Joinedon,
+                interviewerLateJoin = x.InterviewerLateJoin,
+                isVideoRequired = x.IsVideoRequired,
+                interviewDate = x.interviewDate,
+                confirmationStatus = x.confirmationStatus,
+                meetingStatusStatusDesc = x.MeetingStatusStatusDesc,
+                intervieweStatusStatDesc = x.intervieweStatusStatDesc
+            }).ToList();
+            return Json(payload);
         }
         private static string BuildContradictionReportMessage(string transcriptSummary, string reportStringContent)
         {

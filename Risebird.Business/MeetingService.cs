@@ -3008,6 +3008,23 @@ namespace Risebird.Business
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
+        public string ReassignMeetingByTeam(string id, string meetingid, string Emailid)
+        {
+            try
+            {
+                var assignedMeeting = _meetingRespository.CheckMeetingAssignationValidation(Emailid);
+                if (assignedMeeting != "Valid")
+                {
+                    return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
+                }
+                return _meetingRespository.ReassignMeetingByTeam(Convert.ToInt32(id), Emailid);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+        }
         public async Task<InterviewerDetails> FetchInterviewerCodedName(string emailID)
         {
             try
@@ -4573,6 +4590,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<QcInterviewAIMergePendingRow> GetPendingQcInterviewAIMergeById(int interviewid)
+        {
+            try
+            {
+                return await _meetingRespository.GetPendingQcInterviewAIMergeById(interviewid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
         public async Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId)
         {
@@ -4609,6 +4638,18 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        public async Task<QcInterviewAIMergePendingRow> CheckForAiContradiction(int qcEvaluationId)
+        {
+            try
+            {
+                return await _meetingRespository.CheckForAiContradiction(qcEvaluationId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
         public async Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId)
@@ -4653,6 +4694,18 @@ namespace Risebird.Business
             try
             {
                 return await _meetingRespository.GetQuestionSkillById(questionText, irfId, emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId)
+        {
+            try
+            {
+                return await _meetingRespository.FetchMoreDetailsInterview(interviewId);
             }
             catch (Exception ex)
             {

@@ -13,8 +13,8 @@ Create PROCEDURE [dbo].[usp_GetPendingAITranscriptAnalysis]
 As
 Begin
 
-select distinct top 3 im.id, ic.AudioTranscriptFileLink, interviewDate into #TempTable from InterviewComments ic 
-join InterviewMeetings im on im.id = ic.InterviewId
+select distinct top 3 im.id, ic.AudioTranscriptFileLink, interviewDate,IRF.id as irfIntId into #TempTable from InterviewComments ic 
+join InterviewMeetings im on im.id = ic.InterviewId join IRF on IRF.IRFId=im.IRFId
 where AudioTranscriptFileLink is not null and (IsAITranscriptAnalysisAttempted is null or IsAITranscriptAnalysisAttempted = 0) and
 (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and
 interviewDate<@timeNow and DATEDIFF(DAY, interviewDate,@timeNow)<7 and ISNULL(im.RedoInterview,0)=0

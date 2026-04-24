@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewerInvites>
+@model IEnumerable<Risebird.Entities.ViewModel.InterviewerInvites>
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 @{
@@ -41,9 +41,6 @@
                 </div>
 
                 <div class="pull-right">
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Candidate", actMethod ="OpenInvites" } )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Support</font></span>
-                    </button>
                 </div>
             </div>
         </div>

@@ -16,5 +16,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? Joinedon { get; set; }
         public int ActualDuration { get; set; }
         public int RequiredDuration { get; set; }
+        public string AudioTranscriptFileLink { get; set; }
+        public int MeetingStatus { get; set; }
     }
 }

@@ -114,6 +114,7 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IWalletService, WalletService>();
 builder.Services.AddScoped<IMeetingService, MeetingService>();
+builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IGeneralSkillMatrixService, GeneralSkillMatrixService>();
 builder.Services.AddScoped<IJoinabilityMatrixService, JoinabilityMatrixService>();
@@ -253,6 +254,17 @@ builder.Services.AddScoped<IPlivoWhatsAppRepository, PlivoWhatsAppRepository>();
 // ============================================
 builder.Services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
 builder.Services.AddScoped<IResumeParsingService, ResumeParsingService>();
+// ============================================
+
+// ============================================
+// Relay.app Interviewer Email Availability
+// ============================================
+builder.Services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerEmailAvailabilityRepository>();
+// ============================================
+
+// Naukri Prospective Interviewer Onboarding
+// ============================================
+builder.Services.AddScoped<INaukriOnboardingRepository, NaukriOnboardingRepository>();
 // ============================================
 
 var app = builder.Build();

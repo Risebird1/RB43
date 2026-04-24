@@ -81,7 +81,8 @@ namespace Risebird.Web.Controllers
         private readonly IPlivoWhatsAppService _plivoWhatsAppService;
         private readonly IPlivoWhatsAppRepository _plivoWhatsAppRepository;
         private readonly ISupportTicketRepository _repository;
-
+        private readonly ITranscriptOptimizationHelper _transcriptOptimizationHelper;
+        private readonly IQcInterviewAIMergeJobService _qcInterviewAIMergeJobService;
 
         //private readonly IIRFService _irfService;
 
@@ -100,7 +101,8 @@ namespace Risebird.Web.Controllers
             IPhoneNumberHelper phoneNumberHelper,
             IPlivoService plivoService, IPlivoCallRepository plivoCallRepository,
             IPlivoCXService plivoCXService, IPlivoCXCallRepository plivoCXCallRepository,
-            IPlivoWhatsAppService plivoWhatsAppService, IPlivoWhatsAppRepository plivoWhatsAppRepository, ISupportTicketRepository repository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IPlivoWhatsAppService plivoWhatsAppService, IPlivoWhatsAppRepository plivoWhatsAppRepository, ISupportTicketRepository repository, ITranscriptOptimizationHelper transcriptOptimizationHelper,
+            IQcInterviewAIMergeJobService qcInterviewAIMergeJobService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -140,6 +142,8 @@ namespace Risebird.Web.Controllers
             _plivoWhatsAppService = plivoWhatsAppService;
             _plivoWhatsAppRepository = plivoWhatsAppRepository;
             _repository = repository;
+            _transcriptOptimizationHelper = transcriptOptimizationHelper;
+            _qcInterviewAIMergeJobService = qcInterviewAIMergeJobService;
         }
 
         [Authorize]
@@ -3935,7 +3939,7 @@ NEVER:
                         if (HttpContext.Session.GetString("SensitiveDataFilters") != null)
                             HttpContext.Session.Remove("SensitiveDataFilters");
                         var modelList = new List<MeetingVM>();
-                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview)
+                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview || actionstatus == RibbonActionType.QCSelect || actionstatus == RibbonActionType.QCPendingReport)
                         {
                             modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
                         }
@@ -3943,10 +3947,10 @@ NEVER:
                         {
                             modelList = await _dashboardService.FetchMissingParticipantFakeReporting(emailid, profileName, actionstatus, null);
                         }
-                        else
-                        {
-                            modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype, profileName);
-                        }
+                        //else
+                        //{
+                        //    modelList = await _dashboardService.FetchRibbonDetailsValues(actionstatus, emailid, actiontype, profileName);
+                        //}
                         if (modelList == null)
                         {
                             modelList = new List<MeetingVM>();
@@ -3961,7 +3965,8 @@ NEVER:
                         }
                         else if (actionstatus == RibbonActionType.QCPendingReport || actionstatus == RibbonActionType.QCReport)
                         {
-                            ViewBag.PageHeader = "QC Report";
+                            //ViewBag.PageHeader = "QC Report";
+                            ViewBag.PageHeader = "Reject Pending";
                         }
                         else if (actionstatus == RibbonActionType.PropableRedo)
                         {
@@ -3975,7 +3980,11 @@ NEVER:
                         {
                             ViewBag.PageHeader = "AI Interviews";
                         }
-                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
+                        else if (actionstatus == RibbonActionType.QCSelect)
+                        {
+                            ViewBag.PageHeader = "Select Pending";
+                        }
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; x.PriorityLevelDesc = x.PriorityLevel > 0 ? ((PriorityLevel)x.PriorityLevel).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
 
                         return View(modelList);
@@ -4040,9 +4049,12 @@ NEVER:
                         {
                             ViewBag.PageHeader = "AI Interviews";
                         }
-
+                        else if (actionstatus == RibbonActionType.QCSelect)
+                        {
+                            ViewBag.PageHeader = "Select Pending";
+                        }
                         var modelList = new List<MeetingVM>();
-                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview)
+                        if (actionstatus == RibbonActionType.PropableRedo || actionstatus == RibbonActionType.QCUnderReview || actionstatus == RibbonActionType.QCAIInterview || actionstatus == RibbonActionType.QCSelect)
                         {
                             modelList = await _dashboardService.FetchPropableRedoDetails(emailid, profileName, actionstatus);
                         }
@@ -4073,7 +4085,7 @@ NEVER:
                         modelList = modelList.Where(c => (filter.Client.Count() > 0 ? filter.Client.Contains(c.Name) : c.Name == null)
                         && (filter.ClientHREmail.Count() > 0 ? filter.ClientHREmail.Contains(c.ClientHrContact) : c.ClientHrContact == null)).ToList();
 
-                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; x.PriorityLevelDesc = x.PriorityLevel > 0 ? ((PriorityLevel)x.PriorityLevel).GetDescription() : string.Empty; return x; }).ToList();
                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
                         return View(modelList);
                     }
@@ -7553,5 +7565,200 @@ NEVER:
             }
         }
 
+        /// <summary>
+        /// Runs the QC Interview AI merge assistant (same logic as the Azure Functions timer <c>QcInterviewAIMergeJob</c>).
+        /// Omit <paramref name="interviewId"/> to process all pending rows; pass an id to attempt a single interview (it must still appear in the pending-merge queue).
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> RunQcInterviewAiMerge(int? interviewId = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return RedirectToAction("SignOut", "Session");
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (profileName != "Admin" && profileName != "Quality Controller" && profileName != "SupportAdmin" && profileName != "SeniorHR")
+                    return Json(new { ok = false, message = "Not authorized to run QC AI merge." });
+
+                if (interviewId.HasValue && interviewId.Value > 0)
+                {
+                    var (ok, message) = await _qcInterviewAIMergeJobService.ProcessInterviewAsync(interviewId.Value);
+                    return Json(new { ok, message });
+                }
+
+                //var (processed, failed) = await _qcInterviewAIMergeJobService.ProcessAllPendingAsync();
+                //return Json(new { ok = true, processed, failed, message = $"Processed {processed}, failed/skipped {failed}." });
+                return Json(new { ok = false, message = "QC AI merge failed" });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "QC AI merge failed; see logs." });
+            }
+        }
+
+        public async Task<IActionResult> GenerateTranscriptAiEvaluation(int interviewid)
+        {
+            try
+            {
+                var item = await _meetingService.GetPendingQcInterviewAIMergeById(interviewid);
+                if (item == null)
+                {
+                    item = new QcInterviewAIMergePendingRow();
+                }
+                try
+                {
+                    // OPTIMIZATION: Validate transcript link before attempting download
+                    if (string.IsNullOrEmpty(item.AudioTranscriptFileLink))
+                    {
+                        // Mark as failed - could add a method to update status if needed
+                        return Json("Missing transcript link");
+                    }
+
+                    //ScreeningRequest requestMode
+                    //var aiAnalysis = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { TranscriptLink = item.AudioTranscriptFileLink, Type = ProfileNames.TranscriptAnalysisAIAssistant });
+                    string transcriptText;
+                    using (HttpClient client = new HttpClient())
+                    {
+                        transcriptText = await client.GetStringAsync(item.AudioTranscriptFileLink);
+                    }
+
+                    // OPTIMIZATION: Pre-screen transcript for validity (saves API calls on corrupted/empty transcripts)
+                    if (!string.IsNullOrEmpty(transcriptText))
+                    {
+                        var (isValid, validationReason) = _transcriptOptimizationHelper.ValidateTranscriptForAnalysis(transcriptText);
+                        if (!isValid)
+                        {
+                            // Mark as failed - could add a method to update status if needed
+                            return Json("Transcript validation failed");
+                        }
+
+                        // OPTIMIZATION: Reduce token usage by removing filler words, timestamps, and excessive whitespace
+                        var estimatedTokensBefore = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
+                        transcriptText = _transcriptOptimizationHelper.OptimizeTranscriptText(transcriptText);
+                        var estimatedTokensAfter = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
+                    }
+                    else
+                    {
+                        return Json("Transcript is empty or could not be downloaded");
+                    }
+
+                    var aiAnalysis = await _assistantServiceHelper.GenerateTranscriptAnalysis(transcriptText);
+                    if (aiAnalysis != null)
+                    {
+                        var model = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                        if (model != null)
+                        {
+                            await _meetingService.SaveAITranscriptAnalysis(item.InterviewId, model);
+                        }
+                        try
+                        {
+                            var jsonToProcess = aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
+                            var modelset = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(jsonToProcess);
+                            //TransScript Analysis save to db
+                            bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(item.InterviewId, modelset, jsonToProcess, true);
+                            if (serviceResult)
+                            {
+                                return Json("Successfully generated the AI evaluation");
+                            }
+                            else
+                            {
+                                return Json("Fail to generate the AI evaluation");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return Json("Fail to generate the AI evaluation");
+        }
+
+        [HttpPost]
+        [Authorize]
+        [RequestFormLimits(MultipartBodyLengthLimit = 15728640)]
+        public async Task<IActionResult> UploadQcAiTranscript(int interviewId, IFormFile transcriptFile)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                {
+                    return Json(new { ok = false, message = "Session expired. Please sign in again." });
+                }
+
+                var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profile != ProfileNames.Admin && profile != ProfileNames.SupportAdmin && profile != ProfileNames.QualityController)
+                {
+                    return Json(new { ok = false, message = "You are not allowed to upload transcripts." });
+                }
+
+                if (transcriptFile == null || transcriptFile.Length == 0)
+                {
+                    return Json(new { ok = false, message = "Please select a file." });
+                }
+
+                const long maxBytes = 15 * 1024 * 1024;
+                if (transcriptFile.Length > maxBytes)
+                {
+                    return Json(new { ok = false, message = "File is too large. Maximum size is 15 MB." });
+                }
+
+                var ext = Path.GetExtension(transcriptFile.FileName)?.ToLowerInvariant() ?? string.Empty;
+                if (ext != ".txt" && ext != ".vtt" && ext != ".json")
+                {
+                    return Json(new { ok = false, message = "Invalid file type. Use .txt, .vtt, or .json." });
+                }
+
+                var safeBase = Path.GetFileNameWithoutExtension(transcriptFile.FileName);
+                if (string.IsNullOrWhiteSpace(safeBase))
+                {
+                    safeBase = "transcript";
+                }
+
+                foreach (var c in Path.GetInvalidFileNameChars())
+                {
+                    safeBase = safeBase.Replace(c, '_');
+                }
+
+                var blobName = $"{interviewId}_{Guid.NewGuid():N}_{safeBase}{ext}";
+                var contentType = ext == ".json" ? "application/json" : (ext == ".vtt" ? "text/vtt" : "text/plain");
+
+                string blobUrl;
+                using (var stream = transcriptFile.OpenReadStream())
+                {
+                    blobUrl = await _azureStorageHelper.InsertBlobCloudCompare(blobName, "transcripts", null, stream, null, contentType, null);
+                }
+
+                if (string.IsNullOrEmpty(blobUrl))
+                {
+                    return Json(new { ok = false, message = "Could not store the file. Please try again." });
+                }
+
+                var updated = await _meetingRespository.UpdateTranscriptLink(interviewId, blobUrl, null);
+                if (!updated)
+                {
+                    return Json(new { ok = false, message = "Could not update the interview. Please try again." });
+                }
+
+                return Json(new { ok = true, message = "Transcript uploaded successfully." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Upload failed. Please try again." });
+            }
+        }
     }
 }

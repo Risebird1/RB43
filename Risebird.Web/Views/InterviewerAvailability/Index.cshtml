@@ -1,0 +1,746 @@
+@model List<Risebird.Entities.ViewModel.InterviewerEmailAvailabilityVM>
+@{
+    ViewData["Title"] = "Interviewer Email Availability";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int page = ViewBag.Page != null ? (int)ViewBag.Page : 1;
+    int pageSize = ViewBag.PageSize != null ? (int)ViewBag.PageSize : 25;
+    int totalCount = ViewBag.TotalCount != null ? (int)ViewBag.TotalCount : 0;
+    int totalPages = ViewBag.TotalPages != null ? (int)ViewBag.TotalPages : 1;
+    string selStatus = ViewBag.Status as string ?? string.Empty;
+    string selEmail = ViewBag.SenderEmail as string ?? string.Empty;
+    string selFitment = ViewBag.ResumeFitment as string ?? string.Empty;
+    string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
+    string selDateTo = ViewBag.DateTo as string ?? string.Empty;
+    string profileName = ViewBag.ProfileName as string ?? string.Empty;
+    bool canDelete = profileName == "Admin" || profileName == "SupportAdmin";
+
+    bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selEmail)
+                   || !string.IsNullOrEmpty(selFitment) || !string.IsNullOrEmpty(selDateFrom)
+                   || !string.IsNullOrEmpty(selDateTo);
+
+    int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
+    int last = Math.Min(page * pageSize, totalCount);
+
+    string pageUrl(int p)
+    {
+        var q = $"?page={p}&pageSize={pageSize}";
+        if (!string.IsNullOrEmpty(selStatus)) q += $"&status={Uri.EscapeDataString(selStatus)}";
+        if (!string.IsNullOrEmpty(selEmail)) q += $"&senderEmail={Uri.EscapeDataString(selEmail)}";
+        if (!string.IsNullOrEmpty(selFitment)) q += $"&resumeFitment={Uri.EscapeDataString(selFitment)}";
+        if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
+        if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
+        return Url.Action("Index", "InterviewerAvailability") + q;
+    }
+}
+
+<style>
+    #loadingOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:9999; justify-content:center; align-items:center; }
+    #loadingOverlay.show { display:flex; }
+    #loadingOverlay .spinner-content { text-align:center; background:#fff; padding:30px 50px; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.15); }
+    #loadingOverlay .spinner-border { width:3rem; height:3rem; }
+    #loadingOverlay .loading-text { margin-top:15px; font-weight:500; color:#495057; }
+
+    .ia-filter-control { min-height:30px; height:30px; color:grey; font-weight:500; font-size:12.7px !important; padding:0.2rem 0.6rem; line-height:1.5; }
+    .badge { width:auto;padding:5px!important;}
+    .ia-stat .stat-value { font-size:1.5rem; font-weight:700; }
+    .ia-stat .stat-label { font-size:13px; font-weight:500; color:#495057; }
+
+    #iaTable { table-layout:auto; width:100%; min-width:1350px; font-size:12px; }
+    #iaTable.table-sm > thead > tr > th, #iaTable.table-sm > tbody > tr > td { padding:0.3rem 0.45rem; vertical-align:top; }
+    #iaTable thead th { font-size:12px; font-weight:600; vertical-align:middle; white-space:nowrap; }
+
+    .ia-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%; min-width:0; }
+    .ia-email-ellipsis { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:170px; font-size:12px; }
+
+    .status-open { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
+    .status-closed { background:#d1e7dd; color:#0a3622; border:1px solid #198754; }
+    .status-inprogress { background:#cfe2ff; color:#0a3278; border:1px solid #0d6efd; }
+    .status-verified { background:#d1e7dd; color:#0a3622; border:1px solid #198754; }
+
+    .fitment-strong { background:#d1e7dd; color:#0f5132; }
+    .fitment-moderate { background:#fff3cd; color:#664d03; }
+    .fitment-weak { background:#f8d7da; color:#842029; }
+    .fitment-na { background:#e9ecef; color:#6c757d; }
+
+    .intent-badge { display:inline-block; font-size:10.5px; padding:0.22em 0.5em; border-radius:3px; font-weight:500; white-space:normal; line-height:1.3; max-width:100%; word-break:break-word; }
+    .mail-preview-text { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; color:#555; font-size:11.5px; line-height:1.35; word-break:break-word; }
+
+    .action-btns { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; align-items:center; }
+    /* Table action buttons only — do not shrink modal/footer buttons */
+    #iaTable .action-btns .btn { font-size:9px !important; line-height:1.35; padding:0.28rem 0.5rem; border-radius:2px; font-weight:500; }
+    #iaTable .action-btns .btn-manage-record { background:linear-gradient(135deg,#0d6efd 0%,#0a58ca 100%) !important; border:0; color:#fff !important; box-shadow:0 1px 3px rgba(13,110,253,.35); }
+    #iaTable .action-btns .btn-manage-record:hover { filter:brightness(1.05); color:#fff !important; }
+    #iaTable .action-btns .btn-drop-profile { background:linear-gradient(180deg,#fff8e6 0%,#ffe8a3 100%) !important; border:1px solid #e6c200; color:#664d03 !important; min-width:10px; padding:0.28rem 0.45rem; }
+    #iaTable .action-btns .btn-drop-profile:hover { background:#fff3cd !important; border-color:#d4a017; color:#523e02 !important; }
+    #iaTable .action-btns .btn-delete-record { background:linear-gradient(180deg,#f8d7da 0%,#f1aeb5 100%) !important; border:1px solid #dc3545; color:#842029 !important; min-width:10px; padding:0.28rem 0.45rem; }
+    #iaTable .action-btns .btn-delete-record:hover { background:#f5c2c7 !important; color:#58151c !important; }
+    .status-change-btn { font-size:11px; padding:2px 6px; line-height:1.4; flex-shrink:0; }
+
+    #main-panel .content.client .container-fluid { min-width:0; }
+
+    .col-num { width:34px; } .col-date { width:108px; white-space:nowrap; } .col-email { width:170px; max-width:200px; }
+    .col-name { max-width:140px; } .col-job { min-width:100px; max-width:160px; } .col-fitment { width:90px; }
+    .col-phone { width:110px; white-space:nowrap; }
+    .col-timeframe { min-width:100px; max-width:180px; } .col-slots { width:50px; text-align:center; }
+    .col-intent-summary { min-width:120px; max-width:220px; } .col-status { width:100px; white-space:nowrap; }
+    .col-actions { width:100px; white-space:nowrap; }
+    .col-employed { width:80px; white-space:nowrap; }
+
+    .col-company {
+        min-width: 100px;
+        max-width: 180px;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        line-height: 1.35;
+        hyphens: auto;
+        width: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .mgm-header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); color:#fff; border:0; padding:1rem 1.25rem; flex-wrap:wrap; gap:0.75rem; align-items:flex-start; }
+    .mgm-header .modal-title-wrap { flex:1 1 220px; min-width:0; }
+    .mgm-header .modal-title {color:#fff; font-size:1.05rem; font-weight:600; line-height:1.35; margin:0; word-wrap:break-word; }
+    .mgm-header .btn-close { filter:invert(1) grayscale(100%) brightness(200%); opacity:.85; }
+    .mgm-header .mgm-record-pill { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:8px; padding:0.35rem 0.75rem; text-align:right; }
+    .mgm-header .mgm-record-pill .lbl { font-size:11px; opacity:.75; letter-spacing:.02em; }
+    .mgm-header .mgm-record-pill .num { font-size:13px; font-weight:700; }
+    #manageModal .modal-content { border:none; border-radius:12px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,.18),0 0 1px rgba(0,0,0,.08); }
+    #manageModal .modal-body { font-size:12.5px; background:#fafbfc; }
+    .mgm-meta { font-size:12.5px; color:#6c757d; }
+    .mgm-meta strong { color:#212529; }
+    .mgm-section-title { font-size:12px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+    .mgm-mail-body { white-space:pre-wrap; word-break:break-word; font-size:13px; line-height:1.75; background:#f8f9fa; border-radius:6px; padding:14px 18px; border:1px solid #e9ecef; max-height:200px; overflow-y:auto; }
+    .mgm-action-card { border:1px solid #e9ecef; border-radius:8px; padding:16px; margin-bottom:12px; transition:border-color .2s; }
+    .mgm-action-card.completed { border-color:#198754; background:#f0fdf4; }
+    .mgm-action-card.failed { border-color:#dc3545; background:#fef2f2; }
+    .mgm-action-card.pending { border-color:#dee2e6; }
+    .mgm-action-card.disabled { opacity:.5; pointer-events:none; }
+    .mgm-step-number { width:28px; height:28px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; }
+    .mgm-step-number.pending { background:#e9ecef; color:#6c757d; }
+    .mgm-step-number.completed { background:#198754; color:#fff; }
+    .mgm-step-number.failed { background:#dc3545; color:#fff; }
+    .mgm-step-number.running { background:#0d6efd; color:#fff; }
+    .mgm-action-btn { min-width:128px; font-size:12px !important; font-weight:600; padding:0.4rem 0.85rem !important; line-height:1.4 !important; border-radius:8px !important; }
+    .mgm-action-btn.btn-success { box-shadow:0 2px 6px rgba(25,135,84,.25); }
+    .mgm-action-btn.btn-info { box-shadow:0 2px 6px rgba(13,202,240,.3); }
+    .mgm-btn-view-resume { font-size:12px !important; padding:0.4rem 0.75rem !important; line-height:1.4 !important; border-radius:8px !important; }
+    .mgm-status-strip { background:linear-gradient(180deg,#fff 0%,#f4f6f8 100%); border-bottom:1px solid #e2e6ea !important; }
+    .mgm-status-btns .btn { font-size:12px !important; padding:0.35rem 0.75rem !important; line-height:1.4 !important; border-radius:8px !important; font-weight:500; }
+    .mgm-status-badge-wrap .badge { font-size:12.5px !important; font-weight:600; padding:0.45rem 0.85rem !important; border-radius:8px; }
+    .mgm-footer .btn { font-size:12px !important; padding:0.45rem 1rem !important; border-radius:8px !important; font-weight:500; }
+    .mgm-footer .btn-refresh-manage { border:1px solid #ced4da; background:#fff; color:#495057; }
+    .mgm-footer .btn-refresh-manage:hover { background:#f8f9fa; border-color:#adb5bd; color:#212529; }
+    .ia-page-refresh { font-size:12px !important; font-weight:600; padding:0.4rem 0.9rem !important; border-radius:8px !important; border:1px solid #9fd89f !important; background:linear-gradient(180deg,#e8f8e8 0%,#d4edda 100%) !important; color:#0f5132 !important; box-shadow:0 1px 3px rgba(25,135,84,.12); }
+    .ia-page-refresh:hover { background:#d1e7dd !important; border-color:#75b879 !important; color:#0a3622 !important; }
+    .ia-badge-dropped { font-size:11px !important; font-weight:600; padding:0.35em 0.55em !important; border-radius:6px; }
+    .mgm-action-btn:disabled { opacity:.88; cursor:not-allowed; }
+    .mgm-result-block { font-size:12px; margin-top:8px; padding:8px 12px; border-radius:6px; background:#f8f9fa; border:1px solid #e9ecef; max-height:200px; overflow-y:auto; }
+    .mgm-footer { border-top:1px solid #e9ecef; background:#fafbfc; }
+
+    .mgm-info-row { display:flex; align-items:flex-start; gap:10px; padding:8px 12px; border-radius:8px; background:#fff; border:1px solid #e9ecef; margin-bottom:8px; font-size:12.5px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+    .mgm-info-row .label { font-weight:600; color:#495057; flex:0 0 108px; min-width:0; }
+    .mgm-info-row .value { color:#212529; flex:1 1 auto; min-width:0; word-break:break-word; overflow-wrap:anywhere; line-height:1.45; }
+    .mgm-info-row .value#mgmCompany { display:block; }
+    .employed-yes { color:#198754; font-weight:600; }
+    .employed-no { color:#dc3545; font-weight:600; }
+</style>
+
+<div id="loadingOverlay">
+    <div class="spinner-content">
+        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+        <div class="loading-text">Loading records...</div>
+    </div>
+</div>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="content client">
+            <div class="container-fluid py-4">
+
+                <div class="row mb-3 align-items-center">
+                    <div class="col">
+                        <h4 class="fw-bold mb-0"><i class="fas fa-calendar-check text-primary me-2"></i>Interviewer Email Availability</h4>
+                        <p class="text-muted mb-0 mt-1">Interviewer availability emails processed via Relay.app</p>
+                    </div>
+                    <div class="col-auto d-flex gap-2">
+                        <button type="button" class="btn btn-sm ia-page-refresh" onclick="location.reload()" title="Reload this page"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                    </div>
+                </div>
+
+                @if (TempData["Success"] != null) { <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i>@TempData["Success"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
+                @if (TempData["Error"] != null) { <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
+
+                @{ var cardOpen = Model.Count(r => string.Equals(r.Status, "Open", StringComparison.OrdinalIgnoreCase));
+                   var cardIP = Model.Count(r => string.Equals(r.Status, "InProgress", StringComparison.OrdinalIgnoreCase));
+                   var cardVerified = Model.Count(r => string.Equals(r.Status, "Verified", StringComparison.OrdinalIgnoreCase));
+                   var cardClosed = Model.Count(r => string.Equals(r.Status, "Closed", StringComparison.OrdinalIgnoreCase)); }
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-success">@cardVerified</div><div class="stat-label">Verified</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value" style="color:#6c757d;">@cardClosed</div><div class="stat-label">Closed</div></div></div>
+                </div>
+
+                <form asp-action="Index" asp-controller="InterviewerAvailability" method="get" id="filterForm">
+                    <input type="hidden" name="page" value="1" />
+                    <input type="hidden" name="pageSize" value="@pageSize" />
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body py-2 px-3">
+                            <div class="d-flex align-items-center gap-2" style="flex-wrap:nowrap;width:100%;">
+                                <select name="status" class="form-select ia-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">All statuses</option>
+                                    @if (selStatus == "Open") { <option value="Open" selected>Open</option> } else { <option value="Open">Open</option> }
+                                    @if (selStatus == "InProgress") { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option> }
+                                    @if (selStatus == "Verified") { <option value="Verified" selected>Verified</option> } else { <option value="Verified">Verified</option> }
+                                    @if (selStatus == "Closed") { <option value="Closed" selected>Closed</option> } else { <option value="Closed">Closed</option> }
+                                </select>
+                                <select name="resumeFitment" class="form-select ia-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">All fitment</option>
+                                    @if (selFitment == "Strong Fit") { <option value="Strong Fit" selected>Strong Fit</option> } else { <option value="Strong Fit">Strong Fit</option> }
+                                    @if (selFitment == "Moderate Fit") { <option value="Moderate Fit" selected>Moderate Fit</option> } else { <option value="Moderate Fit">Moderate Fit</option> }
+                                    @if (selFitment == "Weak Fit") { <option value="Weak Fit" selected>Weak Fit</option> } else { <option value="Weak Fit">Weak Fit</option> }
+                                    @if (selFitment == "N/A") { <option value="N/A" selected>N/A</option> } else { <option value="N/A">N/A</option> }
+                                </select>
+                                <input type="text" name="senderEmail" class="form-control ia-filter-control" placeholder="Sender email..." style="flex:1 1 0;min-width:130px;" value="@selEmail" />
+                                <input type="date" name="dateFrom" class="form-control ia-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
+                                <span class="text-muted flex-shrink-0" style="font-size:11px;">–</span>
+                                <input type="date" name="dateTo" class="form-control ia-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateTo" onchange="document.getElementById('filterForm').submit()" />
+                                <button style="background:#07363c4f !important;border:0px;padding:7px 10px;" type="submit" class="btn btn-primary btn-sm flex-shrink-0"><i class="fas fa-filter me-1"></i>Apply</button>
+                                <a style="padding:7px 10px!important;border:0px;background:#da7c7c !important;color:#fff" asp-action="Index" asp-controller="InterviewerAvailability" class="btn btn-sm btn-outline-secondary flex-shrink-0"><i class="fas fa-times me-1"></i>Clear</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
+                        @if (!Model.Any())
+                        {
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                                <span>@(hasFilters ? "No records match the selected filters." : "No interviewer availability emails yet. Once Relay.app routes an email, it will appear here.")</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive ia-scroll">
+                                <table id="iaTable" class="table table-hover table-sm mb-0 align-top">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="col-num">#</th><th class="col-date">Received</th><th class="col-email">Email</th>
+                                            <th class="col-name">Name</th><th class="col-phone">Phone</th><th class="col-job">Job Title</th>
+                                            <th class="col-employed">Employed</th><th class="col-company">Company</th>
+                                            <th class="col-fitment">Fitment</th>
+                                            <th class="col-slots">Slots</th><th class="col-timeframe">Time Frame</th>
+                                            <th class="col-intent-summary">Intent</th><th class="col-status">Status</th><th class="col-actions">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var r in Model)
+                                        {
+                                            string rStatus = r.Status?.ToLower() ?? "open";
+                                            string statusCss = rStatus switch { "open" => "status-open", "inprogress" => "status-inprogress", "verified" => "status-verified", "closed" => "status-closed", _ => "bg-light border" };
+                                            string fitCss = (r.ResumeFitment ?? "").ToLower() switch { "strong fit" => "fitment-strong", "moderate fit" => "fitment-moderate", "weak fit" => "fitment-weak", _ => "fitment-na" };
+
+                                            <tr id="row-@r.Id">
+                                                <td class="col-num text-muted" style="font-size:12px">@r.Id</td>
+                                                <td class="col-date" style="font-size:12px">@(r.ReceivedAt.HasValue ? r.ReceivedAt.Value.ToString("dd MMM yy, HH:mm") : "—")</td>
+                                                <td class="col-email">
+                                                    <a href="mailto:@r.SenderEmail" class="text-decoration-none ia-email-ellipsis" title="@r.SenderEmail">@r.SenderEmail</a>
+                                                    @if (r.InterviewerProfileId.HasValue) { <span class="badge bg-success" style="font-size:9px;" title="Known interviewer">RB</span> }
+                                                </td>
+                                                <td class="col-name">
+                                                    <span class="fw-semibold" style="font-size:12px;white-space:break-spaces;">@(r.InterviewerName ?? r.InterviewerNickName ?? "—")</span>
+                                                    @if (r.Experience.HasValue) { <br /><span class="text-muted" style="font-size:10px;">@r.Experience yr exp</span> }
+                                                </td>
+                                                <td class="col-phone" style="font-size:12px;">
+                                                    @{ string displayPhone = r.UserMobileNumber.HasValue ? r.UserMobileNumber.Value.ToString() : r.Phone; }
+                                                    @(displayPhone ?? "—")
+                                                </td>
+                                                <td class="col-job" style="font-size:12px;">
+                                                    <span style="white-space: break-spaces;"> @(r.JobTitle ?? "—")</span>
+                                                    @if (!string.IsNullOrEmpty(r.MagName)) { <br /><span class="text-muted" style="font-size:10px;">@r.MagName</span> }
+                                                </td>
+                                                <td class="col-employed" style="font-size:12px;">
+                                                    @if (r.IsEmployed == true)
+                                                    { <span class="employed-yes"><i class="fas fa-check-circle"></i> Yes</span> }
+                                                    else if (r.IsEmployed == false)
+                                                    { <span class="employed-no"><i class="fas fa-times-circle"></i> No</span> }
+                                                    else
+                                                    { <span class="text-muted">—</span> }
+                                                </td>
+                                                <td class="col-company" style="font-size:12px;" title="@(r.CompanyName ?? "")">@(r.CompanyName ?? "—")</td>
+                                                <td class="col-fitment"><span style="white-space:nowrap;" class="intent-badge @fitCss">@(r.ResumeFitment ?? "N/A")</span></td>
+                                                <td class="col-slots text-center" style="font-size:12px;">@(r.SlotsPerDay ?? "—")</td>
+                                                <td class="col-timeframe" style="font-size:11px;">@(r.TimeFrame ?? "—")</td>
+                                                <td class="col-intent-summary">
+                                                    @if (!string.IsNullOrWhiteSpace(r.MailBodyIntent)) { <span class="intent-badge bg-light border" style="font-size:10px;">@r.MailBodyIntent</span> }
+                                                    @if (!string.IsNullOrWhiteSpace(r.AvailabilityIntent)) { <div class="mail-preview-text mt-1" style="-webkit-line-clamp:2;">@r.AvailabilityIntent</div> }
+                                                </td>
+                                                <td class="col-status">
+                                                    <span class="intent-badge @statusCss" style="word-break:normal;">@(r.Status ?? "Open")</span>
+                                                    @if (r.ResumeAIAnalysisCompleted == true)
+                                                    {
+                                                        string aiVerdictText = "AI";
+                                                        string aiScoreText = "";
+                                                        string aiBadgeClass = "text-info";
+                                                        try
+                                                        {
+                                                            if (!string.IsNullOrWhiteSpace(r.ResumeAIAnalysisResult))
+                                                            {
+                                                                var aiData = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(r.ResumeAIAnalysisResult);
+                                                                string verdict = aiData?.verdict;
+                                                                string score = aiData?.fitmentScore?.ToString();
+                                                                if (!string.IsNullOrEmpty(verdict))
+                                                                {
+                                                                    bool isYes = verdict.Equals("yes", StringComparison.OrdinalIgnoreCase);
+                                                                    aiBadgeClass = isYes ? "text-success" : "text-danger";
+                                                                    aiVerdictText = isYes ? "Yes" : "No";
+                                                                }
+                                                                if (!string.IsNullOrEmpty(score)) aiScoreText = score;
+                                                            }
+                                                        }
+                                                        catch { }
+                                                        <br /><span style="font-size:9px;" class="@aiBadgeClass" title="AI Verdict: @aiVerdictText@(aiScoreText != "" ? " | Score: " + aiScoreText : "")"><i class="fas fa-robot"></i> @aiVerdictText@(aiScoreText != "" ? " · " + aiScoreText : "")</span>
+                                                    }
+                                                    @if (r.AssessmentGroupId.HasValue) { <span style="font-size:9px;" class="text-primary"><i class="fas fa-users"></i> AG</span> }
+                                                </td>
+                                                <td class="col-actions">
+                                                    <div class="action-btns d-flex align-items-center flex-wrap gap-1">
+                                                        <button type="button" title="Manage — review, verify &amp; assign"
+                                                                class="btn btn-primary btn-manage-record"
+                                                                data-record-id="@r.Id">
+                                                            <i class="fas fa-bars me-1"></i>Manage
+                                                        </button>
+                                                        @if (r.InterviewerProfileId.HasValue && canDelete)
+                                                        {
+                                                            <button type="button" title="Drop profile — mark interviewer unavailable"
+                                                                    class="btn btn-warning btn-sm btn-drop-profile"
+                                                                    data-record-id="@r.Id"
+                                                                    aria-label="Drop profile">
+                                                                <i class="fas fa-user-slash"></i>
+                                                            </button>
+                                                        }
+                                                        @if (canDelete)
+                                                        {
+                                                            <button type="button" title="Delete this record"
+                                                                    class="btn btn-danger btn-sm btn-delete-record"
+                                                                    data-record-id="@r.Id">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        }
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                @if (totalPages > 1)
+                {
+                    <div class="d-flex justify-content-between align-items-center mt-3 px-2">
+                        <div class="text-muted" style="font-size:12px;">
+                            Showing @first–@last of @totalCount records
+                            <span class="ms-3">Page size:
+                                @foreach (var sz in new[] { 10, 25, 50, 100 })
+                                { if (pageSize == sz) { <strong class="ms-1">@sz</strong> } else { <a href="javascript:void(0)" class="ms-1 text-decoration-none" onclick="changePageSize(@sz)">@sz</a> } }
+                            </span>
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item @(page <= 1 ? "disabled" : "")"><a class="page-link" href="@pageUrl(page - 1)">Prev</a></li>
+                                @for (int p = Math.Max(1, page - 2); p <= Math.Min(totalPages, page + 2); p++) { <li class="page-item @(p == page ? "active" : "")"><a class="page-link" href="@pageUrl(p)">@p</a></li> }
+                                <li class="page-item @(page >= totalPages ? "disabled" : "")"><a class="page-link" href="@pageUrl(page + 1)">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Anti-forgery token for AJAX calls -->
+<form id="__AjaxAntiForgeryForm" style="display:none;">@Html.AntiForgeryToken()</form>
+
+<!-- Manage Modal -->
+<div class="modal fade" id="manageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header mgm-header">
+                <div class="modal-title-wrap pe-2">
+                    <h5 class="modal-title"><i class="fas fa-clipboard-check me-2"></i>Manage Availability Record</h5>
+                </div>
+                <div class="d-flex align-items-start gap-2 ms-auto flex-shrink-0">
+                    <div style="position: relative;top: 17px;right:30px;">
+                        <span class="lbl">Record no.</span>
+                        <span  id="mgmRecordNo">#—</span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+
+            <div class="mgm-status-strip px-3 px-md-4 py-2 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2 flex-wrap mgm-status-badge-wrap">
+                    <strong class="text-muted" style="font-size:12.5px;">Status</strong>
+                    <span class="badge" id="mgmStatusBadge">Open</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-wrap mgm-status-btns" id="mgmStatusActions">
+                    <span class="text-muted" style="font-size:12px;">Change to</span>
+                    <button type="button" class="btn btn-outline-primary btn-sm btn-mgm-status" data-status="InProgress"><i class="fas fa-hourglass-half me-1"></i>In Progress</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm btn-mgm-status" data-status="Closed"><i class="fas fa-times-circle me-1"></i>Close</button>
+                    <button type="button" class="btn btn-outline-warning btn-sm btn-mgm-status" data-status="Open"><i class="fas fa-redo me-1"></i>Reopen</button>
+                </div>
+            </div>
+
+            <div class="modal-body pt-3" id="mgmBody">
+                <div class="text-center py-4 text-muted" id="mgmLoading"><i class="fas fa-spinner fa-spin me-2"></i>Loading record details...</div>
+
+                <div id="mgmEmailContext" style="display:none;">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mgm-meta">
+                                <span><strong>From:</strong> <span id="mgmFrom"></span></span><br/>
+                                <span><strong>Received:</strong> <span id="mgmReceived"></span></span><br/>
+                                <span><strong>Phone:</strong> <span id="mgmPhone"></span></span><br/>
+                                <span><strong>IRF Ref:</strong> <span id="mgmIrf"></span></span><br/>
+                                <span><strong>Credentials:</strong> <span id="mgmCredentials"></span></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mgm-meta">
+                                <span><strong>Name:</strong> <span id="mgmName"></span></span><br/>
+                                <span><strong>Job Title:</strong> <span id="mgmJobTitle"></span></span><br/>
+                                <span><strong>MAG:</strong> <span id="mgmMag"></span></span><br/>
+                                <span><strong>Slots/Day:</strong> <span id="mgmSlots"></span></span><br/>
+                                <span><strong>Time Frame:</strong> <span id="mgmTimeFrame"></span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mgm-info-row">
+                                <span style="font-size:13px!important;" class="label"><i class="fas fa-briefcase me-1"></i>Employed:</span>
+                                <span style="line-height:25px;" class="value" id="mgmEmployed">—</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mgm-info-row">
+                                <span style="font-size:13px!important;" class="label"><i class="fas fa-building me-1"></i>Company:</span>
+                                <span style="line-height:25px;" class="value" id="mgmCompany">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4"><div class="mgm-section-title">Mail Body Intent</div><div class="intent-badge bg-light border" id="mgmMailIntent"></div></div>
+                        <div class="col-md-4"><div class="mgm-section-title">Availability Intent</div><div style="font-size:12px;" id="mgmAvailIntent"></div></div>
+                        <div class="col-md-4"><div class="mgm-section-title">Concerns</div><div style="font-size:12px;" id="mgmConcerns"></div></div>
+                    </div>
+                    <div class="mb-3"><div class="mgm-section-title">Full Email Body</div><div class="mgm-mail-body" id="mgmMailBody"></div></div>
+                    <hr/>
+
+                    <h6 class="fw-bold mb-3" style="font-size:13px;"><i class="fas fa-tasks me-2 text-primary"></i>Verification &amp; Assignment Pipeline</h6>
+
+                    <div class="mgm-action-card pending" id="step1Card">
+                        <div class="d-flex align-items-start gap-3">
+                            <span class="mgm-step-number pending" id="step1Number">1</span>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                                    <div class="flex-grow-1" style="min-width:180px;"><strong style="font-size:13px;">Resume Fitment Analysis</strong><div class="text-muted mt-1" style="font-size:11.5px;" id="step1Subtitle">Runs the resume through AI to evaluate fitment for the specialization</div></div>
+                                    <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                                        <a href="#" target="_blank" class="btn btn-outline-secondary btn-sm mgm-btn-view-resume" id="btnViewResume" style="display:none;"><i class="fas fa-file-alt me-1"></i>View Resume</a>
+                                        <button type="button" class="btn btn-outline-success btn-sm" id="btnUploadResume" style="font-size:11px;"><i class="fas fa-upload me-1"></i>Upload Resume</button>
+                                        <button type="button" class="btn btn-info btn-sm mgm-action-btn text-white" id="btnAnalyzeResume"><i class="fas fa-robot me-1"></i>Analyze Resume</button>
+                                    </div>
+                                </div>
+                                <div id="resumeUploadArea" style="display:none;" class="mt-2 p-2 border rounded bg-light">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input type="file" id="resumeFileInput" accept=".pdf,.doc,.docx" class="form-control form-control-sm" style="max-width:300px;font-size:11px;" />
+                                        <button type="button" class="btn btn-sm btn-success" id="btnConfirmUpload" style="font-size:11px;padding:3px 10px;"><i class="fas fa-cloud-upload-alt me-1"></i>Upload</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" id="btnCancelUpload" style="font-size:11px;padding:3px 8px;">Cancel</button>
+                                    </div>
+                                    <div class="text-muted mt-1" style="font-size:10px;">Accepts PDF, DOC, DOCX files.</div>
+                                    <div id="uploadProgress" style="display:none;" class="mt-1"><i class="fas fa-spinner fa-spin me-1"></i><span style="font-size:11px;">Uploading...</span></div>
+                                    <div id="uploadResult" style="display:none;" class="mt-1"></div>
+                                </div>
+                                <div class="mgm-result-block" id="step1Result" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mgm-action-card pending disabled" id="step2Card">
+                        <div class="d-flex align-items-start gap-3">
+                            <span class="mgm-step-number pending" id="step2Number">2</span>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                                    <div class="flex-grow-1" style="min-width:180px;"><strong style="font-size:13px;">Assign to Assessment Group</strong><div class="text-muted mt-1" style="font-size:11.5px;" id="step2Subtitle">Maps interviewer to the assessment group and sends notification</div></div>
+                                    <div class="d-flex align-items-center flex-shrink-0">
+                                        <button type="button" class="btn btn-success btn-sm mgm-action-btn" id="btnAssignAG"><i class="fas fa-user-plus me-1"></i>Assign to AG</button>
+                                    </div>
+                                </div>
+                                <div class="mgm-result-block" id="step2Result" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer mgm-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <button type="button" class="btn btn-sm btn-refresh-manage" id="btnRefreshManage"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+<script>
+    var currentRecordId = null, currentRecord = null;
+    var canDelete = @(canDelete ? "true" : "false");
+    var verificationToken = $('#__AjaxAntiForgeryForm input[name="__RequestVerificationToken"]').val() || '';
+
+    function showLoading() { document.getElementById('loadingOverlay').classList.add('show'); }
+    document.getElementById('filterForm').addEventListener('submit', showLoading);
+    document.querySelectorAll('.pagination .page-link').forEach(function (l) { l.addEventListener('click', showLoading); });
+    function changePageSize(size) { showLoading(); var f = document.getElementById('filterForm'); f.querySelector('[name="pageSize"]').value = size; f.querySelector('[name="page"]').value = 1; f.submit(); }
+
+    $(document).on('click', '.btn-manage-record', function () { openManageModal($(this).data('record-id')); });
+
+    $(document).on('click', '.btn-delete-record', function () {
+        var id = $(this).data('record-id');
+        if (!confirm('Are you sure you want to delete record #' + id + '? This action cannot be undone.')) return;
+        $.ajax({
+            url: '@Url.Action("DeleteRecord", "InterviewerAvailability")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: id },
+            success: function (res) {
+                if (res.success) { $('#row-' + id).fadeOut(300, function () { $(this).remove(); }); }
+                else { alert(res.error || 'Could not delete record.'); }
+            },
+            error: function () { alert('Delete request failed.'); }
+        });
+    });
+
+    $(document).on('click', '.btn-drop-profile', function () {
+        var id = $(this).data('record-id');
+        if (!confirm('Drop profile for record #' + id + '? This will mark the interviewer as unavailable (Isavailable = 4) and close this record.')) return;
+        var btn = $(this);
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+        $.ajax({
+            url: '@Url.Action("DropProfile", "InterviewerAvailability")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: id },
+            success: function (res) {
+                if (res.success) {
+                    btn.replaceWith('<span class="badge bg-secondary ia-badge-dropped">Dropped</span>');
+                    var row = $('#row-' + id);
+                    row.find('.col-status .intent-badge').first().removeClass('status-open status-inprogress status-verified').addClass('status-closed').text('Closed');
+                } else { alert(res.error || 'Could not drop profile.'); btn.prop('disabled', false).html('<i class="fas fa-user-slash"></i>'); }
+            },
+            error: function () { alert('Drop profile request failed.'); btn.prop('disabled', false).html('<i class="fas fa-user-slash"></i>'); }
+        });
+    });
+
+    function openManageModal(id) {
+        currentRecordId = id; currentRecord = null;
+        $('#mgmRecordNo').text('#' + id); $('#mgmLoading').show(); $('#mgmEmailContext').hide(); resetPipeline();
+        new bootstrap.Modal(document.getElementById('manageModal')).show();
+        loadRecordDetails(id);
+    }
+
+    function loadRecordDetails(id) {
+        $.ajax({
+            url: '@Url.Action("GetRecordDetails", "InterviewerAvailability")', type: 'GET', data: { id: id },
+            timeout: 30000,
+            success: function (res) {
+                $('#mgmLoading').hide();
+                if (!res.success) { $('#mgmEmailContext').html('<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>' + (res.error || 'Unknown error') + '</div>').show(); return; }
+                currentRecord = res.record; populateModal(res.record); $('#mgmEmailContext').show();
+            },
+            error: function (xhr, status) {
+                $('#mgmLoading').hide();
+                var msg = status === 'timeout' ? 'Request timed out. Please try again.' : 'Failed to load record details.';
+                $('#mgmEmailContext').html('<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>' + msg + ' <button class="btn btn-sm btn-outline-danger ms-2" onclick="loadRecordDetails(' + id + ');$(\'#mgmLoading\').show();$(\'#mgmEmailContext\').hide();">Retry</button></div>').show();
+            }
+        });
+    }
+
+    function populateModal(r) {
+        $('#mgmFrom').text(r.senderEmail || '—'); $('#mgmReceived').text(r.receivedAt || '—');
+        var phoneDisplay = r.userMobileNumber ? r.userMobileNumber.toString() : (r.phone || '—');
+        $('#mgmPhone').text(phoneDisplay); $('#mgmIrf').text(r.irfReference || '—'); $('#mgmCredentials').text(r.hasLoginCredentials || '—');
+        $('#mgmName').text(r.interviewerName || r.interviewerNickName || '—'); $('#mgmJobTitle').text(r.jobTitle || '—');
+        $('#mgmMag').text((r.magName || '—') + (r.assessmentGroupName ? ' \u2192 ' + r.assessmentGroupName : ''));
+        $('#mgmSlots').text(r.slotsPerDay || '—'); $('#mgmTimeFrame').text(r.timeFrame || '—');
+        $('#mgmMailIntent').text(r.mailBodyIntent || '—'); $('#mgmAvailIntent').text(r.availabilityIntent || '—');
+        $('#mgmConcerns').text(r.concernsOrNotInterested || 'None'); $('#mgmMailBody').text(r.mailContent || '');
+        updateStatusBadge(r.status || 'Open');
+
+        if (r.isEmployed === true) { $('#mgmEmployed').html('<span class="employed-yes"><i class="fas fa-check-circle me-1"></i>Yes</span>'); }
+        else if (r.isEmployed === false) { $('#mgmEmployed').html('<span class="employed-no"><i class="fas fa-times-circle me-1"></i>No</span>'); }
+        else { $('#mgmEmployed').text('—'); }
+        $('#mgmCompany').text(r.companyName || '—');
+
+        var resumeUrl = r.resumeLink; if (!resumeUrl || resumeUrl === 'None') resumeUrl = r.profileResumeLink;
+        if (resumeUrl && resumeUrl !== 'None') { $('#btnViewResume').attr('href', resumeUrl).show(); } else { $('#btnViewResume').hide(); }
+        syncPipeline(r);
+    }
+
+    function updateStatusBadge(s) {
+        var b = $('#mgmStatusBadge'); b.text(s).removeClass('bg-warning bg-primary bg-success bg-secondary bg-danger text-dark');
+        switch ((s || '').toLowerCase()) { case 'open': b.addClass('bg-warning text-dark'); break; case 'inprogress': b.addClass('bg-primary'); break; case 'verified': b.addClass('bg-success'); break; case 'closed': b.addClass('bg-secondary'); break; default: b.addClass('bg-light text-dark'); }
+    }
+
+    function resetPipeline() {
+        ['step1Card','step2Card'].forEach(function(id){ $('#'+id).removeClass('completed failed disabled').addClass('pending'); });
+        ['step1Number','step2Number'].forEach(function(id){ $('#'+id).removeClass('completed failed running').addClass('pending'); });
+        $('#step2Card').addClass('disabled');
+        $('#step1Result, #step2Result').hide().empty();
+        $('#btnAnalyzeResume').prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Analyze Resume');
+        $('#btnAssignAG').prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Assign to AG');
+        $('#btnUploadResume').show();
+        $('#resumeUploadArea').hide();
+        $('#resumeFileInput').val('');
+        $('#uploadProgress, #uploadResult').hide();
+    }
+
+    function syncPipeline(r) {
+        if (r.resumeAIAnalysisCompleted === true) {
+            var html = r.resumeAIAnalysisResult || 'Analysis complete.';
+            try { var p = JSON.parse(r.resumeAIAnalysisResult); html = '<strong>Verdict:</strong> ' + (p.verdict||'—') + ' | <strong>Score:</strong> ' + (p.fitmentScore||'—') + '<br/>' + (p.completeFitmentAnalysis||''); } catch(e){}
+            markStep(1, 'completed', html);
+        } else if (!r.hasResumeLink && !r.hasProfileResumeLink) {
+            $('#step1Subtitle').html('No resume available for analysis. <strong>Upload a resume to proceed.</strong>');
+            $('#btnAnalyzeResume').prop('disabled', true);
+            $('#resumeUploadArea').show();
+        }
+
+        if (r.assessmentGroupId && r.assessmentGroupId > 0) {
+            markStep(2, 'completed', 'Assigned to ' + (r.assessmentGroupName || 'AG #' + r.assessmentGroupId) + (r.assessmentGroupAssignedAt ? ' on ' + r.assessmentGroupAssignedAt : ''));
+        } else if (!r.interviewerProfileId) {
+            $('#step2Subtitle').html('<span class="text-danger">Sender is not a known interviewer in the system. Cannot assign AG.</span>');
+            $('#btnAssignAG').prop('disabled', true);
+        } else if (!r.resolvedAssessmentGroupId) {
+            $('#step2Subtitle').html('<span class="text-warning">No assessment group found for MAG: <strong>' + (r.magName || '—') + '</strong>. Check MAG name in MasterAssessmentGroup table.</span>');
+            $('#btnAssignAG').prop('disabled', true);
+        }
+    }
+
+    function markStep(step, state, message) {
+        var card = $('#step'+step+'Card'), num = $('#step'+step+'Number'), result = $('#step'+step+'Result');
+        card.removeClass('pending completed failed disabled'); num.removeClass('pending completed failed running');
+        if (state === 'completed') {
+            card.addClass('completed'); num.addClass('completed');
+            if (step===1) { $('#btnAnalyzeResume').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed'); $('#btnUploadResume').hide(); $('#resumeUploadArea').hide(); }
+            if (step===2) $('#btnAssignAG').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Assigned');
+        } else if (state === 'failed') { card.addClass('failed'); num.addClass('failed'); }
+        else if (state === 'running') { num.addClass('running'); }
+        if (message) result.html(message).show();
+        if (step===1 && state==='completed') $('#step2Card').removeClass('disabled');
+    }
+
+    $(document).on('click', '.btn-mgm-status', function () {
+        var status = $(this).data('status'); if (!currentRecordId) return;
+        $.ajax({ url: '@Url.Action("UpdateStatusModal", "InterviewerAvailability")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, status: status },
+            success: function (res) { if (res.success) { updateStatusBadge(res.status); if (currentRecord) currentRecord.status = res.status; } }
+        });
+    });
+
+    // Resume Upload
+    $('#btnUploadResume').on('click', function () { $('#resumeUploadArea').toggle(); });
+    $('#btnCancelUpload').on('click', function () { $('#resumeUploadArea').hide(); $('#resumeFileInput').val(''); $('#uploadResult').hide(); });
+
+    $('#btnConfirmUpload').on('click', function () {
+        if (!currentRecordId) return;
+        var fileInput = document.getElementById('resumeFileInput');
+        if (!fileInput.files || fileInput.files.length === 0) { alert('Please select a file.'); return; }
+
+        var formData = new FormData();
+        formData.append('id', currentRecordId);
+        formData.append('resumeFile', fileInput.files[0]);
+        formData.append('__RequestVerificationToken', verificationToken);
+
+        $('#uploadProgress').show(); $('#uploadResult').hide();
+        $('#btnConfirmUpload').prop('disabled', true);
+
+        $.ajax({
+            url: '@Url.Action("UploadResume", "InterviewerAvailability")',
+            type: 'POST', data: formData, processData: false, contentType: false, timeout: 120000,
+            success: function (res) {
+                $('#uploadProgress').hide(); $('#btnConfirmUpload').prop('disabled', false);
+                if (res.success) {
+                    $('#uploadResult').html('<span class="text-success" style="font-size:11px;"><i class="fas fa-check-circle me-1"></i>Uploaded successfully.</span>').show();
+                    $('#btnViewResume').attr('href', res.resumeLink).show();
+                    $('#btnAnalyzeResume').prop('disabled', false);
+                    $('#step1Subtitle').text('Resume uploaded. Click Analyze Resume to proceed.');
+                    if (currentRecord) { currentRecord.resumeLink = res.resumeLink; currentRecord.hasResumeLink = true; }
+                    setTimeout(function(){ $('#resumeUploadArea').hide(); }, 2000);
+                } else {
+                    $('#uploadResult').html('<span class="text-danger" style="font-size:11px;"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Upload failed.') + '</span>').show();
+                }
+            },
+            error: function () {
+                $('#uploadProgress').hide(); $('#btnConfirmUpload').prop('disabled', false);
+                $('#uploadResult').html('<span class="text-danger" style="font-size:11px;"><i class="fas fa-times-circle me-1"></i>Upload request failed.</span>').show();
+            }
+        });
+    });
+
+    $('#btnAnalyzeResume').on('click', function () {
+        if (!currentRecordId) return; var btn = $(this);
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Analyzing...'); $('#step1Number').removeClass('pending').addClass('running');
+        $('#step1Subtitle').text('AI analysis in progress \u2014 this may take 30\u201360 seconds...');
+        $.ajax({ url: '@Url.Action("AnalyzeResume", "InterviewerAvailability")', type: 'POST', timeout: 180000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            success: function (res) {
+                if (res.success) {
+                    var h='<strong>Verdict:</strong> '+(res.verdict||'—')+' | <strong>Score:</strong> '+(res.fitmentScore||'—');
+                    if(res.completeFitmentAnalysis) h+='<br/><div class="mt-1" style="white-space:pre-wrap;">'+res.completeFitmentAnalysis+'</div>';
+                    markStep(1,'completed',h);
+                    if(currentRecord){currentRecord.resumeAIAnalysisCompleted=true;currentRecord.resumeAIAnalysisResult=res.analysisResult;}
+                    if(res.isPositiveVerdict) updateStatusBadge('Verified');
+                } else {
+                    var errHtml = res.error || 'Analysis failed.';
+                    if (res.needsUpload) {
+                        errHtml += ' <br/><em style="font-size:11px;">Use the Upload Resume button to upload a valid PDF.</em>';
+                        $('#resumeUploadArea').show();
+                    }
+                    markStep(1,'failed',errHtml);
+                    btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry');
+                    $('#step1Subtitle').text('Runs the resume through AI to evaluate fitment for the specialization');
+                }
+            },
+            error: function (xhr, status) {
+                var msg = status === 'timeout' ? 'Request timed out. The analysis may still be running — try refreshing in a minute.' : 'Request failed. Please try again.';
+                markStep(1,'failed',msg);
+                btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry');
+                $('#step1Subtitle').text('Runs the resume through AI to evaluate fitment for the specialization');
+            }
+        });
+    });
+
+    $('#btnAssignAG').on('click', function () {
+        if (!currentRecordId) return; var btn = $(this);
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Assigning...'); $('#step2Number').removeClass('pending').addClass('running');
+        $.ajax({ url: '@Url.Action("AssignAssessmentGroup", "InterviewerAvailability")', type: 'POST', timeout: 60000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            success: function (res) {
+                if (res.success) { markStep(2,'completed',res.message||'Assessment group assigned.'); updateStatusBadge('Closed'); }
+                else { markStep(2,'failed',res.error||'Assignment failed.'); btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry'); }
+            },
+            error: function () { markStep(2,'failed','Request failed.'); btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry'); }
+        });
+    });
+
+    $('#btnRefreshManage').on('click', function () { if (currentRecordId) { $('#mgmLoading').show(); $('#mgmEmailContext').hide(); resetPipeline(); loadRecordDetails(currentRecordId); } });
+</script>
+}

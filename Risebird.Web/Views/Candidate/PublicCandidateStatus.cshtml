@@ -1899,9 +1899,10 @@
                                                                                             else if (item.zoomLink != null && item.zoomLink != "")
                                                                                             {
 
-                                                                                            <a style="border:none;border-radius:0px;" class="interview_10" id="zoomlinkId" target="_blank" title="" href=@item.zoomLink>Meeting Link</a>
-
-
+                                                                                            @* <a style="border:none;border-radius:0px;" class="interview_10" id="zoomlinkId" target="_blank" title="" href=@item.zoomLink>Meeting Link</a> *@
+                                                                                                <div onclick="captureclick('Meeting','CandidatePortal','@item.InterviewId')" class="btn shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;border-color: #99b0bd4f !important; min-height:auto!important;background:#99b0bdc4;height:auto;">
+                                                                                                    <span onclick="javascript:CopyPublicUrl('@item.CandidateEmailId','@item.IRFId',1);" title="Copy Public URL">Candidate meeting link</span>
+                                                                                                </div>
                                                                                             }
                                                                                             else
                                                                                             {
@@ -2618,7 +2619,42 @@
         <div id="modal_clientComment_placeholder"></div>
 
         <div id="modal_candidateCommunicationDetails_placeholder"></div>
+        <div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Secure Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
 
+                        <label class="label-field desp-label">Details for Skill Channel Url:  <b id="txtUrl"> </b></label><button class="copy-btn" onclick="copyCandidateToClipboard('#txtUrl')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
         <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=2024" />
 
@@ -3508,6 +3544,33 @@
             });
         }
     }
+        </script>
+        <script>
+             function CopyPublicUrl(EmailId,IRFId,type) {
+                $.ajax({
+                    url: '/Candidate/GetPublicURLCandidate',
+                    data: { 'Emailid': EmailId,'IRFId' :IRFId,'type':type},
+                    type: 'POST',
+                    success: function (result) {
+                        var modal = document.getElementById("PublicUrlShareModel");
+                        modal.style.display = "block";
+                        $("#txtUrl").text(result);
+                    }
+                });
+            }
+             function closePublicUrlShareModel() {
+                var modal = document.getElementById("PublicUrlShareModel");
+                modal.style.display = "none";
+            }
+
+            function copyCandidateToClipboard(element) {
+                var temp = $("<input>");
+                $("body").append(temp);
+                temp.val($(element).text()).select();
+                document.execCommand("copy");
+                temp.remove();
+                $('#special_text').text('Copied');
+            }
         </script>
         <script src='//in.fw-cdn.com/32643530/1474062.js' chat='true' widgetId='88b3fd92-7db0-4187-9e9d-3e99eb70ccd9'>
         </script>

@@ -424,6 +424,13 @@ namespace Risebird.Entities.ViewModel
         public string ProjectTitle { get; set; }
         public string HRFirstName { get; set; }
         public string HRLastName { get; set; }
+        public bool ReportAI { get; set; }
+        public bool TranscritAi { get; set; }
+        public bool ContradictionAi { get; set; }
+        public int PriorityLevel { get; set; }
+        public string PriorityLevelDesc { get; set; }
+        public string Riskcategory { get; set; }
+        public string NonAIreasoning { get; set; }
 
     }
 

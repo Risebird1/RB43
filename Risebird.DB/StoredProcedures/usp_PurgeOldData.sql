@@ -1,13 +1,18 @@
 -- =============================================================================
--- usp_DeleteOldVapiPlivoData
+-- usp_PurgeOldData
 --
--- Removes Vapi and Plivo rows older than @RetentionDays days (default 30).
--- Called once daily by the DeleteOldVapiPlivoData Azure Timer Function.
+-- Generic daily purge job. Deletes rows older than the configured retention
+-- window from every high-churn table across the platform.
+-- Called once daily by the PurgeOldDataJob Azure Timer Function.
+--
+-- Parameters
+--   @VapiPlivoRetentionDays  INT = 30   — Vapi / Plivo call + debug + checkpoint tables
+--   @OpenAIRetentionDays     INT = 60   — OpenAI API log tables
 --
 -- Returns a single-row result set with the deleted-row count per table so
 -- the caller can log a full summary without a round-trip per table.
 --
--- Tables cleaned (debug/checkpoint first — highest churn):
+-- ── Vapi / Plivo tables (30-day default) ─────────────────────────────────────
 --   VapiWebhookDebugLogs      (RequestTimestamp)
 --   VapiWebhookCheckpoints    (Timestamp)
 --   PlivoWebhookDebugLogs     (RequestTimestamp)
@@ -19,17 +24,30 @@
 --   PlivoCallLogs             (CreatedAt)
 --   PlivoCXCallLogs           (CreatedAt)
 --   PlivoWhatsAppLogs         (CreatedAt)
+--
+-- ── OpenAI / Azure cost tables (60-day default) ───────────────────────────────
+--   OpenAIApiLogs             (LogDate)
 -- =============================================================================
-CREATE OR ALTER PROCEDURE [dbo].[usp_DeleteOldVapiPlivoData]
-    @RetentionDays INT = 30
+
+-- Drop the old procedure name if it still exists from a previous deployment
+IF OBJECT_ID(N'[dbo].[usp_DeleteOldVapiPlivoData]', 'P') IS NOT NULL
+    DROP PROCEDURE [dbo].[usp_DeleteOldVapiPlivoData];
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[usp_PurgeOldData]
+    @VapiPlivoRetentionDays INT = 30,
+    @OpenAIRetentionDays    INT = 60
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @Cutoff DATETIME = DATEADD(DAY, -@RetentionDays, GETUTCDATE());
+    DECLARE
+        @VapiPlivoCutoff DATETIME  = DATEADD(DAY, -@VapiPlivoRetentionDays, GETUTCDATE()),
+        @OpenAICutoff    DATETIME2 = DATEADD(DAY, -@OpenAIRetentionDays,    GETUTCDATE());
 
     -- ── Row-count accumulators ────────────────────────────────────────────────
     DECLARE
+        -- Vapi / Plivo
         @VapiDebugRows         INT = 0,
         @VapiCheckpointRows    INT = 0,
         @PlivoDebugRows        INT = 0,
@@ -40,59 +58,69 @@ BEGIN
         @VapiCallLogRows       INT = 0,
         @PlivoCallLogRows      INT = 0,
         @PlivoCxCallLogRows    INT = 0,
-        @WaLogRows             INT = 0;
+        @WaLogRows             INT = 0,
+        -- OpenAI / Azure cost
+        @OpenAIApiLogRows      INT = 0;
 
-    -- ── Debug / checkpoint tables (highest churn — delete first) ─────────────
+    -- ── Vapi / Plivo: debug + checkpoint tables (highest churn) ──────────────
 
     DELETE FROM [dbo].[VapiWebhookDebugLogs]
-    WHERE [RequestTimestamp] < @Cutoff;
+    WHERE [RequestTimestamp] < @VapiPlivoCutoff;
     SET @VapiDebugRows = @@ROWCOUNT;
 
     DELETE FROM [dbo].[VapiWebhookCheckpoints]
-    WHERE [Timestamp] < @Cutoff;
+    WHERE [Timestamp] < @VapiPlivoCutoff;
     SET @VapiCheckpointRows = @@ROWCOUNT;
 
     DELETE FROM [dbo].[PlivoWebhookDebugLogs]
-    WHERE [RequestTimestamp] < @Cutoff;
+    WHERE [RequestTimestamp] < @VapiPlivoCutoff;
     SET @PlivoDebugRows = @@ROWCOUNT;
 
     DELETE FROM [dbo].[PlivoCXWebhookDebugLogs]
-    WHERE [CreatedAt] < @Cutoff;
+    WHERE [CreatedAt] < @VapiPlivoCutoff;
     SET @PlivoCxDebugRows = @@ROWCOUNT;
 
     DELETE FROM [dbo].[PlivoCXWebhookCheckpoints]
-    WHERE [Timestamp] < @Cutoff;
+    WHERE [Timestamp] < @VapiPlivoCutoff;
     SET @PlivoCxCheckpointRows = @@ROWCOUNT;
 
     DELETE FROM [dbo].[PlivoWhatsAppDebugLogs]
-    WHERE [CreatedAt] < @Cutoff;
+    WHERE [CreatedAt] < @VapiPlivoCutoff;
     SET @WaDebugRows = @@ROWCOUNT;
 
     DELETE FROM [dbo].[PlivoWhatsAppCheckpoints]
-    WHERE [Timestamp] < @Cutoff;
+    WHERE [Timestamp] < @VapiPlivoCutoff;
     SET @WaCheckpointRows = @@ROWCOUNT;
 
-    -- ── Core call / message log tables ───────────────────────────────────────
+    -- ── Vapi / Plivo: core call / message log tables ──────────────────────────
 
     DELETE FROM [dbo].[VapiCallLogs]
-    WHERE [CreatedAt] < @Cutoff;
+    WHERE [CreatedAt] < @VapiPlivoCutoff;
     SET @VapiCallLogRows = @@ROWCOUNT;
 
     DELETE FROM [dbo].[PlivoCallLogs]
-    WHERE [CreatedAt] < @Cutoff;
+    WHERE [CreatedAt] < @VapiPlivoCutoff;
     SET @PlivoCallLogRows = @@ROWCOUNT;
 
     DELETE FROM [dbo].[PlivoCXCallLogs]
-    WHERE [CreatedAt] < @Cutoff;
+    WHERE [CreatedAt] < @VapiPlivoCutoff;
     SET @PlivoCxCallLogRows = @@ROWCOUNT;
 
     DELETE FROM [dbo].[PlivoWhatsAppLogs]
-    WHERE [CreatedAt] < @Cutoff;
+    WHERE [CreatedAt] < @VapiPlivoCutoff;
     SET @WaLogRows = @@ROWCOUNT;
+
+    -- ── OpenAI / Azure cost tables ────────────────────────────────────────────
+
+    DELETE FROM [dbo].[OpenAIApiLogs]
+    WHERE [LogDate] < @OpenAICutoff;
+    SET @OpenAIApiLogRows = @@ROWCOUNT;
 
     -- ── Return summary row ────────────────────────────────────────────────────
     SELECT
-        @Cutoff                AS Cutoff,
+        @VapiPlivoCutoff       AS VapiPlivoCutoff,
+        @OpenAICutoff          AS OpenAICutoff,
+        -- Vapi / Plivo
         @VapiDebugRows         AS VapiWebhookDebugLogs,
         @VapiCheckpointRows    AS VapiWebhookCheckpoints,
         @PlivoDebugRows        AS PlivoWebhookDebugLogs,
@@ -103,6 +131,8 @@ BEGIN
         @VapiCallLogRows       AS VapiCallLogs,
         @PlivoCallLogRows      AS PlivoCallLogs,
         @PlivoCxCallLogRows    AS PlivoCXCallLogs,
-        @WaLogRows             AS PlivoWhatsAppLogs;
+        @WaLogRows             AS PlivoWhatsAppLogs,
+        -- OpenAI / Azure cost
+        @OpenAIApiLogRows      AS OpenAIApiLogs;
 END
 GO

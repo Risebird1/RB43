@@ -11,6 +11,7 @@ namespace Risebird.Business.Interface
         List<InterviewerProfileVM> GetInterviewers();
         //Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
         bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, out string uniqueid, bool? isApplicant = false);
+        Exception LastAddProfileException { get; }
         //Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
         bool EditInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out string uniqueid);
         Task<bool> DeleteInterviewerProfile(int id);

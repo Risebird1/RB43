@@ -4707,6 +4707,36 @@ namespace Risebird.Repository
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
+        public string ReassignMeetingByTeam(int id, string interviewerMail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //var result = SqlMapper.Query<int>(con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1,IsEmergency=1 Output inserted.id where id = @meetingid and ISNULL(EIAssigned,0)!=1", new { value = interviewerMail, meetingid = id }, commandType: Text);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@meetingid", id);
+                    parameters.Add("@interviewer", interviewerMail);
+                    var result = SqlMapper.Query<int>(con, "usp_reassignByTeamInterview", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    if (result?.FirstOrDefault() > 0)
+                    {
+                        return "Interview assigned Successfully.";
+                    }
+                    return "Interview already assigned to someone else.";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+        }
         public async Task<InterviewerDetails> FetchInterviewerCodedName(string emailId)
         {
             try
@@ -7672,8 +7702,8 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                     var parameters = new DynamicParameters();
                     parameters.Add("@interviewId", interviewId);
                     parameters.Add("@completeAnalysis", model.completeAnalysis);
-                    parameters.Add("@score", model.score);
-                    parameters.Add("@verdict", model.verdict);
+                    parameters.Add("@score", model.final_score);
+                    parameters.Add("@verdict", model.final_verdict);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveOpenAIReportQCV2", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return true;
@@ -7851,6 +7881,25 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             }
             return null;
         }
+        public async Task<QcInterviewAIMergePendingRow> GetPendingQcInterviewAIMergeById(int interviewid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewid);
+                    var result = await SqlMapper.QueryAsync<QcInterviewAIMergePendingRow>(con, "usp_GetPendingQcInterviewAIMergeById", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
         public async Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null)
         {
@@ -7898,6 +7947,25 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<QcInterviewAIMergePendingRow> CheckForAiContradiction(int qcEvaluationId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@qcEvaluationId", qcEvaluationId);
+                    var result = await SqlMapper.QueryAsync<QcInterviewAIMergePendingRow>(con, "usp_CheckAiContradictionDetails", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
 
         public async Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId)
@@ -8044,6 +8112,29 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                     return data?.FirstOrDefault();
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Interviewid", interviewId);
+                    var data = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_interviewrelatredmoredetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return data;
+                }
             }
             catch (SqlException ex)
             {

@@ -166,6 +166,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> FetchOpenMeetingById(string id);
         string CheckMeetingAssignationValidation(string Emailid);
         string ReAssignMeeting(int id, string interviewerMail);
+        string ReassignMeetingByTeam(int id, string interviewerMail);
         Task<InterviewerDetails> FetchInterviewerCodedName(string emailId);
         Task<IEnumerable<string>> GetIRFInterviewingMembersEmails(string irfId);
         Task<IEnumerable<string>> GetIRFQualityControllerEmails(string irfId);
@@ -302,8 +303,10 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveAITranscriptAnalysis(int interviewId, TranscriptAnalysisSchema model);
         Task<bool> SaveQcInterviewAIevaluation(int interviewId, TranscriptAnalysisSchema model, string jsonResponse = null, bool transcritAi = true, string reportAIJsonResponse = null);
         Task<IEnumerable<QcInterviewAIMergePendingRow>> GetPendingQcInterviewAIMerge();
+        Task<QcInterviewAIMergePendingRow> GetPendingQcInterviewAIMergeById(int interviewid);
         Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null);
         Task<bool> SaveAiContradictionDetails(int qcEvaluationId, string contradictionJson = null);
+        Task<QcInterviewAIMergePendingRow> CheckForAiContradiction(int qcEvaluationId);
         Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId);
         Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);
         Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model);
@@ -312,6 +315,7 @@ namespace Risebird.Repository.Interface
         Task SaveZohoMeetingParticipantDetails(List<ZohoParticipantList> _participantlist);
         Task<bool> UpdateTranscriptSummary(int interviewId, string transcriptSummary = null);
         Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId);
+        Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId);
         Task<int> GetAIInterviewVideoCount(string sessionId);
     }
 }
