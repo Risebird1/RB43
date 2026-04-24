@@ -14,6 +14,8 @@
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
     bool canDelete = profileName == "Admin" || profileName == "SupportAdmin";
+    bool canDrop = canDelete || profileName == "HR" || profileName == "SeniorHR"
+                || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement";
 
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selEmail)
                    || !string.IsNullOrEmpty(selFitment) || !string.IsNullOrEmpty(selDateFrom)
@@ -146,6 +148,49 @@
     .mgm-info-row .value#mgmCompany { display:block; }
     .employed-yes { color:#198754; font-weight:600; }
     .employed-no { color:#dc3545; font-weight:600; }
+
+    .btn-history { font-size:11px; padding:2px 6px; line-height:1.4; flex-shrink:0; }
+
+    .history-timeline { list-style:none; padding:0; margin:0; }
+    .history-timeline li { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid #f0f0f0; align-items:flex-start; }
+    .history-timeline li:last-child { border-bottom:none; }
+    .ht-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+    .ht-dot.open { background:#ffc107; } .ht-dot.inprogress { background:#0d6efd; }
+    .ht-dot.verified { background:#198754; } .ht-dot.closed { background:#6c757d; }
+    .ht-dot.resumeupload { background:#0dcaf0; } .ht-dot.resumeanalysis { background:#fd7e14; }
+    .ht-dot.agassignment { background:#6f42c1; } .ht-dot.profiledropped { background:#dc3545; }
+    .ht-dot.recordcreated { background:#20c997; }
+    .ht-dot.magchange { background:#e67e22; }
+    .ht-body { flex:1; } .ht-transition { font-size:13px; font-weight:600; color:#212529; }
+    .ht-meta { font-size:11.5px; color:#6c757d; margin-top:2px; }
+
+    #historyModal.modal { z-index:1080; }
+    #historyModal .modal-dialog { margin:0.75rem auto; max-width:560px; }
+    #historyModal .modal-content { font-family:'Roboto',sans-serif; border:none; border-radius:10px; overflow:hidden; box-shadow:0 16px 48px rgba(15,23,42,0.12); }
+    #historyModal .hm-header { background:linear-gradient(165deg,#eef2f7 0%,#e2e8f0 45%,#dce4ed 100%); border-bottom:1px solid #cbd5e1; padding:1rem 1.25rem; }
+    #historyModal .hm-eyebrow { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin:0 0 0.35rem 0; }
+    #historyModal .hm-title { font-size:17px; font-weight:700; color:#334155; line-height:1.25; margin:0; }
+    #historyModal .hm-title i { color:#475569; opacity:0.9; }
+    #historyModal #historyModalSubject { font-size:12px; color:#64748b; line-height:1.4; display:block; margin-top:0.35rem; }
+    #historyModal .hm-body { background:#f1f5f9; padding:0.75rem 1rem; font-size:14px; color:#334155; max-height:min(420px,calc(100vh - 14rem)); overflow-y:auto; }
+    #historyModal .history-timeline li { padding:12px 14px; margin-bottom:8px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
+    #historyModal .history-timeline li:last-child { margin-bottom:0; }
+    #historyModal .ht-transition { font-size:14px; color:#334155; }
+    #historyModal .ht-meta { font-size:12px; color:#64748b; margin-top:6px; }
+    #historyModal .hm-footer { background:#fff; border-top:1px solid #e2e8f0; padding:0.5rem 1rem; }
+    #historyModal .hm-footer-btn { font-size:12px; font-weight:600; padding:5px 14px; border-radius:6px; color:#475569; background:#fff; border:1px solid #cbd5e1; }
+    #historyModal .hm-footer-btn:hover { background:#f1f5f9; border-color:#94a3b8; color:#1e293b; }
+
+    .mag-edit-wrap { display:inline-flex; align-items:center; gap:4px; position:relative; }
+    .mag-edit-btn { background:none; border:none; color:#6c757d; cursor:pointer; padding:2px 4px; font-size:12px; }
+    .mag-edit-btn:hover { color:#0d6efd; }
+    .mag-dropdown-container { position:absolute; top:100%; left:0; z-index:1060; width:350px; background:#fff; border:1px solid #dee2e6; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.12); display:none; }
+    .mag-dropdown-container.open { display:block; }
+    .mag-dropdown-search { width:100%; border:none; border-bottom:1px solid #dee2e6; padding:8px 12px; font-size:12px; outline:none; border-radius:8px 8px 0 0; }
+    .mag-dropdown-list { max-height:200px; overflow-y:auto; margin:0; padding:4px 0; list-style:none; }
+    .mag-dropdown-list li { padding:6px 12px; cursor:pointer; font-size:12px; }
+    .mag-dropdown-list li:hover { background:#e9ecef; }
+    .mag-dropdown-list li.selected { background:#0d6efd; color:#fff; }
 </style>
 
 <div id="loadingOverlay">
@@ -316,7 +361,7 @@
                                                                 data-record-id="@r.Id">
                                                             <i class="fas fa-bars me-1"></i>Manage
                                                         </button>
-                                                        @if (r.InterviewerProfileId.HasValue && canDelete)
+                                                        @if (r.InterviewerProfileId.HasValue && canDrop)
                                                         {
                                                             <button type="button" title="Drop profile — mark interviewer unavailable"
                                                                     class="btn btn-warning btn-sm btn-drop-profile"
@@ -419,7 +464,16 @@
                             <div class="mgm-meta">
                                 <span><strong>Name:</strong> <span id="mgmName"></span></span><br/>
                                 <span><strong>Job Title:</strong> <span id="mgmJobTitle"></span></span><br/>
-                                <span><strong>MAG:</strong> <span id="mgmMag"></span></span><br/>
+                                <span><strong>MAG:</strong>
+                                    <span class="mag-edit-wrap">
+                                        <span id="mgmMag"></span>
+                                        <button type="button" class="mag-edit-btn" id="btnEditMag" title="Change MAG"><i class="fas fa-pencil-alt"></i></button>
+                                        <div class="mag-dropdown-container" id="magDropdownContainer">
+                                            <input type="text" class="mag-dropdown-search" id="magSearchInput" placeholder="Search MAG..." autocomplete="off" />
+                                            <ul class="mag-dropdown-list" id="magDropdownList"></ul>
+                                        </div>
+                                    </span>
+                                </span><br/>
                                 <span><strong>Slots/Day:</strong> <span id="mgmSlots"></span></span><br/>
                                 <span><strong>Time Frame:</strong> <span id="mgmTimeFrame"></span></span>
                             </div>
@@ -496,8 +550,35 @@
             </div>
 
             <div class="modal-footer mgm-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <button type="button" class="btn btn-sm btn-refresh-manage" id="btnRefreshManage"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-refresh-manage" id="btnRefreshManage"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary btn-history" id="btnViewHistory"><i class="fas fa-history me-1"></i>History</button>
+                </div>
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- History Modal -->
+<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header hm-header border-0 align-items-start">
+                <div class="min-w-0 flex-grow-1 pe-2">
+                    <p class="hm-eyebrow">Audit trail</p>
+                    <h2 class="hm-title mb-0"><i class="fas fa-history me-2"></i>Record history</h2>
+                    <small class="text-muted" id="historyModalSubject"></small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body hm-body pt-3">
+                <div class="text-center py-4" id="historyLoading"><i class="fas fa-spinner fa-spin me-2"></i>Loading history...</div>
+                <ul class="history-timeline mb-0" id="historyList" style="display:none"></ul>
+                <div class="text-center py-4" id="historyEmpty" style="display:none"><i class="fas fa-inbox me-2"></i>No history recorded yet.</div>
+            </div>
+            <div class="modal-footer hm-footer border-0">
+                <button type="button" class="hm-footer-btn" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -610,13 +691,32 @@
         $('#resumeUploadArea').hide();
         $('#resumeFileInput').val('');
         $('#uploadProgress, #uploadResult').hide();
+        $('#magDropdownContainer').removeClass('open');
+    }
+
+    function aiPassed(r) {
+        if (r.resumeAIAnalysisCompleted !== true) return false;
+        try {
+            var p = JSON.parse(r.resumeAIAnalysisResult);
+            return p && p.verdict && p.verdict.toLowerCase().indexOf('yes') !== -1;
+        } catch(e) { return false; }
     }
 
     function syncPipeline(r) {
+        var verdictPositive = false;
         if (r.resumeAIAnalysisCompleted === true) {
             var html = r.resumeAIAnalysisResult || 'Analysis complete.';
-            try { var p = JSON.parse(r.resumeAIAnalysisResult); html = '<strong>Verdict:</strong> ' + (p.verdict||'—') + ' | <strong>Score:</strong> ' + (p.fitmentScore||'—') + '<br/>' + (p.completeFitmentAnalysis||''); } catch(e){}
-            markStep(1, 'completed', html);
+            try {
+                var p = JSON.parse(r.resumeAIAnalysisResult);
+                html = '<strong>Verdict:</strong> ' + (p.verdict||'—') + ' | <strong>Score:</strong> ' + (p.fitmentScore||'—') + '<br/>' + (p.completeFitmentAnalysis||'');
+                verdictPositive = p && p.verdict && p.verdict.toLowerCase().indexOf('yes') !== -1;
+            } catch(e){}
+            if (verdictPositive) {
+                markStep(1, 'completed', html);
+            } else {
+                markStep(1, 'failed', html + '<br/><span class="text-danger" style="font-size:11px;"><strong>Fitment negative — next step is blocked.</strong></span>');
+                $('#btnAnalyzeResume').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed');
+            }
         } else if (!r.hasResumeLink && !r.hasProfileResumeLink) {
             $('#step1Subtitle').html('No resume available for analysis. <strong>Upload a resume to proceed.</strong>');
             $('#btnAnalyzeResume').prop('disabled', true);
@@ -625,11 +725,15 @@
 
         if (r.assessmentGroupId && r.assessmentGroupId > 0) {
             markStep(2, 'completed', 'Assigned to ' + (r.assessmentGroupName || 'AG #' + r.assessmentGroupId) + (r.assessmentGroupAssignedAt ? ' on ' + r.assessmentGroupAssignedAt : ''));
+        } else if (r.resumeAIAnalysisCompleted === true && !verdictPositive) {
+            $('#step2Subtitle').html('<span class="text-danger">Resume fitment analysis was negative. Cannot assign AG.</span>');
+            $('#step2Card').addClass('disabled');
+            $('#btnAssignAG').prop('disabled', true);
         } else if (!r.interviewerProfileId) {
             $('#step2Subtitle').html('<span class="text-danger">Sender is not a known interviewer in the system. Cannot assign AG.</span>');
             $('#btnAssignAG').prop('disabled', true);
         } else if (!r.resolvedAssessmentGroupId) {
-            $('#step2Subtitle').html('<span class="text-warning">No assessment group found for MAG: <strong>' + (r.magName || '—') + '</strong>. Check MAG name in MasterAssessmentGroup table.</span>');
+            $('#step2Subtitle').html('<span class="text-warning">No assessment group found for MAG: <strong>' + (r.magName || '—') + '</strong>. Check MAG name or use the edit button to change it.</span>');
             $('#btnAssignAG').prop('disabled', true);
         }
     }
@@ -705,9 +809,17 @@
                 if (res.success) {
                     var h='<strong>Verdict:</strong> '+(res.verdict||'—')+' | <strong>Score:</strong> '+(res.fitmentScore||'—');
                     if(res.completeFitmentAnalysis) h+='<br/><div class="mt-1" style="white-space:pre-wrap;">'+res.completeFitmentAnalysis+'</div>';
-                    markStep(1,'completed',h);
                     if(currentRecord){currentRecord.resumeAIAnalysisCompleted=true;currentRecord.resumeAIAnalysisResult=res.analysisResult;}
-                    if(res.isPositiveVerdict) updateStatusBadge('Verified');
+                    if (res.isPositiveVerdict) {
+                        markStep(1,'completed',h);
+                        updateStatusBadge('Verified');
+                    } else {
+                        markStep(1,'failed', h + '<br/><span class="text-danger" style="font-size:11px;"><strong>Fitment negative — next step is blocked.</strong></span>');
+                        btn.prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed');
+                        $('#step2Subtitle').html('<span class="text-danger">Resume fitment analysis was negative. Cannot assign AG.</span>');
+                        $('#step2Card').addClass('disabled');
+                        $('#btnAssignAG').prop('disabled', true);
+                    }
                 } else {
                     var errHtml = res.error || 'Analysis failed.';
                     if (res.needsUpload) {
@@ -742,5 +854,143 @@
     });
 
     $('#btnRefreshManage').on('click', function () { if (currentRecordId) { $('#mgmLoading').show(); $('#mgmEmailContext').hide(); resetPipeline(); loadRecordDetails(currentRecordId); } });
+
+    /* ── MAG searchable dropdown ───────────────────────────────────── */
+    var allMags = [];
+    var magsLoaded = false;
+
+    function loadMags(callback) {
+        if (magsLoaded) { if (callback) callback(); return; }
+        $.ajax({
+            url: '@Url.Action("GetAllMags", "InterviewerAvailability")', type: 'GET',
+            success: function (res) {
+                if (res.success && res.data) { allMags = res.data; magsLoaded = true; }
+                if (callback) callback();
+            }
+        });
+    }
+
+    $('#btnEditMag').on('click', function (e) {
+        e.stopPropagation();
+        var $dd = $('#magDropdownContainer');
+        if ($dd.hasClass('open')) { $dd.removeClass('open'); return; }
+        loadMags(function () {
+            renderMagList('');
+            $dd.addClass('open');
+            $('#magSearchInput').val('').focus();
+        });
+    });
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.mag-edit-wrap').length) $('#magDropdownContainer').removeClass('open');
+    });
+
+    $('#magSearchInput').on('input', function () { renderMagList($(this).val()); });
+
+    function renderMagList(filter) {
+        var $list = $('#magDropdownList').empty();
+        var lf = (filter || '').toLowerCase();
+        var currentMag = currentRecord ? (currentRecord.magName || '') : '';
+        $.each(allMags, function (_, m) {
+            var display = m.magName + (m.assessmentGroupName ? ' → ' + m.assessmentGroupName : '');
+            if (lf && display.toLowerCase().indexOf(lf) === -1) return;
+            var $li = $('<li>').text(display).data('mag', m);
+            if (m.magName === currentMag) $li.addClass('selected');
+            $list.append($li);
+        });
+    }
+
+    $(document).on('click', '#magDropdownList li', function () {
+        var m = $(this).data('mag');
+        if (!m || !currentRecordId) return;
+        var oldMag = currentRecord ? (currentRecord.magName || '') : '';
+        if (m.magName === oldMag) { $('#magDropdownContainer').removeClass('open'); return; }
+
+        $.ajax({
+            url: '@Url.Action("SaveMagOverride", "InterviewerAvailability")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, oldValue: oldMag, newValue: m.magName },
+            success: function (res) {
+                if (res.success) {
+                    $('#mgmMag').text(m.magName + (m.assessmentGroupName ? ' \u2192 ' + m.assessmentGroupName : ''));
+                    if (currentRecord) { currentRecord.magName = m.magName; currentRecord.resolvedAssessmentGroupId = m.assessmentGroupId; currentRecord.assessmentGroupName = m.assessmentGroupName; }
+                    if (m.assessmentGroupId > 0) {
+                        $('#step2Subtitle').html('Maps interviewer to the assessment group and sends notification');
+                        if (!$('#step2Card').hasClass('completed') && aiPassed(currentRecord)) { $('#btnAssignAG').prop('disabled', false); $('#step2Card').removeClass('disabled'); }
+                    }
+                } else { alert(res.error || 'Failed to update MAG.'); }
+                $('#magDropdownContainer').removeClass('open');
+            }
+        });
+    });
+
+    /* ── History modal ───────────────────────────────────────────────── */
+    var eventLabels = {
+        'StatusChange': { icon: 'fas fa-sync-alt', color: '#6c757d', label: 'Status changed' },
+        'ResumeUpload': { icon: 'fas fa-upload', color: '#0dcaf0', label: 'Resume uploaded' },
+        'ResumeAnalysis': { icon: 'fas fa-robot', color: '#fd7e14', label: 'Resume analyzed' },
+        'AGAssignment': { icon: 'fas fa-user-plus', color: '#6f42c1', label: 'Assigned to AG' },
+        'ProfileDropped': { icon: 'fas fa-user-slash', color: '#dc3545', label: 'Profile dropped' },
+        'RecordCreated': { icon: 'fas fa-plus-circle', color: '#20c997', label: 'Record created' },
+        'MagChange': { icon: 'fas fa-pencil-alt', color: '#e67e22', label: 'MAG changed' }
+    };
+
+    function openHistoryModal(recordId) {
+        if (!recordId) return;
+        $('#historyModalSubject').text('Record #' + recordId);
+        $('#historyLoading').show(); $('#historyList').hide().empty(); $('#historyEmpty').hide();
+
+        var modalEl = document.getElementById('historyModal');
+        var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        $(modalEl).one('shown.bs.modal', function () {
+            var backs = document.querySelectorAll('.modal-backdrop.show');
+            if (backs.length > 1) backs[backs.length - 1].style.zIndex = '1075';
+        });
+        modal.show();
+
+        $.ajax({
+            url: '@Url.Action("GetHistory", "InterviewerAvailability")',
+            type: 'GET', data: { id: recordId },
+            success: function (data) {
+                $('#historyLoading').hide();
+                if (!data || data.length === 0) { $('#historyEmpty').show(); return; }
+                var $ul = $('#historyList');
+                $.each(data, function (_, h) {
+                    var cfg = eventLabels[h.eventType] || eventLabels['StatusChange'];
+                    var dotCls = h.eventType.toLowerCase();
+                    if (h.eventType === 'StatusChange') dotCls = (h.toValue || 'open').toLowerCase();
+
+                    var arrow;
+                    if (h.eventType === 'RecordCreated') {
+                        arrow = '<span class="text-muted">Record created as </span><strong>' + h.toValue + '</strong>';
+                    } else if (h.eventType === 'ResumeUpload') {
+                        arrow = '<span class="text-muted">Uploaded: </span><strong>' + h.toValue + '</strong>';
+                    } else if (h.fromValue === '—' || !h.fromValue) {
+                        arrow = '<strong>' + h.toValue + '</strong>';
+                    } else {
+                        arrow = '<strong>' + h.fromValue + '</strong>'
+                            + ' <i class="fas fa-long-arrow-alt-right mx-1 text-muted" style="font-size:10px"></i> '
+                            + '<strong>' + h.toValue + '</strong>';
+                    }
+
+                    $ul.append(
+                        '<li><span class="ht-dot ' + dotCls + '"></span>'
+                        + '<div class="ht-body"><div class="ht-transition">'
+                        + '<i class="' + cfg.icon + ' me-2" style="font-size:11px;color:' + cfg.color + '" title="' + cfg.label + '"></i>'
+                        + arrow + '</div>'
+                        + '<div class="ht-meta"><i class="fas fa-user me-1"></i>' + h.changedBy
+                        + ' &nbsp;&middot;&nbsp; <i class="fas fa-clock me-1"></i>' + h.changedAt
+                        + '</div></div></li>'
+                    );
+                });
+                $ul.show();
+            },
+            error: function () {
+                $('#historyLoading').hide();
+                $('#historyEmpty').text('Could not load history. Please try again.').show();
+            }
+        });
+    }
+
+    $('#btnViewHistory').on('click', function () { openHistoryModal(currentRecordId); });
 </script>
 }
