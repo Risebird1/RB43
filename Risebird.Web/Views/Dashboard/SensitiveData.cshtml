@@ -324,7 +324,7 @@
 
     /* QC interview detail modal */
     #qcInterviewDetailModal .modal-dialog {
-        max-width: 880px;
+        max-width: 1080px!important;
     }
 
     #qcInterviewDetailModal .qc-interview-detail-body {
@@ -378,7 +378,7 @@
     #qcInterviewDetailModal .qc-interview-detail-cell {
         display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: center!important;
     gap: 12px;
     min-width: 0;
     padding: 10px 14px;
@@ -559,6 +559,12 @@
     #uploadAiTranscriptModal .qc-upload-modal-btn .fa,
     #uploadAiTranscriptModal .qc-upload-modal-btn .fas {
         font-size: 14px;
+    }
+
+    @@media (max-width: 767px) {
+     #qcInterviewDetailModal .qc-interview-detail-row {
+    display: contents!important;
+        }
     }
 </style>
 <input type="hidden" id="txtrate" value="@Model.Count()" />
