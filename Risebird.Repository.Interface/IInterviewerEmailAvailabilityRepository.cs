@@ -7,6 +7,9 @@ namespace Risebird.Repository.Interface
 {
     public interface IInterviewerEmailAvailabilityRepository
     {
+        Task InsertHistoryAsync(int recordId, string eventType, string fromValue, string toValue, string changedBy);
+        Task<List<InterviewerEmailAvailabilityHistory>> GetHistoryAsync(int recordId);
+
         Task<int> InsertEmailAvailabilityAsync(InterviewerEmailAvailability record);
 
         Task<List<InterviewerEmailAvailabilityVM>> GetEmailAvailabilityAsync(

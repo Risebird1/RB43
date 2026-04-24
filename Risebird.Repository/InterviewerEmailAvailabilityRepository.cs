@@ -253,5 +253,38 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task InsertHistoryAsync(int recordId, string eventType, string fromValue, string toValue, string changedBy)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync("usp_InsertInterviewerEmailAvailabilityHistory",
+                    new { RecordId = recordId, EventType = eventType, FromValue = fromValue, ToValue = toValue, ChangedBy = changedBy },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        public async Task<List<InterviewerEmailAvailabilityHistory>> GetHistoryAsync(int recordId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var results = await con.QueryAsync<InterviewerEmailAvailabilityHistory>(
+                    "usp_GetInterviewerEmailAvailabilityHistory",
+                    new { RecordId = recordId },
+                    commandType: CommandType.StoredProcedure);
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<InterviewerEmailAvailabilityHistory>();
+            }
+        }
     }
 }

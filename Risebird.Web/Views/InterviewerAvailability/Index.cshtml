@@ -146,6 +146,37 @@
     .mgm-info-row .value#mgmCompany { display:block; }
     .employed-yes { color:#198754; font-weight:600; }
     .employed-no { color:#dc3545; font-weight:600; }
+
+    .btn-history { font-size:11px; padding:2px 6px; line-height:1.4; flex-shrink:0; }
+
+    .history-timeline { list-style:none; padding:0; margin:0; }
+    .history-timeline li { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid #f0f0f0; align-items:flex-start; }
+    .history-timeline li:last-child { border-bottom:none; }
+    .ht-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+    .ht-dot.open { background:#ffc107; } .ht-dot.inprogress { background:#0d6efd; }
+    .ht-dot.verified { background:#198754; } .ht-dot.closed { background:#6c757d; }
+    .ht-dot.resumeupload { background:#0dcaf0; } .ht-dot.resumeanalysis { background:#fd7e14; }
+    .ht-dot.agassignment { background:#6f42c1; } .ht-dot.profiledropped { background:#dc3545; }
+    .ht-dot.recordcreated { background:#20c997; }
+    .ht-body { flex:1; } .ht-transition { font-size:13px; font-weight:600; color:#212529; }
+    .ht-meta { font-size:11.5px; color:#6c757d; margin-top:2px; }
+
+    #historyModal.modal { z-index:1080; }
+    #historyModal .modal-dialog { margin:0.75rem auto; max-width:560px; }
+    #historyModal .modal-content { font-family:'Roboto',sans-serif; border:none; border-radius:10px; overflow:hidden; box-shadow:0 16px 48px rgba(15,23,42,0.12); }
+    #historyModal .hm-header { background:linear-gradient(165deg,#eef2f7 0%,#e2e8f0 45%,#dce4ed 100%); border-bottom:1px solid #cbd5e1; padding:1rem 1.25rem; }
+    #historyModal .hm-eyebrow { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin:0 0 0.35rem 0; }
+    #historyModal .hm-title { font-size:17px; font-weight:700; color:#334155; line-height:1.25; margin:0; }
+    #historyModal .hm-title i { color:#475569; opacity:0.9; }
+    #historyModal #historyModalSubject { font-size:12px; color:#64748b; line-height:1.4; display:block; margin-top:0.35rem; }
+    #historyModal .hm-body { background:#f1f5f9; padding:0.75rem 1rem; font-size:14px; color:#334155; max-height:min(420px,calc(100vh - 14rem)); overflow-y:auto; }
+    #historyModal .history-timeline li { padding:12px 14px; margin-bottom:8px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
+    #historyModal .history-timeline li:last-child { margin-bottom:0; }
+    #historyModal .ht-transition { font-size:14px; color:#334155; }
+    #historyModal .ht-meta { font-size:12px; color:#64748b; margin-top:6px; }
+    #historyModal .hm-footer { background:#fff; border-top:1px solid #e2e8f0; padding:0.5rem 1rem; }
+    #historyModal .hm-footer-btn { font-size:12px; font-weight:600; padding:5px 14px; border-radius:6px; color:#475569; background:#fff; border:1px solid #cbd5e1; }
+    #historyModal .hm-footer-btn:hover { background:#f1f5f9; border-color:#94a3b8; color:#1e293b; }
 </style>
 
 <div id="loadingOverlay">
@@ -496,8 +527,35 @@
             </div>
 
             <div class="modal-footer mgm-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <button type="button" class="btn btn-sm btn-refresh-manage" id="btnRefreshManage"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-refresh-manage" id="btnRefreshManage"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary btn-history" id="btnViewHistory"><i class="fas fa-history me-1"></i>History</button>
+                </div>
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- History Modal -->
+<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header hm-header border-0 align-items-start">
+                <div class="min-w-0 flex-grow-1 pe-2">
+                    <p class="hm-eyebrow">Audit trail</p>
+                    <h2 class="hm-title mb-0"><i class="fas fa-history me-2"></i>Record history</h2>
+                    <small class="text-muted" id="historyModalSubject"></small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body hm-body pt-3">
+                <div class="text-center py-4" id="historyLoading"><i class="fas fa-spinner fa-spin me-2"></i>Loading history...</div>
+                <ul class="history-timeline mb-0" id="historyList" style="display:none"></ul>
+                <div class="text-center py-4" id="historyEmpty" style="display:none"><i class="fas fa-inbox me-2"></i>No history recorded yet.</div>
+            </div>
+            <div class="modal-footer hm-footer border-0">
+                <button type="button" class="hm-footer-btn" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -742,5 +800,74 @@
     });
 
     $('#btnRefreshManage').on('click', function () { if (currentRecordId) { $('#mgmLoading').show(); $('#mgmEmailContext').hide(); resetPipeline(); loadRecordDetails(currentRecordId); } });
+
+    /* ── History modal ───────────────────────────────────────────────── */
+    var eventLabels = {
+        'StatusChange': { icon: 'fas fa-sync-alt', color: '#6c757d', label: 'Status changed' },
+        'ResumeUpload': { icon: 'fas fa-upload', color: '#0dcaf0', label: 'Resume uploaded' },
+        'ResumeAnalysis': { icon: 'fas fa-robot', color: '#fd7e14', label: 'Resume analyzed' },
+        'AGAssignment': { icon: 'fas fa-user-plus', color: '#6f42c1', label: 'Assigned to AG' },
+        'ProfileDropped': { icon: 'fas fa-user-slash', color: '#dc3545', label: 'Profile dropped' },
+        'RecordCreated': { icon: 'fas fa-plus-circle', color: '#20c997', label: 'Record created' }
+    };
+
+    function openHistoryModal(recordId) {
+        if (!recordId) return;
+        $('#historyModalSubject').text('Record #' + recordId);
+        $('#historyLoading').show(); $('#historyList').hide().empty(); $('#historyEmpty').hide();
+
+        var modalEl = document.getElementById('historyModal');
+        var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+        $(modalEl).one('shown.bs.modal', function () {
+            var backs = document.querySelectorAll('.modal-backdrop.show');
+            if (backs.length > 1) backs[backs.length - 1].style.zIndex = '1075';
+        });
+        modal.show();
+
+        $.ajax({
+            url: '@Url.Action("GetHistory", "InterviewerAvailability")',
+            type: 'GET', data: { id: recordId },
+            success: function (data) {
+                $('#historyLoading').hide();
+                if (!data || data.length === 0) { $('#historyEmpty').show(); return; }
+                var $ul = $('#historyList');
+                $.each(data, function (_, h) {
+                    var cfg = eventLabels[h.eventType] || eventLabels['StatusChange'];
+                    var dotCls = h.eventType.toLowerCase();
+                    if (h.eventType === 'StatusChange') dotCls = (h.toValue || 'open').toLowerCase();
+
+                    var arrow;
+                    if (h.eventType === 'RecordCreated') {
+                        arrow = '<span class="text-muted">Record created as </span><strong>' + h.toValue + '</strong>';
+                    } else if (h.eventType === 'ResumeUpload') {
+                        arrow = '<span class="text-muted">Uploaded: </span><strong>' + h.toValue + '</strong>';
+                    } else if (h.fromValue === '—' || !h.fromValue) {
+                        arrow = '<strong>' + h.toValue + '</strong>';
+                    } else {
+                        arrow = '<strong>' + h.fromValue + '</strong>'
+                            + ' <i class="fas fa-long-arrow-alt-right mx-1 text-muted" style="font-size:10px"></i> '
+                            + '<strong>' + h.toValue + '</strong>';
+                    }
+
+                    $ul.append(
+                        '<li><span class="ht-dot ' + dotCls + '"></span>'
+                        + '<div class="ht-body"><div class="ht-transition">'
+                        + '<i class="' + cfg.icon + ' me-2" style="font-size:11px;color:' + cfg.color + '" title="' + cfg.label + '"></i>'
+                        + arrow + '</div>'
+                        + '<div class="ht-meta"><i class="fas fa-user me-1"></i>' + h.changedBy
+                        + ' &nbsp;&middot;&nbsp; <i class="fas fa-clock me-1"></i>' + h.changedAt
+                        + '</div></div></li>'
+                    );
+                });
+                $ul.show();
+            },
+            error: function () {
+                $('#historyLoading').hide();
+                $('#historyEmpty').text('Could not load history. Please try again.').show();
+            }
+        });
+    }
+
+    $('#btnViewHistory').on('click', function () { openHistoryModal(currentRecordId); });
 </script>
 }
