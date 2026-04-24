@@ -200,7 +200,10 @@ namespace Risebird.Web.Controllers
                 return Json(new { success = false, error = "Invalid status update request." });
 
             var changedBy = HttpContext.Session.GetString("email").Trim('"');
+            var record = await _repository.GetEmailAvailabilityByIdAsync(id);
+            string fromStatus = record?.Status ?? "—";
             var ok = await _repository.UpdateEmailAvailabilityStatusAsync(id, status, changedBy);
+            if (ok) await _repository.InsertHistoryAsync(id, "StatusChange", fromStatus, status, changedBy);
             return Json(new { success = ok, status, error = ok ? null : "Could not update status." });
         }
 
@@ -234,7 +237,8 @@ namespace Risebird.Web.Controllers
                 return Json(new { success = false, error = "Not signed in." });
 
             var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
-            if (profileName != "Admin" && profileName != "SupportAdmin")
+            var dropAllowed = new[] { "Admin", "SupportAdmin", "HR", "SeniorHR", "InterviewerManagement", "SeniorInterviewerManagement" };
+            if (!Array.Exists(dropAllowed, p => p == profileName))
                 return Json(new { success = false, error = "You are not authorised to drop interviewer profiles." });
 
             try
@@ -251,7 +255,10 @@ namespace Risebird.Web.Controllers
 
                 if (ok)
                 {
+                    string fromStatus = record.Status ?? "Open";
                     await _repository.UpdateEmailAvailabilityStatusAsync(id, "Closed", modifiedBy);
+                    await _repository.InsertHistoryAsync(id, "ProfileDropped", "Active", "Dropped (Isavailable=4)", modifiedBy);
+                    await _repository.InsertHistoryAsync(id, "StatusChange", fromStatus, "Closed", modifiedBy);
                 }
 
                 return Json(new
@@ -309,6 +316,12 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, error = "Upload failed — could not retrieve blob URL." });
 
                 var ok = await _repository.UpdateResumeLinkAsync(id, uploadedUrl);
+
+                if (ok)
+                {
+                    var uploader = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                    await _repository.InsertHistoryAsync(id, "ResumeUpload", null, resumeFile.FileName, uploader);
+                }
 
                 return Json(new
                 {
@@ -413,6 +426,15 @@ namespace Risebird.Web.Controllers
                 var ok = await _repository.UpdateEmailAvailabilityVerificationAsync(
                     id, employmentVerified: null, resumeAIAnalysisCompleted: true,
                     resumeAIAnalysisResult: analysisJson, newStatus: newStatus);
+
+                if (ok)
+                {
+                    var analyzer = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                    await _repository.InsertHistoryAsync(id, "ResumeAnalysis", null,
+                        $"Verdict: {analysis?.verdict}, Score: {analysis?.fitmentScore}", analyzer);
+                    if (record.Status != newStatus)
+                        await _repository.InsertHistoryAsync(id, "StatusChange", record.Status ?? "Open", newStatus, analyzer);
+                }
 
                 return Json(new
                 {
@@ -535,6 +557,8 @@ namespace Risebird.Web.Controllers
                 }
 
                 string agName = record.AssessmentGroupName ?? "Assessment Group #" + agId;
+                await _repository.InsertHistoryAsync(id, "AGAssignment", null, agName, assignedBy);
+
                 return Json(new
                 {
                     success = true,
@@ -547,6 +571,78 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── MAG dropdown + override ───────────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllMags()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var mags = await _repository.GetAllMasterAssessmentGroupsAsync();
+                return Json(new { success = true, data = mags });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveMagOverride(int id, string oldValue, string newValue)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            if (string.IsNullOrWhiteSpace(newValue))
+                return Json(new { success = false, error = "MAG name cannot be empty." });
+
+            try
+            {
+                var changedBy = HttpContext.Session.GetString("email").Trim('"');
+                var ok = await _repository.UpdateMagNameAsync(id, newValue.Trim());
+                if (ok)
+                    await _repository.InsertHistoryAsync(id, "MagChange", oldValue ?? "—", newValue.Trim(), changedBy);
+
+                return Json(new { success = ok, error = ok ? null : "Failed to update MAG name." });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── History (JSON) ──────────────────────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetHistory(int id)
+        {
+            try
+            {
+                var history = await _repository.GetHistoryAsync(id);
+                return Json(history.Select(h => new
+                {
+                    h.Id,
+                    h.RecordId,
+                    fromValue = h.FromValue ?? "—",
+                    toValue = h.ToValue ?? "—",
+                    changedBy = h.ChangedBy,
+                    changedAt = h.ChangedAt.ToString("dd MMM yyyy, HH:mm") + " UTC",
+                    eventType = h.EventType ?? "StatusChange"
+                }));
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new object[0]);
             }
         }
 
@@ -616,6 +712,9 @@ namespace Risebird.Web.Controllers
                 };
 
                 var newId = await _repository.InsertEmailAvailabilityAsync(record);
+
+                if (newId > 0)
+                    await _repository.InsertHistoryAsync(newId, "RecordCreated", null, "Open", "Relay.app");
 
                 return Ok(new
                 {
