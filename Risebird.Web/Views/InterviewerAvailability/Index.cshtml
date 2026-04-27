@@ -671,7 +671,7 @@
         $('#mgmCompany').text(r.companyName || '—');
 
         var resumeUrl = r.resumeLink; if (!resumeUrl || resumeUrl === 'None') resumeUrl = r.profileResumeLink;
-        if (resumeUrl && resumeUrl !== 'None') { $('#btnViewResume').attr('href', resumeUrl).show(); } else { $('#btnViewResume').hide(); }
+        if (resumeUrl && resumeUrl !== 'None') { $('#btnViewResume').attr('href', 'https://docs.google.com/gview?url=' + encodeURIComponent(resumeUrl) + '&embedded=false').show(); } else { $('#btnViewResume').hide(); }
         syncPipeline(r);
     }
 
@@ -783,7 +783,7 @@
                 $('#uploadProgress').hide(); $('#btnConfirmUpload').prop('disabled', false);
                 if (res.success) {
                     $('#uploadResult').html('<span class="text-success" style="font-size:11px;"><i class="fas fa-check-circle me-1"></i>Uploaded successfully.</span>').show();
-                    $('#btnViewResume').attr('href', res.resumeLink).show();
+                    $('#btnViewResume').attr('href', 'https://docs.google.com/gview?url=' + encodeURIComponent(res.resumeLink) + '&embedded=false').show();
                     $('#btnAnalyzeResume').prop('disabled', false);
                     $('#step1Subtitle').text('Resume uploaded. Click Analyze Resume to proceed.');
                     if (currentRecord) { currentRecord.resumeLink = res.resumeLink; currentRecord.hasResumeLink = true; }

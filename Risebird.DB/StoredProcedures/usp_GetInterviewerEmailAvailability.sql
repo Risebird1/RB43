@@ -33,16 +33,20 @@ BEGIN
         ip.CompanyName,
         ip.ResumeLink         AS ProfileResumeLink,
         ul.MobileNumber       AS UserMobileNumber,
-        mag.MAGName           AS MasterAssessmentGroupName,
-        ag.AssessmentGroup    AS AssessmentGroupName,
+        magInfo.MAGName       AS MasterAssessmentGroupName,
+        magInfo.AssessmentGroupId AS ResolvedAssessmentGroupId,
+        magInfo.AssessmentGroupName,
         COUNT(*) OVER()       AS TotalCount
     FROM InterviewerEmailAvailability ea
     LEFT JOIN InterviewerProfile ip ON ip.Id = ea.InterviewerProfileId
     LEFT JOIN UserList ul ON ul.id = ea.UserId
-    LEFT JOIN MasterAssessmentGroup mag
-        ON LTRIM(RTRIM(LOWER(mag.MAGName))) = LTRIM(RTRIM(LOWER(ea.MagName)))
-        AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
-    LEFT JOIN AssessmentGroup ag ON ag.id = mag.AssessmentGroupId
+    OUTER APPLY (
+        SELECT TOP 1 mag.MAGName, mag.AssessmentGroupId, ag.AssessmentGroup AS AssessmentGroupName
+        FROM MasterAssessmentGroup mag
+        LEFT JOIN AssessmentGroup ag ON ag.id = mag.AssessmentGroupId
+        WHERE LTRIM(RTRIM(LOWER(mag.MAGName))) = LTRIM(RTRIM(LOWER(ea.MagName)))
+          AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
+    ) magInfo
     WHERE
         (@Status IS NULL OR ea.Status = @Status)
         AND (@SenderEmail IS NULL OR ea.SenderEmail LIKE '%' + @SenderEmail + '%')
