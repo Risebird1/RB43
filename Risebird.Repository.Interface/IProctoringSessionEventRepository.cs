@@ -1,4 +1,5 @@
 using Risebird.Entities.Data;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository.Interface
@@ -7,5 +8,9 @@ namespace Risebird.Repository.Interface
     {
         /// <summary>Inserts one row; returns identity or 0 on failure.</summary>
         Task<long> InsertAsync(ProctoringSessionEvent row);
+
+        Task<int> GetCountByInterviewIdAsync(int interviewId);
+
+        Task<IReadOnlyList<ProctoringSessionEvent>> GetByInterviewIdOrderedAsync(int interviewId);
     }
 }

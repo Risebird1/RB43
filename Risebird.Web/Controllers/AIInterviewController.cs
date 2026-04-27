@@ -53,6 +53,7 @@ namespace Risebird.Web.Controllers
         private readonly IIRFRepository _irfRepository;
         private readonly IOpenAIInterviewerAssistantHelper _openAIAssistantHelper;
         private readonly IProctoringTokenService _proctoringTokenService;
+        private readonly IProctoringSessionEventRepository _proctoringSessionEventRepository;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
@@ -61,7 +62,7 @@ namespace Risebird.Web.Controllers
             ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper,
             IIRFService iRFService, IAWSRekognitionService aWSRekognitionService, ICandidateService candidateService,
             IIRFRepository irfRepository, IOpenAIInterviewerAssistantHelper openAIAssistantHelper,
-            IProctoringTokenService proctoringTokenService)
+            IProctoringTokenService proctoringTokenService, IProctoringSessionEventRepository proctoringSessionEventRepository)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -79,6 +80,7 @@ namespace Risebird.Web.Controllers
             _irfRepository = irfRepository;
             _openAIAssistantHelper = openAIAssistantHelper;
             _proctoringTokenService = proctoringTokenService;
+            _proctoringSessionEventRepository = proctoringSessionEventRepository;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -1718,6 +1720,8 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.AccessType = accessType;
 
+                await SetProctoringEventCountForReportAsync(meetingDetails.InterviewId);
+
                 return View(reportModel);
             }
             else
@@ -1843,9 +1847,49 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.AccessType = accessType;
 
+                await SetProctoringEventCountForReportAsync(meetingDetails.InterviewId);
+
                 return View(reportModel);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ProctoringSessionEvents(Guid seId)
+        {
+            var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
+            if (meetingDetails == null)
+                return NotFound();
+
+            var events = await _proctoringSessionEventRepository.GetByInterviewIdOrderedAsync(meetingDetails.InterviewId);
+            var model = new ProctoringSessionEventsResultViewModel
+            {
+                SessionId = seId,
+                InterviewId = meetingDetails.InterviewId,
+                CandidateName = meetingDetails.candidateName,
+                CandidateEmail = meetingDetails.candidateEmail,
+                Events = events
+            };
+            ViewData["Title"] = "Proctoring session events";
+            return View(model);
+        }
+
+        private async Task SetProctoringEventCountForReportAsync(int interviewId)
+        {
+            try
+            {
+                if (interviewId <= 0)
+                {
+                    ViewBag.ProctoringEventCount = 0;
+                    return;
+                }
+                ViewBag.ProctoringEventCount = await _proctoringSessionEventRepository.GetCountByInterviewIdAsync(interviewId);
+            }
+            catch
+            {
+                ViewBag.ProctoringEventCount = 0;
+            }
+        }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GenerateAIReportPDFFile(Guid seId)
