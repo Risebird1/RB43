@@ -171,6 +171,7 @@ namespace Risebird.Entities.ViewModel
         public string AIResumeScreeningVerdict { get; set; }
         public string AIScreeningResultJsonV2 { get; set; }
         public string AssessmentGroup { get; set; }
+        public bool IsProctoring { get; set; }
 
     }
 }
