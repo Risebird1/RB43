@@ -33,7 +33,7 @@ Begin
  cl.CompanyVideoLink, ulr.EmailId as ChannelOwnerEmail,     
  ulr.MobileNumber as ChannelOwnerMobile,ca.ClientHRAttemptContact,ulcr.MobileNumber as ClientHRAttemptContactMobile,
  cl.LogoLink ,ca.CandidateMasterId as CandidateMasterId, ir.IsAIInterview,
- ir.CandidateIdverification,ir.CandidateVideo,cf.FormURL as ConsentForm
+ ir.CandidateIdverification,ir.CandidateVideo,cf.FormURL as ConsentForm,irf.IsProctoring
  from Candidate ca join irf ir on ca.IRFId=ir.id    
  join CandidatesMaster cm on cm.id=ca.CandidateMasterId    
  join Client cl on cl.id = ir.ClientId     
