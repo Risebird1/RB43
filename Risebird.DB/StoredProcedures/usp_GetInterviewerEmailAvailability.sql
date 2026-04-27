@@ -14,6 +14,9 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    IF @Page < 1 SET @Page = 1;
+    IF @PageSize < 1 SET @PageSize = 25;
+
     SELECT
         ea.Id, ea.SenderEmail, ea.UserId, ea.InterviewerProfileId,
         ea.Subject, ea.MailContent, ea.ReceivedAt,
@@ -36,7 +39,11 @@ BEGIN
         magInfo.MAGName       AS MasterAssessmentGroupName,
         magInfo.AssessmentGroupId AS ResolvedAssessmentGroupId,
         magInfo.AssessmentGroupName,
-        COUNT(*) OVER()       AS TotalCount
+        COUNT(*) OVER()       AS TotalCount,
+        SUM(CASE WHEN ea.Status = 'Open'       THEN 1 ELSE 0 END) OVER() AS OpenCount,
+        SUM(CASE WHEN ea.Status = 'InProgress'  THEN 1 ELSE 0 END) OVER() AS InProgressCount,
+        SUM(CASE WHEN ea.Status = 'Verified'    THEN 1 ELSE 0 END) OVER() AS VerifiedCount,
+        SUM(CASE WHEN ea.Status = 'Closed'      THEN 1 ELSE 0 END) OVER() AS ClosedCount
     FROM InterviewerEmailAvailability ea
     LEFT JOIN InterviewerProfile ip ON ip.Id = ea.InterviewerProfileId
     LEFT JOIN UserList ul ON ul.id = ea.UserId
@@ -53,7 +60,7 @@ BEGIN
         AND (@ResumeFitment IS NULL OR ea.ResumeFitment = @ResumeFitment)
         AND (@DateFrom IS NULL OR ea.ReceivedAt >= @DateFrom)
         AND (@DateTo IS NULL OR ea.ReceivedAt < DATEADD(DAY, 1, @DateTo))
-    ORDER BY ea.ReceivedAt DESC
+    ORDER BY ea.ReceivedAt DESC, ea.Id DESC
     OFFSET (@Page - 1) * @PageSize ROWS
     FETCH NEXT @PageSize ROWS ONLY
 END
