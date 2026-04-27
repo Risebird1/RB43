@@ -424,8 +424,8 @@ a.rb-link:hover {
                                                             <img class="schedule-img" src="../../img/int-img-2.png">
                                                             <div>
 
-                                                                @if(Model.CandidateDetails.IsAIInterview)
-                                                                {
+                                                                @if(Model.CandidateDetails.IsProctoring)
+                                                                {                                                                    @if(Model.CandidateDetails.IsAIInterview){
                                                                     <div id="risebirdProctoringExtPanel" style="margin-bottom:14px;max-width:520px;">
                                                                         <p style="margin:0 0 8px 0;font-size:14px;color:#204065;">Proctored interviews require the <strong>Risebird Proctoring Assistant</strong> Chrome extension.</p>
                                                                         <a style="width:auto;" id="btnInstallRisebirdProctoringExt" href="https://chromewebstore.google.com/detail/risebird-proctoring-assis/lpbnpcnkhmknkgfnnnecahkmpkihglgg?authuser=0&amp;hl=en" target="_blank" rel="noopener noreferrer" class="btn btn-default click_herebtn" style="margin-bottom:10px;display:inline-block;text-decoration:none;line-height:1.4;">
@@ -439,7 +439,8 @@ a.rb-link:hover {
                                                                             <i class="fa fa-check-circle" style="margin-right:6px;"></i>You can join the meeting using the button.
                                                                         </div>
                                                                     </div>
-                                                                    <a id="btn_ai_Interview" role="button"
+                                                                } 
+                                                                <a id="btn_ai_Interview" role="button"
                                                                     class="btn btn-primary click_herebtn disabled"
                                                                     style="text-decoration:none;display:inline;margin-top:0px;padding:10px 35px;line-height:1.4;opacity:0.55;cursor:not-allowed;pointer-events:none;"
                                                                     data-join-url="@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })"
