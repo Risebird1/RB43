@@ -155,7 +155,7 @@
                 extensionReadyFallbackTimer = window.setTimeout(function () {
                     extensionReadyFallbackTimer = null;
                     if (!joinSent) onExtensionReady();
-                }, 2200);
+                }, 5000);
                 document.addEventListener('risebird-proctoring-recording-started', function () {
                     tryStartMonitoring('recording');
                 });
@@ -193,9 +193,9 @@
                 function deferRun() {
                     try {
                         if (typeof window.requestAnimationFrame === 'function') {
-                            window.requestAnimationFrame(function () { window.setTimeout(run, 120); });
+                            window.requestAnimationFrame(function () { window.setTimeout(run, 50); });
                         } else {
-                            window.setTimeout(run, 120);
+                            window.setTimeout(run, 50);
                         }
                     } catch (e2) {
                         run();
