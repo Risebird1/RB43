@@ -8,6 +8,9 @@ namespace Risebird.Repository.Interface
 {
     public interface INaukriOnboardingRepository
     {
+        Task InsertHistoryAsync(int recordId, string eventType, string fromValue, string toValue, string changedBy);
+        Task<List<NaukriOnboardingHistory>> GetHistoryAsync(int recordId);
+
         Task<int> InsertAsync(NaukriProspectiveInterviewer record);
 
         Task<List<NaukriProspectiveInterviewerVM>> GetListAsync(

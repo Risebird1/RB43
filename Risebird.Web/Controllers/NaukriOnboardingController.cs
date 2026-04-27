@@ -170,7 +170,10 @@ namespace Risebird.Web.Controllers
                 return Json(new { success = false, error = "Invalid status." });
 
             var changedBy = HttpContext.Session.GetString("email").Trim('"');
+            var existing = await _repository.GetByIdAsync(id);
             var ok = await _repository.UpdateStatusAsync(id, status, changedBy);
+            if (ok)
+                await _repository.InsertHistoryAsync(id, "StatusChange", existing?.Status ?? "—", status, changedBy);
             return Json(new { success = ok, status });
         }
 
@@ -188,6 +191,8 @@ namespace Risebird.Web.Controllers
                 return Json(new { success = false, error = "Not authorised." });
 
             var ok = await _repository.DeleteAsync(id);
+            if (ok)
+                await _repository.InsertHistoryAsync(id, "Deleted", "—", "Record deleted", profileName);
             return Json(new { success = ok });
         }
 
@@ -287,6 +292,10 @@ namespace Risebird.Web.Controllers
                 var (isExisting, existingUserId, existingProfileId) =
                     await _repository.UpdateResumeParseResultAsync(id, parsedEmail, parsedPhone);
 
+                var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                await _repository.InsertHistoryAsync(id, "ResumeParse", "—",
+                    $"Email: {parsedEmail ?? "N/A"}, Phone: {parsedPhone ?? "N/A"}" + (isExisting ? $" (Existing UserId: {existingUserId})" : " (New)"), user);
+
                 return Json(new
                 {
                     success = true,
@@ -319,6 +328,12 @@ namespace Risebird.Web.Controllers
             try
             {
                 var ok = await _repository.UpdateEmploymentVerificationAsync(id, verified, companyName, isEmployed, details);
+                if (ok)
+                {
+                    var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                    string evSummary = $"Company: {companyName ?? "N/A"}, Employed: {(isEmployed ? "Yes" : "No")}";
+                    await _repository.InsertHistoryAsync(id, "EmploymentVerification", "—", evSummary, user);
+                }
                 return Json(new { success = ok });
             }
             catch (Exception ex)
@@ -388,6 +403,10 @@ namespace Risebird.Web.Controllers
                 string newStatus = isPositive ? "Verified" : "InProgress";
 
                 await _repository.UpdateAIAnalysisAsync(id, true, analysisJson, analysis?.verdict, score, newStatus);
+
+                var aiUser = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                await _repository.InsertHistoryAsync(id, "ResumeAnalysis", "—",
+                    $"Verdict: {analysis?.verdict ?? "N/A"}, Score: {score?.ToString() ?? "N/A"}", aiUser);
 
                 return Json(new
                 {
@@ -536,6 +555,9 @@ namespace Risebird.Web.Controllers
 
                 await _repository.UpdateOnboardingResultAsync(id, userId, profileId, agId, ackSent);
 
+                await _repository.InsertHistoryAsync(id, "Onboarded", "—",
+                    $"UserId: {userId}, AG: {agId}, Ack email: {(ackSent ? "Sent" : "Failed")}", loggedInUser);
+
                 return Json(new
                 {
                     success = true,
@@ -586,6 +608,9 @@ namespace Risebird.Web.Controllers
                     "");
 
                 await _repository.UpdateAckEmailSentAsync(id);
+
+                var ackUser = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                await _repository.InsertHistoryAsync(id, "AckEmailResent", "—", "Acknowledgement email resent", ackUser);
 
                 return Json(new { success = true, message = "Acknowledgement email sent successfully." });
             }
@@ -639,6 +664,10 @@ namespace Risebird.Web.Controllers
                 if (result == null)
                     return Json(new { success = false, error = "Update failed." });
 
+                string eventType = fieldName == "MagName" ? "MagChange"
+                    : fieldName == "ParsedEmail" ? "EmailChange" : "PhoneChange";
+                await _repository.InsertHistoryAsync(id, eventType, oldValue ?? "—", newValue.Trim(), changedBy);
+
                 if (fieldName == "ParsedEmail")
                 {
                     bool isEx = false;
@@ -669,6 +698,33 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Get history for a record ──────────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetHistory(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var history = await _repository.GetHistoryAsync(id);
+                return Json(history.Select(h => new
+                {
+                    h.EventType,
+                    fromValue = h.FromValue ?? "—",
+                    toValue = h.ToValue ?? "—",
+                    changedBy = h.ChangedBy,
+                    changedAt = h.ChangedAt.ToString("dd MMM yyyy, HH:mm")
+                }));
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(Array.Empty<object>());
             }
         }
 
@@ -703,6 +759,9 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, error = "Upload failed." });
 
                 await _repository.UpdateResumeLinkAsync(id, uploadedUrl);
+
+                var uploadUser = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                await _repository.InsertHistoryAsync(id, "ResumeUpload", "—", resumeFile.FileName, uploadUser);
 
                 return Json(new { success = true, resumeLink = uploadedUrl, message = "Resume uploaded." });
             }
@@ -810,6 +869,10 @@ namespace Risebird.Web.Controllers
                 };
 
                 var newId = await _repository.InsertAsync(record);
+
+                if (newId > 0)
+                    await _repository.InsertHistoryAsync(newId, "RecordCreated", "—",
+                        $"Candidate: {record.CandidateName}, MAG: {record.MagName}", "Relay Webhook");
 
                 return Ok(new
                 {
