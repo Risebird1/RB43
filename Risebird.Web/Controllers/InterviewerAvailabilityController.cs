@@ -94,6 +94,10 @@ namespace Risebird.Web.Controllers
                 ViewBag.PageSize      = pageSize;
                 ViewBag.TotalCount    = totalCount;
                 ViewBag.TotalPages    = totalPages;
+                ViewBag.OpenCount     = first?.OpenCount ?? 0;
+                ViewBag.InProgressCount = first?.InProgressCount ?? 0;
+                ViewBag.VerifiedCount = first?.VerifiedCount ?? 0;
+                ViewBag.ClosedCount   = first?.ClosedCount ?? 0;
                 ViewBag.Status        = status        ?? string.Empty;
                 ViewBag.SenderEmail   = senderEmail   ?? string.Empty;
                 ViewBag.ResumeFitment = resumeFitment  ?? string.Empty;
@@ -107,6 +111,7 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
+                ViewBag.OpenCount = 0; ViewBag.InProgressCount = 0; ViewBag.VerifiedCount = 0; ViewBag.ClosedCount = 0;
                 ViewBag.Status = status; ViewBag.SenderEmail = senderEmail; ViewBag.ResumeFitment = resumeFitment;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
