@@ -424,15 +424,36 @@ a.rb-link:hover {
                                                             <img class="schedule-img" src="../../img/int-img-2.png">
                                                             <div>
 
-                                                                @if(Model.CandidateDetails.IsAIInterview)
-                                                                {
-                                                                    <button id="btn_ai_Interview" type="button"
-                                                                    class="btn btn-primary click_herebtn"
-                                                                    onclick="window.open('@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })', '_blank' )"
-                                                                    @(item.AadharVerificationId >
-                                                                                0 ? "" : "disabled")>
+                                                               @if(Model.CandidateDetails.IsAIInterview){
+                                                                    @if (Model.CandidateDetails.IsProctoring)
+                                                                    {
+                                                                    <div id="risebirdProctoringExtPanel" style="margin-bottom:14px;max-width:520px;">
+                                                                        <p style="margin:0 0 8px 0;font-size:14px;color:#204065;">Proctored interviews require the <strong>Risebird Proctoring Assistant</strong> Chrome extension.</p>
+                                                                        <a style="width:auto;" id="btnInstallRisebirdProctoringExt" href="https://chromewebstore.google.com/detail/risebird-proctoring-assis/lpbnpcnkhmknkgfnnnecahkmpkihglgg?authuser=0&amp;hl=en" target="_blank" rel="noopener noreferrer" class="btn btn-default click_herebtn" style="margin-bottom:10px;display:inline-block;text-decoration:none;line-height:1.4;">
+                                                                            Install Risebird Proctoring Assistant (Chrome Web Store)
+                                                                        </a>
+                                                                        <div style="margin-bottom:10px;">
+                                                                            <button type="button" id="risebirdRecheckExtBtn" class="btn btn-sm btn-default" style="font-size:13px;display:inline-block;">I installed it — enable join</button>
+                                                                        </div>
+                                                                        <div id="risebirdProctoringExtStatus" class="alert alert-info" style="display:none;margin:0;padding:8px 12px;font-size:13px;"></div>
+                                                                        <div id="risebirdProctoringExtOk" class="alert alert-success" style="display:none;margin:8px 0 0 0;padding:8px 12px;font-size:13px;">
+                                                                            <i class="fa fa-check-circle" style="margin-right:6px;"></i>You can join the meeting using the button.
+                                                                        </div>
+                                                                    </div>
+                                                                } 
+                                                                <a id="btn_ai_Interview" role="button"
+                                                                    class="btn btn-primary click_herebtn disabled"
+                                                                    style="text-decoration:none;display:inline;margin-top:0px;padding:10px 35px;line-height:1.4;opacity:0.55;cursor:not-allowed;pointer-events:none;"
+                                                                    data-join-url="@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })"
+                                                                    data-aadhar-ok="@(item.AadharVerificationId > 0 ? "true" : "false")"
+                                                                    data-interview-id="@item.InterviewId"
+                                                                    href="#"
+                                                                    target="_blank"
+                                                                    rel="opener"
+                                                                    aria-disabled="true"
+                                                                    onclick="return window.risebirdAiInterviewJoinAnchorClick(event);">
                                                                         Click here to join the meeting
-                                                                    </button>
+                                                                    </a>
                                                                 }
                                                                 @* else if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId > 0)
                                                                 {
@@ -443,7 +464,7 @@ a.rb-link:hover {
                                                                 {
                                                                     @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                     {
-                                                                                    <div style="color: #3094e5;margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
+                                                                                    <div style="width:auto;color: #3094e5;margin: 18px 0px 8px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
                                                                                                 onclick="captureclick('ZoomMeeting','JoinMeeting',@item.InterviewId)">
                                                                                             Click here to join the meeting
                                                                                             <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" style="cursor:pointer;" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Meeting Link</span></a>
@@ -466,7 +487,7 @@ a.rb-link:hover {
                                                             </div>
 
 
-                                                                <div style="position:relative;margin-top:6px;">
+                                                                <div style="clear:both;position:relative;margin-top:6px;">
                                                                             <span style="color:grey;font-weight:700;"> If you feel the interviewer is not engaged or any other ethical issue</span> <a style="cursor:pointer;color:#3094e5;font-weight:600;text-decoration:underline;font-size:16px;margin-bottom:20px;display:inline-block"
                                                                                            href="@Url.Action("CandidateRatingInterviewer", "Interview", new { id = item.InterviewId })"
                                                                                            target="_blank" rel="noopener noreferrer">
@@ -2025,6 +2046,241 @@ a.rb-link:hover {
     }
 </script>
 <script>
+(function () {
+    var RISEBIRD_PROCTORING_EXT_ID = 'lpbnpcnkhmknkgfnnnecahkmpkihglgg';
+    window.risebirdProctoringExtensionInstalled = false;
+    window.risebirdUserConfirmedProctoringExtension = false;
+    window.risebirdAadharJoinOk = false;
+    var risebirdExtWasMissingAfterProbe = false;
+    var risebirdInstallToastShown = false;
+
+    function risebirdShouldEnforceExtensionInstall() {
+        var ua = navigator.userAgent || '';
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) return false;
+        return /Chrome\//i.test(ua) || /Edg\//i.test(ua) || /OPR\//i.test(ua) || /Brave/i.test(ua) || /Chromium/i.test(ua);
+    }
+
+    function risebirdDomSignalsExtensionPresent() {
+        try {
+            if (window.__RISEBIRD_PROCTORING_EXTENSION__ === true) return true;
+            var el = document.documentElement;
+            if (el && el.getAttribute('data-risebird-proctoring-extension') === '1') return true;
+        } catch (ex) { }
+        return false;
+    }
+
+    window.risebirdGetAiJoinButton = function () {
+        return document.getElementById('btn_ai_Interview');
+    };
+
+    window.risebirdApplyAiJoinButtonState = function () {
+        var btn = window.risebirdGetAiJoinButton();
+        var statusEl = document.getElementById('risebirdProctoringExtStatus');
+        var okEl = document.getElementById('risebirdProctoringExtOk');
+        if (!btn) return;
+
+        var verified = window.risebirdAadharJoinOk === true;
+        if (verified && risebirdDomSignalsExtensionPresent()) {
+            window.risebirdProctoringExtensionInstalled = true;
+        }
+
+        var needExt = risebirdShouldEnforceExtensionInstall();
+        var userAttested = window.risebirdUserConfirmedProctoringExtension === true;
+        var extOk = !needExt || window.risebirdProctoringExtensionInstalled === true || userAttested;
+        var canJoin = verified && extOk;
+
+        if (statusEl) {
+            if (!verified) {
+                statusEl.style.display = 'block';
+                statusEl.className = 'alert alert-info';
+                statusEl.innerHTML = 'Complete <strong>Verify Candidate</strong> first to enable Join. You may install the extension now, then use <strong>I installed it — enable join</strong> after verification.';
+            } else if (!needExt) {
+                statusEl.style.display = 'block';
+                statusEl.className = 'alert alert-info';
+                statusEl.innerHTML = 'For full proctoring, use Google Chrome with the Risebird Proctoring Assistant. You can join from this browser now.';
+            } else if (window.risebirdProctoringExtensionInstalled) {
+                statusEl.style.display = 'none';
+            } else if (userAttested) {
+                statusEl.style.display = 'block';
+                statusEl.className = 'alert alert-info';
+                statusEl.innerHTML = 'Extension install confirmed. Use <strong>Click here to join the meeting</strong> when you are ready.';
+            } else {
+                statusEl.style.display = 'block';
+                statusEl.className = 'alert alert-warning';
+                statusEl.innerHTML = 'Install the extension from the Chrome Web Store, then click <strong>I installed it — enable join</strong>.';
+            }
+        }
+        if (okEl) {
+            okEl.style.display = (verified && needExt && (window.risebirdProctoringExtensionInstalled || userAttested)) ? 'block' : 'none';
+        }
+
+        var joinUrl = btn.getAttribute('data-join-url') || '';
+        if (canJoin && joinUrl) {
+            btn.setAttribute('href', joinUrl);
+            btn.setAttribute('aria-disabled', 'false');
+            btn.classList.remove('disabled');
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+            btn.style.pointerEvents = '';
+        } else {
+            btn.setAttribute('href', '#');
+            btn.setAttribute('aria-disabled', 'true');
+            btn.classList.add('disabled');
+            btn.style.opacity = '0.55';
+            btn.style.cursor = 'not-allowed';
+            btn.style.pointerEvents = 'none';
+        }
+    };
+
+    // Join uses a real anchor (target=_blank, rel=opener) so Chrome keeps user activation and the Proctoring extension reliably attaches to the interview tab.
+    window.risebirdAiInterviewJoinAnchorClick = function (ev) {
+        var btn = window.risebirdGetAiJoinButton();
+        if (!btn || btn.getAttribute('aria-disabled') === 'true') {
+            if (ev) ev.preventDefault();
+            return false;
+        }
+        var url = btn.getAttribute('data-join-url');
+        if (!url) {
+            if (ev) ev.preventDefault();
+            return false;
+        }
+        try {
+            var iid = parseInt(btn.getAttribute('data-interview-id'), 10);
+            if (!isNaN(iid) && typeof captureclick === 'function') {
+                captureclick('AIInterview', 'JoinMeeting', iid);
+            }
+        } catch (ex) { }
+        btn.setAttribute('href', url);
+        return true;
+    };
+
+    window.risebirdOpenAiInterviewJoin = function () {
+        var a = window.risebirdGetAiJoinButton();
+        if (!a || a.getAttribute('aria-disabled') === 'true') return;
+        if (typeof a.click === 'function') a.click();
+    };
+
+    function risebirdProbeExtImg(path) {
+        return new Promise(function (resolve) {
+            var img = new Image();
+            var t = setTimeout(function () {
+                img.onload = img.onerror = null;
+                resolve(false);
+            }, 1200);
+            img.onload = function () {
+                clearTimeout(t);
+                img.onload = img.onerror = null;
+                resolve(true);
+            };
+            img.onerror = function () {
+                clearTimeout(t);
+                img.onload = img.onerror = null;
+                resolve(false);
+            };
+            img.src = 'chrome-extension://' + RISEBIRD_PROCTORING_EXT_ID + '/' + path;
+        });
+    }
+
+    window.risebirdDetectProctoringExtension = async function () {
+        if (!risebirdShouldEnforceExtensionInstall()) return false;
+        if (risebirdDomSignalsExtensionPresent()) return true;
+        var paths = [
+            'icons/icon16.png', 'icons/icon32.png', 'icons/icon48.png', 'icons/icon128.png',
+            'icon16.png', 'icon32.png', 'icon48.png', 'icon128.png',
+            'images/icon16.png', 'images/icon48.png', 'images/icon128.png',
+            'assets/icon16.png', 'assets/icon48.png', 'assets/icon128.png',
+            'img/icon16.png', 'img/icon48.png',
+            'favicon.ico', 'favicon.png'
+        ];
+        var results = await Promise.all(paths.map(function (p) { return risebirdProbeExtImg(p); }));
+        return results.some(Boolean);
+    };
+
+    function risebirdNotifyExtensionReady() {
+        if (risebirdInstallToastShown) return;
+        risebirdInstallToastShown = true;
+        if (typeof swal !== 'undefined' && swal.fire) {
+            swal.fire({
+                title: 'Proctoring extension ready',
+                text: 'Risebird Proctoring Assistant was detected. You can join the meeting.',
+                type: 'success',
+                confirmButtonText: 'OK'
+            });
+        } else {
+            alert('Risebird Proctoring Assistant was detected. You can join the meeting.');
+        }
+    }
+
+    window.risebirdRefreshProctoringExtensionPresence = async function (allowInstallTransitionToast) {
+        var btn = window.risebirdGetAiJoinButton();
+        if (!btn) return;
+        var prev = window.risebirdProctoringExtensionInstalled === true;
+        var detected = await window.risebirdDetectProctoringExtension();
+        window.risebirdProctoringExtensionInstalled = prev || detected || risebirdDomSignalsExtensionPresent();
+        if (!window.risebirdProctoringExtensionInstalled) risebirdExtWasMissingAfterProbe = true;
+        window.risebirdApplyAiJoinButtonState();
+        if (allowInstallTransitionToast && window.risebirdProctoringExtensionInstalled && !prev && risebirdExtWasMissingAfterProbe) {
+            risebirdNotifyExtensionReady();
+        }
+    };
+
+    window.addEventListener('message', function (e) {
+        try {
+            var d = e.data;
+            if (d && d.source === 'risebird-proctoring-extension' && d.installed) {
+                var prev = window.risebirdProctoringExtensionInstalled === true;
+                window.risebirdProctoringExtensionInstalled = true;
+                window.risebirdApplyAiJoinButtonState();
+                if (window.risebirdAadharJoinOk && !prev) risebirdNotifyExtensionReady();
+            }
+        } catch (ex) { }
+    });
+
+    window.addEventListener('risebird-proctoring-extension-ready', function () {
+        var prev = window.risebirdProctoringExtensionInstalled === true;
+        window.risebirdProctoringExtensionInstalled = true;
+        window.risebirdApplyAiJoinButtonState();
+        if (window.risebirdAadharJoinOk && !prev) risebirdNotifyExtensionReady();
+    });
+
+    function risebirdInitProctoringJoinGate() {
+        var btn = window.risebirdGetAiJoinButton();
+        if (!btn) return;
+        window.risebirdAadharJoinOk = btn.getAttribute('data-aadhar-ok') === 'true';
+        window.risebirdApplyAiJoinButtonState();
+        window.risebirdRefreshProctoringExtensionPresence(false).then(function () {
+            if (window.risebirdProctoringExtensionInstalled) risebirdExtWasMissingAfterProbe = false;
+        });
+        var recheck = function () { window.risebirdRefreshProctoringExtensionPresence(true); };
+        window.addEventListener('focus', recheck);
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') recheck();
+        });
+        setInterval(function () {
+            if (!window.risebirdUserConfirmedProctoringExtension && !window.risebirdProctoringExtensionInstalled && risebirdShouldEnforceExtensionInstall()) {
+                window.risebirdRefreshProctoringExtensionPresence(true);
+            }
+        }, 4000);
+
+        var recheckBtn = document.getElementById('risebirdRecheckExtBtn');
+        if (recheckBtn && !recheckBtn._risebirdWired) {
+            recheckBtn._risebirdWired = true;
+            recheckBtn.addEventListener('click', function () {
+                window.risebirdUserConfirmedProctoringExtension = true;
+                window.risebirdApplyAiJoinButtonState();
+                window.risebirdRefreshProctoringExtensionPresence(true);
+            });
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', risebirdInitProctoringJoinGate);
+    } else {
+        risebirdInitProctoringJoinGate();
+    }
+})();
+</script>
+<script>
     // Biometric Verification Modal Functions
     let cameraStream = null;
     let capturedPhotoData = null;
@@ -2204,15 +2460,24 @@ a.rb-link:hover {
 
     // Function to update meeting link styling based on verification status
     function updateMeetingLinkStyling() {
-        debugger;
+        if (typeof window.risebirdAadharJoinOk !== 'undefined') {
+            window.risebirdAadharJoinOk = true;
+        }
+        if (typeof window.risebirdApplyAiJoinButtonState === 'function') {
+            window.risebirdApplyAiJoinButtonState();
+        }
+        if (typeof window.risebirdRefreshProctoringExtensionPresence === 'function') {
+            window.risebirdRefreshProctoringExtensionPresence(false);
+        }
         var aiInterviewButton = document.getElementById('btn_ai_Interview');
-        if(aiInterviewButton != null)
-        {
-            aiInterviewButton.disabled = false;  // enable it
-            aiInterviewButton.removeAttribute("disabled"); // Remove disabled attribute
-            aiInterviewButton.style.opacity = "1";
-            aiInterviewButton.style.cursor = "pointer";
-            //aiInterviewButton.classList.remove("disabled-link"); // optional: remove custom disabled styling
+        if (aiInterviewButton != null && typeof window.risebirdApplyAiJoinButtonState !== 'function') {
+            var ju = aiInterviewButton.getAttribute('data-join-url');
+            if (ju) aiInterviewButton.setAttribute('href', ju);
+            aiInterviewButton.setAttribute('aria-disabled', 'false');
+            aiInterviewButton.classList.remove('disabled');
+            aiInterviewButton.style.opacity = '1';
+            aiInterviewButton.style.cursor = 'pointer';
+            aiInterviewButton.style.pointerEvents = '';
         }
     @* const meetingLinks = document.querySelectorAll('.meeting-link');
         meetingLinks.forEach(function(link) {
@@ -2366,18 +2631,6 @@ a.rb-link:hover {
             confirmButtonColor: "#ffc107"
         }).then(function(result) {
             if (result.value) {
-                // Enable the meeting link button directly
-                var aiInterviewButton = document.getElementById('btn_ai_Interview');
-                if(aiInterviewButton != null) {
-                    aiInterviewButton.disabled = false;
-                    aiInterviewButton.removeAttribute("disabled");
-                    aiInterviewButton.style.opacity = "1";
-                    aiInterviewButton.style.cursor = "pointer";
-                    aiInterviewButton.style.backgroundColor = "#007bff";
-                    aiInterviewButton.style.color = "#fff";
-                }
-                
-                // Also call the update function for consistency
                 updateMeetingLinkStyling();
                 
                 // Close the modal

@@ -1,0 +1,160 @@
+@using Risebird.CommonHelper
+@using Risebird.Entities.Data
+@using Risebird.Web.Helpers
+@using System.Linq
+@model Risebird.Entities.ViewModel.ProctoringSessionEventsResultViewModel
+@{
+    ViewData["Title"] = "Proctoring session events";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    string KindClass(string k)
+    {
+        if (string.IsNullOrEmpty(k)) return "rb-pe-kind";
+        k = k.ToLowerInvariant();
+        if (k.Contains("violat") || k.Contains("error") || k == "stop") return "rb-pe-kind rb-pe-bad";
+        if (k.Contains("join") || k.Contains("start")) return "rb-pe-kind rb-pe-good";
+        if (k.Contains("screenshot")) return "rb-pe-kind rb-pe-warn";
+        return "rb-pe-kind";
+    }
+    string LevelClass(string l)
+    {
+        if (string.IsNullOrEmpty(l)) return "";
+        return l.ToLowerInvariant() == "violation" ? "rb-pe-badge-bad" : (l.ToLowerInvariant() == "info" ? "rb-pe-badge-info" : "rb-pe-badge");
+    }
+}
+<style>
+    .rb-pe-wrap { max-width: 1280px; margin: 0 auto; padding: 24px; background: #f6f8fb; min-height: 60vh; }
+    .rb-pe-hero {
+        background: #fff; border-radius: 14px; box-shadow: 0 2px 16px rgba(15, 30, 60, .08);
+        padding: 22px 28px; margin-bottom: 22px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 16px;
+        border: 1px solid #e8ecf2;
+    }
+    .rb-pe-hero h1 { font-size: 1.45rem; font-weight: 700; color: #14243d; margin: 0 0 6px 0; display: flex; align-items: center; gap: 10px; }
+    .rb-pe-hero p { margin: 0; color: #5a6b85; font-size: .95rem; }
+    .rb-pe-meta { text-align: right; font-size: .88rem; color: #4a5b75; }
+    .rb-pe-meta strong { color: #14243d; }
+    .rb-pe-control-bar {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+        justify-content: flex-start;
+        background: #fff; border: 1px solid #e8ecf2; border-radius: 10px; padding: 8px 12px; margin-bottom: 14px;
+        box-shadow: 0 1px 3px rgba(15, 30, 60, .05);
+    }
+    .rb-pe-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; flex: 0 0 auto; margin: 0 0 0 auto; }
+    .rb-pe-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-size: 13px; text-decoration: none; cursor: pointer; border: 1px solid #d0d8e4; background: #fff; color: #1a2d4a; }
+    .rb-pe-btn:hover { background: #f0f4fa; border-color: #c2cbd8; }
+    .rb-pe-btn-primary { background: #2563eb; color: #fff; border-color: #2563eb; }
+    .rb-pe-btn-primary:hover { background: #1d4ed8; }
+
+    .rb-pe-stats { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 8px; flex: 1 1 auto; min-width: 0; margin: 0; }
+    @@media (min-width: 641px) {
+        .rb-pe-toolbar { padding-left: 12px; border-left: 1px solid #e8ecf2; }
+    }
+    .rb-pe-stat { display: inline-flex; flex-direction: column; justify-content: center; min-width: 0;
+        background: #f3f5f9; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px 10px; }
+    .rb-pe-stat label { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: .06em; color: #6b7c96; margin: 0 0 1px; line-height: 1.2; }
+    .rb-pe-stat .rb-pe-stat-val { font-size: 0.95rem; font-weight: 700; color: #0f1f3a; line-height: 1.25; word-break: break-word; }
+    .rb-pe-stat--wide { min-width: 0; max-width: 220px; flex: 1 1 140px; }
+    @@media (max-width: 640px) {
+        .rb-pe-control-bar { align-items: stretch; }
+        .rb-pe-toolbar { width: 100%; margin-left: 0; padding-left: 0; border-left: 0; }
+        .rb-pe-btn { width: 100%; justify-content: center; }
+    }
+
+    .rb-pe-table-wrap { background: #fff; border: 1px solid #e8ecf2; border-radius: 12px; overflow: auto; box-shadow: 0 1px 8px rgba(15, 30, 60, .05); }
+    .rb-pe-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .rb-pe-table th {
+        text-align: left; padding: 10px 12px; background: #f0f3f8; color: #384a63; font-weight: 600; border-bottom: 1px solid #e2e8f0; white-space: nowrap;
+    }
+    .rb-pe-table td { padding: 10px 12px; border-bottom: 1px solid #f0f2f6; vertical-align: top; color: #1a2a40; }
+    .rb-pe-table tr:hover td { background: #fafbfd; }
+    .rb-pe-kind { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: lowercase; background: #e8edf5; color: #334a66; }
+    .rb-pe-kind.rb-pe-good { background: #dcfce7; color: #166534; }
+    .rb-pe-kind.rb-pe-bad { background: #fee2e2; color: #b91c1c; }
+    .rb-pe-kind.rb-pe-warn { background: #fef3c7; color: #b45309; }
+    .rb-pe-badge, .rb-pe-badge-info, .rb-pe-badge-bad { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 4px; }
+    .rb-pe-badge { background: #e8edf5; color: #4a5b75; }
+    .rb-pe-badge-info { background: #dbeafe; color: #1d4ed8; }
+    .rb-pe-badge-bad { background: #fecaca; color: #b91c1c; }
+    .rb-pe-empty { text-align: center; padding: 48px 24px; color: #6b7c96; background: #fff; border-radius: 12px; border: 1px dashed #d5dde8; }
+</style>
+
+<div class="rb-pe-wrap">
+    <div class="rb-pe-hero">
+        <div>
+            <h1><i class="fa fa-shield-alt" style="color:#3b6fb8"></i> Proctoring session events</h1>
+        </div>
+        <div class="rb-pe-meta">
+            <div><strong>Interview</strong> #@Model.InterviewId</div>
+            <div><strong>Session</strong> <span style="user-select:all">@Model.SessionId</span></div>
+        </div>
+    </div>
+
+    <div class="rb-pe-control-bar" aria-label="Actions and session summary">
+        <div class="rb-pe-stats">
+            <div class="rb-pe-stat">
+                <label>Total events</label>
+                <span class="rb-pe-stat-val">@Model.Events.Count</span>
+            </div>
+            <div class="rb-pe-stat">
+                <label>Candidate</label>
+                <span class="rb-pe-stat-val" style="font-size:0.88rem; font-weight:600">@(string.IsNullOrEmpty(Model.CandidateName) ? "—" : Model.CandidateName)</span>
+            </div>
+            <div class="rb-pe-stat rb-pe-stat--wide">
+                <label>Email</label>
+                <span class="rb-pe-stat-val" style="font-size:0.8rem; font-weight:500">@(string.IsNullOrEmpty(Model.CandidateEmail) ? "—" : Model.CandidateEmail)</span>
+            </div>
+        </div>
+        <div class="rb-pe-toolbar">
+            <a class="rb-pe-btn" href="@Url.Action("Report", "AIInterview", new { seId = Model.SessionId })">
+                <i class="fa fa-arrow-left"></i> Back to AI report
+            </a>
+        </div>
+    </div>
+
+    @if (Model.Events == null || !Model.Events.Any())
+    {
+        <div class="rb-pe-empty">
+            <i class="fa fa-inbox" style="font-size:2rem;opacity:.35;display:block;margin-bottom:12px;"></i>
+            No proctoring events have been stored for this interview yet.
+        </div>
+    }
+    else
+    {
+        <div class="rb-pe-table-wrap">
+            <table class="rb-pe-table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Created (IST)</th>
+                        <th>Created (UTC)</th>
+                        <th>Event</th>
+                        <th>Email (row)</th>
+                        <th>Level</th>
+                        <th>Reason / notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (ProctoringSessionEvent ev in Model.Events)
+                {
+                    <tr>
+                        <td>@ev.Id</td>
+                        <td>@(ev.CreatedAtIst.HasValue
+                            ? ev.CreatedAtIst.Value.ToString("dd MMM yyyy, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) + " IST"
+                            : IndiaTimeHelper.FormatIstForDisplay(ev.CreatedAtUtc))</td>
+                        <td><span style="color:#5a6b85; font-size:12px">@ev.CreatedAtUtc.ToString("dd MMM yyyy, HH:mm:ss' UTC'")</span></td>
+                        <td><span class="@KindClass(ev.EventKind)">@ev.EventKind</span></td>
+                        <td style="font-size:12px">@(string.IsNullOrEmpty(ev.CandidateEmail) ? "—" : ev.CandidateEmail)</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(ev.Level))
+                            {
+                                <span class="@LevelClass(ev.Level)">@ev.Level</span>
+                            }
+                            else { <span class="text-muted">—</span> }
+                        </td>
+                        <td>@ProctoringEventDisplayHelper.GetReasonTextForDisplay(ev)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
