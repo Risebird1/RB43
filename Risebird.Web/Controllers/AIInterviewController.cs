@@ -17,6 +17,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
+using Risebird.Web.Services.Proctoring;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,6 +52,8 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IIRFRepository _irfRepository;
         private readonly IOpenAIInterviewerAssistantHelper _openAIAssistantHelper;
+        private readonly IProctoringTokenService _proctoringTokenService;
+        private readonly IProctoringSessionEventRepository _proctoringSessionEventRepository;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
@@ -58,7 +61,8 @@ namespace Risebird.Web.Controllers
             ISASUrlHelper sasUrlHelper, IAIInterviewerService aiinterviewerService,
             ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper,
             IIRFService iRFService, IAWSRekognitionService aWSRekognitionService, ICandidateService candidateService,
-            IIRFRepository irfRepository, IOpenAIInterviewerAssistantHelper openAIAssistantHelper)
+            IIRFRepository irfRepository, IOpenAIInterviewerAssistantHelper openAIAssistantHelper,
+            IProctoringTokenService proctoringTokenService, IProctoringSessionEventRepository proctoringSessionEventRepository)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -75,6 +79,8 @@ namespace Risebird.Web.Controllers
             _candidateService = candidateService;
             _irfRepository = irfRepository;
             _openAIAssistantHelper = openAIAssistantHelper;
+            _proctoringTokenService = proctoringTokenService;
+            _proctoringSessionEventRepository = proctoringSessionEventRepository;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -92,6 +98,7 @@ namespace Risebird.Web.Controllers
                 //two scenarios possible, one where the interview hasnt started as yet. The second where the interview has already started.
                 if (meetingDetails != null)
                 {
+                    ApplyAiProctoringViewBag(meetingDetails, sid);
                     if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                     {
                         var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
@@ -100,8 +107,8 @@ namespace Risebird.Web.Controllers
                         if (transcript == null || transcript.Count() == 0)
                         {
                             var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(meetingDetails.InterviewId, meetingDetails.irfIntId);
-                            
-                            if(sampleQuestion != null)
+
+                            if (sampleQuestion != null)
                             {
                                 var model = new ChatMessageViewModel();
                                 model.SessionId = sid;
@@ -118,7 +125,7 @@ namespace Risebird.Web.Controllers
                                     model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
                                     model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                     model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
-                                    
+
                                     // Fetch random typing sample text from database if it's a typing speed question
                                     if (sampleQuestion.IsTypingSpeedAssessment)
                                     {
@@ -126,16 +133,16 @@ namespace Risebird.Web.Controllers
                                         if (typingSample != null && !string.IsNullOrWhiteSpace(typingSample.SampleText))
                                         {
                                             model.TypingSampleTextFromDB = typingSample.SampleText;
-                                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug,
                                                 new Exception($"Typing sample text loaded successfully. Length: {typingSample.SampleText.Length}"));
                                         }
                                         else
                                         {
-                                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
                                                 new Exception("No typing sample text available in database. Please add sample texts to TypingSpeedSampleTexts table."));
                                         }
                                     }
-                                    
+
                                     await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                 }
@@ -170,7 +177,7 @@ namespace Risebird.Web.Controllers
                                 };
                                 return View("ExitModalPartial", exitModel);
                             }
-                            
+
                         }
                         else
                         {
@@ -275,7 +282,7 @@ namespace Risebird.Web.Controllers
 
                                         var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(meetingDetails.InterviewId, meetingDetails.irfIntId);
 
-                                        if(sampleQuestion != null)
+                                        if (sampleQuestion != null)
                                         {
                                             model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(sampleQuestion.Message), sampleQuestionId = sampleQuestion.id });
 
@@ -290,7 +297,7 @@ namespace Risebird.Web.Controllers
                                                 model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
                                                 model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                                 model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
-                                                
+
                                                 // Fetch random typing sample text from database if it's a typing speed question
                                                 if (sampleQuestion.IsTypingSpeedAssessment)
                                                 {
@@ -298,16 +305,16 @@ namespace Risebird.Web.Controllers
                                                     if (typingSample != null && !string.IsNullOrWhiteSpace(typingSample.SampleText))
                                                     {
                                                         model.TypingSampleTextFromDB = typingSample.SampleText;
-                                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug,
                                                             new Exception($"Typing sample text loaded successfully. Length: {typingSample.SampleText.Length}"));
                                                     }
                                                     else
                                                     {
-                                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
                                                             new Exception("No typing sample text available in database. Please add sample texts to TypingSpeedSampleTexts table."));
                                                     }
                                                 }
-                                                
+
                                                 await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                                             }
@@ -315,7 +322,7 @@ namespace Risebird.Web.Controllers
                                         else
                                         {
                                             //check if the interview is already marked completed in the first details object above and if not, mark it as completed
-                                            if(meetingDetails.MeetingStatus != (int)MeetingStatus.Completed)
+                                            if (meetingDetails.MeetingStatus != (int)MeetingStatus.Completed)
                                             {
                                                 await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
 
@@ -337,7 +344,7 @@ namespace Risebird.Web.Controllers
                                             };
                                             return View("ExitModalPartial", exitModel);
                                         }
-                                            
+
 
                                     }
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() == 10)
@@ -784,6 +791,20 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>Chrome extension: session token + policy for AI interview page (meeting not in a terminal state).</summary>
+        private void ApplyAiProctoringViewBag(MeetingVM meetingDetails, Guid sid)
+        {
+            // Always emit proctoring bootstrap on the live AI interview page when we have a session + interview row.
+            // Do not gate on InterviewComments.MeetingStatus (often stale vs. a valid candidate session).
+            ProctoringViewBagHelper.ApplyForMeeting(
+                this,
+                meetingDetails,
+                _proctoringTokenService,
+                _configuration,
+                sid.ToString(),
+                issueProctoringBootstrapEvenIfMeetingStatusTerminal: true);
+        }
+
         [HttpPost]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Index([FromForm] ChatMessageViewModel model)
@@ -791,6 +812,11 @@ namespace Risebird.Web.Controllers
 
             try
             {
+                // ViewBag is not carried from GET to POST — re-apply so _RisebirdProctoringAiInterview has token, interview id, name, email on every render.
+                var meetingForProctoring = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(model.SessionId);
+                if (meetingForProctoring != null)
+                    ApplyAiProctoringViewBag(meetingForProctoring, model.SessionId);
+
                 if (model.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                 {
                     string question = model.CurrentQuestion;
@@ -803,7 +829,7 @@ namespace Risebird.Web.Controllers
                     {
                         userMessage = "Typed Out";
                     }
-                    else if(!model.showChatBox)
+                    else if (!model.showChatBox)
                     {
                         if (model.AudioFile != null && model.AudioFile.Length > 0)
                         {
@@ -855,7 +881,7 @@ namespace Risebird.Web.Controllers
                             //    };
                             //    return View("ExitModalPartial", exitModel);
                             //}
-                            if(!string.IsNullOrEmpty(model.Message))
+                            if (!string.IsNullOrEmpty(model.Message))
                             {
                                 userMessage = $"Verbal Explanation : {tranScribedResponse}{Environment.NewLine}Written Code :{Environment.NewLine}{model.Message}";
 
@@ -892,7 +918,7 @@ namespace Risebird.Web.Controllers
                     if (allQuestions?.Count() == 35)
                     //if (allQuestions?.Count() == 3)                                 
                     {
-                        bool iscandidateVideoSavedTodb =  await UploadBotInterviewVideo(model, question, userMessage);
+                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
                         var exitModel = new AIInterviewExitModalViewModel();
                         if (!iscandidateVideoSavedTodb)
                         {
@@ -980,7 +1006,7 @@ namespace Risebird.Web.Controllers
                         {
                             try
                             {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug,
                                     new Exception($"Starting OpenAI typing assessment analysis for session {model.SessionId}"));
 
                                 // Compute candidate's actual WPM from typed word count and time taken
@@ -1000,7 +1026,7 @@ namespace Risebird.Web.Controllers
 
                                 // Serialize inputs to JSON
                                 string inputsJson = JsonConvert.SerializeObject(inputs, Formatting.Indented);
-                                
+
                                 // Send only the inputs to the assistant
                                 string assistantMessage = inputsJson;
 
@@ -1008,17 +1034,17 @@ namespace Risebird.Web.Controllers
                                 string threadId = await _openAIAssistantHelper.CreateThreadAsync();
                                 await _openAIAssistantHelper.AddMessageAsync(threadId, "user", assistantMessage);
                                 string runId = await _openAIAssistantHelper.CreateRunAsync(threadId, OpenAIInterviewerAssistants.TypingAssessmentAssistant);
-                                
+
                                 // Wait for completion
                                 string runStatus = await _openAIAssistantHelper.WaitForRunAsync(threadId, runId);
-                                
+
                                 if (runStatus == "completed")
                                 {
                                     // Get response
                                     var messages = await _openAIAssistantHelper.GetMessagesAsync(threadId);
                                     string openAIResponse = messages.FirstOrDefault() ?? "{}";
-                                    
-                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug,
                                         new Exception($"OpenAI typing assessment response received. Length: {openAIResponse.Length}"));
 
                                     // Parse OpenAI response
@@ -1029,7 +1055,7 @@ namespace Risebird.Web.Controllers
                                     }
                                     catch (JsonException jsonEx)
                                     {
-                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
                                             new Exception($"Failed to parse OpenAI response as JSON: {jsonEx.Message}. Raw response: {openAIResponse}"));
                                     }
 
@@ -1037,7 +1063,7 @@ namespace Risebird.Web.Controllers
                                     bool isPassed = false;
                                     decimal wordAccuracy = 0;
                                     decimal charAccuracy = 0;
-                                    
+
                                     if (analysisResult != null && analysisResult.scores != null)
                                     {
                                         wordAccuracy = analysisResult.scores.word_level_accuracy_percent;
@@ -1072,15 +1098,15 @@ namespace Risebird.Web.Controllers
                                         OpenAIRunId = runId,
                                         CreatedBy = model.candidateName
                                     };
-                                    
+
                                     await _aiinterviewerService.SaveTypingSpeedAssessment(typingAssessment);
-                                    
-                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug,
                                         new Exception($"Typing assessment saved successfully. Passed: {isPassed}, Accuracy: {wordAccuracy}%"));
                                 }
                                 else
                                 {
-                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
                                         new Exception($"OpenAI typing assessment run status: {runStatus}. ThreadId: {threadId}, RunId: {runId}"));
                                 }
                             }
@@ -1147,7 +1173,7 @@ namespace Risebird.Web.Controllers
                                 model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
                                 model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                 model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
-                                
+
                                 // Fetch random typing sample text from database if it's a typing speed question
                                 if (sampleQuestion.IsTypingSpeedAssessment)
                                 {
@@ -1155,16 +1181,16 @@ namespace Risebird.Web.Controllers
                                     if (typingSample != null && !string.IsNullOrWhiteSpace(typingSample.SampleText))
                                     {
                                         model.TypingSampleTextFromDB = typingSample.SampleText;
-                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug, 
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug,
                                             new Exception($"Typing sample text loaded successfully. Length: {typingSample.SampleText.Length}"));
                                     }
                                     else
                                     {
-                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, 
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
                                             new Exception("No typing sample text available in database. Please add sample texts to TypingSpeedSampleTexts table."));
                                     }
                                 }
-                                
+
                                 await _aiinterviewerService.LogTranscript(model.SessionId, "assistant", model.CurrentQuestion, sampleQuestion.id);
 
                             }
@@ -1198,7 +1224,7 @@ namespace Risebird.Web.Controllers
                             };
                             return View("ExitModalPartial", exitModel);
                         }
-                        
+
                     }
                 }
                 else
@@ -1364,7 +1390,7 @@ namespace Risebird.Web.Controllers
         {
             if (string.IsNullOrWhiteSpace(text))
                 return false;
-            if(!isMultilingual)
+            if (!isMultilingual)
             {
                 // Remove common punctuation and whitespace for validation
                 var cleaned = new string(text
@@ -1390,7 +1416,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 string VideoLink = string.Empty;
-                
+
                 // If there's a video file, upload it
                 if (model.VideoFile != null && model.VideoFile.Length > 0)
                 {
@@ -1467,7 +1493,7 @@ namespace Risebird.Web.Controllers
                 }
                 // If no video file but there's a text/code response, save it with empty VideoLink
                 // This allows text/code submissions to be saved successfully
-                
+
                 // Save in db with question.sessionid,videoLink,Datetime (VideoLink can be empty for text responses)
                 // For the Adaptive/OpenAI flow, CurrentQuestionId is 0 because there are no preset question IDs.
                 // Passing 0 is treated as non-null by the stored proc, which causes it to UPDATE the very first row
@@ -1530,7 +1556,7 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> ExitModalPartial(Guid seId)
         {
             var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
-            
+
             var exitModel = new AIInterviewExitModalViewModel
             {
                 Title = "Interview Complete",
@@ -1546,7 +1572,7 @@ namespace Risebird.Web.Controllers
                 InterviewDate = meetingDetails?.interviewDate,
                 IsFromIndex = true
             };
-            
+
             return View(exitModel);
         }
 
@@ -1582,7 +1608,7 @@ namespace Risebird.Web.Controllers
                         aiReport = await _api.GenerateReport(seId, string.Empty, meetingDetails.AIInterviewType, isExit: isExit);
                         var list = new List<string>();
                         list.Add(aiReport?.Replies?.FirstOrDefault());
-                        if(aiReport!=null)
+                        if (aiReport != null)
                         {
                             aiReport.Replies = list;
 
@@ -1670,7 +1696,7 @@ namespace Risebird.Web.Controllers
                 reportModel.resumeLink = meetingDetails.resumeLink;
                 reportModel.AIResumeScreeningVerdict = meetingDetails.AIResumeScreeningVerdict;
                 reportModel.AIResumeScreeningScore = meetingDetails.AIResumeScreeningScore;
-                if(reportModel.AIInterviewEvaluation!= null)
+                if (reportModel.AIInterviewEvaluation != null)
                 {
                     reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
 
@@ -1680,7 +1706,7 @@ namespace Risebird.Web.Controllers
                     reportModel.sentimentViewModel = await _aiinterviewerService.GetSentimentAnalysisById(meetingDetails.CandidateAnswerVideoIdAI);
 
                 }
-                
+
                 // Get candidate details for resume screening link using InterviewId
                 var candidate = await _irfRepository.GetCandidateIdAndIrfIdByMeetingId(meetingDetails.InterviewId);
                 ViewBag.IRFId = meetingDetails.irfIntId;
@@ -1693,7 +1719,9 @@ namespace Risebird.Web.Controllers
                     accessType = "Public";
                 }
                 ViewBag.AccessType = accessType;
-                
+
+                await SetProctoringEventCountForReportAsync(meetingDetails.InterviewId);
+
                 return View(reportModel);
             }
             else
@@ -1717,7 +1745,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (aiReport == null)
                     {
-                        aiReport = await _api.GenerateReport(seId, candidatePrompt, isExit:isExit);
+                        aiReport = await _api.GenerateReport(seId, candidatePrompt, isExit: isExit);
                         var list = new List<string>();
                         list.Add(aiReport?.Replies?.FirstOrDefault());
                         if (aiReport != null)
@@ -1747,7 +1775,7 @@ namespace Risebird.Web.Controllers
                                         InterviewDate = meetingDetails.interviewDate,
                                         IsFromIndex = false // Add this flag to identify the source
                                     };
-                                    return View("ExitModalPartial", exitModel);;
+                                    return View("ExitModalPartial", exitModel); ;
                                 }
                                 else
                                 {
@@ -1791,7 +1819,7 @@ namespace Risebird.Web.Controllers
                 AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
                 reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
                 //reportModel.chatMessageViewModel = chatMessageModel;
-                
+
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault()); //JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = true;
@@ -1805,7 +1833,7 @@ namespace Risebird.Web.Controllers
                 reportModel.InterviewDate = meetingDetails.interviewDate;
                 reportModel.SessionId = seId.ToString();
                 reportModel.InterviewId = meetingDetails.InterviewId;
-                
+
                 // Get candidate details for resume screening link using InterviewId
                 var candidate = await _irfRepository.GetCandidateIdAndIrfIdByMeetingId(meetingDetails.InterviewId);
                 ViewBag.IRFId = meetingDetails.irfIntId;
@@ -1818,10 +1846,50 @@ namespace Risebird.Web.Controllers
                     accessType = "Public";
                 }
                 ViewBag.AccessType = accessType;
-                
+
+                await SetProctoringEventCountForReportAsync(meetingDetails.InterviewId);
+
                 return View(reportModel);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ProctoringSessionEvents(Guid seId)
+        {
+            var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
+            if (meetingDetails == null)
+                return NotFound();
+
+            var events = await _proctoringSessionEventRepository.GetByInterviewIdOrderedAsync(meetingDetails.InterviewId);
+            var model = new ProctoringSessionEventsResultViewModel
+            {
+                SessionId = seId,
+                InterviewId = meetingDetails.InterviewId,
+                CandidateName = meetingDetails.candidateName,
+                CandidateEmail = meetingDetails.candidateEmail,
+                Events = events
+            };
+            ViewData["Title"] = "Proctoring session events";
+            return View(model);
+        }
+
+        private async Task SetProctoringEventCountForReportAsync(int interviewId)
+        {
+            try
+            {
+                if (interviewId <= 0)
+                {
+                    ViewBag.ProctoringEventCount = 0;
+                    return;
+                }
+                ViewBag.ProctoringEventCount = await _proctoringSessionEventRepository.GetCountByInterviewIdAsync(interviewId);
+            }
+            catch
+            {
+                ViewBag.ProctoringEventCount = 0;
+            }
+        }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GenerateAIReportPDFFile(Guid seId)
@@ -2141,8 +2209,8 @@ namespace Risebird.Web.Controllers
                             : comment;
                         if (result)
                         {
-                            
-                            return Json(new { issuccessful = true, message = $"Successfully flagged the question starting with '{snippet}' for sentiment analysis."});//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
+
+                            return Json(new { issuccessful = true, message = $"Successfully flagged the question starting with '{snippet}' for sentiment analysis." });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
                             //return Json($"Successfully flagged the question starting with '{questionDetails.Comment.Substring(0, 25)}' for sentiment analysis.");
                         }

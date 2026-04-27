@@ -1,0 +1,210 @@
+@* Proctoring bootstrap for AI / interview pages — extension wiring only (no visible page chrome). *@
+@if (ViewBag.ProctoringToken != null && ViewBag.ProctoringInterviewId != null)
+{
+    <script type="application/json" id="risebird-proctoring-bootstrap">
+@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new {
+            interviewId = ViewBag.ProctoringInterviewId,
+            sessionToken = ViewBag.ProctoringToken,
+            name = ViewBag.ProctoringCandidateName ?? "",
+            email = ViewBag.ProctoringCandidateEmail ?? "",
+            restrictedDomains = ViewBag.ProctoringRestrictedDomains,
+            allowedExamHosts = ViewBag.ProctoringAllowedExamHosts,
+            clipboardBlocking = ViewBag.ProctoringClipboardBlocking,
+            meetingStartIso = ViewBag.ProctoringMeetingStartIso,
+            meetingEndIso = ViewBag.ProctoringMeetingEndIso
+        }))
+    </script>
+    <div id="risebird-proctoring-panel" hidden aria-hidden="true"></div>
+    <script type="text/javascript">
+        (function () {
+            var cfg = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new {
+                interviewId = ViewBag.ProctoringInterviewId,
+                sessionToken = ViewBag.ProctoringToken,
+                name = ViewBag.ProctoringCandidateName ?? "",
+                email = ViewBag.ProctoringCandidateEmail ?? "",
+                restrictedDomains = ViewBag.ProctoringRestrictedDomains,
+                allowedExamHosts = ViewBag.ProctoringAllowedExamHosts,
+                clipboardBlocking = ViewBag.ProctoringClipboardBlocking
+            }));
+            var meetingStartMs = Date.parse(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ProctoringMeetingStartIso ?? "")));
+            var meetingEndMs = Date.parse(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ProctoringMeetingEndIso ?? "")));
+            if (isNaN(meetingStartMs)) meetingStartMs = 0;
+            if (isNaN(meetingEndMs)) meetingEndMs = Number.MAX_SAFE_INTEGER;
+            var __bootNow = Date.now();
+            // DB interview window often ends before "take interview now"; stale end blocks RB_COMPLETE_TEST_SETUP forever.
+            if (meetingEndMs < __bootNow && meetingEndMs !== Number.MAX_SAFE_INTEGER)
+                meetingEndMs = __bootNow + 2 * 60 * 60 * 1000;
+            if (meetingStartMs > meetingEndMs && meetingEndMs !== Number.MAX_SAFE_INTEGER)
+                meetingStartMs = 0;
+            var stopExtensionAfterMs = meetingEndMs + 5 * 60 * 1000;
+            function origin() { return window.location.origin; }
+            function isTrustedMessageOrigin(ev) {
+                if (!ev || !ev.origin) return false;
+                if (ev.origin === origin()) return true;
+                // Extension background / content scripts often send with chrome-extension:// origin.
+                if (ev.origin.indexOf('chrome-extension://') === 0) return true;
+                if (ev.origin.indexOf('moz-extension://') === 0) return true;
+                return false;
+            }
+            // postMessage second arg must match this document's origin or '*', or the browser drops the event (extension never sees HELLO/JOIN).
+            // Server-computed origin can differ from window.location.origin behind proxies / alternate hostnames.
+            var postMessageTargetServer = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((string)(ViewBag.ProctoringPostMessageTargetOrigin ?? string.Empty)));
+            var postMessageTarget = (postMessageTargetServer === '*') ? '*' : origin();
+            // options.broadcastHello: duplicate HELLO via postMessage(..., '*') for older extension builds; never use for JOIN.
+            function emitProctoring(payload, options) {
+                options = options || {};
+                try { window.postMessage(payload, postMessageTarget); } catch (e) { }
+                if (options.broadcastHello === true && postMessageTarget !== '*') {
+                    try { window.postMessage(payload, '*'); } catch (e1) { }
+                }
+                try {
+                    document.dispatchEvent(new CustomEvent('risebird-proctoring-postmessage', { bubbles: true, composed: true, detail: payload }));
+                } catch (e2) { }
+            }
+            var joinSent = false;
+            var monitoringStarted = false;
+            var meetingEndNotified = false;
+            var proctoringWired = false;
+            function endProctoringSession() {
+                if (meetingEndNotified) return;
+                meetingEndNotified = true;
+                try {
+                    emitProctoring({ source: 'risebird-proctor-extension', type: 'RB_PROCTORING_MEETING_END' });
+                } catch (e) { }
+            }
+            function tryStartMonitoring(reason) {
+                if (monitoringStarted) return;
+                if (!joinSent) return;
+                var now = Date.now();
+                if (now > meetingEndMs) return;
+                var byRecording = reason === 'recording';
+                var bySchedule = now >= meetingStartMs;
+                // AI interviews often open before DB interviewDate; still start proctoring once extension has joined.
+                var byImmediate = reason === 'immediate';
+                if (!byRecording && !bySchedule && !byImmediate) return;
+                monitoringStarted = true;
+                emitProctoring({ type: 'RB_COMPLETE_TEST_SETUP' });
+            }
+            var extensionReadyFallbackTimer = null;
+            var helloIntervalId = null;
+            function clearHelloInterval() {
+                if (helloIntervalId != null) {
+                    window.clearInterval(helloIntervalId);
+                    helloIntervalId = null;
+                }
+            }
+            function clearExtensionReadyFallback() {
+                if (extensionReadyFallbackTimer != null) {
+                    window.clearTimeout(extensionReadyFallbackTimer);
+                    extensionReadyFallbackTimer = null;
+                }
+            }
+            function onExtensionReady() {
+                if (joinSent) return;
+                clearExtensionReadyFallback();
+                clearHelloInterval();
+                joinSent = true;
+                emitProctoring({ type: 'RB_PROCTORING_JOIN', payload: cfg });
+                tryStartMonitoring('immediate');
+            }
+            function wire() {
+                if (proctoringWired) return;
+                proctoringWired = true;
+                function handleExtensionSignal(data) {
+                    if (!data || typeof data !== 'object') return;
+                    var t = data.type;
+                    if (t === 'RB_PROCTORING_EXTENSION_READY' || t === 'RISEBIRD_PROCTORING_EXTENSION_READY') {
+                        onExtensionReady();
+                        return;
+                    }
+                    if (typeof t === 'string' && t.indexOf('PROCTORING_EXTENSION_READY') !== -1) {
+                        onExtensionReady();
+                        return;
+                    }
+                }
+                window.addEventListener('message', function (ev) {
+                    // Do not require ev.source === window: extension content scripts / injected bridges
+                    // often dispatch with a different source. Origin may be the page or chrome-extension://.
+                    if (!isTrustedMessageOrigin(ev)) return;
+                    handleExtensionSignal(ev.data);
+                });
+                document.addEventListener('risebird-proctoring-postmessage', function (domEv) {
+                    handleExtensionSignal(domEv && domEv.detail);
+                });
+                function emitHelloBurst() {
+                    if (joinSent) return;
+                    emitProctoring({ type: 'RB_PROCTORING_HELLO' }, { broadcastHello: true });
+                }
+                emitHelloBurst();
+                var burstDelays = [90, 220, 500, 950, 1600];
+                for (var bi = 0; bi < burstDelays.length; bi++) {
+                    (function (ms) {
+                        window.setTimeout(function () {
+                            if (joinSent) return;
+                            emitHelloBurst();
+                        }, ms);
+                    })(burstDelays[bi]);
+                }
+                helloIntervalId = window.setInterval(function () {
+                    if (joinSent) { clearHelloInterval(); return; }
+                    emitHelloBurst();
+                }, 2500);
+                if (postMessageTarget === '*' && typeof console !== 'undefined' && console.info) {
+                    console.info('[Risebird Proctoring] postMessage target is * (localhost). Extension manifest must match this page, e.g. http://localhost:*/* and https://localhost:*/*');
+                }
+                extensionReadyFallbackTimer = window.setTimeout(function () {
+                    extensionReadyFallbackTimer = null;
+                    if (!joinSent) onExtensionReady();
+                }, 5000);
+                document.addEventListener('risebird-proctoring-recording-started', function () {
+                    tryStartMonitoring('recording');
+                });
+                window.risebirdNotifyProctoringRecordingStart = function () {
+                    document.dispatchEvent(new CustomEvent('risebird-proctoring-recording-started', { bubbles: true }));
+                };
+                window.risebirdNotifyProctoringInterviewTimerEnded = function () {
+                    endProctoringSession();
+                };
+                window.setInterval(function () {
+                    tryStartMonitoring('schedule');
+                    if (Date.now() > stopExtensionAfterMs && joinSent) endProctoringSession();
+                }, 2000);
+                function onLeave() {
+                    clearExtensionReadyFallback();
+                    clearHelloInterval();
+                    endProctoringSession();
+                }
+                window.addEventListener('pagehide', onLeave);
+                window.addEventListener('beforeunload', onLeave);
+                // Tab may open in the background (e.g. after Chrome Web Store); timers and extension injection can be delayed.
+                document.addEventListener('visibilitychange', function () {
+                    if (document.visibilityState !== 'visible' || joinSent) return;
+                    try { emitProctoring({ type: 'RB_PROCTORING_HELLO' }, { broadcastHello: true }); } catch (e) { }
+                });
+                window.addEventListener('pageshow', function () {
+                    if (joinSent) return;
+                    try { emitProctoring({ type: 'RB_PROCTORING_HELLO' }, { broadcastHello: true }); } catch (e) { }
+                });
+            }
+            function scheduleWire() {
+                function run() {
+                    try { wire(); } catch (e) { }
+                }
+                function deferRun() {
+                    try {
+                        if (typeof window.requestAnimationFrame === 'function') {
+                            window.requestAnimationFrame(function () { window.setTimeout(run, 50); });
+                        } else {
+                            window.setTimeout(run, 50);
+                        }
+                    } catch (e2) {
+                        run();
+                    }
+                }
+                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', deferRun);
+                else deferRun();
+            }
+            scheduleWire();
+        })();
+    </script>
+}
