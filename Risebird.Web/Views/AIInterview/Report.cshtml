@@ -92,6 +92,15 @@
     text-align: right;
     }
 
+    .rb-report-actions-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+    align-items: center;
+    }
+
     .rb-report-date {
     display: flex;
     align-items: center;
@@ -631,6 +640,10 @@
 
     .rb-report-meta {
     text-align: left;
+    }
+
+    .rb-report-actions-row {
+    justify-content: flex-start;
     }
 
     .rb-summary-cards {
@@ -1606,9 +1619,20 @@
                 <i class="fa fa-calendar"></i>
                 <span>@DateTime.Now.ToString("MMMM dd, yyyy")</span>
             </div>
-            <button class="rb-action-btn rb-secondary-btn" onclick="getPDF()" style="margin-top:10px;">
-                <i class="fa fa-download"></i> Download PDF
-            </button>
+            <div class="rb-report-actions-row">
+                <button class="rb-action-btn rb-secondary-btn" type="button" onclick="getPDF()">
+                    <i class="fa fa-download"></i> Download PDF
+                </button>
+                @{
+                    var proctoringCount = ViewBag.ProctoringEventCount as int? ?? 0;
+                }
+                @if (proctoringCount > 0)
+                {
+                    <a style="color:#fff!important" class="rb-action-btn rb-secondary-btn" href="@Url.Action("ProctoringSessionEvents", "AIInterview", new { seId = Model.SessionId })" style="text-decoration:none;">
+                        <i class="fa fa-shield-alt"></i> Proctoring events (@proctoringCount)
+                    </a>
+                }
+            </div>
         </div>
     </div>
 

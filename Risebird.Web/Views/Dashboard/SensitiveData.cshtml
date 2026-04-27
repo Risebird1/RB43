@@ -151,9 +151,9 @@
         opacity: 0.9;
     }
 
-        .ai-eval-doc-line--short {
-            width: 55%;
-        }
+    .ai-eval-doc-line--short {
+        width: 55%;
+    }
 
     @@keyframes ai-eval-shimmer {
         0% {
@@ -223,9 +223,9 @@
         animation: ai-eval-pulse-a 1.1s ease-in-out infinite;
     }
 
-        .ai-eval-compare-node--b {
-            animation: ai-eval-pulse-b 1.1s ease-in-out infinite;
-        }
+    .ai-eval-compare-node--b {
+        animation: ai-eval-pulse-b 1.1s ease-in-out infinite;
+    }
 
     .ai-eval-compare-bar {
         width: 28px;
@@ -324,7 +324,7 @@
 
     /* QC interview detail modal */
     #qcInterviewDetailModal .modal-dialog {
-        max-width: 880px;
+        max-width: 1080px !important;
     }
 
     #qcInterviewDetailModal .qc-interview-detail-body {
@@ -348,21 +348,21 @@
             flex-wrap: wrap;
         }
 
-        #qcInterviewDetailModal .qc-interview-detail-value .qc-detail-issue-link {
-            display: inline-block;
-            margin: 0 4px 8px 0;
-        }
+    #qcInterviewDetailModal .qc-interview-detail-value .qc-detail-issue-link {
+        display: inline-block;
+        margin: 0 4px 8px 0;
+    }
 
-        #qcInterviewDetailModal .qc-interview-detail-value .count {
-            display: inline-block;
-            width: 26px;
-            height: 26px;
-            line-height: 26px;
-            text-align: center;
-            border-radius: 50%;
-            background: #e2e8f0;
-            font-weight: 600;
-        }
+    #qcInterviewDetailModal .qc-interview-detail-value .count {
+        display: inline-block;
+        width: 26px;
+        height: 26px;
+        line-height: 26px;
+        text-align: center;
+        border-radius: 50%;
+        background: #e2e8f0;
+        font-weight: 600;
+    }
 
     #qcInterviewDetailModal .qc-interview-detail-row {
         display: grid;
@@ -377,15 +377,15 @@
 
     #qcInterviewDetailModal .qc-interview-detail-cell {
         display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-    padding: 10px 14px;
-    border: 1px solid #e2e8f0;
-    border-radius: 2px;
-    background: #fff;
-    height:100%!important;
+        flex-direction: row;
+        align-items: center !important;
+        gap: 12px;
+        min-width: 0;
+        padding: 10px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 2px;
+        background: #fff;
+        height: 100% !important;
     }
 
     #qcInterviewDetailModal .qc-interview-detail-cell--multiline {
@@ -395,7 +395,7 @@
 
     #qcInterviewDetailModal .qc-interview-detail-label {
         flex: 0 0 auto;
-        max-width:60%;
+        max-width: 60%;
         font-size: 12px;
         font-weight: 600;
         color: #64748b;
@@ -560,6 +560,12 @@
     #uploadAiTranscriptModal .qc-upload-modal-btn .fas {
         font-size: 14px;
     }
+
+    @@media (max-width: 767px) {
+        #qcInterviewDetailModal .qc-interview-detail-row {
+            display: contents !important;
+        }
+    }
 </style>
 <input type="hidden" id="txtrate" value="@Model.Count()" />
 
@@ -578,79 +584,79 @@
                         {
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCPendingReport')"><strong>Reject Pending</strong></div>
                             @* <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div> *@
+                    <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div> *@
                             <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
                         }
                         @* else if (ViewBag.actionstatus == "QCReport")
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
-                        }
-                        else if (ViewBag.actionstatus == "PropableRedo")
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
-                        }
-                        else if (ViewBag.actionstatus == "QCAIInterview")
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
-                        }
-                        else if (ViewBag.actionstatus == "FakeReport")
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
-                        } *@
+                    {
+                    <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                    <div class="feedback-tab-ac" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
+                    }
+                    else if (ViewBag.actionstatus == "PropableRedo")
+                    {
+                    <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                    <div class="feedback-tab-ac" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
+                    }
+                    else if (ViewBag.actionstatus == "QCAIInterview")
+                    {
+                    <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                    <div class="feedback-tab-ac" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
+                    }
+                    else if (ViewBag.actionstatus == "FakeReport")
+                    {
+                    <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                    <div class="feedback-tab-ac" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
+                    } *@
                         else if (ViewBag.actionstatus == "QCSelect")
                         {
                             <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>Reject Pending</strong></div>
                             @* <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div> *@
+                    <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div> *@
                             <div class="feedback-tab-ac" onclick="Changeurldetails('QCSelect')"><strong>Select Pending</strong></div>
                         }
                         @* else
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
-                        } *@
+                    {
+                    <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('PropableRedo')"><strong>High Severity QC pending</strong></div>
+                    <div class="feedback-tab-ac" onclick="Changeurldetails('QCUnderReview')"><strong>Under Review</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('QCAIInterview')"><strong>AI Interviews</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails('FakeReport')"><strong>Fake Report</strong></div>
+                    } *@
                     }
 
                 </div>
                 <div class="pull-right">
                     <div>
-                       @*  <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
+                        @*  <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <div class="mdc-button__ripple"></div>
                         </button> *@
 
                         @if (ViewBag.Actiontype != 0)
@@ -661,7 +667,7 @@
                         }
                         @* @if (ViewBag.actionstatus == "FakeReport" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCAIInterview" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PropableRedo" || ViewBag.actionstatus == "QCUnderReview" || ViewBag.actionstatus == "QCSelect")
                         {
-                            <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard", new { actionstatus = ViewBag.actionstatus, actiontype = ViewBag.Actiontype })'"></i></span>
+                        <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("UnassignedInterviewsExportToExcel", "Dashboard", new { actionstatus = ViewBag.actionstatus, actiontype = ViewBag.Actiontype })'"></i></span>
                         } *@
                     </div>
                 </div>
@@ -679,12 +685,12 @@
                                 <div class="ai-eval-loader-dialog">
                                     <section class="ai-eval-loader-section ai-eval-loader-section--report" aria-labelledby="aiEvalHeadingReport">
                                         <div class="ai-eval-anim-report">
-                                           
-                                                    <span style="margin-right: 5px;" class="ai-eval-dot"></span>
+
                                             <span style="margin-right: 5px;" class="ai-eval-dot"></span>
-                                                    <span class="ai-eval-dot"></span>
-                                               
-                                            
+                                            <span style="margin-right: 5px;" class="ai-eval-dot"></span>
+                                            <span class="ai-eval-dot"></span>
+
+
                                         </div>
                                         <h4 class="ai-eval-loader-heading" id="aiEvalHeadingReport">Report AI evaluation</h4>
                                         <p class="ai-eval-loader-text">Analyzing the client report and running the AI quality pass. This may take a moment.</p>
@@ -700,12 +706,12 @@
                                     </section>
                                     <section class="ai-eval-loader-section ai-eval-loader-section--contradiction" aria-labelledby="aiEvalHeadingContradiction">
                                         <div class="ai-eval-anim-contradiction">
-                                            
+
                                             <span class="ai-eval-dot"></span>
                                             <span class="ai-eval-dot"></span>
                                             <span class="ai-eval-dot"></span>
-                                      
-                                           @*  <div class="ai-eval-compare-node" aria-hidden="true"></div>
+
+                                            @*  <div class="ai-eval-compare-node" aria-hidden="true"></div>
                                             <div class="ai-eval-compare-bar" aria-hidden="true"></div>
                                             <div class="ai-eval-compare-node ai-eval-compare-node--b" aria-hidden="true"></div> *@
                                         </div>
@@ -886,7 +892,7 @@
                                                         <th>Priority</th>
                                                         <th>Interview Date</th>
                                                         <th>Candidate</th>
-                                                         @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
+                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                         {
                                                             <th>Non AI Reasoning</th>
                                                             <th>Risk Category</th>
@@ -1308,11 +1314,11 @@
                                                                 }
 
                                                             </td>
-                                                             @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
+                                                            @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCSelect")
                                                             {
                                                                 <td>@item.NonAIreasoning</td>
                                                                 <td>@item.Riskcategory</td>
-                                                             }
+                                                            }
                                                             @if (ViewBag.actionstatus == "QCReport")
                                                             {
                                                                 <td>@item.Joinedon</td>
@@ -1321,42 +1327,42 @@
                                                             {
                                                                 @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
                                                                 {
-                                                                <td style="text-align:center">
+                                                                    <td style="text-align:center">
 
-                                                                    @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != "")
-                                                                    {
-                                                                        @if (@item.AITranscriptVerdict == "yes")
+                                                                        @if (item.AITranscriptVerdict != null && item.AITranscriptVerdict != "")
                                                                         {
-                                                                            <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check transcript quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                            @if (@item.AITranscriptVerdict == "yes")
+                                                                            {
+                                                                                <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check transcript quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check transcript quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                            }
+                                                                        }
+                                                                        <br /><br />
+                                                                        @if (item.AIVerdict != null && item.AIVerdict != "")
+                                                                        {
+                                                                            @if (@item.AIVerdict.ToLower().Contains("yes"))
+                                                                            {
+                                                                                <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check report quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;"> check report quality details<svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                            }
+                                                                        }
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        @if (@item.AITranscriptAnalysisScore == 0)
+                                                                        {
+                                                                            <span>NA</span>
                                                                         }
                                                                         else
                                                                         {
-                                                                            <a target="_blank" href="@Url.Action("TransciptAnalysis", "AIScreener" , new { interviewId = item.InterviewId, irfId = item.irfIntId})" title="Transcript Analysis" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check transcript quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
+                                                                            <span class="count" style="width:26px;height:26px;line-height:26px;">@item.AITranscriptAnalysisScore</span>
                                                                         }
-                                                                    }
-                                                                    <br /><br />
-                                                                    @if (item.AIVerdict != null && item.AIVerdict != "")
-                                                                    {
-                                                                        @if (@item.AIVerdict.ToLower().Contains("yes"))
-                                                                        {
-                                                                            <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;">check report quality details <svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="AI QC Report" style="text-decoration:none;"><span style="background:#abadabe3;padding: 0px 10px 3px 10px;border-radius: 4px;color: #fff;font-size: 15px;font-weight:700;text-transform:capitalize;"><font style="font-weight:400;text-transform:none;"> check report quality details<svg style="color: white;width:8px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" fill="white"></path></svg></font></span></a>
-                                                                        }
-                                                                    }
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    @if (@item.AITranscriptAnalysisScore == 0)
-                                                                    {
-                                                                        <span>NA</span>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <span class="count" style="width:26px;height:26px;line-height:26px;">@item.AITranscriptAnalysisScore</span>
-                                                                    }
-                                                                </td>
+                                                                    </td>
                                                                 }
                                                                 @if (ViewBag.actionstatus != "QCPendingReport" && ViewBag.actionstatus != "QCSelect")
                                                                 {
@@ -1522,9 +1528,9 @@
                                                                         }
                                                                         @if (string.IsNullOrEmpty(item.AudioTranscriptFileLink))
                                                                         {
-                                                                        <button type="button" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Upload AI transcript" onclick="openUploadAiTranscriptModal('@item.imid');" title="Upload AI transcript">
-                                                                            <span class="mdc-fab__icon touch"><i class="fas fa-robot" style="font-size:15px;" aria-hidden="true"></i></span>
-                                                                        </button>
+                                                                            <button type="button" class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Upload AI transcript" onclick="openUploadAiTranscriptModal('@item.imid');" title="Upload AI transcript">
+                                                                                <span class="mdc-fab__icon touch"><i class="fas fa-robot" style="font-size:15px;" aria-hidden="true"></i></span>
+                                                                            </button>
                                                                         }
                                                                         @if (!item.TranscritAi)
                                                                         {
@@ -1687,7 +1693,7 @@
                             <div id="qcDetailIssues" class="qc-interview-detail-value"></div>
                         </div>
 
-                    
+
                     </div>
                     <div class="qc-interview-detail-row">
                         <div class="qc-interview-detail-cell">
@@ -1717,7 +1723,7 @@
                             <div id="qcDetailTranscriptMissing" class="qc-interview-detail-value"></div>
                         </div>
                     </div>
-                 
+
                 </div>
             </div>
         </div>

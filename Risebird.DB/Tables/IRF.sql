@@ -74,6 +74,7 @@ CREATE TABLE [dbo].[IRF](
             [showChatBox]  [bit] null,
             [generateTranscriptSummary]  [bit] null,
             [isMultiLingual]  [bit] null,
+            [IsProctoring]  [bit] null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -692,6 +693,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add SkillCluster VARCHAR(200) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsProctoring')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsProctoring bit null
 END
 
 END
