@@ -94,6 +94,10 @@ namespace Risebird.Web.Controllers
                 ViewBag.PageSize      = pageSize;
                 ViewBag.TotalCount    = totalCount;
                 ViewBag.TotalPages    = totalPages;
+                ViewBag.OpenCount     = first?.OpenCount ?? 0;
+                ViewBag.InProgressCount = first?.InProgressCount ?? 0;
+                ViewBag.VerifiedCount = first?.VerifiedCount ?? 0;
+                ViewBag.ClosedCount   = first?.ClosedCount ?? 0;
                 ViewBag.Status        = status        ?? string.Empty;
                 ViewBag.SenderEmail   = senderEmail   ?? string.Empty;
                 ViewBag.ResumeFitment = resumeFitment  ?? string.Empty;
@@ -107,6 +111,7 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
+                ViewBag.OpenCount = 0; ViewBag.InProgressCount = 0; ViewBag.VerifiedCount = 0; ViewBag.ClosedCount = 0;
                 ViewBag.Status = status; ViewBag.SenderEmail = senderEmail; ViewBag.ResumeFitment = resumeFitment;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
@@ -685,9 +690,18 @@ namespace Risebird.Web.Controllers
                 if (receivedAt.HasValue && receivedAt.Value < DateTime.UtcNow.AddHours(-46))
                     return Ok(new { success = false, skipped = true, reason = "Email older than 46 hours — skipped." });
 
-                var systemSenders = new[] { "mailer-daemon@googlemail.com", "workspace-noreply@google.com" };
+                var systemSenders = new[] { "mailer-daemon@googlemail.com", "mailer-daemon@google.com", "workspace-noreply@google.com", "postmaster@google.com", "noreply@google.com" };
                 if (systemSenders.Any(s => string.Equals(payload.SenderEmail?.Trim(), s, StringComparison.OrdinalIgnoreCase)))
                     return Ok(new { success = false, skipped = true, reason = "System email — skipped." });
+
+                var senderLower = (payload.SenderEmail?.Trim() ?? "").ToLower();
+                if (senderLower.StartsWith("mailer-daemon@") || senderLower.StartsWith("postmaster@"))
+                    return Ok(new { success = false, skipped = true, reason = "Bounce/system sender — skipped." });
+
+                var subjectLower = (payload.Subject?.Trim() ?? "").ToLower();
+                var skipSubjects = new[] { "delivery status notification", "undeliverable", "delivery failure", "mail delivery failed", "returned mail" };
+                if (skipSubjects.Any(s => subjectLower.Contains(s)))
+                    return Ok(new { success = false, skipped = true, reason = "Delivery status/bounce notification — skipped." });
 
                 var record = new InterviewerEmailAvailability
                 {

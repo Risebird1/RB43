@@ -218,10 +218,10 @@
                 @if (TempData["Success"] != null) { <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i>@TempData["Success"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
                 @if (TempData["Error"] != null) { <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
 
-                @{ var cardOpen = Model.Count(r => string.Equals(r.Status, "Open", StringComparison.OrdinalIgnoreCase));
-                   var cardIP = Model.Count(r => string.Equals(r.Status, "InProgress", StringComparison.OrdinalIgnoreCase));
-                   var cardVerified = Model.Count(r => string.Equals(r.Status, "Verified", StringComparison.OrdinalIgnoreCase));
-                   var cardClosed = Model.Count(r => string.Equals(r.Status, "Closed", StringComparison.OrdinalIgnoreCase)); }
+                @{ int cardOpen = ViewBag.OpenCount != null ? (int)ViewBag.OpenCount : 0;
+                   int cardIP = ViewBag.InProgressCount != null ? (int)ViewBag.InProgressCount : 0;
+                   int cardVerified = ViewBag.VerifiedCount != null ? (int)ViewBag.VerifiedCount : 0;
+                   int cardClosed = ViewBag.ClosedCount != null ? (int)ViewBag.ClosedCount : 0; }
                 <div class="row g-3 mb-4">
                     <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
                     <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
@@ -671,7 +671,7 @@
         $('#mgmCompany').text(r.companyName || '—');
 
         var resumeUrl = r.resumeLink; if (!resumeUrl || resumeUrl === 'None') resumeUrl = r.profileResumeLink;
-        if (resumeUrl && resumeUrl !== 'None') { $('#btnViewResume').attr('href', resumeUrl).show(); } else { $('#btnViewResume').hide(); }
+        if (resumeUrl && resumeUrl !== 'None') { $('#btnViewResume').attr('href', 'https://docs.google.com/gview?url=' + encodeURIComponent(resumeUrl) + '&embedded=false').show(); } else { $('#btnViewResume').hide(); }
         syncPipeline(r);
     }
 
@@ -783,7 +783,7 @@
                 $('#uploadProgress').hide(); $('#btnConfirmUpload').prop('disabled', false);
                 if (res.success) {
                     $('#uploadResult').html('<span class="text-success" style="font-size:11px;"><i class="fas fa-check-circle me-1"></i>Uploaded successfully.</span>').show();
-                    $('#btnViewResume').attr('href', res.resumeLink).show();
+                    $('#btnViewResume').attr('href', 'https://docs.google.com/gview?url=' + encodeURIComponent(res.resumeLink) + '&embedded=false').show();
                     $('#btnAnalyzeResume').prop('disabled', false);
                     $('#step1Subtitle').text('Resume uploaded. Click Analyze Resume to proceed.');
                     if (currentRecord) { currentRecord.resumeLink = res.resumeLink; currentRecord.hasResumeLink = true; }

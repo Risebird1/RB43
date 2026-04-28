@@ -25,6 +25,47 @@ namespace Risebird.Repository
             _logger = logger;
         }
 
+        public async Task InsertHistoryAsync(int recordId, string eventType, string fromValue, string toValue, string changedBy)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@RecordId", recordId);
+                p.Add("@EventType", eventType);
+                p.Add("@FromValue", fromValue);
+                p.Add("@ToValue", toValue);
+                p.Add("@ChangedBy", changedBy ?? "System");
+
+                await con.ExecuteAsync("usp_InsertNaukriOnboardingHistory", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        public async Task<List<NaukriOnboardingHistory>> GetHistoryAsync(int recordId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@RecordId", recordId);
+
+                var result = await con.QueryAsync<NaukriOnboardingHistory>(
+                    "usp_GetNaukriOnboardingHistory", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<NaukriOnboardingHistory>();
+            }
+        }
+
         public async Task<int> InsertAsync(NaukriProspectiveInterviewer record)
         {
             try

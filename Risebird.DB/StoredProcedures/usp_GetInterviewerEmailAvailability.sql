@@ -14,6 +14,9 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    IF @Page < 1 SET @Page = 1;
+    IF @PageSize < 1 SET @PageSize = 25;
+
     SELECT
         ea.Id, ea.SenderEmail, ea.UserId, ea.InterviewerProfileId,
         ea.Subject, ea.MailContent, ea.ReceivedAt,
@@ -33,23 +36,31 @@ BEGIN
         ip.CompanyName,
         ip.ResumeLink         AS ProfileResumeLink,
         ul.MobileNumber       AS UserMobileNumber,
-        mag.MAGName           AS MasterAssessmentGroupName,
-        ag.AssessmentGroup    AS AssessmentGroupName,
-        COUNT(*) OVER()       AS TotalCount
+        magInfo.MAGName       AS MasterAssessmentGroupName,
+        magInfo.AssessmentGroupId AS ResolvedAssessmentGroupId,
+        magInfo.AssessmentGroupName,
+        COUNT(*) OVER()       AS TotalCount,
+        SUM(CASE WHEN ea.Status = 'Open'       THEN 1 ELSE 0 END) OVER() AS OpenCount,
+        SUM(CASE WHEN ea.Status = 'InProgress'  THEN 1 ELSE 0 END) OVER() AS InProgressCount,
+        SUM(CASE WHEN ea.Status = 'Verified'    THEN 1 ELSE 0 END) OVER() AS VerifiedCount,
+        SUM(CASE WHEN ea.Status = 'Closed'      THEN 1 ELSE 0 END) OVER() AS ClosedCount
     FROM InterviewerEmailAvailability ea
     LEFT JOIN InterviewerProfile ip ON ip.Id = ea.InterviewerProfileId
     LEFT JOIN UserList ul ON ul.id = ea.UserId
-    LEFT JOIN MasterAssessmentGroup mag
-        ON LTRIM(RTRIM(LOWER(mag.MAGName))) = LTRIM(RTRIM(LOWER(ea.MagName)))
-        AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
-    LEFT JOIN AssessmentGroup ag ON ag.id = mag.AssessmentGroupId
+    OUTER APPLY (
+        SELECT TOP 1 mag.MAGName, mag.AssessmentGroupId, ag.AssessmentGroup AS AssessmentGroupName
+        FROM MasterAssessmentGroup mag
+        LEFT JOIN AssessmentGroup ag ON ag.id = mag.AssessmentGroupId
+        WHERE LTRIM(RTRIM(LOWER(mag.MAGName))) = LTRIM(RTRIM(LOWER(ea.MagName)))
+          AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
+    ) magInfo
     WHERE
         (@Status IS NULL OR ea.Status = @Status)
         AND (@SenderEmail IS NULL OR ea.SenderEmail LIKE '%' + @SenderEmail + '%')
         AND (@ResumeFitment IS NULL OR ea.ResumeFitment = @ResumeFitment)
         AND (@DateFrom IS NULL OR ea.ReceivedAt >= @DateFrom)
         AND (@DateTo IS NULL OR ea.ReceivedAt < DATEADD(DAY, 1, @DateTo))
-    ORDER BY ea.ReceivedAt DESC
+    ORDER BY ea.ReceivedAt DESC, ea.Id DESC
     OFFSET (@Page - 1) * @PageSize ROWS
     FETCH NEXT @PageSize ROWS ONLY
 END

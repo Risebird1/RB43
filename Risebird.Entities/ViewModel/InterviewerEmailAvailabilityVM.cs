@@ -55,6 +55,10 @@ namespace Risebird.Entities.ViewModel
 
         // Pagination
         public int      TotalCount                  { get; set; }
+        public int      OpenCount                   { get; set; }
+        public int      InProgressCount             { get; set; }
+        public int      VerifiedCount               { get; set; }
+        public int      ClosedCount                 { get; set; }
     }
 
     public class RelayInterviewerAvailabilityPayload
