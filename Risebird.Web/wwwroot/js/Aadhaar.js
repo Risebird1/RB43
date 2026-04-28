@@ -1,4 +1,4 @@
-﻿var Buttonclick = 1;
+var Buttonclick = 1;
 //var isAadharVerified = false;
 function openAadhaarpopup() {
     document.getElementById("divSubmit").style.display = "none";
@@ -52,6 +52,10 @@ function submitOtpnumber() {
     }
 }
 function BindKYCData(data) {
+    if (!data || (!data.name && !data.address && !data.gender && !data.dob && !data.doc_face)) {
+        $("#divAadhaarKYC").empty().html('Aadhaar data is not available. Please verify again.');
+        return;
+    }
     var html = '';
     html += '<table style="overflow:auto" width="100%">';
     html += '<tr><td rowspan="4"><img src="data:image/png;base64,' + data.doc_face + '" alt="Red dot" /></td><td>Name</td><td>' + data.name + '</td></tr>';
@@ -60,7 +64,10 @@ function BindKYCData(data) {
     html += '<tr><td>DOB</td><td>' + data.dob + '</td></tr>';
     html += '</table>';
     $("#divAadhaarKYC").empty().html(html);
-    document.getElementById("btnSubmitDetails").disabled = false;
+    var submitBtn = document.getElementById("btnSubmitDetails");
+    if (submitBtn) {
+        submitBtn.disabled = false;
+    }
 }
 function openAadhaarKYCpopup() {
     var modal = document.getElementById("AadhaarKYCpopup");
