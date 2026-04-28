@@ -31,6 +31,9 @@ union
 Select qca.InterviewId,'AIRedo' as Type,'Redo Requested' as Riskcategory        
 from QcInterviewAIevaluation qca where ISNULL(AIMergeRedoInterview,0)=1
 union
+Select InterviewId,'Report AI Score' as Type,'High Severity' as RiskcategoryFrom InterviewComments where AIReportQCAnalysisScore<60UnionSelect InterviewId,'Transcript AI Score' as Type,'High Severity' as RiskcategoryFrom InterviewComments where AITranscriptAnalysisScore<6
+UnionSelect qca.InterviewId,'Contradiction AI Score' as Type,'High Severity' as Riskcategoryfrom QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) >=4
+union
 Select im.id as InterviewId,Case when imj.Joinedon is null and imc.PerformedOn is null then 'No Show'   
 when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is null then 'Candidate No Show' end as Type,'Fake Report' as Riskcategory
 from InterviewMeetings im  join InterviewComments ic on ic.InterviewId=im.id                  
@@ -67,6 +70,9 @@ and (pt.DurationSelectedMin*4/9>ic.VideoDuration) and (InterviewStatus=1 or Inte
 union
 Select qca.InterviewId,'AIRedo' as Type,'Redo Requested' as Riskcategory        
 from QcInterviewAIevaluation qca where ISNULL(AIMergeRedoInterview,0)=1
+union
+Select InterviewId,'Report AI Score' as Type,'High Severity' as RiskcategoryFrom InterviewComments where AIReportQCAnalysisScore<60UnionSelect InterviewId,'Transcript AI Score' as Type,'High Severity' as RiskcategoryFrom InterviewComments where AITranscriptAnalysisScore<6
+UnionSelect qca.InterviewId,'Contradiction AI Score' as Type,'High Severity' as Riskcategoryfrom QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) >=4
 union
 Select im.id as InterviewId,Case when imj.Joinedon is null and imc.PerformedOn is null then 'No Show'   
 when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is null then 'Candidate No Show' end as Type,'Fake Report' as Riskcategory
@@ -111,6 +117,9 @@ and (pt.DurationSelectedMin*4/9>ic.VideoDuration) and (InterviewStatus=1 or Inte
 union
 Select qca.InterviewId,'AIRedo' as Type,'Redo Requested' as Riskcategory        
 from QcInterviewAIevaluation qca where ISNULL(AIMergeRedoInterview,0)=1
+union
+Select InterviewId,'Report AI Score' as Type,'High Severity' as RiskcategoryFrom InterviewComments where AIReportQCAnalysisScore<60UnionSelect InterviewId,'Transcript AI Score' as Type,'High Severity' as RiskcategoryFrom InterviewComments where AITranscriptAnalysisScore<6
+UnionSelect qca.InterviewId,'Contradiction AI Score' as Type,'High Severity' as Riskcategoryfrom QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) >=4
 union
 Select im.id as InterviewId,Case when imj.Joinedon is null and imc.PerformedOn is null then 'No Show'   
 when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is null then 'Candidate No Show' end as Type,'Fake Report' as Riskcategory
