@@ -77,7 +77,6 @@ namespace Risebird.Entities.ViewModel
         public string AIContradictionScore { get; set; }
         public string ResumeLink { get; set; }
         public int RedMarker { get; set; }
-        public string interviewer { get; set; }
         public int Rating { get; set; }
         [Display(Name = "Video Reward")]
         public int VideoReward { get; set; }
