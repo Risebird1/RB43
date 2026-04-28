@@ -237,7 +237,7 @@
         transform: rotate(180deg) !important;
     }
     .content-wrappers {
-    margin: 60px auto 20px auto;
+    margin: 60px auto 20px auto!important;
     }
     </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
@@ -536,7 +536,10 @@ a.rb-link:hover {
                                                                 </div>
                                                             }
 
-                                                            <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
+                                                            @if (!Model.CandidateDetails.IsAIInterview)
+                                                            {
+                                                                <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
+                                                            }
                                                             <div>
 
                                                                @if(Model.CandidateDetails.IsAIInterview){
@@ -802,7 +805,7 @@ a.rb-link:hover {
                                                     <div class="panel-heading" role="tab" id="headingCandidateConsent" style="background:#fff;">
                                                         <h4 class="panel-title">
                                                             <a class="collapsed" role="button" data-toggle="collapse" data-parent="#otherDetailsAccordion" href="#collapseCandidateConsent" aria-expanded="false" aria-controls="collapseCandidateConsent" style="padding:12px 14px !important;font-size:14px !important;font-weight:600 !important;color:#204065 !important;line-height:1.35;">
-                                                                <i class="fa fa-file-text-o" style="color:#42a5f5;font-size:14px;margin-right:7px;"></i>Candidate Consent
+                                                                <i class="fa fa-file-text" style="color:#42a5f5;font-size:14px;margin-right:7px;"></i>Candidate Consent
                                                                 <span style="display:block;font-size:12px;font-weight:400;color:#7a8da3;margin-top:2px;">Recording &amp; proctoring acknowledgement</span>
                                                             </a>
                                                         </h4>
