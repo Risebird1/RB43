@@ -12,6 +12,8 @@
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
     int inthistCount = 0;
     int scheduleCount = 0;
+    bool renderedPrimaryMeetingBlock = false;
+    int reportInterviewId = 0;
 }
 
 
@@ -174,7 +176,70 @@
     -moz-transform: rotate(180deg);
     transform: rotate(180deg);
     }
-</style>
+
+    /* PDF-like full-width two-section accordion */
+    #accordion {
+        width: 100%;
+    }
+    #accordion .panel {
+        border: 1px solid #dbe5ef;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        overflow: hidden;
+        box-shadow: none;
+    }
+    #accordion .panel-heading {
+        background: #eef5ff;
+        padding: 0;
+    }
+    #accordion .panel-title > a,
+    #accordion .panel-title > a:active {
+        padding: 14px 16px !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0 !important;
+        word-spacing: 0 !important;
+        text-transform: none !important;
+        color: #204065 !important;
+        line-height: 1.35;
+        text-decoration: none !important;
+        display: block;
+    }
+    #accordion .panel-heading a:before {
+        right: 0;
+        color: #6f859d;
+    }
+    #accordion .panel-body {
+        padding: 14px 16px;
+        background: #fff;
+    }
+    .left-pannel,
+    .right-pannel,
+    .int-panel,
+    .w-full {
+        width: 100% !important;
+    }
+
+    /* Sleek nested chevrons for Other Details cards */
+    #otherDetailsAccordion .panel-heading a:before {
+        font-family: FontAwesome !important;
+        content: "\f078" !important;
+        color: #8aa0b8 !important;
+        font-size: 12px !important;
+        right: 0 !important;
+        transition: transform .2s ease !important;
+        position: relative;
+    }
+    #otherDetailsAccordion .panel-heading a.collapsed:before {
+        transform: rotate(0deg) !important;
+    }
+    #otherDetailsAccordion .panel-heading a:not(.collapsed):before {
+        transform: rotate(180deg) !important;
+    }
+    .content-wrappers {
+    margin: 60px auto 20px auto;
+    }
+    </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/tabs.css?v=2024" />
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
@@ -232,15 +297,7 @@
             </div>
         </div>
     </div>
-    <div>
-<marquee behavior="scroll" direction="left" scrollamount="5">
-  <b>
-    <span style="color:#5A2DFF; font-size:18px; font-weight:600; animation: fadeGlow 1s ease-in-out infinite;">
-      🔔 For any queries, concerns, or feedback regarding interviews or the Risebird platform, contact us at Candidate Support WhatsApp Number : 9667262444 or email us at 
-      <span style="color:#FFD700;">candidatesupport@risebird.io</span>
-    </span>
-  </b>
-</marquee>
+    @* Candidate support is shown in the footer-style bar below Other Details *@
 
 <style>
 @@keyframes fadeGlow {
@@ -298,6 +355,27 @@ text-shadow: 0 0 15px #bfb8da;
     line-height: 1.55;
 }
 
+        .vertical-mdl-tabs .panel-default > .panel-heading + .panel-collapse > .panel-body {
+    border-top-color: #fff;
+}
+
+
+        .vertical-mdl-tabs .panel-default>.panel-heading {
+            background: none !important;
+            
+            border: none !important;
+
+        }
+
+        #accordion .panel-body {
+            padding: 0px 14px 14px 16px;
+            background: #fff;
+        }
+
+        .panel-group, #accordion .panel, .panel-group .panel+.panel {
+
+         margin-bottom:0px;
+        }
 a.rb-link {
     color: #0066FF;
     font-weight: 600;
@@ -338,6 +416,10 @@ a.rb-link:hover {
     from { transform: translateY(25px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+.follow ul li, .follow p {
+      font-size: 13px;
+      line-height: 20px;
+}
 </style>
         <div class="content-wrappers">
 
@@ -364,8 +446,8 @@ a.rb-link:hover {
                                 <div class="panel panel-default">
                                     <div class="panel-heading active" role="tab" id="headingOne">
                                         <h4 class="panel-title">
-                                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                Meeting Link
+                                        <a style="color: #8a9bb0 !important;text-transform: uppercase !important;font-weight: 600;font-size: 13px !important;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                Your Interview
                                             </a>
                                         </h4>
                                     </div>
@@ -381,7 +463,34 @@ a.rb-link:hover {
                                                         @if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.confirmationStatus == "Confirmed")
                                                         {
                                                             scheduleCount = +1;
-                                                            <div> <h1 style="margin:0px 0px 15px 0px;"><img width="22" src="../../img/schedule-time.png" style="margin-right:10px;">Scheduled Interview Details</h1></div>
+                                                            if (!renderedPrimaryMeetingBlock)
+                                                            {
+                                                                renderedPrimaryMeetingBlock = true;
+                                                                reportInterviewId = item.InterviewId;
+                                                            <div style="width:100%;border:1px solid #dbe5ef;border-radius:10px;background:#ffffff;overflow:hidden;margin-bottom:14px;">
+                                                                <div style="padding:14px 16px;border-bottom:1px solid #e4edf7;">
+                                                                    
+                                                                    <div style="font-size:21px;font-weight:700;line-height:1.35;color:#1f3550;margin-bottom:12px;">@Model.CandidateDetails.PrimarySkillInvite Interview</div>
+                                                                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                                                                        <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#f3f8ff;border:1px solid #d8e6f6;border-radius:999px;font-size:13px;color:#5c7088;">
+                                                                            <i class="fa fa-calendar" aria-hidden="true" style="color:#42a5f5;font-size:13px;"></i>
+                                                                            <strong style="color:#1f3550;font-weight:600;">@item.interviewDateTimeZone</strong>
+                                                                        </span>
+                                                                        <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#f3f8ff;border:1px solid #d8e6f6;border-radius:999px;font-size:13px;color:#5c7088;">
+                                                                            <i class="fa fa-cubes" aria-hidden="true" style="color:#42a5f5;font-size:13px;"></i>
+                                                                            <strong style="color:#1f3550;font-weight:600;">Primary Skill:</strong>&nbsp;@Model.CandidateDetails.PrimarySkillInvite
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <div style="padding:12px 16px;">
+                                                                    <p style="line-height:24px;margin:0;font-size:14px;color:#4d647c;">
+                                                                        <b style="color:#204065;">JD Name :</b>
+                                                                        <c onclick="captureclick('JobDescription','Jd Link')">
+                                                                            <a style="cursor:pointer;color:#42a5f5;font-weight:600;" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a>
+                                                                        </c>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
                                                             @* @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                     {
                                                     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;position:relative">
@@ -395,10 +504,6 @@ a.rb-link:hover {
                                                     </div>
                                                     }*@
                                                             <div class="clearfix"></div>
-                                                            <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a style="cursor:pointer;position: relative;top:0px;color: #42a5f5;" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
-                                                            <p style="line-height:32px;font-size:17px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
-
-                                                            <div style="padding:0px;margin:0px 0px 15px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDateTimeZone (@item.TimeZonesValue)</span></div>
                                                             @* @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                             {
                                                                 @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId == 0)
@@ -413,47 +518,144 @@ a.rb-link:hover {
 
                                                             @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId == 0)
                                                             {
-                                                                <div style="padding:0px;margin:0px 0px 25px 0px;">
-                                                                    <button type="button" class="clickhere_btn callsubmit" style="float:left;width:150px;margin-left: 0px;margin-bottom: 15px;">
-                                                                        <span data-toggle="tooltip" data-placement="top" title="" onclick="openBiometricpopup(@item.InterviewId)" data-original-title="Validate Aadhar Details"><font style="font-family: Roboto, sans-serif; font-size:12px;">Verify Candidate</font></span>
-                                                                    </button>
+                                                                <div style="width:100%;margin:0 0 18px 0;padding:14px 16px;border:1px solid #dbe5ef;border-radius:10px;background:#ffffff;">
+                                                                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+                                                                        <div style="display:flex;align-items:flex-start;gap:10px;">
+                                                                            <div style="width:38px;height:38px;border-radius:50%;background:#eef5ff;border:1px solid #d8e6f6;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                                                <i class="fa fa-user-circle" aria-hidden="true" style="color:#42a5f5;font-size:16px;"></i>
+                                                                            </div>
+                                                                            <div>
+                                                                                <div style="font-size:14px;font-weight:600;color:#1f3550;margin-bottom:2px;">Verify Your Identity</div>
+                                                                                <div style="font-size:13px;color:#6b7d90;line-height:1.45;">Required before joining. Please complete verification for the registered candidate.</div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button type="button" class="btn btn-default click_herebtn" style="white-space:nowrap;font-size:13px;font-weight:600;padding:8px 16px;line-height:1.4;border:1px solid #c8daf0;background:#eef5ff;color:#1f5c93;" data-toggle="tooltip" data-placement="top" title="" onclick="openBiometricpopup(@item.InterviewId)" data-original-title="Validate Aadhar Details">
+                                                                            <i class="fa fa-check-circle" style="margin-right:6px;"></i>Verify Now
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
                                                             }
 
                                                             <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
-                                                            <img class="schedule-img" src="../../img/int-img-2.png">
                                                             <div>
 
                                                                @if(Model.CandidateDetails.IsAIInterview){
                                                                     @if (Model.CandidateDetails.IsProctoring)
                                                                     {
-                                                                    <div id="risebirdProctoringExtPanel" style="margin-bottom:14px;max-width:520px;">
-                                                                        <p style="margin:0 0 8px 0;font-size:14px;color:#204065;">Proctored interviews require the <strong>Risebird Proctoring Assistant</strong> Chrome extension.</p>
-                                                                        <a style="width:auto;" id="btnInstallRisebirdProctoringExt" href="https://chromewebstore.google.com/detail/risebird-proctoring-assis/lpbnpcnkhmknkgfnnnecahkmpkihglgg?authuser=0&amp;hl=en" target="_blank" rel="noopener noreferrer" class="btn btn-default click_herebtn" style="margin-bottom:10px;display:inline-block;text-decoration:none;line-height:1.4;">
-                                                                            Install Risebird Proctoring Assistant (Chrome Web Store)
+                                                                        <div id="risebirdProctoringExtPanel" style="margin-bottom:14px;width:100%;border:1px solid #dbe5ef;background:#f7fbff;border-radius:10px;overflow:hidden;">
+                                                                            <div style="padding:14px 16px;border-bottom:1px solid #dbe5ef;background:#eef5ff;">
+                                                                                <span style="font-size:16px;font-weight:700;color:#204065;">
+                                                                                    <i class="fa fa-shield" style="color:#42a5f5;font-size:15px;margin-right:6px;"></i>Risebird Interview Setup
+                                                                                </span>
+                                                                            </div>
+
+                                                                            <div style="padding:14px 16px;">
+                                                                                <div style="display:flex;align-items:flex-start;gap:8px;background:#eaf3ff;border:1px solid #cfe2fb;border-radius:8px;padding:10px 12px;margin-bottom:12px;">
+                                                                                    <i class="fa fa-info-circle" style="color:#42a5f5;font-size:14px;position:relative;top:1px;"></i>
+                                                                                    <span style="font-size:13px;line-height:1.5;color:#35526f;">
+                                                                                        This is a proctoring interview. <strong>Proctoring Assistant</strong> Chrome extension is required before you can join.
+                                                                                    </span>
+                                                                                </div>
+
+                                                                                <div style="background:#ffffff;border:1px solid #dbe5ef;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+                                                                                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;">
+                                                                                        <div style="font-size:14px;font-weight:600;color:#204065;">
+                                                                                            <i class="fa fa-download" style="color:#42a5f5;font-size:14px;margin-right:6px;"></i>1. Install Extension
+                                                                                        </div>
+                                                                                            <a id="btnInstallRisebirdProctoringExt" href="https://chromewebstore.google.com/detail/risebird-proctoring-assis/lpbnpcnkhmknkgfnnnecahkmpkihglgg?authuser=0&amp;hl=en"
+                                                                                           onclick="return window.risebirdOpenProctoringStoreWindow(event);"
+                                                                                           title="Open Chrome Web Store"
+                                                                                           style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;min-width:26px;border:1px solid #d8e6f6;border-radius:50%;color:#42a5f5;background:#f4f8ff;text-decoration:none;">
+                                                                                            <i class="fa fa-external-link" style="font-size:12px;"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <p style="margin:0 0 10px 0;font-size:13px;color:#4d647c;">Open the Chrome Web Store in new tab.</p>
+                                                                                   @*  <a id="btnInstallRisebirdProctoringExt" href="https://chromewebstore.google.com/detail/risebird-proctoring-assis/lpbnpcnkhmknkgfnnnecahkmpkihglgg?authuser=0&amp;hl=en" target="_blank" rel="noopener noreferrer" class="btn btn-default click_herebtn" style="width:auto;display:inline-block;text-decoration:none;line-height:1.4;">
+                                                                                        Install Risebird Proctoring Assistant
+                                                                                    </a> *@
+                                                                                    <div style="padding:0px 0 0 0;">
+                                                                                        <div id="risebirdProctoringExtStatus" class="alert alert-info" style="display:none;margin:0;padding:8px 12px;font-size:13px;"></div>
+                                                                                       <div style="clear:both"></div> <div style="margin-top:7px;">
+                                                                                            <button type="button" id="risebirdRecheckExtBtn" style="display:none;width:100%;padding:10px 12px;background:rgb(192 207 218);color:#fff;font-family:inherit;font-size:13.5px;font-weight:600;border:none;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;gap:6px;">
+                                                                                                <i class="fa fa-check-circle" style="margin-right:6px;"></i>I installed the extension — enable join meeting 
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div style="clear:both"></div>
+                                                                                <div style="background:#ffffff;border:1px solid #dbe5ef;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+                                                                                    <div style="margin-bottom:10px;">
+                                                                                        <div style="font-size:14px;font-weight:600;color:#204065;line-height:1.4;">
+                                                                                            <i class="fa fa-video-camera" style="color:#42a5f5;font-size:14px;margin-right:6px;"></i>2. Join Meeting
+                                                                                        </div>
+                                                                                        <p style="margin:6px 0 0 0;font-size:13px;color:#4d647c;line-height:1.5;">Complete candidate verification first. The join button will auto-enable when installation setup is complete.</p>
+                                                                                    </div>
+                                                                                    <a id="btn_ai_Interview" role="button"
+                                                                                       class="btn btn-primary click_herebtn disabled"
+                                                                                       style="text-decoration:none;display:inline-block;margin-top:0px;padding:10px 20px;line-height:1.4;opacity:0.55;cursor:not-allowed;pointer-events:none;min-width:260px;text-align:center;"
+                                                                                       data-join-url="@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })"
+                                                                                       data-aadhar-ok="@(item.AadharVerificationId > 0 ? "true" : "false")"
+                                                                                       data-interview-id="@item.InterviewId"
+                                                                                       href="#"
+                                                                                       target="_blank"
+                                                                                       rel="opener"
+                                                                                       aria-disabled="true"
+                                                                                       onclick="return window.risebirdAiInterviewJoinAnchorClick(event);">
+                                                                                        Click here to join the meeting
+                                                                                    </a>
+                                                                                    <div id="risebirdProctoringExtOk" class="alert alert-success" style="display:none;margin:10px 0 0 0;padding:8px 12px;font-size:13px;">
+                                                                                        <i class="fa fa-check-circle" style="margin-right:6px;"></i>You can join the meeting using the button.
+                                                                                    </div>
+                                                                                    <div style="clear:both"></div>
+                                                                                </div>
+                                                                                <div style="clear:both"></div>
+                                                                                <div style="background:#ffffff;border:1px solid #dbe5ef;border-radius:8px;padding:12px 14px;">
+                                                                                    <div id="risebirdProctoringStep3Toggle" role="button" tabindex="0" aria-expanded="false" style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;cursor:pointer;user-select:none;">
+                                                                                        <div>
+                                                                                            <div style="font-size:14px;font-weight:600;color:#204065;line-height:1.35;">
+                                                                                                <i class="fa fa-desktop" style="color:#42a5f5;font-size:14px;margin-right:6px;"></i>3. Start Proctoring Session after joining meeting
+                                                                                            </div>
+                                                                                            <div style="margin-top:5px;font-size:13px;color:#4d647c;line-height:1.45;">Open the extension and follow prompts.</div>
+                                                                                        </div>
+                                                                                        <i id="risebirdProctoringStep3Chevron" class="fa fa-chevron-down" style="font-size:12px;color:#6f859d;transition:transform 0.2s ease;margin-top:3px;"></i>
+                                                                                    </div>
+                                                                                    <div id="risebirdProctoringStep3Body" style="display:none;padding-top:12px;">
+                                                                                        <p style="margin:0 0 10px 0;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#8a9bb0;">Risebird Interview Setup</p>
+                                                                                        <ol style="display:flex;flex-direction:column;gap:10px;list-style:none;margin:0;padding:0;">
+                                                                                            <li style="display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:#4d647c;line-height:1.45;">
+                                                                                                <span style="min-width:20px;height:20px;border-radius:50%;background:#eef5ff;border:1px solid #d8e6f6;color:#42a5f5;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">a</span>
+                                                                                                <span>Click the <strong>Risebird</strong> extension icon in your Chrome toolbar and select <strong>Join Session</strong>.</span>
+                                                                                            </li>
+                                                                                            <li style="display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:#4d647c;line-height:1.45;">
+                                                                                                <span style="min-width:20px;height:20px;border-radius:50%;background:#eef5ff;border:1px solid #d8e6f6;color:#42a5f5;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">b</span>
+                                                                                                <span>Click <strong>Start Session</strong> and allow the required screen-sharing prompt.</span>
+                                                                                            </li>
+                                                                                            <li style="display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:#4d647c;line-height:1.45;">
+                                                                                                <span style="min-width:20px;height:20px;border-radius:50%;background:#fff6e8;border:1px solid #f2d6a8;color:#d38a1e;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">!</span>
+                                                                                                <span>Select <strong>Entire Screen</strong> (not a window/tab) for interview integrity.</span>
+                                                                                            </li>
+                                                                                        </ol>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a id="btn_ai_Interview" role="button"
+                                                                           class="btn btn-primary click_herebtn disabled"
+                                                                           style="text-decoration:none;display:inline;margin-top:0px;padding:10px 35px;line-height:1.4;opacity:0.55;cursor:not-allowed;pointer-events:none;"
+                                                                           data-join-url="@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })"
+                                                                           data-aadhar-ok="@(item.AadharVerificationId > 0 ? "true" : "false")"
+                                                                           data-interview-id="@item.InterviewId"
+                                                                           href="#"
+                                                                           target="_blank"
+                                                                           rel="opener"
+                                                                           aria-disabled="true"
+                                                                           onclick="return window.risebirdAiInterviewJoinAnchorClick(event);">
+                                                                            Click here to join the meeting
                                                                         </a>
-                                                                        <div style="margin-bottom:10px;">
-                                                                            <button type="button" id="risebirdRecheckExtBtn" class="btn btn-sm btn-default" style="font-size:13px;display:inline-block;">I installed it — enable join</button>
-                                                                        </div>
-                                                                        <div id="risebirdProctoringExtStatus" class="alert alert-info" style="display:none;margin:0;padding:8px 12px;font-size:13px;"></div>
-                                                                        <div id="risebirdProctoringExtOk" class="alert alert-success" style="display:none;margin:8px 0 0 0;padding:8px 12px;font-size:13px;">
-                                                                            <i class="fa fa-check-circle" style="margin-right:6px;"></i>You can join the meeting using the button.
-                                                                        </div>
-                                                                    </div>
-                                                                } 
-                                                                <a id="btn_ai_Interview" role="button"
-                                                                    class="btn btn-primary click_herebtn disabled"
-                                                                    style="text-decoration:none;display:inline;margin-top:0px;padding:10px 35px;line-height:1.4;opacity:0.55;cursor:not-allowed;pointer-events:none;"
-                                                                    data-join-url="@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })"
-                                                                    data-aadhar-ok="@(item.AadharVerificationId > 0 ? "true" : "false")"
-                                                                    data-interview-id="@item.InterviewId"
-                                                                    href="#"
-                                                                    target="_blank"
-                                                                    rel="opener"
-                                                                    aria-disabled="true"
-                                                                    onclick="return window.risebirdAiInterviewJoinAnchorClick(event);">
-                                                                        Click here to join the meeting
-                                                                    </a>
+                                                                    }
                                                                 }
                                                                 @* else if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId > 0)
                                                                 {
@@ -485,15 +687,6 @@ a.rb-link:hover {
                                                                 }
                                                                 
                                                             </div>
-
-
-                                                                <div style="clear:both;position:relative;margin-top:6px;">
-                                                                            <span style="color:grey;font-weight:700;"> If you feel the interviewer is not engaged or any other ethical issue</span> <a style="cursor:pointer;color:#3094e5;font-weight:600;text-decoration:underline;font-size:16px;margin-bottom:20px;display:inline-block"
-                                                                                           href="@Url.Action("CandidateRatingInterviewer", "Interview", new { id = item.InterviewId })"
-                                                                                           target="_blank" rel="noopener noreferrer">
-                                                                                             Report here
-                                                                                        </a>
-                                                                                    </div>
                                                             @if (item.interviewDate >= DateTime.Now)
                                                             {
 
@@ -513,6 +706,7 @@ a.rb-link:hover {
                                                                     </div>
                                                                 </div>
 
+                                                            }
                                                             }
                                                         }
 
@@ -545,244 +739,108 @@ a.rb-link:hover {
                                 <div class="panel panel-default">
                                     <div class="panel-heading" role="tab" id="headingTwo">
                                         <h4 class="panel-title">
-                                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                OTHER DETAILS
+                                        <a style="color: #8a9bb0 !important;text-transform: uppercase !important;font-weight: 600;font-size: 13px !important;" class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                Other Details
                                             </a>
                                         </h4>
                                     </div>
                                     <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
                                         <div class="panel-body">
-                                            <div class="col-md-12 pull-left">
-                                                <div class="right-pannel">
-                                                    <div class="mdl-tabs__panel" id="tab3-panel" style="display:block;">
+                                            <div id="otherDetailsAccordion" class="panel-group" role="tablist" aria-multiselectable="true" style="margin-bottom:0;">
+                                                <div class="panel panel-default" style="margin-bottom:10px;border-radius:8px;overflow:hidden;">
+                                                    <div class="panel-heading" role="tab" id="headingEmployerDetails" style="background:#fff;">
+                                                        <h4 class="panel-title">
+                                                            <a role="button" data-toggle="collapse" data-parent="#otherDetailsAccordion" href="#collapseEmployerDetails" aria-expanded="true" aria-controls="collapseEmployerDetails" style="padding:12px 14px !important;font-size:14px !important;font-weight:600 !important;color:#204065 !important;line-height:1.35;">
+                                                                <i class="fa fa-building" style="color:#42a5f5;font-size:14px;margin-right:7px;"></i>Employer Details
+                                                                <span style="display:block;font-size:12px;font-weight:400;color:#7a8da3;margin-top:2px;">Company &amp; contact information</span>
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseEmployerDetails" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingEmployerDetails">
+                                                        <div class="panel-body" style="padding:12px 14px;background:#f6faff;">
+                                                            <div style="border:1px solid #dbe5ef;border-radius:8px;overflow:hidden;background:#f6faff;">
+                                                                <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-bottom:1px solid #deebf7;font-size:13.5px;background:#f6faff;">
+                                                                    <div style="width:170px;color:#7a8da3;flex-shrink:0;">Company Website</div>
+                                                                    <div style="color:#1f3550;font-weight:500;"><a href="@Model.CandidateDetails.CompanyLink" target="_blank">@Model.CandidateDetails.ClientName</a></div>
+                                                                </div>
+                                                                <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-bottom:1px solid #deebf7;font-size:13.5px;background:#f6faff;">
+                                                                    <div style="width:170px;color:#7a8da3;flex-shrink:0;">HR Contact</div>
+                                                                    <div style="color:#1f3550;font-weight:500;">
+                                                                        <span><i class="fa fa-envelope" style="color:#F9A825;font-size:13px;position:relative;top:1px;margin-right:5px;"></i></span>@Model.CandidateDetails.ClientHRAttemptContact
+                                                                        <span style="margin-left:8px;cursor:pointer;" onclick="captureclick('Call','Hr Contact')"><span data-toggle="tooltip" data-placement="top" title="Click here to call the Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.ClientHRAttemptContactMobile','@Model.CandidateDetails.ClientHRAttemptContact', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span> Phone</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;font-size:13.5px;background:#f6faff;">
+                                                                    <div style="width:170px;color:#7a8da3;flex-shrink:0;">Risebird Contact</div>
+                                                                    <div style="color:#1f3550;font-weight:500;">
+                                                                        <span><i class="fa fa-envelope" style="color:#F9A825;font-size:13px;position:relative;top:1px;margin-right:5px;"></i></span>@Model.CandidateDetails.ChannelOwnerEmail
+                                                                        <span style="margin-left:8px;cursor:pointer;" onclick="captureclick('Call','Risebird Contact')"><span data-toggle="tooltip" data-placement="top" title="Click here to call the Risebird Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ChannelOwnerEmail','@Model.CandidateDetails.ChannelOwnerMobile','@Model.CandidateDetails.ChannelOwnerEmail', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span> Phone</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-
-                                                        <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="23" src="../../img/employer.png" style="margin-right:7px;top: -3px;position:relative;"> KNOW YOUR EMPLOYER</h1></div>
-                                                        <div style="clear:both"></div>
-
-                                                        <div class="w40">
-
-
-                                                            <div style="line-height:32px;margin-bottom: 0px;"><b>Company Website :</b><br /> <a href="@Model.CandidateDetails.CompanyLink" target="_blank">@Model.CandidateDetails.ClientName</a></div>
-
-                                                            <div style="line-height:32px;margin-bottom:10px;text-align: left;font-size:16px;"><b>HR Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ClientHRAttemptContact &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Hr Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.ClientHRAttemptContactMobile','@Model.CandidateDetails.ClientHRAttemptContact', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>Phone</div></div>
-                                                            <div style="line-height:32px;margin-bottom:10px;font-size: 16px;"><b>Risebird Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ChannelOwnerEmail &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Risebird Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Risebird Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ChannelOwnerEmail','@Model.CandidateDetails.ChannelOwnerMobile','@Model.CandidateDetails.ChannelOwnerEmail', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>Phone</div></div>
-                                                        </div>
-
-                                                        @if (!String.IsNullOrWhiteSpace(Model.CandidateDetails.CompanyVideoLink))
-                                                        {
-                                                            <div class="w60">
-                                                                <div class="videoWrap" style="padding: 8px 10px;background: #f3eeee;">
+                                                           @*  @if (!String.IsNullOrWhiteSpace(Model.CandidateDetails.CompanyVideoLink))
+                                                            {
+                                                                <div class="videoWrap" style="padding:8px 10px;background:#f3eeee;margin-top:10px;">
                                                                     <video data-position='top' id="risetubevideo_3" controls class="vjs-tech video-width" controlsList="nodownload" autoplay>
                                                                         <source src="@Model.CandidateDetails.CompanyVideoLink" type="video/mp4" autoplay>
                                                                         <source src="@Model.CandidateDetails.CompanyVideoLink" type="video/mp4">
                                                                     </video>
                                                                 </div>
-                                                            </div>
-                                                        }
-
-                                                        else
-                                                        {
-                                                            <div class="w60">
-                                                                <div class="videoWrap" style="padding: 8px 10px;background:#191919;">
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="videoWrap" style="padding:8px 10px;background:#191919;margin-top:10px;">
                                                                     <img style="margin: 0px auto;display: block;" src="../../img/no-video.jpg" />
                                                                 </div>
-                                                            </div>
-                                                        }
-
-
-
-
-                                                    </div>
-
-
-
-                                                </div>
-                                            </div>
-                                            <div class="int-panel col-md-12 pull-left">
-                                                <div class="w-full">
-
-                                                    <div class="mdl-tabs__panel" id="tab4-panel" style="display:block;float:left">
-
-                                                        <div id="interviewConsent" class="top-margin" style="clear:both;">
-                                                            <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right: 3px;"> INTERVIEW CONSENT DETAILS</h1></div>
-                                                            <div style="clear:both"></div>
-                                                            <div class="follow">
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div id="section">
-                                                                            <div class="article">
-                                                                                <p>I confirm and authorize Risebird, (Arhat Talent Solutions Private Limited) and its partners and customers to use my ID proof data for verifying my identity to appear for an interview.</p>
-                                                                                <p>I am aware and agree that this interview will be recorded and will be shared only with my employer in fully secured and encrypted format. It will be permanently deleted from all records in 2-3 weeks' time.</p>
-                                                                                <p>I am also aware that if I feel my interview is not up to the mark, I cancel my candidature anytime during or after the interview. My recordings will be deleted immediately.</p>
-
-                                                                                <div class="moretext">
-                                                                                    <p>I agree that my voice signature shall be used for authenticating my profile at the time of interview and on-boarding (if I get selected).</p>
-                                                                                    <p>I will ensure that my webcam will be switched on and audio settings is done before the start of the meeting. I will not use Audio Splitter or speaker for voice communication.</p>
-                                                                                    <p>I will not appear for the interview using mobile or tablet.</p>
-                                                                                    <p>I will ensure to use Chrome (preferably) and download zoom plugin. I will join the meeting by clicking on the meeting link using my laptop.</p>
-                                                                                    <p>I will share my desktop during the interview and will have my desktop and browser clean and close all the apps before the start of the interview.</p>
-                                                                                    <p>I will not be late for my scheduled interview, and will join 5 minutes before time.</p>
-                                                                                    <p>I will ensure that I will be in the silent place where there is no background noise and with appropriate light during the interview. If required I will choose a clean uncluttered background.</p>
-                                                                                    <p>I am aware that this will be a hands-on interview, so I will have the editor open.</p>
-                                                                                </div>
-                                                                            </div>
-                                                                            <a class="moreless-button" href="#" style="font-size:15px;margin: 15px 0px 0px 15px;text-align:left; display: inline-block;">Read more</a>
-                                                                        </div>
-
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
+                                                            } *@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @* <div class="int-left-pannel">
-                                                <div class="mdl-tabs__panel" id="tab2-panel" style="display:block;float:left">
 
-                                                <h1 style="margin:0px 0px 15px 0px"><img width="25" src="../../img/history.png" style="position:relative;top:-5px;left: -2px;margin-right:3px;"> Interview History Details</h1>
-
-                                                <div class="scrollbar" id="style-4">
-                                                <div class="force-overflow">
-                                                @foreach (var item in Model.Meetings)
-                                                {
-
-                                                @if (item.interviewDate < DateTime.Now || item.confirmationStatus != "Confirmed")
-                                                {
-                                                inthistCount = +1;
-                                                <div class="interview-tab">
-                                                <div class="left-div" style="float:left"><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;display:inline-block;font-size:16px;"></i><span><span style="color: #0000008a;font-weight: 500;padding-left:5px;font-size: 15px;"> @item.interviewDate</span></span></div>
-                                                <div class="right-div" style="float:right">
-                                                @if (Model.IsReschedule)
-                                                {
-                                                <div class="meeting-link">Reschedule Interview Link : <a class="click_herebtn" href="@Model.SchedulingLink" target="_blank"><span>Click Here</span></a></div>
-
-                                                }
-                                                @if (item.confirmationStatus != "Confirmed")
-                                                {
-                                                <div style="text-align:right;"><b style="font-size:13px;padding:10px;color:grey">Status :</b><div class="current cancelled" style="font-size:13px;padding:2px 15px">@item.confirmationStatus</div></div>
-
-                                                }
-
-
-                                                else if (item.MeetingStatusStatusDesc == "Status Pending")
-                                                {
-                                                <div style="text-align:right;"><b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current pending" style="font-size:13px;padding:2px 5px;color:#2E7D32!important;background:#bddbcd59"><span>@item.MeetingStatusStatusDesc</span></span></div>
-
-                                                }
-
-                                                else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
-                                                {
-                                                <div style="text-align:right;"> <b style="font-size:14px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current noshowcandidate" style="font-size:13px;padding:2px 5px;color:#94207bbd"><span>@item.MeetingStatusStatusDesc</span></span></div>
-
-                                                }
-                                                else if (item.MeetingStatusStatusDesc == "No Show(Interviewer)")
-                                                {
-                                                <div style="text-align:right;"> <b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current" style="font-size:13px;padding:2px 5px;color:#7d6413bd;background:antiquewhite"><span>@item.MeetingStatusStatusDesc</span></span></div>
-
-                                                }
-
-                                                else if (item.confirmationStatus == "Confirmed")
-                                                {
-
-                                                <div style="text-align:right;"><b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span>@item.MeetingStatusStatusDesc</span></div>
-
-
-                                                }
+                                                <div class="panel panel-default" style="margin-bottom:0;border-radius:8px;overflow:hidden;">
+                                                    <div class="panel-heading" role="tab" id="headingCandidateConsent" style="background:#fff;">
+                                                        <h4 class="panel-title">
+                                                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#otherDetailsAccordion" href="#collapseCandidateConsent" aria-expanded="false" aria-controls="collapseCandidateConsent" style="padding:12px 14px !important;font-size:14px !important;font-weight:600 !important;color:#204065 !important;line-height:1.35;">
+                                                                <i class="fa fa-file-text-o" style="color:#42a5f5;font-size:14px;margin-right:7px;"></i>Candidate Consent
+                                                                <span style="display:block;font-size:12px;font-weight:400;color:#7a8da3;margin-top:2px;">Recording &amp; proctoring acknowledgement</span>
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseCandidateConsent" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingCandidateConsent">
+                                                        <div class="panel-body" style="padding:12px 14px;background:#f6faff;">
+                                                            <div style="border:1px solid #dbe5ef;border-radius:8px;background:#f6faff;padding:12px;">
+                                                                <div id="interviewConsent" class="top-margin" style="clear:both;">
+                                                                    <div class="follow">
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <div id="section">
+                                                                                    <div class="article">
+                                                                                        <p>I confirm and authorize Risebird, (Arhat Talent Solutions Private Limited) and its partners and customers to use my ID proof data for verifying my identity to appear for an interview.</p>
+                                                                                        <p>I am aware and agree that this interview will be recorded and will be shared only with my employer in fully secured and encrypted format. It will be permanently deleted from all records in 2-3 weeks' time.</p>
+                                                                                        <p>I am also aware that if I feel my interview is not up to the mark, I cancel my candidature anytime during or after the interview. My recordings will be deleted immediately.</p>
+                                                                                        <div class="moretext">
+                                                                                            <p>I agree that my voice signature shall be used for authenticating my profile at the time of interview and on-boarding (if I get selected).</p>
+                                                                                            <p>I will ensure that my webcam will be switched on and audio settings is done before the start of the meeting. I will not use Audio Splitter or speaker for voice communication.</p>
+                                                                                            <p>I will not appear for the interview using mobile or tablet.</p>
+                                                                                            <p>I will ensure to use Chrome (preferably) and download zoom plugin. I will join the meeting by clicking on the meeting link using my laptop.</p>
+                                                                                            <p>I will share my desktop during the interview and will have my desktop and browser clean and close all the apps before the start of the interview.</p>
+                                                                                            <p>I will not be late for my scheduled interview, and will join 5 minutes before time.</p>
+                                                                                            <p>I will ensure that I will be in the silent place where there is no background noise and with appropriate light during the interview. If required I will choose a clean uncluttered background.</p>
+                                                                                            <p>I am aware that this will be a hands-on interview, so I will have the editor open.</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <a class="moreless-button" href="#" style="font-size:15px;margin: 15px 0px 0px 0px;text-align:left; display: inline-block;">Read more</a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                </div>
-                                                }
-
-                                                }
-                                                </div>
-                                                </div>
-                                                </div>
-                                                </div>
-                                                @if(inthistCount == 0)   {
-
-                                                <div class="w-full">
-
-                                                <div class="mdl-tabs__panel" id="tab4-panel" style="display:block;float:left">
-
-                                                <div id="interviewConsent" class="top-margin" style="clear:both;">
-                                                <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right: 3px;"> INTERVIEW CONSENT DETAILS</h1></div>
-                                                <div style="clear:both"></div>
-                                                <div class="follow">
-                                                <div class="row">
-                                                <div class="col-md-12">
-                                                <div id="section">
-                                                <div class="article">
-                                                <p>I confirm and authorize Risebird, (Arhat Talent Solutions Private Limited) and its partners and customers to use my ID proof data for verifying my identity to appear for an interview.</p>
-                                                <p>I am aware and agree that this interview will be recorded and will be shared only with my employer in fully secured and encrypted format. It will be permanently deleted from all records in 2-3 weeks' time.</p>
-                                                <p>I am also aware that if I feel my interview is not up to the mark, I cancel my candidature anytime during or after the interview. My recordings will be deleted immediately.</p>
-
-                                                <div class="moretext">
-                                                <p>I agree that my voice signature shall be used for authenticating my profile at the time of interview and on-boarding (if I get selected).</p>
-                                                <p>I will ensure that my webcam will be switched on and audio settings is done before the start of the meeting. I will not use Audio Splitter or speaker for voice communication.</p>
-                                                <p>I will not appear for the interview using mobile or tablet.</p>
-                                                <p>I will ensure to use Chrome (preferably) and download zoom plugin. I will join the meeting by clicking on the meeting link using my laptop.</p>
-                                                <p>I will share my desktop during the interview and will have my desktop and browser clean and close all the apps before the start of the interview.</p>
-                                                <p>I will not be late for my scheduled interview, and will join 5 minutes before time.</p>
-                                                <p>I will ensure that I will be in the silent place where there is no background noise and with appropriate light during the interview. If required I will choose a clean uncluttered background.</p>
-                                                <p>I am aware that this will be a hands-on interview, so I will have the editor open.</p>
-                                                </div>
-                                                </div>
-                                                <a class="moreless-button" href="#" style="font-size:15px;margin: 15px 0px 0px 15px;text-align:left; display: inline-block;">Read more</a>
-                                                </div>
-
-                                                </div>
-                                                </div>
-                                                </div>
-
-                                                </div>
-                                                </div>
-                                                </div>
-                                                }
-                                                else
-                                                {
-                                                <div class="int-right-pannel">
-
-                                                <div class="mdl-tabs__panel" id="tab4-panel" style="display:block;float:left">
-                                                <div id="interviewConsent" class="top-margin" style="clear:both;">
-                                                <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="23" src="../../img/consent.png" /> INTERVIEW CONSENT DETAILS</h1></div>
-                                                <div style="clear:both"></div>
-                                                <div class="follow">
-                                                <div class="row">
-                                                <div class="col-md-12">
-                                                <div id="section">
-                                                <div class="article">
-                                                <p>I confirm and authorize Risebird, (Arhat Talent Solutions Private Limited) and its partners and customers to use my ID proof data for verifying my identity to appear for an interview.</p>
-                                                <p>I am aware and agree that this interview will be recorded and will be shared only with my employer in fully secured and encrypted format. It will be permanently deleted from all records in 2-3 weeks' time.</p>
-                                                <p>I am also aware that if I feel my interview is not up to the mark, I cancel my candidature anytime during or after the interview. My recordings will be deleted immediately.</p>
-
-                                                <div class="moretext">
-                                                <p>I agree that my voice signature shall be used for authenticating my profile at the time of interview and on-boarding (if I get selected).</p>
-                                                <p>I will ensure that my webcam will be switched on and audio settings is done before the start of the meeting. I will not use Audio Splitter or speaker for voice communication.</p>
-                                                <p>I will not appear for the interview using mobile or tablet.</p>
-                                                <p>I will ensure to use Chrome (preferably) and download zoom plugin. I will join the meeting by clicking on the meeting link using my laptop.</p>
-                                                <p>I will share my desktop during the interview and will have my desktop and browser clean and close all the apps before the start of the interview.</p>
-                                                <p>I will not be late for my scheduled interview, and will join 5 minutes before time.</p>
-                                                <p>I will ensure that I will be in the silent place where there is no background noise and with appropriate light during the interview. If required I will choose a clean uncluttered background.</p>
-                                                <p>I am aware that this will be a hands-on interview, so I will have the editor open.</p>
-                                                </div>
-
-                                                </div>
-                                                <a class="moreless-button" href="#" style="font-size:15px;margin: 15px 0px 0px 15px;text-align:left; display: inline-block;">Read more</a>
-                                                </div>
-
-                                                </div>
-                                                </div>
-                                                </div>
-
-                                                </div>
-                                                </div>
-                                                </div>
-
-                                                }
-
-
-                                                </div>*@
-
+                                            </div>
                                             </div>
                                         </div>
                                     </div>
@@ -794,6 +852,32 @@ a.rb-link:hover {
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    @if (reportInterviewId > 0)
+    {
+        <div style="max-width:700px;margin:12px auto 0 auto;padding:0 12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;background:#fff7ea;border:1px solid #f1d9a9;border-radius:8px;">
+                <div style="display:flex;align-items:flex-start;gap:10px;">
+                    <i class="fa fa-video-camera" style="color:#d38a1e;font-size:15px;margin-top:2px;"></i>
+                    <div style="font-size:13.5px;line-height:1.45;color:#5a4a2b;">
+                        <div style="font-weight:600;color:#5a4a2b;">Interviewer video switched off?</div>
+                        <div style="color:#7a6a49;">Or experiencing any other ethical issue during the session?</div>
+                    </div>
+                </div>
+                <a href="@Url.Action("CandidateRatingInterviewer", "Interview", new { id = reportInterviewId })"
+                   target="_blank" rel="noopener noreferrer"
+                   style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#b17210;background:#fff;border:1.5px solid #e7c88f;border-radius:999px;padding:6px 14px;text-decoration:none;">
+                    <i class="fa fa-exclamation-triangle" style="font-size:12px;"></i>Report here
+                </a>
+            </div>
+        </div>
+    }
+    <div style="display:flex;justify-content:center;margin-top:14px;">
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:#fff;border:1px solid #dbe5ef;border-radius:999px;font-size:13px;color:#6b7d90;">
+            <i class="fa fa-envelope" style="color:#42a5f5;font-size:13px;"></i>
+            Candidate support:&nbsp;<a href="mailto:candidatesupport@risebird.io" style="color:#1f3550;font-weight:500;text-decoration:none;">candidatesupport@risebird.io</a>
         </div>
     </div>
     <div id="InterviewRatingRedoModel" class="modal modal-bg" style="z-index:100;overflow:auto;">
@@ -2050,6 +2134,7 @@ a.rb-link:hover {
     var RISEBIRD_PROCTORING_EXT_ID = 'lpbnpcnkhmknkgfnnnecahkmpkihglgg';
     window.risebirdProctoringExtensionInstalled = false;
     window.risebirdUserConfirmedProctoringExtension = false;
+    window.risebirdInstallFlowStarted = false;
     window.risebirdAadharJoinOk = false;
     var risebirdExtWasMissingAfterProbe = false;
     var risebirdInstallToastShown = false;
@@ -2077,6 +2162,7 @@ a.rb-link:hover {
         var btn = window.risebirdGetAiJoinButton();
         var statusEl = document.getElementById('risebirdProctoringExtStatus');
         var okEl = document.getElementById('risebirdProctoringExtOk');
+        var recheckBtn = document.getElementById('risebirdRecheckExtBtn');
         if (!btn) return;
 
         var verified = window.risebirdAadharJoinOk === true;
@@ -2086,8 +2172,13 @@ a.rb-link:hover {
 
         var needExt = risebirdShouldEnforceExtensionInstall();
         var userAttested = window.risebirdUserConfirmedProctoringExtension === true;
-        var extOk = !needExt || window.risebirdProctoringExtensionInstalled === true || userAttested;
+        var extInstalled = window.risebirdProctoringExtensionInstalled === true;
+        var extOk = !needExt || extInstalled || userAttested;
         var canJoin = verified && extOk;
+
+        if (recheckBtn) {
+            recheckBtn.style.display = (extInstalled || window.risebirdInstallFlowStarted === true) ? 'inline-block' : 'none';
+        }
 
         if (statusEl) {
             if (!verified) {
@@ -2107,11 +2198,11 @@ a.rb-link:hover {
             } else {
                 statusEl.style.display = 'block';
                 statusEl.className = 'alert alert-warning';
-                statusEl.innerHTML = 'Install the extension from the Chrome Web Store, then click <strong>I installed it — enable join</strong>.';
+                statusEl.innerHTML = 'Install the extension from the Chrome Web Store. The <strong>I installed it — enable join</strong> button appears after installation is detected.';
             }
         }
         if (okEl) {
-            okEl.style.display = (verified && needExt && (window.risebirdProctoringExtensionInstalled || userAttested)) ? 'block' : 'none';
+            okEl.style.display = (verified && needExt && (extInstalled || userAttested)) ? 'block' : 'none';
         }
 
         var joinUrl = btn.getAttribute('data-join-url') || '';
@@ -2158,6 +2249,13 @@ a.rb-link:hover {
         var a = window.risebirdGetAiJoinButton();
         if (!a || a.getAttribute('aria-disabled') === 'true') return;
         if (typeof a.click === 'function') a.click();
+    };
+
+    window.risebirdOpenProctoringStoreWindow = function (ev) {
+        if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+        var installUrl = 'https://chromewebstore.google.com/detail/risebird-proctoring-assis/lpbnpcnkhmknkgfnnnecahkmpkihglgg?authuser=0&hl=en';
+        window.open(installUrl, '_blank', 'noopener,noreferrer');
+        return false;
     };
 
     function risebirdProbeExtImg(path) {
@@ -2266,9 +2364,42 @@ a.rb-link:hover {
         if (recheckBtn && !recheckBtn._risebirdWired) {
             recheckBtn._risebirdWired = true;
             recheckBtn.addEventListener('click', function () {
+                recheckBtn.style.background = 'rgb(97 172 231)';
                 window.risebirdUserConfirmedProctoringExtension = true;
                 window.risebirdApplyAiJoinButtonState();
                 window.risebirdRefreshProctoringExtensionPresence(true);
+            });
+        }
+
+        var installBtn = document.getElementById('btnInstallRisebirdProctoringExt');
+        if (installBtn && !installBtn._risebirdWired) {
+            installBtn._risebirdWired = true;
+            installBtn.addEventListener('click', function (ev) {
+                window.risebirdInstallFlowStarted = true;
+                window.risebirdApplyAiJoinButtonState();
+                if (typeof window.risebirdRefreshProctoringExtensionPresence === 'function') {
+                    setTimeout(function () { window.risebirdRefreshProctoringExtensionPresence(false); }, 1500);
+                }
+            });
+        }
+
+        var step3Toggle = document.getElementById('risebirdProctoringStep3Toggle');
+        var step3Body = document.getElementById('risebirdProctoringStep3Body');
+        var step3Chevron = document.getElementById('risebirdProctoringStep3Chevron');
+        if (step3Toggle && step3Body && step3Chevron && !step3Toggle._risebirdWired) {
+            step3Toggle._risebirdWired = true;
+            var toggleStep3 = function () {
+                var isOpen = step3Body.style.display !== 'none';
+                step3Body.style.display = isOpen ? 'none' : 'block';
+                step3Chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+                step3Toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+            };
+            step3Toggle.addEventListener('click', toggleStep3);
+            step3Toggle.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleStep3();
+                }
             });
         }
     }
