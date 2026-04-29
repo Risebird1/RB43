@@ -599,7 +599,7 @@ a.rb-link:hover {
                                                                                         <div style="font-size:14px;font-weight:600;color:#204065;line-height:1.4;">
                                                                                             <i class="fa fa-video-camera" style="color:#42a5f5;font-size:14px;margin-right:6px;"></i>2. Join Meeting
                                                                                         </div>
-                                                                                        <p style="margin:6px 0 0 0;font-size:13px;color:#4d647c;line-height:1.5;">The join button will auto-enable when installation setup is complete.</p>
+                                                                                        <p style="margin:6px 0 0 0;font-size:13px;color:#4d647c;line-height:1.5;">The join meeting button will auto-enable when installation setup is complete.</p>
                                                                                     </div>
                                                                                     <a id="btn_ai_Interview" role="button"
                                                                                        class="btn btn-primary click_herebtn disabled"
@@ -2218,7 +2218,7 @@ a.rb-link:hover {
             } else {
                 statusEl.style.display = 'block';
                 statusEl.className = 'alert alert-warning';
-                statusEl.innerHTML = 'Install the extension from the Chrome Web Store by clicking the icon on the right side.';
+                statusEl.innerHTML = 'Install the extension from the Chrome Web Store by clicking the icon on the right side as soon as you land on the AI Interview page.';
             }
         }
         if (okEl) {
@@ -2379,6 +2379,9 @@ a.rb-link:hover {
         var btn = window.risebirdGetAiJoinButton();
         if (!btn) return;
         window.risebirdAadharJoinOk = btn.getAttribute('data-aadhar-ok') === 'true';
+        if (window.risebirdAadharJoinOk === true && risebirdShouldEnforceExtensionInstall()) {
+            window.risebirdInstallFlowStarted = true;
+        }
         window.risebirdApplyAiJoinButtonState();
         window.risebirdRefreshProctoringExtensionPresence(false).then(function () {
             if (window.risebirdProctoringExtensionInstalled) risebirdExtWasMissingAfterProbe = false;
