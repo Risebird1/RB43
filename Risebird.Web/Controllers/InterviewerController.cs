@@ -4863,7 +4863,7 @@ namespace Risebird.Web.Controllers
                                 saveOperationResult = await _interviewerService.AddInternalInterviewerToIRFPostPositiveVerdict(new InterviewerDirectApplicationVM { EmailId = model.EmailId, IRFId = model.IRFId, OpenAIResponse = aiAnalysisModel.completeFitmentAnalysis, AIVerdict = aiAnalysisModel.verdict, AIAnalysisScore = aiAnalysisModel.fitmentScore, ResumeLink = model.ResumeLink });//, irf
                                 if (saveOperationResult)
                                 {
-                                    if (aiAnalysisModel.verdict.ToLower() == "yes")
+                                    if (aiAnalysisModel.verdict.ToLower().Contains("yes"))
                                     {
                                         //_notificationHelper.SendUnassignedInterviewsNotifications();
 
@@ -5066,7 +5066,7 @@ namespace Risebird.Web.Controllers
                                 saveOperationResult = await _interviewerService.AddInternalInterviewerToIRFPostPositiveVerdict(new InterviewerDirectApplicationVM { EmailId = model.EmailId, AssessmentGroupId = model.AssessmentGroupId, OpenAIResponse = aiAnalysisModel.completeFitmentAnalysis, AIVerdict = aiAnalysisModel.verdict, AIAnalysisScore = aiAnalysisModel.fitmentScore, ResumeLink = model.ResumeLink, DirectApplicationFor = DirectApplicationForTypes.MAG });//, irf
                                 if (saveOperationResult)
                                 {
-                                    if (aiAnalysisModel.verdict.ToLower() == "yes")
+                                    if (aiAnalysisModel.verdict.ToLower().Contains("yes"))
                                     {
                                         //_notificationHelper.SendUnassignedInterviewsNotifications();
 

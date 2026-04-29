@@ -46,7 +46,7 @@ namespace Risebird.Entities.ViewModel
         public string   ProfileResumeLink           { get; set; }
         public string   ExistingAssessmentGroupIds  { get; set; }
         public string   UserEmail                   { get; set; }
-        public long?    UserMobileNumber            { get; set; }
+        public string   UserMobileNumber            { get; set; }
 
         // Joined from MasterAssessmentGroup / AssessmentGroup
         public string   MasterAssessmentGroupName   { get; set; }
