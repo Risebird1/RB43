@@ -8058,19 +8058,19 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null)
+        public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool downloadPdf = false)
         {
             try
             {
                 ViewBag.PageStatus = "Mainurl";
-                var email = HttpContext.Session.GetString("email");
+                var email = HttpContext.Session.GetString("email") ?? string.Empty;
                 email = email.Replace("\"", "");
                 ViewBag.EmailId = email;
                 bool isAdminHR = false;
                 bool isInterviewer = false;
                 ViewBag.actiontype = actiontype;
                 ViewBag.IRFID = irfId;
-                string profileName = HttpContext.Session.GetString("profileName");
+                string profileName = HttpContext.Session.GetString("profileName") ?? string.Empty;
                 profileName = profileName.Replace("\"", "");
                 ViewBag.profile = profileName;
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
@@ -8108,12 +8108,12 @@ namespace Risebird.Web.Controllers
                 {
                     foreach (var question in model.QuestionsCollection)
                     {
-                        question.Comment = question.Comment.Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
+                        question.Comment = (question.Comment ?? string.Empty).Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
                     }
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
                 model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
-                string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                string output = Regex.Replace(model.InterviewerComment ?? string.Empty, "<.*?>", string.Empty);
                 model.InterviewerComment = output;
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
@@ -8141,12 +8141,41 @@ namespace Risebird.Web.Controllers
                 if (isClient || isClientSelected)
                 {
                     ViewBag.ClientDetails = "client";
-                    return View(model);
                 }
-                else
+
+                if (downloadPdf)
                 {
-                    return View(model);
+                    ViewBag.IsServerPdfDownload = true;
+                    var html = await RenderToStringAsync("GenerateClientReportPDFFile", model, ViewData);
+                    if (string.IsNullOrEmpty(html))
+                    {
+                        return RedirectToAction("MyInterview");
+                    }
+
+                    var siteRoot = $"{Request.Scheme}://{Request.Host.Value}{Request.PathBase}";
+                    html = NormalizeHtmlForPdf(html, siteRoot);
+                    html = EnsurePdfBaseTag(html, siteRoot);
+                    var pdfBytes = GenerateClientReportPdf(html);
+                    if (pdfBytes == null || pdfBytes.Length == 0)
+                    {
+                        return RedirectToAction("MyInterview");
+                    }
+
+                    var baseName = string.IsNullOrWhiteSpace(model.CandidateName)
+                        ? "InterviewReport"
+                        : string.Join("_", model.CandidateName.Split(System.IO.Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries)).Trim();
+                    if (string.IsNullOrEmpty(baseName))
+                    {
+                        baseName = "InterviewReport";
+                    }
+
+                    // Match client html2pdf name: {CandidateName}_{d}_{M}_{yyyy}.pdf (local date)
+                    var n = DateTime.Now;
+                    var fileName = $"{baseName}_{n.Day}_{n.Month}_{n.Year}.pdf";
+                    return File(pdfBytes, "application/pdf", fileName);
                 }
+
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -9517,7 +9546,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<string> RenderToStringAsync(string viewName, object model)
+        public async Task<string> RenderToStringAsync(string viewName, object model, ViewDataDictionary viewData = null)
         {
             try
             {
@@ -9537,6 +9566,13 @@ namespace Risebird.Web.Controllers
                     {
                         Model = model
                     };
+                    if (viewData != null)
+                    {
+                        foreach (var key in viewData.Keys.ToList())
+                        {
+                            viewDictionary[key] = viewData[key];
+                        }
+                    }
 
                     var tempData = new TempDataDictionary(actionContext.HttpContext, _tempDataProvider);
 
@@ -9556,6 +9592,112 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        private static string NormalizeHtmlForPdf(string html, string siteRoot)
+        {
+            if (string.IsNullOrEmpty(html) || string.IsNullOrEmpty(siteRoot))
+            {
+                return html;
+            }
+
+            var root = siteRoot.TrimEnd('/');
+            html = Regex.Replace(
+                html,
+                @"(?<attr>href|src|action)\s*=\s*(?<q>['""])/(?!/)(?<path>[^'""#?]*)(\k<q>)",
+                m => $"{m.Groups["attr"].Value}={m.Groups["q"].Value}{root}/{m.Groups["path"].Value.TrimStart('/')}{m.Groups["q"].Value}",
+                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+            html = Regex.Replace(
+                html,
+                @"url\s*\(\s*(['""]?)(/[^'"")]+)\1\s*\)",
+                m =>
+                {
+                    var path = m.Groups[2].Value.TrimStart('/');
+                    return $"url('{root}/{path}')";
+                },
+                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+            return html;
+        }
+
+        private static string EnsurePdfBaseTag(string html, string siteRoot)
+        {
+            if (string.IsNullOrEmpty(html) || string.IsNullOrEmpty(siteRoot))
+            {
+                return html;
+            }
+
+            if (html.IndexOf("<base ", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return html;
+            }
+
+            var root = siteRoot.TrimEnd('/') + "/";
+            var headIdx = html.IndexOf("<head", StringComparison.OrdinalIgnoreCase);
+            if (headIdx < 0)
+            {
+                return html;
+            }
+
+            var gt = html.IndexOf('>', headIdx);
+            if (gt < 0)
+            {
+                return html;
+            }
+
+            return html.Insert(gt + 1, "\n<base href=\"" + root + "\">\n");
+        }
+
+        private byte[] GenerateClientReportPdf(string htmlContent)
+        {
+            const int pdfJsWaitMs = 15000;
+
+            try
+            {
+                var globalSettings = new GlobalSettings
+                {
+                    ColorMode = DinkToPdf.ColorMode.Color,
+                    Orientation = Orientation.Portrait,
+                    PaperSize = DinkToPdf.PaperKind.A4,
+                    Margins = new MarginSettings { Top = 0, Bottom = 0, Left = 0, Right = 0 }
+                };
+
+                var objectSettings = new ObjectSettings
+                {
+                    PagesCount = true,
+                    HtmlContent = htmlContent,
+                    WebSettings =
+                    {
+                        DefaultEncoding = "utf-8",
+                        LoadImages = true,
+                        EnableJavascript = true,
+                        PrintMediaType = false
+                    },
+                    LoadSettings = { JSDelay = pdfJsWaitMs },
+                    HeaderSettings = { FontName = "Arial", FontSize = 9, Line = false },
+                    FooterSettings = new FooterSettings
+                    {
+                        FontName = "Arial",
+                        FontSize = 8,
+                        Center = "© 2023 Arhat Talent Solutions Pvt Ltd.",
+                        Line = false
+                    }
+                };
+
+                var pdf = new HtmlToPdfDocument
+                {
+                    GlobalSettings = globalSettings,
+                    Objects = { objectSettings }
+                };
+
+                return _converter.Convert(pdf);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
