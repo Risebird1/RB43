@@ -303,7 +303,7 @@
                                                     @if (r.Experience.HasValue) { <br /><span class="text-muted" style="font-size:10px;">@r.Experience yr exp</span> }
                                                 </td>
                                                 <td class="col-phone" style="font-size:12px;">
-                                                    @{ string displayPhone = r.UserMobileNumber.HasValue ? r.UserMobileNumber.Value.ToString() : r.Phone; }
+                                                    @{ string displayPhone = !string.IsNullOrEmpty(r.UserMobileNumber) ? r.UserMobileNumber : r.Phone; }
                                                     @(displayPhone ?? "—")
                                                 </td>
                                                 <td class="col-job" style="font-size:12px;">
@@ -342,7 +342,7 @@
                                                                 string score = aiData?.fitmentScore?.ToString();
                                                                 if (!string.IsNullOrEmpty(verdict))
                                                                 {
-                                                                    bool isYes = verdict.Equals("yes", StringComparison.OrdinalIgnoreCase);
+                                                                    bool isYes = verdict.IndexOf("yes", StringComparison.OrdinalIgnoreCase) >= 0;
                                                                     aiBadgeClass = isYes ? "text-success" : "text-danger";
                                                                     aiVerdictText = isYes ? "Yes" : "No";
                                                                 }
