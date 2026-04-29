@@ -81,7 +81,7 @@ namespace Risebird.Repository
 
                 var result = await con.QueryAsync<InterviewerEmailAvailabilityVM>(
                     "usp_GetInterviewerEmailAvailability", parameters,
-                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+                    commandType: CommandType.StoredProcedure, commandTimeout: 120);
 
                 return result.ToList();
             }
