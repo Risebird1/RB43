@@ -342,7 +342,7 @@
                                                                 string score = aiData?.fitmentScore?.ToString();
                                                                 if (!string.IsNullOrEmpty(verdict))
                                                                 {
-                                                                    bool isYes = verdict.Equals("yes", StringComparison.OrdinalIgnoreCase);
+                                                                    bool isYes = verdict.IndexOf("yes", StringComparison.OrdinalIgnoreCase) >= 0;
                                                                     aiBadgeClass = isYes ? "text-success" : "text-danger";
                                                                     aiVerdictText = isYes ? "Yes" : "No";
                                                                 }
