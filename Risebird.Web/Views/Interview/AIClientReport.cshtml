@@ -1423,7 +1423,7 @@
     function getPDF() {
         var interviewid = $("#InterviewId").val();
         var irfid = $("#IRFId").val();
-        var url = "/Interview/GenerateClientReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid;
+        var url = "/Interview/GenerateClientReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid + "&downloadPdf=true";
         window.open(url, "_blank");
     }
     function GeneratePublicUrl(index) {

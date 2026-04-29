@@ -11,6 +11,7 @@
     ViewData["Title"] = "Interview Report";
     ViewBag.PageHeader = "Interview Report";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    var isServerPdf = ViewBag.IsServerPdfDownload as bool? == true;
 
     var meetingStatusList = new List<SelectListItem>
     ();
@@ -19,6 +20,27 @@
     var interviewStatusList = new List<SelectListItem>
         ();
     var hasDistinctParticipants = Model.HasDistinctParticipants;
+
+    decimal serverPdfTotTech = 0;
+    decimal serverPdfTotTech2 = 0;
+    if (isServerPdf)
+    {
+        if (Model.TechSkillReportCollection != null)
+        {
+            foreach (var t in Model.TechSkillReportCollection)
+            {
+                serverPdfTotTech += (decimal)t.WeightageActual;
+            }
+        }
+
+        if (Model.TechSkillTwoReportCollection != null)
+        {
+            foreach (var t in Model.TechSkillTwoReportCollection)
+            {
+                serverPdfTotTech2 += (decimal)t.WeightageActual;
+            }
+        }
+    }
 }
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
@@ -94,12 +116,453 @@
 }
 
 <link href="~/newassets/css/report.css?v=2025" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css?family=Montserrat:500,600,700&display=swap" rel="stylesheet" />
+<style>
+    /* Flush report with reference PDF: hide dashboard nav bar (removes white strip above black header) */
+    body.sidebar-mini .wrapper > nav.navbar.navbar-absolute.top-h {
+        display: none !important;
+    }
+
+    body.sidebar-mini #main-panel > .content.dataloading.client {
+        margin-top: 0 !important;
+        padding: 0 !important;
+        min-height: 0 !important;
+    }
+
+    /* Report width + uniform ~20px inset (browser + PDF) */
+    body.sidebar-mini #main-panel > .content.dataloading.client {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    #pdfdownload.client-report.bl-bg {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding: 20px !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #pdfdownload.client-report > .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    /* Legacy client PDF look: Open Sans + flat header + report.css tech bars (#009688, 11px bar text) */
+    #pdfdownload.client-report,
+    #pdfdownload.client-report #reportForm {
+        font-family: "Open Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+        font-size: 15px;
+        line-height: 1.55;
+        color: #000;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    #pdfdownload.client-report .cr-report-header {
+        background: #000 !important;
+        padding: 20px !important;
+        border-bottom: none;
+        box-shadow: none;
+    }
+
+    /* Table layout: reliable side-by-side in wkhtmltopdf */
+    #pdfdownload.client-report .cr-report-header__grid {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+    #pdfdownload.client-report .cr-report-header__col--left,
+    #pdfdownload.client-report .cr-report-header__col--right {
+        display: table-cell;
+        vertical-align: top;
+        width: 50%;
+    }
+
+    #pdfdownload.client-report .cr-report-header__col--right {
+        text-align: right;
+    }
+
+    #pdfdownload.client-report .cr-report-header__logos {
+        margin-bottom: 10px;
+    }
+
+    #pdfdownload.client-report .cr-report-header__logos--left {
+        text-align: left;
+    }
+
+    #pdfdownload.client-report .cr-report-header__logos--right {
+        text-align: right;
+    }
+
+    /* Match logo box widths (reference: Risebird width drives client box) */
+    #pdfdownload.client-report .cr-logo--client,
+    #pdfdownload.client-report .cr-logo--risebird {
+        width: 140px;
+        max-width: 140px;
+        height: auto;
+        max-height: 48px;
+        object-fit: contain;
+        object-position: center;
+        display: inline-block;
+    }
+
+    #pdfdownload.client-report .cr-report-header__actions {
+        margin-top: 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+    }
+
+    #pdfdownload.client-report .cr-report-header__hr {
+        clear: both;
+        margin: 10px 0 0 0;
+        border: none;
+        border-top: 1px solid #333;
+        opacity: 1;
+    }
+
+    #pdfdownload.client-report .cr-hdr-label {
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        margin-top: 10px;
+        letter-spacing: normal;
+        text-transform: none;
+    }
+
+    #pdfdownload.client-report .cr-hdr-label:first-of-type {
+        margin-top: 0;
+    }
+
+    #pdfdownload.client-report .cr-hdr-value {
+        font-size: 18px;
+        font-weight: normal;
+        color: #e6e3e3;
+        margin-top: 0;
+    }
+
+    #pdfdownload.client-report .cr-hdr-value a {
+        color: #e6e3e3 !important;
+        text-decoration: none !important;
+    }
+
+    #pdfdownload.client-report .cr-hdr-aside-label {
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        text-align: right;
+        letter-spacing: normal;
+        text-transform: none;
+    }
+
+    #pdfdownload.client-report .cr-hdr-aside-value {
+        font-size: 16px;
+        font-weight: normal;
+        color: #e6e3e3;
+        text-align: right;
+    }
+
+    #pdfdownload.client-report .cr-hdr-aside-value.cr-nickname {
+        color: #f6a0a0;
+    }
+
+    #pdfdownload.client-report .cr-action-chip {
+        float: none;
+        border: 1px solid #fff;
+        border-radius: 0;
+        padding: 2px 8px !important;
+        margin: 0 !important;
+        width: auto !important;
+        max-width: 100%;
+        display: inline-block !important;
+        text-align: center;
+        background: transparent;
+        box-sizing: border-box;
+        vertical-align: middle;
+    }
+
+    #pdfdownload.client-report .cr-action-chip a {
+        color: #fff !important;
+        font-weight: bold;
+        font-size: 15px;
+        text-decoration: none !important;
+    }
+
+    #pdfdownload.client-report .cr-action-chip .fa {
+        margin-right: 6px;
+        font-size: 16px;
+        vertical-align: middle;
+        color: #fff !important;
+        width: 1.15em;
+        text-align: center;
+    }
+
+    #pdfdownload.client-report .cr-skill-meta {
+        margin-top: 0;
+        margin-bottom: 14px !important;
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        clear: both;
+    }
+
+    #pdfdownload.client-report .cr-skill-meta h2 {
+        font-family: "Open Sans", sans-serif !important;
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        line-height: 1.4 !important;
+        letter-spacing: normal !important;
+        margin: 0 !important;
+        color: #000 !important;
+    }
+
+    #pdfdownload.client-report .cr-skill-meta h2 span,
+    #pdfdownload.client-report .cr-skill-meta h2 div {
+        font-size: 18px !important;
+        line-height: 1.4 !important;
+    }
+
+    #pdfdownload.client-report .cr-section-head {
+        font-family: "Open Sans", sans-serif;
+        margin: 8px 0;
+        padding: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #000;
+        border-bottom: none;
+    }
+
+    #pdfdownload.client-report .cr-section-head__badge {
+        display: inline-block;
+        vertical-align: middle;
+        padding: 2px 9px;
+        margin-right: 8px;
+        background: #000;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 0;
+        min-width: auto;
+        height: auto;
+    }
+
+    #pdfdownload.client-report .cr-section-head__label {
+        display: inline;
+        vertical-align: middle;
+        font-weight: 600;
+    }
+
+    #pdfdownload.client-report .cr-section-head .totScore {
+        display: inline;
+        margin-left: 2px;
+    }
+
+    #pdfdownload.client-report .cr-section-head .totScore strong {
+        font-size: 18px;
+        font-weight: bold;
+        color: #000;
+    }
+
+    #pdfdownload.client-report .interviewComment {
+        margin-top: 16px !important;
+        padding: 12px 0 18px !important;
+    }
+
+    #pdfdownload.client-report .cr-tech-panel {
+        margin-top: 8px !important;
+        padding: 28px 0 18px 0 !important;
+    }
+
+    #pdfdownload.client-report .interviewComment #int-cmnt,
+    #pdfdownload.client-report .interviewComment > div:not(.cr-section-head) {
+        font-size: 15px;
+        color: #000;
+    }
+
+    #pdfdownload.client-report .cr-tech-card {
+        padding-top: 10px;
+        border-bottom: none;
+    }
+
+    #pdfdownload.client-report .cr-tech-card > p:first-of-type {
+        font-family: "Open Sans", sans-serif;
+        font-size: 15px;
+        font-weight: normal;
+        color: #000;
+        margin-bottom: 5px !important;
+    }
+
+    #pdfdownload.client-report .rqlevel {
+        font-family: "Open Sans", sans-serif;
+        font-size: 15px;
+        color: #000;
+        line-height: 1.45;
+    }
+
+    #pdfdownload.client-report .skillBackground.skill-small {
+        font-size: 12px !important;
+    }
+
+    /* Match legacy Report.css: thin track + flat teal fill; value text sits below bar */
+    #pdfdownload.client-report .skillBackground {
+        border-radius: 3px;
+        margin-top: 10px;
+        box-shadow: none;
+        background-color: #e6e5e5 !important;
+        color: #000 !important;
+        min-height: 0;
+        position: relative;
+        overflow: visible;
+        padding-bottom: 2px;
+    }
+
+    #pdfdownload.client-report .skill-round-xlarge {
+        height: 13px !important;
+        min-height: 13px !important;
+        border-radius: 3px !important;
+    }
+
+    #pdfdownload.client-report .skill-teal {
+        background-color: #009688 !important;
+        background-image: none !important;
+        color: transparent !important;
+        font-size: 0 !important;
+        line-height: 0 !important;
+        float: left;
+        clear: none;
+        box-shadow: none !important;
+    }
+
+    #pdfdownload.client-report .skill-teal[style*="display:contents"] {
+        display: block !important;
+    }
+
+    #pdfdownload.client-report .skillBackground::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    #pdfdownload.client-report .skill-teal .ratecount {
+        display: none !important;
+    }
+
+    #pdfdownload.client-report .skillBackground > .ratecount {
+        font-family: "Open Sans", sans-serif !important;
+        font-size: 12px !important;
+        font-weight: bold !important;
+        color: #000 !important;
+        position: static !important;
+        display: block !important;
+        clear: both !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin-top: 10px !important;
+        text-align: center !important;
+        line-height: 1.35 !important;
+        padding: 0 !important;
+        top: auto !important;
+        right: auto !important;
+        left: auto !important;
+        text-shadow: none !important;
+    }
+
+    /* Tight list markers: override Report.css tick background + 30px padding on li */
+    #pdfdownload.client-report .question ul {
+        margin: 0.35em 0 0.75em 0 !important;
+        padding: 0 0 0 0.9em !important;
+        list-style-type: circle !important;
+        list-style-position: outside !important;
+    }
+
+    #pdfdownload.client-report .question ul li {
+        font-size: 15px;
+        line-height: 1.5;
+        list-style-type: circle !important;
+        list-style-position: outside !important;
+        background: none !important;
+        background-image: none !important;
+        padding: 0.15em 0 0.35em 0 !important;
+        margin-left: 0 !important;
+    }
+
+    #pdfdownload.client-report .question label {
+        font-size: 15px;
+        color: #9A9A9A !important;
+        font-weight: normal;
+        margin: 4px 0 8px 0 !important;
+        padding: 0 0 0 0.15em !important;
+        display: block;
+    }
+
+    #pdfdownload.client-report hr {
+        border-color: #cccccc;
+        opacity: 1;
+    }
+
+    /* Extra vertical rhythm for page-break sections (replaces large inline padding) */
+    #pdfdownload.client-report .cr-report-section {
+        padding: 28px 0 22px 0 !important;
+    }
+</style>
+@if (isServerPdf)
+{
+    <style>
+        /* wkhtml/DinkToPdf: full page height; keep #main-panel floats for skill rows */
+        html, body {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        body.sidebar-mini .wrapper, .wrapper {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        #main-panel {
+            display: block !important;
+            height: auto !important;
+            max-height: none !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+        }
+        #main-panel > .content,
+        #main-panel .content.dataloading,
+        #pdfdownload {
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        .perfect-scrollbar-on .main-panel {
+            height: auto !important;
+            max-height: none !important;
+        }
+        .modal, .modal-bg, #QuestionNotificationModelPopup, #PublicUrlShareModel, #AadhaarKYCpopup, #SecureUrlModel, #SecureUrlShareModel {
+            display: none !important;
+        }
+        body.sidebar-mini .wrapper .main-panel,
+        body.sidebar-mini #main-panel {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+    </style>
+}
 <div id="main-panel" style="display:none;">
 
 
     <div class="content dataloading client">
 
-        <div class="row bl-bg" id="pdfdownload">
+        <div class="row bl-bg client-report" id="pdfdownload">
 
             <!--<nav class="navbar navbar-expand-lg navbar-transparent btn-primary" style="height:60px;">
                      <div class="pull-left">
@@ -120,99 +583,89 @@
                          <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
                             @Html.AntiForgeryToken()
                                  <div class="canvas_div_pdf">
-                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @if (!isServerPdf)
+                                {
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                }
                                      <div class="row">
                                          <div class="col-md-12">
-                                         <div style="background:#000;padding:60px 20px 20px 20px;">
-                                             <div style="clear:both">
-                                                 <div class="pull-left">
-                                                 <div id="txtpageHeader" class="clientlogoarea" style="position:absolute;left:20px;top:30px;"><img src="data:image/png;base64,@ViewBag.ClientLogo" /></div>
+                                         <div class="cr-report-header">
+                                             <div class="cr-report-header__grid">
+                                                 <div class="cr-report-header__col cr-report-header__col--left">
+                                                     @if (!Model.IsReportwhitelabel && !string.IsNullOrWhiteSpace(ViewBag.ClientLogo as string))
+                                                     {
+                                                     <div class="cr-report-header__logos cr-report-header__logos--left">
+                                                         <img id="txtpageHeader" class="cr-logo cr-logo--client" src="data:image/png;base64,@ViewBag.ClientLogo" alt="" />
+                                                     </div>
+                                                     }
                                                     @if (Model.resumeLink != null && Model.resumeLink != "")
                                                     {
-                                                                                <div style="font-size:16px; font-weight:bold;color:#fff;">Candidate </div>
-                                                                                  <div>   <a style="color:#fff;float:left" id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")><h5 style="font-size:17px; font-weight:normal;color:#e6e3e3">@Model.CandidateName</h5></a>
-
+                                                                                <div class="cr-hdr-label">Candidate</div>
+                                                                                  <div class="cr-hdr-value">   <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")>@Model.CandidateName</a>
                                                                                        </div>
                                                     }
                                                     else
                                                     {
-                                                                            <div style="font-size:15px; font-weight:bold;color:#fff">Candidate</div>
-                                                                            <div>  <h2 style="font-size:16px; font-weight:normal;color:#e6e3e3;float:left">@Model.CandidateName</h2>
-                                                                            </div>
+                                                                            <div class="cr-hdr-label">Candidate</div>
+                                                                            <div class="cr-hdr-value">@Model.CandidateName</div>
                                                     }
                                                 <div style="clear:both"></div>
                                                     @Html.HiddenFor(m => m.CandidateName)
-                                                <div style="font-size:15px; font-weight:bold;color:#fff">Position</div>
-                                                <div style="font-size:15px; font-weight:normal;color:#e6e3e3">@Model.JDTiltle</div>
+                                                <div class="cr-hdr-label">Position</div>
+                                                <div class="cr-hdr-value">@Model.JDTiltle</div>
                                                  <div style="clear:both"></div>
                                                     @if (Model.CommunicationalProficiency != 0)
                                                     {
-
-                                                                                  <div style="font-size:15px; font-weight:bold;color:#fff;margin-top:10px;"> Communication Score: <span class="totScore"><strong style="padding-left:10px;color:#e6e3e3">@Model.CommunicationalProficiency / 10</strong></span></div>
-
+                                                                                  <div class="cr-hdr-label" style="margin-top:12px;">Communication Score</div>
+                                                                                  <div class="cr-hdr-value">@Model.CommunicationalProficiency <span style="opacity:.7">/ 10</span></div>
                                                     }
                                                     else
                                                     {
-
-                                                                                          <div style="font-size:15px; font-weight:bold;color:#fff;margin-top:10px;"> Communicational Score: <span class="totScore"><strong style="padding-left:10px;color:#e6e3e3">@Model.CommunicationalProficiency / 10</strong></span></div>
-
+                                                                                          <div class="cr-hdr-label" style="margin-top:12px;">Communication Score</div>
+                                                                                          <div class="cr-hdr-value">@Model.CommunicationalProficiency <span style="opacity:.7">/ 10</span></div>
                                                     }
                                                  </div>
-                                                 <div class="pull-right">
-                                                 <!-- <img style="position:absolute;top:30px;right:30px;height:35px" src="data:image/png;base64,@ViewBag.ClientLogo" />-->
-                                                      <div style="clear:both;margin-top:0px;">
-                                                         <div  style="font-weight:bold;font-size:15px;text-align:right; color:#fff;">
-                                                            Interview Date
-                                                         </div>
-                                                         <div style="font-weight:normal;font-size:15px; color:#e6e3e3;text-align:right;">@Model.interviewDate</div>
+                                                 <div class="cr-report-header__col cr-report-header__col--right">
+                                                     @if (!Model.IsReportwhitelabel && !string.IsNullOrWhiteSpace(ViewBag.Risebirdlogo as string))
+                                                     {
+                                                     <div class="cr-report-header__logos cr-report-header__logos--right">
+                                                         <img class="cr-logo cr-logo--risebird" src="data:image/png;base64,@ViewBag.Risebirdlogo" alt="" />
                                                      </div>
-                                                      <div style="clear:both;margin-top:10px;">
-                                                         <div  style="font-weight:bold;font-size:15px;text-align:right;color:#fff;">
-                                                            Interviewer Coded Name
-                                                         </div>
-                                                         <div style="font-weight:normal;font-size:15px; color:#f6a0a0;text-align:right;">( @Model.NickName )</div>
+                                                     }
+                                                      <div>
+                                                         <div class="cr-hdr-aside-label">Interview Date</div>
+                                                         <div class="cr-hdr-aside-value">@Model.interviewDate</div>
+                                                     </div>
+                                                      <div style="margin-top:10px;">
+                                                         <div class="cr-hdr-aside-label">Interviewer Coded Name</div>
+                                                         <div class="cr-hdr-aside-value cr-nickname">@Model.NickName</div>
                                                      </div>
 
-                                                       <div>
+                                                       <div class="cr-report-header__actions">
                                                         @if (Model.MeetingStatus == 1)
                                                         {
-
                                                                                    <div class="row"><div class="nodata-wrapper-pdf"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
-
                                                         }
                                                         else
                                                         {
-
                                                             @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                             {
-
-                                                                                                              <div style="float:right;border:1px #fff solid;padding:3px 10px; text-align:center;margin-top:10px;"> <a style="color:#fff;font-weight:bold;text-decoration:none;" href="@Model.VideoLink"><img style="width:25px;padding:3px;margin-right:5px;" src="/img/watch-video.png"> Interview Video</a></div>
-
-
+                                                                                                              <div class="cr-action-chip"> <a href="@Model.VideoLink"><i class="fa fa-play-circle-o" aria-hidden="true"></i> Interview Video</a></div>
                                                             }
-
                                                             @if (Model.IsTranscript && ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
                                                             {
                                                                 @if (Model.AudioTranscriptFileLink != null && Url.Content(Model.AudioTranscriptFileLink) != null)
                                                                 {
-                                                                                                                                                      <div style="float:right;border:1px #fff solid;padding:3px 10px; text-align:center;margin-top:10px;"> <a style="color:#fff;font-weight:bold;text-decoration:none;" href="@Model.AudioTranscriptFileLink"><img style="width:25px;padding:3px;margin-right:5px;" src="/img/wataudio.png">Interview Audio Transcript</a></div>
+                                                                                                                                                      <div class="cr-action-chip"> <a href="@Model.AudioTranscriptFileLink"><i class="fa fa-file-text-o" aria-hidden="true"></i> Interview Audio Transcript</a></div>
                                                                 }
-
                                                             }
-
-
                                                         }
                                                  </div>
-
                                                  </div>
                                              </div>
-
-
-
-                                             <hr style="clear:both;margin-bottom:0px;" />
-
+                                             <hr class="cr-report-header__hr" />
                                              </div>
-                                             <div class="col-lg-12 col-md-12 skill-divider"> <hr> <h2 style="font-size:15px!important;letter-spacing:normal;top:10px;position:relative"><span style="text-transform:none!important;float:left;font-size:15px;line-height:18px;color:#000;padding-right:5px;">Primary Skill :</span><span style="float:left"> @Model.JDTiltle</span>
+                                             <div class="col-lg-12 col-md-12 skill-divider cr-skill-meta"> <hr style="margin-top:0;border:none" /> <h2 style="font-size:15px!important;letter-spacing:normal;top:10px;position:relative"><span style="text-transform:none!important;float:left;font-size:15px;line-height:18px;color:#000;padding-right:5px;">Primary Skill :</span><span style="float:left"> @Model.JDTiltle</span>
                                              <span style="float:left;color:#000;height:18px;margin:-3px 5px 0px 10px;"> | </span>
                                                <span style="float:left">
                                                     @{
@@ -250,8 +703,8 @@
                                                   </span></h2>
                                              </div>
 
-                                             <div class="interviewComment" style="clear:both;overflow:auto;padding:10px 20px 20px 20px;">
-                                                 <div style="color:#000;margin:10px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">1</span>Interviewer Comment</div>
+                                             <div class="interviewComment" style="clear:both;overflow:auto;">
+                                                 <div class="cr-section-head"><span class="cr-section-head__badge">1</span><span class="cr-section-head__label">Interviewer Comment</span></div>
                                                  <hr style="margin-bottom:8px;" />
                                             @if (Model.InterviewerComment != null)
                                             {
@@ -264,28 +717,28 @@
                                              </div>
                                         @if (!string.IsNullOrEmpty(Model.CodeSnippet))
                                         {
-                                                             <div style="padding:0px 20px 20px 20px;">
-                                                             <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">2</span> Code Output:<a style="text-decoration:none;" href="@Model.CodeSnippet" target="_blank"><span style="background: #000;font-size:14px;font-weight:normal;color: #fff;padding: 3px 6px 6px 6px;border-radius:0px;margin:15px;text-decoration:none">Click here to view code snippet</span></a></div>
+                                                             <div style="padding:0px 20px 20px 0px;">
+                                                             <div class="cr-section-head" style="margin-top:0.5rem"><span class="cr-section-head__badge">2</span><span class="cr-section-head__label">Code Output:<a style="text-decoration:none;" href="@Model.CodeSnippet" target="_blank"><span style="background:#000;font-size:14px;font-weight:normal;color:#fff;padding:3px 6px 6px 6px;border-radius:0;margin-left:8px;text-decoration:none;display:inline-block;">Click here to view code snippet</span></a></span></div>
                                                              </div>
 
                                         }
-                                        else
+                                        else if (!isServerPdf)
                                         {
-                                                              <div style="padding:0px 20px 20px 20px;">
-                                                               <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">2</span> Code Output: <span style="color: #868080; font-weight:500;font-size:16px;">No code snippet is available</span></div>
+                                                              <div style="padding:0px 20px 20px 0px;">
+                                                               <div class="cr-section-head" style="margin-top:0.5rem"><span class="cr-section-head__badge">2</span><span class="cr-section-head__label">Code Output: <span style="color:#868080;font-weight:500;font-size:16px;">No code snippet is available</span></span></div>
                                                                 </div>
                                         }
 
                                           <div class="html2pdf__page-break"></div>
-                                             <div style="padding:80px 20px 20px 20px;margin-top:10px;">
-                                                 <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">3</span> Tech Skills Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
+                                             <div class="cr-tech-panel" style="margin-top:10px;">
+                                                 <div class="cr-section-head" style="margin-top:0"><span class="cr-section-head__badge">3</span><span class="cr-section-head__label">Tech Skills Score: </span><span class="totScore"><strong id="totTechScore">@(isServerPdf ? serverPdfTotTech.ToString("F2") + "%" : "")</strong></span></div>
                                                  <hr style="clear:both;margin-bottom:0px;" />
                                                  <div style="padding:0px">
                                                 @if (Model.TechSkillReportCollection != null)
                                                 {
                                                     @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
                                                     {
-                                                                                                      <div style="padding-top:10px">
+                                                                                                      <div class="cr-tech-card" style="padding-top:10px">
                                                                                                    <p style="margin-bottom:5px;">@Model.TechSkillReportCollection[i].SkillName</p>
                                                             @{
                                                                 var TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
@@ -299,16 +752,18 @@
                                                                                                          <div class="skillBackground skill-round-xlarge skill-small">
                                                                 @if (Model.TechSkillReportCollection[i].ActualLevelId == 7)
                                                                 {
-                                                                                                                              <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">Not Tested</span></div>
+                                                                                                                              <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"></div>
+                                                                                                                              <span class="ratecount">Not Tested</span>
                                                                 }
                                                                 else if (TechSkill_Score == 0)
                                                                 {
-                                                                                                                             <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@TechSkill_Score %</span></div>
+                                                                                                                             <div class="skill-center skill-round-xlarge skill-teal" style="width:0%"></div>
+                                                                                                                             <span class="ratecount">@TechSkill_Score %</span>
                                                                 }
                                                                 else
                                                                 {
-                                                                                                                             <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired (@((int)Math.Round(TechSkill_Score))%)</span></div>
-
+                                                                                                                             <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"></div>
+                                                                                                                             <span class="ratecount">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired (@((int)Math.Round(TechSkill_Score))%)</span>
                                                                 }
                                                                                                             </div>
                                                                                                           </div>
@@ -319,8 +774,8 @@
 
                                          <div class="html2pdf__page-break"></div>
                                          <div class="col-md-12">
-                                             <div style="margin-top:10px;padding:80px 20px 20px 8px;">
-                                                 <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">4</span>Questions Discussed</div>
+                                             <div class="cr-report-section" style="margin-top:10px;">
+                                                 <div class="cr-section-head" style="margin-top:0"><span class="cr-section-head__badge">4</span><span class="cr-section-head__label">Questions Discussed</span></div>
                                                  <hr style="margin-bottom:8px;" />
                                                  <div class="question">
                                                     @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
@@ -354,8 +809,8 @@
                 <div class="html2pdf__page-break"></div>
                 <div class="col-md-12">
                     <div style="height:50px;clear:both"></div>
-                    <div class="col-lg-12 col-md-12 skill-divider">
-                        <hr> <h2 style="font-size:15px!important;letter-spacing:normal">
+                    <div class="col-lg-12 col-md-12 skill-divider cr-skill-meta">
+                        <hr style="margin-top:0;border:none" /> <h2 style="font-size:15px!important;letter-spacing:normal">
                             <span style="text-transform:none!important;float:left">Other Skills: </span>
                             <span style="float:left;color:#000;height:18px;margin:-3px 5px 0px 10px;"> | </span>
                             <span style="float:left">
@@ -402,8 +857,8 @@
                         </h2>
                     </div>
 
-                    <div class="interviewComment" style="clear:both;overflow:auto;padding:10px 20px 20px 20px;">
-                        <div style="color:#000;margin:10px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">1</span>Interviewer Comment</div>
+                    <div class="interviewComment" style="clear:both;overflow:auto;">
+                        <div class="cr-section-head"><span class="cr-section-head__badge">1</span><span class="cr-section-head__label">Interviewer Comment</span></div>
                         <hr style="margin-bottom:8px;" />
                                                     @if (Model.InterviewerCommentTwo != null)
                                                     {
@@ -417,8 +872,8 @@
                 </div>
                 <div class="col-md-12">
 
-                    <div style="margin-top:10px;padding:80px 20px 20px 8px;">
-                        <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">2</span>Questions Discussed</div>
+                    <div class="cr-report-section" style="margin-top:10px;">
+                        <div class="cr-section-head" style="margin-top:0"><span class="cr-section-head__badge">2</span><span class="cr-section-head__label">Questions Discussed</span></div>
                         <hr style="margin-bottom:8px;" />
                         <div class="question">
                                                         @if (Model.QuestionsTwoCollection != null && Model.QuestionsTwoCollection.Count() != 0)
@@ -429,7 +884,7 @@
                                                                     var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsTwoCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
                                                                     @if (Model.QuestionsTwoCollection[i].Timing != null && Model.QuestionsTwoCollection[i].Timing > 0)
                                                                     {
-                                            <li style="padding-left:10px;margin-left:0px;" onclick="switchtoquestionVedio(@Model.QuestionsTwoCollection[i].Timing)" style="cursor:pointer;font-size:14px;background-size:7%;background-position:5px 6px;">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                            <li style="padding-left:10px;margin-left:0px;" onclick="switchtoquestionVedio(@Model.QuestionsTwoCollection[i].Timing)" style="cursor:pointer;font-size:14px;background-size:7%;background-position:5px 6px;">@Model.QuestionsTwoCollection[i].Comment [@Model.QuestionsTwoCollection[i].SkillName]</li>
                                                                     }
                                                                     else
                                                                     {
@@ -449,8 +904,8 @@
                 </div>
 
                 <div class="html2pdf__page-break"></div>
-                <div style="padding:80px 20px 20px 20px;margin-top:10px;">
-                    <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">3</span> Tech Skill Score: <span class="totScore"><strong id="totTechScore2"></strong></span></div>
+                <div class="cr-tech-panel" style="margin-top:10px;">
+                    <div class="cr-section-head" style="margin-top:0"><span class="cr-section-head__badge">3</span><span class="cr-section-head__label">Tech Skill Score: </span><span class="totScore"><strong id="totTechScore2">@(isServerPdf ? serverPdfTotTech2.ToString("F2") + "%" : "")</strong></span></div>
                     <hr style="clear:both;margin-bottom:0px;" />
 
 
@@ -459,7 +914,7 @@
                                                     {
                                                         @for (int i = 0; i < Model.TechSkillTwoReportCollection.Count(); i++)
                                                         {
-                                <div style="padding-top:10px">
+                                <div class="cr-tech-card" style="padding-top:10px">
                                     <p style="margin-bottom:5px;">@Model.TechSkillTwoReportCollection[i].SkillName</p>
                                                                 @{
                                                                     var TechSkill_Score = Model.TechSkillTwoReportCollection[i].WeightageActual * 100 / Model.TechSkillTwoReportCollection[i].WeightageRequired;
@@ -472,16 +927,18 @@
                                     <div class="skillBackground skill-round-xlarge skill-small">
                                                                     @if (Model.TechSkillTwoReportCollection[i].ActualLevelId == 7)
                                                                     {
-                                            <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">Not Tested</span></div>
+                                            <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"></div>
+                                            <span class="ratecount">Not Tested</span>
                                                                     }
                                                                     else if (TechSkill_Score == 0)
                                                                     {
-                                            <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@TechSkill_Score %</span></div>
+                                            <div class="skill-center skill-round-xlarge skill-teal" style="width:0%"></div>
+                                            <span class="ratecount">@TechSkill_Score %</span>
                                                                     }
                                                                     else
                                                                     {
-                                            <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@Model.TechSkillTwoReportCollection[i].WeightageActual  / @Model.TechSkillTwoReportCollection[i].WeightageRequired (@((int)Math.Round(TechSkill_Score))%)</span></div>
-
+                                            <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"></div>
+                                            <span class="ratecount">@Model.TechSkillTwoReportCollection[i].WeightageActual  / @Model.TechSkillTwoReportCollection[i].WeightageRequired (@((int)Math.Round(TechSkill_Score))%)</span>
                                                                     }
                                     </div>
                                 </div>
@@ -531,6 +988,8 @@
             </div>
 
 
+@if (!isServerPdf)
+{
 <div id="modal_clientComment_placeholder"></div>
 
 <div id="modal_clientAudio_placeholder"></div>
@@ -621,8 +1080,12 @@
     </div>
 </div>
 @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
+}
 
+@if (!isServerPdf)
+{
 <script src="~/js/ModalFormServerValidation.js?v=2024"></script>
+}
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -641,7 +1104,7 @@
     </script>
 }
 
-@if (ViewBag.profile == "Interviewer")
+@if (ViewBag.profile == "Interviewer" && !isServerPdf)
 {
     @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
     {
@@ -793,8 +1256,12 @@
         }
     }
     window.onload = function () {
-        document.getElementById("int-cmnt").innerHTML = $('#int-cmnt').text();
-        getPDF();
+        var el = document.getElementById("int-cmnt");
+        if (el) { el.innerHTML = $('#int-cmnt').text(); }
+@if (!isServerPdf)
+{
+        <text>        getPDF();</text>
+}
     }
 </script>
 
@@ -806,7 +1273,8 @@
 <script src="~/js/FeedbackRecorder/Record.js?v=2024"></script>
 <script src="~/js/Aadhaar.js?v=2024"></script>
 
-
+@if (!isServerPdf)
+{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 
 <script>
@@ -814,6 +1282,10 @@
         // var imgData = $("#hidclientlogo").val();
         // var imgData1 = $("#hidlogo").val();
         var whitelabling = $("#hidwhitelabling").val();
+        var mainPanel = document.getElementById("main-panel");
+        if (mainPanel) {
+            mainPanel.style.display = "block";
+        }
 
         var d = new Date();
         var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + ".pdf";
@@ -823,8 +1295,8 @@
             html2pdf()
             .from(element)
             .set({
-                margin: [-4, -2, -4, -2], //top, left, buttom, right,
-                padding: [20, 40, 20, 40],
+                margin: [0, 0, 0, 0],
+                padding: [20, 20, 20, 20],
                 filename: filename,
                 image: { type: 'jpeg', quality: .95 },
                 html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
@@ -846,8 +1318,8 @@
             html2pdf()
             .from(element)
             .set({
-                margin: [-4, -2, -4, -2], //top, left, buttom, right,
-                padding: [20, 40, 20, 40],
+                margin: [0, 0, 0, 0],
+                padding: [20, 20, 20, 20],
                 filename: filename,
                 image: { type: 'jpeg', quality: .95 },
                 html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
@@ -876,7 +1348,7 @@
     }
 
 </script>
-
+}
 
 <style>
     .before {
@@ -887,7 +1359,3 @@
         page-break-after: always;
     }
 </style>
-
-<script>
-    pagebreak: { avoid: "tr", mode: "css", before: "#nextpage1", after: "1cm" }
-</script>
