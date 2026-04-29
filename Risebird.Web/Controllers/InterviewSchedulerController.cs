@@ -414,6 +414,11 @@ namespace Risebird.Web.Controllers
                             ModelState.AddModelError(string.Empty, "Your Emailid is marked cold. Please contact the admin for further information.");
                             return View(model);
                         }
+                        if (_interviewdetails.Any(x => x.interviewtype.Contains("StatusPending")))
+                        {
+                            ModelState.AddModelError(string.Empty, "An interview is already pending for you on" + _interviewdetails.Where(x => x.interviewtype.Contains("StatusPending")).Select(x => x.interviewDate).FirstOrDefault() + ". Please contact the admin for further information.");
+                            return View(model);
+                        }
                     }
                     //if (_ckeckEmail)
                     //{
@@ -1659,6 +1664,11 @@ namespace Risebird.Web.Controllers
                         if (_interviewdetails.Any(x => x.interviewtype.Contains("ColdCandidate")))
                         {
                             ModelState.AddModelError(string.Empty, "Your Emailid is marked cold. Please contact the admin for further information.");
+                            return View(model);
+                        }
+                        if (_interviewdetails.Any(x => x.interviewtype.Contains("StatusPending")))
+                        {
+                            ModelState.AddModelError(string.Empty, "An interview is already pending for you on" + _interviewdetails.Where(x => x.interviewtype.Contains("StatusPending")).Select(x => x.interviewDate).FirstOrDefault() + ". Please contact the admin for further information.");
                             return View(model);
                         }
                     }
