@@ -269,5 +269,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<ZohoParticipantList>> GetZohoLiveMeetingInfomation();
         Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId);
         Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId);
+        Task<IEnumerable<PaymentSLAVM>> GetAutoApprovalPaymentSLAPendingList();
     }
 }

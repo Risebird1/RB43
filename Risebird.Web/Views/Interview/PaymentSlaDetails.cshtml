@@ -291,7 +291,7 @@
                                                        
                                                             @* <td>@item.candidateEmail</td> *@
                                                         
-                                                        <td>@item.interviewer</td>
+                                                        <td>@item.Interviewer</td>
                                                         @if (!string.IsNullOrWhiteSpace(item.CompanyName))
                                                         {
                                                             @if (item.CompanyName.Length > 30)
@@ -326,9 +326,9 @@
                                                                 }
                                                             </span>@item.MobileNumber
                                                         </td>
-                                                        @if (item.interviewer != null || item.interviewer != "")
+                                                        @if (item.Interviewer != null || item.Interviewer != "")
                                                         {
-                                                            <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                            <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.Interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
                                                         }
                                                         else
                                                         {
@@ -399,11 +399,11 @@
                                                                         </button>
                                                                     </a>
                                                                 </span>
-                                                                @if (!string.IsNullOrWhiteSpace(item.interviewer))
+                                                                @if (!string.IsNullOrWhiteSpace(item.Interviewer))
                                                                 {
                                                                     <span>
                                                                         <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
-                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.Interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
                                                                         </button>
                                                                     </span>
                                                                 }

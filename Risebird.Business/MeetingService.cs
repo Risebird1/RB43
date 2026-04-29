@@ -4718,6 +4718,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<PaymentSLAVM>> GetAutoApprovalPaymentSLAPendingList()
+        {
+            try
+            {
+                return await _meetingRespository.GetAutoApprovalPaymentSLAPendingList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 
