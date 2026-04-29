@@ -237,7 +237,7 @@
         transform: rotate(180deg) !important;
     }
     .content-wrappers {
-    margin: 60px auto 20px auto;
+    margin: 60px auto 20px auto!important;
     }
     </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
@@ -406,6 +406,14 @@ a.rb-link:hover {
     background: #0047B3;
     transform: translateY(-1px);
 }
+#risebirdProctoringExtStatus.alert:before{
+     border-color: #d33f3f;
+}
+
+#risebirdProctoringExtStatus.alert{
+    background: #fac2c27a;
+    border-color: #fac2c27a;
+}
 
 @@keyframes fadeIn {
     from { opacity: 0; }
@@ -536,7 +544,10 @@ a.rb-link:hover {
                                                                 </div>
                                                             }
 
-                                                            <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
+                                                            @if (!Model.CandidateDetails.IsAIInterview)
+                                                            {
+                                                                <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
+                                                            }
                                                             <div>
 
                                                                @if(Model.CandidateDetails.IsAIInterview){
@@ -576,7 +587,7 @@ a.rb-link:hover {
                                                                                     <div style="padding:0px 0 0 0;">
                                                                                         <div id="risebirdProctoringExtStatus" class="alert alert-info" style="display:none;margin:0;padding:8px 12px;font-size:13px;"></div>
                                                                                        <div style="clear:both"></div> <div style="margin-top:7px;">
-                                                                                            <button type="button" id="risebirdRecheckExtBtn" style="display:none;width:100%;padding:10px 12px;background:rgb(192 207 218);color:#fff;font-family:inherit;font-size:13.5px;font-weight:600;border:none;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;gap:6px;">
+                                                                                            <button type="button" id="risebirdRecheckExtBtn" style="display:none;width:100%;padding:10px 12px;background: rgb(66 165 245);color:#fff;font-family:inherit;font-size:13.5px;font-weight:600;border:none;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;gap:6px;">
                                                                                                 <i class="fa fa-check-circle" style="margin-right:6px;"></i>I installed the extension — enable join meeting 
                                                                                             </button>
                                                                                         </div>
@@ -588,7 +599,7 @@ a.rb-link:hover {
                                                                                         <div style="font-size:14px;font-weight:600;color:#204065;line-height:1.4;">
                                                                                             <i class="fa fa-video-camera" style="color:#42a5f5;font-size:14px;margin-right:6px;"></i>2. Join Meeting
                                                                                         </div>
-                                                                                        <p style="margin:6px 0 0 0;font-size:13px;color:#4d647c;line-height:1.5;">Complete candidate verification first. The join button will auto-enable when installation setup is complete.</p>
+                                                                                        <p style="margin:6px 0 0 0;font-size:13px;color:#4d647c;line-height:1.5;">The join button will auto-enable when installation setup is complete.</p>
                                                                                     </div>
                                                                                     <a id="btn_ai_Interview" role="button"
                                                                                        class="btn btn-primary click_herebtn disabled"
@@ -610,16 +621,16 @@ a.rb-link:hover {
                                                                                 </div>
                                                                                 <div style="clear:both"></div>
                                                                                 <div style="background:#ffffff;border:1px solid #dbe5ef;border-radius:8px;padding:12px 14px;">
-                                                                                    <div id="risebirdProctoringStep3Toggle" role="button" tabindex="0" aria-expanded="false" style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;cursor:pointer;user-select:none;">
+                                                                                    <div id="risebirdProctoringStep3Toggle" role="button" tabindex="0" aria-expanded="true" style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;cursor:pointer;user-select:none;">
                                                                                         <div>
                                                                                             <div style="font-size:14px;font-weight:600;color:#204065;line-height:1.35;">
                                                                                                 <i class="fa fa-desktop" style="color:#42a5f5;font-size:14px;margin-right:6px;"></i>3. Start Proctoring Session after joining meeting
                                                                                             </div>
                                                                                             <div style="margin-top:5px;font-size:13px;color:#4d647c;line-height:1.45;">Open the extension and follow prompts.</div>
                                                                                         </div>
-                                                                                        <i id="risebirdProctoringStep3Chevron" class="fa fa-chevron-down" style="font-size:12px;color:#6f859d;transition:transform 0.2s ease;margin-top:3px;"></i>
+                                                                                        <i id="risebirdProctoringStep3Chevron" class="fa fa-chevron-down" style="font-size:12px;color:#6f859d;transition:transform 0.2s ease;margin-top:3px;transform:rotate(180deg);"></i>
                                                                                     </div>
-                                                                                    <div id="risebirdProctoringStep3Body" style="display:none;padding-top:12px;">
+                                                                                    <div id="risebirdProctoringStep3Body" style="display:block;padding-top:12px;">
                                                                                         <p style="margin:0 0 10px 0;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#8a9bb0;">Risebird Interview Setup</p>
                                                                                         <ol style="display:flex;flex-direction:column;gap:10px;list-style:none;margin:0;padding:0;">
                                                                                             <li style="display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:#4d647c;line-height:1.45;">
@@ -874,7 +885,7 @@ a.rb-link:hover {
             </div>
         </div>
     }
-    <div style="display:flex;justify-content:center;margin-top:14px;">
+    <div style="display:flex;justify-content:center;margin-top:14px;margin-bottom:20px;">
         <div style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:#fff;border:1px solid #dbe5ef;border-radius:999px;font-size:13px;color:#6b7d90;">
             <i class="fa fa-envelope" style="color:#42a5f5;font-size:13px;"></i>
             Candidate support:&nbsp;<a href="mailto:candidatesupport@risebird.io" style="color:#1f3550;font-weight:500;text-decoration:none;">candidatesupport@risebird.io</a>
@@ -2138,6 +2149,7 @@ a.rb-link:hover {
     window.risebirdAadharJoinOk = false;
     var risebirdExtWasMissingAfterProbe = false;
     var risebirdInstallToastShown = false;
+    var risebirdProctoringVerifyIdentityPrompt = false;
 
     function risebirdShouldEnforceExtensionInstall() {
         var ua = navigator.userAgent || '';
@@ -2181,10 +2193,18 @@ a.rb-link:hover {
         }
 
         if (statusEl) {
+            if (verified) {
+                risebirdProctoringVerifyIdentityPrompt = false;
+            }
             if (!verified) {
-                statusEl.style.display = 'block';
-                statusEl.className = 'alert alert-info';
-                statusEl.innerHTML = 'Complete <strong>Verify Candidate</strong> first to enable Join. You may install the extension now, then use <strong>I installed it — enable join</strong> after verification.';
+                if (risebirdProctoringVerifyIdentityPrompt) {
+                    statusEl.style.display = 'block';
+                    statusEl.className = 'alert alert-info';
+                    statusEl.innerHTML = 'Complete <strong>Verify Your Identity</strong> first then you may install the extension after verification.';
+                } else {
+                    statusEl.style.display = 'none';
+                    statusEl.innerHTML = '';
+                }
             } else if (!needExt) {
                 statusEl.style.display = 'block';
                 statusEl.className = 'alert alert-info';
@@ -2198,7 +2218,7 @@ a.rb-link:hover {
             } else {
                 statusEl.style.display = 'block';
                 statusEl.className = 'alert alert-warning';
-                statusEl.innerHTML = 'Install the extension from the Chrome Web Store. The <strong>I installed it — enable join</strong> button appears after installation is detected.';
+                statusEl.innerHTML = 'Install the extension from the Chrome Web Store by clicking the icon on the right side.';
             }
         }
         if (okEl) {
@@ -2251,8 +2271,22 @@ a.rb-link:hover {
         if (typeof a.click === 'function') a.click();
     };
 
+    window.risebirdShowVerifyIdentityBeforeExtensionMessage = function () {
+        risebirdProctoringVerifyIdentityPrompt = true;
+        var statusEl = document.getElementById('risebirdProctoringExtStatus');
+        if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.className = 'alert alert-info';
+            statusEl.innerHTML = 'Complete <strong>Verify Your Identity</strong> first then you may install the extension after verification.';
+        }
+    };
+
     window.risebirdOpenProctoringStoreWindow = function (ev) {
         if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+        if (window.risebirdAadharJoinOk !== true) {
+            window.risebirdShowVerifyIdentityBeforeExtensionMessage();
+            return false;
+        }
         var installUrl = 'https://chromewebstore.google.com/detail/risebird-proctoring-assis/lpbnpcnkhmknkgfnnnecahkmpkihglgg?authuser=0&hl=en';
         window.open(installUrl, '_blank', 'noopener,noreferrer');
         return false;
@@ -2364,6 +2398,10 @@ a.rb-link:hover {
         if (recheckBtn && !recheckBtn._risebirdWired) {
             recheckBtn._risebirdWired = true;
             recheckBtn.addEventListener('click', function () {
+                if (window.risebirdAadharJoinOk !== true) {
+                    window.risebirdShowVerifyIdentityBeforeExtensionMessage();
+                    return;
+                }
                 recheckBtn.style.background = 'rgb(97 172 231)';
                 window.risebirdUserConfirmedProctoringExtension = true;
                 window.risebirdApplyAiJoinButtonState();
@@ -2375,6 +2413,9 @@ a.rb-link:hover {
         if (installBtn && !installBtn._risebirdWired) {
             installBtn._risebirdWired = true;
             installBtn.addEventListener('click', function (ev) {
+                if (window.risebirdAadharJoinOk !== true) {
+                    return;
+                }
                 window.risebirdInstallFlowStarted = true;
                 window.risebirdApplyAiJoinButtonState();
                 if (typeof window.risebirdRefreshProctoringExtensionPresence === 'function') {
