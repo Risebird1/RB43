@@ -85,7 +85,6 @@
                 monitoringStarted = true;
                 emitProctoring({ type: 'RB_COMPLETE_TEST_SETUP' });
             }
-            var extensionReadyFallbackTimer = null;
             var helloIntervalId = null;
             function clearHelloInterval() {
                 if (helloIntervalId != null) {
@@ -93,15 +92,8 @@
                     helloIntervalId = null;
                 }
             }
-            function clearExtensionReadyFallback() {
-                if (extensionReadyFallbackTimer != null) {
-                    window.clearTimeout(extensionReadyFallbackTimer);
-                    extensionReadyFallbackTimer = null;
-                }
-            }
             function onExtensionReady() {
                 if (joinSent) return;
-                clearExtensionReadyFallback();
                 clearHelloInterval();
                 joinSent = true;
                 emitProctoring({ type: 'RB_PROCTORING_JOIN', payload: cfg });
@@ -152,10 +144,8 @@
                 if (postMessageTarget === '*' && typeof console !== 'undefined' && console.info) {
                     console.info('[Risebird Proctoring] postMessage target is * (localhost). Extension manifest must match this page, e.g. http://localhost:*/* and https://localhost:*/*');
                 }
-                extensionReadyFallbackTimer = window.setTimeout(function () {
-                    extensionReadyFallbackTimer = null;
-                    if (!joinSent) onExtensionReady();
-                }, 5000);
+                // JOIN immediately so the extension receives candidate + session without waiting for READY or user interaction.
+                try { onExtensionReady(); } catch (e0) { }
                 document.addEventListener('risebird-proctoring-recording-started', function () {
                     tryStartMonitoring('recording');
                 });
@@ -170,7 +160,6 @@
                     if (Date.now() > stopExtensionAfterMs && joinSent) endProctoringSession();
                 }, 2000);
                 function onLeave() {
-                    clearExtensionReadyFallback();
                     clearHelloInterval();
                     endProctoringSession();
                 }
@@ -190,19 +179,8 @@
                 function run() {
                     try { wire(); } catch (e) { }
                 }
-                function deferRun() {
-                    try {
-                        if (typeof window.requestAnimationFrame === 'function') {
-                            window.requestAnimationFrame(function () { window.setTimeout(run, 50); });
-                        } else {
-                            window.setTimeout(run, 50);
-                        }
-                    } catch (e2) {
-                        run();
-                    }
-                }
-                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', deferRun);
-                else deferRun();
+                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+                else run();
             }
             scheduleWire();
         })();
