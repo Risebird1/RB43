@@ -256,6 +256,11 @@ namespace Risebird.Services.Controllers
                                             _ScheduleCandidateStatus.onboardingStatus = "Your Emailid is marked cold. Please contact the admin for further information.";
                                             flagout = true;
                                         }
+                                        if (_interviewdetails.Any(x => x.interviewtype.Contains("StatusPending")))
+                                        {
+                                            _ScheduleCandidateStatus.onboardingStatus = "An interview is already pending for you on" + _interviewdetails.Where(x => x.interviewtype.Contains("StatusPending")).Select(x => x.interviewDate).FirstOrDefault() + ". Please contact the admin for further information.";
+                                            flagout = true;
+                                        }
                                     }
                                     if (!flagout)
                                     {
@@ -294,7 +299,7 @@ namespace Risebird.Services.Controllers
                                                 string textreminder = string.Empty;
                                                 textreminder = item.Phone;
                                                 int interviewId = 0;
-                                                
+
                                                 if (string.IsNullOrWhiteSpace(reqData.requestType))
                                                 {
                                                     reqData.requestType = "API";

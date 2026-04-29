@@ -6,24 +6,25 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-Create PROCEDURE [dbo].[usp_SaveAiContradictionDetails]  
-    @qcEvaluationId INT,  
-    @contradictionJson varchar(max)  
-AS  
-BEGIN  
-Declare @Count int=0
-Set @Count=(Select Count(*) from QcInterviewAIevaluation where interviewid=@qcEvaluationId)
-
-if(@Count>0)
-begin
-        UPDATE [dbo].[QcInterviewAIevaluation]  
-        SET [ContradictionJson]=@contradictionJson  
-        WHERE [interviewid] = @qcEvaluationId;  
-end
-else
-begin
-Insert into QcInterviewAIevaluation (InterviewId,ContradictionJson) values(@qcEvaluationId,@contradictionJson)
-end
-END 
+CREATE PROCEDURE [dbo].[usp_SaveAiContradictionDetails]    
+    @qcEvaluationId INT,    
+    @contradictionJson varchar(max)    
+AS    
+BEGIN    
+Declare @Count int=0,@ContradictionScore varchar(10)  
+Set @Count=(Select Count(*) from QcInterviewAIevaluation where interviewid=@qcEvaluationId)  
+Set @ContradictionScore=(CASE WHEN ISJSON(@contradictionJson) = 1 THEN JSON_VALUE(@contradictionJson, '$.OverallContradictionScore') ELSE NULL END)  
+  
+if(@Count>0)  
+begin  
+        UPDATE [dbo].[QcInterviewAIevaluation]    
+        SET [ContradictionJson]=@contradictionJson,  
+        [ContradictionScore]=@ContradictionScore  
+        WHERE [interviewid] = @qcEvaluationId;    
+end  
+else  
+begin  
+Insert into QcInterviewAIevaluation (InterviewId,ContradictionJson,ContradictionScore) values(@qcEvaluationId,@contradictionJson,@ContradictionScore)  
+end  
+END  
 GO

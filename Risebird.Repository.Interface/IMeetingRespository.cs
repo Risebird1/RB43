@@ -317,5 +317,6 @@ namespace Risebird.Repository.Interface
         Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId);
         Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId);
         Task<int> GetAIInterviewVideoCount(string sessionId);
+        Task<IEnumerable<PaymentSLAVM>> GetAutoApprovalPaymentSLAPendingList();
     }
 }
