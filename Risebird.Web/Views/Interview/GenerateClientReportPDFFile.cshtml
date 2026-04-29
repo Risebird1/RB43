@@ -132,15 +132,19 @@
         min-height: 0 !important;
     }
 
-    /* Full-bleed report width (browser + PDF) */
-    body.sidebar-mini #main-panel > .content.dataloading.client,
+    /* Report width + uniform ~20px inset (browser + PDF) */
+    body.sidebar-mini #main-panel > .content.dataloading.client {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
     #pdfdownload.client-report.bl-bg {
         margin-left: 0 !important;
         margin-right: 0 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
+        padding: 20px !important;
         max-width: 100% !important;
         width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     #pdfdownload.client-report > .row {
@@ -160,7 +164,7 @@
 
     #pdfdownload.client-report .cr-report-header {
         background: #000 !important;
-        padding: 14px 12px 12px 12px !important;
+        padding: 20px !important;
         border-bottom: none;
         box-shadow: none;
     }
@@ -369,15 +373,12 @@
 
     #pdfdownload.client-report .interviewComment {
         margin-top: 16px !important;
-        padding: 6px 6px 14px !important;
+        padding: 12px 0 18px !important;
     }
 
     #pdfdownload.client-report .cr-tech-panel {
-        margin-top: 6px !important;
-        padding-left: 6px !important;
-        padding-right: 6px !important;
-        padding-top: 32px !important;
-        padding-bottom: 12px !important;
+        margin-top: 8px !important;
+        padding: 28px 0 18px 0 !important;
     }
 
     #pdfdownload.client-report .interviewComment #int-cmnt,
@@ -474,20 +475,42 @@
         text-shadow: none !important;
     }
 
+    /* Tight list markers: override Report.css tick background + 30px padding on li */
+    #pdfdownload.client-report .question ul {
+        margin: 0.35em 0 0.75em 0 !important;
+        padding: 0 0 0 0.9em !important;
+        list-style-type: circle !important;
+        list-style-position: outside !important;
+    }
+
     #pdfdownload.client-report .question ul li {
         font-size: 15px;
         line-height: 1.5;
+        list-style-type: circle !important;
+        list-style-position: outside !important;
+        background: none !important;
+        background-image: none !important;
+        padding: 0.15em 0 0.35em 0 !important;
+        margin-left: 0 !important;
     }
 
     #pdfdownload.client-report .question label {
         font-size: 15px;
         color: #9A9A9A !important;
         font-weight: normal;
+        margin: 4px 0 8px 0 !important;
+        padding: 0 0 0 0.15em !important;
+        display: block;
     }
 
     #pdfdownload.client-report hr {
         border-color: #cccccc;
         opacity: 1;
+    }
+
+    /* Extra vertical rhythm for page-break sections (replaces large inline padding) */
+    #pdfdownload.client-report .cr-report-section {
+        padding: 28px 0 22px 0 !important;
     }
 </style>
 @if (isServerPdf)
@@ -680,7 +703,7 @@
                                                   </span></h2>
                                              </div>
 
-                                             <div class="interviewComment" style="clear:both;overflow:auto;padding:10px 20px 20px 20px;">
+                                             <div class="interviewComment" style="clear:both;overflow:auto;">
                                                  <div class="cr-section-head"><span class="cr-section-head__badge">1</span><span class="cr-section-head__label">Interviewer Comment</span></div>
                                                  <hr style="margin-bottom:8px;" />
                                             @if (Model.InterviewerComment != null)
@@ -707,7 +730,7 @@
                                         }
 
                                           <div class="html2pdf__page-break"></div>
-                                             <div class="cr-tech-panel" style="padding:80px 20px 20px 20px;margin-top:10px;">
+                                             <div class="cr-tech-panel" style="margin-top:10px;">
                                                  <div class="cr-section-head" style="margin-top:0"><span class="cr-section-head__badge">3</span><span class="cr-section-head__label">Tech Skills Score: </span><span class="totScore"><strong id="totTechScore">@(isServerPdf ? serverPdfTotTech.ToString("F2") + "%" : "")</strong></span></div>
                                                  <hr style="clear:both;margin-bottom:0px;" />
                                                  <div style="padding:0px">
@@ -751,7 +774,7 @@
 
                                          <div class="html2pdf__page-break"></div>
                                          <div class="col-md-12">
-                                             <div style="margin-top:10px;padding:80px 20px 20px 8px;">
+                                             <div class="cr-report-section" style="margin-top:10px;">
                                                  <div class="cr-section-head" style="margin-top:0"><span class="cr-section-head__badge">4</span><span class="cr-section-head__label">Questions Discussed</span></div>
                                                  <hr style="margin-bottom:8px;" />
                                                  <div class="question">
@@ -834,7 +857,7 @@
                         </h2>
                     </div>
 
-                    <div class="interviewComment" style="clear:both;overflow:auto;padding:10px 20px 20px 20px;">
+                    <div class="interviewComment" style="clear:both;overflow:auto;">
                         <div class="cr-section-head"><span class="cr-section-head__badge">1</span><span class="cr-section-head__label">Interviewer Comment</span></div>
                         <hr style="margin-bottom:8px;" />
                                                     @if (Model.InterviewerCommentTwo != null)
@@ -849,7 +872,7 @@
                 </div>
                 <div class="col-md-12">
 
-                    <div style="margin-top:10px;padding:80px 20px 20px 8px;">
+                    <div class="cr-report-section" style="margin-top:10px;">
                         <div class="cr-section-head" style="margin-top:0"><span class="cr-section-head__badge">2</span><span class="cr-section-head__label">Questions Discussed</span></div>
                         <hr style="margin-bottom:8px;" />
                         <div class="question">
@@ -881,7 +904,7 @@
                 </div>
 
                 <div class="html2pdf__page-break"></div>
-                <div class="cr-tech-panel" style="padding:80px 20px 20px 20px;margin-top:10px;">
+                <div class="cr-tech-panel" style="margin-top:10px;">
                     <div class="cr-section-head" style="margin-top:0"><span class="cr-section-head__badge">3</span><span class="cr-section-head__label">Tech Skill Score: </span><span class="totScore"><strong id="totTechScore2">@(isServerPdf ? serverPdfTotTech2.ToString("F2") + "%" : "")</strong></span></div>
                     <hr style="clear:both;margin-bottom:0px;" />
 
@@ -1272,8 +1295,8 @@
             html2pdf()
             .from(element)
             .set({
-                margin: [-4, -2, -4, -2], //top, left, buttom, right,
-                padding: [20, 40, 20, 40],
+                margin: [0, 0, 0, 0],
+                padding: [20, 20, 20, 20],
                 filename: filename,
                 image: { type: 'jpeg', quality: .95 },
                 html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
@@ -1295,8 +1318,8 @@
             html2pdf()
             .from(element)
             .set({
-                margin: [-4, -2, -4, -2], //top, left, buttom, right,
-                padding: [20, 40, 20, 40],
+                margin: [0, 0, 0, 0],
+                padding: [20, 20, 20, 20],
                 filename: filename,
                 image: { type: 'jpeg', quality: .95 },
                 html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
