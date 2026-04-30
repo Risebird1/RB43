@@ -48,6 +48,7 @@ namespace Risebird.Entities.Data
         public bool?    AcknowledgementEmailSent    { get; set; }
 
         public string   Status                      { get; set; }
+        public string   Source                      { get; set; }
         public string   ProcessedBy                 { get; set; }
         public DateTime CreatedAt                   { get; set; }
         public DateTime? UpdatedAt                  { get; set; }

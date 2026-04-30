@@ -10,14 +10,15 @@
     string selStatus = ViewBag.Status as string ?? string.Empty;
     string selName = ViewBag.CandidateName as string ?? string.Empty;
     string selMag = ViewBag.MagName as string ?? string.Empty;
+    string selSource = ViewBag.Source as string ?? string.Empty;
     string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
     bool canDelete = profileName == "Admin" || profileName == "SupportAdmin";
 
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selName)
-                   || !string.IsNullOrEmpty(selMag) || !string.IsNullOrEmpty(selDateFrom)
-                   || !string.IsNullOrEmpty(selDateTo);
+                   || !string.IsNullOrEmpty(selMag) || !string.IsNullOrEmpty(selSource)
+                   || !string.IsNullOrEmpty(selDateFrom) || !string.IsNullOrEmpty(selDateTo);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
     int last = Math.Min(page * pageSize, totalCount);
@@ -28,6 +29,7 @@
         if (!string.IsNullOrEmpty(selStatus)) q += $"&status={Uri.EscapeDataString(selStatus)}";
         if (!string.IsNullOrEmpty(selName)) q += $"&candidateName={Uri.EscapeDataString(selName)}";
         if (!string.IsNullOrEmpty(selMag)) q += $"&magName={Uri.EscapeDataString(selMag)}";
+        if (!string.IsNullOrEmpty(selSource)) q += $"&source={Uri.EscapeDataString(selSource)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return Url.Action("Index", "NaukriOnboarding") + q;
@@ -188,8 +190,8 @@
 
                 <div class="row mb-3 align-items-center">
                     <div class="col">
-                        <h4 class="fw-bold mb-0"><i class="fas fa-user-graduate text-primary me-2"></i>Naukri Prospective Interviewer Onboarding</h4>
-                        <p class="text-muted mb-0 mt-1">Prospective interviewers sourced from Naukri.com, processed via Relay.app</p>
+                        <h4 class="fw-bold mb-0"><i class="fas fa-user-graduate text-primary me-2"></i>Prospective Interviewer Onboarding</h4>
+                        <p class="text-muted mb-0 mt-1">Prospective interviewers sourced from Naukri / LinkedIn, processed via Relay.app</p>
                     </div>
                     <div class="col-auto d-flex gap-2">
                         <button type="button" class="btn btn-sm nk-page-refresh" onclick="location.reload()" title="Reload this page"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
@@ -230,6 +232,11 @@
                                 </select>
                                 <input type="text" name="candidateName" class="form-control nk-filter-control" placeholder="Candidate name..." style="flex:1 1 0;min-width:130px;" value="@selName" />
                                 <input type="text" name="magName" class="form-control nk-filter-control" placeholder="MAG name..." style="flex:1 1 0;min-width:120px;" value="@selMag" />
+                                <select name="source" class="form-select nk-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">All sources</option>
+                                    @if (selSource == "Naukri") { <option value="Naukri" selected>Naukri</option> } else { <option value="Naukri">Naukri</option> }
+                                    @if (selSource == "LinkedIn") { <option value="LinkedIn" selected>LinkedIn</option> } else { <option value="LinkedIn">LinkedIn</option> }
+                                </select>
                                 <input type="date" name="dateFrom" class="form-control nk-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
                                 <span class="text-muted flex-shrink-0" style="font-size:11px;">\u2013</span>
                                 <input type="date" name="dateTo" class="form-control nk-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateTo" onchange="document.getElementById('filterForm').submit()" />
@@ -256,6 +263,7 @@
                                     <thead class="table-light">
                                         <tr>
                                             <th class="col-num">#</th><th class="col-date">Received</th>
+                                            <th style="min-width:60px;">Source</th>
                                             <th class="col-name">Candidate</th><th class="col-role">Current Role</th>
                                             <th class="col-exp">Exp</th><th class="col-location">Location</th>
                                             <th class="col-mag">MAG</th><th class="col-skills">Key Skills</th>
@@ -275,6 +283,14 @@
                                             <tr id="row-@r.Id">
                                                 <td class="col-num text-muted" style="font-size:12px">@r.Id</td>
                                                 <td class="col-date" style="font-size:12px">@(r.ReceivedAt.HasValue ? r.ReceivedAt.Value.ToString("dd MMM yy, HH:mm") : "\u2014")</td>
+                                                <td style="font-size:11px;">
+                                                    @{
+                                                        string srcLabel = r.Source ?? "Naukri";
+                                                        string srcBadge = string.Equals(srcLabel, "LinkedIn", StringComparison.OrdinalIgnoreCase)
+                                                            ? "background:#0a66c2;color:#fff;" : "background:#4a90d9;color:#fff;";
+                                                    }
+                                                    <span class="badge" style="@srcBadge font-size:10px;">@srcLabel</span>
+                                                </td>
                                                 <td class="col-name">
                                                     <span class="fw-semibold" style="font-size:12px;white-space:break-spaces;">@(r.CandidateName ?? "\u2014")</span>
                                                     @if (!string.IsNullOrEmpty(r.ParsedEmail)) { <br /><span class="text-muted" style="font-size:10px;white-space:break-spaces;">@r.ParsedEmail</span> }
