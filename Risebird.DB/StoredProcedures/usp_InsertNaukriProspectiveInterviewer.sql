@@ -19,12 +19,12 @@ CREATE PROCEDURE [dbo].[usp_InsertNaukriProspectiveInterviewer]
     @MagName            NVARCHAR(200)   = NULL,
     @ResumeLink         NVARCHAR(2000)  = NULL,
     @HasAttachment      BIT             = 0,
+    @Source             VARCHAR(50)     = 'Naukri',
     @NewId              INT             OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Duplicate check: same candidate + subject already exists
     IF EXISTS (
         SELECT 1 FROM NaukriProspectiveInterviewer
         WHERE LOWER(LTRIM(RTRIM(ISNULL(CandidateName,'')))) = LOWER(LTRIM(RTRIM(ISNULL(@CandidateName,''))))
@@ -36,7 +36,6 @@ BEGIN
           AND LOWER(LTRIM(RTRIM(ISNULL(Subject,'')))) = LOWER(LTRIM(RTRIM(ISNULL(@Subject,''))))
         ORDER BY Id DESC
 
-        -- Update resume link if a newer/better one was provided
         IF @ResumeLink IS NOT NULL AND LEN(LTRIM(RTRIM(@ResumeLink))) > 0
            AND @ResumeLink <> 'None'
         BEGIN
@@ -53,12 +52,12 @@ BEGIN
         (SenderEmail, Subject, MailContent, ReceivedAt,
          CandidateName, Location, PastExperience, NoticePeriod, Education,
          KeySkills, CurrentRole, ExperienceYears, Salary, MagName,
-         ResumeLink, HasAttachment, Status, CreatedAt)
+         ResumeLink, HasAttachment, [Source], Status, CreatedAt)
     VALUES
         (@SenderEmail, @Subject, @MailContent, ISNULL(@ReceivedAt, GETUTCDATE()),
          @CandidateName, @Location, @PastExperience, @NoticePeriod, @Education,
          @KeySkills, @CurrentRole, @ExperienceYears, @Salary, @MagName,
-         @ResumeLink, @HasAttachment, 'Open', GETUTCDATE())
+         @ResumeLink, @HasAttachment, ISNULL(@Source, 'Naukri'), 'Open', GETUTCDATE())
 
     SET @NewId = SCOPE_IDENTITY()
 END

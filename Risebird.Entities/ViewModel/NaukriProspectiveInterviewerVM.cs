@@ -49,6 +49,7 @@ namespace Risebird.Entities.ViewModel
         public bool?    AcknowledgementEmailSent    { get; set; }
 
         public string   Status                      { get; set; }
+        public string   Source                      { get; set; }
         public string   ProcessedBy                 { get; set; }
         public DateTime CreatedAt                   { get; set; }
         public DateTime? UpdatedAt                  { get; set; }
@@ -104,6 +105,45 @@ namespace Risebird.Entities.ViewModel
 
         [JsonProperty("mag_name")]
         public string MagName                   { get; set; }
+
+        [JsonProperty("resume_link")]
+        public string ResumeLink                { get; set; }
+
+        [JsonProperty("has_attachment")]
+        public bool HasAttachment               { get; set; }
+    }
+
+    public class RelayLinkedInPayload
+    {
+        [JsonProperty("sender_email")]
+        public string SenderEmail               { get; set; }
+
+        [JsonProperty("subject")]
+        public string Subject                   { get; set; }
+
+        [JsonProperty("mail_content")]
+        public string MailContent               { get; set; }
+
+        [JsonProperty("received_at")]
+        public string ReceivedAt                { get; set; }
+
+        [JsonProperty("candidate_name")]
+        public string CandidateName             { get; set; }
+
+        [JsonProperty("job_title")]
+        public string JobTitle                  { get; set; }
+
+        [JsonProperty("headline")]
+        public string Headline                  { get; set; }
+
+        [JsonProperty("location")]
+        public string Location                  { get; set; }
+
+        [JsonProperty("past_experience")]
+        public string PastExperience            { get; set; }
+
+        [JsonProperty("skills_match")]
+        public string SkillsMatch               { get; set; }
 
         [JsonProperty("resume_link")]
         public string ResumeLink                { get; set; }

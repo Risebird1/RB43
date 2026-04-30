@@ -14,7 +14,7 @@ namespace Risebird.Repository.Interface
         Task<int> InsertAsync(NaukriProspectiveInterviewer record);
 
         Task<List<NaukriProspectiveInterviewerVM>> GetListAsync(
-            string status, string candidateName, string magName,
+            string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize);
 
         Task<NaukriProspectiveInterviewerVM> GetByIdAsync(int id);

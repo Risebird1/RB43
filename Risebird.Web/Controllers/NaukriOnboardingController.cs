@@ -64,6 +64,7 @@ namespace Risebird.Web.Controllers
             string status        = null,
             string candidateName = null,
             string magName       = null,
+            string source        = null,
             string dateFrom      = null,
             string dateTo        = null,
             int    page          = 1,
@@ -79,7 +80,7 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pTo)) dtTo = pTo;
 
-                var records = await _repository.GetListAsync(status, candidateName, magName, dtFrom, dtTo, page, pageSize);
+                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize);
 
                 var first = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -92,6 +93,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Status = status ?? string.Empty;
                 ViewBag.CandidateName = candidateName ?? string.Empty;
                 ViewBag.MagName = magName ?? string.Empty;
+                ViewBag.Source = source ?? string.Empty;
                 ViewBag.DateFrom = dateFrom ?? string.Empty;
                 ViewBag.DateTo = dateTo ?? string.Empty;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
@@ -103,6 +105,7 @@ namespace Risebird.Web.Controllers
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
                 ViewBag.Status = status; ViewBag.CandidateName = candidateName; ViewBag.MagName = magName;
+                ViewBag.Source = source ?? string.Empty;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
                 return View(new List<NaukriProspectiveInterviewerVM>());
@@ -142,7 +145,7 @@ namespace Risebird.Web.Controllers
                         record.AIVerdict, record.AIFitmentScore,
                         record.OnboardingCompleted, record.OnboardedUserId, record.OnboardedProfileId,
                         record.AssessmentGroupId, record.AcknowledgementEmailSent,
-                        record.Status, record.ProcessedBy,
+                        record.Status, record.Source, record.ProcessedBy,
                         record.ResolvedAssessmentGroupId, record.AssessmentGroupName,
                         hasResumeLink = !string.IsNullOrEmpty(record.ResumeLink)
                                         && !string.Equals(record.ResumeLink, "None", StringComparison.OrdinalIgnoreCase)
@@ -865,20 +868,137 @@ namespace Risebird.Web.Controllers
                     Salary          = payload.Salary?.Trim(),
                     MagName         = payload.MagName?.Trim(),
                     ResumeLink      = blobResumeUrl ?? sourceResumeUrl,
-                    HasAttachment   = !string.IsNullOrWhiteSpace(blobResumeUrl) || payload.HasAttachment
+                    HasAttachment   = !string.IsNullOrWhiteSpace(blobResumeUrl) || payload.HasAttachment,
+                    Source          = "Naukri"
                 };
 
                 var newId = await _repository.InsertAsync(record);
 
                 if (newId > 0)
-                    await _repository.InsertHistoryAsync(newId, "RecordCreated", "—",
-                        $"Candidate: {record.CandidateName}, MAG: {record.MagName}", "Relay Webhook");
+                    await _repository.InsertHistoryAsync(newId, "RecordCreated", "\u2014",
+                        $"Candidate: {record.CandidateName}, MAG: {record.MagName}, Source: Naukri", "Relay Webhook");
 
                 return Ok(new
                 {
                     success = true,
                     id = newId,
                     message = $"Naukri prospect created (#{newId}) for {record.CandidateName}.",
+                    resumeUploaded = !string.IsNullOrWhiteSpace(blobResumeUrl)
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        // ── LinkedIn Relay webhook ────────────────────────────────────────────────
+
+        [AllowAnonymous]
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> LinkedInWebhook()
+        {
+            try
+            {
+                var expectedSecret = _configuration["RelayWebhook:LinkedInOnboardingSecret"];
+                if (!string.IsNullOrWhiteSpace(expectedSecret))
+                {
+                    var incoming = Request.Headers["X-Relay-Secret"].ToString();
+                    if (incoming != expectedSecret)
+                        return Unauthorized(new { error = "Invalid secret." });
+                }
+
+                string rawBody;
+                using (var reader = new StreamReader(Request.Body))
+                    rawBody = await reader.ReadToEndAsync();
+
+                if (string.IsNullOrWhiteSpace(rawBody))
+                    return BadRequest(new { error = "Empty request body." });
+
+                var payload = JsonConvert.DeserializeObject<RelayLinkedInPayload>(rawBody,
+                    new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore });
+
+                if (payload == null || string.IsNullOrWhiteSpace(payload.SenderEmail))
+                    return BadRequest(new { error = "Missing required field: sender_email." });
+
+                DateTime? receivedAt = null;
+                if (!string.IsNullOrWhiteSpace(payload.ReceivedAt) &&
+                    DateTime.TryParse(payload.ReceivedAt, null,
+                        System.Globalization.DateTimeStyles.RoundtripKind, out var parsed))
+                    receivedAt = parsed;
+
+                string blobResumeUrl = null;
+                string sourceResumeUrl = payload.ResumeLink?.Trim();
+
+                if (!string.IsNullOrWhiteSpace(sourceResumeUrl)
+                    && !sourceResumeUrl.Equals("None", StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        string downloadUrl = ConvertToDirectDownloadUrl(sourceResumeUrl);
+                        var httpClient = _httpClientFactory.CreateClient();
+                        using var response = await httpClient.GetAsync(downloadUrl);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var contentBytes = await response.Content.ReadAsByteArrayAsync();
+                            var ct = response.Content.Headers.ContentType?.MediaType ?? "";
+
+                            bool isHtml = ct.Contains("text/html")
+                                || (contentBytes.Length > 5
+                                    && System.Text.Encoding.UTF8.GetString(contentBytes, 0, Math.Min(50, contentBytes.Length))
+                                        .TrimStart().StartsWith("<", StringComparison.Ordinal));
+
+                            if (contentBytes.Length > 0 && !isHtml)
+                            {
+                                string ext = ".pdf";
+                                if (ct.Contains("msword") || sourceResumeUrl.EndsWith(".doc", StringComparison.OrdinalIgnoreCase)) ext = ".doc";
+                                else if (ct.Contains("wordprocessingml") || sourceResumeUrl.EndsWith(".docx", StringComparison.OrdinalIgnoreCase)) ext = ".docx";
+
+                                string blobName = $"LI_{DateTime.UtcNow:yyyyMMddHHmmss}_{Guid.NewGuid():N}{ext}";
+                                using var ms = new MemoryStream(contentBytes);
+                                blobResumeUrl = await _azureStorageHelper.InsertBlobCloudCompare(
+                                    blobName, "resumes", blobFIleStream: ms, contentType: ct);
+                            }
+                        }
+                    }
+                    catch (Exception dlEx)
+                    {
+                        await _logger.LogMessage(LogLevelInfo.Exception, dlEx);
+                    }
+                }
+
+                string magName = payload.JobTitle?.Trim();
+
+                var record = new NaukriProspectiveInterviewer
+                {
+                    SenderEmail     = payload.SenderEmail?.Trim(),
+                    Subject         = payload.Subject?.Trim(),
+                    MailContent     = payload.MailContent?.Trim(),
+                    ReceivedAt      = receivedAt ?? DateTime.UtcNow,
+                    CandidateName   = payload.CandidateName?.Trim(),
+                    Location        = payload.Location?.Trim(),
+                    PastExperience  = payload.PastExperience?.Trim(),
+                    KeySkills       = payload.SkillsMatch?.Trim(),
+                    CurrentRole     = payload.Headline?.Trim(),
+                    MagName         = magName,
+                    ResumeLink      = blobResumeUrl ?? sourceResumeUrl,
+                    HasAttachment   = !string.IsNullOrWhiteSpace(blobResumeUrl) || payload.HasAttachment,
+                    Source          = "LinkedIn"
+                };
+
+                var newId = await _repository.InsertAsync(record);
+
+                if (newId > 0)
+                    await _repository.InsertHistoryAsync(newId, "RecordCreated", "—",
+                        $"Candidate: {record.CandidateName}, MAG: {record.MagName}, Source: LinkedIn", "Relay Webhook");
+
+                return Ok(new
+                {
+                    success = true,
+                    id = newId,
+                    message = $"LinkedIn prospect created (#{newId}) for {record.CandidateName}.",
                     resumeUploaded = !string.IsNullOrWhiteSpace(blobResumeUrl)
                 });
             }

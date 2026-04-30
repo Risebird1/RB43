@@ -88,6 +88,7 @@ namespace Risebird.Repository
                 p.Add("@MagName", record.MagName);
                 p.Add("@ResumeLink", record.ResumeLink);
                 p.Add("@HasAttachment", record.HasAttachment);
+                p.Add("@Source", record.Source ?? "Naukri");
                 p.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 await con.ExecuteAsync("usp_InsertNaukriProspectiveInterviewer", p,
@@ -103,7 +104,7 @@ namespace Risebird.Repository
         }
 
         public async Task<List<NaukriProspectiveInterviewerVM>> GetListAsync(
-            string status, string candidateName, string magName,
+            string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize)
         {
             try
@@ -113,6 +114,7 @@ namespace Risebird.Repository
                 p.Add("@Status", string.IsNullOrWhiteSpace(status) ? null : status);
                 p.Add("@CandidateName", string.IsNullOrWhiteSpace(candidateName) ? null : candidateName);
                 p.Add("@MagName", string.IsNullOrWhiteSpace(magName) ? null : magName);
+                p.Add("@Source", string.IsNullOrWhiteSpace(source) ? null : source);
                 p.Add("@DateFrom", dateFrom);
                 p.Add("@DateTo", dateTo);
                 p.Add("@Page", page);
