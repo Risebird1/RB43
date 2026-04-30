@@ -27,5 +27,9 @@ join CandidatesMaster cm on cm.id=ca.CandidateMasterId
 join UserList ul on ul.id=cm.UserId  
 join IRF on IRF.id=ca.IRFId  
 where ul.EmailId=@candidateEmail and IRF.IRFId=@IRFId  and cci.IsColdCandidate=1
+union   
+select 'StatusPending' as interviewtype,interviewDate from [dbo].[InterviewMeetings] as intw join[dbo].[InterviewComments] as intc on intw.id = intc.interviewid   
+where candidateEmail = @candidateEmail and IRFId= @IRFId and ISNULL(RedoInterview,0) = 0  
+and interviewDate<@timenow and confirmationStatus=1  and intc.MeetingStatus=2
 END  
 GO

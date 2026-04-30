@@ -15,13 +15,13 @@ AS
 BEGIN 
 if(@type Like '%Candidate%')
 BEGIN
-Select ps.*,IRF.id as IRFId,IRF.IsVideoRequired,im.candidateEmail,im.candidateName,im.interviewer
+Select ps.*,IRF.id as IRFId,IRF.IsVideoRequired,im.candidateEmail,im.candidateName,im.Interviewer
 From CandidateFeedbackDetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId   
 where ps.Interviewid=@Interviewid 
 END
 else
 BEGIN
-Select ps.*,IRF.id as IRFId,IRF.IsVideoRequired,im.candidateEmail,im.candidateName,im.interviewer,tq.Redflags,Case when tq.id>0 then 1 else 1 end as QCStatus,IsNull(ip.VideoReward,0) as VideoReward   
+Select ps.*,IRF.id as IRFId,IRF.IsVideoRequired,im.candidateEmail,im.candidateName,im.Interviewer,tq.Redflags,Case when tq.id>0 then 1 else 1 end as QCStatus,IsNull(ip.VideoReward,0) as VideoReward   
 From InterviewMeetings im  left join IRF on IRF.IRFId=im.IRFId   
 left join PaymentSLADetails ps on ps.Interviewid=im.id
 left join Trans_QCFormReport tq on tq.interviewid=im.id  

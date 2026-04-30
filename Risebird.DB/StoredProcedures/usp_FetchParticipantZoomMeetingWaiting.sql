@@ -139,7 +139,7 @@ Outer Apply(Select Max(PerformedOn) as PerformedOn From PageClickDetails pct whe
 --EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt                    
 --left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName        
 left join UserList ulc on ulc.EmailId = im.candidateEmail      
-where im.Confirmationstatus=1 and ISNULL(Case When IRF.IsCandidateavailability is null and       
+where ISNULL(IRF.IsAIInterview,0)=0 and im.Confirmationstatus=1 and ISNULL(Case When IRF.IsCandidateavailability is null and       
 IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1        
 and IsNull(im.IsMeetingNotificationSent,0)!=1 and      
 dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and       

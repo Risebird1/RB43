@@ -8168,5 +8168,27 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             }
             return 0;
         }
+        public async Task<IEnumerable<PaymentSLAVM>> GetAutoApprovalPaymentSLAPendingList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    var data = await SqlMapper.QueryAsync<PaymentSLAVM>(con, "usp_AutoApprovePaymentSlaDetails", null,
+                         commandType: CommandType.StoredProcedure);
+                    return data;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
