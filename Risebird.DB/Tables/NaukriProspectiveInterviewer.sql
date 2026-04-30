@@ -70,3 +70,9 @@ BEGIN
     ALTER TABLE NaukriProspectiveInterviewer ADD [ModificationLog] NVARCHAR(MAX) NULL
 END
 GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'Source' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [Source] VARCHAR(50) NOT NULL DEFAULT 'Naukri'
+END
+GO
