@@ -1,0 +1,225 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proxy Candidate Detection — Interviewer Checklist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css?v=2024" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+  @* Base SweetAlert2 styles (bundled with dashboard on other pages); keeps popup layout consistent *@
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@8.19.1/dist/sweetalert2.min.css" crossorigin="anonymous" />
+  <style>
+    .swal2-popup .swal2-styled {
+      box-shadow: none !important;
+    }
+    .swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
+      font-size: 14px !important;
+      min-width: 105px;
+      height: 40px;
+      padding: 0px 20px !important;
+      border: 0px !important;
+    }
+    .sweet-alert h2 {
+      margin-bottom: 10px !important;
+    }
+    .swal2-popup .swal2-content {
+      font-size: 14px !important;
+      color: #a79f9f !important;
+    }
+    .swal2-popup .swal2-title {
+      font-size: 1.8em !important;
+      text-transform: capitalize !important;
+      font-weight: 400 !important;
+    }
+    .swal2-icon {
+      margin: 0em auto 1em !important;
+    }
+    .swal2-popup .swal2-styled {
+      padding: .425em 1em !important;
+    }
+    .swal2-popup .swal2-styled.swal2-cancel {
+      background-color: rgb(221, 51, 51) !important;
+    }
+  </style>
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d1520; --bg2: #131f32; --bg3: #1a2a42; --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.14); --blue: #3b82f6; --blue-light: #60a5fa;
+    --amber: #f59e0b; --red: #ef4444; --green: #22c55e; --white: #eef2f9;
+    --dim: rgba(238,242,249,0.55); --faint: rgba(238,242,249,0.1);
+    --font: 'DM Sans', Helvetica, sans-serif; --mono: 'DM Mono', monospace; --radius: 12px;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--bg); color: var(--white); min-height: 100vh; line-height: 1.5; }
+  .topbar { position: sticky; top: 0; z-index: 100; background: rgba(13,21,32,0.92); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; align-items: center; justify-content: space-between;
+    height: 64px; gap: 24px; }
+  .topbar-progress-wrap { flex: 1; max-width: 400px; display: flex; align-items: center; gap: 14px; }
+  .topbar-bar-bg { flex: 1; height: 6px; background: var(--faint); border-radius: 99px; overflow: hidden; }
+  .topbar-bar-fill { height: 100%; background: var(--blue); border-radius: 99px; transition: width 0.35s ease; }
+  .topbar-count { font-size: 13px; font-family: var(--mono); color: var(--dim); white-space: nowrap; }
+  .topbar-reset { font-size: 13px; font-weight: 500; color: var(--dim); background: none; border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 14px; cursor: pointer; font-family: var(--font);
+    transition: color 0.2s, border-color 0.2s; }
+  .topbar-reset:hover { color: var(--white); border-color: var(--border-strong); }
+  .section-nav { position: sticky; top: 0; z-index: 90; background: rgba(13,21,32,0.88); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+  .section-nav::-webkit-scrollbar { display: none; }
+  .section-nav-inner { display: flex; align-items: center; gap: 2px; padding: 0 32px; height: 48px; min-width: max-content; }
+  .nav-btn { font-size: 13px; font-weight: 500; color: var(--dim); background: none; border: none; cursor: pointer;
+    padding: 6px 14px; border-radius: 8px; font-family: var(--font); white-space: nowrap;
+    transition: color 0.2s, background 0.2s; }
+  .nav-btn:hover { color: var(--white); background: var(--faint); }
+  .hero { padding: 72px 40px 56px; max-width: 900px; margin: 0 auto; text-align: center; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--blue-light); margin-bottom: 16px; }
+  .hero-title { font-size: clamp(32px, 4vw, 52px); font-weight: 700; line-height: 1.1; margin-bottom: 18px; }
+  .hero-sub { font-size: 17px; color: var(--dim); max-width: 600px; margin: 0 auto 32px; line-height: 1.65; }
+  .hero-badges { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: 7px; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 99px; padding: 6px 14px; font-size: 13px; font-weight: 500; color: var(--dim); }
+  .badge-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .main { max-width: 960px; margin: 0 auto; padding: 48px 24px 0px; }
+  .section { margin-bottom: 26px; }
+  .section-header { display: flex; align-items: flex-start; gap: 18px; margin-bottom: 20px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border); }
+  .section-icon { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center;
+    justify-content: center; font-size: 20px; background: var(--bg3); border: 1px solid var(--border); }
+  .section-meta { flex: 1; }
+  .section-title { font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+  .section-subtitle { font-size: 14px; color: var(--dim); }
+  .section-progress { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .sec-bar-bg { width: 80px; height: 5px; background: var(--faint); border-radius: 99px; overflow: hidden; }
+  .sec-bar-fill { height: 100%; border-radius: 99px; transition: width 0.3s ease; background: var(--blue); }
+  .sec-count { font-size: 12px; font-family: var(--mono); color: var(--dim); white-space: nowrap; }
+  .items { display: flex; flex-direction: column; gap: 8px; }
+  .item { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; border-radius: var(--radius);
+    border: 1px solid var(--border); background: var(--bg2); cursor: pointer;
+    transition: background 0.18s, border-color 0.18s, opacity 0.18s; user-select: none;
+    -webkit-tap-highlight-color: transparent; }
+  .item:hover { background: var(--bg3); border-color: var(--border-strong); }
+  .item.checked { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.3); opacity: 0.65; }
+  .item.warn { border-left: 3px solid var(--amber); }
+  .item.new-item { border-left: 3px solid var(--green); }
+  .item-checkbox { width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0; margin-top: 1px;
+    border: 2px solid var(--border-strong); background: transparent; display: flex; align-items: center;
+    justify-content: center; transition: background 0.18s, border-color 0.18s; pointer-events: none; }
+  .item.checked .item-checkbox { background: var(--blue); border-color: var(--blue); }
+  .item-checkbox svg { opacity: 0; transition: opacity 0.15s; }
+  .item.checked .item-checkbox svg { opacity: 1; }
+  .item-body { flex: 1; }
+  .item-label { font-size: 15px; font-weight: 500; color: var(--white); line-height: 1.45; margin-bottom: 2px; }
+  .item.checked .item-label { text-decoration: line-through; color: var(--dim); }
+  .item-note { font-size: 13px; color: var(--dim); line-height: 1.5; }
+  .item-tags { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .tag { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+    border-radius: 5px; padding: 2px 8px; }
+  .tag-warn { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+  .tag-new { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .tag-critical { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .all-clear { display: none; margin-top: 48px; padding: 32px; background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.3); border-radius: 16px; text-align: center; }
+  .all-clear.visible { display: block; }
+  .all-clear-title { font-size: 22px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+  .all-clear-sub { font-size: 15px; color: var(--dim); }
+  .checklist-save-bar { max-width: 960px; margin: 0 auto; padding: 36px 24px 48px; display: flex; flex-wrap: wrap;
+    align-items: center; justify-content: center; gap: 14px 20px; border-top: 1px solid var(--border); }
+  footer { border-top: 1px solid var(--border); padding: 24px 40px; text-align: center; font-size: 13px; color: var(--dim); }
+  @@media (max-width: 600px) {
+    .topbar { padding: 0 16px; }
+    .main { padding: 32px 16px 80px; }
+    .hero { padding: 48px 16px 40px; }
+  }
+  </style>
+</head>
+<body>
+
+<form id="proxyChecklistAntiForgery" style="display:none">@Html.AntiForgeryToken()</form>
+
+<nav class="section-nav" aria-label="Jump to section">
+  <div class="section-nav-inner" id="sectionNav"></div>
+</nav>
+
+<div style="background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 40px;">
+  <div style="max-width:1060px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+  
+    <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:200px;">
+      <label style="font-size:12px;color:var(--dim);white-space:nowrap;">Your Email</label>
+      <input id="interviewerEmail" type="email" placeholder="interviewer@company.com" style="flex:1;background:var(--bg3);border:1px solid var(--border-strong);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--white);font-family:var(--font);outline:none;" oninput="saveSession()">
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:200px;">
+      <label style="font-size:12px;color:var(--dim);white-space:nowrap;">Candidate Name</label>
+      <input id="candidateName" type="text" placeholder="Full name" style="flex:1;background:var(--bg3);border:1px solid var(--border-strong);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--white);font-family:var(--font);outline:none;" oninput="saveSession()">
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:200px;">
+      <label style="font-size:12px;color:var(--dim);white-space:nowrap;">Role Applied For</label>
+      <input id="roleApplied" type="text" placeholder="e.g. Senior Engineer" style="flex:1;background:var(--bg3);border:1px solid var(--border-strong);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--white);font-family:var(--font);outline:none;" oninput="saveSession()">
+    </div>
+    <button type="button" onclick="sendReport()" style="background:var(--blue);border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;color:white;cursor:pointer;white-space:nowrap;font-family:var(--font);display:flex;align-items:center;gap:7px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      Send Report
+    </button>
+  </div>
+</div>
+
+<div class="hero">
+  <img id="rb-logo-hero" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" alt="RiseBird" width="200" height="48" style="height:48px;width:auto;max-width:min(280px,92vw);object-fit:contain;margin-bottom:24px;">
+  <div class="hero-eyebrow">Confidential · For Interviewer Use Only</div>
+  <div class="hero-title">Proxy Candidate Detection</div>
+  <div class="hero-sub">Go through each section during the interview. Check off signals as you observe them. Items marked <span style="color:var(--amber);font-weight:600">High Risk</span> are strong individual indicators.</div>
+  <div class="hero-badges">
+    <div class="badge"><div class="badge-dot" style="background:var(--amber)"></div>High-risk signal</div>
+    <div class="badge"><div class="badge-dot" style="background:var(--green)"></div>Newly added step</div>
+    <div class="badge"><div class="badge-dot" style="background:var(--red)"></div>Critical / immediate action</div>
+  </div>
+</div>
+
+<div style="max-width:960px;margin:0 auto;padding:0 24px;">
+  <div style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:16px 24px;margin-bottom:16px;display:flex;align-items:center;gap:16px;">
+    <div style="font-size:22px;flex-shrink:0;">🚨</div>
+    <div style="font-size:14px;color:var(--white);line-height:1.6;">
+      <strong style="color:#fca5a5;">Incomplete checklists put your account at risk.</strong> Interviewers who do not complete this protocol before and during every session are in violation of RiseBird's interviewer standards. Repeated non-compliance results in <strong style="color:#fca5a5;">account suspension and removal from the interviewer panel.</strong>
+    </div>
+  </div>
+</div>
+
+<main class="main" id="main"></main>
+
+<div class="main" style="padding-top:0">
+  <div class="all-clear" id="allClear">
+    <div class="all-clear-title">All items reviewed</div>
+    <div class="all-clear-sub">You have worked through the full checklist. Document your findings and proceed with the interview decision accordingly.</div>
+  </div>
+</div>
+
+<div class="checklist-save-bar">
+  <button type="button" id="btnSaveChecklist" onclick="submitChecklistToBackend()" style="background:var(--green);border:none;border-radius:8px;padding:11px 24px;font-size:14px;font-weight:600;color:white;cursor:pointer;white-space:nowrap;font-family:var(--font);display:inline-flex;align-items:center;gap:8px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+    Save checklist
+  </button>
+</div>
+
+<footer style="padding:32px 40px">
+  <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px">
+    <img id="rb-logo-footer" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" alt="RiseBird" width="200" height="48" style="height:28px;width:auto;max-width:min(200px,70vw);object-fit:contain;opacity:0.75">
+  </div>
+  <div style="font-size:12px;color:rgba(238,242,249,0.3)">For interviewer use only · Do not share with candidates · Confidential</div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js?v=2024"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js?v=2024" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+<script src="@Url.Content("~/Newassets/js/plugins/sweetalert2.min.js")"></script>
+<script>
+  window.__proxyChecklistSubmitUrl = '@Url.Action("SaveProxyCandidateChecklist", "Interviewer")';
+</script>
+<script src="@Url.Content("~/doc/proxy-candidate-checklist.app.js")"></script>
+</body>
+</html>

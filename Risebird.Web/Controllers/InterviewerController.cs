@@ -1436,6 +1436,93 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>Proxy candidate detection training checklist (interviewer-only).</summary>
+        [HttpGet]
+        public async Task<IActionResult> ProxyCandidateDetectionChecklist()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        return View();
+                    }
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("InterviewerIndex", "Dashboard");
+            }
+        }
+
+        /// <summary>Saves proxy-detection checklist selections (JSON) for the logged-in interviewer to blob storage.</summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveProxyCandidateChecklist([FromForm] string payload)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { success = false, message = "Your session has expired. Please sign in again." });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName != "Interviewer")
+                    return Json(new { success = false, message = "Not authorized." });
+
+                if (string.IsNullOrWhiteSpace(payload))
+                    return Json(new { success = false, message = "No checklist data was sent." });
+
+                ProxyCandidateChecklistSubmitVM model;
+                try
+                {
+                    model = JsonConvert.DeserializeObject<ProxyCandidateChecklistSubmitVM>(payload);
+                }
+                catch (JsonException)
+                {
+                    return Json(new { success = false, message = "Invalid data format." });
+                }
+
+                if (model == null)
+                    return Json(new { success = false, message = "Invalid payload." });
+
+                if (model.ChecklistState == null)
+                    model.ChecklistState = new Dictionary<string, bool>();
+
+                var sessionEmail = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var checkedKeys = model.ChecklistState.Where(kv => kv.Value).Select(kv => kv.Key).ToList();
+
+                var record = new
+                {
+                    SavedAtUtc = DateTime.UtcNow,
+                    LoggedInInterviewerEmail = sessionEmail,
+                    FormInterviewerEmail = model.InterviewerEmail,
+                    CandidateName = model.CandidateName,
+                    RoleApplied = model.RoleApplied,
+                    CheckedItemKeys = checkedKeys,
+                    TotalChecked = checkedKeys.Count,
+                    FullState = model.ChecklistState
+                };
+
+                var json = JsonConvert.SerializeObject(record, Formatting.Indented);
+                var safeEmail = System.Text.RegularExpressions.Regex.Replace(sessionEmail ?? "unknown", @"[^a-zA-Z0-9.@_-]", "_");
+                var fileName = $"proxy-candidate-checklist/{safeEmail}/{DateTime.UtcNow:yyyyMMdd-HHmmss}-{Guid.NewGuid():N}.json";
+
+                var blob = _azureStorageHelper.GetCloudBlockBlob("documents", fileName);
+                blob.UploadText(json);
+
+                return Json(new { success = true, message = "Checklist saved successfully." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not save right now. Please try again." });
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> MyProfile(InterviewerProfileVM interviewerProfile)
         {
