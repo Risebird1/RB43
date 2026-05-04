@@ -32,6 +32,7 @@ namespace Risebird.Web.Controllers
         private readonly IAzureStorageHelper           _azureStorageHelper;
         private readonly IFileMimeTypeHelper           _fileMimeTypeHelper;
         private readonly IHttpClientFactory            _httpClientFactory;
+        private readonly IEncryptionHelper              _encryptionHelper;
 
         public NaukriOnboardingController(
             INaukriOnboardingRepository  repository,
@@ -43,7 +44,8 @@ namespace Risebird.Web.Controllers
             IInterviewerService          interviewerService,
             IAzureStorageHelper           azureStorageHelper,
             IFileMimeTypeHelper           fileMimeTypeHelper,
-            IHttpClientFactory            httpClientFactory)
+            IHttpClientFactory            httpClientFactory,
+            IEncryptionHelper             encryptionHelper)
         {
             _repository             = repository;
             _logger                 = logger;
@@ -55,6 +57,7 @@ namespace Risebird.Web.Controllers
             _azureStorageHelper     = azureStorageHelper;
             _fileMimeTypeHelper     = fileMimeTypeHelper;
             _httpClientFactory      = httpClientFactory;
+            _encryptionHelper       = encryptionHelper;
         }
 
         // ── Dashboard ───────────────────────────────────────────────────────────────
@@ -145,6 +148,10 @@ namespace Risebird.Web.Controllers
                         record.AIVerdict, record.AIFitmentScore,
                         record.OnboardingCompleted, record.OnboardedUserId, record.OnboardedProfileId,
                         record.AssessmentGroupId, record.AcknowledgementEmailSent,
+                        record.SelectedIRFId, record.SelectedIRFName, record.ApplicationLink,
+                        record.InvitationEmailSent, invitationEmailSentAt = record.InvitationEmailSentAt?.ToString("dd MMM yyyy, HH:mm"),
+                        record.ProspectResponse, prospectResponseAt = record.ProspectResponseAt?.ToString("dd MMM yyyy, HH:mm"),
+                        record.SelfRegistrationCompleted,
                         record.Status, record.Source, record.ProcessedBy,
                         record.ResolvedAssessmentGroupId, record.AssessmentGroupName,
                         hasResumeLink = !string.IsNullOrEmpty(record.ResumeLink)
@@ -272,8 +279,14 @@ namespace Risebird.Web.Controllers
                 }
 
                 string resumeText = null;
-                try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
-                catch { }
+                bool isDocFile = resumeUrl.EndsWith(".doc", StringComparison.OrdinalIgnoreCase)
+                              || resumeUrl.EndsWith(".docx", StringComparison.OrdinalIgnoreCase);
+
+                if (!isDocFile)
+                {
+                    try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
+                    catch { /* not a valid PDF — will try DOC conversion next */ }
+                }
 
                 if (string.IsNullOrWhiteSpace(resumeText))
                 {
@@ -283,11 +296,17 @@ namespace Risebird.Web.Controllers
                         if (!string.IsNullOrWhiteSpace(convertedUrl))
                             resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedUrl);
                     }
-                    catch { }
+                    catch { /* conversion or converted-PDF read failed */ }
+                }
+
+                if (string.IsNullOrWhiteSpace(resumeText) && isDocFile)
+                {
+                    try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
+                    catch { /* last-resort: maybe blob extension was wrong and it's actually a PDF */ }
                 }
 
                 if (string.IsNullOrWhiteSpace(resumeText))
-                    return Json(new { success = false, error = "Could not read the resume. The file may be corrupted or in an unsupported format. Try uploading a valid PDF.", needsUpload = true });
+                    return Json(new { success = false, error = "Could not read the resume. The file may be corrupted or in an unsupported format. Try uploading a valid PDF/DOC/DOCX.", needsUpload = true });
 
                 string parsedEmail = ExtractEmail(resumeText);
                 string parsedPhone = ExtractPhone(resumeText);
@@ -315,7 +334,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false, error = "Parse failed: " + ex.Message });
+                return Json(new { success = false, error = "Parse failed. The resume file could not be processed — it may be corrupted or in an unsupported format. Try uploading a valid PDF/DOC/DOCX.", needsUpload = true });
             }
         }
 
@@ -636,6 +655,189 @@ namespace Risebird.Web.Controllers
             {
                 var mags = await _repository.GetAllMasterAssessmentGroupsAsync();
                 return Json(new { success = true, data = mags });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Get active skill channels (IRFs) for a given assessment group ─────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetActiveChannels(int assessmentGroupId)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                var channels = await _repository.GetActiveIRFsByAssessmentGroupIdAsync(assessmentGroupId);
+                return Json(new { success = true, data = channels });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Select IRF / Skill Channel (Step 2 of new pipeline) ─────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SelectSkillChannel(int id, int irfId, string irfName, int assessmentGroupId)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                var encryptedId = await _encryptionHelper.EncryptStringValue(irfId.ToString());
+                var appLink = $"{Request.Scheme}://{Request.Host}/Interviewer/ApplicationForm?id={System.Web.HttpUtility.UrlEncode(encryptedId)}";
+
+                await _repository.UpdateSelectedIRFAsync(id, irfId, irfName, appLink, assessmentGroupId);
+
+                var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                await _repository.InsertHistoryAsync(id, "SkillChannelSelected", "\u2014",
+                    $"IRF: {irfName} (id:{irfId}), AG: {assessmentGroupId}", user);
+
+                return Json(new { success = true, applicationLink = appLink, message = "Skill channel selected." });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Send Invitation Email (Step 3 of new pipeline) ──────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendInvitationEmail(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null) return Json(new { success = false, error = "Record not found." });
+
+                string email = record.ParsedEmail;
+                if (string.IsNullOrWhiteSpace(email))
+                    return Json(new { success = false, error = "Prospect email not available. Parse the resume first." });
+
+                if (string.IsNullOrWhiteSpace(record.ApplicationLink))
+                    return Json(new { success = false, error = "No application link generated. Select a skill channel first." });
+
+                string candidateName = record.CandidateName ?? "there";
+                string magName = record.MagName ?? record.SelectedIRFName ?? "Interviewer";
+                string appLink = record.ApplicationLink;
+
+                string responseBaseUrl = $"{Request.Scheme}://{Request.Host}/NaukriOnboarding/ProspectResponseAction";
+                string needClarityLink = $"{responseBaseUrl}?id={id}&response=NeedClarity";
+                string manualSupportLink = $"{responseBaseUrl}?id={id}&response=ManualSupport";
+                string notInterestedLink = $"{responseBaseUrl}?id={id}&response=NotInterested";
+
+                string htmlBody = BuildInvitationEmailHtml(candidateName, magName, appLink, needClarityLink, manualSupportLink, notInterestedLink);
+
+                var mailModel = new Mail
+                {
+                    TO = email,
+                    Subject = $"Risebird Interviewer Opportunity \u2014 {magName}",
+                    Body = htmlBody
+                };
+                var result = await _notificationHelper.SendHelpsupportMail(mailModel);
+
+                await _repository.UpdateInvitationEmailSentAsync(id);
+                var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                await _repository.InsertHistoryAsync(id, "InvitationEmailSent", "\u2014",
+                    $"Sent to: {email}, Channel: {record.SelectedIRFName ?? "\u2014"}", user);
+
+                return Json(new { success = true, message = "Invitation email sent to " + email + "." });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = "Failed to send invitation email: " + ex.Message });
+            }
+        }
+
+        // ── Prospect response action (public endpoint — clicked from email) ─────
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> ProspectResponseAction(int id, string response)
+        {
+            try
+            {
+                if (id <= 0 || string.IsNullOrWhiteSpace(response))
+                    return Content("Invalid request.");
+
+                var validResponses = new[] { "NeedClarity", "ManualSupport", "NotInterested" };
+                if (!validResponses.Contains(response))
+                    return Content("Invalid response type.");
+
+                await _repository.UpdateProspectResponseAsync(id, response);
+                await _repository.InsertHistoryAsync(id, "ProspectResponse", "\u2014",
+                    $"Prospect chose: {response}", "Prospect");
+
+                string message = response switch
+                {
+                    "NeedClarity" => "Thank you for your response! Our team will reach out to you shortly to provide more details about the opportunity.",
+                    "ManualSupport" => "Thank you! Our onboarding team will contact you to assist with the registration process.",
+                    "NotInterested" => "Thank you for letting us know. We respect your decision and hope to connect in the future.",
+                    _ => "Thank you for your response."
+                };
+
+                return Content($@"
+                    <html><head><title>Risebird</title>
+                    <style>body{{font-family:Arial,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f5f7fa;margin:0;}}
+                    .card{{background:#fff;border-radius:12px;padding:40px;max-width:500px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.1);}}
+                    h2{{color:#2c3e50;}} p{{color:#555;line-height:1.6;}}</style></head>
+                    <body><div class='card'><h2>Response Recorded</h2><p>{message}</p></div></body></html>", "text/html");
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Content("Something went wrong. Please try again later.");
+            }
+        }
+
+        // ── Check self-registration progress (polls UserList for the prospect's email) ──
+
+        [HttpGet]
+        public async Task<IActionResult> CheckSelfRegistration(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null) return Json(new { success = false, error = "Record not found." });
+
+                if (record.SelfRegistrationCompleted == true)
+                    return Json(new { success = true, completed = true, userId = record.OnboardedUserId, profileId = record.OnboardedProfileId });
+
+                if (string.IsNullOrWhiteSpace(record.ParsedEmail))
+                    return Json(new { success = true, completed = false, reason = "No email to check." });
+
+                int? userId = await _repository.GetInterviewerProfileIdByUserIdAsync(0);
+                using var con = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+                var user = await Dapper.SqlMapper.QueryFirstOrDefaultAsync<dynamic>(con,
+                    "SELECT TOP 1 ul.id AS UserId, ip.Id AS ProfileId FROM UserList ul LEFT JOIN InterviewerProfile ip ON ip.UserId = ul.id WHERE LOWER(LTRIM(RTRIM(ul.EmailId))) = @Email",
+                    new { Email = record.ParsedEmail.Trim().ToLower() });
+
+                if (user != null && user.UserId > 0)
+                {
+                    await _repository.UpdateSelfRegistrationAsync(id, true, (int)user.UserId, (int?)user.ProfileId);
+                    var sysUser = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                    await _repository.InsertHistoryAsync(id, "SelfRegistered", "\u2014",
+                        $"Prospect self-registered. UserId: {user.UserId}", sysUser);
+                    return Json(new { success = true, completed = true, userId = user.UserId, profileId = user.ProfileId });
+                }
+
+                return Json(new { success = true, completed = false, reason = "Prospect has not yet completed self-registration." });
             }
             catch (Exception ex)
             {
@@ -1045,6 +1247,59 @@ namespace Risebird.Web.Controllers
                 if (digits.Length >= 10 && digits.Length <= 13) return digits;
             }
             return null;
+        }
+
+        private static string BuildInvitationEmailHtml(string candidateName, string magName, string appLink,
+            string needClarityLink, string manualSupportLink, string notInterestedLink)
+        {
+            return $@"
+<div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;'>
+  <div style='text-align:center;padding:20px 0;'>
+    <h2 style='color:#2c3e50;margin:0;'>Risebird Interview Panel</h2>
+    <p style='color:#7f8c8d;margin:5px 0 0;'>Interviewer Opportunity</p>
+  </div>
+  <div style='background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:30px;'>
+    <p style='font-size:15px;color:#333;'>Hi {System.Net.WebUtility.HtmlEncode(candidateName)},</p>
+    <p style='font-size:14px;color:#555;line-height:1.7;'>
+      We came across your profile and believe you would be an excellent fit for our interview panel as a
+      <strong style='color:#2c3e50;'>{System.Net.WebUtility.HtmlEncode(magName)}</strong> specialist.
+    </p>
+    <p style='font-size:14px;color:#555;line-height:1.7;'>
+      Risebird connects seasoned professionals with top companies to conduct technical interviews.
+      It's 100% remote, fully flexible, and compensated transparently.
+    </p>
+    <div style='text-align:center;margin:25px 0;'>
+      <a href='{appLink}' style='display:inline-block;background:#27ae60;color:#fff;padding:14px 32px;border-radius:6px;text-decoration:none;font-size:15px;font-weight:600;'>
+        I'm Interested &mdash; Register Now
+      </a>
+    </div>
+    <p style='font-size:13px;color:#888;text-align:center;'>Click the button above to complete a quick registration (takes ~2 minutes)</p>
+    <hr style='border:none;border-top:1px solid #eee;margin:25px 0;'/>
+    <p style='font-size:14px;color:#555;'>Not sure yet? Choose an option below:</p>
+    <table style='width:100%;border-collapse:collapse;margin-top:10px;'>
+      <tr>
+        <td style='padding:8px 5px;text-align:center;'>
+          <a href='{needClarityLink}' style='display:inline-block;background:#3498db;color:#fff;padding:10px 20px;border-radius:5px;text-decoration:none;font-size:13px;'>
+            I Need More Details
+          </a>
+        </td>
+        <td style='padding:8px 5px;text-align:center;'>
+          <a href='{manualSupportLink}' style='display:inline-block;background:#e67e22;color:#fff;padding:10px 20px;border-radius:5px;text-decoration:none;font-size:13px;'>
+            I Need Help Registering
+          </a>
+        </td>
+        <td style='padding:8px 5px;text-align:center;'>
+          <a href='{notInterestedLink}' style='display:inline-block;background:#95a5a6;color:#fff;padding:10px 20px;border-radius:5px;text-decoration:none;font-size:13px;'>
+            Not Interested
+          </a>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div style='text-align:center;padding:20px 0;'>
+    <p style='font-size:12px;color:#aaa;'>Risebird Technologies Pvt. Ltd. &bull; <a href='https://portal.risebird.io' style='color:#3498db;'>portal.risebird.io</a></p>
+  </div>
+</div>";
         }
     }
 }
