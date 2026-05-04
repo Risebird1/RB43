@@ -433,14 +433,7 @@
                         <div class="col-md-6">
                             <div class="mgm-meta">
                                 <span><strong>MAG:</strong>
-                                    <span class="mag-dropdown-wrap">
-                                        <span id="mgmMag" class="mgm-ellipsis-mag"></span>
-                                        <button type="button" class="inline-edit-btn" id="btnEditMag" title="Change MAG"><i class="fas fa-pencil-alt"></i></button>
-                                        <div id="magDropdown">
-                                            <div class="mag-search-wrap"><input type="text" id="magSearch" class="form-control form-control-sm" placeholder="Search MAG name..." autocomplete="off" /></div>
-                                            <div id="magList"></div>
-                                        </div>
-                                    </span>
+                                    <span id="mgmMag" class="mgm-ellipsis-mag"></span>
                                 </span><br/>
                                 <span><strong>Education:</strong> <span id="mgmEducation"></span></span><br/>
                                 <span><strong>Salary:</strong> <span id="mgmSalary"></span></span><br/>
@@ -520,18 +513,37 @@
                         </div>
                     </div>
 
-                    <!-- Step 2: Employment Verification -->
+                    <!-- Step 2: Select MAG & Skill Channel -->
                     <div class="mgm-action-card pending disabled" id="step2Card">
                         <div class="d-flex align-items-start gap-3">
                             <span class="mgm-step-number pending" id="step2Number">2</span>
                             <div class="flex-grow-1">
                                 <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
                                     <div class="flex-grow-1" style="min-width:180px;">
-                                        <strong style="font-size:13px;">Employment Verification</strong>
-                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="step2Subtitle">Verifies the candidate's employment status via Signzy</div>
+                                        <strong style="font-size:13px;">Select MAG &amp; Skill Channel</strong>
+                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="step2Subtitle">Choose the correct MAG and an active skill channel to generate the application link</div>
                                     </div>
-                                    <div class="d-flex align-items-center flex-shrink-0">
-                                        <button type="button" class="btn btn-warning btn-sm mgm-action-btn" id="btnVerifyEmployment"><i class="fas fa-id-badge me-1"></i>Verify Employment</button>
+                                </div>
+                                <div class="mt-2" id="step2Controls">
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label" style="font-size:11px;font-weight:600;">MAG (searchable)</label>
+                                            <div class="mag-dropdown-wrap" style="position:relative;">
+                                                <input type="text" id="step2MagSearch" class="form-control form-control-sm" placeholder="Search MAG name..." autocomplete="off" />
+                                                <div id="step2MagList" style="display:none;position:absolute;z-index:100;width:100%;max-height:200px;overflow-y:auto;background:#fff;border:1px solid #ddd;border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,0.15);"></div>
+                                                <input type="hidden" id="step2MagId" />
+                                                <input type="hidden" id="step2AgId" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="form-label" style="font-size:11px;font-weight:600;">Skill Channel (IRF)</label>
+                                            <select id="step2ChannelSelect" class="form-select form-select-sm" disabled>
+                                                <option value="">-- Select MAG first --</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-primary btn-sm w-100" id="btnConfirmChannel" disabled><i class="fas fa-check me-1"></i>Confirm</button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="mgm-result-block" id="step2Result" style="display:none;"></div>
@@ -539,18 +551,19 @@
                         </div>
                     </div>
 
-                    <!-- Step 3: AI Resume Analysis -->
+                    <!-- Step 3: Send Invitation Email -->
                     <div class="mgm-action-card pending disabled" id="step3Card">
                         <div class="d-flex align-items-start gap-3">
                             <span class="mgm-step-number pending" id="step3Number">3</span>
                             <div class="flex-grow-1">
                                 <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
                                     <div class="flex-grow-1" style="min-width:180px;">
-                                        <strong style="font-size:13px;">AI Resume Fitment Analysis</strong>
-                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="step3Subtitle">Runs the resume through AI to evaluate fitment for the specialization</div>
+                                        <strong style="font-size:13px;">Send Invitation Email</strong>
+                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="step3Subtitle">Sends the prospect an email with the registration link and response options</div>
                                     </div>
-                                    <div class="d-flex align-items-center flex-shrink-0">
-                                        <button type="button" class="btn btn-info btn-sm mgm-action-btn text-white" id="btnAnalyzeResume"><i class="fas fa-robot me-1"></i>Analyze Resume</button>
+                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                        <button type="button" class="btn btn-primary btn-sm mgm-action-btn" id="btnSendInvitation"><i class="fas fa-paper-plane me-1"></i>Send Email</button>
+                                        <button type="button" class="btn btn-outline-primary btn-sm mgm-action-btn" id="btnResendInvitation" style="display:none;"><i class="fas fa-redo me-1"></i>Resend</button>
                                     </div>
                                 </div>
                                 <div class="mgm-result-block" id="step3Result" style="display:none;"></div>
@@ -558,19 +571,18 @@
                         </div>
                     </div>
 
-                    <!-- Step 4: Onboard -->
+                    <!-- Step 4: Track Progress -->
                     <div class="mgm-action-card pending disabled" id="step4Card">
                         <div class="d-flex align-items-start gap-3">
                             <span class="mgm-step-number pending" id="step4Number">4</span>
                             <div class="flex-grow-1">
                                 <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
                                     <div class="flex-grow-1" style="min-width:180px;">
-                                        <strong style="font-size:13px;">Onboard Interviewer</strong>
-                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="step4Subtitle">Creates the interviewer profile, maps to AG + channels, and sends acknowledgement email</div>
+                                        <strong style="font-size:13px;">Prospect Progress</strong>
+                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="step4Subtitle">Tracks the prospect's response and self-registration progress</div>
                                     </div>
                                     <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                        <button type="button" class="btn btn-success btn-sm mgm-action-btn" id="btnOnboard"><i class="fas fa-user-plus me-1"></i>Onboard</button>
-                                        <button type="button" class="btn btn-outline-success btn-sm mgm-action-btn" id="btnResendAck" style="display:none;"><i class="fas fa-envelope me-1"></i>Resend Ack</button>
+                                        <button type="button" class="btn btn-outline-info btn-sm" id="btnCheckProgress"><i class="fas fa-sync-alt me-1"></i>Check Progress</button>
                                     </div>
                                 </div>
                                 <div class="mgm-result-block" id="step4Result" style="display:none;"></div>
@@ -713,115 +725,103 @@
         ['step1Number','step2Number','step3Number','step4Number'].forEach(function(id){ $('#'+id).removeClass('completed failed running').addClass('pending'); });
         $('#step2Card, #step3Card, #step4Card').addClass('disabled');
         $('#step1Result, #step2Result, #step3Result, #step4Result').hide().empty();
+        for (var s = 1; s <= 4; s++) $('#step'+s+'Subtitle').html(defaultSubtitles[s]);
         $('#btnParseResume').prop('disabled',false).html('<i class="fas fa-file-invoice me-1"></i>Parse Resume');
-        $('#btnVerifyEmployment').prop('disabled',false).html('<i class="fas fa-id-badge me-1"></i>Verify Employment');
-        $('#btnAnalyzeResume').prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Analyze Resume');
-        $('#btnOnboard').prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Onboard');
-        $('#btnResendAck').hide();
+        $('#btnSendInvitation').prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Send Email');
+        $('#btnResendInvitation').hide();
+        $('#btnConfirmChannel').prop('disabled',true);
+        $('#btnCheckProgress').prop('disabled',false).html('<i class="fas fa-sync-alt me-1"></i>Check Progress');
+        $('#step2Controls').show();
+        $('#step2ChannelSelect').prop('disabled',true).html('<option value="">-- Select MAG first --</option>');
+        $('#step2MagSearch').val(''); $('#step2MagId').val(''); $('#step2AgId').val('');
         $('#resumeUploadArea').hide(); $('#resumeFileInput').val(''); $('#uploadProgress, #uploadResult').hide();
         $('#mgmParsedEmail').text('\u2014'); $('#mgmParsedPhone').text('\u2014');
-        closeMagDropdown();
         $('#mgmCompany').text('\u2014'); $('#mgmEmployed').text('\u2014');
     }
 
-    function evPassed(r) { return r.employmentVerified === true && !!r.employmentCompanyName; }
-    function aiPassed(r) {
-        if (r.resumeAIAnalysisCompleted !== true) return false;
-        try { var p = JSON.parse(r.resumeAIAnalysisResult); return p && p.verdict && p.verdict.toLowerCase().indexOf('yes') !== -1; } catch(e){ return false; }
-    }
-
     function syncPipeline(r) {
-        // Step 1: Parse
+        // Step 1: Parse Resume
         if (r.resumeParseCompleted === true) {
             var statusMsg = '';
-            if (r.isExistingInterviewer === true) statusMsg = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Already exists in the system (UserId: ' + r.existingUserId + '). Cannot onboard again.</span>';
-            else statusMsg = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>New prospect \u2014 ready for verification.</span>';
-            markStep(1, 'completed', buildStep1Html(r.parsedEmail, r.parsedPhone, statusMsg));
+            if (r.isExistingInterviewer === true) {
+                statusMsg = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>This email already exists in the system (UserId: ' + r.existingUserId + ').</span>'
+                          + '<br/><span style="color:#842029;font-size:12px;font-weight:500;"><i class="fas fa-info-circle me-1"></i>Please edit the email to an alternative email address for this prospect to continue.</span>';
+                markStep(1, 'failed', buildStep1Html(r.parsedEmail, r.parsedPhone, statusMsg));
+                $('#step1Subtitle').html('<span style="color:#842029;font-size:11px;font-weight:500;">Duplicate email \u2014 edit to proceed</span>');
+                $('#step2Card, #step3Card, #step4Card').addClass('disabled');
+                $('#step2Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 parsed email is a duplicate. Edit the email in Step 1 first.</span>');
+            } else {
+                statusMsg = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>New prospect \u2014 ready to proceed.</span>';
+                markStep(1, 'completed', buildStep1Html(r.parsedEmail, r.parsedPhone, statusMsg));
+            }
         } else if (!r.hasResumeLink) {
             $('#step1Subtitle').html('No resume available. <strong>Upload a resume to proceed.</strong>');
             $('#btnParseResume').prop('disabled', true);
         }
 
-        // Step 2: Employment
-        if (r.employmentVerified === true) {
-            var html2 = '<strong>Company:</strong> ' + (r.employmentCompanyName || '\u2014') + ' | <strong>Employed:</strong> ' + (r.employmentIsEmployed ? 'Yes' : 'No');
-            if (evPassed(r)) {
-                markStep(2, 'completed', html2);
-            } else {
-                html2 += '<br/><span style="color:#842029;font-weight:500;"><i class="fas fa-times-circle me-1"></i>EV failed \u2014 no employment found. Edit email/phone above and retry.</span>';
-                markStep(2, 'failed', html2);
-                $('#btnVerifyEmployment').prop('disabled', false).html('<i class="fas fa-id-badge me-1"></i>Retry EV');
-            }
-        }
-
-        // Step 3: AI — only enable if EV passed
-        if (r.resumeAIAnalysisCompleted === true) {
-            var html3 = r.resumeAIAnalysisResult || 'Analysis complete.';
-            var aiPositive = false;
-            try { var p = JSON.parse(r.resumeAIAnalysisResult); aiPositive = p && p.verdict && p.verdict.toLowerCase().indexOf('yes') !== -1; html3 = '<strong>Verdict:</strong> ' + (p.verdict||'\u2014') + ' | <strong>Score:</strong> ' + (p.fitmentScore||'\u2014') + '<br/>' + (p.completeFitmentAnalysis||''); } catch(e){}
-            if (aiPositive) {
-                markStep(3, 'completed', html3);
-            } else {
-                html3 += '<br/><span style="color:#842029;font-weight:500;"><i class="fas fa-times-circle me-1"></i>AI fitment negative \u2014 cannot proceed to onboarding.</span>';
-                markStep(3, 'failed', html3);
-            }
-        }
-        if (!evPassed(r) && r.onboardingCompleted !== true) {
-            $('#step3Card').addClass('disabled');
-            if (r.employmentVerified === true) {
-                $('#step3Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 employment verification did not pass.</span>');
-            }
-        }
-
-        // Step 4: Onboard — only enable if EV passed AND AI passed
-        if (r.onboardingCompleted === true) {
-            var html4 = 'Onboarded as UserId: ' + (r.onboardedUserId || '\u2014');
-            if (r.acknowledgementEmailSent === true) html4 += ' | <span class="text-success">Ack email sent</span>';
-            else { html4 += ' | <span class="text-danger">Ack email NOT sent</span>'; $('#btnResendAck').show(); }
-            markStep(4, 'completed', html4);
+        // Step 2: Select MAG & Skill Channel
+        if (r.selectedIRFId && r.selectedIRFName) {
+            markStep(2, 'completed', '<strong>Channel:</strong> ' + r.selectedIRFName + ' (IRF #' + r.selectedIRFId + ')' +
+                (r.applicationLink ? '<br/><span style="font-size:11px;"><strong>Link:</strong> <a href="' + r.applicationLink + '" target="_blank" style="word-break:break-all;">' + r.applicationLink + '</a></span>' : ''));
+            $('#step2Controls').hide();
         } else {
-            var canOnboard = true;
-            var blockReasons = [];
+            if (r.magName && r.resolvedAssessmentGroupId) {
+                $('#step2MagSearch').val(r.magName + (r.assessmentGroupName ? ' \u2192 ' + r.assessmentGroupName : ''));
+                $('#step2MagId').val(r.magName);
+                $('#step2AgId').val(r.resolvedAssessmentGroupId);
+                loadChannelsForAG(r.resolvedAssessmentGroupId);
+            }
+        }
 
-            if (r.isExistingInterviewer === true) {
-                blockReasons.push('Interviewer already exists in the system.');
-                canOnboard = false;
-            }
-            if (!r.resolvedAssessmentGroupId) {
-                blockReasons.push('No assessment group found for MAG: <strong>' + (r.magName || '\u2014') + '</strong>. Edit the MAG above.');
-                canOnboard = false;
-            }
-            if (!evPassed(r)) {
-                blockReasons.push('Employment verification has not passed.');
-                canOnboard = false;
-            }
-            if (r.resumeAIAnalysisCompleted === true && !aiPassed(r)) {
-                blockReasons.push('AI resume fitment is negative.');
-                canOnboard = false;
-            }
-            if (r.resumeAIAnalysisCompleted !== true) {
-                canOnboard = false;
-            }
+        // Step 3: Send Invitation Email
+        if (r.invitationEmailSent === true) {
+            var html3 = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Invitation email sent</span>';
+            if (r.invitationEmailSentAt) html3 += ' on ' + r.invitationEmailSentAt;
+            markStep(3, 'completed', html3);
+            $('#btnSendInvitation').hide(); $('#btnResendInvitation').show();
+        } else if (!r.selectedIRFId || !r.parsedEmail) {
+            $('#step3Card').addClass('disabled');
+        }
 
-            if (!canOnboard) {
-                $('#step4Card').addClass('disabled');
-                if (blockReasons.length > 0) {
-                    $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">' + blockReasons.join('<br/>') + '</span>');
-                }
-                $('#btnOnboard').prop('disabled', true);
+        // Step 4: Track Progress
+        if (r.selfRegistrationCompleted === true || r.onboardingCompleted === true) {
+            var html4 = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Prospect has self-registered and is onboarded!</span>';
+            if (r.onboardedUserId) html4 += '<br/><strong>UserId:</strong> ' + r.onboardedUserId;
+            markStep(4, 'completed', html4);
+        } else if (r.prospectResponse) {
+            var respLabel = {'NeedClarity':'Needs More Details','ManualSupport':'Requested Manual Help','NotInterested':'Not Interested'}[r.prospectResponse] || r.prospectResponse;
+            var respClass = r.prospectResponse === 'NotInterested' ? 'text-danger' : 'text-info';
+            var html4r = '<span class="' + respClass + '"><i class="fas fa-reply me-1"></i>Prospect responded: <strong>' + respLabel + '</strong></span>';
+            if (r.prospectResponseAt) html4r += ' on ' + r.prospectResponseAt;
+            if (r.prospectResponse === 'ManualSupport') {
+                html4r += '<br/><span style="color:#e67e22;font-weight:500;"><i class="fas fa-info-circle me-1"></i>Prospect needs manual assistance with onboarding. Reach out to help.</span>';
+            } else if (r.prospectResponse === 'NeedClarity') {
+                html4r += '<br/><span style="color:#3498db;font-weight:500;"><i class="fas fa-info-circle me-1"></i>Prospect needs more information. Contact them to clarify.</span>';
             }
+            markStep(4, 'failed', html4r);
+            $('#step4Card').removeClass('disabled');
+        } else if (r.invitationEmailSent === true) {
+            $('#step4Card').removeClass('disabled');
+            $('#step4Subtitle').html('Waiting for prospect to respond or self-register...');
         }
     }
+
+    var defaultSubtitles = {
+        1: 'Extracts email &amp; phone from the resume PDF and checks if the interviewer already exists in the system',
+        2: 'Choose the correct MAG and an active skill channel to generate the application link',
+        3: 'Sends the prospect an email with the registration link and response options',
+        4: 'Tracks the prospect\u2019s response and self-registration progress'
+    };
 
     function markStep(step, state, message) {
         var card = $('#step'+step+'Card'), num = $('#step'+step+'Number'), result = $('#step'+step+'Result');
         card.removeClass('pending completed failed disabled'); num.removeClass('pending completed failed running');
         if (state === 'completed') {
             card.addClass('completed'); num.addClass('completed');
-            if (step===1) $('#btnParseResume').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Parsed');
-            if (step===2) $('#btnVerifyEmployment').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Verified');
-            if (step===3) $('#btnAnalyzeResume').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed');
-            if (step===4) $('#btnOnboard').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Onboarded');
+            if (step===1) { $('#btnParseResume').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Parsed'); $('#step1Subtitle').html('<span class="text-success" style="font-size:11px;">Resume parsed successfully</span>'); }
+            if (step===2) { $('#btnConfirmChannel').prop('disabled',true); $('#step2Subtitle').html('<span class="text-success" style="font-size:11px;">MAG &amp; skill channel confirmed</span>'); }
+            if (step===3) { $('#btnSendInvitation').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Sent'); $('#step3Subtitle').html('<span class="text-success" style="font-size:11px;">Invitation email sent successfully</span>'); }
+            if (step===4) { $('#btnCheckProgress').prop('disabled',true); $('#step4Subtitle').html('<span class="text-success" style="font-size:11px;">Prospect onboarded</span>'); }
         } else if (state === 'failed') { card.addClass('failed'); num.addClass('failed'); }
         else if (state === 'running') { num.addClass('running'); }
         if (message) result.html(message).show();
@@ -829,7 +829,6 @@
         if (step === 1 && state === 'completed') { $('#step2Card').removeClass('disabled'); }
         if (step === 2 && state === 'completed') { $('#step3Card').removeClass('disabled'); }
         if (step === 3 && state === 'completed') { $('#step4Card').removeClass('disabled'); }
-        // failed EV/AI keeps next steps disabled (handled by syncPipeline / inline handlers)
     }
 
     /* ── Status change ──────────────────────────────────────── */
@@ -895,10 +894,12 @@
                 if (res.success) {
                     var statusMsg = '';
                     if (res.isExistingInterviewer) {
-                        statusMsg = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Already exists (UserId: ' + res.existingUserId + '). Cannot onboard.</span>';
-                        markStep(1, 'completed', buildStep1Html(res.parsedEmail, res.parsedPhone, statusMsg));
-                        $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">Cannot onboard \u2014 interviewer already exists in the system.</span>');
-                        $('#btnOnboard').prop('disabled', true);
+                        statusMsg = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>This email already exists in the system (UserId: ' + res.existingUserId + ').</span>'
+                                  + '<br/><span style="color:#842029;font-size:12px;font-weight:500;"><i class="fas fa-info-circle me-1"></i>Please edit the email to an alternative email for this prospect to continue.</span>';
+                        markStep(1, 'failed', buildStep1Html(res.parsedEmail, res.parsedPhone, statusMsg));
+                        $('#step1Subtitle').html('<span style="color:#842029;font-size:11px;font-weight:500;">Duplicate email \u2014 edit to proceed</span>');
+                        $('#step2Card, #step3Card, #step4Card').addClass('disabled');
+                        $('#step2Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 parsed email is a duplicate. Edit the email in Step 1 first.</span>');
                     } else {
                         statusMsg = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message||'New prospect.') + '</span>';
                         markStep(1, 'completed', buildStep1Html(res.parsedEmail, res.parsedPhone, statusMsg));
@@ -915,152 +916,158 @@
                 }
             },
             error: function (xhr, status) {
-                var msg = status === 'timeout' ? 'Request timed out.' : 'Request failed.';
+                var msg = status === 'timeout' ? 'Request timed out. Please try again.' : 'Request failed.';
                 markStep(1, 'failed', msg);
                 btn.prop('disabled',false).html('<i class="fas fa-file-invoice me-1"></i>Retry');
+                $('#step1Subtitle').html(defaultSubtitles[1]);
             }
         });
     });
 
-    /* ── Step 2: Employment Verification ────────────────────── */
+    /* ── Step 2: Select MAG & Skill Channel ────────────────── */
 
-    $('#btnVerifyEmployment').on('click', function () {
-        if (!currentRecordId || !currentRecord) return;
-        var phone = currentRecord.parsedPhone;
-        var email = currentRecord.parsedEmail;
-        if (!phone && !email) { alert('No phone or email parsed yet. Complete Step 1 first.'); return; }
+    var allMagsCache = null;
 
-        var btn = $(this);
-        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Verifying...'); $('#step2Number').removeClass('pending').addClass('running');
-        $('#step2Subtitle').text('Calling Signzy for employment verification...');
-
-        $.ajax({
-            url: '/Aadhaar/EvVerification', type: 'POST',
-            data: { candidateemail: email, mobilenumber: phone }, timeout: 60000,
-            success: function (evResult) {
-                var companyName = '', isEmployed = false, verified = true;
-                try {
-                    if (evResult) {
-                        companyName = evResult.companyName || evResult.CompanyName || '';
-                        isEmployed = evResult.isemployed || evResult.Isemployed || evResult.isEmployed || evResult.IsEmployed || false;
-                    }
-                } catch(e){}
-
-                $.ajax({
-                    url: '@Url.Action("SaveEmploymentResult", "NaukriOnboarding")', type: 'POST',
-                    data: { __RequestVerificationToken: verificationToken, id: currentRecordId, verified: verified, companyName: companyName, isEmployed: isEmployed, details: JSON.stringify(evResult) },
-                    success: function (saveRes) {
-                        var h = '<strong>Company:</strong> ' + (companyName||'\u2014') + ' | <strong>Employed:</strong> ' + (isEmployed?'Yes':'No');
-                        $('#mgmCompany').text(companyName || '\u2014');
-                        if (isEmployed) { $('#mgmEmployed').html('<span class="employed-yes"><i class="fas fa-check-circle me-1"></i>Yes</span>'); }
-                        else { $('#mgmEmployed').html('<span class="employed-no"><i class="fas fa-times-circle me-1"></i>No</span>'); }
-                        if (currentRecord) { currentRecord.employmentVerified = true; currentRecord.employmentCompanyName = companyName; currentRecord.employmentIsEmployed = isEmployed; }
-
-                        if (companyName) {
-                            markStep(2, 'completed', h);
-                        } else {
-                            h += '<br/><span style="color:#842029;font-weight:500;"><i class="fas fa-times-circle me-1"></i>EV failed \u2014 no company found. Edit email/phone and retry.</span>';
-                            markStep(2, 'failed', h);
-                            btn.prop('disabled', false).html('<i class="fas fa-id-badge me-1"></i>Retry EV');
-                            $('#step3Card').addClass('disabled');
-                            $('#step3Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 employment verification did not pass.</span>');
-                            $('#step4Card').addClass('disabled');
-                            $('#btnOnboard').prop('disabled', true);
-                        }
-                    },
-                    error: function () { markStep(2, 'failed', 'Failed to save verification result.'); btn.prop('disabled',false).html('<i class="fas fa-id-badge me-1"></i>Retry'); }
-                });
-            },
-            error: function (xhr, status) {
-                var msg = status === 'timeout' ? 'Signzy verification timed out.' : 'Verification request failed.';
-                markStep(2, 'failed', msg);
-                btn.prop('disabled',false).html('<i class="fas fa-id-badge me-1"></i>Retry');
-                $('#step2Subtitle').text('Verifies the candidate\'s employment status via Signzy');
-            }
+    $('#step2MagSearch').on('focus', function () {
+        if (allMagsCache) { renderStep2MagList(allMagsCache, ''); return; }
+        $.ajax({ url: '@Url.Action("GetAllMags", "NaukriOnboarding")', type: 'GET',
+            success: function (res) { if (res.success) { allMagsCache = res.data; renderStep2MagList(res.data, ''); } }
         });
     });
+    $('#step2MagSearch').on('input', function () { if (allMagsCache) renderStep2MagList(allMagsCache, $(this).val()); });
 
-    /* ── Step 3: AI Resume Analysis ─────────────────────────── */
+    function renderStep2MagList(mags, filter) {
+        var list = $('#step2MagList'); list.empty().show();
+        var f = (filter || '').toLowerCase();
+        var filtered = mags.filter(function(m){ return !f || (m.magName||'').toLowerCase().indexOf(f) !== -1 || (m.assessmentGroupName||'').toLowerCase().indexOf(f) !== -1; });
+        if (filtered.length === 0) { list.html('<div style="padding:8px 12px;font-size:12px;color:#999;">No MAGs found</div>'); return; }
+        filtered.slice(0, 50).forEach(function(m){
+            var label = m.magName + (m.assessmentGroupName ? ' \u2192 ' + m.assessmentGroupName : '');
+            list.append('<div class="mag-item" style="padding:6px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid #f0f0f0;" data-mag-name="'+m.magName+'" data-ag-id="'+m.assessmentGroupId+'" data-ag-name="'+(m.assessmentGroupName||'')+'">'+label+'</div>');
+        });
+    }
 
-    $('#btnAnalyzeResume').on('click', function () {
-        if (!currentRecordId) return; var btn = $(this);
-        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Analyzing...'); $('#step3Number').removeClass('pending').addClass('running');
-        $('#step3Subtitle').text('AI analysis in progress \u2014 this may take 30\u201360 seconds...');
+    $(document).on('click', '#step2MagList .mag-item', function(){
+        var magName = $(this).data('mag-name'), agId = $(this).data('ag-id'), agName = $(this).data('ag-name');
+        $('#step2MagSearch').val(magName + (agName ? ' \u2192 ' + agName : ''));
+        $('#step2MagId').val(magName); $('#step2AgId').val(agId);
+        $('#step2MagList').hide();
+        loadChannelsForAG(agId);
+    });
 
-        $.ajax({ url: '@Url.Action("AnalyzeResume", "NaukriOnboarding")', type: 'POST', timeout: 180000,
-            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
-            success: function (res) {
-                if (res.success) {
-                    var h = '<strong>Verdict:</strong> ' + (res.verdict||'\u2014') + ' | <strong>Score:</strong> ' + (res.fitmentScore||'\u2014');
-                    if (res.completeFitmentAnalysis) h += '<br/><div class="mt-1" style="white-space:pre-wrap;">' + res.completeFitmentAnalysis + '</div>';
-                    if (currentRecord) { currentRecord.resumeAIAnalysisCompleted = true; currentRecord.resumeAIAnalysisResult = res.analysisResult; }
+    $(document).on('click', function(e){ if (!$(e.target).closest('#step2MagSearch, #step2MagList').length) $('#step2MagList').hide(); });
 
-                    if (res.isPositiveVerdict) {
-                        markStep(3, 'completed', h);
-                        updateStatusBadge('Verified');
-                        $('#step4Card').removeClass('disabled');
-                    } else {
-                        h += '<br/><span style="color:#842029;font-weight:500;"><i class="fas fa-times-circle me-1"></i>AI fitment negative \u2014 cannot proceed to onboarding.</span>';
-                        markStep(3, 'failed', h);
-                        $('#step4Card').addClass('disabled');
-                        $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 AI resume fitment is negative.</span>');
-                        $('#btnOnboard').prop('disabled', true);
-                    }
+    function loadChannelsForAG(agId) {
+        var sel = $('#step2ChannelSelect'); sel.prop('disabled',true).html('<option value="">Loading channels...</option>');
+        $.ajax({ url: '@Url.Action("GetActiveChannels", "NaukriOnboarding")', type: 'GET', data: { assessmentGroupId: agId },
+            success: function(res) {
+                sel.empty();
+                if (res.success && res.data && res.data.length > 0) {
+                    sel.append('<option value="">-- Select a channel --</option>');
+                    res.data.forEach(function(ch){ sel.append('<option value="'+ch.id+'" data-irf-name="'+ch.irfId+'">'+ch.irfId+' (#'+ch.id+')</option>'); });
+                    sel.prop('disabled', false);
                 } else {
-                    var errHtml = res.error || 'Analysis failed.';
-                    if (res.needsUpload) errHtml += '<br/><em style="font-size:11px;">Upload a valid resume PDF to proceed.</em>';
-                    markStep(3, 'failed', errHtml);
-                    btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry');
+                    sel.html('<option value="">No active channels found</option>');
                 }
             },
-            error: function (xhr, status) {
-                var msg = status === 'timeout' ? 'Timed out. Analysis may still be running \u2014 refresh in a minute.' : 'Request failed.';
-                markStep(3, 'failed', msg);
-                btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry');
-            }
+            error: function() { sel.html('<option value="">Failed to load channels</option>'); }
         });
+    }
+
+    $('#step2ChannelSelect').on('change', function(){
+        $('#btnConfirmChannel').prop('disabled', !$(this).val());
     });
 
-    /* ── Step 4: Onboard ────────────────────────────────────── */
+    $('#btnConfirmChannel').on('click', function () {
+        if (!currentRecordId) return;
+        var irfId = $('#step2ChannelSelect').val();
+        var irfName = $('#step2ChannelSelect option:selected').data('irf-name') || $('#step2ChannelSelect option:selected').text();
+        var agId = $('#step2AgId').val();
+        if (!irfId || !agId) { alert('Please select both a MAG and a skill channel.'); return; }
 
-    $('#btnOnboard').on('click', function () {
-        if (!currentRecordId) return; var btn = $(this);
-        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Onboarding...'); $('#step4Number').removeClass('pending').addClass('running');
-        $('#step4Subtitle').text('Creating profile, mapping to AG + channels, sending ack email...');
-
-        $.ajax({ url: '@Url.Action("OnboardInterviewer", "NaukriOnboarding")', type: 'POST', timeout: 120000,
-            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
-            success: function (res) {
+        var btn = $(this); btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Saving...');
+        $('#step2Number').removeClass('pending').addClass('running');
+        $('#step2Subtitle').text('Saving skill channel selection...');
+        $.ajax({ url: '@Url.Action("SelectSkillChannel", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, irfId: irfId, irfName: irfName, assessmentGroupId: agId },
+            success: function(res) {
                 if (res.success) {
-                    var h = res.message || 'Onboarded successfully.';
-                    markStep(4, 'completed', h);
-                    updateStatusBadge('Onboarded');
-                    if (!res.acknowledgementEmailSent) { $('#btnResendAck').show(); }
-                    if (currentRecord) { currentRecord.onboardingCompleted = true; currentRecord.onboardedUserId = res.userId; }
+                    markStep(2, 'completed', '<strong>Channel:</strong> ' + irfName + ' (IRF #' + irfId + ')' +
+                        (res.applicationLink ? '<br/><span style="font-size:11px;"><strong>Link:</strong> <a href="' + res.applicationLink + '" target="_blank" style="word-break:break-all;">' + res.applicationLink + '</a></span>' : ''));
+                    $('#step2Controls').hide();
+                    if (currentRecord) { currentRecord.selectedIRFId = parseInt(irfId); currentRecord.selectedIRFName = irfName; currentRecord.applicationLink = res.applicationLink; }
                 } else {
-                    markStep(4, 'failed', res.error || 'Onboarding failed.');
-                    btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry');
+                    markStep(2, 'failed', res.error || 'Failed to save.');
+                    btn.prop('disabled',false).html('<i class="fas fa-check me-1"></i>Confirm');
+                    $('#step2Subtitle').html(defaultSubtitles[2]);
                 }
             },
-            error: function () {
-                markStep(4, 'failed', 'Request failed.');
-                btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry');
-            }
+            error: function(){ markStep(2, 'failed', 'Request failed.'); btn.prop('disabled',false).html('<i class="fas fa-check me-1"></i>Confirm'); $('#step2Subtitle').html(defaultSubtitles[2]); }
         });
     });
 
-    /* ── Resend Ack ─────────────────────────────────────────── */
+    /* ── Step 3: Send Invitation Email ──────────────────────── */
 
-    $('#btnResendAck').on('click', function () {
+    $('#btnSendInvitation').on('click', function () {
+        if (!currentRecordId) return; var btn = $(this);
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Sending...'); $('#step3Number').removeClass('pending').addClass('running');
+        $('#step3Subtitle').text('Sending invitation email to the prospect...');
+        $.ajax({ url: '@Url.Action("SendInvitationEmail", "NaukriOnboarding")', type: 'POST', timeout: 60000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            success: function(res) {
+                if (res.success) {
+                    markStep(3, 'completed', '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message || 'Email sent.') + '</span>');
+                    if (currentRecord) { currentRecord.invitationEmailSent = true; }
+                    $('#btnSendInvitation').hide(); $('#btnResendInvitation').show();
+                    $('#step4Card').removeClass('disabled');
+                    $('#step4Subtitle').html('Waiting for prospect to respond or self-register...');
+                } else {
+                    markStep(3, 'failed', res.error || 'Failed to send email.');
+                    btn.prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Retry');
+                    $('#step3Subtitle').html(defaultSubtitles[3]);
+                }
+            },
+            error: function(){ markStep(3, 'failed', 'Request failed.'); btn.prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Retry'); $('#step3Subtitle').html(defaultSubtitles[3]); }
+        });
+    });
+
+    $('#btnResendInvitation').on('click', function () {
         if (!currentRecordId) return; var btn = $(this);
         btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Sending...');
-        $.ajax({ url: '@Url.Action("ResendAcknowledgement", "NaukriOnboarding")', type: 'POST', timeout: 60000,
+        $.ajax({ url: '@Url.Action("SendInvitationEmail", "NaukriOnboarding")', type: 'POST', timeout: 60000,
             data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
-            success: function (res) {
-                if (res.success) { btn.html('<i class="fas fa-check me-1"></i>Sent').prop('disabled',true).removeClass('btn-outline-success').addClass('btn-success'); }
-                else { alert(res.error || 'Failed to send.'); btn.prop('disabled',false).html('<i class="fas fa-envelope me-1"></i>Resend Ack'); }
+            success: function(res) {
+                if (res.success) { btn.html('<i class="fas fa-check me-1"></i>Resent').prop('disabled',true); }
+                else { alert(res.error || 'Failed.'); btn.prop('disabled',false).html('<i class="fas fa-redo me-1"></i>Resend'); }
             },
-            error: function () { alert('Request failed.'); btn.prop('disabled',false).html('<i class="fas fa-envelope me-1"></i>Resend Ack'); }
+            error: function(){ alert('Request failed.'); btn.prop('disabled',false).html('<i class="fas fa-redo me-1"></i>Resend'); }
+        });
+    });
+
+    /* ── Step 4: Check Progress ─────────────────────────────── */
+
+    $('#btnCheckProgress').on('click', function () {
+        if (!currentRecordId) return; var btn = $(this);
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Checking...');
+        $('#step4Number').removeClass('pending').addClass('running');
+        $('#step4Subtitle').text('Checking if the prospect has self-registered...');
+        $.ajax({ url: '@Url.Action("CheckSelfRegistration", "NaukriOnboarding")', type: 'GET', data: { id: currentRecordId },
+            success: function(res) {
+                btn.prop('disabled',false).html('<i class="fas fa-sync-alt me-1"></i>Check Progress');
+                $('#step4Number').removeClass('running').addClass('pending');
+                if (res.success && res.completed) {
+                    markStep(4, 'completed', '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Prospect has self-registered and is onboarded!</span><br/><strong>UserId:</strong> ' + (res.userId || '\u2014'));
+                    updateStatusBadge('Onboarded');
+                    if (currentRecord) { currentRecord.selfRegistrationCompleted = true; currentRecord.onboardingCompleted = true; currentRecord.onboardedUserId = res.userId; }
+                } else if (res.success) {
+                    $('#step4Result').html('<span class="text-muted" style="font-size:12px;"><i class="fas fa-clock me-1"></i>' + (res.reason || 'Prospect has not yet completed self-registration.') + '</span>').show();
+                    $('#step4Subtitle').text('Waiting for prospect to respond or self-register...');
+                } else {
+                    $('#step4Result').html('<span class="text-danger" style="font-size:12px;">' + (res.error || 'Error checking.') + '</span>').show();
+                    $('#step4Subtitle').html(defaultSubtitles[4]);
+                }
+            },
+            error: function(){ btn.prop('disabled',false).html('<i class="fas fa-sync-alt me-1"></i>Check Progress'); $('#step4Number').removeClass('running').addClass('pending'); $('#step4Subtitle').html(defaultSubtitles[4]); alert('Request failed.'); }
         });
     });
 
@@ -1130,11 +1137,18 @@
                         $('#mgmParsedEmail').text(newVal);
                         var newStatusMsg = '';
                         if (res.isExistingInterviewer) {
-                            newStatusMsg = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Already exists (UserId: ' + res.existingUserId + '). Cannot onboard.</span>';
-                            $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">Cannot onboard \u2014 interviewer already exists (UserId: ' + res.existingUserId + ').</span>');
-                            $('#btnOnboard').prop('disabled', true);
+                            newStatusMsg = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>This email also exists in the system (UserId: ' + res.existingUserId + ').</span>'
+                                         + '<br/><span style="color:#842029;font-size:12px;font-weight:500;"><i class="fas fa-info-circle me-1"></i>Try a different email address for this prospect.</span>';
+                            $('#step1Card').removeClass('completed').addClass('failed');
+                            $('#step1Number').removeClass('completed').addClass('failed');
+                            $('#step2Card, #step3Card, #step4Card').addClass('disabled');
+                            $('#step2Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 parsed email is a duplicate. Edit the email in Step 1 first.</span>');
                         } else {
                             newStatusMsg = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message || 'Email updated. Interviewer is new to the system.') + '</span>';
+                            $('#step1Card').removeClass('failed').addClass('completed');
+                            $('#step1Number').removeClass('failed').addClass('completed');
+                            $('#step2Card').removeClass('disabled');
+                            $('#step2Subtitle').text('Choose the correct MAG and an active skill channel to generate the application link');
                         }
                         $('#step1Result .s1-status-msg').html(newStatusMsg);
                     } else {
@@ -1142,106 +1156,14 @@
                         $('#step1Result .s1-phone-val').text(newVal);
                         $('#mgmParsedPhone').text(newVal);
                     }
-                    // After editing email or phone, re-enable EV retry
-                    if (currentRecord.employmentVerified === true && !evPassed(currentRecord)) {
-                        $('#step2Card').removeClass('completed disabled').addClass('pending');
-                        $('#step2Number').removeClass('completed failed').addClass('pending');
-                        $('#btnVerifyEmployment').prop('disabled', false).html('<i class="fas fa-id-badge me-1"></i>Retry EV');
-                        $('#step2Subtitle').text('Email/phone updated \u2014 click Retry EV to re-verify with the corrected details.');
-                        $('#step2Result').hide();
-                    }
+                    
                 } else { alert(res.error || 'Failed to update.'); }
             },
             error: function () { btn.prop('disabled', false); alert('Request failed.'); }
         });
     });
 
-    /* ── MAG Searchable Dropdown ─────────────────────────────── */
-
-    var magCache = null;
-    function closeMagDropdown() { $('#magDropdown').hide(); $('#magSearch').val(''); }
-
-    $(document).on('click', function (e) { if (!$(e.target).closest('.mag-dropdown-wrap').length) closeMagDropdown(); });
-
-    $('#btnEditMag').on('click', function () {
-        if ($('#magDropdown').is(':visible')) { closeMagDropdown(); return; }
-        if (magCache) { renderMagList(magCache, ''); $('#magDropdown').show(); $('#magSearch').focus(); return; }
-        $('#magList').html('<div class="mag-no-results"><i class="fas fa-spinner fa-spin me-1"></i>Loading...</div>');
-        $('#magDropdown').show();
-        $.ajax({
-            url: '@Url.Action("GetAllMags", "NaukriOnboarding")', type: 'GET', timeout: 30000,
-            success: function (res) {
-                if (res.success && res.data) { magCache = res.data; renderMagList(magCache, ''); $('#magSearch').focus(); }
-                else { $('#magList').html('<div class="mag-no-results">Failed to load MAGs.</div>'); }
-            },
-            error: function () { $('#magList').html('<div class="mag-no-results">Failed to load MAGs.</div>'); }
-        });
-    });
-
-    $('#magSearch').on('input', function () {
-        var q = $(this).val().toLowerCase();
-        if (magCache) renderMagList(magCache, q);
-    });
-
-    function renderMagList(data, query) {
-        var html = '';
-        var currentMag = (currentRecord && currentRecord.magName) || '';
-        var filtered = data.filter(function (m) {
-            return !query || m.magName.toLowerCase().indexOf(query) !== -1 || (m.assessmentGroupName && m.assessmentGroupName.toLowerCase().indexOf(query) !== -1);
-        });
-        if (filtered.length === 0) { html = '<div class="mag-no-results">No MAGs found.</div>'; }
-        else {
-            filtered.slice(0, 100).forEach(function (m) {
-                var isActive = m.magName === currentMag ? ' active' : '';
-                html += '<div class="mag-item' + isActive + '" data-mag-name="' + m.magName.replace(/"/g, '&quot;') + '" data-ag-id="' + m.assessmentGroupId + '" data-ag-name="' + (m.assessmentGroupName || '').replace(/"/g, '&quot;') + '">'
-                       + '<span>' + m.magName + '</span><span class="mag-ag">' + (m.assessmentGroupName || '') + '</span></div>';
-            });
-            if (filtered.length > 100) html += '<div class="mag-no-results">' + (filtered.length - 100) + ' more \u2014 refine your search.</div>';
-        }
-        $('#magList').html(html);
-    }
-
-    $(document).on('click', '.mag-item', function () {
-        var newMag = $(this).data('mag-name');
-        var agId = $(this).data('ag-id');
-        var agName = $(this).data('ag-name');
-        var oldMag = (currentRecord && currentRecord.magName) || '';
-        if (newMag === oldMag) { closeMagDropdown(); return; }
-
-        closeMagDropdown();
-        $('#mgmMag').removeAttr('title').html('<i class="fas fa-spinner fa-spin me-1 text-muted"></i>Saving...');
-
-        $.ajax({
-            url: '@Url.Action("SaveManualOverride", "NaukriOnboarding")', type: 'POST', timeout: 30000,
-            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, fieldName: 'MagName', oldValue: oldMag, newValue: newMag },
-            success: function (res) {
-                if (res.success) {
-                    currentRecord.magName = newMag;
-                    currentRecord.resolvedAssessmentGroupId = agId;
-                    currentRecord.assessmentGroupName = agName;
-                    var magTxt = newMag + (agName ? ' \u2192 ' + agName : '');
-                    $('#mgmMag').text(magTxt).attr('title', magTxt);
-                    if (agId && currentRecord.isExistingInterviewer !== true && currentRecord.onboardingCompleted !== true) {
-                        $('#step4Subtitle').text('Creates the interviewer profile, maps to AG + channels, and sends acknowledgement email');
-                        $('#btnOnboard').prop('disabled', false);
-                        $('#step4Card').removeClass('failed');
-                    } else if (!agId) {
-                        $('#step4Subtitle').html('<span style="color:#842029;font-weight:500;">No assessment group found for MAG: <strong>' + newMag + '</strong>.</span>');
-                        $('#btnOnboard').prop('disabled', true);
-                    }
-                } else {
-                    alert(res.error || 'Failed to update MAG.');
-                    var oldMagTxt = oldMag + (currentRecord.assessmentGroupName ? ' \u2192 ' + currentRecord.assessmentGroupName : '');
-                    $('#mgmMag').text(oldMagTxt).attr('title', oldMagTxt);
-                }
-            },
-            error: function () {
-                alert('Request failed.');
-                var revertMagTxt = oldMag + (currentRecord && currentRecord.assessmentGroupName ? ' \u2192 ' + currentRecord.assessmentGroupName : '');
-                $('#mgmMag').text(revertMagTxt).attr('title', revertMagTxt);
-            }
-        });
-    });
+    /* ── (MAG selection is now in Step 2 of the pipeline) ─── */
 
     /* ── Refresh ────────────────────────────────────────────── */
 
@@ -1260,7 +1182,11 @@
         'EmailChange':              { icon: 'fas fa-at',             color: '#3498db', label: 'Email changed' },
         'PhoneChange':              { icon: 'fas fa-phone',          color: '#9b59b6', label: 'Phone changed' },
         'RecordCreated':            { icon: 'fas fa-plus-circle',    color: '#20c997', label: 'Record created' },
-        'Deleted':                  { icon: 'fas fa-trash',          color: '#dc3545', label: 'Record deleted' }
+        'Deleted':                  { icon: 'fas fa-trash',          color: '#dc3545', label: 'Record deleted' },
+        'SkillChannelSelected':     { icon: 'fas fa-link',           color: '#0d6efd', label: 'Skill channel selected' },
+        'InvitationEmailSent':      { icon: 'fas fa-paper-plane',    color: '#6f42c1', label: 'Invitation email sent' },
+        'ProspectResponse':         { icon: 'fas fa-reply',          color: '#e67e22', label: 'Prospect responded' },
+        'SelfRegistered':           { icon: 'fas fa-user-check',     color: '#198754', label: 'Self-registered' }
     };
 
     function openHistoryModal(recordId) {

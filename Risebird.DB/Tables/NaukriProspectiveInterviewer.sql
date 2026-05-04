@@ -76,3 +76,51 @@ BEGIN
     ALTER TABLE NaukriProspectiveInterviewer ADD [Source] VARCHAR(50) NOT NULL DEFAULT 'Naukri'
 END
 GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'SelectedIRFId' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [SelectedIRFId] INT NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'SelectedIRFName' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [SelectedIRFName] NVARCHAR(300) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'ApplicationLink' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [ApplicationLink] NVARCHAR(2000) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'InvitationEmailSent' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [InvitationEmailSent] BIT NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'InvitationEmailSentAt' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [InvitationEmailSentAt] DATETIME NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'ProspectResponse' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [ProspectResponse] VARCHAR(50) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'ProspectResponseAt' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [ProspectResponseAt] DATETIME NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'SelfRegistrationCompleted' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [SelfRegistrationCompleted] BIT NULL
+END
+GO

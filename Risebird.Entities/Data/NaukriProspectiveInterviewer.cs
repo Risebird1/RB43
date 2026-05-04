@@ -47,6 +47,15 @@ namespace Risebird.Entities.Data
         public int?     AssessmentGroupId           { get; set; }
         public bool?    AcknowledgementEmailSent    { get; set; }
 
+        public int?     SelectedIRFId               { get; set; }
+        public string   SelectedIRFName             { get; set; }
+        public string   ApplicationLink             { get; set; }
+        public bool?    InvitationEmailSent         { get; set; }
+        public DateTime? InvitationEmailSentAt      { get; set; }
+        public string   ProspectResponse            { get; set; }
+        public DateTime? ProspectResponseAt         { get; set; }
+        public bool?    SelfRegistrationCompleted   { get; set; }
+
         public string   Status                      { get; set; }
         public string   Source                      { get; set; }
         public string   ProcessedBy                 { get; set; }
