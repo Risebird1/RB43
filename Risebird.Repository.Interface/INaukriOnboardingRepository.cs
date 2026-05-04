@@ -50,6 +50,8 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateProspectResponseAsync(int id, string response);
         Task<List<ActiveIRFItem>> GetActiveIRFsByAssessmentGroupIdAsync(int assessmentGroupId);
         Task<bool> UpdateSelfRegistrationAsync(int id, bool completed, int? userId, int? profileId);
+
+        Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email);
     }
 
     public class ActiveIRFItem
