@@ -464,5 +464,19 @@ namespace Risebird.Repository
             }
             catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
         }
+
+        public async Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var row = await con.QueryFirstOrDefaultAsync<dynamic>(
+                    "SELECT TOP 1 ul.id AS UserId, ip.Id AS ProfileId FROM UserList ul LEFT JOIN InterviewerProfile ip ON ip.UserId = ul.id WHERE LOWER(LTRIM(RTRIM(ul.EmailId))) = @Email AND ul.IsActive = 1",
+                    new { Email = email.Trim().ToLower() }, commandTimeout: 30);
+                if (row == null) return (null, null);
+                return ((int?)row.UserId, (int?)row.ProfileId);
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return (null, null); }
+        }
     }
 }

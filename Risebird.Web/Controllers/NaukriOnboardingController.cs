@@ -822,19 +822,15 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(record.ParsedEmail))
                     return Json(new { success = true, completed = false, reason = "No email to check." });
 
-                int? userId = await _repository.GetInterviewerProfileIdByUserIdAsync(0);
-                using var con = new System.Data.SqlClient.SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-                var user = await Dapper.SqlMapper.QueryFirstOrDefaultAsync<dynamic>(con,
-                    "SELECT TOP 1 ul.id AS UserId, ip.Id AS ProfileId FROM UserList ul LEFT JOIN InterviewerProfile ip ON ip.UserId = ul.id WHERE LOWER(LTRIM(RTRIM(ul.EmailId))) = @Email",
-                    new { Email = record.ParsedEmail.Trim().ToLower() });
+                var (foundUserId, foundProfileId) = await _repository.FindUserByEmailAsync(record.ParsedEmail);
 
-                if (user != null && user.UserId > 0)
+                if (foundUserId.HasValue && foundUserId.Value > 0)
                 {
-                    await _repository.UpdateSelfRegistrationAsync(id, true, (int)user.UserId, (int?)user.ProfileId);
+                    await _repository.UpdateSelfRegistrationAsync(id, true, foundUserId.Value, foundProfileId);
                     var sysUser = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                     await _repository.InsertHistoryAsync(id, "SelfRegistered", "\u2014",
-                        $"Prospect self-registered. UserId: {user.UserId}", sysUser);
-                    return Json(new { success = true, completed = true, userId = user.UserId, profileId = user.ProfileId });
+                        $"Prospect self-registered. UserId: {foundUserId.Value}", sysUser);
+                    return Json(new { success = true, completed = true, userId = foundUserId.Value, profileId = foundProfileId });
                 }
 
                 return Json(new { success = true, completed = false, reason = "Prospect has not yet completed self-registration." });
@@ -842,7 +838,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false, error = ex.Message });
+                return Json(new { success = false, error = "Failed to check self-registration status. Please try again." });
             }
         }
 
