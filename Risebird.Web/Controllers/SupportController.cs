@@ -485,6 +485,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ReturnBack = returnBack;
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                ViewBag.CurrentProfile = profileName;
                 var model = await _supportService.GetRaisedIssueDetails(profileName);
                 if (type == "Open")
                 {

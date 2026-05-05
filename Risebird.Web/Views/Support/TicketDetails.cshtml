@@ -4,7 +4,11 @@
     ViewData["Title"] = "Ticket Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var profile = ViewBag.Profile as string ?? "";
-    bool canReopen = Model.Status?.ToLower() == "close";
+    // Only an Interviewer who owns this ticket may reopen it
+    bool canReopen = Model.Status?.ToLower() == "close" && profile == "Interviewer";
+    // Support / admin roles can close an open ticket
+    bool canClose  = Model.Status?.ToLower() == "open"
+                     && profile != "Interviewer" && profile != "Client";
 }
 <script>
     var Header = "<div>Ticket Details</div>";
@@ -169,7 +173,29 @@
                     }
                 </div>
 
-                @*── Reopen section (only for closed tickets owned by user or admin roles) ──*@
+                @*── Close section (support / admin roles, when ticket is open) ──*@
+                @if (canClose)
+                {
+                    <div class="ticket-card" id="closeSection">
+                        <div class="section-title" style="color:#c62828;border-bottom-color:#fce4ec;">Close Ticket</div>
+                        <p style="font-size:13px;color:#555;margin-bottom:12px;">
+                            Add a resolution comment and close this ticket. The original issue information will be preserved in the history.
+                        </p>
+                        <textarea id="txtCloseComment" class="form-control"
+                                  rows="3" maxlength="1000"
+                                  placeholder="Enter resolution / closing comment…"></textarea>
+                        <div style="margin-top:10px;">
+                            <button onclick="submitClose(@Model.id)"
+                                    class="mdc-button mdc-button--raised mdc-ripple-upgraded"
+                                    style="background:#c62828;color:#fff;">
+                                Close Ticket
+                            </button>
+                        </div>
+                        <div id="closeResultMsg" style="display:none;margin-top:10px;" class="alert"></div>
+                    </div>
+                }
+
+                @*── Reopen section (Interviewer profile only, when ticket is closed) ──*@
                 @if (canReopen)
                 {
                     <div class="ticket-card" id="reopenSection">
@@ -262,6 +288,32 @@
     }
     function closeAttachment() {
         document.getElementById('attachmentModal').style.display = 'none';
+    }
+
+    function submitClose(ticketId) {
+        var comment = $('#txtCloseComment').val().trim();
+        if (!comment) {
+            alert('Please enter a resolution comment before closing the ticket.');
+            return;
+        }
+        if (!confirm('Are you sure you want to close Ticket #' + ticketId + '?')) return;
+
+        $.ajax({
+            url: '@Url.Action("UpdateRaisedRequestsStatus","Support")',
+            type: 'POST',
+            data: { requestid: ticketId, comment: comment },
+            success: function (res) {
+                var msgEl = $('#closeResultMsg');
+                msgEl.removeClass('alert-danger').addClass('alert-success')
+                     .text('Ticket closed successfully.').show();
+                setTimeout(function () { location.reload(); }, 1500);
+            },
+            error: function () {
+                var msgEl = $('#closeResultMsg');
+                msgEl.removeClass('alert-success').addClass('alert-danger')
+                     .text('An error occurred. Please try again.').show();
+            }
+        });
     }
 
     function submitReopen(ticketId) {
