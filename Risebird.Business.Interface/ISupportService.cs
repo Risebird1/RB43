@@ -14,5 +14,7 @@ namespace Risebird.Business.Interface
         Task<bool> SaveRaisedIssueDetails(RaiseBugsVM model);
         Task<IEnumerable<RaiseBugsVM>> GetRaisedIssueDetails(string profileName);
         Task<bool> UpdateRaisedRequestStatus(RaiseBugsVM model);
+        Task<IEnumerable<RaiseBugsVM>> GetMyTickets(string requestedBy);
+        Task<bool> ReopenTicket(RaiseBugsVM model);
     }
 }

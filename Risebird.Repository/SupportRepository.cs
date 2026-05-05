@@ -239,5 +239,48 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<IEnumerable<RaiseBugsVM>> GetMyTickets(string requestedBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters parameters = new DynamicParameters();
+                    parameters.Add("@RequestedBy", requestedBy);
+                    return await SqlMapper.QueryAsync<RaiseBugsVM>(con, "usp_GetMyTickets", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> ReopenTicket(RaiseBugsVM model)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", model.id);
+                parameters.Add("@ReopenComment", model.ReopenComment);
+                parameters.Add("@ReopenedBy", model.RequestedBy);
+                parameters.Add("@ReopenedOn", DateTime.Now);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_ReopenRaisedIssue", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }

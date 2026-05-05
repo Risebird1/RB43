@@ -1,0 +1,527 @@
+@model IEnumerable<Risebird.Entities.ViewModel.RaiseBugsVM>
+
+@{
+    ViewData["Title"] = "My Tickets";
+    ViewBag.PageHeader = "My Tickets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var modelList = Model?.ToList() ?? new List<Risebird.Entities.ViewModel.RaiseBugsVM>();
+    var openCount   = modelList.Count(x => x.Status?.ToLower() == "open");
+    var closedCount = modelList.Count(x => x.Status?.ToLower() != "open");
+}
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<style>
+    .ticket-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 14px 20px;
+    }
+    .ticket-summary-chips {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .ticket-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all .2s;
+    }
+    .ticket-chip.open   { background: #fff3cd; color: #856404; border-color: #ffc107; }
+    .ticket-chip.closed { background: #d1e7dd; color: #0a5c36; border-color: #20c997; }
+    .ticket-chip.all    { background: #e8eaf6; color: #3949ab; border-color: #7986cb; }
+    .ticket-chip.active { box-shadow: 0 0 0 3px rgba(0,0,0,.12); }
+
+    .status-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .4px;
+        text-transform: uppercase;
+    }
+    .status-badge.open   { background: #fff3cd; color: #856404; }
+    .status-badge.close  { background: #d1e7dd; color: #0a5c36; }
+
+    .type-badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    #myTicketTable th, #myTicketTable td {
+        vertical-align: middle !important;
+        font-size: 13px;
+    }
+
+    .ticket-comment-cell .short-text  { display: block; }
+    .ticket-comment-cell .extra-text  { display: none; }
+
+    .btn-reopen {
+        background: #17a2b8;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 5px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s;
+    }
+    .btn-reopen:hover { background: #117a8b; }
+
+    .ticket-attachment-btn {
+        background: #8fb2e4;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .modal-bg { display: none; position: fixed; z-index: 1050; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); overflow: auto; }
+    .modal-bg .modal-dialog { margin: 80px auto; max-width: 520px; }
+    .filheader { background: #3949ab; padding: 14px 20px; display: flex; align-items: center; gap: 10px; }
+    .filheader .filavatar span { display: flex; }
+    .filheader .modal-title { color: #fff; margin: 0; font-size: 16px; font-weight: 700; }
+    .modal-content { border-radius: 8px; overflow: hidden; }
+    .modal-body { padding: 20px; }
+    .modal-content .close { position: absolute; right: 14px; top: 14px; background: none; border: none; font-size: 22px; color: #fff; cursor: pointer; z-index: 10; }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: #9e9e9e; }
+    .empty-state svg { margin-bottom: 16px; }
+    .empty-state p  { font-size: 15px; margin: 0; }
+
+    .raise-new-btn {
+        background: #3949ab;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+    }
+    .raise-new-btn:hover { background: #283593; color: #fff; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad">
+            <div class="card-header bg-w clearfix ticket-page-header">
+                <div class="pull-left">
+                    <h4 class="card-title" style="margin:0; font-weight:700;">My Tickets</h4>
+                </div>
+                <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                    <div class="ticket-summary-chips">
+                        <span class="ticket-chip all active" id="chip-all" onclick="filterTickets('all')">
+                            All &nbsp;<strong>@modelList.Count</strong>
+                        </span>
+                        <span class="ticket-chip open" id="chip-open" onclick="filterTickets('open')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 4v4l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                            Open &nbsp;<strong>@openCount</strong>
+                        </span>
+                        <span class="ticket-chip closed" id="chip-closed" onclick="filterTickets('closed')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M13.485 1.929L5.5 9.914 2.515 6.929 1.1 8.343 5.5 12.743l9.4-9.4z" fill="currentColor"/></svg>
+                            Closed &nbsp;<strong>@closedCount</strong>
+                        </span>
+                    </div>
+                    <a class="raise-new-btn js-tr-window-trigger"
+                       href="#"
+                       data-url="@Url.Action("RaiseBugRequest", "Support")"
+                       data-panel="main">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Raise New Ticket
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(ViewBag.Message as string))
+    {
+        <div class="alert alert-info alert-dismissible" role="alert" style="margin: 10px 15px 0;">
+            @ViewBag.Message
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+    }
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center" style="display:block;">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading mtop-10">
+                            @if (!modelList.Any())
+                            {
+                                <div class="empty-state">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 24 24" stroke="#bdbdbd" stroke-width="1.2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                    <p>No tickets raised yet. Click <strong>Raise New Ticket</strong> to get started.</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div style="overflow-x:auto;" class="scrollbar" id="style-2">
+                                    <table id="myTicketTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Ticket ID</th>
+                                                <th>Request Type</th>
+                                                <th>Issue Details</th>
+                                                <th>Raised On</th>
+                                                <th>Status</th>
+                                                <th>Resolution Comment</th>
+                                                <th>Closed On</th>
+                                                <th>Attachment</th>
+                                                <th class="disabled-sorting text-center">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Ticket ID</th>
+                                                <th>Request Type</th>
+                                                <th>Issue Details</th>
+                                                <th>Raised On</th>
+                                                <th>Status</th>
+                                                <th>Resolution Comment</th>
+                                                <th>Closed On</th>
+                                                <th>Attachment</th>
+                                                <th class="disabled-sorting text-center">Actions</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            @{ int rowNum = 1; }
+                                            @foreach (var item in modelList)
+                                            {
+                                                var statusClass = item.Status?.ToLower() == "open" ? "open" : "close";
+                                                var isOpen = item.Status?.ToLower() == "open";
+                                                <tr class="ticket-row" data-status="@item.Status?.ToLower()">
+                                                    <td>@rowNum</td>
+                                                    <td>
+                                                        <strong style="color:#3949ab;">#@item.id</strong>
+                                                    </td>
+                                                    <td>
+                                                        <span class="type-badge">@(item.RequestType ?? "—")</span>
+                                                    </td>
+                                                    <td class="ticket-comment-cell">
+                                                        @if (!string.IsNullOrWhiteSpace(item.Comment))
+                                                        {
+                                                            if (item.Comment.Length > 60)
+                                                            {
+                                                                <span class="short-text">@item.Comment.Substring(0, 60)<span style="color:#9e9e9e;">…</span></span>
+                                                                <span class="extra-text">@item.Comment</span>
+                                                                <a onclick="toggleComment('@item.id')" id="toggle_@item.id" href="#" style="font-size:11px; color:#3949ab;">Read more</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>@item.Comment</span>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color:#bdbdbd;">—</span>
+                                                        }
+                                                    </td>
+                                                    <td style="white-space:nowrap;">@item.RequestedOn.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                                    <td>
+                                                        <span class="status-badge @statusClass">@(item.Status ?? "—")</span>
+                                                    </td>
+                                                    <td>
+                                                        @if (!string.IsNullOrWhiteSpace(item.StatusComment))
+                                                        {
+                                                            <span style="font-size:12px; color:#555;">@item.StatusComment</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color:#bdbdbd;">—</span>
+                                                        }
+                                                    </td>
+                                                    <td style="white-space:nowrap;">
+                                                        @if (item.ClosedOn.HasValue)
+                                                        {
+                                                            @item.ClosedOn.Value.ToString("dd MMM yyyy")
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color:#bdbdbd;">—</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (!string.IsNullOrWhiteSpace(item.AttachmentURL))
+                                                        {
+                                                            <button class="ticket-attachment-btn" onclick="showAttachment('@item.AttachmentURL')">View</button>
+                                                            <br /><a href="@item.AttachmentURL" target="_blank" style="font-size:11px;">Download</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color:#bdbdbd;">—</span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if (!isOpen)
+                                                        {
+                                                            <button class="btn-reopen" onclick="openReopenModal('@item.id')">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                                                                Reopen
+                                                            </button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color:#bdbdbd; font-size:12px;">Awaiting resolution</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                rowNum++;
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Reopen Ticket Modal *@
+<div id="ReopenTicketModal" class="modal-bg" style="z-index:1060;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="position:relative;">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Reopen Ticket <span id="reopenTicketIdLabel" style="font-weight:400; font-size:14px;"></span></h5>
+            </div>
+            <button type="button" class="close" onclick="closeReopenModal()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <input type="hidden" id="txtReopenTicketId" />
+            <div class="modal-body" style="color:#333;">
+                <p style="font-size:13px; color:#666; margin-bottom:12px;">
+                    Please describe why you are reopening this ticket. Your comment will be saved with the request.
+                </p>
+                <div>
+                    <textarea id="txtReopenComment"
+                              class="form-control"
+                              rows="4"
+                              maxlength="1000"
+                              placeholder="Enter your reason for reopening..."></textarea>
+                    <small id="reopenCharCount" style="color:#9e9e9e;">0 / 1000</small>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-12 mc-button-area" style="display:flex; gap:10px; justify-content:flex-end;">
+                        <button type="button" onclick="closeReopenModal()" class="mdc-button mdc-button--outlined mdc-ripple-upgraded">Cancel</button>
+                        <button type="button" onclick="submitReopen()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnSubmitReopen">Submit Reopen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Attachment Preview Modal *@
+<div id="AttachmentPreviewModal" class="modal-bg" style="z-index:1060;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="position:relative;">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="#fff" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"/></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Attachment Preview</h5>
+            </div>
+            <button type="button" class="close" onclick="closeAttachmentModal()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body text-center">
+                <img id="imgAttachmentPreview" src="" style="max-width:100%; border-radius:4px;" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script type="text/javascript">
+    var currentFilter = 'all';
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
+
+    function applyDataTable() {
+        if ($.fn.DataTable.isDataTable('#myTicketTable')) {
+            $('#myTicketTable').DataTable().destroy();
+        }
+        $('#myTicketTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            order: [[4, 'desc']],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search tickets...",
+                emptyTable: "No tickets found."
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after(
+                    "<span class='ref-btn' onclick='refreshTable()' style='top:18px;cursor:pointer;margin-left:6px;'>" +
+                    "<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z'/></svg>" +
+                    "</span>"
+                );
+            }
+        });
+        hideLoader();
+    }
+
+    function refreshTable() {
+        showLoader();
+        setTimeout(function () {
+            applyDataTable();
+        }, 600);
+    }
+
+    function showLoader() {
+        $(".loader").show();
+        $(".dataloading").hide();
+    }
+    function hideLoader() {
+        $(".loader").hide();
+        $(".dataloading").show();
+    }
+
+    showLoader();
+    window.onload = function () {
+        setTimeout(function () { hideLoader(); applyDataTable(); }, 1200);
+    };
+
+    // ── filter chips ──
+    function filterTickets(type) {
+        currentFilter = type;
+        ['all', 'open', 'closed'].forEach(function (t) {
+            $('#chip-' + t).removeClass('active');
+        });
+        $('#chip-' + type).addClass('active');
+
+        var dt = $('#myTicketTable').DataTable();
+        if (type === 'all') {
+            dt.column(5).search('').draw();
+        } else if (type === 'open') {
+            dt.column(5).search('Open', true, false).draw();
+        } else {
+            dt.column(5).search('Close', true, false).draw();
+        }
+    }
+
+    // ── read more/less ──
+    function toggleComment(id) {
+        var $short = $('.ticket-row[data-status]').find('.short-text');
+        var row = $('#myTicketTable').find('tr td').filter(function () {
+            return $(this).find('#toggle_' + id).length > 0;
+        }).closest('tr');
+        var $extra  = row.find('.extra-text');
+        var $short2 = row.find('.short-text');
+        var $link   = row.find('#toggle_' + id);
+        if ($extra.is(':visible')) {
+            $extra.hide();
+            $short2.show();
+            $link.text('Read more');
+        } else {
+            $short2.hide();
+            $extra.show();
+            $link.text('Read less');
+        }
+        return false;
+    }
+
+    // ── reopen modal ──
+    function openReopenModal(ticketId) {
+        $('#txtReopenTicketId').val(ticketId);
+        $('#reopenTicketIdLabel').text('— Ticket #' + ticketId);
+        $('#txtReopenComment').val('');
+        $('#reopenCharCount').text('0 / 1000');
+        document.getElementById('ReopenTicketModal').style.display = 'block';
+    }
+    function closeReopenModal() {
+        document.getElementById('ReopenTicketModal').style.display = 'none';
+    }
+
+    $('#txtReopenComment').on('input', function () {
+        $('#reopenCharCount').text($(this).val().length + ' / 1000');
+    });
+
+    function submitReopen() {
+        var comment   = $('#txtReopenComment').val().trim();
+        var requestId = $('#txtReopenTicketId').val();
+        if (!comment) {
+            alert('Please enter a reason for reopening the ticket.');
+            return;
+        }
+        $('#btnSubmitReopen').prop('disabled', true).text('Submitting…');
+        $.ajax({
+            url: '@Url.Action("ReopenTicket", "Support")',
+            type: 'POST',
+            data: { requestid: requestId, comment: comment },
+            success: function (message) {
+                closeReopenModal();
+                alert(message);
+                location.reload();
+            },
+            error: function () {
+                alert('An error occurred. Please try again.');
+                $('#btnSubmitReopen').prop('disabled', false).text('Submit Reopen');
+            }
+        });
+    }
+
+    // ── attachment modal ──
+    function showAttachment(url) {
+        document.getElementById('imgAttachmentPreview').src = url;
+        document.getElementById('AttachmentPreviewModal').style.display = 'block';
+    }
+    function closeAttachmentModal() {
+        document.getElementById('AttachmentPreviewModal').style.display = 'none';
+    }
+
+    // close modals on outside click
+    window.addEventListener('click', function (e) {
+        var reopenModal = document.getElementById('ReopenTicketModal');
+        var attachModal = document.getElementById('AttachmentPreviewModal');
+        if (e.target === reopenModal) closeReopenModal();
+        if (e.target === attachModal) closeAttachmentModal();
+    });
+</script>
+}

@@ -124,5 +124,31 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<IEnumerable<RaiseBugsVM>> GetMyTickets(string requestedBy)
+        {
+            try
+            {
+                return await _supportRespository.GetMyTickets(requestedBy);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> ReopenTicket(RaiseBugsVM model)
+        {
+            try
+            {
+                return await _supportRespository.ReopenTicket(model);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

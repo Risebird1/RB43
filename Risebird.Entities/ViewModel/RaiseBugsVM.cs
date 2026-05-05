@@ -13,6 +13,9 @@ namespace Risebird.Entities.ViewModel
         public DateTime RequestedOn { get; set; }
         public string AttachmentURL { get; set; }
         public string Status { get; set; }
+        public string StatusComment { get; set; }
+        public string ClosedBy { get; set; }
+        public DateTime? ClosedOn { get; set; }
         public string Requester { get; set; }
         public string MobileNumber { get; set; }
         public string Name { get; set; }
@@ -20,5 +23,6 @@ namespace Risebird.Entities.ViewModel
         public int irfIntId { get; set; }
         public string candidateEmail { get; set; }
         public string Interviewer { get; set; }
+        public string ReopenComment { get; set; }
     }
 }

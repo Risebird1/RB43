@@ -7,6 +7,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -520,6 +521,59 @@ namespace Risebird.Web.Controllers
                 model.Comment = comment;
                 var result = await _supportService.UpdateRaisedRequestStatus(model);
                 return Json("Request is closed successfully.");
+            }
+            else
+            {
+                return Json("Please try again.");
+            }
+        }
+        #endregion
+
+        #region My Tickets
+        [HttpGet]
+        public async Task<IActionResult> MyTickets()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (TempData["MyTicketsMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["MyTicketsMessage"].ToString();
+                        TempData.Remove("MyTicketsMessage");
+                    }
+                    var model = await _supportService.GetMyTickets(emailId);
+                    return View(model ?? new List<RaiseBugsVM>());
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyTickets");
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ReopenTicket(int requestid, string comment)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var model = new RaiseBugsVM();
+                model.id = requestid;
+                model.RequestedBy = emailId;
+                model.ReopenComment = comment;
+                var result = await _supportService.ReopenTicket(model);
+                if (result)
+                    return Json("Ticket has been reopened successfully.");
+                return Json("Could not reopen the ticket. Please try again.");
             }
             else
             {
