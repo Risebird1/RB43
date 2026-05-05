@@ -18,5 +18,11 @@ namespace Risebird.CommonHelper.Interface
         Task<RunResult> ParseResume(string resumeData);
         Task<RunResult> TranscriptToNotes(string transcriptdata);
         Task<RunResult> GeneratecontradictionReport(string transcriptSummary);
+
+        /// <summary>
+        /// Calls the Payment-Ticket-Review assistant (asst_kjUOaWfVxQOymoAN1m29MrR8) with
+        /// the composed ticket context and returns the raw RunResult for verdict parsing.
+        /// </summary>
+        Task<RunResult> GeneratePaymentTicketReview(string composedMessage);
     }
 }
