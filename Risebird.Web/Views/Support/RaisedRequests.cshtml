@@ -4,6 +4,8 @@
     ViewData["Title"] = "RaisedRequests";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentProfile = ViewBag.CurrentProfile as string ?? "";
+    bool canClose = currentProfile != "Interviewer" && currentProfile != "Client";
 }
 <script>
     var Header = "<div>Raised Requests</div>";
@@ -101,10 +103,23 @@
                                             @foreach (var item in Model)
                                             {
                                                 <tr>
-                                                    <td>
-                                                       
+                                                    <td style="white-space:nowrap;">
+                                                        @* View Details — always visible, opens in new tab *@
+                                                        <a href="@Url.Action("TicketDetails","Support", new { id = item.id })"
+                                                           target="_blank" rel="noopener noreferrer"
+                                                           title="View Ticket Details">
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="View Details" style="margin-right:4px;">
+                                                                <span class="mdc-fab__icon material-icons">
+                                                                    <svg style="color:white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                                                                        <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                                                                    </svg>
+                                                                </span>
+                                                            </button>
+                                                        </a>
 
-                                                        @if (item.Status?.ToLower() == "open")
+                                                        @* Close — only for support/admin roles when ticket is open *@
+                                                        @if (item.Status?.ToLower() == "open" && canClose)
                                                         {
                                                             <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Close Request">
                                                                 <span onclick="openRaisedBugClosepopup('@item.id','@item.RequestedBy','@item.RequestedOn')" title="Close Request" class="mdc-fab__icon material-icons">

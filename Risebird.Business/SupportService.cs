@@ -124,5 +124,57 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<IEnumerable<RaiseBugsVM>> GetMyRaisedIssues(string requestedBy)
+        {
+            try
+            {
+                return await _supportRespository.GetMyRaisedIssues(requestedBy);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<RaiseBugsVM> GetRaisedIssueById(int id)
+        {
+            try
+            {
+                return await _supportRespository.GetRaisedIssueById(id);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> ReopenRaisedIssue(int id, string comment, string actionBy, string actionByRole)
+        {
+            try
+            {
+                return await _supportRespository.ReopenRaisedIssue(id, comment, actionBy, actionByRole);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<RaisedIssueHistoryVM>> GetRaisedIssueHistory(int raisedIssueId)
+        {
+            try
+            {
+                return await _supportRespository.GetRaisedIssueHistory(raisedIssueId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

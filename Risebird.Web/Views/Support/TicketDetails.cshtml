@@ -1,0 +1,345 @@
+@model Risebird.Entities.ViewModel.RaiseBugsVM
+
+@{
+    ViewData["Title"] = "Ticket Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var profile = ViewBag.Profile as string ?? "";
+    // Only an Interviewer who owns this ticket may reopen it
+    bool canReopen = Model.Status?.ToLower() == "close" && profile == "Interviewer";
+    // Support / admin roles can close an open ticket
+    bool canClose  = Model.Status?.ToLower() == "open"
+                     && profile != "Interviewer" && profile != "Client";
+}
+<script>
+    var Header = "<div>Ticket Details</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<style>
+    /* ── card shell ────────────────────────────────── */
+    .ticket-card { background:#fff; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.08); padding:24px; margin-bottom:24px; }
+
+    /* ── status badge ──────────────────────────────── */
+    .ticket-status-badge { display:inline-block; padding:4px 14px; border-radius:14px; font-size:13px; font-weight:600; }
+    .badge-open  { background:#e8f5e9; color:#2e7d32; border:1px solid #a5d6a7; }
+    .badge-close { background:#fce4ec; color:#c62828; border:1px solid #ef9a9a; }
+
+    /* ── meta grid ─────────────────────────────────── */
+    .ticket-meta { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+    .meta-item label { display:block; font-size:11px; color:#888; text-transform:uppercase; letter-spacing:.6px; margin-bottom:2px; }
+    .meta-item span  { font-size:14px; font-weight:500; color:#333; }
+
+    /* ── history timeline ──────────────────────────── */
+    .history-timeline { position:relative; padding-left:28px; margin-top:8px; }
+    .history-timeline::before { content:''; position:absolute; left:10px; top:0; bottom:0; width:2px; background:#e0e0e0; }
+    .history-entry { position:relative; margin-bottom:20px; }
+    .history-entry::before {
+        content:'';
+        position:absolute;
+        left:-22px; top:5px;
+        width:12px; height:12px;
+        border-radius:50%;
+        border:2px solid #1976d2;
+        background:#fff;
+    }
+    .history-entry.action-Created::before  { border-color:#43a047; }
+    .history-entry.action-Closed::before   { border-color:#e53935; }
+    .history-entry.action-Reopened::before { border-color:#f57c00; }
+
+    .history-entry .h-action {
+        font-size:13px; font-weight:600;
+        padding:2px 10px; border-radius:10px; display:inline-block; margin-bottom:4px;
+    }
+    .action-Created  .h-action { background:#e8f5e9; color:#2e7d32; }
+    .action-Closed   .h-action { background:#fce4ec; color:#c62828; }
+    .action-Reopened .h-action { background:#fff3e0; color:#e65100; }
+
+    .history-entry .h-meta { font-size:12px; color:#666; margin-bottom:4px; }
+    .history-entry .h-comment { font-size:13px; color:#333; background:#f5f5f5; border-radius:6px; padding:8px 12px; }
+
+    /* ── attachment ────────────────────────────────── */
+    .attach-btn { font-size:12px; padding:3px 10px; border-radius:4px; border:1px solid #8fb2e4; background:#8fb2e4; color:#fff; cursor:pointer; }
+
+    /* ── section title ─────────────────────────────── */
+    .section-title { font-size:15px; font-weight:700; color:#1976d2; border-bottom:2px solid #e3f2fd; padding-bottom:6px; margin-bottom:16px; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title">
+                        Ticket #@Model.id &nbsp;
+                        @if (Model.Status?.ToLower() == "open")
+                        {
+                            <span class="ticket-status-badge badge-open">Open</span>
+                        }
+                        else
+                        {
+                            <span class="ticket-status-badge badge-close">Closed</span>
+                        }
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+
+                @*── Ticket Information card ──*@
+                <div class="ticket-card">
+                    <div class="section-title">Ticket Information</div>
+                    <div class="ticket-meta">
+                        <div class="meta-item">
+                            <label>Ticket ID</label>
+                            <span>#@Model.id</span>
+                        </div>
+                        <div class="meta-item">
+                            <label>Request Type</label>
+                            <span>@Model.RequestType</span>
+                        </div>
+                        <div class="meta-item">
+                            <label>Raised By</label>
+                            <span>@Model.RequestedBy</span>
+                        </div>
+                        <div class="meta-item">
+                            <label>Requester Role</label>
+                            <span>@Model.Requester</span>
+                        </div>
+                        <div class="meta-item">
+                            <label>Raised On</label>
+                            <span>@Model.RequestedOn.ToString("dd MMM yyyy, hh:mm tt")</span>
+                        </div>
+                        <div class="meta-item">
+                            <label>Status</label>
+                            <span>
+                                @if (Model.Status?.ToLower() == "open")
+                                {
+                                    <span class="ticket-status-badge badge-open">Open</span>
+                                }
+                                else
+                                {
+                                    <span class="ticket-status-badge badge-close">Closed</span>
+                                }
+                            </span>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(Model.ClosedBy))
+                        {
+                            <div class="meta-item">
+                                <label>Closed By</label>
+                                <span>@Model.ClosedBy</span>
+                            </div>
+                        }
+                        @if (Model.ClosedOn.HasValue)
+                        {
+                            <div class="meta-item">
+                                <label>Closed On</label>
+                                <span>@Model.ClosedOn.Value.ToString("dd MMM yyyy, hh:mm tt")</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div style="margin-top:20px;">
+                        <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.6px;">Issue Description</label>
+                        <div style="background:#f9f9f9;border-radius:6px;padding:12px 16px;margin-top:6px;font-size:14px;color:#333;">
+                            @Model.Comment
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.StatusComment))
+                    {
+                        <div style="margin-top:14px;">
+                            <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.6px;">Resolution / Close Comment</label>
+                            <div style="background:#fff8e1;border-radius:6px;padding:12px 16px;margin-top:6px;font-size:14px;color:#5d4037;">
+                                @Model.StatusComment
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(Model.AttachmentURL))
+                    {
+                        <div style="margin-top:16px;">
+                            <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.6px;">Attachment</label><br />
+                            <button class="attach-btn" onclick="showAttachment('@Model.AttachmentURL')">View Attachment</button>
+                            &nbsp;
+                            <a href="@Model.AttachmentURL" target="_blank" style="font-size:13px;">Download</a>
+                        </div>
+                    }
+                </div>
+
+                @*── Close section (support / admin roles, when ticket is open) ──*@
+                @if (canClose)
+                {
+                    <div class="ticket-card" id="closeSection">
+                        <div class="section-title" style="color:#c62828;border-bottom-color:#fce4ec;">Close Ticket</div>
+                        <p style="font-size:13px;color:#555;margin-bottom:12px;">
+                            Add a resolution comment and close this ticket. The original issue information will be preserved in the history.
+                        </p>
+                        <textarea id="txtCloseComment" class="form-control"
+                                  rows="3" maxlength="1000"
+                                  placeholder="Enter resolution / closing comment…"></textarea>
+                        <div style="margin-top:10px;">
+                            <button onclick="submitClose(@Model.id)"
+                                    class="mdc-button mdc-button--raised mdc-ripple-upgraded"
+                                    style="background:#c62828;color:#fff;">
+                                Close Ticket
+                            </button>
+                        </div>
+                        <div id="closeResultMsg" style="display:none;margin-top:10px;" class="alert"></div>
+                    </div>
+                }
+
+                @*── Reopen section (Interviewer profile only, when ticket is closed) ──*@
+                @if (canReopen)
+                {
+                    <div class="ticket-card" id="reopenSection">
+                        <div class="section-title">Reopen Ticket</div>
+                        <p style="font-size:13px;color:#555;margin-bottom:12px;">
+                            Reopening this ticket will restore it to <strong>Open</strong> status.
+                            The original issue information is preserved. Please add a comment explaining why you are reopening.
+                        </p>
+                        <textarea id="txtReopenComment" class="form-control"
+                                  rows="3" maxlength="2000"
+                                  placeholder="Enter reason for reopening this ticket…"></textarea>
+                        <div style="margin-top:10px;">
+                            <button onclick="submitReopen(@Model.id)"
+                                    class="mdc-button mdc-button--raised mdc-ripple-upgraded"
+                                    style="background:#f57c00;color:#fff;">
+                                Reopen Ticket
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                @*── History timeline ──*@
+                <div class="ticket-card">
+                    <div class="section-title">Ticket History</div>
+                    @if (Model.History != null && Model.History.Any())
+                    {
+                        <div class="history-timeline">
+                            @foreach (var h in Model.History)
+                            {
+                                <div class="history-entry action-@h.Action">
+                                    <span class="h-action">@h.Action</span>
+                                    <div class="h-meta">
+                                        by <strong>@(string.IsNullOrWhiteSpace(h.ActionByName) ? h.ActionBy : h.ActionByName)</strong>
+                                        (@h.ActionBy)
+                                        @if (!string.IsNullOrWhiteSpace(h.ActionByRole))
+                                        {
+                                            <text> &mdash; @h.ActionByRole</text>
+                                        }
+                                        &nbsp;|&nbsp; @h.ActionOn.ToString("dd MMM yyyy, hh:mm tt")
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(h.Comment))
+                                    {
+                                        <div class="h-comment">@h.Comment</div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p style="color:#aaa;font-size:13px;">No history available for this ticket.</p>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@*── Attachment lightbox ──*@
+<div id="attachmentModal" class="modal modal-bg" style="z-index:5;display:none;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18">
+                            <path fill="rgb(255,255,255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path>
+                        </svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Attachment</h5>
+            </div>
+            <button type="button" class="close" onclick="closeAttachment()">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body text-center">
+                <img id="attachImg" src="" style="max-width:100%;" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="reopenResultMsg" style="display:none;margin:12px 0;" class="alert"></div>
+
+<script>
+    function showAttachment(url) {
+        document.getElementById('attachImg').src = url;
+        document.getElementById('attachmentModal').style.display = 'block';
+    }
+    function closeAttachment() {
+        document.getElementById('attachmentModal').style.display = 'none';
+    }
+
+    function submitClose(ticketId) {
+        var comment = $('#txtCloseComment').val().trim();
+        if (!comment) {
+            alert('Please enter a resolution comment before closing the ticket.');
+            return;
+        }
+        if (!confirm('Are you sure you want to close Ticket #' + ticketId + '?')) return;
+
+        $.ajax({
+            url: '@Url.Action("UpdateRaisedRequestsStatus","Support")',
+            type: 'POST',
+            data: { requestid: ticketId, comment: comment },
+            success: function (res) {
+                var msgEl = $('#closeResultMsg');
+                msgEl.removeClass('alert-danger').addClass('alert-success')
+                     .text('Ticket closed successfully.').show();
+                setTimeout(function () { location.reload(); }, 1500);
+            },
+            error: function () {
+                var msgEl = $('#closeResultMsg');
+                msgEl.removeClass('alert-success').addClass('alert-danger')
+                     .text('An error occurred. Please try again.').show();
+            }
+        });
+    }
+
+    function submitReopen(ticketId) {
+        var comment = $('#txtReopenComment').val().trim();
+        if (!comment) {
+            alert('Please enter a comment explaining why you are reopening this ticket.');
+            return;
+        }
+        if (!confirm('Are you sure you want to reopen Ticket #' + ticketId + '?')) return;
+
+        $.ajax({
+            url: '@Url.Action("ReopenTicket","Support")',
+            type: 'POST',
+            data: { ticketId: ticketId, comment: comment },
+            success: function (res) {
+                var msgEl = $('#reopenResultMsg');
+                if (res.success) {
+                    msgEl.removeClass('alert-danger').addClass('alert-success').text(res.message).show();
+                    setTimeout(function () { location.reload(); }, 1500);
+                } else {
+                    msgEl.removeClass('alert-success').addClass('alert-danger').text(res.message).show();
+                }
+            },
+            error: function () {
+                alert('An error occurred. Please try again.');
+            }
+        });
+    }
+</script>
