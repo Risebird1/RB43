@@ -680,11 +680,18 @@
         switch ((s || '').toLowerCase()) { case 'open': b.addClass('bg-warning text-dark'); break; case 'inprogress': b.addClass('bg-primary'); break; case 'verified': b.addClass('bg-success'); break; case 'closed': b.addClass('bg-secondary'); break; default: b.addClass('bg-light text-dark'); }
     }
 
+    var iaDefaultSubtitles = {
+        1: 'Runs the resume through AI to evaluate fitment for the specialization',
+        2: 'Maps interviewer to the assessment group and sends notification'
+    };
+
     function resetPipeline() {
         ['step1Card','step2Card'].forEach(function(id){ $('#'+id).removeClass('completed failed disabled').addClass('pending'); });
         ['step1Number','step2Number'].forEach(function(id){ $('#'+id).removeClass('completed failed running').addClass('pending'); });
         $('#step2Card').addClass('disabled');
         $('#step1Result, #step2Result').hide().empty();
+        $('#step1Subtitle').html(iaDefaultSubtitles[1]);
+        $('#step2Subtitle').html(iaDefaultSubtitles[2]);
         $('#btnAnalyzeResume').prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Analyze Resume');
         $('#btnAssignAG').prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Assign to AG');
         $('#btnUploadResume').show();
@@ -716,6 +723,7 @@
             } else {
                 markStep(1, 'failed', html + '<br/><span class="text-danger" style="font-size:11px;"><strong>Fitment negative — next step is blocked.</strong></span>');
                 $('#btnAnalyzeResume').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed');
+                $('#step1Subtitle').html('<span class="text-danger" style="font-size:11px;">Fitment analysis negative</span>');
             }
         } else if (!r.hasResumeLink && !r.hasProfileResumeLink) {
             $('#step1Subtitle').html('No resume available for analysis. <strong>Upload a resume to proceed.</strong>');
@@ -743,8 +751,8 @@
         card.removeClass('pending completed failed disabled'); num.removeClass('pending completed failed running');
         if (state === 'completed') {
             card.addClass('completed'); num.addClass('completed');
-            if (step===1) { $('#btnAnalyzeResume').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed'); $('#btnUploadResume').hide(); $('#resumeUploadArea').hide(); }
-            if (step===2) $('#btnAssignAG').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Assigned');
+            if (step===1) { $('#btnAnalyzeResume').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed'); $('#btnUploadResume').hide(); $('#resumeUploadArea').hide(); $('#step1Subtitle').html('<span class="text-success" style="font-size:11px;">AI analysis completed</span>'); }
+            if (step===2) { $('#btnAssignAG').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Assigned'); $('#step2Subtitle').html('<span class="text-success" style="font-size:11px;">Assessment group assigned</span>'); }
         } else if (state === 'failed') { card.addClass('failed'); num.addClass('failed'); }
         else if (state === 'running') { num.addClass('running'); }
         if (message) result.html(message).show();
@@ -816,6 +824,7 @@
                     } else {
                         markStep(1,'failed', h + '<br/><span class="text-danger" style="font-size:11px;"><strong>Fitment negative — next step is blocked.</strong></span>');
                         btn.prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed');
+                        $('#step1Subtitle').html('<span class="text-danger" style="font-size:11px;">Fitment analysis negative</span>');
                         $('#step2Subtitle').html('<span class="text-danger">Resume fitment analysis was negative. Cannot assign AG.</span>');
                         $('#step2Card').addClass('disabled');
                         $('#btnAssignAG').prop('disabled', true);
@@ -828,14 +837,14 @@
                     }
                     markStep(1,'failed',errHtml);
                     btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry');
-                    $('#step1Subtitle').text('Runs the resume through AI to evaluate fitment for the specialization');
+                    $('#step1Subtitle').html(iaDefaultSubtitles[1]);
                 }
             },
             error: function (xhr, status) {
                 var msg = status === 'timeout' ? 'Request timed out. The analysis may still be running — try refreshing in a minute.' : 'Request failed. Please try again.';
                 markStep(1,'failed',msg);
                 btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry');
-                $('#step1Subtitle').text('Runs the resume through AI to evaluate fitment for the specialization');
+                $('#step1Subtitle').html(iaDefaultSubtitles[1]);
             }
         });
     });
@@ -843,13 +852,14 @@
     $('#btnAssignAG').on('click', function () {
         if (!currentRecordId) return; var btn = $(this);
         btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Assigning...'); $('#step2Number').removeClass('pending').addClass('running');
+        $('#step2Subtitle').text('Assigning to assessment group...');
         $.ajax({ url: '@Url.Action("AssignAssessmentGroup", "InterviewerAvailability")', type: 'POST', timeout: 60000,
             data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
             success: function (res) {
                 if (res.success) { markStep(2,'completed',res.message||'Assessment group assigned.'); updateStatusBadge('Closed'); }
-                else { markStep(2,'failed',res.error||'Assignment failed.'); btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry'); }
+                else { markStep(2,'failed',res.error||'Assignment failed.'); btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry'); $('#step2Subtitle').html(iaDefaultSubtitles[2]); }
             },
-            error: function () { markStep(2,'failed','Request failed.'); btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry'); }
+            error: function () { markStep(2,'failed','Request failed.'); btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry'); $('#step2Subtitle').html(iaDefaultSubtitles[2]); }
         });
     });
 

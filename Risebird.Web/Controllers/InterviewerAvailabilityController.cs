@@ -376,40 +376,37 @@ namespace Risebird.Web.Controllers
                 string jobTitle = record.AssessmentGroupName ?? record.MagName ?? record.JobTitle ?? "General";
 
                 string resumeText = null;
+                bool isDocFile = resumeUrl.EndsWith(".doc", StringComparison.OrdinalIgnoreCase)
+                              || resumeUrl.EndsWith(".docx", StringComparison.OrdinalIgnoreCase);
 
-                // Try reading as PDF first
-                try
+                if (!isDocFile)
                 {
-                    resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl);
-                }
-                catch (Exception pdfEx)
-                {
-                    await _logger.LogMessage(LogLevelInfo.Warning, pdfEx);
+                    try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
+                    catch { }
                 }
 
-                // If PDF reading failed, always attempt DOC/DOCX-to-PDF conversion
-                // (the file may be a DOC/DOCX even if the URL ends in .pdf)
                 if (string.IsNullOrWhiteSpace(resumeText))
                 {
                     try
                     {
                         string convertedPdfUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
                         if (!string.IsNullOrWhiteSpace(convertedPdfUrl))
-                        {
                             resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedPdfUrl);
-                        }
                     }
-                    catch (Exception docEx)
-                    {
-                        await _logger.LogMessage(LogLevelInfo.Warning, docEx);
-                    }
+                    catch { }
+                }
+
+                if (string.IsNullOrWhiteSpace(resumeText) && isDocFile)
+                {
+                    try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
+                    catch { }
                 }
 
                 if (string.IsNullOrWhiteSpace(resumeText))
                     return Json(new
                     {
                         success = false,
-                        error = "Could not read the resume. The file may be corrupted, password-protected, or in an unsupported format. Please upload a valid PDF resume using the upload button.",
+                        error = "Could not read the resume. The file may be corrupted, password-protected, or in an unsupported format. Please upload a valid PDF/DOC/DOCX resume using the upload button.",
                         needsUpload = true
                     });
 

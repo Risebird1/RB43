@@ -44,6 +44,21 @@ namespace Risebird.Repository.Interface
         Task<List<MagDropdownItem>> GetAllMasterAssessmentGroupsAsync();
 
         Task<dynamic> SaveManualOverrideAsync(int id, string fieldName, string oldValue, string newValue, string changedBy);
+
+        Task<bool> UpdateSelectedIRFAsync(int id, int irfId, string irfName, string applicationLink, int? assessmentGroupId);
+        Task<bool> UpdateInvitationEmailSentAsync(int id);
+        Task<bool> UpdateProspectResponseAsync(int id, string response);
+        Task<List<ActiveIRFItem>> GetActiveIRFsByAssessmentGroupIdAsync(int assessmentGroupId);
+        Task<bool> UpdateSelfRegistrationAsync(int id, bool completed, int? userId, int? profileId);
+
+        Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email);
+    }
+
+    public class ActiveIRFItem
+    {
+        public int id { get; set; }
+        public string IRFId { get; set; }
+        public string AssessmentGroupId { get; set; }
     }
 
     public class MagDropdownItem
