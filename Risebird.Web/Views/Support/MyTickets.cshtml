@@ -118,9 +118,16 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <a href="@Url.Action("TicketDetails","Support", new { id = item.id })"
-                                                       target="_blank" rel="noopener noreferrer"
-                                                       class="mdc-button mdc-button--outlined" style="font-size:12px;padding:2px 10px;">
-                                                        View Details
+                                                           target="_blank" rel="noopener noreferrer"
+                                                           title="View Ticket Details">
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="View Details" style="margin-right:4px;">
+                                                                <span class="mdc-fab__icon material-icons">
+                                                                    <svg style="color:white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                                                                        <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                                                                    </svg>
+                                                                </span>
+                                                            </button>
                                                     </a>
                                                 </td>
                                             </tr>
