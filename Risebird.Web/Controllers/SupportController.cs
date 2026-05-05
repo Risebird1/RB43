@@ -530,6 +530,20 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<JsonResult> GetMyOpenTicketCount()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { openCount = 0, totalCount = 0 });
+
+            var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var tickets = await _supportService.GetMyRaisedIssues(emailId);
+            if (tickets == null) return Json(new { openCount = 0, totalCount = 0 });
+
+            var list = tickets.ToList();
+            return Json(new { openCount = list.Count(x => x.Status == "Open"), totalCount = list.Count });
+        }
+
         [HttpGet]
         public async Task<IActionResult> MyTickets(string status = null)
         {
