@@ -19,7 +19,14 @@ Create Procedure usp_SaveRaisedIssueDetails
 @interviewId int
 AS  
 BEGIN  
-Insert into RaisedIssues(RequestType,Comment,AttachmentURL,RequestedBy,RequestedOn,Status,Requester,interviewId)   
-values(@RequestType,@Comment,@AttachmentURL,@RequestedBy,@RequestedOn,'Open',@Requester,@interviewId)  
+    DECLARE @NewId INT;
+
+    INSERT INTO RaisedIssues(RequestType, Comment, AttachmentURL, RequestedBy, RequestedOn, Status, Requester, interviewId)
+    VALUES (@RequestType, @Comment, @AttachmentURL, @RequestedBy, @RequestedOn, 'Open', @Requester, @interviewId);
+
+    SET @NewId = SCOPE_IDENTITY();
+
+    INSERT INTO RaisedIssuesHistory(RaisedIssueId, Action, Comment, ActionBy, ActionByRole, ActionOn)
+    VALUES (@NewId, 'Created', @Comment, @RequestedBy, @Requester, @RequestedOn);
 END  
 GO
