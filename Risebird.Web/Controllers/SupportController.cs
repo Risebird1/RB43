@@ -514,9 +514,12 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
                 var model = new RaiseBugsVM();
                 model.id = requestid;
                 model.RequestedBy = emailId;
+                model.Requester = profileName;
                 model.Comment = comment;
                 var result = await _supportService.UpdateRaisedRequestStatus(model);
                 return Json("Request is closed successfully.");
@@ -525,6 +528,79 @@ namespace Risebird.Web.Controllers
             {
                 return Json("Please try again.");
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MyTickets(string status = null)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return RedirectToAction("SignOut", "Session");
+
+            var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+
+            var tickets = await _supportService.GetMyRaisedIssues(emailId);
+            if (tickets == null) tickets = new System.Collections.Generic.List<RaiseBugsVM>();
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                if (status.Equals("Open", System.StringComparison.OrdinalIgnoreCase))
+                    tickets = tickets.Where(x => x.Status == "Open").ToList();
+                else if (status.Equals("Close", System.StringComparison.OrdinalIgnoreCase))
+                    tickets = tickets.Where(x => x.Status == "Close").ToList();
+            }
+
+            ViewBag.FilterStatus = status ?? "All";
+            ViewBag.Profile = profileName;
+            return View(tickets);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TicketDetails(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return RedirectToAction("SignOut", "Session");
+
+            var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+
+            var ticket = await _supportService.GetRaisedIssueById(id);
+            if (ticket == null)
+                return RedirectToAction("MyTickets");
+
+            // Security: only Admin/TechSupport or the original requester may view the detail.
+            if (ticket.RequestedBy != emailId &&
+                profileName != ProfileNames.Admin &&
+                profileName != "TechSupport" &&
+                profileName != ProfileNames.SupportAdmin)
+            {
+                return RedirectToAction("MyTickets");
+            }
+
+            var history = await _supportService.GetRaisedIssueHistory(id);
+            ticket.History = history?.ToList() ?? new System.Collections.Generic.List<RaisedIssueHistoryVM>();
+
+            ViewBag.Profile = profileName;
+            return View(ticket);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ReopenTicket(int ticketId, string comment)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, message = "Session expired. Please log in again." });
+
+            if (string.IsNullOrWhiteSpace(comment))
+                return Json(new { success = false, message = "A comment is required to reopen a ticket." });
+
+            var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+
+            var result = await _supportService.ReopenRaisedIssue(ticketId, comment, emailId, profileName);
+            if (result)
+                return Json(new { success = true, message = "Ticket has been reopened successfully." });
+
+            return Json(new { success = false, message = "Could not reopen the ticket. Please try again." });
         }
         #endregion
     }
