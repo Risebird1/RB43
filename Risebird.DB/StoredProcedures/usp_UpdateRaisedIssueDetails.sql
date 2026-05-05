@@ -14,8 +14,15 @@ Create Procedure usp_UpdateRaisedIssueDetails
 @RequestedBy varchar(200),
 @RequestedOn datetime
 AS  
-BEGIN  
-Update RaisedIssues set Status='Close',StatusComment=@Comment,ClosedBy=@RequestedBy,ClosedOn=@RequestedOn where id=@id
+BEGIN
+    Update RaisedIssues
+    set Status        = 'Close',
+        StatusComment = @Comment,
+        ClosedBy      = @RequestedBy,
+        ClosedOn      = @RequestedOn
+    where id = @id
 
-END 
+    Insert into RaisedIssuesHistory(RaisedIssueId, Action, Comment, ActionBy, ActionOn)
+    values(@id, 'Closed', @Comment, @RequestedBy, @RequestedOn)
+END
 GO

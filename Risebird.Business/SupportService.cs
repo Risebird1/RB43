@@ -150,5 +150,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<IEnumerable<RaisedIssueHistoryVM>> GetTicketHistory(int raisedIssueId)
+        {
+            try
+            {
+                return await _supportRespository.GetTicketHistory(raisedIssueId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

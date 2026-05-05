@@ -17,10 +17,13 @@ Create Procedure usp_ReopenRaisedIssue
 AS
 BEGIN
     Update RaisedIssues
-    set Status = 'Open',
-        StatusComment = 'Reopened: ' + @ReopenComment,
-        ClosedBy = NULL,
-        ClosedOn = NULL
+    set Status        = 'Open',
+        StatusComment = @ReopenComment,
+        ClosedBy      = NULL,
+        ClosedOn      = NULL
     where id = @id and RequestedBy = @ReopenedBy
+
+    Insert into RaisedIssuesHistory(RaisedIssueId, Action, Comment, ActionBy, ActionOn)
+    values(@id, 'Reopened', @ReopenComment, @ReopenedBy, @ReopenedOn)
 END
 GO

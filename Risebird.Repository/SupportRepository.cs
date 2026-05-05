@@ -282,5 +282,24 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<IEnumerable<RaisedIssueHistoryVM>> GetTicketHistory(int raisedIssueId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@RaisedIssueId", raisedIssueId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<RaisedIssueHistoryVM>(con, "usp_GetTicketHistory", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

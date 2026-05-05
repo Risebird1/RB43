@@ -73,30 +73,32 @@
                                                   <th>Report</th>
                                                   <th>Reasoning</th>
                                                 }
-                                                <th>Status</th>
-                                                
-                                            </tr>
-                                        </thead>
-                                        <tfoot>
-                                            <tr>
+                                                                <th>Status</th>
+                                                                <th>Latest Comment</th>
+                                                                <th class="disabled-sorting text-center">History</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tfoot>
+                                                            <tr>
 
-                                                <th class="disabled-sorting text-center">Actions</th>
-                                                <th>Requested By</th>
-                                                <th>Requester</th>
-                                                <th>Request Date</th>
-                                                <th>Request Type</th>
-                                                <th>Issue Details</th>
-                                                <th>Attachments</th>
-                                                @if (ViewBag.Type == "OpenPayment")
-                                                {
-                                                  <th>Payment SLA</th>
-                                                  <th>Report</th>
-                                                  <th>Reasoning</th>
-                                                }
-                                                <th>Status</th>
-                                                
-                                            </tr>
-                                        </tfoot>
+                                                                <th class="disabled-sorting text-center">Actions</th>
+                                                                <th>Requested By</th>
+                                                                <th>Requester</th>
+                                                                <th>Request Date</th>
+                                                                <th>Request Type</th>
+                                                                <th>Issue Details</th>
+                                                                <th>Attachments</th>
+                                                                @if (ViewBag.Type == "OpenPayment")
+                                                                {
+                                                                  <th>Payment SLA</th>
+                                                                  <th>Report</th>
+                                                                  <th>Reasoning</th>
+                                                                }
+                                                                <th>Status</th>
+                                                                <th>Latest Comment</th>
+                                                                <th class="disabled-sorting text-center">History</th>
+                                                            </tr>
+                                                        </tfoot>
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
@@ -187,7 +189,16 @@
                                                             </a>
                                                       </td>
                                                     }
-                                                    <td>@item.Status</td>                                                  
+                                                    <td>@item.Status</td>
+                                                    <td style="min-width:160px; font-size:12px; color:#555;">
+                                                        @(string.IsNullOrWhiteSpace(item.StatusComment) ? "—" : item.StatusComment)
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button onclick="openAdminHistoryModal('@item.id')"
+                                                                style="background:#7986cb;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;">
+                                                            History
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -393,5 +404,77 @@
         modal.style.display = "none";
     }
 
+    // ── Admin Ticket History ──
+    var adminActionIcons = {
+        'Created':  '&#128196;',
+        'Closed':   '&#10003;',
+        'Reopened': '&#8635;'
+    };
+    function openAdminHistoryModal(ticketId) {
+        $('#adminHistoryTicketLabel').text('— Ticket #' + ticketId);
+        $('#adminHistoryTimeline').hide().empty();
+        $('#adminHistoryEmpty').hide();
+        $('#adminHistoryLoading').show();
+        document.getElementById('AdminTicketHistoryModal').style.display = 'block';
+
+        $.get('/Support/GetTicketHistory', { ticketId: ticketId }, function (data) {
+            $('#adminHistoryLoading').hide();
+            if (!data || data.length === 0) { $('#adminHistoryEmpty').show(); return; }
+            var html = '';
+            $.each(data, function (i, h) {
+                var actionKey   = h.action || '';
+                var icon        = adminActionIcons[actionKey] || '&#8226;';
+                var displayName = (h.actionByName && h.actionByName.trim()) ? h.actionByName.trim() : h.actionBy;
+                var dateStr     = new Date(h.actionOn).toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+                var commentHtml = h.comment ? '<div style="font-size:12px;color:#555;margin-top:5px;border-top:1px solid #f0f0f0;padding-top:5px;">' + escHtmlRR(h.comment) + '</div>' : '';
+                var colorMap    = { Created:'#1565c0', Closed:'#0a5c36', Reopened:'#856404' };
+                var bgMap       = { Created:'#e3f2fd', Closed:'#d1e7dd', Reopened:'#fff3cd' };
+                html +=
+                    '<div style="display:flex;gap:12px;margin-bottom:18px;">' +
+                        '<div style="flex-shrink:0;width:34px;height:34px;border-radius:50%;background:' + (bgMap[actionKey]||'#eee') + ';color:' + (colorMap[actionKey]||'#333') + ';display:flex;align-items:center;justify-content:center;font-size:16px;z-index:1;">' + icon + '</div>' +
+                        '<div style="flex:1;background:#fafafa;border:1px solid #ececec;border-radius:8px;padding:9px 13px;">' +
+                            '<div style="font-size:13px;font-weight:700;color:' + (colorMap[actionKey]||'#333') + ';">' + escHtmlRR(actionKey) + '</div>' +
+                            '<div style="font-size:11px;color:#9e9e9e;">by <strong>' + escHtmlRR(displayName) + '</strong> &nbsp;·&nbsp; ' + dateStr + '</div>' +
+                            commentHtml +
+                        '</div>' +
+                    '</div>';
+            });
+            $('#adminHistoryTimeline').html(html).show();
+        }).fail(function () {
+            $('#adminHistoryLoading').hide();
+            $('#adminHistoryEmpty').text('Failed to load history. Please try again.').show();
+        });
+    }
+    function closeAdminHistoryModal() {
+        document.getElementById('AdminTicketHistoryModal').style.display = 'none';
+    }
+    function escHtmlRR(s) {
+        if (!s) return '';
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    window.addEventListener('click', function (e) {
+        var m = document.getElementById('AdminTicketHistoryModal');
+        if (m && e.target === m) closeAdminHistoryModal();
+    });
 </script>
+
+<div id="AdminTicketHistoryModal" style="display:none;position:fixed;z-index:1060;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.5);overflow:auto;">
+    <div style="margin:80px auto;max-width:580px;">
+        <div style="border-radius:8px;overflow:hidden;position:relative;">
+            <div style="background:#3949ab;padding:14px 20px;display:flex;align-items:center;gap:10px;">
+                <span style="color:#fff;font-size:18px;">&#128336;</span>
+                <h5 style="color:#fff;margin:0;font-size:16px;font-weight:700;">Ticket History <span id="adminHistoryTicketLabel" style="font-weight:400;font-size:14px;"></span></h5>
+            </div>
+            <button onclick="closeAdminHistoryModal()" style="position:absolute;right:14px;top:14px;background:none;border:none;font-size:22px;color:#fff;cursor:pointer;z-index:10;">&times;</button>
+            <div style="background:#fff;padding:20px;max-height:460px;overflow-y:auto;position:relative;">
+                <div id="adminHistoryLoading" style="text-align:center;padding:30px;color:#9e9e9e;font-size:13px;">Loading history…</div>
+                <div id="adminHistoryTimeline" style="display:none;position:relative;padding-left:6px;">
+                    <div style="position:absolute;left:17px;top:0;bottom:0;width:2px;background:#e0e0e0;"></div>
+                </div>
+                <div id="adminHistoryEmpty" style="display:none;text-align:center;padding:30px;color:#9e9e9e;font-size:13px;">No history found for this ticket.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="~/js/twiliocallmaker.js?v=2024"></script>

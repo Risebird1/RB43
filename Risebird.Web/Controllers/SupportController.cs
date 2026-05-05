@@ -580,6 +580,17 @@ namespace Risebird.Web.Controllers
                 return Json("Please try again.");
             }
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetTicketHistory(int ticketId)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var history = await _supportService.GetTicketHistory(ticketId);
+                return Json(history ?? Enumerable.Empty<RaisedIssueHistoryVM>());
+            }
+            return Json(Enumerable.Empty<RaisedIssueHistoryVM>());
+        }
         #endregion
     }
 }
