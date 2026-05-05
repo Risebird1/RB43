@@ -52,6 +52,10 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateSelfRegistrationAsync(int id, bool completed, int? userId, int? profileId);
 
         Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email);
+
+        Task<bool> UpdatePlivoCallStatusAsync(int id, string callStatus, string conversationId,
+            DateTime? callAt, int? duration, string transcript, string summary,
+            string disposition, string onboardingPreference, bool? kycAccepted, string calledBy);
     }
 
     public class ActiveIRFItem
@@ -59,6 +63,7 @@ namespace Risebird.Repository.Interface
         public int id { get; set; }
         public string IRFId { get; set; }
         public string AssessmentGroupId { get; set; }
+        public string ClientName { get; set; }
     }
 
     public class MagDropdownItem

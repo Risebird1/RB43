@@ -478,5 +478,37 @@ namespace Risebird.Repository
             }
             catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return (null, null); }
         }
+
+        public async Task<bool> UpdatePlivoCallStatusAsync(int id, string callStatus, string conversationId,
+            DateTime? callAt, int? duration, string transcript, string summary,
+            string disposition, string onboardingPreference, bool? kycAccepted, string calledBy)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Id", id);
+                p.Add("@PlivoCallStatus", callStatus);
+                p.Add("@PlivoConversationId", conversationId);
+                p.Add("@PlivoCallAt", callAt);
+                p.Add("@PlivoCallDuration", duration);
+                p.Add("@PlivoCallTranscript", transcript);
+                p.Add("@PlivoCallSummary", summary);
+                p.Add("@PlivoProspectDisposition", disposition);
+                p.Add("@PlivoOnboardingPreference", onboardingPreference);
+                p.Add("@PlivoKycAccepted", kycAccepted);
+                p.Add("@PlivoCalledBy", calledBy);
+
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriPlivoCallStatus", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

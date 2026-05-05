@@ -56,6 +56,18 @@ namespace Risebird.Entities.Data
         public DateTime? ProspectResponseAt         { get; set; }
         public bool?    SelfRegistrationCompleted   { get; set; }
 
+        // Plivo CX voice agent call tracking
+        public string   PlivoCallStatus             { get; set; }
+        public string   PlivoConversationId         { get; set; }
+        public DateTime? PlivoCallAt                { get; set; }
+        public int?     PlivoCallDuration           { get; set; }
+        public string   PlivoCallTranscript         { get; set; }
+        public string   PlivoCallSummary            { get; set; }
+        public string   PlivoProspectDisposition    { get; set; }
+        public string   PlivoOnboardingPreference   { get; set; }
+        public bool?    PlivoKycAccepted            { get; set; }
+        public string   PlivoCalledBy               { get; set; }
+
         public string   Status                      { get; set; }
         public string   Source                      { get; set; }
         public string   ProcessedBy                 { get; set; }

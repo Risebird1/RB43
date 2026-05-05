@@ -21,5 +21,11 @@ namespace Risebird.CommonHelper.Interface
         /// (configured via PlivoCX:RescheduleTriggerEndpointUrl in appsettings.json).
         /// </summary>
         Task<PlivoCXTriggerResponse> TriggerRescheduleCallAsync(PlivoCXTriggerRequest request);
+
+        /// <summary>
+        /// Triggers the onboarding recruitment call to a prospective interviewer.
+        /// Uses PlivoCX:OnboardingTriggerEndpointUrl.
+        /// </summary>
+        Task<PlivoCXTriggerResponse> TriggerOnboardingCallAsync(PlivoCXOnboardingTriggerRequest request);
     }
 }
