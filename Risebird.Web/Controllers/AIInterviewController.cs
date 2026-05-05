@@ -1,8 +1,16 @@
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using ExcelDataReader.Log;
 using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -24,6 +32,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -54,6 +63,10 @@ namespace Risebird.Web.Controllers
         private readonly IOpenAIInterviewerAssistantHelper _openAIAssistantHelper;
         private readonly IProctoringTokenService _proctoringTokenService;
         private readonly IProctoringSessionEventRepository _proctoringSessionEventRepository;
+        private readonly ICompositeViewEngine _viewEngine;
+        private readonly ITempDataProvider _tempDataProvider;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IConverter _converter;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
@@ -62,7 +75,9 @@ namespace Risebird.Web.Controllers
             ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper,
             IIRFService iRFService, IAWSRekognitionService aWSRekognitionService, ICandidateService candidateService,
             IIRFRepository irfRepository, IOpenAIInterviewerAssistantHelper openAIAssistantHelper,
-            IProctoringTokenService proctoringTokenService, IProctoringSessionEventRepository proctoringSessionEventRepository)
+            IProctoringTokenService proctoringTokenService, IProctoringSessionEventRepository proctoringSessionEventRepository,
+            ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
+            IHttpContextAccessor contextAccessor, IConverter converter)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -81,6 +96,10 @@ namespace Risebird.Web.Controllers
             _openAIAssistantHelper = openAIAssistantHelper;
             _proctoringTokenService = proctoringTokenService;
             _proctoringSessionEventRepository = proctoringSessionEventRepository;
+            _viewEngine = viewEngine;
+            _tempDataProvider = tempDataProvider;
+            _contextAccessor = contextAccessor;
+            _converter = converter;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -1397,8 +1416,8 @@ namespace Risebird.Web.Controllers
                     .Where(c => char.IsLetter(c) || char.IsDigit(c))
                     .ToArray());
 
-                // Check if output contains too many unknown characters (�)
-                if (text.Count(c => c == '�') > 3)
+                // Check if output contains too many unknown characters ( )
+                if (text.Count(c => c == ' ') > 3)
                     return false;
 
                 // Check ratio of valid characters to overall text
@@ -1854,7 +1873,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ProctoringSessionEvents(Guid seId)
+        public async Task<IActionResult> ProctoringSessionEvents(Guid seId, bool downloadPdf = false)
         {
             var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
             if (meetingDetails == null)
@@ -1870,7 +1889,184 @@ namespace Risebird.Web.Controllers
                 Events = events
             };
             ViewData["Title"] = "Proctoring session events";
+
+            if (downloadPdf)
+            {
+                ViewBag.IsServerPdfDownload = true;
+                var html = await RenderToStringAsync("ProctoringSessionEvents", model, ViewData);
+                if (string.IsNullOrEmpty(html))
+                {
+                    return RedirectToAction("ProctoringSessionEvents", new { seId });
+                }
+
+                var siteRoot = $"{Request.Scheme}://{Request.Host.Value}{Request.PathBase}";
+                html = NormalizeHtmlForPdf(html, siteRoot);
+                html = EnsurePdfBaseTag(html, siteRoot);
+                var pdfBytes = GenerateProctoringEventsPdf(html);
+                if (pdfBytes == null || pdfBytes.Length == 0)
+                {
+                    return RedirectToAction("ProctoringSessionEvents", new { seId });
+                }
+
+                var fileName = $"ProctoringReport_{meetingDetails.InterviewId}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.pdf";
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+
             return View(model);
+        }
+
+        private async Task<string> RenderToStringAsync(string viewName, object model, ViewDataDictionary viewData = null)
+        {
+            try
+            {
+                var httpContext = _contextAccessor.HttpContext;
+                var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new ActionDescriptor());
+
+                using (var sw = new StringWriter())
+                {
+                    var viewResult = _viewEngine.FindView(actionContext, viewName, false);
+                    if (viewResult.View == null)
+                    {
+                        throw new ArgumentNullException($"The view '{viewName}' was not found.");
+                    }
+
+                    var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                    {
+                        Model = model
+                    };
+                    if (viewData != null)
+                    {
+                        foreach (var key in viewData.Keys.ToList())
+                        {
+                            viewDictionary[key] = viewData[key];
+                        }
+                    }
+
+                    var tempData = new TempDataDictionary(actionContext.HttpContext, _tempDataProvider);
+                    var viewContext = new ViewContext(
+                        actionContext,
+                        viewResult.View,
+                        viewDictionary,
+                        tempData,
+                        sw,
+                        new HtmlHelperOptions()
+                    );
+
+                    await viewResult.View.RenderAsync(viewContext);
+                    return sw.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        private static string NormalizeHtmlForPdf(string html, string siteRoot)
+        {
+            if (string.IsNullOrEmpty(html) || string.IsNullOrEmpty(siteRoot))
+            {
+                return html;
+            }
+
+            var root = siteRoot.TrimEnd('/');
+            html = Regex.Replace(
+                html,
+                @"(?<attr>href|src|action)\s*=\s*(?<q>['""])/(?!/)(?<path>[^'""#?]*)(\k<q>)",
+                m => $"{m.Groups["attr"].Value}={m.Groups["q"].Value}{root}/{m.Groups["path"].Value.TrimStart('/')}{m.Groups["q"].Value}",
+                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+            html = Regex.Replace(
+                html,
+                @"url\s*\(\s*(['""]?)(/[^'"")]+)\1\s*\)",
+                m =>
+                {
+                    var path = m.Groups[2].Value.TrimStart('/');
+                    return $"url('{root}/{path}')";
+                },
+                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+            return html;
+        }
+
+        private static string EnsurePdfBaseTag(string html, string siteRoot)
+        {
+            if (string.IsNullOrEmpty(html) || string.IsNullOrEmpty(siteRoot))
+            {
+                return html;
+            }
+
+            if (html.IndexOf("<base ", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return html;
+            }
+
+            var root = siteRoot.TrimEnd('/') + "/";
+            var headIdx = html.IndexOf("<head", StringComparison.OrdinalIgnoreCase);
+            if (headIdx < 0)
+            {
+                return html;
+            }
+
+            var gt = html.IndexOf('>', headIdx);
+            if (gt < 0)
+            {
+                return html;
+            }
+
+            return html.Insert(gt + 1, "\n<base href=\"" + root + "\">\n");
+        }
+
+        private byte[] GenerateProctoringEventsPdf(string htmlContent)
+        {
+            const int pdfJsWaitMs = 12000;
+
+            try
+            {
+                var globalSettings = new GlobalSettings
+                {
+                    ColorMode = DinkToPdf.ColorMode.Color,
+                    Orientation = Orientation.Portrait,
+                    PaperSize = DinkToPdf.PaperKind.A4,
+                    Margins = new MarginSettings { Top = 0, Bottom = 0, Left = 0, Right = 0 }
+                };
+
+                var objectSettings = new ObjectSettings
+                {
+                    PagesCount = true,
+                    HtmlContent = htmlContent,
+                    WebSettings =
+                    {
+                        DefaultEncoding = "utf-8",
+                        LoadImages = true,
+                        EnableJavascript = true,
+                        PrintMediaType = false
+                    },
+                    LoadSettings = { JSDelay = pdfJsWaitMs },
+                    HeaderSettings = { FontName = "Arial", FontSize = 8, Line = false },
+                    FooterSettings = new FooterSettings
+                    {
+                        FontName = "Arial",
+                        FontSize = 8,
+                        Right = "Page [page] / [toPage]",
+                        Line = false
+                    }
+                };
+
+                var pdf = new HtmlToPdfDocument
+                {
+                    GlobalSettings = globalSettings,
+                    Objects = { objectSettings }
+                };
+
+                return _converter.Convert(pdf);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
 
         private async Task SetProctoringEventCountForReportAsync(int interviewId)

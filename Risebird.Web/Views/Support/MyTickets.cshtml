@@ -1,0 +1,171 @@
+@model IEnumerable<Risebird.Entities.ViewModel.RaiseBugsVM>
+
+@{
+    ViewData["Title"] = "My Tickets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var filterStatus = ViewBag.FilterStatus as string ?? "All";
+}
+<script>
+    var Header = "<div>My Tickets</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<style>
+    .ticket-status-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .4px;
+    }
+    .badge-open   { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .badge-close  { background: #fce4ec; color: #c62828; border: 1px solid #ef9a9a; }
+    .filter-tabs  { display: flex; gap: 8px; margin-bottom: 14px; }
+    .filter-tab   { padding: 6px 18px; border-radius: 20px; border: 1px solid #ccc; cursor: pointer; font-size: 13px; background: #fff; color: #555; }
+    .filter-tab.active { background: #1976d2; color: #fff; border-color: #1976d2; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad">
+            <div class="card-header bg-w clearfix">
+                @* <div class="pull-left">
+                    <h4 class="card-title">My Tickets</h4>
+                </div> *@
+                <div class="pull-right" style="padding:10px 0">
+                    <div class="filter-tabs">
+                        <span class="filter-tab @(filterStatus=="All"?"active":"")"   onclick="applyFilter('All')">All</span>
+                        <span class="filter-tab @(filterStatus=="Open"?"active":"")"  onclick="applyFilter('Open')">Open</span>
+                        <span class="filter-tab @(filterStatus=="Close"?"active":"")" onclick="applyFilter('Close')">Closed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center" style="display:block;">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading mtop-10">
+                            <div style="overflow-x:auto">
+                                <table id="myTicketTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Request Type</th>
+                                            <th>Issue Description</th>
+                                            <th>Raised On</th>
+                                            <th>Status</th>
+                                            <th>Closed By</th>
+                                            <th>Closed On</th>
+                                            <th class="disabled-sorting text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Request Type</th>
+                                            <th>Issue Description</th>
+                                            <th>Raised On</th>
+                                            <th>Status</th>
+                                            <th>Closed By</th>
+                                            <th>Closed On</th>
+                                            <th class="disabled-sorting text-center">Actions</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@item.id</td>
+                                                <td>@item.RequestType</td>
+                                                <td>
+                                                    @if (!string.IsNullOrWhiteSpace(item.Comment) && item.Comment.Length > 60)
+                                                    {
+                                                        @item.Comment.Substring(0, 60)<text>…</text>
+                                                    }
+                                                    else
+                                                    {
+                                                        @item.Comment
+                                                    }
+                                                </td>
+                                                <td>@item.RequestedOn.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                                <td>
+                                                    @if (item.Status?.ToLower() == "open")
+                                                    {
+                                                        <span class="ticket-status-badge badge-open">Open</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="ticket-status-badge badge-close">Closed</span>
+                                                    }
+                                                </td>
+                                                <td>@item.ClosedBy</td>
+                                                <td>
+                                                    @if (item.ClosedOn.HasValue)
+                                                    {
+                                                        @item.ClosedOn.Value.ToString("dd MMM yyyy, hh:mm tt")
+                                                    }
+                                                </td>
+                                                <td class="text-center">
+                                                    <a href="@Url.Action("TicketDetails","Support", new { id = item.id })"
+                                                           target="_blank" rel="noopener noreferrer"
+                                                           title="View Ticket Details">
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="View Details" style="margin-right:4px;">
+                                                                <span class="mdc-fab__icon material-icons">
+                                                                    <svg style="color:white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                                                                        <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                                                                    </svg>
+                                                                </span>
+                                                            </button>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(".dataloading").hide();
+    var loader = document.getElementsByClassName("loader")[0];
+    loader.style.display = "block";
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $('#myTicketTable').DataTable({
+                pagingType: "full_numbers",
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                order: [[3, "desc"]],
+                responsive: true,
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search tickets"
+                }
+            });
+        }, 800);
+    };
+
+    function applyFilter(status) {
+        window.location.href = "@Url.Action("MyTickets","Support")?status=" + status;
+    }
+</script>

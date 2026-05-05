@@ -8,14 +8,20 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 Create Procedure usp_UpdateRaisedIssueDetails 
 @id int,
 @Comment varchar(1000),  
 @RequestedBy varchar(200),
-@RequestedOn datetime
+@RequestedOn datetime,
+@ActionByRole varchar(50) = NULL
 AS  
 BEGIN  
-Update RaisedIssues set Status='Close',StatusComment=@Comment,ClosedBy=@RequestedBy,ClosedOn=@RequestedOn where id=@id
+    UPDATE RaisedIssues
+    SET Status = 'Close', StatusComment = @Comment, ClosedBy = @RequestedBy, ClosedOn = @RequestedOn
+    WHERE id = @id;
 
+    INSERT INTO RaisedIssuesHistory(RaisedIssueId, Action, Comment, ActionBy, ActionByRole, ActionOn)
+    VALUES (@id, 'Closed', @Comment, @RequestedBy, @ActionByRole, @RequestedOn);
 END 
 GO
