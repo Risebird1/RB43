@@ -54,8 +54,9 @@ FROM  RaisedIssues ri
 INNER JOIN InterviewMeetings        im  ON im.Id           = ri.interviewId
 LEFT  JOIN InterviewComments        ic  ON ic.InterviewId  = im.Id
 LEFT  JOIN QcInterviewAIevaluation  qa  ON qa.InterviewId  = im.Id
-WHERE ri.Status      = 'Open'
-  AND ri.RequestType = 'Payment'
-  AND ri.interviewId IS NOT NULL
+WHERE ri.Status           = 'Open'
+  AND ri.RequestType      = 'Payment'
+  AND ri.interviewId      IS NOT NULL
+  AND ri.AIReviewResponse IS NULL   -- skip tickets already reviewed by AI (e.g. reopened after AI closure)
 END
 GO
