@@ -144,5 +144,8 @@ namespace Risebird.Repository.Interface
 
         Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer);
         Task<bool> SaveExternalApplicantResume(int id, string resumeLink = null);
+
+        Task<int> SaveProxyCandidateChecklist(Risebird.Entities.Data.InterviewerProxyCandidateChecklist model);
+        Task<IEnumerable<Risebird.Entities.Data.InterviewerProxyCandidateChecklist>> GetProxyCandidateChecklist(string interviewerEmail = null, int? id = null);
     }
 }
