@@ -711,6 +711,7 @@
 
     function syncPipeline(r) {
         var verdictPositive = false;
+        var step1Done = false;
         if (r.resumeAIAnalysisCompleted === true) {
             var html = r.resumeAIAnalysisResult || 'Analysis complete.';
             try {
@@ -720,6 +721,7 @@
             } catch(e){}
             if (verdictPositive) {
                 markStep(1, 'completed', html);
+                step1Done = true;
             } else {
                 markStep(1, 'failed', html + '<br/><span class="text-danger" style="font-size:11px;"><strong>Fitment negative — next step is blocked.</strong></span>');
                 $('#btnAnalyzeResume').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed');
@@ -744,6 +746,9 @@
             $('#step2Subtitle').html('<span class="text-warning">No assessment group found for MAG: <strong>' + (r.magName || '—') + '</strong>. Check MAG name or use the edit button to change it.</span>');
             $('#btnAssignAG').prop('disabled', true);
         }
+
+        // Explicit step enablement
+        if (step1Done) { $('#step2Card').removeClass('disabled'); }
     }
 
     function markStep(step, state, message) {
