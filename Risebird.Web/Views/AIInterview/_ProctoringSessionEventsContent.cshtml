@@ -1,0 +1,211 @@
+@using Risebird.CommonHelper
+@using Risebird.Entities.Data
+@using Risebird.Web.Helpers
+@using System.Linq
+@model Risebird.Entities.ViewModel.ProctoringSessionEventsResultViewModel
+@{
+    var totalEvents = Model.Events?.Count ?? 0;
+    var violationCount = Model.Events?.Count(x => !string.IsNullOrEmpty(x.Level) && x.Level.ToLowerInvariant() == "violation") ?? 0;
+    var infoCount = Model.Events?.Count(x => !string.IsNullOrEmpty(x.Level) && x.Level.ToLowerInvariant() == "info") ?? 0;
+    var sessionStart = Model.Events?.OrderBy(x => x.CreatedAtUtc).FirstOrDefault();
+    var sessionEnd = Model.Events?.OrderByDescending(x => x.CreatedAtUtc).FirstOrDefault();
+    var sessionDuration = (sessionStart != null && sessionEnd != null) ? sessionEnd.CreatedAtUtc - sessionStart.CreatedAtUtc : (System.TimeSpan?)null;
+    var durationMinutes = sessionDuration.HasValue ? sessionDuration.Value.TotalMinutes : 0;
+    var violationRatePerMin = durationMinutes > 0 ? (violationCount / durationMinutes) : 0;
+    var verdictTone = violationCount == 0 ? "low" : (violationRatePerMin <= 0.2 ? "med" : "");
+    var distinctEventTypes = Model.Events?.Select(x => x.EventKind ?? "").Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(System.StringComparer.OrdinalIgnoreCase).Count() ?? 0;
+    var sessionDurationText = sessionDuration.HasValue ? sessionDuration.Value.ToString(@"hh\h\ mm\m\ ss\s") : "—";
+    var candidateName = string.IsNullOrWhiteSpace(Model.CandidateName) ? "Candidate" : Model.CandidateName.Trim();
+    var candidateEmail = string.IsNullOrWhiteSpace(Model.CandidateEmail) ? "—" : Model.CandidateEmail.Trim();
+    var nameParts = candidateName.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
+    var initials = string.Concat(nameParts.Take(2).Select(p => char.ToUpperInvariant(p[0])));
+    if (string.IsNullOrWhiteSpace(initials)) { initials = "C"; }
+}
+
+<div class="rb-pe-wrap">
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="brand">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3z"></path></svg>
+                Risebird
+            </div>
+            <div class="breadcrumbs">
+                <span>AI Interview</span>
+                <span class="crumb-sep">/</span>
+                <span>Interview #@Model.InterviewId</span>
+                <span class="crumb-sep">/</span>
+                <span class="crumb-current">Proctoring report</span>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <div class="meta-id">
+                <div><b>Interview</b> #@Model.InterviewId</div>
+                <div>Session <span class="mono">@Model.SessionId</span></div>
+            </div>
+            <a class="btn proctoring-hide-pdf" href="@Url.Action("ProctoringSessionEvents", "AIInterview", new { seId = Model.SessionId, downloadPdf = true })" target="_blank" rel="noopener">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export PDF
+            </a>
+            <a class="btn btn-primary proctoring-hide-pdf" href="@Url.Action("Report", "AIInterview", new { seId = Model.SessionId })">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Back to AI report
+            </a>
+        </div>
+    </header>
+    <section class="hero">
+        <div class="hero-l">
+            <div class="candidate">
+                <div class="avatar">@initials</div>
+                <div>
+                    <h1>@candidateName</h1>
+                    <div class="sub">
+                        @candidateEmail
+                        <span class="dot">•</span>
+                        <span style="color:#1e293b;font-weight:500">AI Interview</span>
+                    </div>
+                </div>
+            </div>
+            <div class="session-grid">
+                <div>
+                    <label>Session start</label>
+                    <div class="v">@(sessionStart != null ? IndiaTimeHelper.FormatIstForDisplay(sessionStart.CreatedAtUtc) : "—")</div>
+                </div>
+                <div>
+                    <label>Duration</label>
+                    <div class="v">@(sessionDuration.HasValue ? sessionDuration.Value.ToString(@"hh\h\ mm\m\ ss\s") : "—")</div>
+                </div>
+                <div>
+                    <label>Total events</label>
+                    <div class="v">@totalEvents <span style="color:#64748b;font-weight:400">· @violationCount violations</span></div>
+                </div>
+                <div>
+                    <label>Session ID</label>
+                    <div class="v mono" style="font-size:12px">@Model.SessionId</div>
+                </div>
+            </div>
+        </div>
+        <aside class="verdict@(string.IsNullOrEmpty(verdictTone) ? "" : " " + verdictTone)" id="verdictCard">
+            <div class="verdict-label">Integrity assessment</div>
+            <div class="verdict-row">
+                <div class="verdict-level" id="verdictLevel">@(violationCount == 0 ? "Low risk" : (violationRatePerMin <= 0.2 ? "Moderate risk" : "High risk"))</div>
+                <div class="verdict-score">Score <b id="verdictScore">@(totalEvents > 0 ? System.Math.Max(0, 100 - ((violationCount * 100) / totalEvents)) : 100)</b>/100</div>
+            </div>
+            <div class="verdict-bar"><span style="width:@(totalEvents > 0 ? (violationCount * 100 / totalEvents) : 0)%"></span></div>
+            <div class="verdict-summary">
+                Proctoring summary generated from recorded session events.
+            </div>
+        </aside>
+    </section>
+    <div class="kpis">
+        <div class="kpi">
+            <label>Total violations</label>
+            <div class="no">@violationCount<small>/ @totalEvents events</small></div>
+            <div class="delta @(totalEvents > 0 && ((double)violationCount / totalEvents) > 0.4 ? "bad" : "")">
+                @if (totalEvents > 0)
+                {
+                    @($"{System.Math.Round((double)violationCount * 100 / totalEvents)}% of all events")
+                }
+                else
+                {
+                    @("No events captured")
+                }
+            </div>
+        </div>
+        <div class="kpi">
+            <label>Violation rate</label>
+            <div class="no">@violationRatePerMin.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)<small>/min</small></div>
+            <div class="delta @(violationRatePerMin > 0.2 ? "warn" : "")">
+                @(violationRatePerMin > 0.2 ? "High compared to baseline (<=0.2/min)" : "Within expected range")
+            </div>
+        </div>
+        <div class="kpi">
+            <label>Info events</label>
+            <div class="no">@infoCount</div>
+            <div class="delta">Non-violation telemetry rows</div>
+        </div>
+        <div class="kpi">
+            <label>Duration</label>
+            <div class="no" style="font-size:22px">@sessionDurationText</div>
+            <div class="delta">From first to last recorded event</div>
+        </div>
+        <div class="kpi">
+            <label>Distinct event types</label>
+            <div class="no">@distinctEventTypes</div>
+            <div class="delta">Unique values in event kind</div>
+        </div>
+    </div>
+
+    @if (Model.Events == null || !Model.Events.Any())
+    {
+        <div class="rb-pe-empty">
+            <i class="fa fa-inbox" style="font-size:2rem;opacity:.35;display:block;margin-bottom:12px;"></i>
+            No proctoring events have been stored for this interview yet.
+        </div>
+    }
+    else
+    {
+        var allEvents = Model.Events.OrderBy(x => x.CreatedAtUtc).ToList();
+        var highEvents = allEvents.Count(x => string.Equals(x.Level, "violation", System.StringComparison.OrdinalIgnoreCase));
+        var medEvents = allEvents.Count(x => string.Equals(x.Level, "info", System.StringComparison.OrdinalIgnoreCase));
+        var lowEvents = allEvents.Count - highEvents - medEvents;
+        if (lowEvents < 0) { lowEvents = 0; }
+        <section class="card" style="margin-top:20px">
+            <div class="card-head">
+                <div>
+                    <h2>Flagged incidents</h2>
+                    <div class="desc">Consecutive related events grouped into single incidents. Click any row for full evidence.</div>
+                </div>
+                <div class="filters" id="incFilters">
+                    <button class="chip active" data-incf="all">All <span class="ct" id="ctAll">·@allEvents.Count</span></button>
+                    <button class="chip" data-incf="high">High <span class="ct">·@highEvents</span></button>
+                    <button class="chip" data-incf="med">Medium <span class="ct">·@medEvents</span></button>
+                    <button class="chip" data-incf="low">Low <span class="ct">·@lowEvents</span></button>
+                </div>
+            </div>
+            <div class="incidents" id="incidents">
+                @foreach (var ev in allEvents)
+                {
+                    var reasonText = ProctoringEventDisplayHelper.GetReasonTextForDisplay(ev);
+                    var reason = string.IsNullOrWhiteSpace(reasonText) ? "No reason available." : reasonText;
+                    var kind = string.IsNullOrWhiteSpace(ev.EventKind) ? "telemetry" : ev.EventKind;
+                    var level = (ev.Level ?? "").ToLowerInvariant();
+                    var sev = level == "violation" ? "high" : (level == "info" ? "med" : "low");
+                    var sevLabel = sev == "high" ? "High" : (sev == "med" ? "Medium" : "Low");
+                    var iconSvg = sev == "high"
+                    ? "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"3\"></circle><path d=\"M3 7V5a2 2 0 0 1 2-2h2\"></path><path d=\"M17 3h2a2 2 0 0 1 2 2v2\"></path><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\"></path><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\"></path></svg>"
+                    : (sev == "med"
+                    ? "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"></rect><line x1=\"3\" y1=\"9\" x2=\"21\" y2=\"9\"></line></svg>"
+                    : "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z\"></path><circle cx=\"15\" cy=\"12\" r=\"1.5\" fill=\"currentColor\"></circle></svg>");
+                    <div class="incident sev-@sev" data-sev="@sev" data-id="@ev.Id">
+                        <div class="time">@ev.CreatedAtUtc.ToString("HH:mm:ss")</div>
+                        <div class="icon">@Html.Raw(iconSvg)</div>
+                        <div class="title">@reason</div>
+                        <div class="dur">—</div>
+                        <span class="pill @sev">@sevLabel</span>
+                        <div class="chev">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </div>
+                    <div class="incident-detail">
+                        <dl class="ev-grid">
+                            <dt>Type</dt>
+                            <dd>@kind</dd>
+                            <dt>Host</dt>
+                            <dd><code>@Model.SessionId</code></dd>
+                            <dt>Tab</dt>
+                            <dd>AI Interview - Risebird</dd>
+                            <dt>Detection source</dt>
+                            <dd><code>@(string.IsNullOrWhiteSpace(ev.EventKind) ? "telemetry" : ev.EventKind)</code></dd>
+                            <dt>Evidence</dt>
+                            <dd>@reason</dd>
+                            <dt>Event count</dt>
+                            <dd>1</dd>
+                            <dt>Severity rationale</dt>
+                            <dd>@(level == "violation" ? "Marked as violation in session telemetry." : "Informational/non-violation telemetry row.")</dd>
+                        </dl>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+</div>

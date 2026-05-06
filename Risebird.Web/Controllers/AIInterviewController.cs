@@ -1892,8 +1892,7 @@ namespace Risebird.Web.Controllers
 
             if (downloadPdf)
             {
-                ViewBag.IsServerPdfDownload = true;
-                var html = await RenderToStringAsync("ProctoringSessionEvents", model, ViewData);
+                var html = await RenderToStringAsync("ProctoringSessionEventsPdf", model, ViewData);
                 if (string.IsNullOrEmpty(html))
                 {
                     return RedirectToAction("ProctoringSessionEvents", new { seId });
@@ -1908,7 +1907,18 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("ProctoringSessionEvents", new { seId });
                 }
 
-                var fileName = $"ProctoringReport_{meetingDetails.InterviewId}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.pdf";
+                // Match app pattern from GenerateClientReportPDFFile: sanitize name with Path invalid chars; date in requested MM-dd-yyyy
+                var baseName = string.IsNullOrWhiteSpace(meetingDetails.candidateName)
+                    ? "ProctoringReport"
+                    : string.Join("_", meetingDetails.candidateName.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries)).Trim();
+                if (string.IsNullOrEmpty(baseName))
+                {
+                    baseName = "ProctoringReport";
+                }
+
+                // Match client GenerateClientReportPDFFile: {CandidateName}_{d}_{M}_{yyyy}.pdf (local date)
+                var n = DateTime.Now;
+                var fileName = $"{baseName}_{n.Day}_{n.Month}_{n.Year}.pdf";
                 return File(pdfBytes, "application/pdf", fileName);
             }
 
