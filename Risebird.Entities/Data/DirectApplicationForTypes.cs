@@ -21,5 +21,6 @@
         public static readonly string TranscriptToNotesAssistantId = "TranscriptToNotesAssistantId";
         public static readonly string QcInterviewAIAssistantId = "QcInterviewAIMerge";
         public static readonly string ContradictionReportAIAssistantId = "ContradictionReport";
+        public static readonly string PaymentTicketReviewAssistantId = "PaymentTicketReview";
     }
 }

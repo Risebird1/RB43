@@ -225,10 +225,165 @@ namespace Risebird.Repository
                 parameters.Add("@Comment", model.Comment);
                 parameters.Add("@RequestedBy", model.RequestedBy);
                 parameters.Add("@RequestedOn", DateTime.Now);
+                parameters.Add("@ActionByRole", model.Requester);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "usp_UpdateRaisedIssueDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<IEnumerable<RaiseBugsVM>> GetMyRaisedIssues(string requestedBy)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@RequestedBy", requestedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<RaiseBugsVM>(con, "usp_GetMyRaisedIssues", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<RaiseBugsVM> GetRaisedIssueById(int id)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<RaiseBugsVM>(con, "usp_GetRaisedIssueById", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> ReopenRaisedIssue(int id, string comment, string actionBy, string actionByRole)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                parameters.Add("@Comment", comment);
+                parameters.Add("@ActionBy", actionBy);
+                parameters.Add("@ActionByRole", actionByRole);
+                parameters.Add("@ActionOn", DateTime.Now);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_ReopenRaisedIssue", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<IEnumerable<RaisedIssueHistoryVM>> GetRaisedIssueHistory(int raisedIssueId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@RaisedIssueId", raisedIssueId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<RaisedIssueHistoryVM>(con, "usp_GetRaisedIssueHistory", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<PaymentTicketReviewVM>> GetOpenPaymentTicketsForReview()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<PaymentTicketReviewVM>(con,
+                        "usp_GetOpenPaymentRaisedIssues",
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> SaveRaisedIssueAIResponse(int ticketId, string aiResponseJson,
+            string statusComment, string closedBy, DateTime closedOn, bool closeTicket)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@TicketId",        ticketId);
+                parameters.Add("@AIReviewResponse", aiResponseJson);
+                parameters.Add("@StatusComment",    statusComment);
+                parameters.Add("@ClosedBy",         closedBy);
+                parameters.Add("@ClosedOn",         closedOn);
+                parameters.Add("@CloseTicket",      closeTicket ? 1 : 0);
+                parameters.Add("@ActionByRole",     "System");
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_SaveRaisedIssueAIResponse", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> UpdateQCPenaltyFromAIReview(int interviewId, int revisedPenaltyPct,
+            string updatedMergedDetails, string reasoningComment)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@InterviewId",          interviewId);
+                parameters.Add("@RevisedPenaltyPct",    revisedPenaltyPct);
+                parameters.Add("@UpdatedMergedDetails", updatedMergedDetails);
+                parameters.Add("@ReasoningComment",     reasoningComment);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_UpdateQCPenaltyFromAIReview", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }

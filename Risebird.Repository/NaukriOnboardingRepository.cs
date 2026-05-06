@@ -387,5 +387,128 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<bool> UpdateSelectedIRFAsync(int id, int irfId, string irfName, string applicationLink, int? assessmentGroupId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Id", id);
+                p.Add("@SelectedIRFId", irfId);
+                p.Add("@SelectedIRFName", irfName);
+                p.Add("@ApplicationLink", applicationLink);
+                p.Add("@AssessmentGroupId", assessmentGroupId);
+                await con.ExecuteAsync("usp_UpdateNaukriSelectedIRF", p, commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        public async Task<bool> UpdateInvitationEmailSentAsync(int id)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync("usp_UpdateNaukriInvitationEmail", new { Id = id }, commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        public async Task<bool> UpdateProspectResponseAsync(int id, string response)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Id", id);
+                p.Add("@ProspectResponse", response);
+                await con.ExecuteAsync("usp_UpdateNaukriProspectResponse", p, commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        public async Task<List<ActiveIRFItem>> GetActiveIRFsByAssessmentGroupIdAsync(int assessmentGroupId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var result = await con.QueryAsync<ActiveIRFItem>(
+                    "usp_GetActiveIRFsByAssessmentGroupId",
+                    new { AssessmentGroupId = assessmentGroupId },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return result?.AsList() ?? new List<ActiveIRFItem>();
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return new List<ActiveIRFItem>(); }
+        }
+
+        public async Task<bool> UpdateSelfRegistrationAsync(int id, bool completed, int? userId, int? profileId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(
+                    @"UPDATE NaukriProspectiveInterviewer
+                      SET SelfRegistrationCompleted = @Completed,
+                          OnboardedUserId = ISNULL(@UserId, OnboardedUserId),
+                          OnboardedProfileId = ISNULL(@ProfileId, OnboardedProfileId),
+                          OnboardingCompleted = CASE WHEN @Completed = 1 THEN 1 ELSE OnboardingCompleted END,
+                          Status = CASE WHEN @Completed = 1 THEN 'Onboarded' ELSE Status END,
+                          UpdatedAt = GETUTCDATE()
+                      WHERE Id = @Id",
+                    new { Id = id, Completed = completed, UserId = userId, ProfileId = profileId },
+                    commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        public async Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var row = await con.QueryFirstOrDefaultAsync<dynamic>(
+                    "SELECT TOP 1 ul.id AS UserId, ip.Id AS ProfileId FROM UserList ul LEFT JOIN InterviewerProfile ip ON ip.UserId = ul.id WHERE LOWER(LTRIM(RTRIM(ul.EmailId))) = @Email AND ul.IsActive = 1",
+                    new { Email = email.Trim().ToLower() }, commandTimeout: 30);
+                if (row == null) return (null, null);
+                return ((int?)row.UserId, (int?)row.ProfileId);
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return (null, null); }
+        }
+
+        public async Task<bool> UpdatePlivoCallStatusAsync(int id, string callStatus, string conversationId,
+            DateTime? callAt, int? duration, string transcript, string summary,
+            string disposition, string onboardingPreference, bool? kycAccepted, string calledBy)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Id", id);
+                p.Add("@PlivoCallStatus", callStatus);
+                p.Add("@PlivoConversationId", conversationId);
+                p.Add("@PlivoCallAt", callAt);
+                p.Add("@PlivoCallDuration", duration);
+                p.Add("@PlivoCallTranscript", transcript);
+                p.Add("@PlivoCallSummary", summary);
+                p.Add("@PlivoProspectDisposition", disposition);
+                p.Add("@PlivoOnboardingPreference", onboardingPreference);
+                p.Add("@PlivoKycAccepted", kycAccepted);
+                p.Add("@PlivoCalledBy", calledBy);
+
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriPlivoCallStatus", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
