@@ -61,20 +61,11 @@ namespace Risebird.Entities.ViewModel
         // ── Convenience helpers ────────────────────────────────────────────
 
         /// <summary>
-        /// True when the AI's decision warrants closing / resolving the ticket.
-        /// Covers "reduce" (partial revert) and "approve" (full revert).
-        /// </summary>
-        public bool ShouldClose =>
-            DecisionSummary?.DecisionInFavorOfInterviewer == true &&
-            !string.Equals(DecisionSummary?.FinalDecision, "reject",
-                System.StringComparison.OrdinalIgnoreCase);
-
-        /// <summary>
-        /// True when QC penalty values need to be updated in the DB
-        /// (i.e. any decision other than full rejection).
+        /// True when QC penalty values need to be updated in the DB.
+        /// Only applies when the AI reduced or fully approved the revert.
         /// </summary>
         public bool ShouldUpdateQCPenalty =>
-            ShouldClose &&
+            RevisedPenaltyAmount != null &&
             string.Equals(DecisionSummary?.FinalDecision, "reduce",
                 System.StringComparison.OrdinalIgnoreCase);
 

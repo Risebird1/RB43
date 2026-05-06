@@ -150,31 +150,22 @@ public class PaymentTicketAIReviewJob
                             qcUpdated);
                     }
 
-                    // ── 5b. Save AI response JSON + close (or keep open) ───────
+                    // ── 5b. Save AI response JSON and always close the ticket ──
                     bool saved = await _supportService.SaveRaisedIssueAIResponse(
-                        ticketId: ticket.TicketId,
+                        ticketId:       ticket.TicketId,
                         aiResponseJson: aiRawJson,
-                        statusComment: statusComment,
-                        closedBy: "AI-PaymentTicketReview",
-                        closedOn: now,
-                        closeTicket: verdict.ShouldClose);
+                        statusComment:  statusComment,
+                        closedBy:       "AI-PaymentTicketReview",
+                        closedOn:       now,
+                        closeTicket:    true);   // always close regardless of verdict
 
-                    if (verdict.ShouldClose)
-                    {
-                        _logger.LogInformation(
-                            "PaymentTicketAIReviewJob: TicketId={TicketId} resolved (decision={decision}). " +
-                            "AI response saved. Success={ok}",
-                            ticket.TicketId,
-                            verdict.DecisionSummary.FinalDecision,
-                            saved);
-                    }
-                    else
-                    {
-                        _logger.LogInformation(
-                            "PaymentTicketAIReviewJob: TicketId={TicketId} REJECTED by AI — " +
-                            "ticket kept open, history note added. Success={ok}",
-                            ticket.TicketId, saved);
-                    }
+                    _logger.LogInformation(
+                        "PaymentTicketAIReviewJob: TicketId={TicketId} closed (decision={decision}, " +
+                        "inFavor={favor}). AI response saved. Success={ok}",
+                        ticket.TicketId,
+                        verdict.DecisionSummary.FinalDecision,
+                        verdict.DecisionSummary.DecisionInFavorOfInterviewer,
+                        saved);
                 }
                 catch (Exception ex)
                 {
