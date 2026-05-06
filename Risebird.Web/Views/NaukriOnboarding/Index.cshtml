@@ -821,6 +821,9 @@
     }
 
     function syncPipeline(r) {
+        var step1Done = false, step2Done = false, step3Done = false;
+        var step1Blocked = false;
+
         // Step 1: Parse Resume
         if (r.resumeParseCompleted === true) {
             var statusMsg = '';
@@ -829,11 +832,11 @@
                           + '<br/><span style="color:#842029;font-size:12px;font-weight:500;"><i class="fas fa-info-circle me-1"></i>Please edit the email to an alternative email address for this prospect to continue.</span>';
                 markStep(1, 'failed', buildStep1Html(r.parsedEmail, r.parsedPhone, statusMsg));
                 $('#step1Subtitle').html('<span style="color:#842029;font-size:11px;font-weight:500;">Duplicate email \u2014 edit to proceed</span>');
-                $('#step2Card, #step3Card, #step4Card').addClass('disabled');
-                $('#step2Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 parsed email is a duplicate. Edit the email in Step 1 first.</span>');
+                step1Blocked = true;
             } else {
                 statusMsg = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>New prospect \u2014 ready to proceed.</span>';
                 markStep(1, 'completed', buildStep1Html(r.parsedEmail, r.parsedPhone, statusMsg));
+                step1Done = true;
             }
         } else if (!r.hasResumeLink) {
             $('#step1Subtitle').html('No resume available. <strong>Upload a resume to proceed.</strong>');
@@ -845,6 +848,7 @@
             markStep(2, 'completed', '<strong>Channel:</strong> ' + r.selectedIRFName + ' (IRF #' + r.selectedIRFId + ')' +
                 (r.applicationLink ? '<br/><span style="font-size:11px;"><strong>Link:</strong> <a href="' + r.applicationLink + '" target="_blank" style="word-break:break-all;">' + r.applicationLink + '</a></span>' : ''));
             $('#step2Controls').hide();
+            step2Done = true;
         } else {
             if (r.magName && r.resolvedAssessmentGroupId) {
                 $('#step2MagSearch').val(r.magName + (r.assessmentGroupName ? ' \u2192 ' + r.assessmentGroupName : ''));
@@ -860,8 +864,7 @@
             if (r.invitationEmailSentAt) html3 += ' on ' + r.invitationEmailSentAt;
             markStep(3, 'completed', html3);
             $('#btnSendInvitation').hide(); $('#btnResendInvitation').show();
-        } else if (!r.selectedIRFId || !r.parsedEmail) {
-            $('#step3Card').addClass('disabled');
+            step3Done = true;
         }
 
         // Step 4: Track Progress
@@ -880,10 +883,17 @@
                 html4r += '<br/><span style="color:#3498db;font-weight:500;"><i class="fas fa-info-circle me-1"></i>Prospect needs more information. Contact them to clarify.</span>';
             }
             markStep(4, 'failed', html4r);
-            $('#step4Card').removeClass('disabled');
-        } else if (r.invitationEmailSent === true) {
-            $('#step4Card').removeClass('disabled');
-            $('#step4Subtitle').html('Waiting for prospect to respond or self-register...');
+        }
+
+        // ── Explicit step enablement pass ──
+        if (step1Blocked) {
+            $('#step2Card, #step3Card, #step4Card').addClass('disabled');
+            $('#step2Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 parsed email is a duplicate. Edit the email in Step 1 first.</span>');
+        } else {
+            if (step1Done) $('#step2Card').removeClass('disabled');
+            if (step2Done) $('#step3Card').removeClass('disabled');
+            if (step3Done) { $('#step4Card').removeClass('disabled'); $('#step4Subtitle').html('Waiting for prospect to respond or self-register...'); }
+            else if (r.invitationEmailSent === true) { $('#step4Card').removeClass('disabled'); $('#step4Subtitle').html('Waiting for prospect to respond or self-register...'); }
         }
     }
 
@@ -984,6 +994,7 @@
                     } else {
                         statusMsg = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message||'New prospect.') + '</span>';
                         markStep(1, 'completed', buildStep1Html(res.parsedEmail, res.parsedPhone, statusMsg));
+                        $('#step2Card').removeClass('disabled');
                     }
                     $('#mgmParsedEmail').text(res.parsedEmail || '\u2014');
                     $('#mgmParsedPhone').text(res.parsedPhone || '\u2014');
@@ -1076,6 +1087,7 @@
                     markStep(2, 'completed', '<strong>Channel:</strong> ' + irfName + ' (IRF #' + irfId + ')' +
                         (res.applicationLink ? '<br/><span style="font-size:11px;"><strong>Link:</strong> <a href="' + res.applicationLink + '" target="_blank" style="word-break:break-all;">' + res.applicationLink + '</a></span>' : ''));
                     $('#step2Controls').hide();
+                    $('#step3Card').removeClass('disabled');
                     if (currentRecord) { currentRecord.selectedIRFId = parseInt(irfId); currentRecord.selectedIRFName = irfName; currentRecord.applicationLink = res.applicationLink; }
                 } else {
                     markStep(2, 'failed', res.error || 'Failed to save.');
@@ -1229,7 +1241,13 @@
                             $('#step1Card').removeClass('failed').addClass('completed');
                             $('#step1Number').removeClass('failed').addClass('completed');
                             $('#step2Card').removeClass('disabled');
-                            $('#step2Subtitle').text('Choose the correct MAG and an active skill channel to generate the application link');
+                            $('#step2Subtitle').html(defaultSubtitles[2]);
+                            if (currentRecord && currentRecord.selectedIRFId && currentRecord.selectedIRFName) {
+                                $('#step3Card').removeClass('disabled');
+                            }
+                            if (currentRecord && currentRecord.invitationEmailSent === true) {
+                                $('#step4Card').removeClass('disabled');
+                            }
                         }
                         $('#step1Result .s1-status-msg').html(newStatusMsg);
                     } else {
