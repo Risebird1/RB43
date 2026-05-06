@@ -822,6 +822,59 @@ namespace Risebird.Web.Controllers
                 _configuration,
                 sid.ToString(),
                 issueProctoringBootstrapEvenIfMeetingStatusTerminal: true);
+            ViewBag.ProctoringSessionId = sid.ToString();
+            ViewBag.ProctoringBackendBaseUrl = ResolveProctoringBackendBaseUrl();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProctoringBootstrap(Guid sid)
+        {
+            var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(sid);
+            if (meetingDetails == null)
+                return NotFound(new { ok = false, error = "AI interview session not found." });
+
+            var interviewId = meetingDetails.InterviewId > 0
+                ? meetingDetails.InterviewId
+                : (meetingDetails.id > 0 ? meetingDetails.id : meetingDetails.imid);
+            if (interviewId <= 0)
+                return BadRequest(new { ok = false, error = "Invalid interview mapping for this session." });
+
+            var candidateEmail = meetingDetails.candidateEmail ?? string.Empty;
+            var candidateName = meetingDetails.candidateName ?? string.Empty;
+            var sessionToken = _proctoringTokenService.CreateToken(candidateEmail, interviewId, sid.ToString());
+
+            var restrictedDomains = _configuration.GetSection("Proctoring:RestrictedDomains").Get<string[]>()
+                ?? new[] { "google.com", "stackoverflow.com", "chat.openai.com" };
+            var allowedHosts = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                Request.Host.Host,
+                "portal.risebird.io"
+            };
+
+            return Json(new
+            {
+                ok = true,
+                payload = new
+                {
+                    interviewId,
+                    sessionId = sid.ToString(),
+                    candidateEmail,
+                    candidateName,
+                    sessionToken,
+                    backendUrl = ResolveProctoringBackendBaseUrl(),
+                    restrictedDomains,
+                    allowedExamHosts = allowedHosts.ToArray(),
+                    clipboardBlocking = _configuration.GetValue("Proctoring:ClipboardBlocking", true)
+                }
+            });
+        }
+
+        private string ResolveProctoringBackendBaseUrl()
+        {
+            var configured = _configuration["ProctoringSettings:BackendBaseUrl"];
+            if (!string.IsNullOrWhiteSpace(configured))
+                return configured.TrimEnd('/');
+            return $"{Request.Scheme}://{Request.Host.Value}";
         }
 
         [HttpPost]

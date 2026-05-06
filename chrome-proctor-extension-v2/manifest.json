@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Risebird Proctoring Screen Monitor",
+  "description": "Monitor-only screen-share proctoring extension with backend telemetry and policy enforcement.",
+  "version": "1.0.0",
+  "action": {
+    "default_title": "Risebird Proctoring",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "scripting",
+    "alarms",
+    "declarativeNetRequest",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content-monitor.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "restricted_sites",
+        "enabled": false,
+        "path": "rules/restricted-sites.json"
+      }
+    ]
+  }
+}

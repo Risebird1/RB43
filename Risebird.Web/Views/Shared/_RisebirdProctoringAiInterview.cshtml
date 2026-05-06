@@ -4,9 +4,11 @@
     <script type="application/json" id="risebird-proctoring-bootstrap">
 @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new {
             interviewId = ViewBag.ProctoringInterviewId,
+            sessionId = ViewBag.ProctoringSessionId ?? "",
             sessionToken = ViewBag.ProctoringToken,
             name = ViewBag.ProctoringCandidateName ?? "",
             email = ViewBag.ProctoringCandidateEmail ?? "",
+            backendUrl = ViewBag.ProctoringBackendBaseUrl ?? "",
             restrictedDomains = ViewBag.ProctoringRestrictedDomains,
             allowedExamHosts = ViewBag.ProctoringAllowedExamHosts,
             clipboardBlocking = ViewBag.ProctoringClipboardBlocking,
@@ -19,13 +21,17 @@
         (function () {
             var cfg = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new {
                 interviewId = ViewBag.ProctoringInterviewId,
+                sessionId = ViewBag.ProctoringSessionId ?? "",
                 sessionToken = ViewBag.ProctoringToken,
                 name = ViewBag.ProctoringCandidateName ?? "",
                 email = ViewBag.ProctoringCandidateEmail ?? "",
+                backendUrl = ViewBag.ProctoringBackendBaseUrl ?? "",
                 restrictedDomains = ViewBag.ProctoringRestrictedDomains,
                 allowedExamHosts = ViewBag.ProctoringAllowedExamHosts,
                 clipboardBlocking = ViewBag.ProctoringClipboardBlocking
             }));
+            var bootstrapSid = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((string)(ViewBag.ProctoringSessionId ?? string.Empty)));
+            var bootstrapApiUrl = '/AIInterview/GetProctoringBootstrap?sid=' + encodeURIComponent(bootstrapSid || '');
             var meetingStartMs = Date.parse(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ProctoringMeetingStartIso ?? "")));
             var meetingEndMs = Date.parse(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ProctoringMeetingEndIso ?? "")));
             if (isNaN(meetingStartMs)) meetingStartMs = 0;
@@ -65,6 +71,71 @@
             var monitoringStarted = false;
             var meetingEndNotified = false;
             var proctoringWired = false;
+            var proctorSessionKey = 'rb-proctoring-' + (cfg.sessionId || cfg.interviewId || 'default');
+            var priorSetupDone = false;
+            var priorJoinDone = false;
+            try {
+                priorSetupDone = window.sessionStorage.getItem(proctorSessionKey + '-setup-done') === '1';
+                priorJoinDone = window.sessionStorage.getItem(proctorSessionKey + '-join-done') === '1';
+            } catch (e) { }
+            var modalHost = null;
+            var modalStatusEl = null;
+            var modalSubStatusEl = null;
+            function ensureProctoringModal() {
+                if (modalHost) return;
+                modalHost = document.createElement('div');
+                modalHost.id = 'risebird-proctoring-startup-modal';
+                modalHost.style.position = 'fixed';
+                modalHost.style.inset = '0';
+                modalHost.style.background = 'rgba(0, 0, 0, 0.55)';
+                modalHost.style.zIndex = '99999';
+                modalHost.style.display = 'none';
+                modalHost.style.alignItems = 'center';
+                modalHost.style.justifyContent = 'center';
+                modalHost.innerHTML = ''
+                    + '<div style="width: min(500px, 92vw); background: #fff; border-radius: 10px; box-shadow: 0 10px 35px rgba(0,0,0,.25);">'
+                    + '  <div style="padding: 16px 18px; border-bottom: 1px solid #ececec;">'
+                    + '    <h3 style="margin: 0; font-size: 18px; color: #111827;">Proctoring Setup</h3>'
+                    + '  </div>'
+                    + '  <div style="padding: 16px 18px;">'
+                    + '    <p id="risebird-proctoring-modal-status" style="margin: 0; font-size: 14px; color: #111827;"></p>'
+                    + '    <p id="risebird-proctoring-modal-substatus" style="margin: 8px 0 0; font-size: 12px; color: #4b5563;"></p>'
+                    + '  </div>'
+                    + '</div>';
+                document.body.appendChild(modalHost);
+                modalStatusEl = document.getElementById('risebird-proctoring-modal-status');
+                modalSubStatusEl = document.getElementById('risebird-proctoring-modal-substatus');
+            }
+            function showProctoringModal(statusText, subText) {
+                ensureProctoringModal();
+                if (modalStatusEl) modalStatusEl.textContent = statusText || 'Initializing proctoring...';
+                if (modalSubStatusEl) modalSubStatusEl.textContent = subText || '';
+                modalHost.style.display = 'flex';
+            }
+            function hideProctoringModal() {
+                if (!modalHost) return;
+                modalHost.style.display = 'none';
+            }
+            async function fetchBootstrapFromBackend() {
+                if (!bootstrapSid) return;
+                try {
+                    var res = await fetch(bootstrapApiUrl, { method: 'GET', credentials: 'same-origin' });
+                    if (!res.ok) return;
+                    var json = await res.json();
+                    if (!json || json.ok !== true || !json.payload) return;
+                    cfg.interviewId = json.payload.interviewId || cfg.interviewId;
+                    cfg.sessionId = json.payload.sessionId || cfg.sessionId;
+                    cfg.sessionToken = json.payload.sessionToken || cfg.sessionToken;
+                    cfg.name = json.payload.candidateName || cfg.name;
+                    cfg.email = json.payload.candidateEmail || cfg.email;
+                    cfg.backendUrl = json.payload.backendUrl || cfg.backendUrl;
+                    cfg.restrictedDomains = json.payload.restrictedDomains || cfg.restrictedDomains;
+                    cfg.allowedExamHosts = json.payload.allowedExamHosts || cfg.allowedExamHosts;
+                    if (typeof json.payload.clipboardBlocking !== 'undefined') cfg.clipboardBlocking = json.payload.clipboardBlocking;
+                } catch (e) {
+                    // Fallback to server-rendered cfg.
+                }
+            }
             function endProctoringSession() {
                 if (meetingEndNotified) return;
                 meetingEndNotified = true;
@@ -75,6 +146,10 @@
             function tryStartMonitoring(reason) {
                 if (monitoringStarted) return;
                 if (!joinSent) return;
+                if (priorSetupDone) {
+                    monitoringStarted = true;
+                    return;
+                }
                 var now = Date.now();
                 if (now > meetingEndMs) return;
                 var byRecording = reason === 'recording';
@@ -83,6 +158,7 @@
                 var byImmediate = reason === 'immediate';
                 if (!byRecording && !bySchedule && !byImmediate) return;
                 monitoringStarted = true;
+                try { window.sessionStorage.setItem(proctorSessionKey + '-setup-done', '1'); priorSetupDone = true; } catch (e3) { }
                 emitProctoring({ type: 'RB_COMPLETE_TEST_SETUP' });
             }
             var helloIntervalId = null;
@@ -97,11 +173,21 @@
                 clearHelloInterval();
                 joinSent = true;
                 emitProctoring({ type: 'RB_PROCTORING_JOIN', payload: cfg });
+                try { window.sessionStorage.setItem(proctorSessionKey + '-join-done', '1'); priorJoinDone = true; } catch (e4) { }
                 tryStartMonitoring('immediate');
+                if (!priorSetupDone) {
+                    showProctoringModal('Proctoring started.', 'Your session is now being monitored.');
+                    window.setTimeout(hideProctoringModal, 1200);
+                } else {
+                    hideProctoringModal();
+                }
             }
             function wire() {
                 if (proctoringWired) return;
                 proctoringWired = true;
+                if (!priorSetupDone) {
+                    showProctoringModal('Starting proctoring...', 'Fetching secure session details and connecting extension.');
+                }
                 function handleExtensionSignal(data) {
                     if (!data || typeof data !== 'object') return;
                     var t = data.type;
@@ -145,7 +231,19 @@
                     console.info('[Risebird Proctoring] postMessage target is * (localhost). Extension manifest must match this page, e.g. http://localhost:*/* and https://localhost:*/*');
                 }
                 // JOIN immediately so the extension receives candidate + session without waiting for READY or user interaction.
-                try { onExtensionReady(); } catch (e0) { }
+                if (!priorJoinDone) {
+                    try { onExtensionReady(); } catch (e0) { }
+                    window.setTimeout(function () {
+                        if (joinSent || priorSetupDone) return;
+                        showProctoringModal(
+                            'Waiting for proctoring extension...',
+                            'Please keep this tab open. If needed, install/enable the Risebird proctoring extension.'
+                        );
+                    }, 3500);
+                } else {
+                    joinSent = true;
+                    hideProctoringModal();
+                }
                 document.addEventListener('risebird-proctoring-recording-started', function () {
                     tryStartMonitoring('recording');
                 });
@@ -176,10 +274,14 @@
                 });
             }
             function scheduleWire() {
-                function run() {
+                async function run() {
+                    if (!priorSetupDone) {
+                        showProctoringModal('Starting proctoring...', 'Fetching secure session details and connecting extension.');
+                    }
+                    await fetchBootstrapFromBackend();
                     try { wire(); } catch (e) { }
                 }
-                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { run(); });
                 else run();
             }
             scheduleWire();

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Risebird Proctoring</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Risebird Proctoring</h1>
+
+      <section class="card">
+        <label for="backendBaseUrl">Backend URL</label>
+        <input id="backendBaseUrl" type="url" placeholder="https://your-domain.com" autocomplete="off" />
+
+        <label for="sessionToken">Session Token</label>
+        <input id="sessionToken" type="password" placeholder="JWT session token" autocomplete="off" />
+
+        <label for="sessionId">Session ID</label>
+        <input id="sessionId" type="text" placeholder="Interview session id" autocomplete="off" />
+
+        <label for="candidateId">Candidate ID (optional)</label>
+        <input id="candidateId" type="text" placeholder="Candidate identifier" autocomplete="off" />
+      </section>
+
+      <section class="card">
+        <h2>Policy (Dashboard Controlled)</h2>
+        <p id="policyHint">
+          Restricted domains and allowed hosts are pushed by dashboard/session handshake and are not editable here.
+        </p>
+        <div class="policy-grid">
+          <div>
+            <strong>Restricted domains</strong>
+            <ul id="restrictedDomainsList" class="pill-list"></ul>
+          </div>
+          <div>
+            <strong>Allowed hosts</strong>
+            <ul id="allowedHostsList" class="pill-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Session Diagnostics</h2>
+        <div id="status" class="status status-idle">Inactive</div>
+        <dl class="diag-list">
+          <dt>Violations</dt>
+          <dd id="violationsCount">0</dd>
+          <dt>Screenshot uploads</dt>
+          <dd id="screenshotUploads">0</dd>
+          <dt>Last screenshot</dt>
+          <dd id="lastScreenshotAt">Never</dd>
+        </dl>
+      </section>
+
+      <section class="card">
+        <h2>Recent Event Logs</h2>
+        <ul id="recentEventsList" class="event-list"></ul>
+      </section>
+
+      <section class="actions">
+        <button id="startBtn" class="btn btn-primary" type="button">Start Proctoring</button>
+        <button id="stopBtn" class="btn btn-secondary" type="button">Stop</button>
+        <button id="refreshBtn" class="btn" type="button">Refresh Status</button>
+      </section>
+
+      <p id="message" class="message"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

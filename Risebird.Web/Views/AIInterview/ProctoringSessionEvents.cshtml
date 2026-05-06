@@ -1,6 +1,7 @@
 @using Risebird.CommonHelper
 @using Risebird.Entities.Data
 @using Risebird.Web.Helpers
+@using Newtonsoft.Json.Linq
 @using System.Linq
 @model Risebird.Entities.ViewModel.ProctoringSessionEventsResultViewModel
 @{
@@ -2324,6 +2325,27 @@
         var medEvents = allEvents.Count(x => string.Equals(x.Level, "info", System.StringComparison.OrdinalIgnoreCase));
         var lowEvents = allEvents.Count - highEvents - medEvents;
         if (lowEvents < 0) { lowEvents = 0; }
+        var screenshotEvidence = allEvents
+            .Where(x => string.Equals(x.EventKind, "screenshot", System.StringComparison.OrdinalIgnoreCase))
+            .Select(x =>
+            {
+                string blobUrl = null;
+                string capturedAt = null;
+                try
+                {
+                    if (!string.IsNullOrWhiteSpace(x.MetadataJson))
+                    {
+                        var obj = JObject.Parse(x.MetadataJson);
+                        blobUrl = obj["blobUrl"]?.ToString();
+                        capturedAt = obj["capturedAt"]?.ToString();
+                    }
+                }
+                catch { }
+                return new { Event = x, BlobUrl = blobUrl, CapturedAt = capturedAt };
+            })
+            .Where(x => !string.IsNullOrWhiteSpace(x.BlobUrl))
+            .OrderByDescending(x => x.Event.CreatedAtUtc)
+            .ToList();
         <section class="card" style="margin-top:20px">
             <div class="card-head">
                 <div>
@@ -2381,6 +2403,54 @@
                     </div>
                 }
             </div>
+        </section>
+
+        <section class="card" style="margin-top:20px">
+            <div class="card-head">
+                <div>
+                    <h2>Screenshot evidence</h2>
+                    <div class="desc">Screenshots captured during proctoring and uploaded to blob storage.</div>
+                </div>
+            </div>
+            @if (screenshotEvidence.Any())
+            {
+                <div class="rb-pe-table-wrap">
+                    <table class="rb-pe-table">
+                        <thead>
+                            <tr>
+                                <th>Captured (IST)</th>
+                                <th>Logged (IST)</th>
+                                <th>Preview</th>
+                                <th>Blob link</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in screenshotEvidence)
+                            {
+                                var capturedText = !string.IsNullOrWhiteSpace(item.CapturedAt) ? item.CapturedAt : IndiaTimeHelper.FormatIstForDisplay(item.Event.CreatedAtUtc);
+                                <tr>
+                                    <td>@capturedText</td>
+                                    <td>@IndiaTimeHelper.FormatIstForDisplay(item.Event.CreatedAtUtc)</td>
+                                    <td>
+                                        <a href="@item.BlobUrl" target="_blank" rel="noopener">
+                                            <img src="@item.BlobUrl" alt="Screenshot evidence" style="width:140px;height:auto;border-radius:6px;border:1px solid #e2e8f0;" />
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="@item.BlobUrl" target="_blank" rel="noopener">Open blob</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="rb-pe-empty" style="margin-top:8px;">
+                    No screenshot blobs found for this session.
+                </div>
+            }
         </section>
     }
 </div>
