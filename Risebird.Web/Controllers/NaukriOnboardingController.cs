@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.PlivoCXModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Business.Interface;
@@ -33,6 +34,7 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper           _fileMimeTypeHelper;
         private readonly IHttpClientFactory            _httpClientFactory;
         private readonly IEncryptionHelper              _encryptionHelper;
+        private readonly IPlivoCXService               _plivoCXService;
 
         public NaukriOnboardingController(
             INaukriOnboardingRepository  repository,
@@ -45,7 +47,8 @@ namespace Risebird.Web.Controllers
             IAzureStorageHelper           azureStorageHelper,
             IFileMimeTypeHelper           fileMimeTypeHelper,
             IHttpClientFactory            httpClientFactory,
-            IEncryptionHelper             encryptionHelper)
+            IEncryptionHelper             encryptionHelper,
+            IPlivoCXService               plivoCXService)
         {
             _repository             = repository;
             _logger                 = logger;
@@ -58,6 +61,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper     = fileMimeTypeHelper;
             _httpClientFactory      = httpClientFactory;
             _encryptionHelper       = encryptionHelper;
+            _plivoCXService         = plivoCXService;
         }
 
         // ── Dashboard ───────────────────────────────────────────────────────────────
@@ -152,6 +156,10 @@ namespace Risebird.Web.Controllers
                         record.InvitationEmailSent, invitationEmailSentAt = record.InvitationEmailSentAt?.ToString("dd MMM yyyy, HH:mm"),
                         record.ProspectResponse, prospectResponseAt = record.ProspectResponseAt?.ToString("dd MMM yyyy, HH:mm"),
                         record.SelfRegistrationCompleted,
+                        record.PlivoCallStatus, record.PlivoConversationId,
+                        plivoCallAt = record.PlivoCallAt?.ToString("dd MMM yyyy, HH:mm"),
+                        record.PlivoCallDuration, record.PlivoProspectDisposition,
+                        record.PlivoOnboardingPreference, record.PlivoKycAccepted, record.PlivoCalledBy,
                         record.Status, record.Source, record.ProcessedBy,
                         record.ResolvedAssessmentGroupId, record.AssessmentGroupName,
                         hasResumeLink = !string.IsNullOrEmpty(record.ResumeLink)
@@ -1205,6 +1213,235 @@ namespace Risebird.Web.Controllers
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return StatusCode(500, new { error = ex.Message });
             }
+        }
+
+        // ── Plivo CX Onboarding Call — Initiate (AJAX) ────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InitiatePlivoCall(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                string phone = record.ParsedPhone;
+                if (string.IsNullOrWhiteSpace(phone))
+                    return Json(new { success = false, error = "No phone number available. Parse the resume first." });
+
+                if (phone.Length == 10 && !phone.StartsWith("+"))
+                    phone = "+91" + phone;
+                else if (phone.Length > 10 && !phone.StartsWith("+"))
+                    phone = "+" + phone;
+
+                if (!string.IsNullOrEmpty(record.PlivoCallStatus) &&
+                    record.PlivoCallStatus != "trigger-failed")
+                    return Json(new { success = false, error = $"A call has already been made (status: {record.PlivoCallStatus}). Use the view to check details.", alreadyCalled = true });
+
+                var calledBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+
+                await _repository.UpdatePlivoCallStatusAsync(id, "initiated", null,
+                    DateTime.UtcNow, null, null, null, null, null, null, calledBy);
+
+                var triggerRequest = new PlivoCXOnboardingTriggerRequest
+                {
+                    PhoneNumber     = phone,
+                    ProspectName    = record.CandidateName ?? "there",
+                    ProspectEmail   = record.ParsedEmail,
+                    Specialization  = record.MagName ?? record.KeySkills ?? "Technical",
+                    ExperienceYears = record.ExperienceYears,
+                    LogId           = id.ToString(),
+                    TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                };
+
+                var response = await _plivoCXService.TriggerOnboardingCallAsync(triggerRequest);
+
+                if (!string.IsNullOrEmpty(response?.Error))
+                {
+                    await _repository.UpdatePlivoCallStatusAsync(id, "trigger-failed", null,
+                        null, null, null, response.Error, null, null, null, null);
+
+                    return Json(new { success = false, error = $"Plivo CX trigger failed: {response.Error}" });
+                }
+
+                string conversationId = response?.ConversationId;
+                await _repository.UpdatePlivoCallStatusAsync(id, "triggered", conversationId,
+                    null, null, null, null, null, null, null, null);
+
+                await _repository.InsertHistoryAsync(id, "PlivoCallInitiated", "—",
+                    $"Call triggered to {phone}. ConversationId: {conversationId ?? "N/A"}", calledBy);
+
+                return Json(new
+                {
+                    success = true,
+                    conversationId,
+                    message = $"Call initiated to {record.CandidateName} ({phone})."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = "Failed to initiate call: " + ex.Message });
+            }
+        }
+
+        // ── Plivo CX Onboarding Call — Hangup Webhook (public endpoint) ─────────
+
+        [AllowAnonymous]
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> PlivoOnboardingHangup()
+        {
+            try
+            {
+                string rawBody;
+                using (var reader = new StreamReader(Request.Body))
+                    rawBody = await reader.ReadToEndAsync();
+
+                if (string.IsNullOrWhiteSpace(rawBody))
+                    return BadRequest(new { error = "Empty request body." });
+
+                PlivoCXOnboardingHangupPayload payload = null;
+                int? recordId = null;
+
+                // Try parsing as nested Plivo CX event first
+                try
+                {
+                    var nestedEvent = JsonConvert.DeserializeObject<PlivoCXHangupEvent>(rawBody);
+                    if (nestedEvent?.Data?.Object?.EventData != null)
+                    {
+                        var ed = nestedEvent.Data.Object.EventData;
+                        payload = new PlivoCXOnboardingHangupPayload
+                        {
+                            ConversationId     = nestedEvent.Data.Object.ConversationId,
+                            CallUUID           = nestedEvent.Data.Object.CallUuid,
+                            CallStatus         = GetEventValue(ed, "call_status"),
+                            Duration           = GetEventValue(ed, "duration"),
+                            Transcript         = GetEventValue(ed, "transcript"),
+                            Summary            = GetEventValue(ed, "summary"),
+                            LogId              = GetEventValue(ed, "log_id"),
+                            ProspectDisposition   = GetEventValue(ed, "prospect_disposition"),
+                            OnboardingPreference  = GetEventValue(ed, "onboarding_preference"),
+                            KycAccepted           = GetEventValue(ed, "kyc_accepted"),
+                            HangupCause        = GetEventValue(ed, "hangup_cause")
+                        };
+                    }
+                }
+                catch { }
+
+                // Fallback: direct flat JSON
+                if (payload == null || string.IsNullOrEmpty(payload.LogId))
+                {
+                    payload = JsonConvert.DeserializeObject<PlivoCXOnboardingHangupPayload>(rawBody,
+                        new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore });
+                }
+
+                if (payload == null)
+                    return BadRequest(new { error = "Could not parse hangup payload." });
+
+                if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int parsedId))
+                    recordId = parsedId;
+
+                if (!recordId.HasValue)
+                    return BadRequest(new { error = "Missing log_id in hangup payload." });
+
+                int? duration = null;
+                if (!string.IsNullOrEmpty(payload.Duration) && int.TryParse(payload.Duration, out int dur))
+                    duration = dur;
+
+                bool? kycAccepted = null;
+                if (!string.IsNullOrEmpty(payload.KycAccepted))
+                    kycAccepted = payload.KycAccepted.Equals("true", StringComparison.OrdinalIgnoreCase)
+                               || payload.KycAccepted == "1";
+
+                string callStatus = !string.IsNullOrEmpty(payload.CallStatus)
+                    ? payload.CallStatus.ToLower()
+                    : "completed";
+
+                await _repository.UpdatePlivoCallStatusAsync(
+                    recordId.Value,
+                    callStatus,
+                    payload.ConversationId,
+                    DateTime.UtcNow,
+                    duration,
+                    payload.Transcript,
+                    payload.Summary,
+                    payload.ProspectDisposition?.ToLower(),
+                    payload.OnboardingPreference?.ToLower(),
+                    kycAccepted,
+                    null);
+
+                string historyDetail = $"Status: {callStatus}";
+                if (!string.IsNullOrEmpty(payload.ProspectDisposition))
+                    historyDetail += $", Disposition: {payload.ProspectDisposition}";
+                if (!string.IsNullOrEmpty(payload.OnboardingPreference))
+                    historyDetail += $", Preference: {payload.OnboardingPreference}";
+                if (duration.HasValue)
+                    historyDetail += $", Duration: {duration}s";
+
+                await _repository.InsertHistoryAsync(recordId.Value, "PlivoCallCompleted", "—",
+                    historyDetail, "PlivoCX Webhook");
+
+                return Ok(new { success = true, recordId = recordId.Value });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        // ── Get Plivo Call Details (AJAX) ─────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetPlivoCallDetails(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                return Json(new
+                {
+                    success = true,
+                    plivoCallStatus = record.PlivoCallStatus,
+                    plivoConversationId = record.PlivoConversationId,
+                    plivoCallAt = record.PlivoCallAt?.ToString("dd MMM yyyy, HH:mm"),
+                    plivoCallDuration = record.PlivoCallDuration,
+                    plivoCallTranscript = record.PlivoCallTranscript,
+                    plivoCallSummary = record.PlivoCallSummary,
+                    plivoProspectDisposition = record.PlivoProspectDisposition,
+                    plivoOnboardingPreference = record.PlivoOnboardingPreference,
+                    plivoKycAccepted = record.PlivoKycAccepted,
+                    plivoCalledBy = record.PlivoCalledBy
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        private static string GetEventValue(Dictionary<string, string> eventData, string keySuffix)
+        {
+            if (eventData == null) return null;
+            foreach (var kvp in eventData)
+            {
+                if (kvp.Key.EndsWith("." + keySuffix, StringComparison.OrdinalIgnoreCase)
+                    || kvp.Key.Equals(keySuffix, StringComparison.OrdinalIgnoreCase))
+                    return kvp.Value;
+            }
+            return null;
         }
 
         // ── Helpers ─────────────────────────────────────────────────────────────────

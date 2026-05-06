@@ -30,6 +30,7 @@ namespace Risebird.CommonHelper
         private readonly HttpClient _httpClient;
         private readonly string     _triggerEndpointUrl;
         private readonly string     _rescheduleTriggerEndpointUrl;
+        private readonly string     _onboardingTriggerEndpointUrl;
 
         public PlivoCXService(IConfiguration configuration)
         {
@@ -37,6 +38,7 @@ namespace Risebird.CommonHelper
             var authToken = configuration["PlivoCX:ApiAuthToken"]  ?? string.Empty;
             _triggerEndpointUrl           = configuration["PlivoCX:TriggerEndpointUrl"]           ?? string.Empty;
             _rescheduleTriggerEndpointUrl = configuration["PlivoCX:RescheduleTriggerEndpointUrl"] ?? string.Empty;
+            _onboardingTriggerEndpointUrl = configuration["PlivoCX:OnboardingTriggerEndpointUrl"] ?? string.Empty;
 
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Authorization =
@@ -53,8 +55,11 @@ namespace Risebird.CommonHelper
         public Task<PlivoCXTriggerResponse> TriggerRescheduleCallAsync(PlivoCXTriggerRequest request)
             => PostTriggerAsync(_rescheduleTriggerEndpointUrl, request, "PlivoCX:RescheduleTriggerEndpointUrl");
 
+        public Task<PlivoCXTriggerResponse> TriggerOnboardingCallAsync(PlivoCXOnboardingTriggerRequest request)
+            => PostTriggerAsync(_onboardingTriggerEndpointUrl, request, "PlivoCX:OnboardingTriggerEndpointUrl");
+
         private async Task<PlivoCXTriggerResponse> PostTriggerAsync(
-            string triggerUrl, PlivoCXTriggerRequest request, string configKeyName)
+            string triggerUrl, object request, string configKeyName)
         {
             if (string.IsNullOrEmpty(triggerUrl))
                 throw new InvalidOperationException(

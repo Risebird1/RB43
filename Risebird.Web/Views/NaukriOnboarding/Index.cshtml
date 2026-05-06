@@ -150,6 +150,7 @@
     .ht-dot.ackemailresent { background:#6f42c1; }
     .ht-dot.magchange { background:#e67e22; } .ht-dot.emailchange { background:#3498db; } .ht-dot.phonechange { background:#9b59b6; }
     .ht-dot.recordcreated { background:#20c997; } .ht-dot.deleted { background:#dc3545; }
+    .ht-dot.plivocallinitiated { background:#6f42c1; } .ht-dot.plivocallcompleted { background:#198754; }
     .ht-body { flex:1; } .ht-transition { font-size:13px; font-weight:600; color:#212529; }
     .ht-meta { font-size:11.5px; color:#6c757d; margin-top:2px; }
 
@@ -267,6 +268,7 @@
                                             <th class="col-name">Candidate</th><th class="col-role">Current Role</th>
                                             <th class="col-exp">Exp</th><th class="col-location">Location</th>
                                             <th class="col-mag">MAG</th><th class="col-skills">Key Skills</th>
+                                            <th style="min-width:90px;">Call</th>
                                             <th class="col-status">Status</th><th class="col-actions">Actions</th>
                                         </tr>
                                     </thead>
@@ -309,6 +311,37 @@
                                                     </div>
                                                 </td>
                                                 <td class="col-skills"><div class="skills-wrap" style="white-space:break-spaces;" title="@(r.KeySkills ?? "\u2014")">@(r.KeySkills ?? "\u2014")</div></td>
+                                                <td style="font-size:11px;white-space:nowrap;">
+                                                    @if (string.IsNullOrEmpty(r.PlivoCallStatus))
+                                                    {
+                                                        <span class="text-muted" style="font-size:10px;">—</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        string callBadge = r.PlivoCallStatus switch {
+                                                            "triggered" => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
+                                                            "completed" => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
+                                                            "answered" => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
+                                                            "no-answer" => "background:#fff3cd;color:#856404;border:1px solid #ffc107;",
+                                                            "busy" => "background:#fff3cd;color:#856404;border:1px solid #ffc107;",
+                                                            "failed" => "background:#f8d7da;color:#842029;border:1px solid #dc3545;",
+                                                            "trigger-failed" => "background:#f8d7da;color:#842029;border:1px solid #dc3545;",
+                                                            "initiated" => "background:#e2e3e5;color:#41464b;border:1px solid #6c757d;",
+                                                            _ => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
+                                                        };
+                                                        <span class="intent-badge" style="@callBadge font-size:10px;">@r.PlivoCallStatus</span>
+                                                        if (!string.IsNullOrEmpty(r.PlivoProspectDisposition))
+                                                        {
+                                                            string dispColor = r.PlivoProspectDisposition switch {
+                                                                "interested" => "text-success",
+                                                                "not_interested" => "text-danger",
+                                                                "unsubscribe" => "text-danger",
+                                                                _ => "text-muted"
+                                                            };
+                                                            <br/><span class="@dispColor" style="font-size:9.5px;"><i class="fas fa-phone-alt me-1"></i>@r.PlivoProspectDisposition</span>
+                                                        }
+                                                    }
+                                                </td>
                                                 <td class="col-status">
                                                     <span class="intent-badge @statusCss" style="font-size:12px;white-space:break-spaces;">@(r.Status ?? "Open")</span>
                                                     @if (r.ResumeAIAnalysisCompleted == true)
@@ -477,6 +510,47 @@
                         <div class="col-12"><div class="mgm-section-title">Key Skills</div><div style="font-size:12px;" id="mgmSkills" class="mgm-ellipsis-skills"></div></div>
                     </div>
                     <div class="mb-3"><div class="mgm-section-title">Email Subject</div><div style="font-size:12.5px;" id="mgmSubject"></div></div>
+
+                    <hr/>
+
+                    <!-- Plivo Voice Agent Call Section -->
+                    <div class="mgm-action-card pending" id="plivoCallCard" style="border-color:#6f42c1;background:#faf8ff;">
+                        <div class="d-flex align-items-start gap-3">
+                            <span class="mgm-step-number" id="plivoCallIcon" style="background:#6f42c1;color:#fff;"><i class="fas fa-phone-alt" style="font-size:12px;"></i></span>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                                    <div class="flex-grow-1" style="min-width:180px;">
+                                        <strong style="font-size:13px;">Recruitment Call (Plivo AI Agent)</strong>
+                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="plivoCallSubtitle">Call the prospect to gauge interest in freelance interviewing with Risebird</div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                        <button type="button" class="btn btn-sm mgm-action-btn text-white" id="btnInitiateCall" style="background:#6f42c1;border-color:#6f42c1;"><i class="fas fa-phone-alt me-1"></i>Call Prospect</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnViewCallDetails" style="display:none;font-size:11px;padding:4px 10px;"><i class="fas fa-info-circle me-1"></i>Details</button>
+                                    </div>
+                                </div>
+                                <div class="mgm-result-block" id="plivoCallResult" style="display:none;"></div>
+                                <!-- Call details expandable panel -->
+                                <div id="plivoCallDetailsPanel" style="display:none;" class="mt-2 p-2 border rounded bg-white">
+                                    <div class="row g-2" style="font-size:12px;">
+                                        <div class="col-md-6"><strong>Disposition:</strong> <span id="plivoDetDisposition">—</span></div>
+                                        <div class="col-md-6"><strong>Onboarding Pref:</strong> <span id="plivoDetPreference">—</span></div>
+                                        <div class="col-md-6"><strong>KYC Accepted:</strong> <span id="plivoDetKyc">—</span></div>
+                                        <div class="col-md-6"><strong>Duration:</strong> <span id="plivoDetDuration">—</span></div>
+                                        <div class="col-md-6"><strong>Called At:</strong> <span id="plivoDetCalledAt">—</span></div>
+                                        <div class="col-md-6"><strong>Called By:</strong> <span id="plivoDetCalledBy">—</span></div>
+                                    </div>
+                                    <div class="mt-2" id="plivoDetSummaryWrap" style="display:none;">
+                                        <strong>Summary:</strong>
+                                        <div id="plivoDetSummary" style="font-size:11.5px;background:#f8f9fa;border-radius:4px;padding:8px;margin-top:4px;max-height:120px;overflow-y:auto;"></div>
+                                    </div>
+                                    <div class="mt-2" id="plivoDetTranscriptWrap" style="display:none;">
+                                        <strong>Transcript:</strong>
+                                        <div id="plivoDetTranscript" style="font-size:11px;background:#f8f9fa;border-radius:4px;padding:8px;margin-top:4px;max-height:150px;overflow-y:auto;white-space:pre-wrap;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <hr/>
 
@@ -704,6 +778,7 @@
         else if (r.employmentIsEmployed === false) { $('#mgmEmployed').html('<span class="employed-no"><i class="fas fa-times-circle me-1"></i>No</span>'); }
 
         if (r.hasResumeLink) { $('#btnViewResume').attr('href', r.resumeLink).show(); } else { $('#btnViewResume').hide(); }
+        syncPlivoCallUI(r);
         syncPipeline(r);
     }
 
@@ -725,6 +800,12 @@
         ['step1Number','step2Number','step3Number','step4Number'].forEach(function(id){ $('#'+id).removeClass('completed failed running').addClass('pending'); });
         $('#step2Card, #step3Card, #step4Card').addClass('disabled');
         $('#step1Result, #step2Result, #step3Result, #step4Result').hide().empty();
+        $('#plivoCallResult').hide().empty(); $('#plivoCallDetailsPanel').hide();
+        $('#btnInitiateCall').show().prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Prospect');
+        $('#btnViewCallDetails').hide();
+        $('#plivoCallCard').css('border-color', '#6f42c1').css('background', '#faf8ff');
+        $('#plivoCallIcon').css('background', '#6f42c1');
+        $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
         for (var s = 1; s <= 4; s++) $('#step'+s+'Subtitle').html(defaultSubtitles[s]);
         $('#btnParseResume').prop('disabled',false).html('<i class="fas fa-file-invoice me-1"></i>Parse Resume');
         $('#btnSendInvitation').prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Send Email');
@@ -964,7 +1045,7 @@
                 sel.empty();
                 if (res.success && res.data && res.data.length > 0) {
                     sel.append('<option value="">-- Select a channel --</option>');
-                    res.data.forEach(function(ch){ sel.append('<option value="'+ch.id+'" data-irf-name="'+ch.irfId+'">'+ch.irfId+' (#'+ch.id+')</option>'); });
+                    res.data.forEach(function(ch){ sel.append('<option value="'+ch.id+'" data-irf-name="'+ch.irfId+'">'+ch.irfId+' ('+(ch.clientName||'#'+ch.id)+')</option>'); });
                     sel.prop('disabled', false);
                 } else {
                     sel.html('<option value="">No active channels found</option>');
@@ -1186,7 +1267,9 @@
         'SkillChannelSelected':     { icon: 'fas fa-link',           color: '#0d6efd', label: 'Skill channel selected' },
         'InvitationEmailSent':      { icon: 'fas fa-paper-plane',    color: '#6f42c1', label: 'Invitation email sent' },
         'ProspectResponse':         { icon: 'fas fa-reply',          color: '#e67e22', label: 'Prospect responded' },
-        'SelfRegistered':           { icon: 'fas fa-user-check',     color: '#198754', label: 'Self-registered' }
+        'SelfRegistered':           { icon: 'fas fa-user-check',     color: '#198754', label: 'Self-registered' },
+        'PlivoCallInitiated':       { icon: 'fas fa-phone-alt',      color: '#6f42c1', label: 'Plivo call initiated' },
+        'PlivoCallCompleted':       { icon: 'fas fa-phone-square',   color: '#198754', label: 'Plivo call completed' }
     };
 
     function openHistoryModal(recordId) {
@@ -1247,5 +1330,153 @@
     }
 
     $('#btnViewHistory').on('click', function () { openHistoryModal(currentRecordId); });
+
+    /* ── Plivo Call ─────────────────────────────────────────── */
+
+    function syncPlivoCallUI(r) {
+        var card = $('#plivoCallCard'), btn = $('#btnInitiateCall'), detBtn = $('#btnViewCallDetails');
+        var result = $('#plivoCallResult'), detPanel = $('#plivoCallDetailsPanel');
+
+        result.hide().empty(); detPanel.hide();
+        btn.show().prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Prospect');
+        detBtn.hide();
+        card.css('border-color', '#6f42c1').css('background', '#faf8ff');
+        $('#plivoCallIcon').css('background', '#6f42c1');
+        $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
+
+        if (!r.parsedPhone) {
+            btn.prop('disabled', true);
+            $('#plivoCallSubtitle').html('<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>No phone number. Parse the resume first.</span>');
+            return;
+        }
+
+        if (!r.plivoCallStatus) return;
+
+        var status = r.plivoCallStatus;
+        if (status === 'triggered' || status === 'initiated') {
+            card.css('border-color', '#0d6efd').css('background', '#f0f6ff');
+            $('#plivoCallIcon').css('background', '#0d6efd');
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>In Progress');
+            $('#plivoCallSubtitle').html('<span class="text-primary"><i class="fas fa-phone-volume me-1"></i>Call in progress...</span>');
+            detBtn.show();
+        } else if (status === 'completed' || status === 'answered') {
+            card.css('border-color', '#198754').css('background', '#f0fdf4');
+            $('#plivoCallIcon').css('background', '#198754');
+            btn.hide();
+            detBtn.show();
+
+            var dispHtml = '';
+            if (r.plivoProspectDisposition) {
+                var dispLabel = { 'interested': 'Interested', 'not_interested': 'Not Interested', 'unsubscribe': 'Unsubscribe', 'no_answer': 'No Answer' }[r.plivoProspectDisposition] || r.plivoProspectDisposition;
+                var dispClass = r.plivoProspectDisposition === 'interested' ? 'text-success' : 'text-danger';
+                dispHtml = '<span class="' + dispClass + ' fw-bold"><i class="fas fa-phone-alt me-1"></i>' + dispLabel + '</span>';
+            }
+            var prefHtml = '';
+            if (r.plivoOnboardingPreference) {
+                var prefLabel = { 'self_registration': 'Will self-register', 'manual_onboarding': 'Prefers manual', 'need_clarity': 'Needs clarity', 'facing_errors': 'Facing errors' }[r.plivoOnboardingPreference] || r.plivoOnboardingPreference;
+                prefHtml = ' &middot; <span class="text-info">' + prefLabel + '</span>';
+            }
+            var kycHtml = '';
+            if (r.plivoKycAccepted === true) kycHtml = ' &middot; <span class="text-success">KYC OK</span>';
+            else if (r.plivoKycAccepted === false) kycHtml = ' &middot; <span class="text-danger">KYC declined</span>';
+
+            result.html('<span class="text-success"><i class="fas fa-check-circle me-1"></i>Call completed</span>' +
+                (dispHtml ? '<br/>' + dispHtml + prefHtml + kycHtml : '')).show();
+            $('#plivoCallSubtitle').html('<span class="text-success" style="font-size:11px;">Call completed</span>');
+        } else if (status === 'no-answer' || status === 'busy') {
+            card.css('border-color', '#ffc107').css('background', '#fffcf0');
+            $('#plivoCallIcon').css('background', '#ffc107');
+            btn.prop('disabled', false).html('<i class="fas fa-redo me-1"></i>Retry Call');
+            detBtn.show();
+            result.html('<span class="text-warning"><i class="fas fa-phone-slash me-1"></i>No answer / busy. You can retry.</span>').show();
+            $('#plivoCallSubtitle').html('<span class="text-warning" style="font-size:11px;">Prospect did not answer</span>');
+        } else if (status === 'trigger-failed' || status === 'failed') {
+            card.css('border-color', '#dc3545').css('background', '#fef2f2');
+            $('#plivoCallIcon').css('background', '#dc3545');
+            btn.prop('disabled', false).html('<i class="fas fa-redo me-1"></i>Retry Call');
+            result.html('<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Call failed. You can retry.</span>').show();
+            $('#plivoCallSubtitle').html('<span class="text-danger" style="font-size:11px;">Call failed</span>');
+        }
+    }
+
+    $('#btnInitiateCall').on('click', function () {
+        if (!currentRecordId) return;
+        if (!currentRecord || !currentRecord.parsedPhone) { alert('No phone number available. Parse the resume first.'); return; }
+        if (!confirm('Initiate Plivo AI recruitment call to ' + (currentRecord.candidateName || 'prospect') + ' (' + currentRecord.parsedPhone + ')?')) return;
+
+        var btn = $(this);
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Calling...');
+        $('#plivoCallSubtitle').html('<span class="text-primary"><i class="fas fa-phone-volume me-1"></i>Initiating call...</span>');
+
+        $.ajax({
+            url: '@Url.Action("InitiatePlivoCall", "NaukriOnboarding")', type: 'POST', timeout: 30000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            success: function (res) {
+                if (res.success) {
+                    $('#plivoCallResult').html('<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message || 'Call initiated.') + '</span>').show();
+                    btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>In Progress');
+                    $('#plivoCallSubtitle').html('<span class="text-primary"><i class="fas fa-phone-volume me-1"></i>Call in progress...</span>');
+                    $('#btnViewCallDetails').show();
+                    if (currentRecord) { currentRecord.plivoCallStatus = 'triggered'; currentRecord.plivoConversationId = res.conversationId; }
+                } else {
+                    $('#plivoCallResult').html('<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Failed.') + '</span>').show();
+                    btn.prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Prospect');
+                    $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
+                }
+            },
+            error: function () {
+                $('#plivoCallResult').html('<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Request failed.</span>').show();
+                btn.prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Prospect');
+                $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
+            }
+        });
+    });
+
+    $('#btnViewCallDetails').on('click', function () {
+        var panel = $('#plivoCallDetailsPanel');
+        if (panel.is(':visible')) { panel.slideUp(200); return; }
+        panel.slideDown(200);
+        loadPlivoCallDetails();
+    });
+
+    function loadPlivoCallDetails() {
+        if (!currentRecordId) return;
+        $.ajax({
+            url: '@Url.Action("GetPlivoCallDetails", "NaukriOnboarding")', type: 'GET', data: { id: currentRecordId },
+            success: function (res) {
+                if (!res.success) return;
+                var dispLabels = { 'interested': 'Interested', 'not_interested': 'Not Interested', 'unsubscribe': 'Unsubscribe', 'no_answer': 'No Answer' };
+                var prefLabels = { 'self_registration': 'Will self-register', 'manual_onboarding': 'Prefers manual onboarding', 'need_clarity': 'Needs clarity', 'facing_errors': 'Facing errors while onboarding' };
+
+                $('#plivoDetDisposition').text(dispLabels[res.plivoProspectDisposition] || res.plivoProspectDisposition || '—');
+                $('#plivoDetPreference').text(prefLabels[res.plivoOnboardingPreference] || res.plivoOnboardingPreference || '—');
+                $('#plivoDetKyc').text(res.plivoKycAccepted === true ? 'Yes' : res.plivoKycAccepted === false ? 'No' : '—');
+                $('#plivoDetDuration').text(res.plivoCallDuration ? res.plivoCallDuration + 's' : '—');
+                $('#plivoDetCalledAt').text(res.plivoCallAt || '—');
+                $('#plivoDetCalledBy').text(res.plivoCalledBy || '—');
+
+                if (res.plivoCallSummary) {
+                    $('#plivoDetSummary').text(res.plivoCallSummary);
+                    $('#plivoDetSummaryWrap').show();
+                } else { $('#plivoDetSummaryWrap').hide(); }
+
+                if (res.plivoCallTranscript) {
+                    $('#plivoDetTranscript').text(res.plivoCallTranscript);
+                    $('#plivoDetTranscriptWrap').show();
+                } else { $('#plivoDetTranscriptWrap').hide(); }
+
+                // Update the card UI with fresh data
+                if (currentRecord) {
+                    currentRecord.plivoCallStatus = res.plivoCallStatus;
+                    currentRecord.plivoProspectDisposition = res.plivoProspectDisposition;
+                    currentRecord.plivoOnboardingPreference = res.plivoOnboardingPreference;
+                    currentRecord.plivoKycAccepted = res.plivoKycAccepted;
+                    currentRecord.plivoCallDuration = res.plivoCallDuration;
+                    syncPlivoCallUI(currentRecord);
+                    $('#plivoCallDetailsPanel').show();
+                }
+            }
+        });
+    }
 </script>
 }
