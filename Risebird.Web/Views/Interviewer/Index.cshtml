@@ -495,6 +495,9 @@
                                                             <button type="button" class="btn-act" title="Suspicious" onclick="SuspiciousTypeDetails('@item.EmailId');">
                                                                 <img class="icon-m icon-img" src="/img/suspicious.png" alt="Suspicious"/>
                                                             </button>
+                                                            <button type="button" class="btn-act" title="Proxy Detection Checklist" onclick="openProxyChecklistModal('@item.EmailId');">
+                                                                <svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 }
@@ -1267,6 +1270,7 @@
             html += '<button type="button" class="btn-act" title="TDS" onclick="OpenTdsCertificatesJson(' + i + ');"><svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></button>';
             html += '<button type="button" class="btn-act" title="Flags" onclick="OpenInterviewerFlagDetailsJson(' + i + ');"><svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg></button>';
             html += '<button type="button" class="btn-act" title="Suspicious" onclick="SuspiciousTypeDetails(\'' + (data[i].emailId || '') + '\');"><img class="icon-m icon-img" src="/img/suspicious.png" alt=""/></button>';
+            html += '<button type="button" class="btn-act" title="Proxy Detection Checklist" onclick="openProxyChecklistModal(\'' + (data[i].emailId || '') + '\');"><svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></button>';
             html += '</td>';
             html += '</tr>';
         }
@@ -2143,3 +2147,137 @@
         </div>
     </div>
 </div>
+
+<!-- Proxy Detection Checklist Modal -->
+<div id="proxyChecklistModal" class="modal modal-bg">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <h5 class="modal-title pull-left">Proxy Detection Checklist</h5>
+            </div>
+            <button type="button" class="close" aria-label="Close">
+                <span onclick="closeProxyChecklistModal()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" id="proxyChecklistModalBody" style="overflow:auto;max-height:70vh;padding:20px;">
+            </div>
+            <div style="padding:12px 20px;text-align:right;border-top:1px solid #eee;">
+                <input type="button" onclick="closeProxyChecklistModal()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" style="color:#fff;line-height:13px;" value="Close">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var PROXY_SECTION_MAP = {
+        'pre-setup':           { title: 'Pre-Interview Setup',               total: 6 },
+        'screen-verify':       { title: 'Screen Verification',               total: 6 },
+        'ai-assistants':       { title: 'AI Interview Assistant Software',   total: 6 },
+        'interactive-probing': { title: 'Interactive Probing Techniques',    total: 6 },
+        'eye-head':            { title: 'Eye & Head Movement',               total: 4 },
+        'lips-body':           { title: 'Lips & Body Language',              total: 5 },
+        'apps-devices':        { title: 'Suspicious Applications & Devices', total: 6 },
+        'audio-voice':         { title: 'Audio & Voice Signals',             total: 4 },
+        'behavior':            { title: 'Behavior & Response Quality',       total: 5 },
+        'environment':         { title: 'Suspicious Environment',            total: 4 },
+        'photo-identity':      { title: 'Photo & Identity Verification',     total: 4 }
+    };
+
+    function openProxyChecklistModal(email) {
+        if (!email) return;
+        var body = document.getElementById('proxyChecklistModalBody');
+        body.innerHTML = '<div style="text-align:center;padding:30px;color:#888;"><span class="fa fa-spinner fa-spin" style="font-size:24px;"></span><br>Loading...</div>';
+        document.getElementById('proxyChecklistModal').style.display = 'block';
+
+        $.ajax({
+            type: 'POST',
+            url: '/Interviewer/GetProxyChecklistByEmail',
+            data: { email: email },
+            success: function (response) {
+                bindProxyChecklistData(body, response);
+            },
+            error: function () {
+                body.innerHTML = '<div style="text-align:center;padding:30px;color:#c00;">Could not load checklist. Please try again.</div>';
+            }
+        });
+    }
+
+    function closeProxyChecklistModal() {
+        document.getElementById('proxyChecklistModal').style.display = 'none';
+    }
+
+    function bindProxyChecklistData(body, response) {
+        if (!response || !response.success) {
+            var msg = (response && response.message) ? response.message : 'No checklist data found for this interviewer.';
+            body.innerHTML = '<div style="text-align:center;padding:40px;">'
+                + '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
+                + '<p style="color:#999;margin-top:12px;">' + msg + '</p></div>';
+            return;
+        }
+
+        var d = response.data;
+        var state = d.checklistState || {};
+        var totalChecked = d.totalChecked || 0;
+        var totalItems   = d.totalItems   || 0;
+        var pct = totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0;
+        var barColor = pct >= 80 ? '#22c55e' : pct >= 40 ? '#f59e0b' : '#ef4444';
+
+        var html = '';
+        // Header meta strip
+        html += '<div style="background:#f8fafc;border-radius:8px;padding:14px 18px;margin-bottom:18px;border:1px solid #e2e8f0;">';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;">';
+        html += '<div><span style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Interviewer</span>'
+              + '<div style="font-size:14px;font-weight:600;color:#1e293b;margin-top:2px;">' + (d.interviewerEmail || '—') + '</div></div>';
+        html += '<div><span style="font-size:12px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Last Saved</span>'
+              + '<div style="font-size:14px;color:#1e293b;margin-top:2px;">' + (d.savedOn || '—') + '</div></div>';
+        html += '<div style="text-align:right;">'
+              + '<span style="font-size:22px;font-weight:700;color:' + barColor + ';">' + totalChecked + '</span>'
+              + '<span style="font-size:14px;color:#64748b;"> / ' + totalItems + ' reviewed</span></div>';
+        html += '</div>';
+        // Overall progress bar
+        html += '<div style="margin-top:12px;">'
+              + '<div style="height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;">'
+              + '<div style="height:100%;width:' + pct + '%;background:' + barColor + ';border-radius:99px;transition:width .4s;"></div></div>'
+              + '<div style="font-size:11px;color:#94a3b8;text-align:right;margin-top:4px;">' + pct + '% complete</div>'
+              + '</div>';
+        html += '</div>';
+
+        // Section breakdown table
+        html += '<table style="width:100%;border-collapse:collapse;font-size:13px;">';
+        html += '<thead><tr style="background:#f1f5f9;">'
+              + '<th style="padding:8px 12px;text-align:left;color:#475569;font-weight:600;">Section</th>'
+              + '<th style="padding:8px 12px;text-align:center;color:#475569;font-weight:600;">Checked</th>'
+              + '<th style="padding:8px 12px;text-align:center;color:#475569;font-weight:600;">Total</th>'
+              + '<th style="padding:8px 12px;text-align:left;color:#475569;font-weight:600;">Progress</th>'
+              + '</tr></thead>';
+        html += '<tbody>';
+
+        var sectionOrder = ['pre-setup','screen-verify','ai-assistants','interactive-probing',
+                            'eye-head','lips-body','apps-devices','audio-voice','behavior','environment','photo-identity'];
+        var rowBg = ['#ffffff','#f8fafc'];
+        sectionOrder.forEach(function(secId, idx) {
+            var sec = PROXY_SECTION_MAP[secId];
+            if (!sec) return;
+            var checked = 0;
+            for (var j = 0; j < sec.total; j++) {
+                if (state[secId + '-' + j]) checked++;
+            }
+            var sPct = sec.total > 0 ? Math.round((checked / sec.total) * 100) : 0;
+            var sColor = sPct === 100 ? '#22c55e' : sPct > 0 ? '#3b82f6' : '#e2e8f0';
+            html += '<tr style="background:' + rowBg[idx % 2] + ';border-bottom:1px solid #f1f5f9;">';
+            html += '<td style="padding:9px 12px;color:#1e293b;">' + sec.title + '</td>';
+            html += '<td style="padding:9px 12px;text-align:center;font-weight:600;color:' + (checked > 0 ? '#1e293b' : '#94a3b8') + ';">' + checked + '</td>';
+            html += '<td style="padding:9px 12px;text-align:center;color:#64748b;">' + sec.total + '</td>';
+            html += '<td style="padding:9px 12px;">'
+                  + '<div style="height:6px;background:#e2e8f0;border-radius:99px;overflow:hidden;min-width:80px;">'
+                  + '<div style="height:100%;width:' + sPct + '%;background:' + sColor + ';border-radius:99px;"></div></div>'
+                  + '</td>';
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+        body.innerHTML = html;
+    }
+</script>

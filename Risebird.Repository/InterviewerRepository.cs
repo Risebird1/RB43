@@ -4226,6 +4226,66 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        #region Proxy Candidate Checklist
+
+        public async Task<int> SaveProxyCandidateChecklist(Risebird.Entities.Data.InterviewerProxyCandidateChecklist model)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewerEmail", model.InterviewerEmail);
+                parameters.Add("@ChecklistStateJson", model.ChecklistStateJson);
+                parameters.Add("@TotalItems", model.TotalItems);
+                parameters.Add("@TotalChecked", model.TotalChecked);
+                parameters.Add("@CreatedBy", model.CreatedBy);
+                parameters.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveInterviewerProxyCandidateChecklist", parameters, commandType: CommandType.StoredProcedure);
+                    return parameters.Get<int>("@NewId");
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<IEnumerable<Risebird.Entities.Data.InterviewerProxyCandidateChecklist>> GetProxyCandidateChecklist(string interviewerEmail = null, int? id = null)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewerEmail", interviewerEmail);
+                parameters.Add("@Id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<Risebird.Entities.Data.InterviewerProxyCandidateChecklist>(
+                        con, "usp_GetInterviewerProxyCandidateChecklist", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        #endregion
     }
 
 }
