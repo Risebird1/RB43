@@ -1464,18 +1464,13 @@ namespace Risebird.Web.Controllers
                 return false;
             if (!isMultilingual)
             {
-                // Remove common punctuation and whitespace for validation
                 var cleaned = new string(text
                     .Where(c => char.IsLetter(c) || char.IsDigit(c))
                     .ToArray());
 
-                // Check if output contains too many unknown characters ( )
-                if (text.Count(c => c == ' ') > 3)
-                    return false;
-
                 // Check ratio of valid characters to overall text
                 double validRatio = (double)cleaned.Length / text.Length;
-                if (validRatio < 0.5) // Less than 50% recognizable text → bad transcription
+                if (validRatio < 0.5)
                     return false;
 
             }
