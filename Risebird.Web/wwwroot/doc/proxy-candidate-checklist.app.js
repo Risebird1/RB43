@@ -215,12 +215,8 @@
     window.location.href = 'mailto:' + to + '?subject=' + subject + '&body=' + encodeURIComponent(body);
   }
 
+  // State is always driven by the backend on load; start empty until the fetch resolves.
   var state = {};
-  try {
-    state = JSON.parse(localStorage.getItem('proxyChecklist') || '{}');
-  } catch (e) {
-    state = {};
-  }
 
   function save() {
     localStorage.setItem('proxyChecklist', JSON.stringify(state));
@@ -420,6 +416,32 @@
 
   window.submitChecklistToBackend = submitChecklistToBackend;
 
+  function loadStateFromBackend() {
+    var url = window.__proxyChecklistLoadUrl;
+    if (!url) { render(); return; }
+
+    fetch(url, { method: 'GET', credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data && data.success && data.record && data.record.checklistState &&
+            typeof data.record.checklistState === 'object') {
+          // Backend has saved state — restore it
+          state = data.record.checklistState;
+        } else {
+          // No saved state in DB — start with all checkboxes unchecked
+          state = {};
+        }
+        save(); // keep localStorage in sync with whatever we resolved
+        render();
+      })
+      .catch(function () {
+        // Network or parse error — start clean (all unchecked)
+        state = {};
+        save();
+        render();
+      });
+  }
+
   render();
-  restoreSession();
+  loadStateFromBackend();
 })();

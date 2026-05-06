@@ -149,7 +149,8 @@ namespace Risebird.Web.Controllers
                                 item.AssessmentGroupId = string.Join(" , ",
                                     item.AssessmentGroupId.Split(',')
                                         .Where(g => !string.IsNullOrWhiteSpace(g))
-                                        .Select(g => {
+                                        .Select(g =>
+                                        {
                                             int id = int.TryParse(g.Trim(), out int v) ? v : 0;
                                             return assessmentGroupDictIdx.TryGetValue(id, out var name) ? name : string.Empty;
                                         })
@@ -201,7 +202,8 @@ namespace Risebird.Web.Controllers
                                 item.Senioritylevel = string.Join(" , ",
                                     item.Senioritylevel.Split(',')
                                         .Where(s => !string.IsNullOrWhiteSpace(s))
-                                        .Select(s => {
+                                        .Select(s =>
+                                        {
                                             int id = int.TryParse(s.Trim(), out int v) ? v : 0;
                                             return seniorityDictIdx.TryGetValue(id, out var name) ? name : string.Empty;
                                         })
@@ -1436,6 +1438,47 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>Returns the most recently saved proxy-detection checklist for the logged-in interviewer (JSON).</summary>
+        [HttpGet]
+        public async Task<IActionResult> GetProxyCandidateChecklistState()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false });
+
+                var sessionEmail = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var records = await _interviewerRepository.GetProxyCandidateChecklist(sessionEmail);
+                var latest = records?.FirstOrDefault();
+
+                if (latest == null)
+                    latest = new InterviewerProxyCandidateChecklist();
+
+                Dictionary<string, bool> checklistState = null;
+                if (!string.IsNullOrWhiteSpace(latest.ChecklistStateJson))
+                {
+                    try { checklistState = JsonConvert.DeserializeObject<Dictionary<string, bool>>(latest.ChecklistStateJson); }
+                    catch { /* malformed JSON — proceed without state */ }
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    record = new
+                    {
+                        checklistState = checklistState,
+                        totalItems = latest.TotalItems,
+                        totalChecked = latest.TotalChecked
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
         /// <summary>Proxy candidate detection training checklist (interviewer-only).</summary>
         [HttpGet]
         public async Task<IActionResult> ProxyCandidateDetectionChecklist()
@@ -1494,27 +1537,22 @@ namespace Risebird.Web.Controllers
 
                 var sessionEmail = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 var checkedKeys = model.ChecklistState.Where(kv => kv.Value).Select(kv => kv.Key).ToList();
+                var totalItems = model.ChecklistState.Count;
 
-                var record = new
+                var checklistRecord = new Risebird.Entities.Data.InterviewerProxyCandidateChecklist
                 {
-                    SavedAtUtc = DateTime.UtcNow,
-                    LoggedInInterviewerEmail = sessionEmail,
-                    FormInterviewerEmail = model.InterviewerEmail,
-                    CandidateName = model.CandidateName,
-                    RoleApplied = model.RoleApplied,
-                    CheckedItemKeys = checkedKeys,
+                    InterviewerEmail = sessionEmail,
+                    ChecklistStateJson = JsonConvert.SerializeObject(model.ChecklistState),
+                    TotalItems = totalItems,
                     TotalChecked = checkedKeys.Count,
-                    FullState = model.ChecklistState
+                    CreatedBy = sessionEmail
                 };
 
-                var json = JsonConvert.SerializeObject(record, Formatting.Indented);
-                var safeEmail = System.Text.RegularExpressions.Regex.Replace(sessionEmail ?? "unknown", @"[^a-zA-Z0-9.@_-]", "_");
-                var fileName = $"proxy-candidate-checklist/{safeEmail}/{DateTime.UtcNow:yyyyMMdd-HHmmss}-{Guid.NewGuid():N}.json";
+                var savedId = await _interviewerRepository.SaveProxyCandidateChecklist(checklistRecord);
+                if (savedId > 0)
+                    return Json(new { success = true, message = "Checklist saved successfully." });
 
-                var blob = _azureStorageHelper.GetCloudBlockBlob("documents", fileName);
-                blob.UploadText(json);
-
-                return Json(new { success = true, message = "Checklist saved successfully." });
+                return Json(new { success = false, message = "Could not save the checklist. Please try again." });
             }
             catch (Exception ex)
             {
@@ -2759,7 +2797,8 @@ namespace Risebird.Web.Controllers
                         item.AssessmentGroupId = string.Join(" , ",
                             item.AssessmentGroupId.Split(',')
                                 .Where(g => !string.IsNullOrWhiteSpace(g))
-                                .Select(g => {
+                                .Select(g =>
+                                {
                                     int id = int.TryParse(g.Trim(), out int v) ? v : 0;
                                     return assessmentGroupDict.TryGetValue(id, out var name) ? name : string.Empty;
                                 })
@@ -2807,7 +2846,8 @@ namespace Risebird.Web.Controllers
                         item.Senioritylevel = string.Join(" , ",
                             item.Senioritylevel.Split(',')
                                 .Where(s => !string.IsNullOrWhiteSpace(s))
-                                .Select(s => {
+                                .Select(s =>
+                                {
                                     int id = int.TryParse(s.Trim(), out int v) ? v : 0;
                                     return seniorityDict.TryGetValue(id, out var name) ? name : string.Empty;
                                 })
@@ -5305,7 +5345,7 @@ namespace Risebird.Web.Controllers
                             endDate = DateTime.Now.Date;
                             startDate = endDate.Value.AddDays(-7);
                         }
-                        
+
                         var model = await _interviewerService.GetFLNAcknowledgementStatus(emailId, startDate, endDate);
                         ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
                         ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
@@ -5336,7 +5376,7 @@ namespace Risebird.Web.Controllers
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("FLN Acknowledgement Status");
             string fileName = "FLN_Acknowledgement_Status_" + DateTime.Now.ToString("ddMMyyyy_HHmmss") + ".xlsx";
-            
+
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -5345,7 +5385,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    
+
                     if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "HR")
                     {
                         if (!startDate.HasValue && !endDate.HasValue)
@@ -5353,20 +5393,20 @@ namespace Risebird.Web.Controllers
                             endDate = DateTime.Now.Date;
                             startDate = endDate.Value.AddDays(-7);
                         }
-                        
+
                         var modelList = await _interviewerService.GetFLNAcknowledgementStatus(emailId, startDate, endDate);
-                        
+
                         if (modelList != null && modelList.Count() > 0)
                         {
                             Sheet.Cells["A1:L1"].Style.Font.Bold = true;
                             Sheet.Cells["A1:L1"].Style.Font.Size = 12;
                             Sheet.Cells["A1:L1"].Style.WrapText = true;
-                            
+
                             for (int a = 1; a <= 12; a++)
                             {
                                 Sheet.Column(a).Width = 25;
                             }
-                            
+
                             Sheet.Cells[1, 1].Value = "Email Id";
                             Sheet.Cells[1, 2].Value = "Primary Specialization";
                             Sheet.Cells[1, 3].Value = "AI Verdict";
@@ -5379,7 +5419,7 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[1, 10].Value = "Acknowledgement Status";
                             Sheet.Cells[1, 11].Value = "Target Skill Channel";
                             Sheet.Cells[1, 12].Value = "Assessment Group";
-                            
+
                             int i = 2;
                             foreach (var item in modelList)
                             {
@@ -5397,7 +5437,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 12].Value = item.AssessmentGroup;
                                 i++;
                             }
-                            
+
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }
                         else
