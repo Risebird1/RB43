@@ -176,5 +176,48 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<PaymentTicketReviewVM>> GetOpenPaymentTicketsForReview()
+        {
+            try
+            {
+                return await _supportRespository.GetOpenPaymentTicketsForReview();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> SaveRaisedIssueAIResponse(int ticketId, string aiResponseJson,
+            string statusComment, string closedBy, DateTime closedOn, bool closeTicket)
+        {
+            try
+            {
+                return await _supportRespository.SaveRaisedIssueAIResponse(
+                    ticketId, aiResponseJson, statusComment, closedBy, closedOn, closeTicket);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateQCPenaltyFromAIReview(int interviewId, int revisedPenaltyPct,
+            string updatedMergedDetails, string reasoningComment)
+        {
+            try
+            {
+                return await _supportRespository.UpdateQCPenaltyFromAIReview(
+                    interviewId, revisedPenaltyPct, updatedMergedDetails, reasoningComment);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
