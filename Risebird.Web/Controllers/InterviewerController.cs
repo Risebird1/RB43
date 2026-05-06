@@ -1438,6 +1438,53 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>Returns the saved proxy-detection checklist for a given interviewer email (admin/HR view, JSON).</summary>
+        [HttpPost]
+        public async Task<IActionResult> GetProxyChecklistByEmail(string email)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Session expired." });
+
+                if (string.IsNullOrWhiteSpace(email))
+                    return Json(new { success = false, message = "Email is required." });
+
+                var records = await _interviewerRepository.GetProxyCandidateChecklist(email.Trim());
+                var latest = records?.FirstOrDefault();
+
+                if (latest == null)
+                    return Json(new { success = false, message = "No checklist found for this interviewer." });
+
+                Dictionary<string, bool> checklistState = null;
+                if (!string.IsNullOrWhiteSpace(latest.ChecklistStateJson))
+                {
+                    try { checklistState = JsonConvert.DeserializeObject<Dictionary<string, bool>>(latest.ChecklistStateJson); }
+                    catch { /* malformed JSON — return without state */ }
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        interviewerEmail = latest.InterviewerEmail,
+                        totalItems       = latest.TotalItems,
+                        totalChecked     = latest.TotalChecked,
+                        savedOn          = latest.CreatedOn.HasValue
+                                            ? latest.CreatedOn.Value.ToString("dd MMM yyyy, hh:mm tt") + " UTC"
+                                            : "—",
+                        checklistState   = checklistState
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not load checklist." });
+            }
+        }
+
         /// <summary>Returns the most recently saved proxy-detection checklist for the logged-in interviewer (JSON).</summary>
         [HttpGet]
         public async Task<IActionResult> GetProxyCandidateChecklistState()
