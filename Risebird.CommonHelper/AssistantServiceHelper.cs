@@ -39,6 +39,7 @@ namespace Risebird.CommonHelper
         private readonly string AITranscriptToNotesAssistantId;
         private readonly string QcInterviewAIMergeAssistantId;
         private readonly string ContradictionReportAIAssistantId;
+        private readonly string PaymentTicketReviewAssistantId;
 
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IOpenAIApiLogger openAIApiLogger)
@@ -64,6 +65,7 @@ namespace Risebird.CommonHelper
             AITranscriptToNotesAssistantId = _configuration["OpenAI:AITranscriptToNotesAssistantId"];
             QcInterviewAIMergeAssistantId = _configuration["OpenAI:QcInterviewAIMergeAssistantId"];
             ContradictionReportAIAssistantId = _configuration["OpenAI:ContradictionReportAIAssistantId"];
+            PaymentTicketReviewAssistantId = _configuration["OpenAI:PaymentTicketReviewAssistantId"];
         }
 
         public async Task<RunResult> ScreenAsync(ScreeningRequest requestModel)
@@ -283,6 +285,11 @@ namespace Risebird.CommonHelper
                     {
                         assistantId = ContradictionReportAIAssistantId;
                         operationType = "ContradictionReport";
+                    }
+                    else if (profileType == ProfileNames.PaymentTicketReviewAssistantId)
+                    {
+                        assistantId = PaymentTicketReviewAssistantId;
+                        operationType = "PaymentTicketReview";
                     }
                     else
                     {
@@ -1564,6 +1571,55 @@ namespace Risebird.CommonHelper
             }
         }
 
+        /// <summary>
+        /// Calls assistant asst_kjUOaWfVxQOymoAN1m29MrR8 (Payment Ticket Review) directly
+        /// with a plain-text composed message and returns the assistant reply.
+        /// </summary>
+        public async Task<RunResult> GeneratePaymentTicketReview(string composedMessage)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(composedMessage))
+                    return null;
+
+                string threadId = await CreateThreadAsync(plainAssistantMessage: composedMessage);
+
+                string runId;
+                if (!string.IsNullOrEmpty(threadId))
+                {
+                    runId = await CreateRun(threadId, ProfileNames.PaymentTicketReviewAssistantId);
+                }
+                else
+                {
+                    return null;
+                }
+                await Task.Delay(10000);
+                if (string.IsNullOrEmpty(runId))
+                    return null;
+
+                string runStatus = string.Empty;
+                int pollInterval = 10000;
+                int maxPollInterval = 30000;
+
+                while (runStatus != "completed")
+                {
+                    await Task.Delay(pollInterval);
+                    runStatus = await RetrieveRun(runId, threadId);
+                    if (runStatus == "failed")
+                        break;
+                    pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
+                }
+                if (runStatus == "completed")
+                    await RetrieveRunStepsForTokenUsage(runId, threadId);
+
+                return await ListRunMessages(threadId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 
     public class VectorStore

@@ -239,4 +239,95 @@ namespace Risebird.Entities.Data.PlivoCXModels
         public string ClientName     { get; set; }
         public string TriggeredBy    { get; set; }
     }
+
+    // ─── Interviewer Onboarding Call (Plivo CX) ─────────────────────────────────
+
+    /// <summary>
+    /// Variables posted to the Plivo CX onboarding agent trigger endpoint.
+    /// The AI agent uses these to personalise the recruitment call.
+    /// </summary>
+    public class PlivoCXOnboardingTriggerRequest
+    {
+        [JsonProperty("phone_number")]
+        public string PhoneNumber { get; set; }
+
+        [JsonProperty("prospect_name")]
+        public string ProspectName { get; set; }
+
+        [JsonProperty("prospect_email")]
+        public string ProspectEmail { get; set; }
+
+        [JsonProperty("specialization")]
+        public string Specialization { get; set; }
+
+        [JsonProperty("experience_years")]
+        public string ExperienceYears { get; set; }
+
+        [JsonProperty("log_id")]
+        public string LogId { get; set; }
+
+        [JsonProperty("today_date")]
+        public string TodayDate { get; set; }
+    }
+
+    /// <summary>
+    /// Hangup payload from the Plivo CX onboarding agent.
+    /// Contains variables extracted by the AI Conversation node.
+    /// </summary>
+    public class PlivoCXOnboardingHangupPayload
+    {
+        [JsonProperty("conversation_id")]
+        public string ConversationId { get; set; }
+
+        [JsonProperty("call_uuid")]
+        public string CallUUID { get; set; }
+
+        [JsonProperty("call_status")]
+        public string CallStatus { get; set; }
+
+        [JsonProperty("duration")]
+        public string Duration { get; set; }
+
+        [JsonProperty("hangup_cause")]
+        public string HangupCause { get; set; }
+
+        [JsonProperty("transcript")]
+        public string Transcript { get; set; }
+
+        [JsonProperty("summary")]
+        public string Summary { get; set; }
+
+        [JsonProperty("log_id")]
+        public string LogId { get; set; }
+
+        [JsonProperty("phone_number")]
+        public string PhoneNumber { get; set; }
+
+        [JsonProperty("prospect_name")]
+        public string ProspectName { get; set; }
+
+        [JsonProperty("prospect_email")]
+        public string ProspectEmail { get; set; }
+
+        /// <summary>
+        /// Values: "interested" | "not_interested" | "unsubscribe" | "no_answer"
+        /// </summary>
+        [JsonProperty("prospect_disposition")]
+        public string ProspectDisposition { get; set; }
+
+        /// <summary>
+        /// Values: "self_registration" | "manual_onboarding" | "need_clarity" | "facing_errors"
+        /// </summary>
+        [JsonProperty("onboarding_preference")]
+        public string OnboardingPreference { get; set; }
+
+        /// <summary>
+        /// Whether the prospect accepted the KYC verification process
+        /// </summary>
+        [JsonProperty("kyc_accepted")]
+        public string KycAccepted { get; set; }
+
+        [JsonProperty("confirmed_name")]
+        public string ConfirmedName { get; set; }
+    }
 }
