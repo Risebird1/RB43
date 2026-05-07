@@ -57,6 +57,7 @@ LEFT  JOIN QcInterviewAIevaluation  qa  ON qa.InterviewId  = im.Id
 WHERE ri.Status           = 'Open'
   AND ri.RequestType      = 'Payment'
   AND ri.interviewId      IS NOT NULL
-  AND ri.AIReviewResponse IS NULL   -- skip tickets already reviewed by AI (e.g. reopened after AI closure)
+  AND ri.AIReviewResponse IS NULL
+  AND ri.Interviewid > 0 -- skip tickets already reviewed by AI (e.g. reopened after AI closure)
 END
 GO

@@ -25,6 +25,9 @@ namespace Risebird.Entities.ViewModel
         public string candidateEmail { get; set; }
         public string Interviewer { get; set; }
 
+        /// <summary>True when the ticket has at least one 'Reopened' history entry.</summary>
+        public bool IsReopened { get; set; }
+
         /// <summary>Populated on the detail/My-Ticket page to show full audit trail.</summary>
         public List<RaisedIssueHistoryVM> History { get; set; }
     }
