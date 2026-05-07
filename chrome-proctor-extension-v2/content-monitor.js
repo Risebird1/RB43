@@ -1,17 +1,34 @@
+/**
+ * Screen chunks — standard client pattern:
+ * - One getDisplayMedia(monitor) stream, one MediaRecorder, recorder.start(timesliceMs).
+ * - Upload each non-empty Blob from ondataavailable after warm-up and basic quality gates
+ *   (standalone WebM prefers EBML at offset 0; VP8 clusters often decode more reliably than VP9 fragments).
+ * - Production alternative: stream to server and segment with ffmpeg; client-only upload remains chunked WebM.
+ */
 const monitorState = {
   active: false,
   stream: null,
   recorder: null,
   chunkSeq: 0,
   chunkIntervalMs: 5000,
-  eventListenersBound: false
+  keyframePingIntervalId: null,
+  /** When MediaRecorder started — used to skip warm-up chunks that preview black. */
+  recordingStartedAt: null,
+  /** Incident-triggered MediaRecorder.requestData(): accept next chunk even if small / non-EBML. */
+  pendingIncidentFlushCount: 0,
+  pendingEvidenceTrigger: null
 };
+
+/** Violation DOM hooks (tab blur, visibility, clipboard, etc.) — bound once per tab load. */
+let violationListenersBound = false;
+
+/** Single in-flight screen-share setup (page + popup can request capture at the same time). */
+let pendingCaptureSetupPromise = null;
 
 const bridgeState = {
   joined: false,
   lastJoinPayload: null,
-  chunkIntervalMs: 5000,
-  popupOpenedForSessionId: null
+  chunkIntervalMs: 5000
 };
 
 function nowIso() {
@@ -87,32 +104,12 @@ async function syncPopupInputs(normalized) {
   }
 }
 
-async function requestPopupOpen(normalized = {}, reason = "page-join") {
-  const sessionId = String(normalized.sessionId || "").trim();
-  if (!sessionId) {
-    return;
-  }
-  if (bridgeState.popupOpenedForSessionId === sessionId) {
-    return;
-  }
-
-  try {
-    const response = await chrome.runtime.sendMessage({
-      type: "OPEN_PROCTORING_POPUP",
-      payload: {
-        sessionId,
-        reason
-      }
-    });
-    if (response?.ok) {
-      bridgeState.popupOpenedForSessionId = sessionId;
-    }
-  } catch (_error) {
-    // Non-blocking: page bootstrap should continue even when popup open fails.
-  }
-}
-
 function stopMediaResources() {
+  if (monitorState.keyframePingIntervalId !== null) {
+    window.clearInterval(monitorState.keyframePingIntervalId);
+    monitorState.keyframePingIntervalId = null;
+  }
+
   if (monitorState.recorder && monitorState.recorder.state !== "inactive") {
     monitorState.recorder.stop();
   }
@@ -126,17 +123,21 @@ function stopMediaResources() {
   monitorState.recorder = null;
   monitorState.stream = null;
   monitorState.active = false;
+  monitorState.pendingIncidentFlushCount = 0;
+  monitorState.pendingEvidenceTrigger = null;
+  monitorState.recordingStartedAt = null;
 }
 
-function bindViolationListeners() {
-  if (monitorState.eventListenersBound) {
+function ensureViolationListeners() {
+  if (violationListenersBound) {
     return;
   }
+  violationListenersBound = true;
 
   document.addEventListener(
     "copy",
     (event) => {
-      if (!monitorState.active) {
+      if (!bridgeState.joined) {
         return;
       }
       event.preventDefault();
@@ -148,7 +149,7 @@ function bindViolationListeners() {
   document.addEventListener(
     "cut",
     (event) => {
-      if (!monitorState.active) {
+      if (!bridgeState.joined) {
         return;
       }
       event.preventDefault();
@@ -160,7 +161,7 @@ function bindViolationListeners() {
   document.addEventListener(
     "paste",
     (event) => {
-      if (!monitorState.active) {
+      if (!bridgeState.joined) {
         return;
       }
       event.preventDefault();
@@ -172,7 +173,7 @@ function bindViolationListeners() {
   document.addEventListener(
     "contextmenu",
     (event) => {
-      if (!monitorState.active) {
+      if (!bridgeState.joined) {
         return;
       }
       event.preventDefault();
@@ -182,16 +183,16 @@ function bindViolationListeners() {
   );
 
   document.addEventListener("visibilitychange", () => {
-    if (!monitorState.active) {
+    if (!bridgeState.joined) {
       return;
     }
     if (document.visibilityState === "hidden") {
-      reportViolation("PAGE_HIDDEN", "Candidate moved page to background.");
+      reportViolation("PAGE_HIDDEN", "Candidate moved page to background (tab switch or minimized).");
     }
   });
 
   document.addEventListener("fullscreenchange", () => {
-    if (!monitorState.active) {
+    if (!bridgeState.joined) {
       return;
     }
     if (!document.fullscreenElement) {
@@ -200,28 +201,80 @@ function bindViolationListeners() {
   });
 
   window.addEventListener("blur", () => {
-    if (!monitorState.active) {
+    if (!bridgeState.joined) {
       return;
     }
-    reportViolation("WINDOW_BLUR", "Browser window lost focus.");
+    reportViolation("WINDOW_BLUR", "Browser window lost focus (e.g. switched to another app).");
   });
-
-  monitorState.eventListenersBound = true;
 }
 
 function chooseSupportedMimeType(candidates) {
-  const fallback = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
+  /* Prefer VP8 first: fragments often remain decodable as standalone WebM in `<video>` across browsers. */
+  const fallback = ["video/webm;codecs=vp8", "video/webm;codecs=vp9", "video/webm"];
   const pool = Array.isArray(candidates) && candidates.length > 0 ? candidates : fallback;
   return pool.find((value) => MediaRecorder.isTypeSupported(value)) || "";
 }
 
+/** Minimum timeslice (ms): aligns with periodic upload cadence; larger slices carry fuller clusters per chunk. */
+const MIN_SCREEN_CHUNK_INTERVAL_MS = 8000;
+
+/** Skip periodic uploads briefly after share starts — encoder/UI warm-up often yields unusable fragments. Incident flushes bypass. */
+const SCREEN_RECORDING_WARMUP_MS = 10000;
+
+async function isEbmlWebmMagic(blob) {
+  const head = await blob.slice(0, 4).arrayBuffer();
+  const u = new Uint8Array(head);
+  return u.length >= 4 && u[0] === 0x1a && u[1] === 0x45 && u[2] === 0xdf && u[3] === 0xa3;
+}
+
+/**
+ * Drop tiny or non-EBML fragments that preview blank in the dashboard; keep EBML-leading chunks or large continuation slices.
+ */
+async function shouldPersistScreenChunkBody(blob) {
+  if (!blob || blob.size === 0) return false;
+  if (blob.size >= 131072) return true;
+  const ebml = await isEbmlWebmMagic(blob);
+  if (ebml && blob.size >= 16384) return true;
+  if (!ebml && blob.size >= 98304) return true;
+  return false;
+}
+
+async function shouldPersistPeriodicScreenChunk(blob) {
+  if (monitorState.recordingStartedAt && Date.now() - monitorState.recordingStartedAt < SCREEN_RECORDING_WARMUP_MS) {
+    return false;
+  }
+  return shouldPersistScreenChunkBody(blob);
+}
+
 function createRecorder(stream, mimeType) {
-  const options = mimeType ? { mimeType } : undefined;
-  return new MediaRecorder(stream, options);
+  const options = { videoBitsPerSecond: 2500000 };
+  if (mimeType) {
+    options.mimeType = mimeType;
+  }
+  try {
+    return new MediaRecorder(stream, options);
+  } catch (_err) {
+    return mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+  }
 }
 
 async function handleRecorderChunk(event) {
   if (!monitorState.active || !event.data || event.data.size === 0) {
+    return;
+  }
+
+  let incidentReason = null;
+  if ((monitorState.pendingIncidentFlushCount || 0) > 0) {
+    monitorState.pendingIncidentFlushCount -= 1;
+    incidentReason = monitorState.pendingEvidenceTrigger || "incident";
+    if ((monitorState.pendingIncidentFlushCount || 0) === 0) {
+      monitorState.pendingEvidenceTrigger = null;
+    }
+  }
+
+  const persist =
+    incidentReason !== null ? true : await shouldPersistPeriodicScreenChunk(event.data);
+  if (!persist) {
     return;
   }
 
@@ -230,7 +283,8 @@ async function handleRecorderChunk(event) {
     chunkSeq: monitorState.chunkSeq,
     mimeType: event.data.type || "video/webm",
     capturedAt: nowIso(),
-    data: dataUrl
+    data: dataUrl,
+    evidenceTrigger: incidentReason || undefined
   };
 
   monitorState.chunkSeq += 1;
@@ -244,9 +298,21 @@ async function startMonitorOnlyCapture(payload = {}) {
   if (monitorState.active) {
     return { ok: true };
   }
+  if (pendingCaptureSetupPromise) {
+    return pendingCaptureSetupPromise;
+  }
 
-  bindViolationListeners();
-  monitorState.chunkIntervalMs = Number(payload.chunkIntervalMs) || 5000;
+  pendingCaptureSetupPromise = runMonitorOnlyCapture(payload).finally(() => {
+    pendingCaptureSetupPromise = null;
+  });
+
+  return pendingCaptureSetupPromise;
+}
+
+async function runMonitorOnlyCapture(payload = {}) {
+  ensureViolationListeners();
+  const requested = Number(payload.chunkIntervalMs) || 5000;
+  monitorState.chunkIntervalMs = Math.max(MIN_SCREEN_CHUNK_INTERVAL_MS, requested);
   monitorState.chunkSeq = 0;
 
   const stream = await navigator.mediaDevices.getDisplayMedia({
@@ -298,6 +364,20 @@ async function startMonitorOnlyCapture(payload = {}) {
   monitorState.stream = stream;
   monitorState.recorder = recorder;
   monitorState.active = true;
+  monitorState.recordingStartedAt = Date.now();
+
+  if (typeof videoTrack.requestFrame === "function") {
+    monitorState.keyframePingIntervalId = window.setInterval(() => {
+      try {
+        videoTrack.requestFrame();
+      } catch (_err) {
+        // Ignore (track ended or unsupported).
+      }
+    }, 1600);
+  }
+  emitPageSignal("RB_PROCTORING_CAPTURE_ACTIVE", {
+    chunkIntervalMs: monitorState.chunkIntervalMs
+  });
   return { ok: true };
 }
 
@@ -317,7 +397,6 @@ async function joinSessionFromPage(payload = {}) {
   }
 
   await syncPopupInputs(normalized);
-  await requestPopupOpen(normalized, "page-join");
 
   const response = await chrome.runtime.sendMessage({
     type: "START_SESSION",
@@ -327,8 +406,15 @@ async function joinSessionFromPage(payload = {}) {
     throw new Error(response?.error || "Unable to start proctoring session.");
   }
 
+  try {
+    await chrome.storage.local.set({ "risebird.proctor.session.manualStopLocked": true });
+  } catch (_e) {
+    // Ignore storage failures; session still runs.
+  }
+
   bridgeState.joined = true;
   bridgeState.chunkIntervalMs = Number(response?.state?.chunkIntervalMs) || bridgeState.chunkIntervalMs;
+  ensureViolationListeners();
   return response;
 }
 
@@ -343,10 +429,12 @@ async function completeSetupFromPage() {
 }
 
 async function stopSessionFromPage() {
+  bridgeState.joined = false;
   await stopMonitoring();
   await chrome.runtime.sendMessage({
     type: "STOP_SESSION",
-    reason: "Page signaled end of proctoring session."
+    reason: "Page signaled end of proctoring session.",
+    force: true
   }).catch(() => undefined);
 }
 
@@ -374,9 +462,12 @@ function handlePageSignal(data) {
   }
 
   if (type === "RB_COMPLETE_TEST_SETUP") {
-    // Legacy operator flow: keep the screen-share action in extension popup button.
-    // The popup is prefilled and auto-opened from join to let candidate select "Entire Screen" manually.
-    requestPopupOpen(normalizeJoinPayload(bridgeState.lastJoinPayload || {}), "complete-test-setup").catch(() => undefined);
+    completeSetupFromPage().catch((error) => {
+      reportViolation("MONITOR_SETUP_FAILED", "Unable to start monitor capture from page setup signal.", {
+        error: String(error.message || error)
+      });
+      emitPageSignal("RB_PROCTORING_EXTENSION_ERROR", { error: String(error.message || error) });
+    });
     return;
   }
 
@@ -405,8 +496,32 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     }
 
     if (message?.type === "STOP_MONITORING") {
+      bridgeState.joined = false;
       const result = await stopMonitoring();
       sendResponse(result);
+      return;
+    }
+
+    if (message?.type === "FLUSH_SCREEN_RECORDING") {
+      if (!monitorState.active || !monitorState.recorder || monitorState.recorder.state !== "recording") {
+        sendResponse({ ok: false, error: "No active screen recording." });
+        return;
+      }
+      if (typeof monitorState.recorder.requestData !== "function") {
+        sendResponse({ ok: false, error: "requestData not supported." });
+        return;
+      }
+      const reason = String(message.reason || "incident").slice(0, 120);
+      monitorState.pendingEvidenceTrigger = reason;
+      monitorState.pendingIncidentFlushCount = (monitorState.pendingIncidentFlushCount || 0) + 1;
+      try {
+        monitorState.recorder.requestData();
+      } catch (_err) {
+        monitorState.pendingIncidentFlushCount = Math.max(0, (monitorState.pendingIncidentFlushCount || 0) - 1);
+        sendResponse({ ok: false, error: "requestData failed." });
+        return;
+      }
+      sendResponse({ ok: true });
       return;
     }
 

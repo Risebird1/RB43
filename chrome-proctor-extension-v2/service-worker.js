@@ -15,8 +15,44 @@ const ALARM_NAMES = {
 
 const STORAGE_KEY = "risebird.proctor.session.state";
 const DNR_RULE_ID_BASE = 20000;
+/** Chrome MV3 dynamic rule cap — leave headroom below 5000. */
+const DNR_MAX_RULES = 4500;
+
+/** Serialize DNR updates so concurrent startSession / restore never double-add the same IDs. */
+let dnrSyncChain = Promise.resolve();
 const RESTRICTED_BLOCK_DEDUPE_MS = 3000;
 const TAB_FOCUS_LOSS_DEDUPE_MS = 2000;
+
+/** Baseline blocklist merged with server policy (dashboard / join handshake). */
+const DEFAULT_RESTRICTED_DOMAINS = [
+  "google.com",
+  "google.co.in",
+  "google.co.uk",
+  "bing.com",
+  "duckduckgo.com",
+  "chatgpt.com",
+  "openai.com",
+  "chat.openai.com",
+  "stackoverflow.com",
+  "stackexchange.com",
+  "facebook.com",
+  "instagram.com",
+  "youtube.com",
+  "youtu.be",
+  "reddit.com",
+  "linkedin.com",
+  "web.whatsapp.com",
+  "whatsapp.com",
+  "telegram.org",
+  "t.me",
+  "discord.com",
+  "discordapp.com",
+  "quora.com",
+  "copilot.microsoft.com",
+  "gemini.google.com",
+  "claude.ai",
+  "anthropic.com"
+];
 
 const DEFAULT_POLICY = {
   screenshotIntervalSeconds: 15,
@@ -52,8 +88,20 @@ const state = {
 const runtimeTelemetry = {
   blockedHostLastSeenAt: new Map(),
   lastTabFocusLossAt: 0,
-  popupOpenBySession: new Map()
+  lastEvidenceCaptureAt: 0
 };
+
+/** Avoid flooding screenshot + recorder flush when violations fire in bursts (e.g. rapid clipboard attempts). */
+const EVIDENCE_CAPTURE_DEBOUNCE_MS = 1200;
+
+const NO_EVIDENCE_CAPTURE_VIOLATIONS = new Set([
+  "SCREEN_CHUNK_UPLOAD_FAILED",
+  "SCREENSHOT_UPLOAD_FAILED",
+  "MEDIA_RECORDER_ERROR",
+  "SCREEN_CHUNK_PIPELINE_ERROR",
+  "SESSION_BOOTSTRAP_INVALID",
+  "MONITOR_SETUP_FAILED"
+]);
 
 async function saveState() {
   await chrome.storage.local.set({ [STORAGE_KEY]: state });
@@ -65,6 +113,21 @@ async function restoreState() {
     return;
   }
   Object.assign(state, persisted[STORAGE_KEY]);
+  /**
+   * Older persisted snapshots could omit restrictedDomains — then DNR installs no rules and
+   * isRestrictedHost() stays false, so sites open and no violations log. Re-merge defaults when active.
+   */
+  if (
+    state.sessionActive &&
+    (!Array.isArray(state.restrictedDomains) || state.restrictedDomains.length === 0)
+  ) {
+    state.restrictedDomains = uniqueDomains([...DEFAULT_RESTRICTED_DOMAINS]);
+    try {
+      await saveState();
+    } catch (_e) {
+      // Ignore.
+    }
+  }
 }
 
 function sanitizeBaseUrl(url) {
@@ -100,6 +163,23 @@ function isRestrictedHost(hostname) {
     return false;
   }
   return state.restrictedDomains.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
+}
+
+/** Policy entry that matched (e.g. www.google.com → google.com). */
+function matchingRestrictedRoot(hostname) {
+  if (!hostname || !Array.isArray(state.restrictedDomains)) {
+    return "";
+  }
+  const h = String(hostname).toLowerCase();
+  for (const domain of state.restrictedDomains) {
+    if (!domain) {
+      continue;
+    }
+    if (h === domain || h.endsWith(`.${domain}`)) {
+      return domain;
+    }
+  }
+  return "";
 }
 
 function shouldThrottleBlockedHost(hostname) {
@@ -178,6 +258,62 @@ async function recordViolation(type, message, metadata = {}) {
       // Keep local evidence even if event reporting fails.
     });
   }
+
+  if (state.sessionActive && !NO_EVIDENCE_CAPTURE_VIOLATIONS.has(type)) {
+    captureIncidentEvidence(type, metadata).catch(() => {
+      // Best-effort still image + screen-recording flush only.
+    });
+  }
+}
+
+async function captureScreenshotDataUrlForExamTab() {
+  const tab = await chrome.tabs.get(state.tabId);
+  if (!tab || !tab.windowId) {
+    throw new Error("Exam tab is unavailable.");
+  }
+  if (chrome.tabs.captureTab) {
+    try {
+      return await chrome.tabs.captureTab(state.tabId, { format: "jpeg", quality: 70 });
+    } catch (_e) {
+      /* Older Chrome or permission — fall back to visible tab in window. */
+    }
+  }
+  return chrome.tabs.captureVisibleTab(tab.windowId, {
+    format: "jpeg",
+    quality: 70
+  });
+}
+
+async function flushExamTabScreenRecording(triggerType) {
+  if (!state.sessionActive || !Number.isInteger(state.tabId)) {
+    return;
+  }
+  try {
+    await chrome.tabs.sendMessage(state.tabId, {
+      type: "FLUSH_SCREEN_RECORDING",
+      reason: String(triggerType || "incident").slice(0, 120)
+    });
+  } catch (_e) {
+    /* Exam tab may have no content script — ignore. */
+  }
+}
+
+async function captureIncidentEvidence(triggerType, metadata = {}) {
+  if (!state.sessionActive || NO_EVIDENCE_CAPTURE_VIOLATIONS.has(triggerType)) {
+    return;
+  }
+  const now = Date.now();
+  if (now - runtimeTelemetry.lastEvidenceCaptureAt < EVIDENCE_CAPTURE_DEBOUNCE_MS) {
+    return;
+  }
+  runtimeTelemetry.lastEvidenceCaptureAt = now;
+
+  await flushExamTabScreenRecording(triggerType);
+  try {
+    await uploadScreenshot({ evidenceTrigger: triggerType });
+  } catch (_e) {
+    /* Tab hidden / capture blocked — monitor-share flush above still helps. */
+  }
 }
 
 function appendLocalEvent(level, eventType, message, metadata = {}, timestamp = nowIso()) {
@@ -229,39 +365,75 @@ function extractPolicy(joinResponse, startResponse, inputPolicy) {
     heartbeatIntervalSeconds:
       Number(candidate.heartbeatIntervalSeconds) || DEFAULT_POLICY.heartbeatIntervalSeconds,
     chunkIntervalMs: Number(candidate.chunkIntervalMs) || DEFAULT_POLICY.chunkIntervalMs,
-    restrictedDomains: uniqueDomains(candidate.restrictedDomains || []),
+    restrictedDomains: uniqueDomains([
+      ...DEFAULT_RESTRICTED_DOMAINS,
+      ...(Array.isArray(candidate.restrictedDomains) ? candidate.restrictedDomains : [])
+    ]),
     allowedHosts: uniqueDomains(candidate.allowedHosts || [])
   };
 }
 
+async function removeAllDynamicDeclarativeRules() {
+  try {
+    const existing = await chrome.declarativeNetRequest.getDynamicRules();
+    const removeRuleIds = existing.map((r) => r.id);
+    if (removeRuleIds.length > 0) {
+      await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules: [] });
+    }
+  } catch (_e) {
+    // DNR may be unavailable in restricted contexts — session should still proceed.
+  }
+}
+
 async function syncDynamicRestrictedDomainRules() {
-  const removeRuleIds = [...state.dnrRuleIds];
-  const addRules = [];
-  const nextIds = [];
+  const run = async () => {
+    /** Always clear dynamic rules from Chrome first — persisted state.dnrRuleIds can be stale vs actual IDs in the browser. */
+    await removeAllDynamicDeclarativeRules();
 
-  for (let index = 0; index < state.restrictedDomains.length; index += 1) {
-    const domain = state.restrictedDomains[index];
-    const id = DNR_RULE_ID_BASE + index;
-    const rule = {
-      id,
-      priority: 1,
-      action: { type: "block" },
-      condition: {
-        urlFilter: `||${domain}^`,
-        resourceTypes: ["main_frame", "sub_frame"]
+    const domains = uniqueDomains(state.restrictedDomains).slice(0, DNR_MAX_RULES);
+    const addRules = [];
+    const nextIds = [];
+
+    for (let i = 0; i < domains.length; i += 1) {
+      const domain = domains[i];
+      if (!domain) {
+        continue;
       }
-    };
+      const id = DNR_RULE_ID_BASE + i;
+      /**
+       * urlFilter ||domain^ matches that registrable host and subdomains across schemes (main navigation + subresources).
+       * excludedRequestDomains on every rule was redundant for per-host blocks and could mis-interact with policy; omit.
+       */
+      const rule = {
+        id,
+        priority: 2,
+        action: { type: "block" },
+        condition: {
+          urlFilter: `||${domain}^`
+        }
+      };
 
-    if (state.allowedHosts.length > 0) {
-      rule.condition.excludedRequestDomains = state.allowedHosts;
+      addRules.push(rule);
+      nextIds.push(id);
     }
 
-    addRules.push(rule);
-    nextIds.push(id);
-  }
+    if (addRules.length > 0) {
+      await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: [], addRules });
+    }
+    state.dnrRuleIds = nextIds;
+  };
 
-  await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules });
-  state.dnrRuleIds = nextIds;
+  const previous = dnrSyncChain;
+  const next = previous.then(run, run);
+  dnrSyncChain = next.catch(async (err) => {
+    state.lastError = `DNR: ${String(err?.message || err)}`;
+    try {
+      await saveState();
+    } catch (_e) {
+      // Ignore.
+    }
+  });
+  return next;
 }
 
 async function setupSessionTimers() {
@@ -302,7 +474,7 @@ function getSessionSnapshot() {
     screenshotIntervalSeconds: state.screenshotIntervalSeconds,
     heartbeatIntervalSeconds: state.heartbeatIntervalSeconds,
     chunkIntervalMs: state.chunkIntervalMs,
-    recentEvents: state.eventLog.slice(-30).reverse(),
+    recentEvents: state.eventLog.slice(-60).reverse(),
     lastError: state.lastError,
     startedAt: state.startedAt
   };
@@ -388,6 +560,11 @@ async function startSession(input) {
 
 async function stopSession(reason = "Stopped by user.") {
   if (!state.sessionActive) {
+    try {
+      await chrome.storage.local.remove("risebird.proctor.session.manualStopLocked");
+    } catch (_e) {
+      // Ignore.
+    }
     return getSessionSnapshot();
   }
 
@@ -405,10 +582,7 @@ async function stopSession(reason = "Stopped by user.") {
     // Always continue local cleanup.
   }
 
-  const removeRuleIds = [...state.dnrRuleIds];
-  if (removeRuleIds.length > 0) {
-    await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules: [] });
-  }
+  await removeAllDynamicDeclarativeRules();
 
   state.sessionActive = false;
   state.dnrRuleIds = [];
@@ -416,6 +590,12 @@ async function stopSession(reason = "Stopped by user.") {
   state.allowedHosts = [];
   state.lastError = null;
   await saveState();
+
+  try {
+    await chrome.storage.local.remove("risebird.proctor.session.manualStopLocked");
+  } catch (_e) {
+    // Ignore.
+  }
 
   return getSessionSnapshot();
 }
@@ -428,11 +608,28 @@ async function uploadScreenChunk(message) {
     chunkSeq: message.chunkSeq,
     mimeType: message.mimeType,
     capturedAt: message.capturedAt || nowIso(),
-    data: message.data
+    data: message.data,
+    evidenceTrigger: message.evidenceTrigger || undefined
   };
 
   try {
     await apiPost(API_PATHS.SCREEN_CHUNK, payload);
+    appendLocalEvent(
+      "info",
+      "chunk_upload",
+      message.evidenceTrigger
+        ? `Screen chunk #${message.chunkSeq} (${message.evidenceTrigger})`
+        : `Screen chunk #${message.chunkSeq} uploaded`,
+      {
+        chunkSeq: message.chunkSeq,
+        mimeType: message.mimeType,
+        evidenceTrigger: message.evidenceTrigger || null
+      }
+    );
+    const seq = Number(message.chunkSeq);
+    if (!Number.isFinite(seq) || seq % 5 === 0) {
+      await saveState();
+    }
   } catch (error) {
     await recordViolation("SCREEN_CHUNK_UPLOAD_FAILED", "Screen chunk upload failed", {
       error: String(error.message || error),
@@ -442,22 +639,14 @@ async function uploadScreenChunk(message) {
   }
 }
 
-async function uploadScreenshot() {
+async function uploadScreenshot(options = {}) {
   requireSessionContext();
 
   if (!Number.isInteger(state.tabId)) {
     throw new Error("No active exam tab is associated with session.");
   }
 
-  const tab = await chrome.tabs.get(state.tabId);
-  if (!tab || !tab.windowId) {
-    throw new Error("Exam tab is unavailable.");
-  }
-
-  const screenshotDataUrl = await chrome.tabs.captureVisibleTab(tab.windowId, {
-    format: "jpeg",
-    quality: 70
-  });
+  const screenshotDataUrl = await captureScreenshotDataUrlForExamTab();
 
   const capturedAt = nowIso();
   const payload = {
@@ -465,12 +654,20 @@ async function uploadScreenshot() {
     candidateId: state.candidateId || null,
     tabId: state.tabId,
     capturedAt,
-    data: screenshotDataUrl
+    data: screenshotDataUrl,
+    evidenceTrigger: options.evidenceTrigger || undefined
   };
 
   await apiPost(API_PATHS.SCREENSHOT, payload);
   state.screenshotUploads += 1;
   state.lastScreenshotAt = capturedAt;
+  const trigger = options.evidenceTrigger;
+  appendLocalEvent(
+    "info",
+    "screenshot_tab",
+    trigger ? `Exam tab screenshot (${trigger})` : "Exam tab screenshot uploaded",
+    { capturedAt, evidenceTrigger: trigger || null }
+  );
   await saveState();
 }
 
@@ -492,44 +689,15 @@ async function sendHeartbeat() {
   await saveState();
 }
 
-async function openProctoringPopup(payload = {}) {
-  const sessionId = String(payload.sessionId || "").trim();
-  if (!sessionId) {
-    throw new Error("sessionId is required to open popup.");
-  }
-
-  if (runtimeTelemetry.popupOpenBySession.has(sessionId)) {
-    return { opened: false, reused: true };
-  }
-
-  const popupUrl = chrome.runtime.getURL("popup.html");
-  const windows = await chrome.windows.getAll({ populate: true, windowTypes: ["popup"] });
-  const existing = windows.find((win) =>
-    Array.isArray(win.tabs) && win.tabs.some((tab) => tab.url === popupUrl)
-  );
-
-  if (existing) {
-    await chrome.windows.update(existing.id, { focused: true });
-    runtimeTelemetry.popupOpenBySession.set(sessionId, Date.now());
-    return { opened: false, reused: true };
-  }
-
-  await chrome.windows.create({
-    url: popupUrl,
-    type: "popup",
-    focused: true,
-    width: 460,
-    height: 760
-  });
-
-  runtimeTelemetry.popupOpenBySession.set(sessionId, Date.now());
-  return { opened: true, reused: false };
-}
-
 chrome.runtime.onInstalled.addListener(async () => {
   await restoreState();
   if (!state.sessionActive) {
     return;
+  }
+  try {
+    await syncDynamicRestrictedDomainRules();
+  } catch (_e) {
+    // Rules may fail if session domains empty — continue timers.
   }
   await setupSessionTimers();
 });
@@ -538,6 +706,11 @@ chrome.runtime.onStartup.addListener(async () => {
   await restoreState();
   if (!state.sessionActive) {
     return;
+  }
+  try {
+    await syncDynamicRestrictedDomainRules();
+  } catch (_e) {
+    // Same as onInstalled.
   }
   await setupSessionTimers();
 });
@@ -576,7 +749,8 @@ chrome.webRequest.onErrorOccurred.addListener(
       if (!state.sessionActive) {
         return;
       }
-      if (details.error !== "net::ERR_BLOCKED_BY_CLIENT") {
+      const errStr = String(details.error || "");
+      if (!errStr.includes("ERR_BLOCKED_BY_CLIENT")) {
         return;
       }
 
@@ -588,20 +762,64 @@ chrome.webRequest.onErrorOccurred.addListener(
         return;
       }
 
-      await recordViolation("RESTRICTED_DOMAIN_BLOCKED", "Restricted domain access blocked.", {
-        url: details.url,
-        hostname,
-        tabId: details.tabId,
-        frameId: details.frameId,
-        requestId: details.requestId,
-        error: details.error
-      });
+      const restrictedDomain = matchingRestrictedRoot(hostname);
+      await recordViolation(
+        "RESTRICTED_DOMAIN_BLOCKED",
+        `Restricted domain blocked: ${hostname}${restrictedDomain && restrictedDomain !== hostname ? ` (policy domain: ${restrictedDomain})` : ""}`,
+        {
+          url: details.url,
+          hostname,
+          restrictedDomain: restrictedDomain || hostname,
+          tabId: details.tabId,
+          frameId: details.frameId,
+          requestId: details.requestId,
+          error: details.error
+        }
+      );
     })().catch(() => {
       // Best-effort telemetry only.
     });
   },
   { urls: ["<all_urls>"] }
 );
+
+/** If DNR misses a navigation, detect restricted URL in the exam tab, log, and go back. */
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  (async () => {
+    if (!state.sessionActive || !Number.isInteger(state.tabId) || tabId !== state.tabId) {
+      return;
+    }
+    const url = changeInfo.url || tab?.url || "";
+    if (!url || !/^https?:\/\//i.test(url)) {
+      return;
+    }
+    const hostname = extractHostname(url);
+    if (!hostname || !isRestrictedHost(hostname)) {
+      return;
+    }
+    if (shouldThrottleBlockedHost(hostname)) {
+      return;
+    }
+    const restrictedDomain = matchingRestrictedRoot(hostname);
+    await recordViolation(
+      "RESTRICTED_DOMAIN_NAVIGATION",
+      `Exam tab opened restricted site: ${hostname}${restrictedDomain && restrictedDomain !== hostname ? ` (policy domain: ${restrictedDomain})` : ""}`,
+      {
+        hostname,
+        restrictedDomain: restrictedDomain || hostname,
+        url,
+        tabId
+      }
+    );
+    try {
+      await chrome.tabs.goBack(tabId);
+    } catch (_e) {
+      // No history or tab closed — block already attempted via DNR.
+    }
+  })().catch(() => {
+    // Best-effort.
+  });
+});
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
   (async () => {
@@ -641,6 +859,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return;
       }
       case "STOP_SESSION": {
+        const force = message.force === true;
+        const lockData = await chrome.storage.local.get("risebird.proctor.session.manualStopLocked");
+        const locked = lockData["risebird.proctor.session.manualStopLocked"] === true;
+        if (locked && !force) {
+          sendResponse({
+            ok: false,
+            error: "Stop is disabled until the interview ends or you leave the interview tab."
+          });
+          return;
+        }
         const snapshot = await stopSession(message.reason || "Stopped from extension popup.");
         sendResponse({ ok: true, state: snapshot });
         return;
@@ -663,12 +891,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return;
       }
       case "GET_STATE": {
-        sendResponse({ ok: true, state: getSessionSnapshot() });
-        return;
-      }
-      case "OPEN_PROCTORING_POPUP": {
-        const result = await openProctoringPopup(message.payload || {});
-        sendResponse({ ok: true, ...result });
+        await restoreState();
+        const snapshot = getSessionSnapshot();
+        const lockData = await chrome.storage.local.get("risebird.proctor.session.manualStopLocked");
+        snapshot.manualStopLocked = lockData["risebird.proctor.session.manualStopLocked"] === true;
+        sendResponse({ ok: true, state: snapshot });
         return;
       }
       default:

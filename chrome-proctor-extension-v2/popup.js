@@ -9,7 +9,6 @@ const elements = {
   violationsCount: document.getElementById("violationsCount"),
   screenshotUploads: document.getElementById("screenshotUploads"),
   lastScreenshotAt: document.getElementById("lastScreenshotAt"),
-  recentEventsList: document.getElementById("recentEventsList"),
   message: document.getElementById("message"),
   startBtn: document.getElementById("startBtn"),
   stopBtn: document.getElementById("stopBtn"),
@@ -33,9 +32,18 @@ function setStatus(state) {
     elements.status.className = "status status-error";
     elements.status.textContent = `Error: ${state.lastError}`;
   }
+
+  const stopLocked = Boolean(isActive && state?.manualStopLocked);
+  elements.stopBtn.disabled = stopLocked;
+  elements.stopBtn.title = stopLocked
+    ? "Session ends when the interview ends or you leave the interview tab."
+    : "";
 }
 
 function renderDomainList(listEl, values) {
+  if (!listEl) {
+    return;
+  }
   listEl.innerHTML = "";
   const entries = Array.isArray(values) ? values : [];
   if (entries.length === 0) {
@@ -51,34 +59,10 @@ function renderDomainList(listEl, values) {
   }
 }
 
-function renderRecentEvents(values) {
-  elements.recentEventsList.innerHTML = "";
-  const entries = Array.isArray(values) ? values : [];
-  if (entries.length === 0) {
-    const node = document.createElement("li");
-    node.innerHTML = `<span class="event-title">No events yet.</span>`;
-    elements.recentEventsList.appendChild(node);
+function persistInputs() {
+  if (!elements.backendBaseUrl || !elements.sessionToken || !elements.sessionId || !elements.candidateId) {
     return;
   }
-
-  for (const eventItem of entries.slice(0, 20)) {
-    const row = document.createElement("li");
-    const level = String(eventItem?.level || "").toLowerCase();
-    if (level === "violation") {
-      row.classList.add("event-violation");
-    }
-    const when = eventItem?.capturedAt || "";
-    const eventType = eventItem?.eventType || "event";
-    const message = eventItem?.message || "Event";
-    row.innerHTML =
-      `<span class="event-time">${when || "—"}</span>` +
-      `<span class="event-title">[${eventType}] ${message}</span>` +
-      `<span class="event-meta">Severity: ${level || "info"}</span>`;
-    elements.recentEventsList.appendChild(row);
-  }
-}
-
-function persistInputs() {
   chrome.storage.local.set({
     "risebird.proctor.popup.inputs": {
       backendBaseUrl: elements.backendBaseUrl.value.trim(),
@@ -90,6 +74,9 @@ function persistInputs() {
 }
 
 async function restoreInputs() {
+  if (!elements.backendBaseUrl || !elements.sessionToken || !elements.sessionId || !elements.candidateId) {
+    return;
+  }
   const data = await chrome.storage.local.get("risebird.proctor.popup.inputs");
   const values = data["risebird.proctor.popup.inputs"] || {};
   elements.backendBaseUrl.value = values.backendBaseUrl || "";
@@ -99,9 +86,13 @@ async function restoreInputs() {
 }
 
 async function getActiveTab() {
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  // From the toolbar popup, `currentWindow` is the popup itself — use last focused browser window.
+  let tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   if (!tabs[0] || typeof tabs[0].id !== "number") {
-    throw new Error("No active exam tab found.");
+    tabs = await chrome.tabs.query({ active: true, windowType: "normal" });
+  }
+  if (!tabs[0] || typeof tabs[0].id !== "number") {
+    throw new Error("No active exam tab found. Focus the interview tab and try again.");
   }
   return tabs[0];
 }
@@ -128,7 +119,6 @@ async function refreshState() {
   setStatus(state);
   renderDomainList(elements.restrictedDomainsList, state.restrictedDomains || []);
   renderDomainList(elements.allowedHostsList, state.allowedHosts || []);
-  renderRecentEvents(state.recentEvents || []);
 }
 
 async function startSession() {
@@ -136,6 +126,9 @@ async function startSession() {
   persistInputs();
 
   const tab = await getActiveTab();
+  if (!elements.backendBaseUrl || !elements.sessionToken || !elements.sessionId || !elements.candidateId) {
+    throw new Error("Session form is missing from the popup UI.");
+  }
   const payload = {
     backendBaseUrl: elements.backendBaseUrl.value.trim(),
     sessionToken: elements.sessionToken.value.trim(),
@@ -159,7 +152,8 @@ async function startSession() {
   } catch (error) {
     await sendRuntimeMessage({
       type: "STOP_SESSION",
-      reason: "Monitor-only screen share setup failed."
+      reason: "Monitor-only screen share setup failed.",
+      force: true
     }).catch(() => undefined);
     throw error;
   }
@@ -202,7 +196,7 @@ async function onStopClick() {
   } catch (error) {
     setMessage(String(error.message || error), true);
   } finally {
-    elements.stopBtn.disabled = false;
+    await refreshState().catch(() => undefined);
   }
 }
 

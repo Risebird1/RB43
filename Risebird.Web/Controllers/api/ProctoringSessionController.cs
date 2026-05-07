@@ -92,11 +92,32 @@ namespace Risebird.Web.Controllers.Api
                     .ToArray();
             }
 
+            static string[] MergePolicyHosts(params IEnumerable<string>?[] sources)
+            {
+                var list = new List<string>();
+                foreach (var src in sources)
+                {
+                    if (src == null) continue;
+                    foreach (var x in src)
+                    {
+                        if (!string.IsNullOrWhiteSpace(x))
+                            list.Add(x.Trim());
+                    }
+                }
+                return list.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+            }
+
             var screenshotIntervalSeconds = ParseIntWithFallback(_configuration["ProctoringSettings:Policy:ScreenshotIntervalSeconds"], 15);
             var heartbeatIntervalSeconds = ParseIntWithFallback(_configuration["ProctoringSettings:Policy:HeartbeatIntervalSeconds"], 10);
             var chunkIntervalMs = ParseIntWithFallback(_configuration["ProctoringSettings:Policy:ChunkIntervalMs"], 5000);
-            var restrictedDomains = ParseCsv(_configuration["ProctoringSettings:Policy:RestrictedDomains"]);
-            var allowedHosts = ParseCsv(_configuration["ProctoringSettings:Policy:AllowedHosts"]);
+            var restrictedDomains = MergePolicyHosts(
+                _configuration.GetSection("ProctoringSettings:Policy:RestrictedDomains").Get<string[]>(),
+                ParseCsv(_configuration["ProctoringSettings:Policy:RestrictedDomains"]),
+                _configuration.GetSection("Proctoring:RestrictedDomains").Get<string[]>());
+            var allowedHosts = MergePolicyHosts(
+                _configuration.GetSection("ProctoringSettings:Policy:AllowedHosts").Get<string[]>(),
+                ParseCsv(_configuration["ProctoringSettings:Policy:AllowedHosts"]),
+                _configuration.GetSection("Proctoring:AllowedHosts").Get<string[]>());
 
             return new
             {
@@ -346,6 +367,7 @@ namespace Risebird.Web.Controllers.Api
                     body?.CapturedAt,
                     body?.TabId,
                     body?.CandidateId,
+                    body?.EvidenceTrigger,
                     blobUrl,
                     blobPath,
                     container = ProctoringScreenshotContainer,
@@ -446,6 +468,7 @@ namespace Risebird.Web.Controllers.Api
                     body?.ChunkSeq,
                     body?.CapturedAt,
                     mimeType,
+                    body?.EvidenceTrigger,
                     payloadLength = len,
                     bytesLength = chunkBytes.Length,
                     blobUrl,
@@ -532,6 +555,8 @@ namespace Risebird.Web.Controllers.Api
         public string? CapturedAt { get; set; }
         public string? Data { get; set; }
         public string? ImageBase64 { get; set; }
+        /// <summary>Optional violation / incident code when capture was triggered by evidence pipeline (e.g. EXAM_TAB_FOCUS_LOST).</summary>
+        public string? EvidenceTrigger { get; set; }
     }
 
     public sealed class ProctoringHeartbeatDto
@@ -556,5 +581,7 @@ namespace Risebird.Web.Controllers.Api
         public string? MimeType { get; set; }
         public string? CapturedAt { get; set; }
         public string? Data { get; set; }
+        /// <summary>Set when chunk was forced via MediaRecorder.requestData() after an incident (matches EvidenceTrigger on screenshot).</summary>
+        public string? EvidenceTrigger { get; set; }
     }
 }

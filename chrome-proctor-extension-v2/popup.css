@@ -107,46 +107,6 @@ input:focus {
   color: #f1f6ff;
 }
 
-.event-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 6px;
-  max-height: 180px;
-  overflow-y: auto;
-}
-
-.event-list li {
-  border: 1px solid #2f3a50;
-  border-radius: 6px;
-  padding: 6px 8px;
-  background: #111723;
-  display: grid;
-  gap: 2px;
-}
-
-.event-list li.event-violation {
-  border-color: #7d2d35;
-  background: #2b1619;
-}
-
-.event-list .event-time {
-  font-size: 10px;
-  color: #93a2be;
-}
-
-.event-list .event-title {
-  font-size: 12px;
-  color: #edf2fb;
-  font-weight: 600;
-}
-
-.event-list .event-meta {
-  font-size: 10px;
-  color: #aeb9cd;
-}
-
 .status {
   font-size: 12px;
   border-radius: 6px;
@@ -170,9 +130,18 @@ input:focus {
   color: #ffd9dd;
 }
 
-.actions {
+/* Row toolbar: override .card grid so Start / Stop / Refresh stay on one line */
+.card.actions {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
   gap: 8px;
+}
+
+.card.actions .btn {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .btn {
@@ -208,4 +177,11 @@ input:focus {
   min-height: 16px;
   font-size: 12px;
   color: #9fbee8;
+}
+
+.field-hint {
+  margin: 0;
+  font-size: 11px;
+  color: #9eb0cf;
+  line-height: 1.35;
 }

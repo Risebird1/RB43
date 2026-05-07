@@ -43,6 +43,8 @@
             if (meetingStartMs > meetingEndMs && meetingEndMs !== Number.MAX_SAFE_INTEGER)
                 meetingStartMs = 0;
             var stopExtensionAfterMs = meetingEndMs + 5 * 60 * 1000;
+            /* Brief defer before HELLO/JOIN so the document exists; monitoring starts immediately after join (same for all layouts). */
+            var proctoringWireDelayMs = 0;
             function origin() { return window.location.origin; }
             function isTrustedMessageOrigin(ev) {
                 if (!ev || !ev.origin) return false;
@@ -199,6 +201,12 @@
                         onExtensionReady();
                         return;
                     }
+                    if (t === 'RB_PROCTORING_CAPTURE_ACTIVE') {
+                        try {
+                            document.dispatchEvent(new CustomEvent('risebird-proctoring-capture-active', { bubbles: true, detail: data.payload || {} }));
+                        } catch (eCap) { }
+                        return;
+                    }
                 }
                 window.addEventListener('message', function (ev) {
                     // Do not require ev.source === window: extension content scripts / injected bridges
@@ -243,6 +251,9 @@
                 } else {
                     joinSent = true;
                     hideProctoringModal();
+                    if (!priorSetupDone) {
+                        tryStartMonitoring('immediate');
+                    }
                 }
                 document.addEventListener('risebird-proctoring-recording-started', function () {
                     tryStartMonitoring('recording');
@@ -281,8 +292,11 @@
                     await fetchBootstrapFromBackend();
                     try { wire(); } catch (e) { }
                 }
-                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { run(); });
-                else run();
+                function runAfterInterviewLeadIn() {
+                    window.setTimeout(run, proctoringWireDelayMs);
+                }
+                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', runAfterInterviewLeadIn);
+                else runAfterInterviewLeadIn();
             }
             scheduleWire();
         })();

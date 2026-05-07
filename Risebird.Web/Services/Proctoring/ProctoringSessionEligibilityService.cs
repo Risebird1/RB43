@@ -11,9 +11,6 @@ namespace Risebird.Web.Services.Proctoring
     {
         private readonly IAIInterviewerService _aiInterviewerService;
 
-        /// <summary>No persistence before scheduled interview start (eligibility uses interviewDate as window start).</summary>
-        private const int MinutesBeforeStartGrace = 0;
-
         /// <summary>Grace after scheduled end (submission, clock skew).</summary>
         private const int MinutesAfterEndGrace = 5;
 
@@ -49,10 +46,11 @@ namespace Risebird.Web.Services.Proctoring
                 return false;
 
             var durationMin = details.interviewDuration > 0 ? details.interviewDuration : 60;
-            var windowStart = details.interviewDate.AddMinutes(-MinutesBeforeStartGrace);
+            // Candidates often land on AI Interview before the scheduled slot; do not drop telemetry for "early" opens.
+            // Stop persisting only after scheduled end + grace (submission / clock skew).
             var windowEnd = details.interviewDate.AddMinutes(durationMin + MinutesAfterEndGrace);
             var now = DateTime.Now;
-            if (now < windowStart || now > windowEnd)
+            if (now > windowEnd)
                 return false;
 
             return true;

@@ -25,6 +25,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
+using Risebird.Web.Helpers;
 using Risebird.Web.Services.Proctoring;
 using System;
 using System.Collections.Generic;
@@ -1787,7 +1788,7 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.AccessType = accessType;
 
-                await SetProctoringEventCountForReportAsync(meetingDetails.InterviewId);
+                await SetProctoringReportExtrasAsync(meetingDetails.InterviewId);
 
                 return View(reportModel);
             }
@@ -1914,7 +1915,7 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.AccessType = accessType;
 
-                await SetProctoringEventCountForReportAsync(meetingDetails.InterviewId);
+                await SetProctoringReportExtrasAsync(meetingDetails.InterviewId);
 
                 return View(reportModel);
             }
@@ -1934,7 +1935,8 @@ namespace Risebird.Web.Controllers
                 InterviewId = meetingDetails.InterviewId,
                 CandidateName = meetingDetails.candidateName,
                 CandidateEmail = meetingDetails.candidateEmail,
-                Events = events
+                Events = events,
+                BlobMediaItems = ProctoringBlobPreviewHelper.TakeBlobPreviews(events)
             };
             ViewData["Title"] = "Proctoring session events";
 
@@ -2117,20 +2119,23 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        private async Task SetProctoringEventCountForReportAsync(int interviewId)
+        private async Task SetProctoringReportExtrasAsync(int interviewId)
         {
+            ViewBag.ProctoringEventCount = 0;
+            ViewBag.ProctoringBlobPreviews = Array.Empty<ProctoringBlobPreviewVm>();
+            if (interviewId <= 0)
+                return;
             try
             {
-                if (interviewId <= 0)
-                {
-                    ViewBag.ProctoringEventCount = 0;
-                    return;
-                }
-                ViewBag.ProctoringEventCount = await _proctoringSessionEventRepository.GetCountByInterviewIdAsync(interviewId);
+                var events = await _proctoringSessionEventRepository.GetByInterviewIdOrderedAsync(interviewId);
+                var list = events?.ToList() ?? new List<ProctoringSessionEvent>();
+                ViewBag.ProctoringEventCount = list.Count;
+                ViewBag.ProctoringBlobPreviews = ProctoringBlobPreviewHelper.TakeBlobPreviews(list, maxItems: 18);
             }
             catch
             {
                 ViewBag.ProctoringEventCount = 0;
+                ViewBag.ProctoringBlobPreviews = Array.Empty<ProctoringBlobPreviewVm>();
             }
         }
 

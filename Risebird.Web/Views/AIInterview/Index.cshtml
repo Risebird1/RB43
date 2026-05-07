@@ -1910,6 +1910,25 @@
         flex-wrap: wrap;
     }
 
+    .rb-assistant-audio-play-btn {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 12px;
+        border: none;
+        background: linear-gradient(135deg, #4eda92 0%, #47bc80 100%);
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(71, 188, 128, 0.35);
+    }
+
+    .rb-assistant-audio-play-btn.is-visible {
+        display: inline-flex;
+    }
+
     .rb-mic-record-btn {
         width: 66px;
         height: 66px;
@@ -2184,6 +2203,13 @@
                 <!-- Controls below the phone card -->
                 <div class="rb-audio-phone-controls">
 
+                    @if (ViewData["AssistantAudioBase64"] is string)
+                    {
+                        <button type="button" id="rbAssistantAudioPlayBtn" class="rb-assistant-audio-play-btn" title="Play the interviewer question (required if your browser blocked autoplay)">
+                            <i class="fa fa-volume-up"></i> Play question audio
+                        </button>
+                    }
+
                     <!-- Upload button -->
                     <button type="button" class="rb-audio-util-btn" title="Upload File" data-tooltip="Upload File">
                         <i class="fa fa-upload"></i>
@@ -2349,8 +2375,12 @@
                             @if (Model.IsAdaptive == true)
                             {
                                 @* Audio mode: avatar, waves, and progress are rendered in the phone UI on the left.
-                            Only the hidden <audio> element is needed here for playback. *@
-                                <audio autoplay id="assistantAudio" controls hidden></audio>
+                            Hidden <audio> for programmatic playback; blob queued via inline script below before DOMContentLoaded. *@
+                                <audio autoplay id="assistantAudio" preload="auto" playsinline hidden></audio>
+                                @if (ViewData["AssistantAudioBase64"] is string)
+                                {
+                                    <script type="application/json" id="risebird-assistant-audio-json">@Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]))</script>
+                                }
                             }
                             else
                             {
@@ -2516,13 +2546,87 @@
 
 
 <script>
+    function setAssistantAudioPlayButtonVisible(visible) {
+        var btn = document.getElementById("rbAssistantAudioPlayBtn");
+        if (!btn) return;
+        if (visible) btn.classList.add("is-visible");
+        else btn.classList.remove("is-visible");
+    }
+
+    function hydrateAssistantAudioBlobFromJson() {
+        if (window._initialAssistantAudioBlob) return;
+        var el = document.getElementById("risebird-assistant-audio-json");
+        if (!el || !el.textContent) return;
+        try {
+            var base64 = JSON.parse(el.textContent.trim());
+            if (typeof base64 !== "string" || !base64.length) return;
+            window._initialAssistantAudioBlob = new Blob(
+                [Uint8Array.from(atob(base64), function (c) { return c.charCodeAt(0); })],
+                { type: "audio/mpeg" }
+            );
+        } catch (_e) { }
+    }
+
+    /* Original behaviour: assign blob URL and call play(); waves sync via audio events (not await-heavy decode gates). */
     function playAssistantAudio(blob) {
-        const audioElement = document.getElementById("assistantAudio");
-        const audioUrl = URL.createObjectURL(blob);
-        audioElement.src = audioUrl;
-        audioElement.hidden = false;
-        // Don't highlight here: waves and aiAvatarCircle.speaking are added only on the audio 'play' event, so they stay in sync with actual playback (like video autoplay)
-        audioElement.play();
+        var audioElement = document.getElementById("assistantAudio");
+        if (!audioElement || !blob) return;
+        try {
+            var audioUrl = URL.createObjectURL(blob);
+            if (audioElement._risebirdAssistantAudioUrl) {
+                try { URL.revokeObjectURL(audioElement._risebirdAssistantAudioUrl); } catch (_r) { }
+            }
+            audioElement._risebirdAssistantAudioUrl = audioUrl;
+            audioElement.src = audioUrl;
+            audioElement.hidden = false;
+            var p = audioElement.play();
+            if (p !== undefined) {
+                p.then(function () {
+                    window._pendingAssistantAudioBlob = null;
+                    window._initialAssistantAudioBlob = null;
+                    setAssistantAudioPlayButtonVisible(false);
+                }).catch(function (err) {
+                    console.warn("Assistant audio autoplay blocked or failed:", err);
+                    window._pendingAssistantAudioBlob = blob;
+                    setAssistantAudioPlayButtonVisible(true);
+                });
+            }
+        } catch (err) {
+            console.warn("Assistant audio:", err);
+            window._pendingAssistantAudioBlob = blob;
+            setAssistantAudioPlayButtonVisible(true);
+        }
+    }
+
+    function wireAssistantAudioGestureUnlock() {
+        document.addEventListener(
+            "pointerdown",
+            function tryUnlockAssistantAudio() {
+                var blob = window._pendingAssistantAudioBlob || window._initialAssistantAudioBlob;
+                if (!blob) return;
+                playAssistantAudio(blob);
+            },
+            true
+        );
+    }
+
+    /* Earliest safe autoplay after DOM is ready: waves listeners attached above; rAF runs play right after first paint. Retry only if autoplay was blocked. */
+    function scheduleAssistantAutoplayOnLanding() {
+        var blob = window._initialAssistantAudioBlob;
+        if (!blob || typeof playAssistantAudio !== "function") return;
+        function runKick() {
+            var b = window._initialAssistantAudioBlob || window._pendingAssistantAudioBlob || blob;
+            if (b) playAssistantAudio(b);
+        }
+        if (window.requestAnimationFrame) {
+            requestAnimationFrame(runKick);
+        } else {
+            runKick();
+        }
+        window.setTimeout(function () {
+            if (window._pendingAssistantAudioBlob)
+                playAssistantAudio(window._pendingAssistantAudioBlob);
+        }, 350);
     }
 
     // Chat Log Scrolling Functionality
@@ -2531,6 +2635,8 @@
         const scrollToBottomBtn = document.getElementById('scrollToBottom');
         const audioElement = document.getElementById('assistantAudio');
         const audioWaves = document.getElementById('audioWaves');
+
+        hydrateAssistantAudioBlobFromJson();
 
         // Audio event listeners for wave animation + phone UI avatar (highlight only when audio actually plays)
         if (audioElement && audioWaves) {
@@ -2551,18 +2657,28 @@
                 const aiAvatar = document.getElementById('aiAvatarCircle');
                 if (aiAvatar) aiAvatar.classList.remove('speaking');
 
-                // Prompt candidate to record their answer in phone UI
                 const micStatus = document.getElementById('micStatus');
                 if (micStatus && !micStatus.classList.contains('recording')) {
                     micStatus.textContent = 'Tap to record answer';
                 }
             });
+        }
 
-            // Autoplay initial assistant audio (like video autoplay); highlight happens at same time via 'play' above
-            if (window._initialAssistantAudioBlob && typeof playAssistantAudio === 'function') {
-                playAssistantAudio(window._initialAssistantAudioBlob);
-                window._initialAssistantAudioBlob = null;
+        /* Try landing autoplay for all layouts; adaptive also retries after getUserMedia (stronger unlock). */
+        if (audioElement && window._initialAssistantAudioBlob) {
+            scheduleAssistantAutoplayOnLanding();
+        }
+
+        if (audioElement) {
+            var assistantPlayBtn = document.getElementById("rbAssistantAudioPlayBtn");
+            if (assistantPlayBtn) {
+                assistantPlayBtn.addEventListener("click", function () {
+                    var blob = window._pendingAssistantAudioBlob || window._initialAssistantAudioBlob;
+                    if (!blob) return;
+                    playAssistantAudio(blob);
+                });
             }
+            wireAssistantAudioGestureUnlock();
         }
 
         if (chatLog && scrollToBottomBtn) {
@@ -2623,6 +2739,10 @@
             if (candidateVideoEl && candidateAvatarCircle && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                     .then(function(stream) {
+                        var ab = window._pendingAssistantAudioBlob || window._initialAssistantAudioBlob;
+                        if (ab && typeof playAssistantAudio === 'function') {
+                            playAssistantAudio(ab);
+                        }
                         window._audioPhoneCandidateStream = stream;
                         candidateVideoEl.srcObject = stream;
                         candidateVideoEl.style.display = 'block';
@@ -2675,12 +2795,10 @@
             const audioBlob = new Blob([
                 Uint8Array.from(atob(base64), c => c.charCodeAt(0))
             ], { type: 'audio/mp3' });
-            // Queue for autoplay when DOM is ready (inside DOMContentLoaded, after 'play' listener is attached so highlight and audio start together)
             window._initialAssistantAudioBlob = audioBlob;
         })();
     </script>
 }
-
 <script>
     let mediaRecorderAudio;
     let audioChunks = [];

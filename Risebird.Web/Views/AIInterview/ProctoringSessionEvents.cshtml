@@ -1,7 +1,7 @@
 @using Risebird.CommonHelper
 @using Risebird.Entities.Data
 @using Risebird.Web.Helpers
-@using Newtonsoft.Json.Linq
+@using Risebird.Entities.ViewModel
 @using System.Linq
 @model Risebird.Entities.ViewModel.ProctoringSessionEventsResultViewModel
 @{
@@ -2325,27 +2325,7 @@
         var medEvents = allEvents.Count(x => string.Equals(x.Level, "info", System.StringComparison.OrdinalIgnoreCase));
         var lowEvents = allEvents.Count - highEvents - medEvents;
         if (lowEvents < 0) { lowEvents = 0; }
-        var screenshotEvidence = allEvents
-            .Where(x => string.Equals(x.EventKind, "screenshot", System.StringComparison.OrdinalIgnoreCase))
-            .Select(x =>
-            {
-                string blobUrl = null;
-                string capturedAt = null;
-                try
-                {
-                    if (!string.IsNullOrWhiteSpace(x.MetadataJson))
-                    {
-                        var obj = JObject.Parse(x.MetadataJson);
-                        blobUrl = obj["blobUrl"]?.ToString();
-                        capturedAt = obj["capturedAt"]?.ToString();
-                    }
-                }
-                catch { }
-                return new { Event = x, BlobUrl = blobUrl, CapturedAt = capturedAt };
-            })
-            .Where(x => !string.IsNullOrWhiteSpace(x.BlobUrl))
-            .OrderByDescending(x => x.Event.CreatedAtUtc)
-            .ToList();
+        var blobMediaItems = (Model.BlobMediaItems ?? Array.Empty<ProctoringBlobPreviewVm>()).ToList();
         <section class="card" style="margin-top:20px">
             <div class="card-head">
                 <div>
@@ -2408,32 +2388,51 @@
         <section class="card" style="margin-top:20px">
             <div class="card-head">
                 <div>
-                    <h2>Screenshot evidence</h2>
-                    <div class="desc">Screenshots captured during proctoring and uploaded to blob storage.</div>
+                    <h2>Blob captures</h2>
+                    <div class="desc">Periodic tab screenshots and screen-share chunks uploaded to blob storage (when URL is stored on the event).</div>
                 </div>
             </div>
-            @if (screenshotEvidence.Any())
+            @if (blobMediaItems.Any())
             {
                 <div class="rb-pe-table-wrap">
                     <table class="rb-pe-table">
                         <thead>
                             <tr>
+                                <th>Type</th>
                                 <th>Captured (IST)</th>
                                 <th>Logged (IST)</th>
                                 <th>Preview</th>
-                                <th>Blob link</th>
+                                <th>Open</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in screenshotEvidence)
+                            @foreach (var item in blobMediaItems)
                             {
-                                var capturedText = !string.IsNullOrWhiteSpace(item.CapturedAt) ? item.CapturedAt : IndiaTimeHelper.FormatIstForDisplay(item.Event.CreatedAtUtc);
+                                var capturedText = !string.IsNullOrWhiteSpace(item.CapturedAtRaw)
+                                    ? item.CapturedAtRaw
+                                    : IndiaTimeHelper.FormatIstForDisplay(item.CreatedAtUtc);
                                 <tr>
+                                    <td>
+                                        <span class="rb-pe-kind @(item.EventKind?.IndexOf("chunk", System.StringComparison.OrdinalIgnoreCase) >= 0 ? "rb-pe-warn" : "rb-pe-good")">@item.EventKind</span>
+                                        @if (item.ChunkSeq.HasValue)
+                                        {
+                                            <span style="color:#64748b;font-size:11px;">seq @item.ChunkSeq</span>
+                                        }
+                                    </td>
                                     <td>@capturedText</td>
-                                    <td>@IndiaTimeHelper.FormatIstForDisplay(item.Event.CreatedAtUtc)</td>
+                                    <td>@IndiaTimeHelper.FormatIstForDisplay(item.CreatedAtUtc)</td>
                                     <td>
                                         <a href="@item.BlobUrl" target="_blank" rel="noopener">
-                                            <img src="@item.BlobUrl" alt="Screenshot evidence" style="width:140px;height:auto;border-radius:6px;border:1px solid #e2e8f0;" />
+                                            @if (item.IsVideo)
+                                            {
+                                                <video preload="metadata" controls playsinline style="width:160px;max-height:120px;border-radius:6px;border:1px solid #e2e8f0;background:#0f172a;">
+                                                    <source src="@item.BlobUrl" type="@(string.IsNullOrWhiteSpace(item.MimeType) ? "video/webm" : item.MimeType)" />
+                                                </video>
+                                            }
+                                            else
+                                            {
+                                                <img src="@item.BlobUrl" alt="Proctoring capture" style="width:140px;height:auto;border-radius:6px;border:1px solid #e2e8f0;" loading="lazy" />
+                                            }
                                         </a>
                                     </td>
                                     <td>
@@ -2448,7 +2447,7 @@
             else
             {
                 <div class="rb-pe-empty" style="margin-top:8px;">
-                    No screenshot blobs found for this session.
+                    No blob URLs on file for this session. Events may exist without uploads (eligibility/window) or blob metadata may be missing.
                 </div>
             }
         </section>

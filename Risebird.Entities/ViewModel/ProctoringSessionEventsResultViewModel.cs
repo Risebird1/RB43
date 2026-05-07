@@ -11,5 +11,7 @@ namespace Risebird.Entities.ViewModel
         public string CandidateName { get; set; }
         public string CandidateEmail { get; set; }
         public IReadOnlyList<ProctoringSessionEvent> Events { get; set; } = Array.Empty<ProctoringSessionEvent>();
+        /// <summary>Blob-backed captures (screenshots + screen chunks) with public URLs for preview.</summary>
+        public IReadOnlyList<ProctoringBlobPreviewVm> BlobMediaItems { get; set; } = Array.Empty<ProctoringBlobPreviewVm>();
     }
 }

@@ -11,23 +11,43 @@
       <h1>Risebird Proctoring</h1>
 
       <section class="card">
-        <label for="backendBaseUrl">Backend URL</label>
-        <input id="backendBaseUrl" type="url" placeholder="https://your-domain.com" autocomplete="off" />
-
-        <label for="sessionToken">Session Token</label>
-        <input id="sessionToken" type="password" placeholder="JWT session token" autocomplete="off" />
-
-        <label for="sessionId">Session ID</label>
-        <input id="sessionId" type="text" placeholder="Interview session id" autocomplete="off" />
-
-        <label for="candidateId">Candidate ID (optional)</label>
-        <input id="candidateId" type="text" placeholder="Candidate identifier" autocomplete="off" />
+        <h2>Session status</h2>
+        <div id="status" class="status status-idle">Inactive</div>
+        <dl class="diag-list">
+          <dt>Violations</dt>
+          <dd id="violationsCount">0</dd>
+          <dt>Screenshot uploads</dt>
+          <dd id="screenshotUploads">0</dd>
+          <dt>Last screenshot</dt>
+          <dd id="lastScreenshotAt">Never</dd>
+        </dl>
       </section>
 
       <section class="card">
-        <h2>Policy (Dashboard Controlled)</h2>
+        <h2>Session connection</h2>
+        <p class="field-hint">
+          Values are filled automatically when the AI interview page joins proctoring (from secure handshake). You can edit or paste manually before Start.
+        </p>
+        <label for="backendBaseUrl">Backend base URL</label>
+        <input
+          id="backendBaseUrl"
+          type="url"
+          spellcheck="false"
+          autocomplete="off"
+          placeholder="https://portal.example.com"
+        />
+        <label for="sessionToken">Session token</label>
+        <input id="sessionToken" type="text" spellcheck="false" autocomplete="off" placeholder="Bearer token from interview page" />
+        <label for="sessionId">Session / interview id</label>
+        <input id="sessionId" type="text" spellcheck="false" autocomplete="off" placeholder="Session or interview identifier" />
+        <label for="candidateId">Candidate identifier</label>
+        <input id="candidateId" type="text" spellcheck="false" autocomplete="off" placeholder="Email or candidate id" />
+      </section>
+
+      <section class="card">
+        <h2>Policy (dashboard)</h2>
         <p id="policyHint">
-          Restricted domains and allowed hosts are pushed by dashboard/session handshake and are not editable here.
+          Restricted domains and allowed hosts are pushed by the session handshake.
         </p>
         <div class="policy-grid">
           <div>
@@ -41,28 +61,10 @@
         </div>
       </section>
 
-      <section class="card">
-        <h2>Session Diagnostics</h2>
-        <div id="status" class="status status-idle">Inactive</div>
-        <dl class="diag-list">
-          <dt>Violations</dt>
-          <dd id="violationsCount">0</dd>
-          <dt>Screenshot uploads</dt>
-          <dd id="screenshotUploads">0</dd>
-          <dt>Last screenshot</dt>
-          <dd id="lastScreenshotAt">Never</dd>
-        </dl>
-      </section>
-
-      <section class="card">
-        <h2>Recent Event Logs</h2>
-        <ul id="recentEventsList" class="event-list"></ul>
-      </section>
-
-      <section class="actions">
+      <section class="card actions">
         <button id="startBtn" class="btn btn-primary" type="button">Start Proctoring</button>
         <button id="stopBtn" class="btn btn-secondary" type="button">Stop</button>
-        <button id="refreshBtn" class="btn" type="button">Refresh Status</button>
+        <button id="refreshBtn" class="btn" type="button">Refresh</button>
       </section>
 
       <p id="message" class="message"></p>
