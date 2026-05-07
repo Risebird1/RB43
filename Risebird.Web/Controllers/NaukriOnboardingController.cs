@@ -119,6 +119,59 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ── Prospect Progress Dashboard ──────────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> ProspectProgress(
+            string status        = null,
+            string candidateName = null,
+            string magName       = null,
+            string source        = null,
+            string dateFrom      = null,
+            string dateTo        = null,
+            int    page          = 1,
+            int    pageSize      = 50)
+        {
+            try
+            {
+                if (page < 1) page = 1;
+                if (pageSize < 10) pageSize = 10;
+                if (pageSize > 200) pageSize = 200;
+
+                DateTime? dtFrom = null, dtTo = null;
+                if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
+                if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pTo)) dtTo = pTo;
+
+                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize);
+
+                var first = records.FirstOrDefault();
+                int totalCount = first?.TotalCount ?? 0;
+                int totalPages = totalCount > 0 ? (int)Math.Ceiling((double)totalCount / pageSize) : 1;
+
+                ViewBag.Page = page;
+                ViewBag.PageSize = pageSize;
+                ViewBag.TotalCount = totalCount;
+                ViewBag.TotalPages = totalPages;
+                ViewBag.Status = status ?? string.Empty;
+                ViewBag.CandidateName = candidateName ?? string.Empty;
+                ViewBag.MagName = magName ?? string.Empty;
+                ViewBag.Source = source ?? string.Empty;
+                ViewBag.DateFrom = dateFrom ?? string.Empty;
+                ViewBag.DateTo = dateTo ?? string.Empty;
+
+                return View(records);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
+                ViewBag.Status = status; ViewBag.CandidateName = candidateName; ViewBag.MagName = magName;
+                ViewBag.Source = source ?? string.Empty;
+                ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
+                return View(new List<NaukriProspectiveInterviewerVM>());
+            }
+        }
+
         // ── Get record details (AJAX - for Manage modal) ────────────────────────────
 
         [HttpGet]
