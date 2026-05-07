@@ -2,6 +2,8 @@ const statusEl = document.getElementById('status');
 const violationsEl = document.getElementById('violations');
 const messageEl = document.getElementById('message');
 const eventsEl = document.getElementById('events');
+let refreshInFlight = false;
+let liveRefreshTimer = null;
 
 function showMessage(text, isError = false) {
   messageEl.textContent = text;
@@ -72,10 +74,13 @@ function formatEventMetaLine(m) {
   if (m.requestUrl) parts.push(`url: ${String(m.requestUrl).slice(0, 100)}`);
   if (m.ruleId != null) parts.push(`rule: ${m.ruleId}`);
   if (m.detectionSource) parts.push(`via: ${m.detectionSource}`);
+  if (m.error) parts.push(`error: ${String(m.error).slice(0, 100)}`);
+  if (m.chunkSeq != null) parts.push(`chunk: ${m.chunkSeq}`);
   return parts.length ? parts.join(' · ') : '';
 }
 
 function renderEvents(events) {
+  if (!eventsEl) return;
   if (!events?.length) {
     eventsEl.innerHTML = '<div class="hint">No events yet.</div>';
     return;
@@ -101,31 +106,35 @@ async function applySavedJoinFields() {
   try {
     const data = await chrome.storage.local.get(['proctoringLastJoin']);
     const j = data.proctoringLastJoin;
-    if (!j) return;
+    if (!j) return null;
     document.getElementById('name').value = j.name != null ? String(j.name) : '';
     document.getElementById('email').value = j.email != null ? String(j.email) : '';
     document.getElementById('token').value = j.sessionToken != null ? String(j.sessionToken) : '';
     document.getElementById('interviewId').value =
       j.interviewId !== undefined && j.interviewId !== null && j.interviewId !== '' ? String(j.interviewId) : '';
+    return j;
   } catch (e) {
     console.warn('applySavedJoinFields', e);
+    return null;
   }
 }
 
 async function refreshState() {
+  if (refreshInFlight) return;
+  refreshInFlight = true;
   try {
-    await applySavedJoinFields();
+    const savedJoin = await applySavedJoinFields();
     const { state } = await sendMessage({ type: 'GET_STATE' });
     const needWebAccess =
       state.joined === true && state.hasWebMonitoringAccess !== true;
 
     let status =
       state.sessionActive ? 'Running' : state.joined ? 'Joined' : 'Idle';
-    if (needWebAccess) {
-      status += ' — click “Allow full tab monitoring” below';
-    }
     statusEl.textContent = status;
-    violationsEl.textContent = String(state.violations);
+    const screenshotInfo = state.lastScreenshotAt
+      ? ` · screenshots: ${state.screenshotUploads || 0} (last ${new Date(state.lastScreenshotAt).toLocaleTimeString()})`
+      : ` · screenshots: ${state.screenshotUploads || 0}`;
+    violationsEl.textContent = `${state.violations}${screenshotInfo}`;
 
     const banner = document.getElementById('webAccessBanner');
     const enableBtn = document.getElementById('enableWebMonitoring');
@@ -142,9 +151,16 @@ async function refreshState() {
       }
     }
     document.getElementById('clipboardBlocking').checked = Boolean(state.settings.clipboardBlocking);
+    const actionsSection = document.getElementById('sessionActionsSection');
+    if (actionsSection) {
+      // Popup is status-only now; hide manual action controls always.
+      actionsSection.hidden = true;
+    }
     renderEvents(state.events);
   } catch (e) {
     showMessage(e.message || String(e), true);
+  } finally {
+    refreshInFlight = false;
   }
 }
 
@@ -254,10 +270,23 @@ if (enableWebBtn) {
 }
 
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area !== 'local' || !changes.proctoringLastJoin) return;
-  applySavedJoinFields()
-    .then(() => refreshState())
-    .catch((e) => showMessage(e.message, true));
+  if (area !== 'local') return;
+  if (!changes.proctoringLastJoin && !changes.proctoringEvents && !changes.sessionActive) return;
+  refreshState().catch((e) => showMessage(e.message, true));
 });
 
+function startLiveRefresh() {
+  if (liveRefreshTimer) return;
+  liveRefreshTimer = window.setInterval(() => {
+    refreshState().catch((e) => showMessage(e.message, true));
+  }, 4000);
+}
+
+window.addEventListener('beforeunload', () => {
+  if (!liveRefreshTimer) return;
+  clearInterval(liveRefreshTimer);
+  liveRefreshTimer = null;
+});
+
+startLiveRefresh();
 refreshState().catch((e) => showMessage(e.message, true));

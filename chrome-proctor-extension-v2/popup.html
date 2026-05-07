@@ -6,7 +6,10 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <h1>Risebird Proctoring</h1>
+    <header class="hero">
+      <h1>Risebird Proctoring</h1>
+      <p class="hero-sub">AI interview monitoring controls</p>
+    </header>
 
     <section id="webAccessBanner" class="web-access-banner" hidden>
       <strong>Cross-site monitoring</strong>
@@ -16,7 +19,7 @@
       <button type="button" id="enableWebMonitoring">Allow full tab monitoring</button>
     </section>
 
-    <section>
+    <section class="card">
       <label for="name">Name</label>
       <input id="name" type="text" autocomplete="name" />
 
@@ -30,13 +33,13 @@
       <input id="interviewId" type="text" autocomplete="off" />
     </section>
 
-    <section>
+    <section id="sessionActionsSection" class="card action-grid" hidden>
       <button type="button" id="joinSession">Join Session</button>
       <button type="button" id="startSession">Start Exam</button>
       <button type="button" id="stopSession" class="secondary">End Exam</button>
     </section>
 
-    <section>
+    <section id="settingsSection" class="card" hidden>
       <label>
         <input type="checkbox" id="clipboardBlocking" />
         Enable clipboard blocking
@@ -44,18 +47,18 @@
       <button type="button" id="saveSettings" class="secondary">Save Settings</button>
     </section>
 
-    <section>
-      <div>Status: <span id="status">-</span></div>
+    <section class="card status-card">
+      <div>Status: <span id="status" class="status-pill">-</span></div>
       <div>Violations: <span id="violations">0</span></div>
       <div id="message"></div>
     </section>
 
-    <section>
+    <section id="reportActionsSection" class="card action-grid" hidden>
       <button type="button" id="downloadReport">Download Report</button>
       <button type="button" id="refresh" class="secondary">Refresh</button>
     </section>
 
-    <section>
+    <section id="eventsSection" hidden>
       <div id="events"></div>
     </section>
 

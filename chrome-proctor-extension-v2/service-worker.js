@@ -5,6 +5,8 @@
 const DYNAMIC_RULE_ID_START = 10000;
 const HEARTBEAT_MS = 30000;
 const SCREENSHOT_MS = 60000;
+const SCREEN_CHUNK_FAILURE_COOLDOWN_MS = 60000;
+const SESSION_EXPIRY_CHECK_MS = 15000;
 const EVENT_LOG_STORAGE_KEY = 'proctoringEvents';
 const MAX_STORED_EVENTS = 400;
 
@@ -26,7 +28,17 @@ const state = {
   apiOrigin: '',
   heartbeatTimer: null,
   screenshotTimer: null,
+  screenshotIntervalMs: SCREENSHOT_MS,
   dynamicRuleIds: [],
+  screenshotUploads: 0,
+  lastScreenshotAt: null,
+  screenChunkUploads: 0,
+  lastScreenChunkAt: null,
+  lastScreenChunkFailureAt: 0,
+  sessionExpiresAtMs: null,
+  sessionExpiryTimer: null,
+  sessionEnding: false,
+  autoPopupShownForSessionKey: '',
   /** Last http(s) tab the user had focused — used when Chrome loses focus (no live URL). */
   lastKnownTabContext: {
     hostname: '',
@@ -278,6 +290,59 @@ function parseInterviewId(value) {
   return Number.isFinite(n) && n > 0 ? n : null;
 }
 
+function parseSessionExpiryMs(rawValue) {
+  if (rawValue === undefined || rawValue === null || rawValue === '') return null;
+  if (typeof rawValue === 'number' && Number.isFinite(rawValue)) {
+    return rawValue > 1000000000000 ? Math.round(rawValue) : null;
+  }
+  const text = String(rawValue).trim();
+  if (!text) return null;
+  const asNum = Number(text);
+  if (Number.isFinite(asNum) && asNum > 1000000000000) return Math.round(asNum);
+  const parsed = Date.parse(text);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function stopSessionExpiryTimer() {
+  if (state.sessionExpiryTimer) {
+    clearInterval(state.sessionExpiryTimer);
+    state.sessionExpiryTimer = null;
+  }
+}
+
+function startSessionExpiryTimer() {
+  stopSessionExpiryTimer();
+  if (!state.sessionExpiresAtMs) return;
+  state.sessionExpiryTimer = setInterval(() => {
+    void maybeEndSessionIfExpired('session_expiry_timer');
+  }, SESSION_EXPIRY_CHECK_MS);
+}
+
+function setSessionExpiry(rawValue) {
+  state.sessionExpiresAtMs = parseSessionExpiryMs(rawValue);
+  startSessionExpiryTimer();
+}
+
+async function maybeEndSessionIfExpired(source) {
+  if (!state.sessionExpiresAtMs) return false;
+  if (!state.joined && !state.sessionActive) return false;
+  if (Date.now() < state.sessionExpiresAtMs) return false;
+  if (state.sessionEnding) return true;
+  state.sessionEnding = true;
+  try {
+    await recordWorkerEvent('info', 'Session ended automatically — meeting window expired.', {
+      eventCategory: 'session_lifecycle',
+      event: 'session_auto_end_expired',
+      source,
+      sessionExpiresAtMs: state.sessionExpiresAtMs,
+    });
+    await endExamInternal();
+  } finally {
+    state.sessionEnding = false;
+  }
+  return true;
+}
+
 async function apiPost(path, body, useBearer) {
   const base = (state.apiOrigin || '').replace(/\/$/, '');
   if (!base) {
@@ -301,6 +366,35 @@ async function apiPost(path, body, useBearer) {
     return await res.json();
   } catch {
     return {};
+  }
+}
+
+function sanitizeMs(value, fallback, min, max) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(Math.max(Math.round(n), min), max);
+}
+
+function getSessionKey() {
+  if (!state.interviewId) return '';
+  return `interview:${state.interviewId}`;
+}
+
+async function resetSessionDiagnostics() {
+  state.screenshotUploads = 0;
+  state.lastScreenshotAt = null;
+  state.screenChunkUploads = 0;
+  state.lastScreenChunkAt = null;
+  state.lastScreenChunkFailureAt = 0;
+  try {
+    await chrome.storage.local.set({
+      proctoringDiagnostics: {
+        screenshotUploads: state.screenshotUploads,
+        lastScreenshotAt: state.lastScreenshotAt,
+      },
+    });
+  } catch (_) {
+    /* ignore */
   }
 }
 
@@ -360,8 +454,20 @@ function stopHeartbeat() {
 function startHeartbeat() {
   stopHeartbeat();
   state.heartbeatTimer = setInterval(() => {
+    void maybeEndSessionIfExpired('heartbeat_tick');
+    if (!state.sessionActive) return;
     if (!state.apiOrigin) return;
-    apiPost('/heartbeat', { interviewId: state.interviewId, utcTicks: Date.now() }, true).catch((e) =>
+    apiPost(
+      '/heartbeat',
+      {
+        interviewId: state.interviewId,
+        utcTicks: Date.now(),
+        timestamp: Date.now(),
+        status: state.sessionActive ? 'active' : state.joined ? 'joined' : 'idle',
+        violations: state.violations,
+      },
+      true
+    ).catch((e) =>
       console.warn('proctoring heartbeat', e)
     );
   }, HEARTBEAT_MS);
@@ -375,25 +481,43 @@ function stopScreenshotTimer() {
 }
 
 async function captureAndPostScreenshot() {
-  if (!state.apiOrigin) return;
+  if (!state.apiOrigin || !state.sessionActive) return;
   try {
-    const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'jpeg', quality: 60 });
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const activeTab = tabs[0];
+    if (!activeTab?.url || !isAllowedProctoringPageUrl(activeTab.url)) return;
+    const dataUrl = await chrome.tabs.captureVisibleTab(activeTab.windowId || null, { format: 'jpeg', quality: 60 });
     const base64 = dataUrl.split(',')[1];
     await apiPost('/screenshot', { interviewId: state.interviewId, imageBase64: base64 }, true);
+    state.screenshotUploads += 1;
+    state.lastScreenshotAt = Date.now();
+    await chrome.storage.local.set({
+      proctoringDiagnostics: {
+        screenshotUploads: state.screenshotUploads,
+        lastScreenshotAt: state.lastScreenshotAt,
+      },
+    });
   } catch (e) {
     console.warn('proctoring screenshot', e);
+    await recordWorkerEvent('violation', 'Screenshot upload failed', {
+      eventCategory: 'screenshot',
+      event: 'screenshot_upload_failed',
+      error: e?.message || String(e),
+      interviewId: state.interviewId,
+    });
   }
 }
 
 function startScreenshotTimer() {
   stopScreenshotTimer();
-  state.screenshotTimer = setInterval(() => captureAndPostScreenshot(), SCREENSHOT_MS);
+  state.screenshotTimer = setInterval(() => captureAndPostScreenshot(), state.screenshotIntervalMs || SCREENSHOT_MS);
 }
 
 async function endExamInternal() {
   stopTabAndWindowFocusMonitoring();
   stopHeartbeat();
   stopScreenshotTimer();
+  stopSessionExpiryTimer();
   const tabs = await chrome.tabs.query({});
   for (const t of tabs) {
     if (t.id && t.url && /^https?:/.test(t.url)) {
@@ -421,6 +545,9 @@ async function endExamInternal() {
     windowId: null,
     updatedAt: 0,
   };
+  state.autoPopupShownForSessionKey = '';
+  state.sessionExpiresAtMs = null;
+  await resetSessionDiagnostics();
   await persistSessionToStorage();
   await syncDynamicRules([]);
 }
@@ -433,6 +560,7 @@ async function persistSessionToStorage() {
         email: state.email || '',
         sessionToken: state.sessionToken || '',
         interviewId: state.interviewId != null ? state.interviewId : '',
+        sessionExpiresAtMs: state.sessionExpiresAtMs != null ? state.sessionExpiresAtMs : '',
         updatedAt: Date.now(),
       },
       proctoringSessionJoined: state.joined === true,
@@ -441,6 +569,12 @@ async function persistSessionToStorage() {
         restrictedDomains: state.policy.restrictedDomains || [],
         allowedExamHosts: state.policy.allowedExamHosts || [],
         clipboardBlocking: state.policy.clipboardBlocking !== false,
+        screenshotIntervalMs: state.screenshotIntervalMs || SCREENSHOT_MS,
+        sessionExpiresAtMs: state.sessionExpiresAtMs != null ? state.sessionExpiresAtMs : '',
+      },
+      proctoringDiagnostics: {
+        screenshotUploads: state.screenshotUploads,
+        lastScreenshotAt: state.lastScreenshotAt,
       },
     });
   } catch (e) {
@@ -463,9 +597,21 @@ async function resolveApiOrigin(senderTab) {
 
 /** Open extension popup when AI Interview page completes join (toolbar popup or fallback window). */
 async function openProctoringPopupWindow() {
+  const sessionKey = getSessionKey();
+  if (!sessionKey) return;
+  try {
+    const data = await chrome.storage.local.get(['proctoringAutoPopupShownFor']);
+    if (data.proctoringAutoPopupShownFor === sessionKey || state.autoPopupShownForSessionKey === sessionKey) {
+      return;
+    }
+  } catch (_) {
+    /* ignore storage read errors */
+  }
   try {
     if (typeof chrome.action?.openPopup === 'function') {
       await chrome.action.openPopup();
+      state.autoPopupShownForSessionKey = sessionKey;
+      await chrome.storage.local.set({ proctoringAutoPopupShownFor: sessionKey });
       return;
     }
   } catch (e) {
@@ -488,6 +634,8 @@ async function openProctoringPopupWindow() {
       height: 720,
       focused: true,
     });
+    state.autoPopupShownForSessionKey = sessionKey;
+    await chrome.storage.local.set({ proctoringAutoPopupShownFor: sessionKey });
   } catch (e2) {
     console.warn('Risebird proctoring: windows.create fallback', e2);
   }
@@ -523,6 +671,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       state.policy.restrictedDomains = p.restrictedDomains || [];
       state.policy.allowedExamHosts = p.allowedExamHosts || [];
       state.policy.clipboardBlocking = p.clipboardBlocking !== false;
+      state.screenshotIntervalMs = sanitizeMs(p.screenshotIntervalMs, SCREENSHOT_MS, 5000, 300000);
+      setSessionExpiry(p.sessionExpiresAtMs || p.meetingEndIso || p.meetingEndMs);
       state.settings.clipboardBlocking = state.policy.clipboardBlocking;
       state.apiOrigin = (p.apiOrigin || '').replace(/\/$/, '');
       await resolveApiOrigin(sender.tab);
@@ -549,6 +699,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return;
       }
       state.joined = true;
+      if (!state.sessionActive) {
+        await resetSessionDiagnostics();
+      }
       await persistSessionToStorage();
       startTabAndWindowFocusMonitoring();
       await openProctoringPopupWindow();
@@ -581,6 +734,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       state.interviewId = interviewId;
       state.name = p.name || '';
       state.email = p.email || '';
+      state.screenshotIntervalMs = sanitizeMs(p.screenshotIntervalMs, SCREENSHOT_MS, 5000, 300000);
+      setSessionExpiry(p.sessionExpiresAtMs || p.meetingEndIso || p.meetingEndMs);
       await resolveApiOrigin(sender.tab);
       if (!state.apiOrigin) {
         sendResponse({ ok: false, error: 'Open the Risebird portal tab first.' });
@@ -604,6 +759,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return;
       }
       state.joined = true;
+      if (!state.sessionActive) {
+        await resetSessionDiagnostics();
+      }
       await persistSessionToStorage();
       startTabAndWindowFocusMonitoring();
       sendResponse({ ok: true });
@@ -634,6 +792,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       /* No permissions.request here — page-driven; optional access via popup if needed. */
       if (!state.joined || !state.sessionToken) {
         sendResponse({ ok: false, error: 'Join session first (reload dashboard or use extension popup).' });
+        return;
+      }
+      if (await maybeEndSessionIfExpired('before_complete_test_setup')) {
+        sendResponse({ ok: false, error: 'Session already expired. Please restart from AI Interview.' });
         return;
       }
       await resolveApiOrigin(sender.tab);
@@ -683,6 +845,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const tab = tabs[0];
       if (!tab?.id) {
         sendResponse({ ok: false, error: 'No active tab.' });
+        return;
+      }
+      if (await maybeEndSessionIfExpired('before_start_session')) {
+        sendResponse({ ok: false, error: 'Session already expired. Please restart from AI Interview.' });
         return;
       }
       if (!isAllowedProctoringPageUrl(tab.url || '')) {
@@ -754,6 +920,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           settings: { clipboardBlocking: state.settings.clipboardBlocking },
           events: state.events,
           hasWebMonitoringAccess: await hasOptionalWebOrigins(),
+          screenshotUploads: state.screenshotUploads,
+          lastScreenshotAt: state.lastScreenshotAt,
         },
       });
       return;
@@ -767,6 +935,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           interviewId: state.interviewId,
           violations: state.violations,
           events: state.events,
+          screenshotUploads: state.screenshotUploads,
+          lastScreenshotAt: state.lastScreenshotAt,
         },
       });
       return;
@@ -774,6 +944,44 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     if (message?.type === 'CONTENT_EVENT') {
       await recordWorkerEvent(message.level || 'info', message.reason || '', message.metadata || {});
+      sendResponse({ ok: true });
+      return;
+    }
+
+    if (message?.type === 'UPLOAD_SCREEN_CHUNK') {
+      const p = message.payload || {};
+      if (!state.sessionActive || !state.sessionToken) {
+        sendResponse({ ok: true });
+        return;
+      }
+      try {
+        await apiPost(
+          '/screen-chunk',
+          {
+            interviewId: state.interviewId,
+            chunkSeq: p.chunkSeq,
+            mimeType: p.mimeType,
+            capturedAt: p.capturedAt,
+            data: p.data,
+          },
+          true
+        );
+        state.screenChunkUploads += 1;
+        state.lastScreenChunkAt = Date.now();
+      } catch (err) {
+        const now = Date.now();
+        if (now - state.lastScreenChunkFailureAt >= SCREEN_CHUNK_FAILURE_COOLDOWN_MS) {
+          state.lastScreenChunkFailureAt = now;
+          await recordWorkerEvent('violation', 'Screen chunk upload failed', {
+            eventCategory: 'screen_chunk',
+            event: 'screen_chunk_upload_failed',
+            error: err?.message || String(err),
+            chunkSeq: p.chunkSeq,
+            mimeType: p.mimeType,
+            capturedAt: p.capturedAt,
+          });
+        }
+      }
       sendResponse({ ok: true });
       return;
     }
@@ -865,6 +1073,7 @@ async function restoreSessionFromStorageOnStartup() {
       'proctoringLastJoin',
       'proctoringSessionSnapshot',
       'proctoringSessionJoined',
+      'proctoringDiagnostics',
     ]);
     const j = data.proctoringLastJoin;
     const snap = data.proctoringSessionSnapshot;
@@ -873,7 +1082,14 @@ async function restoreSessionFromStorageOnStartup() {
       state.policy.restrictedDomains = Array.isArray(snap.restrictedDomains) ? snap.restrictedDomains : [];
       state.policy.allowedExamHosts = Array.isArray(snap.allowedExamHosts) ? snap.allowedExamHosts : [];
       state.policy.clipboardBlocking = snap.clipboardBlocking !== false;
+      state.screenshotIntervalMs = sanitizeMs(snap.screenshotIntervalMs, SCREENSHOT_MS, 5000, 300000);
+      setSessionExpiry(snap.sessionExpiresAtMs);
       state.settings.clipboardBlocking = state.policy.clipboardBlocking;
+    }
+    const diag = data.proctoringDiagnostics;
+    if (diag && typeof diag === 'object') {
+      state.screenshotUploads = Number(diag.screenshotUploads) || 0;
+      state.lastScreenshotAt = Number(diag.lastScreenshotAt) || null;
     }
     let joinedFlag = data.proctoringSessionJoined === true;
     if (
@@ -891,6 +1107,9 @@ async function restoreSessionFromStorageOnStartup() {
         state.interviewId = id;
         state.name = j.name || '';
         state.email = j.email || '';
+        if (!state.sessionExpiresAtMs) {
+          setSessionExpiry(j.sessionExpiresAtMs || j.meetingEndIso);
+        }
         state.joined = true;
       } else {
         state.joined = false;
@@ -910,6 +1129,7 @@ async function restoreSessionFromStorageOnStartup() {
       console.warn('restoreSessionFromStorageOnStartup DNR', e);
     }
     startTabAndWindowFocusMonitoring();
+    await maybeEndSessionIfExpired('restore_startup');
     if (state.sessionActive) {
       startHeartbeat();
       startScreenshotTimer();

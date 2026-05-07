@@ -24,7 +24,9 @@
                 email = ViewBag.ProctoringCandidateEmail ?? "",
                 restrictedDomains = ViewBag.ProctoringRestrictedDomains,
                 allowedExamHosts = ViewBag.ProctoringAllowedExamHosts,
-                clipboardBlocking = ViewBag.ProctoringClipboardBlocking
+                clipboardBlocking = ViewBag.ProctoringClipboardBlocking,
+                meetingStartIso = ViewBag.ProctoringMeetingStartIso,
+                meetingEndIso = ViewBag.ProctoringMeetingEndIso
             }));
             var meetingStartMs = Date.parse(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ProctoringMeetingStartIso ?? "")));
             var meetingEndMs = Date.parse(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ProctoringMeetingEndIso ?? "")));

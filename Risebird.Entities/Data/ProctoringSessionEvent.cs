@@ -14,7 +14,7 @@ namespace Risebird.Entities.Data
         public DateTime? CreatedAtIst { get; set; }
         public int InterviewId { get; set; }
         public string CandidateEmail { get; set; }
-        /// <summary>telemetry | join | start | stop | screenshot</summary>
+        /// <summary>telemetry | join | start | stop | screenshot | heartbeat | screen_chunk</summary>
         public string EventKind { get; set; }
         public string Level { get; set; }
         public string Reason { get; set; }
