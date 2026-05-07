@@ -27,18 +27,28 @@
                     {
                         <div class="feedback-tab-ac" onclick="ChangeIssueListdetails('Open','@ViewBag.ReturnBack')"><strong>Open Issue</strong></div>
                         <div class="feedback-tab" onclick="ChangeIssueListdetails('OpenPayment','@ViewBag.ReturnBack')"><strong>Payment Open Issue</strong></div>
+                        <div class="feedback-tab" onclick="ChangeIssueListdetails('ReOpenPayment','@ViewBag.ReturnBack')"><strong>Payment Re-Open Issue</strong></div>
                         <div class="feedback-tab" onclick="ChangeIssueListdetails('Close','@ViewBag.ReturnBack')"><strong>Closed Issue</strong></div>
                     }
                     else if (ViewBag.Type == "OpenPayment")
                     {
                         <div class="feedback-tab" onclick="ChangeIssueListdetails('Open','@ViewBag.ReturnBack')"><strong>Open Issue</strong></div>
                         <div class="feedback-tab-ac" onclick="ChangeIssueListdetails('OpenPayment','@ViewBag.ReturnBack')"><strong>Payment Open Issue</strong></div>
+                        <div class="feedback-tab" onclick="ChangeIssueListdetails('ReOpenPayment','@ViewBag.ReturnBack')"><strong>Payment Re-Open Issue</strong></div>
+                        <div class="feedback-tab" onclick="ChangeIssueListdetails('Close','@ViewBag.ReturnBack')"><strong>Closed Issue</strong></div>
+                    }
+                    else if (ViewBag.Type == "ReOpenPayment")
+                    {
+                        <div class="feedback-tab" onclick="ChangeIssueListdetails('Open','@ViewBag.ReturnBack')"><strong>Open Issue</strong></div>
+                        <div class="feedback-tab" onclick="ChangeIssueListdetails('OpenPayment','@ViewBag.ReturnBack')"><strong>Payment Open Issue</strong></div>
+                        <div class="feedback-tab-ac" onclick="ChangeIssueListdetails('ReOpenPayment','@ViewBag.ReturnBack')"><strong>Payment Re-Open Issue</strong></div>
                         <div class="feedback-tab" onclick="ChangeIssueListdetails('Close','@ViewBag.ReturnBack')"><strong>Closed Issue</strong></div>
                     }
                     else
                     {
                         <div class="feedback-tab" onclick="ChangeIssueListdetails('Open','@ViewBag.ReturnBack')"><strong>Open Issue</strong></div>
                         <div class="feedback-tab" onclick="ChangeIssueListdetails('OpenPayment','@ViewBag.ReturnBack')"><strong>Payment Open Issue</strong></div>
+                        <div class="feedback-tab" onclick="ChangeIssueListdetails('ReOpenPayment','@ViewBag.ReturnBack')"><strong>Payment Re-Open Issue</strong></div>
                         <div class="feedback-tab-ac" onclick="ChangeIssueListdetails('Close','@ViewBag.ReturnBack')"><strong>Closed Issue</strong></div>
                     }
                 </div>
@@ -69,7 +79,7 @@
                                                 <th>Request Type</th>
                                                 <th>Issue Details</th>
                                                 <th>Attachments</th>
-                                                @if (ViewBag.Type == "OpenPayment")
+                                                @if (ViewBag.Type == "OpenPayment" || ViewBag.Type == "ReOpenPayment")
                                                 {
                                                   <th>Payment SLA</th>
                                                   <th>Report</th>
@@ -89,7 +99,7 @@
                                                 <th>Request Type</th>
                                                 <th>Issue Details</th>
                                                 <th>Attachments</th>
-                                                @if (ViewBag.Type == "OpenPayment")
+                                                @if (ViewBag.Type == "OpenPayment" || ViewBag.Type == "ReOpenPayment")
                                                 {
                                                   <th>Payment SLA</th>
                                                   <th>Report</th>
@@ -176,7 +186,7 @@
                                                     {
                                                         <td></td>
                                                     }
-                                                    @if (ViewBag.Type == "OpenPayment")
+                                                    @if (ViewBag.Type == "OpenPayment" || ViewBag.Type == "ReOpenPayment")
                                                     {
                                                       <td>
                                                           <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment SLA">
