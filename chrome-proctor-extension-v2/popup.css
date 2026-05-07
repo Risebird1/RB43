@@ -1,0 +1,122 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 12px;
+  width: 360px;
+}
+
+h1 {
+  font-size: 16px;
+  margin-top: 0;
+}
+
+section {
+  margin-bottom: 12px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+button {
+  margin-right: 8px;
+  margin-top: 6px;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #1f6feb;
+  color: #fff;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #6c757d;
+}
+
+.web-access-banner {
+  background: #fff8e6;
+  border: 1px solid #e6c200;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.web-access-banner strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.web-access-hint {
+  margin: 0 0 8px 0;
+  color: #333;
+  line-height: 1.35;
+}
+
+.web-access-banner button {
+  width: 100%;
+  margin-top: 4px;
+  background: #b45309;
+}
+
+input[type='text'],
+input[type='email'] {
+  width: 100%;
+  margin-top: 4px;
+  box-sizing: border-box;
+}
+
+.hint {
+  font-size: 12px;
+  color: #666;
+}
+
+#events {
+  margin-top: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  max-height: 140px;
+  overflow: auto;
+  padding: 6px;
+  font-size: 12px;
+}
+
+.event {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 5px 0;
+}
+
+.event:last-child {
+  border-bottom: none;
+}
+
+.event.violation {
+  color: #b42318;
+}
+
+.ev-head {
+  font-weight: 600;
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.ev-reason {
+  font-size: 12px;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.ev-meta {
+  font-size: 11px;
+  color: #555;
+  margin-top: 4px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+#message {
+  min-height: 20px;
+  font-size: 12px;
+  color: #333;
+}

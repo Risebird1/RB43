@@ -1,0 +1,62 @@
+{
+  "manifest_version": 3,
+  "name": "Risebird Proctoring Assistant",
+  "description": "Risebird Proctoring for AI Interview: join; tab/window monitoring; DNR-blocked sites; screenshots; violation logging. Risebird API.",
+  "version": "1.4.2",
+  "minimum_chrome_version": "121",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "windows",
+    "webNavigation",
+    "storage",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback"
+  ],
+  "host_permissions": [
+    "https://*.risebird.io/*",
+    "http://localhost/*",
+    "https://localhost/*",
+    "http://127.0.0.1/*",
+    "https://127.0.0.1/*",
+    "http://localhost:44329/*",
+    "https://localhost:44329/*",
+    "http://127.0.0.1:44329/*",
+    "https://127.0.0.1:44329/*",
+    "https://tests.mettl.com/*",
+    "https://*.mettl.com/*"
+  ],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "core_proctoring_rules",
+        "enabled": true,
+        "path": "rules/restricted-sites.json"
+      }
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://portal.risebird.io/AIInterview/*",
+        "https://*.risebird.io/AIInterview/*",
+        "http://localhost/AIInterview/*",
+        "https://localhost/AIInterview/*",
+        "http://127.0.0.1/AIInterview/*",
+        "https://127.0.0.1/AIInterview/*",
+        "http://localhost:44329/AIInterview/*",
+        "https://localhost:44329/AIInterview/*"
+      ],
+      "js": ["content-monitor.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Proctoring Controls"
+  }
+}
