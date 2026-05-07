@@ -1,0 +1,413 @@
+@model List<Risebird.Entities.ViewModel.NaukriProspectiveInterviewerVM>
+@{
+    ViewData["Title"] = "Prospect Progress Tracker";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int page = ViewBag.Page != null ? (int)ViewBag.Page : 1;
+    int pageSize = ViewBag.PageSize != null ? (int)ViewBag.PageSize : 50;
+    int totalCount = ViewBag.TotalCount != null ? (int)ViewBag.TotalCount : 0;
+    int totalPages = ViewBag.TotalPages != null ? (int)ViewBag.TotalPages : 1;
+    string selStatus = ViewBag.Status as string ?? string.Empty;
+    string selName = ViewBag.CandidateName as string ?? string.Empty;
+    string selMag = ViewBag.MagName as string ?? string.Empty;
+    string selSource = ViewBag.Source as string ?? string.Empty;
+    string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
+    string selDateTo = ViewBag.DateTo as string ?? string.Empty;
+
+    bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selName)
+                   || !string.IsNullOrEmpty(selMag) || !string.IsNullOrEmpty(selSource)
+                   || !string.IsNullOrEmpty(selDateFrom) || !string.IsNullOrEmpty(selDateTo);
+
+    int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
+    int last = Math.Min(page * pageSize, totalCount);
+
+    string pageUrl(int p)
+    {
+        var q = $"?page={p}&pageSize={pageSize}";
+        if (!string.IsNullOrEmpty(selStatus)) q += $"&status={Uri.EscapeDataString(selStatus)}";
+        if (!string.IsNullOrEmpty(selName)) q += $"&candidateName={Uri.EscapeDataString(selName)}";
+        if (!string.IsNullOrEmpty(selMag)) q += $"&magName={Uri.EscapeDataString(selMag)}";
+        if (!string.IsNullOrEmpty(selSource)) q += $"&source={Uri.EscapeDataString(selSource)}";
+        if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
+        if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
+        return Url.Action("ProspectProgress", "NaukriOnboarding") + q;
+    }
+
+    string stepDot(bool? completed, bool? failed = null)
+    {
+        if (completed == true) return "<span class='pp-dot pp-done' title='Completed'><i class='fas fa-check'></i></span>";
+        if (failed == true) return "<span class='pp-dot pp-fail' title='Failed'><i class='fas fa-times'></i></span>";
+        return "<span class='pp-dot pp-pending' title='Pending'>&ndash;</span>";
+    }
+}
+
+<style>
+    .text-muted { --bs-text-opacity:1; color:#1f2326 !important; }
+
+    .pp-filter { min-height:30px; height:30px; color:grey; font-weight:500; font-size:12.5px !important; padding:0.2rem 0.6rem; line-height:1.5; }
+
+    .pp-table { font-size:12px; }
+    .pp-table thead th { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:#475569; background:#f1f5f9; border-bottom:2px solid #e2e8f0; padding:8px 6px; white-space:nowrap; vertical-align:middle; position:sticky; top:0; z-index:2; }
+    .pp-table tbody td { padding:7px 6px; vertical-align:middle; border-bottom:1px solid #f1f5f9; }
+    .pp-table tbody tr:hover { background:#f8fafc; }
+
+    .pp-dot { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; font-size:10px; font-weight:700; }
+    .pp-dot.pp-done { background:#d1e7dd; color:#0f5132; }
+    .pp-dot.pp-fail { background:#f8d7da; color:#842029; }
+    .pp-dot.pp-pending { background:#e9ecef; color:#6c757d; font-size:14px; line-height:1; }
+
+    .pp-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:600; white-space:nowrap; }
+    .pp-badge-open { background:#fff3cd; color:#856404; }
+    .pp-badge-inprogress { background:#cfe2ff; color:#0a3278; }
+    .pp-badge-verified { background:#d1e7dd; color:#0f5132; }
+    .pp-badge-onboarded { background:#0f5132; color:#fff; }
+    .pp-badge-rejected { background:#f8d7da; color:#842029; }
+    .pp-badge-closed { background:#e9ecef; color:#495057; }
+
+    .pp-src { font-size:10px; padding:2px 6px; border-radius:3px; font-weight:600; }
+    .pp-src-naukri { background:#4a90d9; color:#fff; }
+    .pp-src-linkedin { background:#0a66c2; color:#fff; }
+
+    .pp-verdict-yes { color:#0f5132; font-weight:600; }
+    .pp-verdict-cond { color:#856404; font-weight:600; }
+    .pp-verdict-no { color:#842029; font-weight:600; }
+
+    .pp-response { font-size:10.5px; font-weight:600; }
+
+    .pp-ev-pass { color:#0f5132; }
+    .pp-ev-fail { color:#842029; }
+    .pp-ev-na { color:#6c757d; }
+
+    .pp-scroll { max-height:calc(100vh - 280px); overflow:auto; }
+
+    .pp-pager a, .pp-pager span { display:inline-flex; align-items:center; justify-content:center; min-width:28px; height:28px; padding:0 6px; border-radius:4px; font-size:12px; font-weight:500; text-decoration:none; margin:0 1px; }
+    .pp-pager a { background:#fff; border:1px solid #dee2e6; color:#495057; }
+    .pp-pager a:hover { background:#e9ecef; }
+    .pp-pager span.active { background:#0d6efd; color:#fff; border:1px solid #0d6efd; }
+    .pp-pager span.disabled { background:#f8f9fa; color:#adb5bd; border:1px solid #dee2e6; }
+
+    .pp-summary-cards .card { border-radius:8px; transition:box-shadow .15s; }
+    .pp-summary-cards .card:hover { box-shadow:0 4px 12px rgba(0,0,0,.1); }
+    .pp-summary-cards .sv { font-size:22px; font-weight:700; }
+    .pp-summary-cards .sl { font-size:11px; color:#6c757d; font-weight:500; margin-top:2px; }
+
+    .pp-connector { display:inline-block; width:12px; text-align:center; color:#cbd5e1; font-size:9px; }
+
+    .pp-name-cell { max-width:140px; }
+    .pp-name-cell .pp-email { font-size:10px; color:#6c757d; word-break:break-all; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="content client">
+            <div class="container-fluid py-4">
+
+                <div class="row mb-3 align-items-center">
+                    <div class="col">
+                        <h4 class="fw-bold mb-0"><i class="fas fa-chart-line text-primary me-2"></i>Prospect Progress Tracker</h4>
+                        <p class="text-muted mb-0 mt-1" style="font-size:13px;">Bird's-eye view of every prospect's onboarding journey &mdash; from email receipt to self-registration</p>
+                    </div>
+                    <div class="col-auto d-flex gap-2">
+                        <a href="@Url.Action("Index", "NaukriOnboarding")" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back to Onboarding</a>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="location.reload()"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                    </div>
+                </div>
+
+                @{
+                    int cParsed = Model.Count(r => r.ResumeParseCompleted == true);
+                    int cChannel = Model.Count(r => r.SelectedIRFId.HasValue && r.SelectedIRFId > 0);
+                    int cInvited = Model.Count(r => r.InvitationEmailSent == true);
+                    int cSelfReg = Model.Count(r => r.SelfRegistrationCompleted == true || r.OnboardingCompleted == true);
+                    int cAwaiting = Model.Count(r => r.InvitationEmailSent == true && r.SelfRegistrationCompleted != true && r.OnboardingCompleted != true && string.IsNullOrEmpty(r.ProspectResponse));
+                }
+                <div class="row g-3 mb-4 pp-summary-cards">
+                    <div class="col-6 col-sm-4 col-lg-2">
+                        <div class="card border-0 shadow-sm text-center py-3"><div class="sv text-primary">@totalCount</div><div class="sl">@(hasFilters ? "Matched" : "Total Prospects")</div></div>
+                    </div>
+                    <div class="col-6 col-sm-4 col-lg-2">
+                        <div class="card border-0 shadow-sm text-center py-3"><div class="sv" style="color:#0d6efd;">@cParsed</div><div class="sl">Resume Parsed</div></div>
+                    </div>
+                    <div class="col-6 col-sm-4 col-lg-2">
+                        <div class="card border-0 shadow-sm text-center py-3"><div class="sv" style="color:#6f42c1;">@cChannel</div><div class="sl">Channel Selected</div></div>
+                    </div>
+                    <div class="col-6 col-sm-4 col-lg-2">
+                        <div class="card border-0 shadow-sm text-center py-3"><div class="sv" style="color:#0dcaf0;">@cInvited</div><div class="sl">Invited</div></div>
+                    </div>
+                    <div class="col-6 col-sm-4 col-lg-2">
+                        <div class="card border-0 shadow-sm text-center py-3"><div class="sv text-warning">@cAwaiting</div><div class="sl">Awaiting Response</div></div>
+                    </div>
+                    <div class="col-6 col-sm-4 col-lg-2">
+                        <div class="card border-0 shadow-sm text-center py-3"><div class="sv text-success">@cSelfReg</div><div class="sl">Self-Registered</div></div>
+                    </div>
+                </div>
+
+                <form asp-action="ProspectProgress" asp-controller="NaukriOnboarding" method="get" id="ppFilterForm">
+                    <input type="hidden" name="page" value="1" />
+                    <input type="hidden" name="pageSize" value="@pageSize" />
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body py-2 px-3">
+                            <div class="d-flex align-items-center gap-2" style="flex-wrap:nowrap;width:100%;">
+                                <select name="status" class="form-select pp-filter" style="flex:1 1 0;min-width:120px;max-width:150px;" onchange="document.getElementById('ppFilterForm').submit()">
+                                    <option value="">All statuses</option>
+                                    @foreach (var s in new[] { "Open", "InProgress", "Verified", "Onboarded", "Rejected", "Closed" })
+                                    {
+                                        <option value="@s" selected="@(selStatus == s ? "selected" : null)">@(s == "InProgress" ? "In Progress" : s)</option>
+                                    }
+                                </select>
+                                <input type="text" name="candidateName" class="form-control pp-filter" placeholder="Candidate name..." style="flex:1 1 0;min-width:120px;" value="@selName" />
+                                <input type="text" name="magName" class="form-control pp-filter" placeholder="MAG name..." style="flex:1 1 0;min-width:110px;" value="@selMag" />
+                                <select name="source" class="form-select pp-filter" style="flex:1 1 0;min-width:100px;max-width:130px;" onchange="document.getElementById('ppFilterForm').submit()">
+                                    <option value="">All sources</option>
+                                    <option value="Naukri" selected="@(selSource == "Naukri" ? "selected" : null)">Naukri</option>
+                                    <option value="LinkedIn" selected="@(selSource == "LinkedIn" ? "selected" : null)">LinkedIn</option>
+                                </select>
+                                <input type="date" name="dateFrom" class="form-control pp-filter" style="flex:1 1 0;min-width:115px;" value="@selDateFrom" onchange="document.getElementById('ppFilterForm').submit()" />
+                                <span class="text-muted flex-shrink-0" style="font-size:11px;">&ndash;</span>
+                                <input type="date" name="dateTo" class="form-control pp-filter" style="flex:1 1 0;min-width:115px;" value="@selDateTo" onchange="document.getElementById('ppFilterForm').submit()" />
+                                <button type="submit" class="btn btn-primary btn-sm flex-shrink-0" style="background:#07363c4f !important;border:0;padding:7px 10px;"><i class="fas fa-filter me-1"></i>Apply</button>
+                                <a asp-action="ProspectProgress" asp-controller="NaukriOnboarding" class="btn btn-sm flex-shrink-0" style="padding:7px 10px!important;border:0;background:#da7c7c !important;color:#fff"><i class="fas fa-times me-1"></i>Clear</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
+                        @if (!Model.Any())
+                        {
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                                <span>@(hasFilters ? "No records match the selected filters." : "No prospect data available.")</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="pp-scroll">
+                                <table class="table table-sm mb-0 pp-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Received</th>
+                                            <th>Src</th>
+                                            <th>Candidate</th>
+                                            <th>MAG</th>
+                                            <th style="text-align:center;" colspan="4">
+                                                Pipeline Steps
+                                            </th>
+                                            <th>Skill Channel</th>
+                                            <th>EV</th>
+                                            <th>AI Fitment</th>
+                                            <th>Prospect Response</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        <tr style="font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">
+                                            <th></th><th></th><th></th><th></th><th></th>
+                                            <th style="text-align:center;padding:2px 6px;">Parse</th>
+                                            <th style="text-align:center;padding:2px 6px;">Channel</th>
+                                            <th style="text-align:center;padding:2px 6px;">Invite</th>
+                                            <th style="text-align:center;padding:2px 6px;">Onboard</th>
+                                            <th></th><th></th><th></th><th></th><th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var r in Model)
+                                        {
+                                            bool parsed = r.ResumeParseCompleted == true;
+                                            bool isDuplicate = parsed && r.IsExistingInterviewer == true;
+                                            bool channelSelected = r.SelectedIRFId.HasValue && r.SelectedIRFId > 0;
+                                            bool invited = r.InvitationEmailSent == true;
+                                            bool selfReg = r.SelfRegistrationCompleted == true || r.OnboardingCompleted == true;
+
+                                            bool evDone = r.EmploymentVerified == true;
+                                            bool evPassed = evDone && (!string.IsNullOrEmpty(r.EmploymentCompanyName) || r.EmploymentIsEmployed == true);
+                                            bool aiDone = r.ResumeAIAnalysisCompleted == true;
+                                            string aiVerdict = r.AIVerdict ?? "";
+                                            bool aiPositive = aiDone && aiVerdict.IndexOf("yes", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                                            string statusLower = (r.Status ?? "open").ToLower();
+                                            string statusBadgeCss = statusLower switch {
+                                                "open" => "pp-badge-open", "inprogress" => "pp-badge-inprogress",
+                                                "verified" => "pp-badge-verified", "onboarded" => "pp-badge-onboarded",
+                                                "rejected" => "pp-badge-rejected", "closed" => "pp-badge-closed",
+                                                _ => "pp-badge-open"
+                                            };
+
+                                            string srcLabel = r.Source ?? "Naukri";
+                                            string srcCss = string.Equals(srcLabel, "LinkedIn", StringComparison.OrdinalIgnoreCase)
+                                                ? "pp-src pp-src-linkedin" : "pp-src pp-src-naukri";
+
+                                            <tr>
+                                                <td class="text-muted">@r.Id</td>
+                                                <td style="white-space:nowrap;font-size:11px;">@(r.ReceivedAt.HasValue ? r.ReceivedAt.Value.ToString("dd MMM yy") : "\u2014")</td>
+                                                <td><span class="@srcCss">@srcLabel</span></td>
+                                                <td class="pp-name-cell">
+                                                    <span class="fw-semibold" style="font-size:12px;">@(r.CandidateName ?? "\u2014")</span>
+                                                    @if (!string.IsNullOrEmpty(r.ParsedEmail))
+                                                    {
+                                                        <br /><span class="pp-email">@r.ParsedEmail</span>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(r.ParsedPhone))
+                                                    {
+                                                        <br /><span class="pp-email"><i class="fas fa-phone-alt" style="font-size:8px;"></i> @r.ParsedPhone</span>
+                                                    }
+                                                </td>
+                                                <td style="font-size:11px;max-width:120px;">
+                                                    @(r.MagName ?? "\u2014")
+                                                    @if (!string.IsNullOrEmpty(r.AssessmentGroupName))
+                                                    {
+                                                        <br /><span style="font-size:10px;color:#6c757d;">@r.AssessmentGroupName</span>
+                                                    }
+                                                </td>
+
+                                                @* Pipeline step dots *@
+                                                <td style="text-align:center;">
+                                                    @if (isDuplicate)
+                                                    {
+                                                        <span class="pp-dot pp-fail" title="Duplicate email"><i class="fas fa-exclamation"></i></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.Raw(stepDot(parsed))
+                                                    }
+                                                </td>
+                                                <td style="text-align:center;">@Html.Raw(stepDot(channelSelected))</td>
+                                                <td style="text-align:center;">@Html.Raw(stepDot(invited))</td>
+                                                <td style="text-align:center;">@Html.Raw(stepDot(selfReg))</td>
+
+                                                @* Skill Channel *@
+                                                <td style="font-size:11px;">
+                                                    @if (channelSelected)
+                                                    {
+                                                        <span title="IRF #@r.SelectedIRFId">@r.SelectedIRFName</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">&ndash;</span>
+                                                    }
+                                                </td>
+
+                                                @* EV *@
+                                                <td style="font-size:11px;">
+                                                    @if (evDone)
+                                                    {
+                                                        if (evPassed)
+                                                        {
+                                                            <span class="pp-ev-pass"><i class="fas fa-check-circle me-1"></i>@(r.EmploymentCompanyName ?? "Employed")</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="pp-ev-fail"><i class="fas fa-times-circle me-1"></i>Not employed</span>
+                                                        }
+                                                    }
+                                                    else if (selfReg)
+                                                    {
+                                                        <span class="pp-ev-pass"><i class="fas fa-check-circle me-1"></i>Via self-reg</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="pp-ev-na">&ndash;</span>
+                                                    }
+                                                </td>
+
+                                                @* AI Fitment *@
+                                                <td style="font-size:11px;">
+                                                    @if (aiDone)
+                                                    {
+                                                        string verdictDisplay = aiVerdict;
+                                                        string verdictClass = "pp-verdict-no";
+                                                        if (aiPositive)
+                                                        {
+                                                            verdictClass = aiVerdict.IndexOf("conditional", StringComparison.OrdinalIgnoreCase) >= 0
+                                                                ? "pp-verdict-cond" : "pp-verdict-yes";
+                                                        }
+                                                        <span class="@verdictClass">
+                                                            @verdictDisplay
+                                                            @if (r.AIFitmentScore.HasValue) { <span style="font-size:10px;opacity:.7;"> (@r.AIFitmentScore)</span> }
+                                                        </span>
+                                                    }
+                                                    else if (selfReg)
+                                                    {
+                                                        <span class="pp-verdict-yes">Via self-reg</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="pp-ev-na">&ndash;</span>
+                                                    }
+                                                </td>
+
+                                                @* Prospect Response *@
+                                                <td style="font-size:11px;">
+                                                    @if (selfReg)
+                                                    {
+                                                        <span class="pp-response text-success"><i class="fas fa-check-circle me-1"></i>Self-Registered</span>
+                                                        @if (r.OnboardedUserId.HasValue)
+                                                        {
+                                                            <br /><span style="font-size:10px;color:#6c757d;">UserId: @r.OnboardedUserId</span>
+                                                        }
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(r.ProspectResponse))
+                                                    {
+                                                        string respText = r.ProspectResponse switch {
+                                                            "NeedClarity" => "Needs Clarity",
+                                                            "ManualSupport" => "Manual Support",
+                                                            "NotInterested" => "Not Interested",
+                                                            _ => r.ProspectResponse
+                                                        };
+                                                        string respColor = r.ProspectResponse == "NotInterested" ? "text-danger" : "text-info";
+                                                        <span class="pp-response @respColor"><i class="fas fa-reply me-1"></i>@respText</span>
+                                                    }
+                                                    else if (invited)
+                                                    {
+                                                        <span class="pp-response text-warning"><i class="fas fa-clock me-1"></i>Awaiting</span>
+                                                        @if (r.InvitationEmailSentAt.HasValue)
+                                                        {
+                                                            <br /><span style="font-size:10px;color:#6c757d;">Sent @r.InvitationEmailSentAt.Value.ToString("dd MMM")</span>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="pp-ev-na">&ndash;</span>
+                                                    }
+                                                </td>
+
+                                                @* Status *@
+                                                <td><span class="pp-badge @statusBadgeCss">@(r.Status ?? "Open")</span></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+
+                    @if (totalPages > 1)
+                    {
+                        <div class="card-footer bg-white border-top d-flex align-items-center justify-content-between py-2 px-3">
+                            <span style="font-size:12px;color:#6c757d;">Showing @first&ndash;@last of @totalCount</span>
+                            <div class="pp-pager">
+                                @if (page > 1) { <a href="@pageUrl(page - 1)"><i class="fas fa-chevron-left" style="font-size:10px;"></i></a> }
+                                else { <span class="disabled"><i class="fas fa-chevron-left" style="font-size:10px;"></i></span> }
+
+                                @{
+                                    int windowStart = Math.Max(1, page - 3);
+                                    int windowEnd = Math.Min(totalPages, page + 3);
+                                    if (windowStart > 1) { <a href="@pageUrl(1)">1</a> if (windowStart > 2) { <span class="disabled">&hellip;</span> } }
+                                    for (int pg = windowStart; pg <= windowEnd; pg++)
+                                    {
+                                        if (pg == page) { <span class="active">@pg</span> }
+                                        else { <a href="@pageUrl(pg)">@pg</a> }
+                                    }
+                                    if (windowEnd < totalPages) { if (windowEnd < totalPages - 1) { <span class="disabled">&hellip;</span> } <a href="@pageUrl(totalPages)">@totalPages</a> }
+                                }
+
+                                @if (page < totalPages) { <a href="@pageUrl(page + 1)"><i class="fas fa-chevron-right" style="font-size:10px;"></i></a> }
+                                else { <span class="disabled"><i class="fas fa-chevron-right" style="font-size:10px;"></i></span> }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
