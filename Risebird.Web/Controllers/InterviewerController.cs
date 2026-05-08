@@ -1549,6 +1549,52 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>Professional interview conduct training (interviewer-only).</summary>
+        [HttpGet]
+        public async Task<IActionResult> ProfessionalInterviewConductTraining()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        return View();
+                    }
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("InterviewerIndex", "Dashboard");
+            }
+        }
+
+        /// <summary>AI interview report analysis training (interviewer-only).</summary>
+        [HttpGet]
+        public async Task<IActionResult> AIInterviewReportAnalysisTraining()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        return View();
+                    }
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("InterviewerIndex", "Dashboard");
+            }
+        }
+
         /// <summary>Saves proxy-detection checklist selections (JSON) for the logged-in interviewer to blob storage.</summary>
         [HttpPost]
         [ValidateAntiForgeryToken]

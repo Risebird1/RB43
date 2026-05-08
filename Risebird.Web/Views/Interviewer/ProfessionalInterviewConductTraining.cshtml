@@ -1,0 +1,412 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Module 06 - Professional Interview Conduct | RiseBird Training</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="~/Newassets/css/training.css?v=2026" rel="stylesheet" />
+
+<style>
+  .topbar-progress-wrap { flex: 1; max-width: 400px; display: flex; align-items: center; gap: 14px; }
+  .topbar-bar-bg { flex: 1; height: 6px; background: var(--faint); border-radius: 99px; overflow: hidden; }
+  .topbar-bar-fill { height: 100%; background: var(--blue); border-radius: 99px; transition: width 0.35s ease; }
+  .topbar-count { font-size: 13px; font-family: var(--mono); color: var(--dim); white-space: nowrap; }
+  .topbar-reset { font-size: 13px; font-weight: 500; color: var(--dim); background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; cursor: pointer; font-family: var(--font); transition: color 0.2s, border-color 0.2s; }
+  .topbar-reset:hover { color: var(--white); border-color: var(--border-strong); }
+  .section-nav { position: sticky; top: 64px; z-index: 90; background: rgba(13,21,32,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+  .section-nav::-webkit-scrollbar { display: none; }
+  .section-nav-inner { display: flex; align-items: center; gap: 2px; padding: 0 32px; height: 48px; min-width: max-content; }
+  .nav-btn { font-size: 13px; font-weight: 500; color: var(--dim); background: none; border: none; cursor: pointer; padding: 6px 14px; border-radius: 8px; font-family: var(--font); white-space: nowrap; transition: color 0.2s, background 0.2s; }
+  .nav-btn:hover { color: var(--white); background: var(--faint); }
+  .nav-btn.active { color: var(--blue-light); background: oklch(0.60 0.18 230 / 0.12); }
+  .section { margin-bottom: 56px; }
+  .section-header { display: flex; align-items: flex-start; gap: 18px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .section-icon { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--bg3); border: 1px solid var(--border); }
+  .section-meta { flex: 1; }
+  .section-title { font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+  .section-subtitle { font-size: 14px; color: var(--dim); }
+  .section-progress { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .sec-bar-bg { width: 80px; height: 5px; background: var(--faint); border-radius: 99px; overflow: hidden; }
+  .sec-bar-fill { height: 100%; border-radius: 99px; transition: width 0.3s ease; background: var(--blue); }
+  .sec-count { font-size: 12px; font-family: var(--mono); color: var(--dim); white-space: nowrap; }
+  .items { display: flex; flex-direction: column; gap: 8px; }
+  .item { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg2); cursor: pointer; transition: background 0.18s, border-color 0.18s, opacity 0.18s; user-select: none; -webkit-tap-highlight-color: transparent; }
+  .item:hover { background: var(--bg3); border-color: var(--border-strong); }
+  .item.checked { background: oklch(0.60 0.18 230 / 0.07); border-color: oklch(0.60 0.18 230 / 0.3); opacity: 0.65; }
+  .item.warn { border-left: 3px solid var(--amber); }
+  .item.warn.checked { border-left-color: oklch(0.60 0.18 230 / 0.5); }
+  .item.danger { border-left: 3px solid var(--red); }
+  .item.danger.checked { border-left-color: oklch(0.60 0.18 230 / 0.5); }
+  .item-checkbox { width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0; margin-top: 1px; border: 2px solid var(--border-strong); background: transparent; display: flex; align-items: center; justify-content: center; transition: background 0.18s, border-color 0.18s; pointer-events: none; }
+  .item.checked .item-checkbox { background: var(--blue); border-color: var(--blue); }
+  .item-checkbox svg { opacity: 0; transition: opacity 0.15s; }
+  .item.checked .item-checkbox svg { opacity: 1; }
+  .item-body { flex: 1; }
+  .item-label { font-size: 15px; font-weight: 500; color: var(--white); line-height: 1.45; margin-bottom: 2px; }
+  .item.checked .item-label { text-decoration: line-through; color: var(--dim); }
+  .item-note { font-size: 13px; color: var(--dim); line-height: 1.5; }
+  .item-tags { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .tag { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 5px; padding: 2px 8px; }
+  .tag-warn { background: oklch(0.74 0.17 55 / 0.15); color: var(--amber); border: 1px solid oklch(0.74 0.17 55 / 0.3); }
+  .tag-good { background: oklch(0.68 0.16 148 / 0.15); color: var(--green); border: 1px solid oklch(0.68 0.16 148 / 0.3); }
+  .tag-danger { background: oklch(0.64 0.19 22 / 0.15); color: var(--red); border: 1px solid oklch(0.64 0.19 22 / 0.3); }
+  .all-clear { display: none; margin-top: 48px; padding: 32px 32px; background: oklch(0.68 0.16 148 / 0.08); border: 1px solid oklch(0.68 0.16 148 / 0.3); border-radius: 16px; text-align: center; }
+  .all-clear.visible { display: block; }
+  .all-clear-title { font-size: 22px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+  .all-clear-sub { font-size: 15px; color: var(--dim); }
+  .checklist-save-bar { max-width: 960px; margin: 0 auto; padding: 36px 24px 48px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px 20px; border-top: 1px solid var(--border); }
+  .checklist-save-btn {
+    background: var(--green);
+    border: none;
+    border-radius: 8px;
+    padding: 11px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: var(--font);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .checklist-save-status { font-size: 13px; color: var(--dim); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="@Url.Action("InterviewerIndex", "Dashboard")" style="text-decoration:none">
+      <button class="topbar-back" type="button">← Dashboard</button>
+    </a>
+    <a href="@Url.Action("InterviewerIndex", "Dashboard")" style="text-decoration:none">
+      <img id="rb-logo-top" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" alt="RiseBird" />
+    </a>
+  </div>
+  <div class="topbar-progress-wrap">
+    <div class="topbar-bar-bg"><div class="topbar-bar-fill" id="globalFill" style="width:0%"></div></div>
+    <div class="topbar-count" id="globalCount">0 / 0</div>
+  </div>
+  <button class="topbar-reset" onclick="resetAll()">Reset all</button>
+</div>
+
+<nav class="section-nav" aria-label="Jump to section">
+  <div class="section-nav-inner" id="sectionNav"></div>
+</nav>
+
+<div class="hero">
+  <img id="rb-logo-hero" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" alt="RiseBird" style="height:48px;width:auto;object-fit:contain;margin-bottom:24px;" />
+  <div class="hero-eyebrow">Module 06 · Audit-Friendly Conduct</div>
+  <h1 class="hero-title">Professional<br/>Interview Conduct</h1>
+  <p class="hero-sub">Transcript AI evaluates every interview from the transcript itself. Run through this checklist before, during, and after each session - it ensures your interviews are professional, structured, fair, and audit-friendly.</p>
+  <div class="hero-badges">
+    <span class="badge"><span class="badge-dot" style="background:var(--amber)"></span>Common pitfall</span>
+    <span class="badge"><span class="badge-dot" style="background:var(--green)"></span>Transcript-friendly best practice</span>
+    <span class="badge"><span class="badge-dot" style="background:var(--red)"></span>Likely to trigger audit flag</span>
+  </div>
+</div>
+
+<div style="max-width:960px;margin:0 auto;padding:0 24px 0;">
+  <div style="background:linear-gradient(135deg, oklch(0.60 0.18 230 / 0.12) 0%, oklch(0.60 0.18 230 / 0.04) 100%);border:1px solid oklch(0.60 0.18 230 / 0.25);border-radius:16px;padding:32px 36px;margin-bottom:24px">
+    <div style="display:flex;align-items:flex-start;gap:18px">
+      <div style="font-size:28px;flex-shrink:0;margin-top:2px">🎙</div>
+      <div>
+        <div style="font-size:18px;font-weight:700;color:var(--white);margin-bottom:8px;letter-spacing:-0.01em">The audit is transcript-based</div>
+        <div style="font-size:15px;color:var(--dim);line-height:1.65;max-width:740px">
+          What's <strong style="color:var(--white)">visible in the transcript</strong> is what gets evaluated. Unclear, silent, or fragmented interactions hurt the audit even when the underlying interview was strong. The goal is not to game the system - it is to make the transcript reflect the engagement, evaluation depth, and professionalism that actually happened.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="main" id="main"></main>
+
+<div class="main" style="padding-top:0">
+  <div class="all-clear" id="allClear">
+    <div class="all-clear-title">All items reviewed</div>
+    <div class="all-clear-sub">Your interview is set up to produce a strong, audit-friendly transcript. Submit your completion below.</div>
+  </div>
+  <div class="checklist-save-bar">
+    <button type="button" class="checklist-save-btn" onclick="saveChecklistProgress()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+      Save checklist
+    </button>
+    <span id="checklistSaveStatus" class="checklist-save-status"></span>
+  </div>
+
+  <div class="complete-block">
+    <div class="complete-title">✓ Mark Module 06 Complete</div>
+    <div class="complete-sub">Enter your email to log completion. We will open a pre-filled confirmation email - please send it to confirm.</div>
+    <form class="complete-form" onsubmit="event.preventDefault()">
+      <input type="email" class="complete-input" placeholder="your.email@company.com" required />
+      <button type="submit" class="complete-btn">Mark Complete</button>
+    </form>
+    <div class="complete-status"></div>
+  </div>
+</div>
+<footer style="padding:32px 40px">
+  <img id="rb-logo-footer" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" alt="RiseBird" style="height:28px;width:auto;object-fit:contain;opacity:0.6;margin-bottom:10px" />
+  <div style="font-size:12px;color:rgba(238,242,249,0.3)">RiseBird Interviewer Training · Confidential - for certified interviewers only</div>
+</footer>
+    <script src="~/js/training.js?v=2026"></script>
+<script>
+const SECTIONS = [
+  {
+    id: "engagement",
+    icon: "🎧",
+    title: "1. Stay Actively Engaged",
+    subtitle: "Strong interviews feel interactive and attentive - the transcript should reflect that",
+    items: [
+      { label: "Acknowledge candidate answers meaningfully - not just 'okay' or 'hmm'", note: "Repeated filler responses are a top audit flag. Use full responses: 'That makes sense, can you go deeper on...' or 'Good approach - what about edge cases?'", tags: ["danger"] },
+      { label: "Ask follow-up questions on every substantive answer", note: "A transcript without follow-ups looks like a checklist quiz, not an evaluation. Probe reasoning behind every answer.", tags: ["good"] },
+      { label: "Maintain conversational continuity - avoid abrupt topic switching", note: "Verbalize transitions: 'Let's move to system design now.' Random jumps make the transcript feel disjointed.", tags: ["warn"] },
+      { label: "Respond within a reasonable time - no long unexplained silences", note: "Silences of 10+ seconds without context show up as gaps in the transcript and are interpreted as inattention.", tags: ["danger"] },
+      { label: "No multitasking that creates delayed responses", note: "Phone, second screen, slack, email - all of these produce response delays the transcript captures. Full attention only.", tags: ["danger"] },
+    ]
+  },
+  {
+    id: "structured",
+    icon: "📐",
+    title: "2. Ask Structured & Clear Questions",
+    subtitle: "Questions should be understandable and role-relevant",
+    items: [
+      { label: "Phrase questions concisely - avoid wandering setups", note: "A clear, direct question gets a clear answer. Long ambiguous setups confuse the candidate and the transcript.", tags: ["good"] },
+      { label: "Explain technical scenarios clearly - break complex problems into steps", note: "If the problem requires context, give the context once cleanly, then ask. Do not drip-feed information.", tags: ["good"] },
+      { label: "Confirm understanding before going deep", note: "'Does the problem statement make sense before we start?' - a 5-second check prevents 5 minutes of confusion.", tags: ["good"] },
+      { label: "Avoid vague or contradictory instructions", note: "If you change your own constraint mid-question, restate the full new question - do not just append corrections.", tags: ["warn"] },
+      { label: "Avoid excessive unexplained jargon", note: "Use the candidate's level of vocabulary. Define acronyms and frameworks the first time you use them in the interview.", tags: ["warn"] },
+    ]
+  },
+  {
+    id: "depth",
+    icon: "🎯",
+    title: "3. Demonstrate Evaluation Depth",
+    subtitle: "The transcript should reflect a meaningful assessment, not surface-level box-ticking",
+    items: [
+      { label: "Probe reasoning - not just answers", note: "Ask 'why' and 'how' more than 'what'. Surface-level questions produce surface-level transcripts that look weak in audit.", tags: ["good"] },
+      { label: "Validate the candidate's problem-solving approach", note: "When they propose a solution, ask them to walk through edge cases, alternatives, or trade-offs.", tags: ["good"] },
+      { label: "Adapt depth based on candidate performance", note: "If the candidate is acing easy questions, escalate. If they are struggling at fundamentals, simplify and move forward - do not drag them.", tags: ["good"] },
+      { label: "If the candidate cannot answer fundamentals, simplify and move on - do not over-probe", note: "The audit does not expect unnecessary probing on basics the candidate clearly does not know. It is acceptable and expected to wrap up reasonably.", tags: ["good"] },
+    ]
+  },
+  {
+    id: "tech-issues",
+    icon: "🔧",
+    title: "4. Handle Technical Issues Professionally",
+    subtitle: "Operational checks are normal - handle them cleanly and resume",
+    items: [
+      { label: "Acknowledge issues clearly when they happen", note: "'Looks like there is an audio issue - can you reconnect once?' makes the disruption visible in the transcript and shows you handled it.", tags: ["good"] },
+      { label: "Resolve quickly - do not let troubleshooting dominate the session", note: "If the issue is not resolved in 2-3 minutes, decide: continue with workarounds, or end and reschedule. Do not burn the entire interview on debugging.", tags: ["warn"] },
+      { label: "After a disruption, summarize where the discussion paused before resuming", note: "'We were discussing your approach to caching - let's pick back up there.' This restores transcript context after a gap.", tags: ["good"] },
+      { label: "Avoid repeated unresolved interruptions without progress", note: "Multiple unresolved tech issues in a transcript trigger operational concern flags. Make one clean attempt to fix, then escalate.", tags: ["danger"] },
+      { label: "Operational behaviors are not penalized when handled well", note: "'Can you hear me?', reconnect requests, ID checks, screen-share setup, brief clarifications - all normal. The audit only flags poor handling, not the events themselves.", tags: ["good"] },
+    ]
+  },
+  {
+    id: "efficiency",
+    icon: "⏱",
+    title: "5. Keep the Interview Efficient",
+    subtitle: "Stay focused on evaluation - do not drift",
+    items: [
+      { label: "Allocate time across topics thoughtfully", note: "Plan rough time-boxes (for example: 10 min behavioral, 25 min technical, 15 min coding, 10 min Q&A). Stick to them.", tags: ["good"] },
+      { label: "Balance discussion and assessment", note: "If you have been in conversation for 8 minutes without an assessable answer, redirect: 'Let's look at a specific example.'", tags: ["good"] },
+      { label: "Avoid excessive small talk at the start", note: "60-90 seconds of rapport is enough. More than that pushes evaluation into the back-half and the transcript looks light on signal.", tags: ["warn"] },
+      { label: "Avoid prolonged irrelevant discussion", note: "If a topic is not producing signal, transition. 'Got it - let's switch to...' is professional.", tags: ["warn"] },
+      { label: "Do not end the interview without meaningful evaluation", note: "Even if the candidate struggled, the transcript needs at least 2-3 substantive evaluation moments. Otherwise the audit reads it as an aborted session.", tags: ["danger"] },
+    ]
+  },
+  {
+    id: "professional",
+    icon: "🤝",
+    title: "6. Maintain Professionalism Throughout",
+    subtitle: "Conduct strongly impacts audit quality and client trust",
+    items: [
+      { label: "Remain respectful - no dismissive, mocking, or sarcastic comments", note: "Every word is on the transcript. Sarcasm reads worse in text than in voice.", tags: ["danger"] },
+      { label: "Allow the candidate to complete their responses", note: "Repeated interruptions are flagged as professionalism concerns. Let them finish, then ask follow-ups.", tags: ["danger"] },
+      { label: "Communicate calmly and clearly - even under pressure", note: "If a candidate pushes back or argues, stay neutral. Acknowledge, document, move on.", tags: ["good"] },
+      { label: "Maintain a neutral, fair tone throughout", note: "Do not telegraph approval or disapproval mid-interview. Save your read for the report.", tags: ["good"] },
+      { label: "No aggressive or confrontational tone - ever", note: "Even if the candidate is rude (Module 04), you stay measured. Aggressive interviewer tone is a top reason for audit flags.", tags: ["danger"] },
+    ]
+  },
+  {
+    id: "continuity",
+    icon: "🔗",
+    title: "7. Ensure Clear Session Continuity",
+    subtitle: "The interview should appear complete and functional in transcript form",
+    items: [
+      { label: "Verbalize transitions clearly between sections", note: "'Let's move to system design' or 'I'd like to follow up on your previous answer' - these create transcript-friendly anchors.", tags: ["good"] },
+      { label: "Acknowledge reconnects after disruptions", note: "'Welcome back - we paused on your caching answer.' Restores context and shows a professional handle on disruption.", tags: ["good"] },
+      { label: "Restate context if interrupted by tech or external issues", note: "Rebuilds the transcript thread after any gap.", tags: ["good"] },
+      { label: "Close the interview professionally - no abrupt disconnects", note: "'That's all from my side. Thank you for your time. You will hear back about next steps.' Confirms a clean ending in the transcript.", tags: ["good"] },
+      { label: "Do not disappear for extended periods or leave the candidate without response", note: "A long interviewer absence on the transcript is flagged as session continuity failure.", tags: ["danger"] },
+    ]
+  },
+  {
+    id: "transcript",
+    icon: "📝",
+    title: "8. Transcript-Friendly Speaking Habits",
+    subtitle: "Small verbal habits that make the transcript readable and audit-strong",
+    items: [
+      { label: "Verbalize the topic when transitioning: 'Now let's talk about...'", note: "AI evaluators rely on these markers to segment the interview correctly.", tags: ["good"] },
+      { label: "Acknowledge candidate responses out loud, with content: 'That makes sense, but what about X?'", note: "Beats silent nodding (which does not appear in the transcript) and beats single-word fillers (which look weak).", tags: ["good"] },
+      { label: "Clarify operational interruptions verbally", note: "'Looks like an audio issue - please reconnect once.' Makes the transcript reflect what happened, not just go silent.", tags: ["good"] },
+      { label: "When asking the candidate to repeat, say why", note: "'You cut out for a moment - could you repeat that last part?' is better than just 'sorry?' on the transcript.", tags: ["good"] },
+    ]
+  },
+  {
+    id: "before-after",
+    icon: "🛫",
+    title: "9. Before, During, and After the Interview",
+    subtitle: "End-to-end best practices for strong audit outcomes",
+    items: [
+      { label: "Before: test audio and video", note: "Mic, camera, internet stability - all confirmed before the candidate joins.", tags: ["good"] },
+      { label: "Before: prepare interview structure", note: "Rough plan of topics + time-boxes. Do not improvise the entire session.", tags: ["good"] },
+      { label: "Before: review candidate profile (resume + JD)", note: "Calibrate your questions to the role and the candidate's experience level.", tags: ["good"] },
+      { label: "Before: ensure a stable, quiet environment", note: "No background noise and no interruptions.", tags: ["good"] },
+      { label: "During: stay engaged, communicate clearly, manage time actively", note: "Do not go on autopilot. Periodically check the time and your topic coverage.", tags: ["good"] },
+      { label: "After: end with a clean closure - thank, summarize next steps, sign off", note: "A professional ending closes the transcript loop cleanly.", tags: ["good"] },
+    ]
+  },
+  {
+    id: "audit-flags",
+    icon: "🚨",
+    title: "10. Behaviors Most Likely to Trigger Audit Flags",
+    subtitle: "The high-risk patterns - avoid these consistently and your audit outcomes stay strong",
+    items: [
+      { label: "Engagement: repeated silence or inattentive responses with no follow-ups", note: "The single biggest engagement flag. Even one strong follow-up per substantive answer fixes this.", tags: ["danger"] },
+      { label: "Evaluation: only surface-level questions, no probing despite strong answers", note: "Interviews where the candidate gives strong answers but the interviewer never digs deeper score weakly on evaluation depth.", tags: ["danger"] },
+      { label: "Communication: repeated unclear instructions, candidate visibly confused", note: "If the transcript shows repeated 'sorry, can you clarify?' - that is a communication flag on the interviewer.", tags: ["danger"] },
+      { label: "Operations: prolonged unresolved technical disruption", note: "10+ minutes of debugging on the transcript looks like a broken session, even if the underlying call recovered.", tags: ["danger"] },
+      { label: "Professionalism: rude, dismissive, or inappropriate comments", note: "Top audit flag. Re-read every comment as if it will appear in a client compliance review.", tags: ["danger"] },
+      { label: "Random topic jumps without verbal transitions", note: "Looks scripted or distracted. Always verbalize the transition.", tags: ["warn"] },
+    ]
+  }
+];
+
+const STORAGE_KEY = 'rb-module-06-conduct';
+
+function load() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } }
+function save(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+let state = load();
+
+const main = document.getElementById('main');
+const navInner = document.getElementById('sectionNav');
+
+function tagEl(t) {
+  const map = { warn: ['tag-warn','Common pitfall'], good: ['tag-good','Best practice'], danger: ['tag-danger','Audit flag risk'] };
+  const [cls, label] = map[t] || ['tag-good', t];
+  return `<span class="tag ${cls}">${label}</span>`;
+}
+
+function render() {
+  main.innerHTML = '';
+  navInner.innerHTML = '';
+  let totalItems = 0, totalChecked = 0;
+
+  SECTIONS.forEach((sec) => {
+    const btn = document.createElement('button');
+    btn.className = 'nav-btn';
+    btn.textContent = sec.title;
+    btn.onclick = () => document.getElementById('sec-' + sec.id).scrollIntoView({behavior:'smooth', block:'start'});
+    navInner.appendChild(btn);
+
+    const secEl = document.createElement('section');
+    secEl.className = 'section';
+    secEl.id = 'sec-' + sec.id;
+
+    const itemsHtml = sec.items.map((item, i) => {
+      const key = `${sec.id}-${i}`;
+      const checked = !!state[key];
+      totalItems++;
+      if (checked) totalChecked++;
+      const itemClass = (item.tags || []).includes('danger') ? 'danger' : (item.tags || []).includes('warn') ? 'warn' : '';
+      return `
+        <div class="item ${itemClass} ${checked ? 'checked' : ''}" data-key="${key}">
+          <div class="item-checkbox">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="item-body">
+            <div class="item-label">${item.label}</div>
+            <div class="item-note">${item.note}</div>
+            ${(item.tags && item.tags.length) ? `<div class="item-tags">${item.tags.map(tagEl).join('')}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const secChecked = sec.items.filter((_, i) => state[`${sec.id}-${i}`]).length;
+    const secPct = Math.round((secChecked / sec.items.length) * 100);
+
+    secEl.innerHTML = `
+      <div class="section-header">
+        <div class="section-icon">${sec.icon}</div>
+        <div class="section-meta">
+          <div class="section-title">${sec.title}</div>
+          <div class="section-subtitle">${sec.subtitle}</div>
+        </div>
+        <div class="section-progress">
+          <div class="sec-bar-bg"><div class="sec-bar-fill" style="width:${secPct}%"></div></div>
+          <div class="sec-count">${secChecked}/${sec.items.length}</div>
+        </div>
+      </div>
+      <div class="items">${itemsHtml}</div>
+    `;
+    main.appendChild(secEl);
+  });
+
+  main.querySelectorAll('.item').forEach(el => {
+    el.addEventListener('click', () => {
+      const key = el.dataset.key;
+      state[key] = !state[key];
+      save(state);
+      render();
+    });
+  });
+
+  document.getElementById('globalFill').style.width = (totalItems ? (totalChecked / totalItems * 100) : 0) + '%';
+  document.getElementById('globalCount').textContent = `${totalChecked} / ${totalItems}`;
+
+  const allClear = document.getElementById('allClear');
+  if (totalItems > 0 && totalChecked === totalItems) allClear.classList.add('visible'); else allClear.classList.remove('visible');
+}
+
+function resetAll() {
+  if (!confirm('Reset all checked items?')) return;
+  state = {};
+  save(state);
+  localStorage.removeItem(`${STORAGE_KEY}-savedAt`);
+  const status = document.getElementById('checklistSaveStatus');
+  if (status) status.textContent = '';
+  render();
+}
+
+function saveChecklistProgress() {
+  save(state);
+  const savedAt = new Date().toLocaleString();
+  localStorage.setItem(`${STORAGE_KEY}-savedAt`, savedAt);
+  const status = document.getElementById('checklistSaveStatus');
+  if (status) {
+    status.textContent = `Saved at ${savedAt}`;
+  }
+}
+
+function loadSavedTime() {
+  const savedAt = localStorage.getItem(`${STORAGE_KEY}-savedAt`);
+  const status = document.getElementById('checklistSaveStatus');
+  if (savedAt && status) {
+    status.textContent = `Last saved at ${savedAt}`;
+  }
+}
+
+render();
+loadSavedTime();
+wireCompletion('m6-professional-conduct', 'Module 06 - Professional Interview Conduct');
+</script>
+</body>
+</html>

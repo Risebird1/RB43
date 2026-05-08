@@ -1,0 +1,283 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Module 07 - AI Audit Compliance | RiseBird Training</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="~/Newassets/css/report-compliance-training.css?v=2026" rel="stylesheet" />
+
+<style>
+  .vs { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0 24px; }
+  @@media (max-width:640px){ .vs{ grid-template-columns:1fr; } }
+  .vs > div { padding:16px 18px; border-radius:10px; font-size:14.5px; line-height:1.6; }
+  .vs .bad { background:oklch(0.64 0.19 22 / 0.08); border:1px solid oklch(0.64 0.19 22 / 0.25); }
+  .vs .good { background:oklch(0.68 0.16 148 / 0.08); border:1px solid oklch(0.68 0.16 148 / 0.25); }
+  .vs .lab { font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px; }
+  .vs .bad .lab { color:var(--red); }
+  .vs .good .lab { color:var(--green); }
+  table.tbl { width:100%; border-collapse:collapse; margin:18px 0 24px; font-size:14.5px; }
+  table.tbl th, table.tbl td { padding:11px 14px; text-align:left; border-bottom:1px solid var(--border); }
+  table.tbl th { background:var(--bg2); color:var(--white); font-weight:600; font-size:13px; letter-spacing:0.02em; }
+  table.tbl td { color:rgba(238,242,249,0.78); }
+  table.tbl tr:hover td { background:var(--bg2); }
+  .bucket-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:18px 0 28px; }
+  @@media (max-width:720px){ .bucket-grid{ grid-template-columns:repeat(2,1fr); } }
+  .bucket { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px 14px; text-align:center; }
+  .bucket-num { font-family:var(--mono); font-size:26px; font-weight:700; color:var(--blue-light); line-height:1; margin-bottom:6px; }
+  .bucket-name { font-size:13px; font-weight:600; color:var(--white); margin-bottom:4px; line-height:1.3; }
+  .bucket-desc { font-size:11px; color:var(--dim); line-height:1.4; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="@Url.Action("InterviewerIndex", "Dashboard")" style="text-decoration:none">
+      <button class="topbar-back" type="button">← Dashboard</button>
+    </a>
+    <a href="@Url.Action("InterviewerIndex", "Dashboard")" style="text-decoration:none">
+      <img id="rb-logo-top" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" alt="RiseBird" />
+    </a>
+  </div>
+  <div class="topbar-context"><span class="topbar-context-dot"></span>Module 07</div>
+</div>
+
+<div class="hero">
+  <div class="hero-eyebrow">Module 07 · ~15 min read · AI Audit Compliance</div>
+  <h1 class="hero-title">How to Avoid Penalties<br/>from the AI Audit Agent</h1>
+  <p class="hero-sub">Every report you submit is now scored by an AI auditor. It does not judge the candidate - it judges the <em>quality of your evaluation</em>. Learn exactly what it checks, what triggers penalties, and how to consistently produce audit-grade reports.</p>
+  <div class="hero-badges">
+    <span class="badge"><span class="badge-dot"></span>5 audit buckets</span>
+    <span class="badge"><span class="badge-dot" style="background:var(--amber)"></span>Score ≥ 70 to pass</span>
+    <span class="badge"><span class="badge-dot" style="background:var(--green)"></span>Evidence-based</span>
+  </div>
+</div>
+
+<article class="article">
+  <h2>Why this module matters</h2>
+  <p>A strong candidate can still produce a <em>poor audit</em> if your questions are shallow, your comments are vague, your scoring is inconsistent, or critical skills were never tested. Likewise, a rejected candidate can produce a <em>high-quality audit</em> if your evaluation is rigorous and well-documented.</p>
+
+  <div class="callout danger">
+    <div class="callout-icon">🤖</div>
+    <div class="callout-body">
+      <strong>The auditor is judging you, not the candidate</strong>
+      Final score starts from 100 and gets penalized for missing evidence, shallow interviews, vague comments, inconsistencies, and unsupported verdicts. <strong>You must score ≥ 70 with no severe structural issues.</strong>
+    </div>
+  </div>
+
+  <h2>What the AI auditor checks</h2>
+  <p>Five buckets, weighted as below. Memorize these - every action you take in an interview maps to one of them.</p>
+
+  <div class="bucket-grid">
+    <div class="bucket"><div class="bucket-num">25</div><div class="bucket-name">Skill Coverage</div><div class="bucket-desc">Were rubric skills actually tested?</div></div>
+    <div class="bucket"><div class="bucket-num">25</div><div class="bucket-name">Question Quality</div><div class="bucket-desc">Depth, applied reasoning, probing</div></div>
+    <div class="bucket"><div class="bucket-num">20</div><div class="bucket-name">Comment Quality</div><div class="bucket-desc">Specific, evidence-backed, balanced</div></div>
+    <div class="bucket"><div class="bucket-num">15</div><div class="bucket-name">Mechanical Consistency</div><div class="bucket-desc">Math, ratings, status alignment</div></div>
+    <div class="bucket"><div class="bucket-num">15</div><div class="bucket-name">Verdict Justification</div><div class="bucket-desc">Decision supported by evidence</div></div>
+  </div>
+
+  <h2>The 5 golden rules</h2>
+
+  <h3>Rule 1 - Audit through evidence</h3>
+  <p>Every score and verdict must be backed by questions asked, candidate responses, observed strengths/weaknesses, and rubric alignment.</p>
+  <div class="vs">
+    <div class="bad"><div class="lab">Weak</div>"Candidate seems weak overall."</div>
+    <div class="good"><div class="lab">Strong</div>"Candidate struggled with concurrency concepts and could not explain thread safety in HashMap during follow-up questions."</div>
+  </div>
+
+  <h3>Rule 2 - Every important skill must be tested</h3>
+  <p>The AI compares <strong>expected skills</strong> (from rubric) vs <strong>observed skills</strong> (what your questions actually tested). If a rubric skill is scored but never tested, you take a severe Skill Coverage penalty.</p>
+
+  <h3>Rule 3 - Questions must be deep enough</h3>
+  <p>Definition-only interviews are heavily penalized. The AI rewards debugging, architecture, trade-offs, real-world reasoning, edge cases, and multi-step thinking.</p>
+  <div class="vs">
+    <div class="bad"><div class="lab">Shallow</div>What is OOP?<br/>What is inheritance?<br/>What is polymorphism?<br/>What is encapsulation?</div>
+    <div class="good"><div class="lab">Deep</div>How would you debug memory leaks in a Spring Boot service?<br/>Explain HashMap collision handling internally.<br/>Design a scalable order-processing API with concurrency.</div>
+  </div>
+
+  <h3>Rule 4 - Comments must be specific</h3>
+  <div class="vs">
+    <div class="bad"><div class="lab">Vague</div>Good candidate · Average communication · Technically okay · Needs improvement</div>
+    <div class="good"><div class="lab">Specific</div>"Demonstrated strong understanding of Spring Boot APIs and request lifecycle but struggled with multithreading and synchronization concepts."</div>
+  </div>
+
+  <h3>Rule 5 - Scores must match evidence</h3>
+  <p>If your rubric says <strong>18/20 - Strongly Selected</strong> but your questions were weak and your comments are negative, the AI flags both Mechanical Consistency and Verdict Justification. Every score must logically align with questions, comments, ratings, and final status.</p>
+
+  <h2>Mandatory interview structure</h2>
+
+  <h3>Skill coverage - every rubric skill needs a question</h3>
+  <table class="tbl">
+    <thead><tr><th>Skill (example)</th><th>Must be tested?</th><th>Example question</th></tr></thead>
+    <tbody>
+      <tr><td>Core Java</td><td>Yes</td><td>Explain JVM memory model and GC behavior.</td></tr>
+      <tr><td>Collections</td><td>Yes</td><td>How does ConcurrentHashMap differ from HashMap?</td></tr>
+      <tr><td>Multithreading</td><td>Yes</td><td>How would you prevent race conditions in a counter service?</td></tr>
+      <tr><td>Spring Boot</td><td>Yes</td><td>Explain the request lifecycle in Spring Boot.</td></tr>
+      <tr><td>SQL</td><td>If in rubric</td><td>Diagnose a slow JOIN query and propose optimizations.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Mix of question types - not just conceptual</h3>
+  <table class="tbl">
+    <thead><tr><th>Type</th><th>Importance</th></tr></thead>
+    <tbody>
+      <tr><td>Conceptual</td><td>Medium</td></tr>
+      <tr><td>Applied scenario</td><td>High</td></tr>
+      <tr><td>Debugging</td><td>High</td></tr>
+      <tr><td>Architecture</td><td>High</td></tr>
+      <tr><td>Edge cases</td><td>High</td></tr>
+      <tr><td>Trade-offs</td><td>High</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Progressive probing - go deeper than the first answer</h3>
+  <div class="vs">
+    <div class="bad"><div class="lab">One-shot</div>"What is indexing?"</div>
+    <div class="good"><div class="lab">Probing</div>"What indexing strategy would you use for a high-volume transaction table - and what problems occur with over-indexing? How would you diagnose slow query performance?"</div>
+  </div>
+
+  <h2>How to write strong comments</h2>
+  <p>A strong comment contains four parts: <strong>Strengths</strong>, <strong>Weaknesses</strong>, <strong>Evidence</strong> (referenced questions/scenarios), and <strong>Hiring justification</strong> (why selected/rejected/borderline).</p>
+
+  <div class="example">
+    <div class="example-label">Excellent comment</div>
+    <p>"Candidate demonstrated solid understanding of REST API design and Spring Boot fundamentals. They handled debugging and transaction management scenarios well. However, they struggled with concurrency concepts and could not explain synchronization strategies during follow-up questions. Database optimization understanding was moderate. Overall technically capable for mid-level backend responsibilities but not strong enough for advanced distributed systems ownership."</p>
+  </div>
+
+  <h2>Mechanical consistency - the math has to add up</h2>
+  <p>The AI checks arithmetic and structural consistency. Common failures:</p>
+  <ul>
+    <li><strong>Score mismatch:</strong> rubric totals 13/20 but reported score says 18/20.</li>
+    <li><strong>Impossible values:</strong> 12/10, negative scores, missing denominator.</li>
+    <li><strong>Verdict mismatch:</strong> tech score 52% but status is "Strongly Selected".</li>
+  </ul>
+
+  <h2>Final verdict alignment</h2>
+  <p>The AI derives the expected verdict from your tech percentage. Tolerance is ±3% near boundaries.</p>
+  <table class="tbl">
+    <thead><tr><th>Score %</th><th>Expected band</th></tr></thead>
+    <tbody>
+      <tr><td>≥ 85%</td><td>Strongly Selected</td></tr>
+      <tr><td>70–84%</td><td>Marginally Selected</td></tr>
+      <tr><td>55–69%</td><td>Marginally Rejected</td></tr>
+      <tr><td>&lt; 55%</td><td>Strongly Rejected</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <div class="callout-icon">⚖</div>
+    <div class="callout-body">
+      <strong>Override is allowed - but you must justify</strong>
+      You can reject a strong scorer if your comments clearly explain <em>why</em>, which critical skill failed, and why that matters for role readiness. Without that, AI penalizes Verdict Justification.
+    </div>
+  </div>
+
+  <h2>Recommended 45-60 minute interview flow</h2>
+  <table class="tbl">
+    <thead><tr><th>Stage</th><th>Duration</th></tr></thead>
+    <tbody>
+      <tr><td>Introduction</td><td>3-5 min</td></tr>
+      <tr><td>Resume / project discussion</td><td>5-10 min</td></tr>
+      <tr><td>Core technical concepts</td><td>10-15 min</td></tr>
+      <tr><td>Applied scenarios / debugging</td><td>10-15 min</td></tr>
+      <tr><td>Architecture / trade-offs</td><td>5-10 min</td></tr>
+      <tr><td>Candidate questions</td><td>2-5 min</td></tr>
+    </tbody>
+  </table>
+
+  <h2>High-risk behaviors that trigger penalties</h2>
+  <ul>
+    <li><strong>Skill Coverage:</strong> scoring skills that were never tested · missing core rubric topics · only generic conceptual questions.</li>
+    <li><strong>Question Quality:</strong> trivia-only interviews · repeated definitions · no problem solving · no follow-up probing.</li>
+    <li><strong>Comment Quality:</strong> one-line comments · generic templates · contradictory statements · no evidence.</li>
+    <li><strong>Consistency:</strong> arithmetic mismatch · impossible scores · positive verdict with negative evidence (or vice versa).</li>
+  </ul>
+
+  <h2>Self-review checklist before submitting</h2>
+  <p>Run through every item below before clicking Submit on the Feedback Report.</p>
+
+  <h3>Skill coverage</h3>
+  <div class="checklist">
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">I tested every major rubric skill</div></div>
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">I assessed the primary skill deeply (multiple questions, follow-ups)</div></div>
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">I asked at least some applied / scenario questions</div></div>
+  </div>
+
+  <h3>Question quality</h3>
+  <div class="checklist">
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">I avoided definition-only questions</div></div>
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">I included debugging or trade-off reasoning questions</div></div>
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">I probed follow-up depth on at least 2 answers</div></div>
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">My questions cannot be answered by a one-line Google search or a generative AI tool</div></div>
+  </div>
+
+  <h3>Comments</h3>
+  <div class="checklist">
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">Comments are skill-specific (not "good candidate")</div></div>
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">I named both strengths and weaknesses</div></div>
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">I justified the verdict with evidence</div></div>
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">Another interviewer could understand my reasoning from the comment alone</div></div>
+  </div>
+
+  <h3>Mechanical consistency</h3>
+  <div class="checklist">
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">Rubric totals match the reported score</div></div>
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">All scores are valid (no impossible values, no missing denominators)</div></div>
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">Verdict aligns with the tech score band (or override is justified in comments)</div></div>
+  </div>
+
+  <h3>Final verdict</h3>
+  <div class="checklist">
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">I can defend this decision using evidence from the interview</div></div>
+    <div class="cl-item"><div class="cl-box"></div><div class="cl-text">An external auditor would trust this report</div></div>
+  </div>
+
+  <h2>Gold-standard report template</h2>
+  <div class="example">
+    <div class="example-label">Reference example</div>
+    <p><strong>Questions asked</strong></p>
+    <p>1. Explain how ConcurrentHashMap handles concurrency internally.<br/>2. Diagnose performance issues in a slow Spring Boot API.<br/>3. Design a scalable notification service with retry handling.<br/>4. Explain transaction isolation problems in relational databases.<br/>5. Discuss trade-offs between SQL and NoSQL for analytics workloads.</p>
+    <p><strong>Interviewer comments</strong></p>
+    <p>"Candidate demonstrated strong backend API and database fundamentals. They handled debugging scenarios confidently and provided good reasoning around transaction handling and service scalability. Understanding of concurrency was moderate; candidate struggled with lock optimization and thread coordination edge cases during follow-up probing. Communication was clear and structured. Overall suitable for mid-level backend responsibilities but would require mentorship for highly concurrent distributed systems."</p>
+    <p><strong>Verdict</strong> - Marginally Selected</p>
+  </div>
+
+  <div class="callout success">
+    <div class="callout-icon">🎯</div>
+    <div class="callout-body">
+      <strong>The bottom line</strong>
+      Conduct interviews like a real technical evaluator, not a checkbox operator. A good report should let another interviewer, hiring manager, auditor, or AI clearly understand <em>what was tested, how deeply, where the candidate excelled, where they struggled, and why the decision was made.</em>
+    </div>
+  </div>
+
+  <div class="complete-block">
+    <div class="complete-title">✓ Mark Module 07 Complete</div>
+    <div class="complete-sub">Enter your email to log completion. We'll open a pre-filled confirmation email - please send it to confirm.</div>
+    <form class="complete-form" onsubmit="event.preventDefault()">
+      <input type="email" class="complete-input" placeholder="your.email@company.com" required />
+      <button type="submit" class="complete-btn">Mark Complete</button>
+    </form>
+    <div class="complete-status"></div>
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--dim)">
+      <a href="@Url.Action("InterviewerIndex", "Dashboard")"><strong>Back to Dashboard</strong></a>
+    </div>
+  </div>
+</article>
+
+<footer>
+  <img id="rb-logo-footer" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" alt="RiseBird" />
+  <div>RiseBird Interviewer Training - Confidential - for certified interviewers only</div>
+</footer>
+
+    <script src="~/js/report-compliance-training.js?v=2026"></script>
+    <script>
+  wireChecklist();
+  wireCompletion('m7-ai-audit', 'Module 07 - AI Audit Compliance');
+</script>
+</body>
+</html>
