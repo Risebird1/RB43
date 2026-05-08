@@ -1163,7 +1163,9 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                var apiUrl = "https://superflow-sandbox.surepass.app/api/v1/workflows/initialize-workflow";
+                //var baseUrl = _configuration["Surepass:BaseUrl"] ?? "https://sandbox.surepass.app";
+                var baseUrl = _configuration["Surepass:BaseUrl"] ?? "https://superflow-sandbox.surepass.app";
+                var apiUrl = $"{baseUrl.TrimEnd('/')}/api/v1/workflows/initialize-workflow";
                 var workflowId = _configuration["Surepass:WorkflowId"] ?? "workflow_3CiBVnvlqqnMyJWASBaR7N5JNHW";
                 var mobileNumber = _configuration["Surepass:TestMobileNumber"] ?? "9999999999";
 
