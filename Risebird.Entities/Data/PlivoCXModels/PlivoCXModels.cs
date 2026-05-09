@@ -248,6 +248,9 @@ namespace Risebird.Entities.Data.PlivoCXModels
     /// </summary>
     public class PlivoCXOnboardingTriggerRequest
     {
+        [JsonProperty("caller_id")]
+        public string CallerId { get; set; }
+
         [JsonProperty("phone_number")]
         public string PhoneNumber { get; set; }
 

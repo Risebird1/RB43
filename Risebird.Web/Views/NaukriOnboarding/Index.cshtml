@@ -514,8 +514,8 @@
 
                     <hr/>
 
-                    <!-- Plivo Voice Agent Call Section (hidden for now) -->
-                    <div class="mgm-action-card pending" id="plivoCallCard" style="border-color:#6f42c1;background:#faf8ff;display:none;">
+                    <!-- Plivo Voice Agent Call Section -->
+                    <div class="mgm-action-card pending" id="plivoCallCard" style="border-color:#6f42c1;background:#faf8ff;">
                         <div class="d-flex align-items-start gap-3">
                             <span class="mgm-step-number" id="plivoCallIcon" style="background:#6f42c1;color:#fff;"><i class="fas fa-phone-alt" style="font-size:12px;"></i></span>
                             <div class="flex-grow-1">
@@ -1356,6 +1356,17 @@
         var card = $('#plivoCallCard'), btn = $('#btnInitiateCall'), detBtn = $('#btnViewCallDetails');
         var result = $('#plivoCallResult'), detPanel = $('#plivoCallDetailsPanel');
 
+        var dispLabels = {
+            'interested': 'Interested', 'not_interested': 'Not Interested', 'unsubscribe': 'Unsubscribe',
+            'wrong_person': 'Wrong Person', 'busy': 'Busy', 'unclear': 'Unclear',
+            'no_answer': 'No Answer', 'busy_rejected': 'Busy / Rejected', 'call_failed': 'Call Failed'
+        };
+        var prefLabels = {
+            'self_registration': 'Will self-register', 'manual_onboarding': 'Prefers manual',
+            'need_clarity': 'Needs clarity', 'facing_errors': 'Facing errors'
+        };
+        var retryableStatuses = ['no_answer', 'no-answer', 'busy', 'busy_rejected', 'failed', 'trigger-failed'];
+
         result.hide().empty(); detPanel.hide();
         btn.show().prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Prospect');
         detBtn.hide();
@@ -1381,40 +1392,48 @@
         } else if (status === 'completed' || status === 'answered') {
             card.css('border-color', '#198754').css('background', '#f0fdf4');
             $('#plivoCallIcon').css('background', '#198754');
-            btn.hide();
             detBtn.show();
 
+            var disp = r.plivoProspectDisposition || '';
             var dispHtml = '';
-            if (r.plivoProspectDisposition) {
-                var dispLabel = { 'interested': 'Interested', 'not_interested': 'Not Interested', 'unsubscribe': 'Unsubscribe', 'no_answer': 'No Answer' }[r.plivoProspectDisposition] || r.plivoProspectDisposition;
-                var dispClass = r.plivoProspectDisposition === 'interested' ? 'text-success' : 'text-danger';
+            if (disp) {
+                var dispLabel = dispLabels[disp] || disp;
+                var dispClass = disp === 'interested' ? 'text-success' : 'text-danger';
                 dispHtml = '<span class="' + dispClass + ' fw-bold"><i class="fas fa-phone-alt me-1"></i>' + dispLabel + '</span>';
             }
             var prefHtml = '';
             if (r.plivoOnboardingPreference) {
-                var prefLabel = { 'self_registration': 'Will self-register', 'manual_onboarding': 'Prefers manual', 'need_clarity': 'Needs clarity', 'facing_errors': 'Facing errors' }[r.plivoOnboardingPreference] || r.plivoOnboardingPreference;
-                prefHtml = ' &middot; <span class="text-info">' + prefLabel + '</span>';
+                prefHtml = ' &middot; <span class="text-info">' + (prefLabels[r.plivoOnboardingPreference] || r.plivoOnboardingPreference) + '</span>';
             }
             var kycHtml = '';
             if (r.plivoKycAccepted === true) kycHtml = ' &middot; <span class="text-success">KYC OK</span>';
             else if (r.plivoKycAccepted === false) kycHtml = ' &middot; <span class="text-danger">KYC declined</span>';
 
+            var isNegative = disp && disp !== 'interested';
+            if (isNegative && disp !== 'unsubscribe') {
+                btn.prop('disabled', false).html('<i class="fas fa-redo me-1"></i>Retry Call');
+            } else {
+                btn.hide();
+            }
+
             result.html('<span class="text-success"><i class="fas fa-check-circle me-1"></i>Call completed</span>' +
                 (dispHtml ? '<br/>' + dispHtml + prefHtml + kycHtml : '')).show();
             $('#plivoCallSubtitle').html('<span class="text-success" style="font-size:11px;">Call completed</span>');
-        } else if (status === 'no-answer' || status === 'busy') {
-            card.css('border-color', '#ffc107').css('background', '#fffcf0');
-            $('#plivoCallIcon').css('background', '#ffc107');
+        } else if (retryableStatuses.indexOf(status) !== -1) {
+            var isNoAnswer = (status === 'no_answer' || status === 'no-answer' || status === 'busy' || status === 'busy_rejected');
+            if (isNoAnswer) {
+                card.css('border-color', '#ffc107').css('background', '#fffcf0');
+                $('#plivoCallIcon').css('background', '#ffc107');
+                result.html('<span class="text-warning"><i class="fas fa-phone-slash me-1"></i>' + (dispLabels[status] || 'No answer') + '. You can retry.</span>').show();
+                $('#plivoCallSubtitle').html('<span class="text-warning" style="font-size:11px;">Prospect did not answer</span>');
+            } else {
+                card.css('border-color', '#dc3545').css('background', '#fef2f2');
+                $('#plivoCallIcon').css('background', '#dc3545');
+                result.html('<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Call failed. You can retry.</span>').show();
+                $('#plivoCallSubtitle').html('<span class="text-danger" style="font-size:11px;">Call failed</span>');
+            }
             btn.prop('disabled', false).html('<i class="fas fa-redo me-1"></i>Retry Call');
             detBtn.show();
-            result.html('<span class="text-warning"><i class="fas fa-phone-slash me-1"></i>No answer / busy. You can retry.</span>').show();
-            $('#plivoCallSubtitle').html('<span class="text-warning" style="font-size:11px;">Prospect did not answer</span>');
-        } else if (status === 'trigger-failed' || status === 'failed') {
-            card.css('border-color', '#dc3545').css('background', '#fef2f2');
-            $('#plivoCallIcon').css('background', '#dc3545');
-            btn.prop('disabled', false).html('<i class="fas fa-redo me-1"></i>Retry Call');
-            result.html('<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Call failed. You can retry.</span>').show();
-            $('#plivoCallSubtitle').html('<span class="text-danger" style="font-size:11px;">Call failed</span>');
         }
     }
 
@@ -1464,7 +1483,7 @@
             url: '@Url.Action("GetPlivoCallDetails", "NaukriOnboarding")', type: 'GET', data: { id: currentRecordId },
             success: function (res) {
                 if (!res.success) return;
-                var dispLabels = { 'interested': 'Interested', 'not_interested': 'Not Interested', 'unsubscribe': 'Unsubscribe', 'no_answer': 'No Answer' };
+                var dispLabels = { 'interested': 'Interested', 'not_interested': 'Not Interested', 'unsubscribe': 'Unsubscribe', 'wrong_person': 'Wrong Person', 'busy': 'Busy', 'unclear': 'Unclear', 'no_answer': 'No Answer', 'busy_rejected': 'Busy / Rejected', 'call_failed': 'Call Failed' };
                 var prefLabels = { 'self_registration': 'Will self-register', 'manual_onboarding': 'Prefers manual onboarding', 'need_clarity': 'Needs clarity', 'facing_errors': 'Facing errors while onboarding' };
 
                 $('#plivoDetDisposition').text(dispLabels[res.plivoProspectDisposition] || res.plivoProspectDisposition || '—');
