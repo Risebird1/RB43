@@ -1292,8 +1292,9 @@ namespace Risebird.Web.Controllers
                 else if (phone.Length > 10 && !phone.StartsWith("+"))
                     phone = "+" + phone;
 
+                var retryableStatuses = new[] { "trigger-failed", "no_answer", "busy_rejected", "failed", "no-answer", "busy" };
                 if (!string.IsNullOrEmpty(record.PlivoCallStatus) &&
-                    record.PlivoCallStatus != "trigger-failed")
+                    !Array.Exists(retryableStatuses, s => s.Equals(record.PlivoCallStatus, StringComparison.OrdinalIgnoreCase)))
                     return Json(new { success = false, error = $"A call has already been made (status: {record.PlivoCallStatus}). Use the view to check details.", alreadyCalled = true });
 
                 var calledBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
@@ -1301,8 +1302,13 @@ namespace Risebird.Web.Controllers
                 await _repository.UpdatePlivoCallStatusAsync(id, "initiated", null,
                     DateTime.UtcNow, null, null, null, null, null, null, calledBy);
 
+                var callerId = _configuration["PlivoCX:OnboardingCallerId"]
+                            ?? _configuration["Plivo:FromNumber"]
+                            ?? "+918031136547";
+
                 var triggerRequest = new PlivoCXOnboardingTriggerRequest
                 {
+                    CallerId        = callerId,
                     PhoneNumber     = phone,
                     ProspectName    = record.CandidateName ?? "there",
                     ProspectEmail   = record.ParsedEmail,
