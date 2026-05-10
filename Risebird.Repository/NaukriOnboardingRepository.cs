@@ -510,5 +510,22 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<int?> FindProspectIdByPhoneAndCallStatusAsync(string phone, string callStatus)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var sql = @"SELECT TOP 1 Id FROM NaukriProspectiveInterviewer
+                            WHERE ParsedPhone = @Phone AND PlivoCallStatus = @Status
+                            ORDER BY Id DESC";
+                return await con.QueryFirstOrDefaultAsync<int?>(sql, new { Phone = phone, Status = callStatus });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

@@ -241,27 +241,26 @@ namespace Risebird.Repository
         // ── Webhook checkpoints ───────────────────────────────────────────────────
 
         // Checkpoint logging disabled — testing phase complete, no longer writing to PlivoCXWebhookCheckpoints
-        public Task<int> SaveCheckpointAsync(PlivoCXWebhookCheckpoint checkpoint)
+        public async Task<int> SaveCheckpointAsync(PlivoCXWebhookCheckpoint checkpoint)
         {
-            // try
-            // {
-            //     using var conn = new SqlConnection(_connectionString);
-            //     const string sql = @"
-            //         INSERT INTO PlivoCXWebhookCheckpoints
-            //             (Timestamp, CheckpointName, Message, ConversationId, CallLogId, AdditionalData)
-            //         VALUES
-            //             (@Timestamp, @CheckpointName, @Message, @ConversationId, @CallLogId, @AdditionalData);
-            //         SELECT CAST(SCOPE_IDENTITY() AS INT);";
-            //
-            //     checkpoint.Timestamp = DateTime.UtcNow;
-            //     return await conn.ExecuteScalarAsync<int>(sql, checkpoint);
-            // }
-            // catch (Exception ex)
-            // {
-            //     await _logger.LogMessage(LogLevelInfo.Exception, ex);
-            //     return 0;
-            // }
-            return Task.FromResult(0);
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                const string sql = @"
+                    INSERT INTO PlivoCXWebhookCheckpoints
+                        (Timestamp, CheckpointName, Message, ConversationId, CallLogId, AdditionalData)
+                    VALUES
+                        (@Timestamp, @CheckpointName, @Message, @ConversationId, @CallLogId, @AdditionalData);
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+                checkpoint.Timestamp = DateTime.UtcNow;
+                return await conn.ExecuteScalarAsync<int>(sql, checkpoint);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
         }
 
         public async Task<List<PlivoCXWebhookCheckpoint>> GetRecentCheckpointsAsync(int count = 100)
