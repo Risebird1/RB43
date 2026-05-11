@@ -35,6 +35,7 @@ namespace Risebird.Web.Controllers
         private readonly IHttpClientFactory            _httpClientFactory;
         private readonly IEncryptionHelper              _encryptionHelper;
         private readonly IPlivoCXService               _plivoCXService;
+        private readonly IPlivoCXCallRepository         _cpRepo;
 
         public NaukriOnboardingController(
             INaukriOnboardingRepository  repository,
@@ -48,7 +49,8 @@ namespace Risebird.Web.Controllers
             IFileMimeTypeHelper           fileMimeTypeHelper,
             IHttpClientFactory            httpClientFactory,
             IEncryptionHelper             encryptionHelper,
-            IPlivoCXService               plivoCXService)
+            IPlivoCXService               plivoCXService,
+            IPlivoCXCallRepository        cpRepo)
         {
             _repository             = repository;
             _logger                 = logger;
@@ -62,6 +64,7 @@ namespace Risebird.Web.Controllers
             _httpClientFactory      = httpClientFactory;
             _encryptionHelper       = encryptionHelper;
             _plivoCXService         = plivoCXService;
+            _cpRepo                 = cpRepo;
         }
 
         // ── Dashboard ───────────────────────────────────────────────────────────────
@@ -1292,8 +1295,9 @@ namespace Risebird.Web.Controllers
                 else if (phone.Length > 10 && !phone.StartsWith("+"))
                     phone = "+" + phone;
 
+                var retryableStatuses = new[] { "trigger-failed", "no_answer", "busy_rejected", "failed", "no-answer", "busy" };
                 if (!string.IsNullOrEmpty(record.PlivoCallStatus) &&
-                    record.PlivoCallStatus != "trigger-failed")
+                    !Array.Exists(retryableStatuses, s => s.Equals(record.PlivoCallStatus, StringComparison.OrdinalIgnoreCase)))
                     return Json(new { success = false, error = $"A call has already been made (status: {record.PlivoCallStatus}). Use the view to check details.", alreadyCalled = true });
 
                 var calledBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
@@ -1301,8 +1305,13 @@ namespace Risebird.Web.Controllers
                 await _repository.UpdatePlivoCallStatusAsync(id, "initiated", null,
                     DateTime.UtcNow, null, null, null, null, null, null, calledBy);
 
+                var callerId = _configuration["PlivoCX:OnboardingCallerId"]
+                            ?? _configuration["Plivo:FromNumber"]
+                            ?? "+918031136547";
+
                 var triggerRequest = new PlivoCXOnboardingTriggerRequest
                 {
+                    CallerId        = callerId,
                     PhoneNumber     = phone,
                     ProspectName    = record.CandidateName ?? "there",
                     ProspectEmail   = record.ParsedEmail,
@@ -1350,59 +1359,158 @@ namespace Risebird.Web.Controllers
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> PlivoOnboardingHangup()
         {
+            await SaveOnbCp("ob_hangup_received",
+                $"PlivoOnboardingHangup hit — Content-Type: {Request.ContentType}");
+
+            // ── Step 1: Read raw body ─────────────────────────────────────────────
+            string rawBody = string.Empty;
             try
             {
-                string rawBody;
                 using (var reader = new StreamReader(Request.Body))
                     rawBody = await reader.ReadToEndAsync();
 
-                if (string.IsNullOrWhiteSpace(rawBody))
-                    return BadRequest(new { error = "Empty request body." });
+                await SaveOnbCp("ob_hangup_body_read",
+                    $"Raw body length: {rawBody?.Length ?? 0}",
+                    extra: rawBody?.Length > 800 ? rawBody.Substring(0, 800) + "…" : rawBody);
+            }
+            catch (Exception ex)
+            {
+                await SaveOnbCp("ob_hangup_body_read_failed", $"Body read FAILED: {ex.Message}");
+                return BadRequest(new { error = "Could not read request body." });
+            }
 
-                PlivoCXOnboardingHangupPayload payload = null;
-                int? recordId = null;
+            if (string.IsNullOrWhiteSpace(rawBody))
+            {
+                await SaveOnbCp("ob_hangup_empty_body", "Empty request body received.");
+                return BadRequest(new { error = "Empty request body." });
+            }
 
-                // Try parsing as nested Plivo CX event first
-                try
+            // ── Step 2: Parse payload ─────────────────────────────────────────────
+            PlivoCXOnboardingHangupPayload payload = null;
+            int? recordId = null;
+            string parseMethod = "none";
+
+            // 2a: Try nested Plivo CX event envelope
+            try
+            {
+                var nestedEvent = JsonConvert.DeserializeObject<PlivoCXHangupEvent>(rawBody);
+                if (nestedEvent?.Data?.Object?.EventData != null)
                 {
-                    var nestedEvent = JsonConvert.DeserializeObject<PlivoCXHangupEvent>(rawBody);
-                    if (nestedEvent?.Data?.Object?.EventData != null)
+                    var ed = nestedEvent.Data.Object.EventData;
+                    payload = new PlivoCXOnboardingHangupPayload
                     {
-                        var ed = nestedEvent.Data.Object.EventData;
-                        payload = new PlivoCXOnboardingHangupPayload
-                        {
-                            ConversationId     = nestedEvent.Data.Object.ConversationId,
-                            CallUUID           = nestedEvent.Data.Object.CallUuid,
-                            CallStatus         = GetEventValue(ed, "call_status"),
-                            Duration           = GetEventValue(ed, "duration"),
-                            Transcript         = GetEventValue(ed, "transcript"),
-                            Summary            = GetEventValue(ed, "summary"),
-                            LogId              = GetEventValue(ed, "log_id"),
-                            ProspectDisposition   = GetEventValue(ed, "prospect_disposition"),
-                            OnboardingPreference  = GetEventValue(ed, "onboarding_preference"),
-                            KycAccepted           = GetEventValue(ed, "kyc_accepted"),
-                            HangupCause        = GetEventValue(ed, "hangup_cause")
-                        };
-                    }
+                        ConversationId        = nestedEvent.Data.Object.ConversationId,
+                        CallUUID              = nestedEvent.Data.Object.CallUuid,
+                        CallStatus            = GetEventValue(ed, "call_status"),
+                        Duration              = GetEventValue(ed, "duration"),
+                        Transcript            = GetEventValue(ed, "transcript"),
+                        Summary               = GetEventValue(ed, "summary"),
+                        LogId                 = GetEventValue(ed, "log_id"),
+                        ProspectDisposition   = GetEventValue(ed, "prospect_disposition"),
+                        OnboardingPreference  = GetEventValue(ed, "onboarding_preference"),
+                        KycAccepted           = GetEventValue(ed, "kyc_accepted"),
+                        HangupCause           = GetEventValue(ed, "hangup_cause")
+                    };
+                    parseMethod = "nested_event";
+                    await SaveOnbCp("ob_hangup_nested_parsed",
+                        $"Nested parse OK — log_id={payload.LogId}, disp={payload.ProspectDisposition}",
+                        convId: payload.ConversationId);
                 }
-                catch { }
+            }
+            catch (Exception ex)
+            {
+                await SaveOnbCp("ob_hangup_nested_parse_failed", $"Nested parse failed: {ex.Message}");
+            }
 
-                // Fallback: direct flat JSON
-                if (payload == null || string.IsNullOrEmpty(payload.LogId))
+            // 2b: Try flat JSON (from AI conversation HTTP action or HTTP request nodes)
+            if (payload == null || string.IsNullOrEmpty(payload.LogId))
+            {
+                try
                 {
                     payload = JsonConvert.DeserializeObject<PlivoCXOnboardingHangupPayload>(rawBody,
                         new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore });
+                    parseMethod = "flat_json";
+                    await SaveOnbCp("ob_hangup_flat_parsed",
+                        $"Flat JSON parse — log_id={payload?.LogId}, disp={payload?.ProspectDisposition}, phone={payload?.PhoneNumber}");
                 }
+                catch (Exception ex)
+                {
+                    await SaveOnbCp("ob_hangup_flat_parse_failed", $"Flat JSON parse failed: {ex.Message}");
+                }
+            }
 
-                if (payload == null)
-                    return BadRequest(new { error = "Could not parse hangup payload." });
+            // 2c: Try extracting from Plivo CX HTTP node wrapper {"none":{},"json":{...},...}
+            if (payload == null || string.IsNullOrEmpty(payload.LogId))
+            {
+                try
+                {
+                    var wrapper = JsonConvert.DeserializeObject<Dictionary<string, object>>(rawBody);
+                    if (wrapper != null && wrapper.ContainsKey("json"))
+                    {
+                        var innerJson = wrapper["json"]?.ToString();
+                        if (!string.IsNullOrEmpty(innerJson))
+                        {
+                            payload = JsonConvert.DeserializeObject<PlivoCXOnboardingHangupPayload>(innerJson,
+                                new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore });
+                            parseMethod = "wrapper_json";
+                            await SaveOnbCp("ob_hangup_wrapper_parsed",
+                                $"Wrapper JSON parse — log_id={payload?.LogId}, disp={payload?.ProspectDisposition}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await SaveOnbCp("ob_hangup_wrapper_parse_failed", $"Wrapper parse failed: {ex.Message}");
+                }
+            }
 
-                if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int parsedId))
-                    recordId = parsedId;
+            if (payload == null)
+            {
+                await SaveOnbCp("ob_hangup_parse_failed", "All parse strategies failed — payload is null.");
+                return BadRequest(new { error = "Could not parse hangup payload." });
+            }
 
-                if (!recordId.HasValue)
-                    return BadRequest(new { error = "Missing log_id in hangup payload." });
+            // ── Step 3: Resolve record ID ─────────────────────────────────────────
+            if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int parsedId))
+                recordId = parsedId;
 
+            // Fallback: look up by phone number if log_id is missing/non-numeric
+            if (!recordId.HasValue && !string.IsNullOrEmpty(payload.PhoneNumber))
+            {
+                await SaveOnbCp("ob_hangup_logid_missing",
+                    $"log_id missing or non-numeric ('{payload.LogId}'). Trying phone lookup: {payload.PhoneNumber}");
+
+                var foundId = await _repository.FindProspectIdByPhoneAndCallStatusAsync(
+                    payload.PhoneNumber, "initiated");
+                if (foundId.HasValue)
+                {
+                    recordId = foundId.Value;
+                    await SaveOnbCp("ob_hangup_phone_lookup_ok",
+                        $"Phone lookup matched record #{recordId}");
+                }
+                else
+                {
+                    foundId = await _repository.FindProspectIdByPhoneAndCallStatusAsync(
+                        payload.PhoneNumber, "triggered");
+                    if (foundId.HasValue)
+                    {
+                        recordId = foundId.Value;
+                        await SaveOnbCp("ob_hangup_phone_lookup_ok",
+                            $"Phone lookup (triggered) matched record #{recordId}");
+                    }
+                }
+            }
+
+            if (!recordId.HasValue)
+            {
+                await SaveOnbCp("ob_hangup_no_record",
+                    $"Could not resolve record. log_id='{payload.LogId}', phone='{payload.PhoneNumber}', parseMethod={parseMethod}");
+                return BadRequest(new { error = $"Missing log_id in hangup payload. log_id='{payload.LogId}', phone='{payload.PhoneNumber}'" });
+            }
+
+            // ── Step 4: Update database ───────────────────────────────────────────
+            try
+            {
                 int? duration = null;
                 if (!string.IsNullOrEmpty(payload.Duration) && int.TryParse(payload.Duration, out int dur))
                     duration = dur;
@@ -1416,7 +1524,11 @@ namespace Risebird.Web.Controllers
                     ? payload.CallStatus.ToLower()
                     : "completed";
 
-                await _repository.UpdatePlivoCallStatusAsync(
+                await SaveOnbCp("ob_hangup_updating_db",
+                    $"Updating record #{recordId} — status={callStatus}, disp={payload.ProspectDisposition}, pref={payload.OnboardingPreference}, kyc={payload.KycAccepted}, dur={duration}",
+                    callLogId: recordId);
+
+                var updated = await _repository.UpdatePlivoCallStatusAsync(
                     recordId.Value,
                     callStatus,
                     payload.ConversationId,
@@ -1429,6 +1541,10 @@ namespace Risebird.Web.Controllers
                     kycAccepted,
                     null);
 
+                await SaveOnbCp("ob_hangup_db_result",
+                    $"UpdatePlivoCallStatusAsync returned {updated} for record #{recordId}",
+                    callLogId: recordId);
+
                 string historyDetail = $"Status: {callStatus}";
                 if (!string.IsNullOrEmpty(payload.ProspectDisposition))
                     historyDetail += $", Disposition: {payload.ProspectDisposition}";
@@ -1440,10 +1556,17 @@ namespace Risebird.Web.Controllers
                 await _repository.InsertHistoryAsync(recordId.Value, "PlivoCallCompleted", "—",
                     historyDetail, "PlivoCX Webhook");
 
+                await SaveOnbCp("ob_hangup_complete",
+                    $"Processing finished for record #{recordId}. parseMethod={parseMethod}",
+                    callLogId: recordId);
+
                 return Ok(new { success = true, recordId = recordId.Value });
             }
             catch (Exception ex)
             {
+                await SaveOnbCp("ob_hangup_db_exception",
+                    $"DB update exception for record #{recordId}: {ex.Message}",
+                    callLogId: recordId);
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return StatusCode(500, new { error = ex.Message });
             }
@@ -1482,6 +1605,45 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Checkpoint helper (reuses PlivoCXWebhookCheckpoints table) ───────────
+
+        private async Task SaveOnbCp(
+            string name, string msg, string convId = null, int? callLogId = null, string extra = null)
+        {
+            try
+            {
+                await _cpRepo.SaveCheckpointAsync(new PlivoCXWebhookCheckpoint
+                {
+                    CheckpointName = name,
+                    Message        = msg,
+                    ConversationId = convId,
+                    CallLogId      = callLogId,
+                    AdditionalData = extra
+                });
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// View recent onboarding-hangup checkpoints.
+        /// Access: /NaukriOnboarding/OnboardingCheckpoints?count=100
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> OnboardingCheckpoints(int count = 100)
+        {
+            try
+            {
+                var all = await _cpRepo.GetRecentCheckpointsAsync(count);
+                var onb = all.Where(c => c.CheckpointName.StartsWith("ob_")).ToList();
+                return Json(onb);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { error = ex.Message });
             }
         }
 
