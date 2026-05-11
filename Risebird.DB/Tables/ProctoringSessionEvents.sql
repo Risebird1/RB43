@@ -7,7 +7,7 @@ CREATE TABLE [dbo].[ProctoringSessionEvents] (
     [CreatedAtIst] DATETIME2(7) NULL,
     [InterviewId] INT NOT NULL,
     [CandidateEmail] NVARCHAR(256) NULL,
-    -- join | start | stop | telemetry | screenshot | heartbeat
+    -- join | start | stop | telemetry | screenshot | heartbeat | screen_chunk
     [EventKind] NVARCHAR(64) NOT NULL,
     -- For telemetry rows: info | violation | null for lifecycle rows
     [Level] NVARCHAR(32) NULL,
