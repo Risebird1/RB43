@@ -4286,6 +4286,67 @@ namespace Risebird.Repository
         }
 
         #endregion
+
+        #region Interviewer training checklist
+
+        public async Task<int> SaveInterviewerTrainingChecklist(Risebird.Entities.Data.InterviewerTrainingChecklist model)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewerEmail", model.InterviewerEmail);
+                parameters.Add("@TrainingModuleCode", model.TrainingModuleCode);
+                parameters.Add("@ChecklistStateJson", model.ChecklistStateJson);
+                parameters.Add("@TotalItems", model.TotalItems);
+                parameters.Add("@TotalChecked", model.TotalChecked);
+                parameters.Add("@CreatedBy", model.CreatedBy);
+                parameters.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveInterviewerTrainingChecklist", parameters, commandType: CommandType.StoredProcedure);
+                    return parameters.Get<int>("@NewId");
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<IEnumerable<Risebird.Entities.Data.InterviewerTrainingChecklist>> GetInterviewerTrainingChecklist(string interviewerEmail, string trainingModuleCode)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewerEmail", interviewerEmail);
+                parameters.Add("@TrainingModuleCode", trainingModuleCode);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<Risebird.Entities.Data.InterviewerTrainingChecklist>(
+                        con, "usp_GetInterviewerTrainingChecklist", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        #endregion
     }
 
 }

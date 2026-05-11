@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Module 06 - Professional Interview Conduct | RiseBird Training</title>
+<title>Professional Interview Conduct | RiseBird Training</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link href="~/Newassets/css/training.css?v=2026" rel="stylesheet" />
 
@@ -76,8 +76,14 @@
   }
   .checklist-save-status { font-size: 13px; color: var(--dim); }
 </style>
+<script>
+  window.__professionalConductSubmitUrl = '@Url.Action("SaveInterviewerTrainingChecklist", "Interviewer")';
+  window.__professionalConductLoadUrl = '@Url.Action("GetInterviewerTrainingChecklistState", "Interviewer")';
+  var TRAINING_MODULE_CODE = 'ProfessionalConduct';
+</script>
 </head>
 <body>
+<form id="professionalConductTrainingAntiForgery" style="display:none">@Html.AntiForgeryToken()</form>
 
 <div class="topbar">
   <div class="topbar-left">
@@ -133,7 +139,7 @@
     <div class="all-clear-sub">Your interview is set up to produce a strong, audit-friendly transcript. Submit your completion below.</div>
   </div>
   <div class="checklist-save-bar">
-    <button type="button" class="checklist-save-btn" onclick="saveChecklistProgress()">
+    <button type="button" id="btnSaveProfessionalConductChecklist" class="checklist-save-btn" onclick="saveChecklistProgress()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
       Save checklist
     </button>
@@ -141,7 +147,6 @@
   </div>
 
   <div class="complete-block">
-    <div class="complete-title">✓ Mark Module 06 Complete</div>
     <div class="complete-sub">Enter your email to log completion. We will open a pre-filled confirmation email - please send it to confirm.</div>
     <form class="complete-form" onsubmit="event.preventDefault()">
       <input type="email" class="complete-input" placeholder="your.email@company.com" required />
@@ -386,14 +391,74 @@ function resetAll() {
   render();
 }
 
+function buildFullChecklistState() {
+  const checklistState = {};
+  let totalItems = 0, totalChecked = 0;
+  SECTIONS.forEach((sec) => {
+    sec.items.forEach((item, i) => {
+      const key = `${sec.id}-${i}`;
+      const v = !!state[key];
+      checklistState[key] = v;
+      totalItems++;
+      if (v) totalChecked++;
+    });
+  });
+  return { checklistState, totalItems, totalChecked };
+}
+
 function saveChecklistProgress() {
-  save(state);
-  const savedAt = new Date().toLocaleString();
-  localStorage.setItem(`${STORAGE_KEY}-savedAt`, savedAt);
-  const status = document.getElementById('checklistSaveStatus');
-  if (status) {
-    status.textContent = `Saved at ${savedAt}`;
+  const url = window.__professionalConductSubmitUrl;
+  const tokenInput = document.querySelector('#professionalConductTrainingAntiForgery input[name="__RequestVerificationToken"]');
+  if (!tokenInput || !tokenInput.value) {
+    alert('Security token missing. Refresh the page and try again.');
+    return;
   }
+  if (!url) {
+    alert('Save is not configured.');
+    return;
+  }
+  const built = buildFullChecklistState();
+  save(state);
+  const payload = JSON.stringify({
+    trainingModuleCode: TRAINING_MODULE_CODE,
+    checklistState: built.checklistState,
+    totalItems: built.totalItems,
+    totalChecked: built.totalChecked
+  });
+  const fd = new FormData();
+  fd.append('__RequestVerificationToken', tokenInput.value);
+  fd.append('payload', payload);
+  const btn = document.getElementById('btnSaveProfessionalConductChecklist');
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+  }
+  fetch(url, { method: 'POST', body: fd, credentials: 'same-origin' })
+    .then((r) => r.text().then((t) => {
+      try {
+        return t ? JSON.parse(t) : {};
+      } catch {
+        throw new Error('Unexpected response from server.');
+      }
+    }))
+    .then((data) => {
+      const status = document.getElementById('checklistSaveStatus');
+      if (data && data.success) {
+        const savedAt = new Date().toLocaleString();
+        localStorage.setItem(`${STORAGE_KEY}-savedAt`, savedAt);
+        if (status) status.textContent = (data.message || 'Saved.') + ' · ' + savedAt;
+      } else {
+        if (status) status.textContent = '';
+        alert((data && data.message) || 'Could not save the checklist. Please try again.');
+      }
+    })
+    .catch(() => alert('Could not reach the server. Check your connection and try again.'))
+    .finally(() => {
+      if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = '';
+      }
+    });
 }
 
 function loadSavedTime() {
@@ -404,9 +469,33 @@ function loadSavedTime() {
   }
 }
 
-render();
-loadSavedTime();
-wireCompletion('m6-professional-conduct', 'Module 06 - Professional Interview Conduct');
+function syncProfessionalConductFromServer() {
+  const url = window.__professionalConductLoadUrl;
+  if (!url) return Promise.resolve();
+  return fetch(url + '?moduleCode=' + encodeURIComponent(TRAINING_MODULE_CODE), { credentials: 'same-origin' })
+    .then((r) => r.json())
+    .then((data) => {
+      if (!data || !data.success || !data.record || !data.record.checklistState) return;
+      const server = data.record.checklistState;
+      Object.keys(server).forEach((k) => {
+        state[k] = !!server[k];
+      });
+      save(state);
+      if (data.record.createdOn) {
+        try {
+          localStorage.setItem(`${STORAGE_KEY}-savedAt`, new Date(data.record.createdOn).toLocaleString());
+        } catch (_) { /* ignore */ }
+      }
+    });
+}
+
+syncProfessionalConductFromServer()
+  .catch(() => { /* ignore */ })
+  .finally(() => {
+    render();
+    loadSavedTime();
+    wireCompletion('m6-professional-conduct', 'Module 06 - Professional Interview Conduct');
+  });
 </script>
 </body>
 </html>
