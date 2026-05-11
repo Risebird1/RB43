@@ -56,6 +56,8 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdatePlivoCallStatusAsync(int id, string callStatus, string conversationId,
             DateTime? callAt, int? duration, string transcript, string summary,
             string disposition, string onboardingPreference, bool? kycAccepted, string calledBy);
+
+        Task<int?> FindProspectIdByPhoneAndCallStatusAsync(string phone, string callStatus);
     }
 
     public class ActiveIRFItem

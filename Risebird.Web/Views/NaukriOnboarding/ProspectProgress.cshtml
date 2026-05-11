@@ -33,6 +33,15 @@
         return Url.Action("ProspectProgress", "NaukriOnboarding") + q;
     }
 
+    (string Text, string? Title) PpEllipsis(string? value, int maxLen = 20)
+    {
+        if (string.IsNullOrEmpty(value))
+            return ("\u2014", null);
+        if (value.Length <= maxLen)
+            return (value, null);
+        return (value.Substring(0, maxLen) + "\u2026", value);
+    }
+
     string stepDot(bool? completed, bool? failed = null)
     {
         if (completed == true) return "<span class='pp-dot pp-done' title='Completed'><i class='fas fa-check'></i></span>";
@@ -42,59 +51,308 @@
 }
 
 <style>
-    .text-muted { --bs-text-opacity:1; color:#1f2326 !important; }
+    .text-muted {
+        --bs-text-opacity: 1;
+        color: #1f2326 !important;
+    }
 
-    .pp-filter { min-height:30px; height:30px; color:grey; font-weight:500; font-size:12.5px !important; padding:0.2rem 0.6rem; line-height:1.5; }
+    .table > thead > tr > th {
+        font-size: 12px !important;
+    }
 
-    .pp-table { font-size:12px; }
-    .pp-table thead th { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:#475569; background:#f1f5f9; border-bottom:2px solid #e2e8f0; padding:8px 6px; white-space:nowrap; vertical-align:middle; position:sticky; top:0; z-index:2; }
-    .pp-table tbody td { padding:7px 6px; vertical-align:middle; border-bottom:1px solid #f1f5f9; }
-    .pp-table tbody tr:hover { background:#f8fafc; }
+    .pp-filter {
+        min-height: 30px;
+        height: 30px;
+        color: grey;
+        font-weight: 500;
+        font-size: 12.5px !important;
+        padding: 0.2rem 0.6rem;
+        line-height: 1.5;
+    }
 
-    .pp-dot { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; font-size:10px; font-weight:700; }
-    .pp-dot.pp-done { background:#d1e7dd; color:#0f5132; }
-    .pp-dot.pp-fail { background:#f8d7da; color:#842029; }
-    .pp-dot.pp-pending { background:#e9ecef; color:#6c757d; font-size:14px; line-height:1; }
+    .pp-table {
+        font-size: 12px;
+        table-layout: fixed;
+        width: 100%;
+    }
 
-    .pp-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:600; white-space:nowrap; }
-    .pp-badge-open { background:#fff3cd; color:#856404; }
-    .pp-badge-inprogress { background:#cfe2ff; color:#0a3278; }
-    .pp-badge-verified { background:#d1e7dd; color:#0f5132; }
-    .pp-badge-onboarded { background:#0f5132; color:#fff; }
-    .pp-badge-rejected { background:#f8d7da; color:#842029; }
-    .pp-badge-closed { background:#e9ecef; color:#495057; }
+        .pp-table thead th {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            color: #475569;
+            background: #f1f5f9;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 8px 5px;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.25;
+            vertical-align: bottom;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
 
-    .pp-src { font-size:10px; padding:2px 6px; border-radius:3px; font-weight:600; }
-    .pp-src-naukri { background:#4a90d9; color:#fff; }
-    .pp-src-linkedin { background:#0a66c2; color:#fff; }
+        .pp-table thead tr:first-child th {
+            vertical-align: bottom;
+        }
 
-    .pp-verdict-yes { color:#0f5132; font-weight:600; }
-    .pp-verdict-cond { color:#856404; font-weight:600; }
-    .pp-verdict-no { color:#842029; font-weight:600; }
+        .pp-table thead tr.pp-head-sub th {
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: .05em;
+            color: #94a3b8;
+            padding: 4px 3px;
+            vertical-align: middle;
+            border-bottom: 2px solid #e2e8f0;
+        }
 
-    .pp-response { font-size:10.5px; font-weight:600; }
+        .pp-table tbody td {
+            padding: 7px 5px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
 
-    .pp-ev-pass { color:#0f5132; }
-    .pp-ev-fail { color:#842029; }
-    .pp-ev-na { color:#6c757d; }
+        .pp-table col.pp-col-num {
+            width: 2.8%;
+        }
 
-    .pp-scroll { max-height:calc(100vh - 280px); overflow:auto; }
+        .pp-table col.pp-col-date {
+            width: 6.5%;
+        }
 
-    .pp-pager a, .pp-pager span { display:inline-flex; align-items:center; justify-content:center; min-width:28px; height:28px; padding:0 6px; border-radius:4px; font-size:12px; font-weight:500; text-decoration:none; margin:0 1px; }
-    .pp-pager a { background:#fff; border:1px solid #dee2e6; color:#495057; }
-    .pp-pager a:hover { background:#e9ecef; }
-    .pp-pager span.active { background:#0d6efd; color:#fff; border:1px solid #0d6efd; }
-    .pp-pager span.disabled { background:#f8f9fa; color:#adb5bd; border:1px solid #dee2e6; }
+        .pp-table col.pp-col-src {
+            width: 5%;
+        }
 
-    .pp-summary-cards .card { border-radius:8px; transition:box-shadow .15s; }
-    .pp-summary-cards .card:hover { box-shadow:0 4px 12px rgba(0,0,0,.1); }
-    .pp-summary-cards .sv { font-size:22px; font-weight:700; }
-    .pp-summary-cards .sl { font-size:11px; color:#6c757d; font-weight:500; margin-top:2px; }
+        .pp-table col.pp-col-mag {
+            width: 11%;
+        }
 
-    .pp-connector { display:inline-block; width:12px; text-align:center; color:#cbd5e1; font-size:9px; }
+        .pp-table col.pp-col-step {
+            width: 4.5%;
+        }
 
-    .pp-name-cell { max-width:140px; }
-    .pp-name-cell .pp-email { font-size:10px; color:#6c757d; word-break:break-all; }
+        .pp-table tbody td:first-child {
+            text-align: center;
+            color: #64748b;
+        }
+
+        .pp-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+    .pp-dot {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+        .pp-dot.pp-done {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .pp-dot.pp-fail {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .pp-dot.pp-pending {
+            background: #e9ecef;
+            color: #6c757d;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+    .pp-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .pp-badge-open {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .pp-badge-inprogress {
+        background: #cfe2ff;
+        color: #0a3278;
+    }
+
+    .pp-badge-verified {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .pp-badge-onboarded {
+        background: #0f5132;
+        color: #fff;
+    }
+
+    .pp-badge-rejected {
+        background: #f8d7da;
+        color: #842029;
+    }
+
+    .pp-badge-closed {
+        background: #e9ecef;
+        color: #495057;
+    }
+
+    .pp-src {
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-weight: 600;
+    }
+
+    .pp-src-naukri {
+        background: #4a90d9;
+        color: #fff;
+    }
+
+    .pp-src-linkedin {
+        background: #0a66c2;
+        color: #fff;
+    }
+
+    .pp-verdict-yes {
+        color: #0f5132;
+        font-weight: 600;
+    }
+
+    .pp-verdict-cond {
+        color: #856404;
+        font-weight: 600;
+    }
+
+    .pp-verdict-no {
+        color: #842029;
+        font-weight: 600;
+    }
+
+    .pp-response {
+        font-size: 10.5px;
+        font-weight: 600;
+    }
+
+    .pp-ev-pass {
+        color: #0f5132;
+    }
+
+    .pp-ev-fail {
+        color: #842029;
+    }
+
+    .pp-ev-na {
+        color: #6c757d;
+    }
+
+    .pp-scroll {
+        max-height: calc(100vh - 280px);
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .pp-pager a, .pp-pager span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 28px;
+        height: 28px;
+        padding: 0 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        margin: 0 1px;
+    }
+
+    .pp-pager a {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        color: #495057;
+    }
+
+        .pp-pager a:hover {
+            background: #e9ecef;
+        }
+
+    .pp-pager span.active {
+        background: #0d6efd;
+        color: #fff;
+        border: 1px solid #0d6efd;
+    }
+
+    .pp-pager span.disabled {
+        background: #f8f9fa;
+        color: #adb5bd;
+        border: 1px solid #dee2e6;
+    }
+
+    .pp-summary-cards .card {
+        border-radius: 8px;
+        transition: box-shadow .15s;
+    }
+
+        .pp-summary-cards .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,.1);
+        }
+
+    .pp-summary-cards .sv {
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .pp-summary-cards .sl {
+        font-size: 11px;
+        color: #6c757d;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    .pp-connector {
+        display: inline-block;
+        width: 12px;
+        text-align: center;
+        color: #cbd5e1;
+        font-size: 9px;
+    }
+
+    .pp-name-cell {
+        min-width: 0;
+        max-width: 100%;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        hyphens: auto;
+    }
+
+        .pp-name-cell .pp-candidate-name {
+            display: inline;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        .pp-name-cell .pp-email {
+            font-size: 10px;
+            color: #6c757d;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -184,29 +442,53 @@
                         {
                             <div class="pp-scroll">
                                 <table class="table table-sm mb-0 pp-table">
+                                    <colgroup>
+                                        <col class="pp-col-num" />
+                                        <col class="pp-col-date" />
+                                        <col class="pp-col-src" />
+                                        <col />
+                                        <col class="pp-col-mag" />
+                                        <col class="pp-col-step" />
+                                        <col class="pp-col-step" />
+                                        <col class="pp-col-step" />
+                                        <col class="pp-col-step" />
+                                        <col />
+                                        <col />
+                                        <col />
+                                        <col />
+                                        <col />
+                                    </colgroup>
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th>Received</th>
-                                            <th>Src</th>
-                                            <th>Candidate</th>
-                                            <th>MAG</th>
-                                            <th style="text-align:center;" colspan="4">
+                                            <th scope="col">#</th>
+                                            <th scope="col">Received</th>
+                                            <th scope="col">Src</th>
+                                            <th scope="col" style="width:15%">Candidate</th>
+                                            <th scope="col" style="width:15%">MAG</th>
+                                            <th scope="colgroup" colspan="4" class="text-center">
                                                 Pipeline Steps
                                             </th>
-                                            <th>Skill Channel</th>
-                                            <th>EV</th>
-                                            <th>AI Fitment</th>
-                                            <th>Prospect Response</th>
-                                            <th>Status</th>
+                                            <th scope="col">Skill Channel</th>
+                                            <th scope="col">EV</th>
+                                            <th scope="col">AI Fitment</th>
+                                            <th scope="col">Prospect Response</th>
+                                            <th scope="col">Status</th>
                                         </tr>
-                                        <tr style="font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">
-                                            <th></th><th></th><th></th><th></th><th></th>
-                                            <th style="text-align:center;padding:2px 6px;">Parse</th>
-                                            <th style="text-align:center;padding:2px 6px;">Channel</th>
-                                            <th style="text-align:center;padding:2px 6px;">Invite</th>
-                                            <th style="text-align:center;padding:2px 6px;">Onboard</th>
-                                            <th></th><th></th><th></th><th></th><th></th>
+                                        <tr class="pp-head-sub">
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
+                                            <th scope="col" class="text-center">Parse</th>
+                                            <th scope="col" class="text-center">Channel</th>
+                                            <th scope="col" class="text-center">Invite</th>
+                                            <th scope="col" class="text-center">Onboard</th>
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -225,37 +507,57 @@
                                             bool aiPositive = aiDone && aiVerdict.IndexOf("yes", StringComparison.OrdinalIgnoreCase) >= 0;
 
                                             string statusLower = (r.Status ?? "open").ToLower();
-                                            string statusBadgeCss = statusLower switch {
-                                                "open" => "pp-badge-open", "inprogress" => "pp-badge-inprogress",
-                                                "verified" => "pp-badge-verified", "onboarded" => "pp-badge-onboarded",
-                                                "rejected" => "pp-badge-rejected", "closed" => "pp-badge-closed",
+                                            string statusBadgeCss = statusLower switch
+                                            {
+                                                "open" => "pp-badge-open",
+                                                "inprogress" => "pp-badge-inprogress",
+                                                "verified" => "pp-badge-verified",
+                                                "onboarded" => "pp-badge-onboarded",
+                                                "rejected" => "pp-badge-rejected",
+                                                "closed" => "pp-badge-closed",
                                                 _ => "pp-badge-open"
                                             };
 
                                             string srcLabel = r.Source ?? "Naukri";
                                             string srcCss = string.Equals(srcLabel, "LinkedIn", StringComparison.OrdinalIgnoreCase)
-                                                ? "pp-src pp-src-linkedin" : "pp-src pp-src-naukri";
+                                            ? "pp-src pp-src-linkedin" : "pp-src pp-src-naukri";
 
                                             <tr>
-                                                <td class="text-muted">@r.Id</td>
-                                                <td style="white-space:nowrap;font-size:11px;">@(r.ReceivedAt.HasValue ? r.ReceivedAt.Value.ToString("dd MMM yy") : "\u2014")</td>
+                                                <td>@r.Id</td>
+                                                <td style="font-size:11px;">@(r.ReceivedAt.HasValue ? r.ReceivedAt.Value.ToString("dd MMM yy") : "\u2014")</td>
                                                 <td><span class="@srcCss">@srcLabel</span></td>
                                                 <td class="pp-name-cell">
-                                                    <span class="fw-semibold" style="font-size:12px;">@(r.CandidateName ?? "\u2014")</span>
+                                                    @{
+                                                        var candDisp = PpEllipsis(r.CandidateName);
+                                                    }
+                                                    <span class="pp-candidate-name fw-semibold" style="font-size:12px;" @if (candDisp.Title != null)
+                                                    {
+                                                        <text> title="@candDisp.Title"</text>
+                                                    }>@candDisp.Text</span>
                                                     @if (!string.IsNullOrEmpty(r.ParsedEmail))
                                                     {
-                                                        <br /><span class="pp-email">@r.ParsedEmail</span>
+                                                        var emailDisp = PpEllipsis(r.ParsedEmail);
+                                                        <br />
+
+                                                        <span class="pp-email" @if (emailDisp.Title != null)
+                                                        {
+                                                            <text> title="@emailDisp.Title"</text>
+                                                        }>@emailDisp.Text</span>
                                                     }
                                                     @if (!string.IsNullOrEmpty(r.ParsedPhone))
                                                     {
-                                                        <br /><span class="pp-email"><i class="fas fa-phone-alt" style="font-size:8px;"></i> @r.ParsedPhone</span>
+                                                        <br />
+
+                                                        <span class="pp-email"><i class="fas fa-phone-alt" style="font-size:8px;"></i> @r.ParsedPhone</span>
                                                     }
                                                 </td>
-                                                <td style="font-size:11px;max-width:120px;">
+                                                <td style="font-size:11px;">
                                                     @(r.MagName ?? "\u2014")
                                                     @if (!string.IsNullOrEmpty(r.AssessmentGroupName))
                                                     {
-                                                        <br /><span style="font-size:10px;color:#6c757d;">@r.AssessmentGroupName</span>
+                                                        <br />
+
+                                                        <span style="font-size:10px;color:#6c757d;">@r.AssessmentGroupName</span>
                                                     }
                                                 </td>
 
@@ -318,11 +620,14 @@
                                                         if (aiPositive)
                                                         {
                                                             verdictClass = aiVerdict.IndexOf("conditional", StringComparison.OrdinalIgnoreCase) >= 0
-                                                                ? "pp-verdict-cond" : "pp-verdict-yes";
+                                                            ? "pp-verdict-cond" : "pp-verdict-yes";
                                                         }
                                                         <span class="@verdictClass">
                                                             @verdictDisplay
-                                                            @if (r.AIFitmentScore.HasValue) { <span style="font-size:10px;opacity:.7;"> (@r.AIFitmentScore)</span> }
+                                                            @if (r.AIFitmentScore.HasValue)
+                                                            {
+                                                                <span style="font-size:10px;opacity:.7;"> (@r.AIFitmentScore)</span>
+                                                            }
                                                         </span>
                                                     }
                                                     else if (selfReg)
@@ -342,12 +647,15 @@
                                                         <span class="pp-response text-success"><i class="fas fa-check-circle me-1"></i>Self-Registered</span>
                                                         @if (r.OnboardedUserId.HasValue)
                                                         {
-                                                            <br /><span style="font-size:10px;color:#6c757d;">UserId: @r.OnboardedUserId</span>
+                                                            <br />
+
+                                                            <span style="font-size:10px;color:#6c757d;">UserId: @r.OnboardedUserId</span>
                                                         }
                                                     }
                                                     else if (!string.IsNullOrEmpty(r.ProspectResponse))
                                                     {
-                                                        string respText = r.ProspectResponse switch {
+                                                        string respText = r.ProspectResponse switch
+                                                        {
                                                             "NeedClarity" => "Needs Clarity",
                                                             "ManualSupport" => "Manual Support",
                                                             "NotInterested" => "Not Interested",
@@ -361,7 +669,9 @@
                                                         <span class="pp-response text-warning"><i class="fas fa-clock me-1"></i>Awaiting</span>
                                                         @if (r.InvitationEmailSentAt.HasValue)
                                                         {
-                                                            <br /><span style="font-size:10px;color:#6c757d;">Sent @r.InvitationEmailSentAt.Value.ToString("dd MMM")</span>
+                                                            <br />
+
+                                                            <span style="font-size:10px;color:#6c757d;">Sent @r.InvitationEmailSentAt.Value.ToString("dd MMM")</span>
                                                         }
                                                     }
                                                     else
@@ -385,23 +695,55 @@
                         <div class="card-footer bg-white border-top d-flex align-items-center justify-content-between py-2 px-3">
                             <span style="font-size:12px;color:#6c757d;">Showing @first&ndash;@last of @totalCount</span>
                             <div class="pp-pager">
-                                @if (page > 1) { <a href="@pageUrl(page - 1)"><i class="fas fa-chevron-left" style="font-size:10px;"></i></a> }
-                                else { <span class="disabled"><i class="fas fa-chevron-left" style="font-size:10px;"></i></span> }
+                                @if (page > 1)
+                                {
+                                    <a href="@pageUrl(page - 1)"><i class="fas fa-chevron-left" style="font-size:10px;"></i></a>
+                                }
+                                else
+                                {
+                                    <span class="disabled"><i class="fas fa-chevron-left" style="font-size:10px;"></i></span>
+                                }
 
                                 @{
                                     int windowStart = Math.Max(1, page - 3);
                                     int windowEnd = Math.Min(totalPages, page + 3);
-                                    if (windowStart > 1) { <a href="@pageUrl(1)">1</a> if (windowStart > 2) { <span class="disabled">&hellip;</span> } }
+                                    if (windowStart > 1)
+                                    {
+                                        <a href="@pageUrl(1)">1</a>
+                                        if (windowStart > 2)
+                                        {
+                                            <span class="disabled">&hellip;</span>
+                                        }
+                                    }
                                     for (int pg = windowStart; pg <= windowEnd; pg++)
                                     {
-                                        if (pg == page) { <span class="active">@pg</span> }
-                                        else { <a href="@pageUrl(pg)">@pg</a> }
+                                        if (pg == page)
+                                        {
+                                            <span class="active">@pg</span>
+                                        }
+                                        else
+                                        {
+                                            <a href="@pageUrl(pg)">@pg</a>
+                                        }
                                     }
-                                    if (windowEnd < totalPages) { if (windowEnd < totalPages - 1) { <span class="disabled">&hellip;</span> } <a href="@pageUrl(totalPages)">@totalPages</a> }
+                                    if (windowEnd < totalPages)
+                                    {
+                                        if (windowEnd < totalPages - 1)
+                                        {
+                                            <span class="disabled">&hellip;</span>
+                                        }
+                                        <a href="@pageUrl(totalPages)">@totalPages</a>
+                                    }
                                 }
 
-                                @if (page < totalPages) { <a href="@pageUrl(page + 1)"><i class="fas fa-chevron-right" style="font-size:10px;"></i></a> }
-                                else { <span class="disabled"><i class="fas fa-chevron-right" style="font-size:10px;"></i></span> }
+                                @if (page < totalPages)
+                                {
+                                    <a href="@pageUrl(page + 1)"><i class="fas fa-chevron-right" style="font-size:10px;"></i></a>
+                                }
+                                else
+                                {
+                                    <span class="disabled"><i class="fas fa-chevron-right" style="font-size:10px;"></i></span>
+                                }
                             </div>
                         </div>
                     }

@@ -496,6 +496,13 @@ namespace Risebird.Web.Controllers
                 {
                     model = model.Where(x => x.Status == "Open").ToList();
                     model = model.Where(x => x.RequestType == "Payment").ToList();
+                    model = model.Where(x => !x.IsReopened).ToList();
+                }
+                else if (type == "ReOpenPayment")
+                {
+                    model = model.Where(x => x.Status == "Open").ToList();
+                    model = model.Where(x => x.RequestType == "Payment").ToList();
+                    model = model.Where(x => x.IsReopened).ToList();
                 }
                 else
                 {
