@@ -527,5 +527,78 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<List<NaukriProspectiveInterviewerVM>> GetEligibleProspectsForAutomationAsync(int batchSize = 2)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var result = await con.QueryAsync<NaukriProspectiveInterviewerVM>(
+                    "usp_GetEligibleProspectsForAutomation",
+                    new { BatchSize = batchSize },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+                return result?.ToList() ?? new List<NaukriProspectiveInterviewerVM>();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<NaukriProspectiveInterviewerVM>();
+            }
+        }
+
+        public async Task<bool> UpdateAutomationStatusAsync(int id, string automationStatus, bool incrementCallAttempt = false)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateProspectAutomationStatus",
+                    new { Id = id, AutomationStatus = automationStatus, IncrementCallAttempt = incrementCallAttempt },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<int?> GetLatestActiveIRFForAssessmentGroupAsync(int assessmentGroupId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var sql = @"SELECT TOP 1 ti.id
+                            FROM TransInterviewer ti
+                            WHERE ti.AssessmentGroupId = @AgId
+                              AND ISNULL(ti.IsActive, 0) = 1
+                              AND ISNULL(ti.IsDeleted, 0) = 0
+                            ORDER BY ti.id DESC";
+                return await con.QueryFirstOrDefaultAsync<int?>(sql, new { AgId = assessmentGroupId });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateMagNameAsync(int id, string magName)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.ExecuteAsync(
+                    "UPDATE NaukriProspectiveInterviewer SET MagName = @MagName, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
+                    new { Id = id, MagName = magName });
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
