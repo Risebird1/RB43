@@ -1,6 +1,7 @@
 @using Risebird.CommonHelper
 @using Risebird.Entities.Data
 @using Risebird.Web.Helpers
+@using System.Text.Json
 @using System.Linq
 @model Risebird.Entities.ViewModel.ProctoringSessionEventsResultViewModel
 @{
@@ -34,6 +35,46 @@
     {
         if (string.IsNullOrEmpty(l)) return "";
         return l.ToLowerInvariant() == "violation" ? "rb-pe-badge-bad" : (l.ToLowerInvariant() == "info" ? "rb-pe-badge-info" : "rb-pe-badge");
+    }
+    string ExtractBlobUrl(string metadataJson)
+    {
+        if (string.IsNullOrWhiteSpace(metadataJson)) return null;
+        try
+        {
+            using var doc = JsonDocument.Parse(metadataJson);
+            if (doc.RootElement.ValueKind == JsonValueKind.Object &&
+                doc.RootElement.TryGetProperty("blobUrl", out var blobProp) &&
+                blobProp.ValueKind == JsonValueKind.String)
+            {
+                var value = blobProp.GetString();
+                return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            }
+        }
+        catch
+        {
+            // Keep report rendering resilient for malformed metadata rows.
+        }
+        return null;
+    }
+    string ExtractMetaString(string metadataJson, string key)
+    {
+        if (string.IsNullOrWhiteSpace(metadataJson) || string.IsNullOrWhiteSpace(key)) return null;
+        try
+        {
+            using var doc = JsonDocument.Parse(metadataJson);
+            if (doc.RootElement.ValueKind == JsonValueKind.Object &&
+                doc.RootElement.TryGetProperty(key, out var valueProp) &&
+                valueProp.ValueKind == JsonValueKind.String)
+            {
+                var value = valueProp.GetString();
+                return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            }
+        }
+        catch
+        {
+            // Ignore malformed metadata and keep rendering.
+        }
+        return null;
     }
 }
 <style>
@@ -2172,6 +2213,99 @@
         color: var(--ink-2)
     }
 
+    .media-section {
+        margin-top: 20px;
+    }
+
+    .media-row {
+        margin-top: 18px;
+    }
+
+    .media-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+        .media-title h3 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+    .media-count {
+        font-size: 12px;
+        color: var(--muted);
+    }
+
+    .media-alert {
+        margin: 8px 0 10px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid #fcd9a4;
+        background: #fff7e6;
+        color: #92400e;
+        font-size: 12px;
+    }
+
+    .media-strip {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 6px;
+    }
+
+    .media-strip-wrap {
+        flex-wrap: wrap;
+        overflow-x: visible;
+        overflow-y: visible;
+        padding-bottom: 0;
+    }
+
+    .media-card {
+        min-width: 210px;
+        width: 210px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fff;
+        flex: 0 0 auto;
+    }
+
+    .media-thumb {
+        width: 100%;
+        height: 120px;
+        background: #0f172a;
+        display: block;
+        object-fit: cover;
+    }
+
+    .media-meta {
+        padding: 8px 10px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+        .media-meta .tt {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ink);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .media-meta .st {
+            font-size: 11px;
+            color: var(--muted);
+            font-variant-numeric: tabular-nums;
+        }
+
     /* ---------- footer note ---------- */
     .footnote {
         padding: 32px 0;
@@ -2320,6 +2454,24 @@
     else
     {
         var allEvents = Model.Events.OrderBy(x => x.CreatedAtUtc).ToList();
+        var screenshotRows = allEvents
+        .Where(x => string.Equals(x.EventKind, "screenshot", System.StringComparison.OrdinalIgnoreCase))
+        .Select(x => new { Event = x, BlobUrl = ExtractBlobUrl(x.MetadataJson) })
+        .Where(x => !string.IsNullOrWhiteSpace(x.BlobUrl))
+        .ToList();
+        var screenshotBlobFailures = allEvents
+        .Where(x => string.Equals(x.EventKind, "screenshot", System.StringComparison.OrdinalIgnoreCase))
+        .Select(x => ExtractMetaString(x.MetadataJson, "uploadError"))
+        .Count(x => !string.IsNullOrWhiteSpace(x));
+        var videoRows = allEvents
+        .Where(x => string.Equals(x.EventKind, "screen_chunk", System.StringComparison.OrdinalIgnoreCase))
+        .Select(x => new { Event = x, BlobUrl = ExtractBlobUrl(x.MetadataJson) })
+        .Where(x => !string.IsNullOrWhiteSpace(x.BlobUrl))
+        .ToList();
+        var screenChunkBlobFailures = allEvents
+        .Where(x => string.Equals(x.EventKind, "screen_chunk", System.StringComparison.OrdinalIgnoreCase))
+        .Select(x => ExtractMetaString(x.MetadataJson, "uploadError"))
+        .Count(x => !string.IsNullOrWhiteSpace(x));
         var highEvents = allEvents.Count(x => string.Equals(x.Level, "violation", System.StringComparison.OrdinalIgnoreCase));
         var medEvents = allEvents.Count(x => string.Equals(x.Level, "info", System.StringComparison.OrdinalIgnoreCase));
         var lowEvents = allEvents.Count - highEvents - medEvents;
@@ -2379,6 +2531,75 @@
                             <dd>@(level == "violation" ? "Marked as violation in session telemetry." : "Informational/non-violation telemetry row.")</dd>
                         </dl>
                     </div>
+                }
+            </div>
+        </section>
+
+        <section class="card media-section">
+            <div class="card-head">
+                <div>
+                    <h2>Captured media evidence</h2>
+                    <div class="desc">Screenshots and recorded screen chunks stored in Azure Blob for this session.</div>
+                </div>
+            </div>
+
+            <div class="media-row">
+                <div class="media-title">
+                    <h3>Screenshots</h3>
+                    <span class="media-count">@screenshotRows.Count item(s)</span>
+                </div>
+                @if (screenshotBlobFailures > 0)
+                {
+                    <div class="media-alert">@screenshotBlobFailures screenshot upload(s) failed to persist to blob storage.</div>
+                }
+                @if (screenshotRows.Any())
+                {
+                    <div class="media-strip media-strip-wrap">
+                        @foreach (var shot in screenshotRows)
+                        {
+                            <a class="media-card" href="@shot.BlobUrl" target="_blank" rel="noopener">
+                                <img class="media-thumb" src="@shot.BlobUrl" alt="Screenshot at @shot.Event.CreatedAtUtc.ToString("HH:mm:ss")" loading="lazy" />
+                                <div class="media-meta">
+                                    <div class="tt">Screenshot</div>
+                                    <div class="st">@IndiaTimeHelper.FormatIstForDisplay(shot.Event.CreatedAtUtc)</div>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="desc">No screenshot blobs found in telemetry metadata.</div>
+                }
+            </div>
+
+            <div class="media-row">
+                <div class="media-title">
+                    <h3>Captured video chunks</h3>
+                    <span class="media-count">@videoRows.Count item(s)</span>
+                </div>
+                @if (screenChunkBlobFailures > 0)
+                {
+                    <div class="media-alert">@screenChunkBlobFailures screen chunk upload(s) failed to persist to blob storage.</div>
+                }
+                @if (videoRows.Any())
+                {
+                    <div class="media-strip media-strip-wrap">
+                        @foreach (var chunk in videoRows)
+                        {
+                            <a class="media-card" href="@chunk.BlobUrl" target="_blank" rel="noopener">
+                                <video class="media-thumb" src="@chunk.BlobUrl" preload="metadata" muted playsinline></video>
+                                <div class="media-meta">
+                                    <div class="tt">Screen chunk</div>
+                                    <div class="st">@IndiaTimeHelper.FormatIstForDisplay(chunk.Event.CreatedAtUtc)</div>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="desc">No video chunk blobs found in telemetry metadata.</div>
                 }
             </div>
         </section>
