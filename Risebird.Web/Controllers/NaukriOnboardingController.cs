@@ -216,6 +216,7 @@ namespace Risebird.Web.Controllers
                         plivoCallAt = record.PlivoCallAt?.ToString("dd MMM yyyy, HH:mm"),
                         record.PlivoCallDuration, record.PlivoProspectDisposition,
                         record.PlivoOnboardingPreference, record.PlivoKycAccepted, record.PlivoCalledBy,
+                        record.AutomationStatus, record.PlivoCallAttemptsTotal, record.PlivoCallAttemptsToday,
                         record.Status, record.Source, record.ProcessedBy,
                         record.ResolvedAssessmentGroupId, record.AssessmentGroupName,
                         hasResumeLink = !string.IsNullOrEmpty(record.ResumeLink)
