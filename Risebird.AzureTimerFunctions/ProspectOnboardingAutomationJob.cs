@@ -148,24 +148,23 @@ namespace Risebird.AzureTimerFunctions
                 return;
             }
 
-            // ── Step 2: Select MAG & Skill Channel ────────────────────────────────
-            if (p.SelectedIRFId == null || p.SelectedIRFId == 0)
+            // ── Step 2: Resolve MAG & generate application link ────────────────────
+            if (string.IsNullOrWhiteSpace(p.ApplicationLink))
             {
-                await _repository.UpdateAutomationStatusAsync(p.Id, "SelectingChannel");
-                var channelSelected = await SelectChannelAsync(p);
-                if (!channelSelected)
+                await _repository.UpdateAutomationStatusAsync(p.Id, "ResolvingMAG");
+                var magResolved = await ResolveMAGAndGenerateLinkAsync(p);
+                if (!magResolved)
                 {
                     await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
                     await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        "Automation: no active skill channel found for this MAG — manual intervention needed.", "AutomationJob");
+                        "Automation: could not resolve MAG — manual intervention needed.", "AutomationJob");
                     return;
                 }
 
                 var refreshed = await _repository.GetByIdAsync(p.Id);
                 if (refreshed == null) return;
-                p.SelectedIRFId = refreshed.SelectedIRFId;
-                p.SelectedIRFName = refreshed.SelectedIRFName;
                 p.ApplicationLink = refreshed.ApplicationLink;
+                p.ResolvedAssessmentGroupId = refreshed.ResolvedAssessmentGroupId;
             }
 
             // ── Step 3: Recruitment Call ───────────────────────────────────────────
@@ -255,16 +254,14 @@ namespace Risebird.AzureTimerFunctions
                 return;
             }
 
-            // ── Step 4: Send Invitation Email ─────────────────────────────────────
+            // ── Step 3: Send Invitation Email ─────────────────────────────────────
             if (p.InvitationEmailSent != true)
             {
-                // Refresh from DB to get the latest ApplicationLink and email
                 var latest = await _repository.GetByIdAsync(p.Id);
                 if (latest != null)
                 {
                     p.ParsedEmail = latest.ParsedEmail;
                     p.ApplicationLink = latest.ApplicationLink;
-                    p.SelectedIRFName = latest.SelectedIRFName;
                     p.MagName = latest.MagName;
                     p.CandidateName = latest.CandidateName;
                 }
@@ -274,7 +271,7 @@ namespace Risebird.AzureTimerFunctions
                     _log.LogWarning($"[OnboardAuto] #{p.Id} — no application link available. Cannot send email.");
                     await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
                     await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        "Automation: no application link — operator must select skill channel.", "AutomationJob");
+                        "Automation: no MAG application link available.", "AutomationJob");
                     return;
                 }
 
@@ -354,14 +351,16 @@ namespace Risebird.AzureTimerFunctions
             }
         }
 
-        private async Task<bool> SelectChannelAsync(Entities.ViewModel.NaukriProspectiveInterviewerVM p)
+        /// <summary>
+        /// Resolves the MAG for this prospect (by exact match or subject-line fuzzy match)
+        /// and generates a MAG-level application link (not IRF-specific).
+        /// </summary>
+        private async Task<bool> ResolveMAGAndGenerateLinkAsync(Entities.ViewModel.NaukriProspectiveInterviewerVM p)
         {
             try
             {
                 int? agId = p.ResolvedAssessmentGroupId;
 
-                // Fallback: if MagName didn't resolve to an AG, try matching known MAG names
-                // against the email subject line (MAG name appears as a part of the subject)
                 if ((agId == null || agId == 0) && !string.IsNullOrWhiteSpace(p.Subject))
                 {
                     _log.LogInformation($"[OnboardAuto] #{p.Id} — exact MAG match failed for '{p.MagName}'. Trying subject-line match.");
@@ -371,7 +370,6 @@ namespace Risebird.AzureTimerFunctions
                     {
                         string subjectLower = p.Subject.ToLower();
 
-                        // Find the longest matching MAG name within the subject (longest = most specific)
                         MagDropdownItem bestMatch = null;
                         int bestLen = 0;
                         foreach (var mag in allMags)
@@ -389,8 +387,6 @@ namespace Risebird.AzureTimerFunctions
                         {
                             agId = bestMatch.AssessmentGroupId;
                             _log.LogInformation($"[OnboardAuto] #{p.Id} — subject-line matched MAG '{bestMatch.MagName}' → AG #{agId}.");
-
-                            // Update the MagName in DB so future lookups work directly
                             await _repository.UpdateMagNameAsync(p.Id, bestMatch.MagName);
                         }
                     }
@@ -402,33 +398,20 @@ namespace Risebird.AzureTimerFunctions
                     return false;
                 }
 
-                int? irfId = await _repository.GetLatestActiveIRFForAssessmentGroupAsync(agId.Value);
-                if (irfId == null)
-                {
-                    _log.LogWarning($"[OnboardAuto] #{p.Id} — no active IRF for AG #{agId}.");
-                    return false;
-                }
-
-                var channels = await _repository.GetActiveIRFsByAssessmentGroupIdAsync(agId.Value);
-                var channel = channels?.FirstOrDefault(c => c.id == irfId.Value);
-                string irfName = channel?.IRFId ?? $"IRF#{irfId}";
-                if (channel != null && !string.IsNullOrEmpty(channel.ClientName))
-                    irfName = $"{channel.IRFId} ({channel.ClientName})";
-
-                var encryptedId = await _encryptionHelper.EncryptStringValue(irfId.Value.ToString());
+                var encryptedAgId = await _encryptionHelper.EncryptStringValue(agId.Value.ToString());
                 var portalBase = _configuration["ApplicationUrl"] ?? "https://portal.risebird.io";
-                string appLink = $"{portalBase}/Interviewer/ApplicationForm?id={System.Web.HttpUtility.UrlEncode(encryptedId)}";
+                string appLink = $"{portalBase}/Interviewer/MagApplicationForm?id={System.Web.HttpUtility.UrlEncode(encryptedAgId)}";
 
-                await _repository.UpdateSelectedIRFAsync(p.Id, irfId.Value, irfName, appLink, agId.Value);
-                await _repository.InsertHistoryAsync(p.Id, "SkillChannelSelected", "—",
-                    $"IRF: {irfName} (id:{irfId}), AG: {agId} — auto-selected", "AutomationJob");
+                await _repository.UpdateSelectedIRFAsync(p.Id, 0, null, appLink, agId.Value);
+                await _repository.InsertHistoryAsync(p.Id, "MAGLinkGenerated", "—",
+                    $"MAG link generated for AG #{agId}. Link: {appLink}", "AutomationJob");
 
-                _log.LogInformation($"[OnboardAuto] #{p.Id} — channel selected: {irfName} (IRF #{irfId}).");
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — MAG link generated for AG #{agId}.");
                 return true;
             }
             catch (Exception ex)
             {
-                _log.LogError($"[OnboardAuto] #{p.Id} — channel select error: {ex.Message}");
+                _log.LogError($"[OnboardAuto] #{p.Id} — MAG resolve error: {ex.Message}");
                 return false;
             }
         }
