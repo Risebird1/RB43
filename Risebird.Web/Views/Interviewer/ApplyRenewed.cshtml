@@ -1,4 +1,4 @@
-﻿@model Risebird.Entities.ViewModel.InterviewerDirectApplicationVM
+@model Risebird.Entities.ViewModel.InterviewerDirectApplicationVM
 @using Risebird.Entities.Enum
 
 @{
@@ -131,6 +131,7 @@
 
                         @Html.HiddenFor(Model => Model.AssessmentGroup)
                         @Html.HiddenFor(Model => Model.IRFId)
+                        @Html.HiddenFor(Model => Model.AssessmentGroupId)
                         @Html.HiddenFor(Model => Model.id)
                     </div>
                 </div>
@@ -328,6 +329,7 @@
                             var nameAsMentionedByApplicant = $("#NameAsMentionedByApplicant").val();
                             var isApplicantRenewedVar = true;
                             var irfId = $("#IRFId").val();
+                            var assessmentGroupId = $("#AssessmentGroupId").val();
                             var referredBy = $("#ReferredBy").val();
 
                             if (mobilenumber.trim() != '' && emailId.trim() != '') {
@@ -341,6 +343,7 @@
                                             isApplicantRenewed: isApplicantRenewedVar,
                                             nameAsMentionedByApplicant: nameAsMentionedByApplicant,
                                             irfId: irfId,
+                                            assessmentGroupId: assessmentGroupId,
                                             referredBy: referredBy
                                         },
                                         success: function (result) {

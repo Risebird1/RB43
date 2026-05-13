@@ -1,0 +1,68 @@
+<div id="CopyExternalMAGApplicationLinkModal" class="modal modal-bg" style="z-index:199;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="height:auto">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="id_externalMAGApplicationModal"> External MAG Application Url </h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeExternalMAGApplicationLinkModal()" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Application Link:  <b id="txtExternalMAGApplicationLink"> </b></label>
+                        <button class="copy-btn" onclick="copyExternalMAGLink('#txtExternalMAGApplicationLink')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text_ExternalMAGApplicationLink" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeExternalMAGApplicationLinkModal()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function CopyExternalMAGApplicationLink(agId, agName) {
+        var modal = document.getElementById("CopyExternalMAGApplicationLinkModal");
+        modal.style.display = "block";
+        $("#txtExternalMAGApplicationLink").text('');
+        $("#id_externalMAGApplicationModal").text('External MAG Application Link : ' + agName);
+        $.ajax({
+            url: '/IRF/GenerateExternalMAGApplicationLink',
+            type: 'POST',
+            data: { 'assessmentGroupId': agId },
+            success: function (result) {
+                if (result != null) {
+                    $("#txtExternalMAGApplicationLink").text(result);
+                }
+                else {
+                    swal.fire("Some error occured. Please try again!");
+                }
+            }
+        });
+    }
+    function closeExternalMAGApplicationLinkModal() {
+        var modal = document.getElementById("CopyExternalMAGApplicationLinkModal");
+        modal.style.display = "none";
+    }
+    function copyExternalMAGLink(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text_ExternalMAGApplicationLink').text('Copied');
+    }
+</script>

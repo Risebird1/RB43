@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -622,7 +622,7 @@ namespace Risebird.Web.Controllers
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, mobiledata, functionKey, "", _cancellationToken);
         }
         [HttpPost]
-        public async Task<JsonResult> EvVerification(string candidateemail, string mobilenumber, int? applicantId, bool isApplicantRenewed = false, string nameAsMentionedByApplicant = null, int? irfId = null, string referredBy = null)
+        public async Task<JsonResult> EvVerification(string candidateemail, string mobilenumber, int? applicantId, bool isApplicantRenewed = false, string nameAsMentionedByApplicant = null, int? irfId = null, int? assessmentGroupId = null, string referredBy = null)
         {
             string loggedInUser = string.Empty;
             if (!isApplicantRenewed)
@@ -721,10 +721,11 @@ namespace Risebird.Web.Controllers
             //    employementdetails.message = "Employment records not found.";
             //}
             employementdetails.CandidateEmail = employementdetails.CandidateEmail?.Trim();
-            if ((applicantId.HasValue || (isApplicantRenewed && irfId.HasValue)) && employementdetails != null && employementdetails.message == null)
+            bool hasIrf = irfId.HasValue && irfId.Value > 0;
+            bool hasAg = assessmentGroupId.HasValue && assessmentGroupId.Value > 0;
+            if ((applicantId.HasValue || (isApplicantRenewed && (hasIrf || hasAg))) && employementdetails != null && employementdetails.message == null)
             {
                 var model = new InterviewerDirectApplicationVM();
-                //update verification status in interviewer direct application table
                 string str = employementdetails.Name;
                 if (str != null)
                 {
@@ -739,7 +740,6 @@ namespace Risebird.Web.Controllers
                         model.FirstName = employementdetails.Name;
                     }
                 }
-                //model.isVerified = employementdetails.isVerified;   ASK THIS******************
                 model.isVerified = true;
                 model.IsEmployed = employementdetails.Isemployed;
                 model.CompanyName = employementdetails.CompanyName;
@@ -749,12 +749,13 @@ namespace Risebird.Web.Controllers
                     model.id = applicantId.Value;
                     await _interviewerService.UpdateApplicantsEmploymentDetails(model, loggedInUser);
                 }
-                else if (isApplicantRenewed && irfId.HasValue && irfId.Value > 0)
+                else if (isApplicantRenewed && (hasIrf || hasAg))
                 {
                     model.EmailId = candidateemail;
                     model.Phone = mobilenumber;
                     model.ReferredBy = referredBy;
-                    model.IRFId = irfId.Value;
+                    model.IRFId = hasIrf ? irfId.Value : 0;
+                    model.AssessmentGroupId = hasAg ? assessmentGroupId.Value : 0;
                     model.NameAsMentionedByApplicant = nameAsMentionedByApplicant;
                     model.IsEmployed = true;
                     model = await _interviewerService.InsertApplicantsRenewed(model);
