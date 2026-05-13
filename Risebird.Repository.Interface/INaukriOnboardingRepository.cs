@@ -58,6 +58,12 @@ namespace Risebird.Repository.Interface
             string disposition, string onboardingPreference, bool? kycAccepted, string calledBy);
 
         Task<int?> FindProspectIdByPhoneAndCallStatusAsync(string phone, string callStatus);
+
+        // Automation
+        Task<List<NaukriProspectiveInterviewerVM>> GetEligibleProspectsForAutomationAsync(int batchSize = 2);
+        Task<bool> UpdateAutomationStatusAsync(int id, string automationStatus, bool incrementCallAttempt = false);
+        Task<int?> GetLatestActiveIRFForAssessmentGroupAsync(int assessmentGroupId);
+        Task<bool> UpdateMagNameAsync(int id, string magName);
     }
 
     public class ActiveIRFItem
