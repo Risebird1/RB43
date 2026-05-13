@@ -315,6 +315,9 @@
             border: none;
             border-radius: 0;
             clear: both;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: visible;
         }
 
             #pdfdownload.client-report .cr-skill-meta h2 {
@@ -325,12 +328,56 @@
                 letter-spacing: normal !important;
                 margin: 0 !important;
                 color: #000 !important;
+                display: flex !important;
+                flex-wrap: wrap !important;
+                align-items: baseline !important;
+                column-gap: 10px !important;
+                row-gap: 6px !important;
+                position: static !important;
+                top: auto !important;
+                overflow: visible !important;
             }
 
                 #pdfdownload.client-report .cr-skill-meta h2 span,
                 #pdfdownload.client-report .cr-skill-meta h2 div {
                     font-size: 18px !important;
                     line-height: 1.4 !important;
+                }
+
+                #pdfdownload.client-report .cr-skill-meta h2 .cr-skill-meta__name {
+                    flex: 1 1 200px;
+                    min-width: 0;
+                    overflow-wrap: anywhere;
+                    word-break: break-word;
+                    font-weight: 600 !important;
+                }
+
+                #pdfdownload.client-report .cr-skill-meta h2 .cr-skill-meta__sep {
+                    flex: 0 0 auto;
+                    color: #000;
+                    opacity: 0.45;
+                    font-weight: 400 !important;
+                    padding: 0 2px;
+                }
+
+                #pdfdownload.client-report .cr-skill-meta h2 .cr-skill-meta__status {
+                    flex: 0 1 auto;
+                    max-width: 100%;
+                    overflow-wrap: anywhere;
+                    word-break: break-word;
+                    font-weight: 700 !important;
+                    text-transform: none !important;
+                    display: inline-flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    gap: 4px 8px;
+                }
+
+                #pdfdownload.client-report .cr-skill-meta h2 .cr-skill-meta__label {
+                    flex: 0 0 auto;
+                    text-transform: none !important;
+                    font-weight: 600 !important;
+                    color: #000 !important;
                 }
 
         #pdfdownload.client-report .cr-section-head {
@@ -649,10 +696,6 @@
                                                          <div class="cr-hdr-aside-label">Interviewer Coded Name</div>
                                                          <div class="cr-hdr-aside-value cr-nickname">@Model.NickName</div>
                                                      </div>
-                                                      <div style="margin-top:10px;">
-                                                         <div class="cr-hdr-aside-label">Interview Status</div>
-                                                         <div class="cr-hdr-aside-value">@pdfInterviewStatusDisplay</div>
-                                                     </div>
 
                                                        <div class="cr-report-header__actions">
                                                         @if (Model.MeetingStatus == 1)
@@ -678,26 +721,22 @@
                                              </div>
                                              <hr class="cr-report-header__hr" />
                                              </div>
-                                             <div class="col-lg-12 col-md-12 skill-divider cr-skill-meta"> <hr style="margin-top:0;border:none" /> <h2 style="font-size:15px!important;letter-spacing:normal;top:10px;position:relative"><span style="text-transform:none!important;float:left;font-size:15px;line-height:18px;color:#000;padding-right:5px;">Primary Skill :</span><span style="float:left"> @Model.JDTiltle</span>
-                                             <span style="float:left;color:#000;height:18px;margin:-3px 5px 0px 10px;"> | </span>
-                                               <span style="float:left">
-                                                    @{
-                                                        var interviewStatusColor = "";
-                                                        if (Model.InterviewStatus == 2 || Model.InterviewStatus == 4)
-                                                        {
-                                                            interviewStatusColor = "#26b726";
-                                                        }
-                                                        else if (Model.InterviewStatus == 3 || Model.InterviewStatus == 5)
-                                                        {
-                                                            interviewStatusColor = "red";
-                                                        }
-                                                        else if (Model.InterviewStatus == 1)
-                                                        {
-                                                            interviewStatusColor = "darkorange";
-                                                        }
-                                                    }
-                                                    <div style="font-size:16px;line-height:15px;text-align:left;font-weight:bold; padding:0px 0px 0px 6px;text-transform:none;"><span style="color:@interviewStatusColor">@pdfInterviewStatusDisplay</span></div>
-                                                  </span></h2>
+                                            @{
+                                                var interviewStatusColor = "";
+                                                if (Model.InterviewStatus == 2 || Model.InterviewStatus == 4)
+                                                {
+                                                    interviewStatusColor = "#26b726";
+                                                }
+                                                else if (Model.InterviewStatus == 3 || Model.InterviewStatus == 5)
+                                                {
+                                                    interviewStatusColor = "red";
+                                                }
+                                                else if (Model.InterviewStatus == 1)
+                                                {
+                                                    interviewStatusColor = "darkorange";
+                                                }
+                                            }
+                                             <div class="col-lg-12 col-md-12 skill-divider cr-skill-meta"> <hr style="margin-top:0;border:none" /> <h2 style="font-size:15px!important;letter-spacing:normal"><span class="cr-skill-meta__label">Primary Skill :</span><span class="cr-skill-meta__name">@Model.JDTiltle</span><span class="cr-skill-meta__sep" aria-hidden="true">|</span><span class="cr-skill-meta__status"><span style="color:@interviewStatusColor">@pdfInterviewStatusDisplay</span></span></h2>
                                              </div>
 
                                              <div class="interviewComment" style="clear:both;overflow:auto;">
@@ -806,40 +845,26 @@
                 <div class="html2pdf__page-break"></div>
                 <div class="col-md-12">
                     <div style="height:50px;clear:both"></div>
-                    <div class="col-lg-12 col-md-12" style="padding:0 0 12px 0;">
-                        <div class="cr-hdr-aside-label">Interview Status (other skill)</div>
-                        <div class="cr-hdr-aside-value">@pdfInterviewStatusTwoDisplay</div>
-                    </div>
+                    @{
+                        var interviewStatusTwoColor = "";
+                        if (Model.InterviewStatusTwo == 2 || Model.InterviewStatusTwo == 4)
+                        {
+                            interviewStatusTwoColor = "#26b726";
+                        }
+                        else if (Model.InterviewStatusTwo == 3 || Model.InterviewStatusTwo == 5)
+                        {
+                            interviewStatusTwoColor = "red";
+                        }
+                        else if (Model.InterviewStatusTwo == 1)
+                        {
+                            interviewStatusTwoColor = "darkorange";
+                        }
+                    }
                     <div class="col-lg-12 col-md-12 skill-divider cr-skill-meta">
-                        <hr style="margin-top:0;border:none" /> <h2 style="font-size:15px!important;letter-spacing:normal">
-                            <span style="text-transform:none!important;float:left">Other Skills: </span>
-                            <span style="float:left;color:#000;height:18px;margin:-3px 5px 0px 10px;"> | </span>
-                            <span style="float:left">
-                                                            @{
-                                                                var interviewStatusTwoColor = "";
-                                                                if (Model.InterviewStatusTwo == 2 || Model.InterviewStatusTwo == 4)
-                                                                {
-                                                                    interviewStatusTwoColor = "#26b726";
-                                                                }
-                                                                else if (Model.InterviewStatusTwo == 3 || Model.InterviewStatusTwo == 5)
-                                                                {
-                                                                    interviewStatusTwoColor = "red";
-                                                                }
-                                                                else if (Model.InterviewStatusTwo == 1)
-                                                                {
-                                                                    interviewStatusTwoColor = "darkorange";
-                                                                }
-                                                            }
-                                <div style="font-size:16px;line-height:15px;text-align:left;font-weight:bold; padding:0px 0px 0px 6px;text-transform:none;">
-                                    <span style="color:@interviewStatusTwoColor">@pdfInterviewStatusTwoDisplay</span>
-                                                                @if (Model.InterviewStatusTwo == 1)
-                                                                {
-                                        <button style="font-size: 12px;color: #fff;border: 0px;background: #8f8a8a;border-radius:4px;line-height: 18px;height: 21px;padding: 0px 4px;" type="button" onclick="ProxyReportDetails('@Model.id')">Details</button>
-                                                                }
-
-                                </div>
-                            </span>
-                        </h2>
+                        <hr style="margin-top:0;border:none" /> <h2 style="font-size:15px!important;letter-spacing:normal"><span class="cr-skill-meta__label">Other Skills:</span><span class="cr-skill-meta__sep" aria-hidden="true">|</span><span class="cr-skill-meta__status"><span style="color:@interviewStatusTwoColor">@pdfInterviewStatusTwoDisplay</span>@if (Model.InterviewStatusTwo == 1)
+                        {
+                            <button style="font-size: 12px;color: #fff;border: 0px;background: #8f8a8a;border-radius:4px;line-height: 18px;height: 21px;padding: 0px 4px;margin-left:8px;vertical-align:baseline;" type="button" onclick="ProxyReportDetails('@Model.id')">Details</button>
+                        }</span></h2>
                     </div>
 
                     <div class="interviewComment" style="clear:both;overflow:auto;">

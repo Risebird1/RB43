@@ -29,7 +29,138 @@
             font-weight: 400;
         }
 
-    
+    .assign-success-compact {
+        text-align: left;
+        margin: 0 auto;
+        max-width: 420px;
+        padding: 10px 12px 4px;
+        background: linear-gradient(135deg, #f4fbf4 0%, #eef6ff 100%);
+        border: 1px solid #c8e6c9;
+        border-radius: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+
+        .assign-success-compact__lead {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1b5e20;
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .assign-success-compact__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            color: #0d47a1;
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 6px;
+            padding: 4px 10px;
+            margin-bottom: 8px;
+        }
+
+        .assign-success-compact__list {
+            margin: 0;
+            padding: 0 0 0 18px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.45;
+        }
+
+            .assign-success-compact__list li {
+                margin-bottom: 6px;
+            }
+
+    #txtconfirmmessage.interviewerAlert {
+        line-height: 1.4 !important;
+        text-align: left;
+    }
+
+    .interviewer-alert-status-wrap {
+        padding: 0 15px;
+    }
+
+    .interviewer-alert-status {
+        display: none;
+        gap: 12px;
+        align-items: flex-start;
+        margin: 8px 0 12px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, .05);
+    }
+
+        .interviewer-alert-status.is-visible {
+            display: flex;
+        }
+
+        .interviewer-alert-status.is-success {
+            background: #eaf8ec;
+            border-color: #b8e0bf;
+            color: #1d6b2f;
+        }
+
+        .interviewer-alert-status.is-error {
+            background: #fdeeee;
+            border-color: #efc2c2;
+            color: #b42318;
+        }
+
+    .interviewer-alert-status__icon {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+    }
+
+    .interviewer-alert-status.is-success .interviewer-alert-status__icon {
+        background: #1f9d43;
+        color: #fff;
+    }
+
+    .interviewer-alert-status.is-error .interviewer-alert-status__icon {
+        background: #d92d20;
+        color: #fff;
+    }
+
+    .interviewer-alert-status__content {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .interviewer-alert-status__title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        line-height: 1.35;
+    }
+
+    .interviewer-alert-status__message {
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.5;
+    }
+
+        .interviewer-alert-status__message .assign-success-compact {
+            margin: 0;
+            max-width: 100%;
+        }
+
+        .interviewer-alert-status__message .assign-success-compact__lead {
+            margin-bottom: 6px;
+        }
+
 </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
@@ -189,7 +320,7 @@
                                                                         <div class="absCenter">
                                                                             <button class="infoButton" style="top: 13px;left:-8px;">
                                                                                 <div class="infoButton-btn" style="width:15px;height:15px;">
-                                                                                    <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:1px;top: -3px;">i</span>
+                                                                                    <span class="infoButton-btn-text" style="position: relative;font-size:13px;width: 10px;height: 21px;left:-5px;top: -2px;">i</span>
                                                                                 </div>
                                                                                 <div class="infoButton-container" style="bottom: calc(-100% + 35px);">
                                                                                     <div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div>
@@ -370,11 +501,17 @@
                 <span onclick="closeInterviewerAlert()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
             <input type="hidden" id="popupreload"/>
-            <div class="col-md-12 pull-left text-center">
-                <span style="color: rgb(49, 131, 27);width: 22px;position: absolute;margin-top: 7px;"><svg id="txt-confirm-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" fill="#31831b"></path></svg></span><h2 class="interviewerAlert" style="margin: 0px 10px 10px 10px;padding:17px 7px 0px 7px!important;background: #dbf6db;font-weight: 700;color: green;font-size: 18px;border-radius: 12px;line-height: 44px;" id="txtconfirmmessage"></h2>
+            <div class="interviewer-alert-status-wrap">
+                <div id="interviewerAlertStatus" class="interviewer-alert-status">
+                    <div id="txt-confirm-icon" class="interviewer-alert-status__icon" aria-hidden="true"></div>
+                    <div class="interviewer-alert-status__content">
+                        <div id="txtconfirmtitle" class="interviewer-alert-status__title"></div>
+                        <div id="txtconfirmmessage" class="interviewer-alert-status__message"></div>
+                    </div>
+                </div>
             </div>
             <div class="modal-body" style="padding:10px 20px;">
-                <div style="overflow-y:auto;max-height:440px;">
+                <div id="interviewerAlertDetails" style="overflow-y:auto;max-height:440px;">
                 
                 <div class="col-md-12 pull-left text-center">
                     <h2 class="interviewerAlert">
@@ -400,10 +537,6 @@
                     <h2 class="interviewerAlert">
                         If the given instructions are not followed, the client may deduct upto  <strong style="color: #e42c2c;">100% of the amount payable to you</strong>
                     </h2>
-                <div id="mandate-popup-btn" class="col-md-12 text-center" style="display:none">
-                    <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
-                </div>
-                   
                 @* <div class="col-md-12  text-center" style="margin:0px auto;display: block;width: 335px;clear: both;">
                 <div id="assign-btn"><button type="button" style="background:#28982399;float: left;" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK, Continue with assigning!</button></div>
                 <div id="unassign-btn" class="mdc-button button-warning" style="float: left;margin-left: 3px;">
@@ -411,6 +544,9 @@
                 </div>
                 </div> *@
             </div>
+                <div id="mandate-popup-btn" class="col-md-12 text-center" style="display:none">
+                    <button type="button" class="mdc-button button-warning" onclick="closeInterviewerAlert()">OK</button>
+                </div>
             </div>
         
         
@@ -418,25 +554,55 @@
     </div>
 </div>
 
+<script type="text/javascript">
+    function formatAssignYourselfMessage(raw) {
+        if (raw == null) return '';
+        var s = String(raw);
+        if (s.indexOf('|VIDEO_MANDATE') !== -1) {
+            return '<div class="assign-success-compact">'
+                + '<div class="assign-success-compact__lead">Interview assigned successfully</div>'
+                + '<div class="assign-success-compact__badge" title="Client requirement"><span class="material-icons" style="font-size:18px;line-height:1;vertical-align:middle;">videocam</span> Video on required</div>'
+                + '<ul class="assign-success-compact__list">'
+                + '<li>Unassign at least <strong>4 hours</strong> before start if you cannot comply.</li>'
+                + '<li>Use a <strong>virtual background</strong>.</li>'
+                + '<li>Your data is <strong>100% secure</strong>.</li>'
+                + '</ul></div>';
+        }
+        return $('<div/>').text(s).html();
+    }
+    function fireAssignResultSwal(raw, isSuccess) {
+        if (typeof swal === 'undefined' || !swal.fire) return;
+        var html = formatAssignYourselfMessage(raw);
+        if (isSuccess) {
+            swal.fire({
+                title: 'Assigned successfully',
+                html: html,
+                icon: 'success',
+                width: 460,
+                customClass: { popup: 'swal2-popup-assign' }
+            });
+        } else {
+            swal.fire({ title: 'Failed', html: html, icon: 'error', width: 420 });
+        }
+    }
+</script>
+
 @if (ViewBag.Message != null)
 {
+    var assignMessageJson = JsonConvert.SerializeObject(ViewBag.Message.ToString());
     <script type="text/javascript">
         $(document).ready(function () {
             my_code();
         });
         function my_code() {
-            var msg = '@ViewBag.Message';
-            if (msg.includes("Success")) {
-                var codedname = $("#hidcodedname").val();
-                swal.fire("Assigned Successfully", '@ViewBag.Message', "success");
-                //swal.fire("For your privacy concerns \n Please join meeting using browser in private or incognito mode only with your coded name : "+ codedname,'@ViewBag.Message', "success");
-                //swal.fire("For your privacy concerns", "Please join meeting using browser in private or incognito mode only with your coded name : " + codedname, "success");
+            var msg = @Html.Raw(assignMessageJson);
+            if (typeof msg === 'string' && msg.indexOf('Success') !== -1) {
+                fireAssignResultSwal(msg, true);
             }
             else {
-                swal.fire("Failed", '@ViewBag.Message', "error");
+                fireAssignResultSwal(msg, false);
             }
         }
-        //window.onload = my_code();
     </script>
 }
 
@@ -664,13 +830,37 @@
     }
 </script>
 <script>
+    function getInterviewerAlertIconSvg(isSuccess) {
+        if (isSuccess) {
+            return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="18" height="18"><path fill="currentColor" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/></svg>';
+        }
+
+        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="16" height="18"><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>';
+    }
+
+    function setInterviewerAlertStatus(isSuccess, messageHtml) {
+        var statusBox = $('#interviewerAlertStatus');
+        statusBox.removeClass('is-success is-error').addClass(isSuccess ? 'is-success' : 'is-error').addClass('is-visible');
+        $('#txt-confirm-icon').html(getInterviewerAlertIconSvg(isSuccess));
+        $('#txtconfirmtitle').text(isSuccess ? 'Assigned successfully' : 'Assignment failed');
+        $('#txtconfirmmessage').html(messageHtml);
+        $('#interviewerAlertDetails').toggle(isSuccess);
+    }
+
+    function resetInterviewerAlertStatus() {
+        $('#interviewerAlertStatus').removeClass('is-success is-error is-visible');
+        $('#txt-confirm-icon').empty();
+        $('#txtconfirmtitle').empty();
+        $('#txtconfirmmessage').empty();
+        $('#interviewerAlertDetails').show();
+    }
+
     function InstructionModel(videolink,textinstruction){
         openInterviewerAlert();
         $("#popupreload").val("false");
         // $('#assign-btn').hide();
         // $('#unassign-btn').hide();
-        $('#txt-confirm-icon').hide();
-        $('#txtconfirmmessage').hide();
+        resetInterviewerAlertStatus();
         $('#mandate-popup-btn').show();
         bindinstructiondetails(videolink,textinstruction);
     }
@@ -695,7 +885,6 @@
             url: "/Interview/InterviewAssignYourself",
             data: { id: id,interviewDate:interviewDate },
             success: function (data) {
-                $("#txtconfirmmessage").text(data);
                 openInterviewerAlert();
                 $("#popupreload").val("true");
                 bindinterviewalertdetails(data,videolink,textinstruction);
@@ -703,11 +892,14 @@
         });
     }
     function bindinterviewalertdetails(data,videolink,textinstruction){
+        $('#mandate-popup-btn').show();
         if(data.includes('Successfully')){
+            setInterviewerAlertStatus(true, formatAssignYourselfMessage(data));
             bindinstructiondetails(videolink,textinstruction);
         }
         else
         {
+            setInterviewerAlertStatus(false, formatAssignYourselfMessage(data));
             document.getElementById("divvideoinstruction").style.display="none";
             document.getElementById("divcompanytextinstruction").style.display="none";
         }
