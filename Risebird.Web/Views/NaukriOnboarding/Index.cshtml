@@ -15,6 +15,7 @@
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
     bool canDelete = profileName == "Admin" || profileName == "SupportAdmin";
+    int MaxCallsTotal = 5;
 
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selName)
                    || !string.IsNullOrEmpty(selMag) || !string.IsNullOrEmpty(selSource)
@@ -270,6 +271,7 @@
                                             <th class="col-exp">Exp</th><th class="col-location">Location</th>
                                             <th class="col-mag">MAG</th><th class="col-skills">Key Skills</th>
                                             <th style="min-width:90px;">Call</th>
+                                            <th style="min-width:80px;">Auto</th>
                                             <th class="col-status">Status</th><th class="col-actions">Actions</th>
                                         </tr>
                                     </thead>
@@ -341,6 +343,44 @@
                                                             };
                                                             <br/><span class="@dispColor" style="font-size:9.5px;"><i class="fas fa-phone-alt me-1"></i>@r.PlivoProspectDisposition</span>
                                                         }
+                                                    }
+                                                </td>
+                                                <td style="font-size:10px;white-space:nowrap;">
+                                                    @if (!string.IsNullOrEmpty(r.AutomationStatus))
+                                                    {
+                                                        string autoBg = r.AutomationStatus switch {
+                                                            "EmailSent" or "Completed" => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
+                                                            "Cold" => "background:#f8d7da;color:#842029;border:1px solid #dc3545;",
+                                                            "ManualRequired" or "Error" => "background:#fff3cd;color:#856404;border:1px solid #ffc107;",
+                                                            "CallTriggered" or "ParsingResume" or "SelectingChannel" or "SendingEmail" => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
+                                                            "AwaitingRetry" or "CallFailed" => "background:#e2e3e5;color:#41464b;border:1px solid #6c757d;",
+                                                            _ => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
+                                                        };
+                                                        string autoLabel = r.AutomationStatus switch {
+                                                            "ParsingResume" => "Parsing",
+                                                            "SelectingChannel" => "Selecting",
+                                                            "CallTriggered" => "Calling",
+                                                            "CallFailed" => "Call Failed",
+                                                            "AwaitingRetry" => "Retry Pending",
+                                                            "SendingEmail" => "Emailing",
+                                                            "EmailSent" => "Email Sent",
+                                                            "ManualRequired" => "Manual",
+                                                            "Cold" => "Cold",
+                                                            "Completed" => "Done",
+                                                            "Error" => "Error",
+                                                            _ => r.AutomationStatus
+                                                        };
+                                                        <span class="intent-badge" style="@autoBg font-size:9.5px;" title="Automation: @r.AutomationStatus">
+                                                            <i class="fas fa-robot me-1"></i>@autoLabel
+                                                        </span>
+                                                        if (r.PlivoCallAttemptsTotal > 0)
+                                                        {
+                                                            <br/><span class="text-muted" style="font-size:9px;">@r.PlivoCallAttemptsTotal / @MaxCallsTotal calls</span>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted" style="font-size:9px;">—</span>
                                                     }
                                                 </td>
                                                 <td class="col-status">
@@ -440,6 +480,7 @@
                 <div class="d-flex align-items-center gap-2 flex-wrap mgm-status-badge-wrap">
                     <strong class="text-muted" style="font-size:12.5px;">Status</strong>
                     <span class="badge" id="mgmStatusBadge">Open</span>
+                    <span class="badge" id="mgmAutomationBadge" style="display:none;font-size:11px;"></span>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-wrap mgm-status-btns" id="mgmStatusActions">
                     <span class="text-muted" style="font-size:12px;">Change to</span>
@@ -514,47 +555,6 @@
 
                     <hr/>
 
-                    <!-- Plivo Voice Agent Call Section -->
-                    <div class="mgm-action-card pending" id="plivoCallCard" style="border-color:#6f42c1;background:#faf8ff;">
-                        <div class="d-flex align-items-start gap-3">
-                            <span class="mgm-step-number" id="plivoCallIcon" style="background:#6f42c1;color:#fff;"><i class="fas fa-phone-alt" style="font-size:12px;"></i></span>
-                            <div class="flex-grow-1">
-                                <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
-                                    <div class="flex-grow-1" style="min-width:180px;">
-                                        <strong style="font-size:13px;">Recruitment Call (Plivo AI Agent)</strong>
-                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="plivoCallSubtitle">Call the prospect to gauge interest in freelance interviewing with Risebird</div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                        <button type="button" class="btn btn-sm mgm-action-btn text-white" id="btnInitiateCall" style="background:#6f42c1;border-color:#6f42c1;"><i class="fas fa-phone-alt me-1"></i>Call Prospect</button>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnViewCallDetails" style="display:none;font-size:11px;padding:4px 10px;"><i class="fas fa-info-circle me-1"></i>Details</button>
-                                    </div>
-                                </div>
-                                <div class="mgm-result-block" id="plivoCallResult" style="display:none;"></div>
-                                <!-- Call details expandable panel -->
-                                <div id="plivoCallDetailsPanel" style="display:none;" class="mt-2 p-2 border rounded bg-white">
-                                    <div class="row g-2" style="font-size:12px;">
-                                        <div class="col-md-6"><strong>Disposition:</strong> <span id="plivoDetDisposition">—</span></div>
-                                        <div class="col-md-6"><strong>Onboarding Pref:</strong> <span id="plivoDetPreference">—</span></div>
-                                        <div class="col-md-6"><strong>KYC Accepted:</strong> <span id="plivoDetKyc">—</span></div>
-                                        <div class="col-md-6"><strong>Duration:</strong> <span id="plivoDetDuration">—</span></div>
-                                        <div class="col-md-6"><strong>Called At:</strong> <span id="plivoDetCalledAt">—</span></div>
-                                        <div class="col-md-6"><strong>Called By:</strong> <span id="plivoDetCalledBy">—</span></div>
-                                    </div>
-                                    <div class="mt-2" id="plivoDetSummaryWrap" style="display:none;">
-                                        <strong>Summary:</strong>
-                                        <div id="plivoDetSummary" style="font-size:11.5px;background:#f8f9fa;border-radius:4px;padding:8px;margin-top:4px;max-height:120px;overflow-y:auto;"></div>
-                                    </div>
-                                    <div class="mt-2" id="plivoDetTranscriptWrap" style="display:none;">
-                                        <strong>Transcript:</strong>
-                                        <div id="plivoDetTranscript" style="font-size:11px;background:#f8f9fa;border-radius:4px;padding:8px;margin-top:4px;max-height:150px;overflow-y:auto;white-space:pre-wrap;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr/>
-
                     <h6 class="fw-bold mb-3" style="font-size:13px;"><i class="fas fa-tasks me-2 text-primary"></i>Onboarding Pipeline</h6>
 
                     <!-- Step 1: Parse Resume -->
@@ -622,6 +622,44 @@
                                     </div>
                                 </div>
                                 <div class="mgm-result-block" id="step2Result" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recruitment Call (between Step 2 and Step 3) -->
+                    <div class="mgm-action-card pending" id="plivoCallCard" style="border-color:#6f42c1;background:#faf8ff;">
+                        <div class="d-flex align-items-start gap-3">
+                            <span class="mgm-step-number" id="plivoCallIcon" style="background:#6f42c1;color:#fff;"><i class="fas fa-phone-alt" style="font-size:12px;"></i></span>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                                    <div class="flex-grow-1" style="min-width:180px;">
+                                        <strong style="font-size:13px;">Recruitment Call (Plivo AI Agent)</strong>
+                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="plivoCallSubtitle">Call the prospect to gauge interest in freelance interviewing with Risebird</div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                        <button type="button" class="btn btn-sm mgm-action-btn text-white" id="btnInitiateCall" style="background:#6f42c1;border-color:#6f42c1;"><i class="fas fa-phone-alt me-1"></i>Call Prospect</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnViewCallDetails" style="display:none;font-size:11px;padding:4px 10px;"><i class="fas fa-info-circle me-1"></i>Details</button>
+                                    </div>
+                                </div>
+                                <div class="mgm-result-block" id="plivoCallResult" style="display:none;"></div>
+                                <div id="plivoCallDetailsPanel" style="display:none;" class="mt-2 p-2 border rounded bg-white">
+                                    <div class="row g-2" style="font-size:12px;">
+                                        <div class="col-md-6"><strong>Disposition:</strong> <span id="plivoDetDisposition">—</span></div>
+                                        <div class="col-md-6"><strong>Onboarding Pref:</strong> <span id="plivoDetPreference">—</span></div>
+                                        <div class="col-md-6"><strong>KYC Accepted:</strong> <span id="plivoDetKyc">—</span></div>
+                                        <div class="col-md-6"><strong>Duration:</strong> <span id="plivoDetDuration">—</span></div>
+                                        <div class="col-md-6"><strong>Called At:</strong> <span id="plivoDetCalledAt">—</span></div>
+                                        <div class="col-md-6"><strong>Called By:</strong> <span id="plivoDetCalledBy">—</span></div>
+                                    </div>
+                                    <div class="mt-2" id="plivoDetSummaryWrap" style="display:none;">
+                                        <strong>Summary:</strong>
+                                        <div id="plivoDetSummary" style="font-size:11.5px;background:#f8f9fa;border-radius:4px;padding:8px;margin-top:4px;max-height:120px;overflow-y:auto;"></div>
+                                    </div>
+                                    <div class="mt-2" id="plivoDetTranscriptWrap" style="display:none;">
+                                        <strong>Transcript:</strong>
+                                        <div id="plivoDetTranscript" style="font-size:11px;background:#f8f9fa;border-radius:4px;padding:8px;margin-top:4px;max-height:150px;overflow-y:auto;white-space:pre-wrap;"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -779,8 +817,30 @@
         else if (r.employmentIsEmployed === false) { $('#mgmEmployed').html('<span class="employed-no"><i class="fas fa-times-circle me-1"></i>No</span>'); }
 
         if (r.hasResumeLink) { $('#btnViewResume').attr('href', r.resumeLink).show(); } else { $('#btnViewResume').hide(); }
+        syncAutomationBadge(r);
         syncPlivoCallUI(r);
         syncPipeline(r);
+    }
+
+    function syncAutomationBadge(r) {
+        var badge = $('#mgmAutomationBadge');
+        if (!r.automationStatus) { badge.hide(); return; }
+        var labels = {
+            'ParsingResume':'Parsing Resume','SelectingChannel':'Selecting Channel',
+            'CallTriggered':'Call Triggered','CallFailed':'Call Failed','AwaitingRetry':'Retry Pending',
+            'SendingEmail':'Sending Email','EmailSent':'Email Sent','ManualRequired':'Manual Required',
+            'Cold':'Cold','Completed':'Completed','Error':'Error'
+        };
+        var colors = {
+            'EmailSent':'#198754','Completed':'#198754','Cold':'#dc3545','ManualRequired':'#e67e22','Error':'#e67e22',
+            'CallTriggered':'#0d6efd','ParsingResume':'#0d6efd','SelectingChannel':'#0d6efd','SendingEmail':'#0d6efd',
+            'AwaitingRetry':'#6c757d','CallFailed':'#6c757d'
+        };
+        var label = labels[r.automationStatus] || r.automationStatus;
+        var color = colors[r.automationStatus] || '#6c757d';
+        badge.html('<i class="fas fa-robot me-1"></i>' + label +
+            (r.plivoCallAttemptsTotal > 0 ? ' (' + r.plivoCallAttemptsTotal + '/5 calls)' : ''))
+            .css({ background: color, color: '#fff', display: 'inline-block' }).show();
     }
 
     function updateStatusBadge(s) {
@@ -888,11 +948,14 @@
 
         // ── Explicit step enablement pass ──
         if (step1Blocked) {
-            $('#step2Card, #step3Card, #step4Card').addClass('disabled');
+            $('#step2Card, #plivoCallCard, #step3Card, #step4Card').addClass('disabled');
             $('#step2Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 parsed email is a duplicate. Edit the email in Step 1 first.</span>');
+            $('#plivoCallCard').addClass('disabled');
         } else {
+            if (step1Done && !step2Done) { $('#step2Card').removeClass('disabled failed'); $('#step2Number').removeClass('failed'); }
             if (step1Done) $('#step2Card').removeClass('disabled');
-            if (step2Done) $('#step3Card').removeClass('disabled');
+            if (step2Done) { $('#plivoCallCard').removeClass('disabled'); $('#step3Card').removeClass('disabled'); }
+            else { $('#plivoCallCard').addClass('disabled'); }
             if (step3Done) { $('#step4Card').removeClass('disabled'); $('#step4Subtitle').html('Waiting for prospect to respond or self-register...'); }
             else if (r.invitationEmailSent === true) { $('#step4Card').removeClass('disabled'); $('#step4Subtitle').html('Waiting for prospect to respond or self-register...'); }
         }
@@ -919,7 +982,7 @@
         if (message) result.html(message).show();
 
         if (step === 1 && state === 'completed') { $('#step2Card').removeClass('disabled'); }
-        if (step === 2 && state === 'completed') { $('#step3Card').removeClass('disabled'); }
+        if (step === 2 && state === 'completed') { $('#plivoCallCard').removeClass('disabled'); $('#step3Card').removeClass('disabled'); }
         if (step === 3 && state === 'completed') { $('#step4Card').removeClass('disabled'); }
     }
 
@@ -1091,12 +1154,20 @@
                     $('#step3Card').removeClass('disabled');
                     if (currentRecord) { currentRecord.selectedIRFId = parseInt(irfId); currentRecord.selectedIRFName = irfName; currentRecord.applicationLink = res.applicationLink; }
                 } else {
-                    markStep(2, 'failed', res.error || 'Failed to save.');
+                    $('#step2Card').removeClass('completed failed disabled').addClass('pending');
+                    $('#step2Number').removeClass('completed failed running').addClass('pending');
+                    $('#step2Result').html('<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Failed to save.') + '</span>').show();
                     btn.prop('disabled',false).html('<i class="fas fa-check me-1"></i>Confirm');
                     $('#step2Subtitle').html(defaultSubtitles[2]);
                 }
             },
-            error: function(){ markStep(2, 'failed', 'Request failed.'); btn.prop('disabled',false).html('<i class="fas fa-check me-1"></i>Confirm'); $('#step2Subtitle').html(defaultSubtitles[2]); }
+            error: function(){
+                $('#step2Card').removeClass('completed failed disabled').addClass('pending');
+                $('#step2Number').removeClass('completed failed running').addClass('pending');
+                $('#step2Result').html('<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Request failed.</span>').show();
+                btn.prop('disabled',false).html('<i class="fas fa-check me-1"></i>Confirm');
+                $('#step2Subtitle').html(defaultSubtitles[2]);
+            }
         });
     });
 
@@ -1233,21 +1304,25 @@
                         if (res.isExistingInterviewer) {
                             newStatusMsg = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>This email also exists in the system (UserId: ' + res.existingUserId + ').</span>'
                                          + '<br/><span style="color:#842029;font-size:12px;font-weight:500;"><i class="fas fa-info-circle me-1"></i>Try a different email address for this prospect.</span>';
-                            $('#step1Card').removeClass('completed').addClass('failed');
-                            $('#step1Number').removeClass('completed').addClass('failed');
+                            $('#step1Card').removeClass('completed pending').addClass('failed');
+                            $('#step1Number').removeClass('completed pending').addClass('failed');
+                            $('#step1Subtitle').html('<span style="color:#842029;font-size:11px;font-weight:500;">Duplicate email \u2014 edit to proceed</span>');
                             $('#step2Card, #step3Card, #step4Card').addClass('disabled');
                             $('#step2Subtitle').html('<span style="color:#842029;font-weight:500;">Blocked \u2014 parsed email is a duplicate. Edit the email in Step 1 first.</span>');
                         } else {
                             newStatusMsg = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message || 'Email updated. Interviewer is new to the system.') + '</span>';
-                            $('#step1Card').removeClass('failed').addClass('completed');
-                            $('#step1Number').removeClass('failed').addClass('completed');
-                            $('#step2Card').removeClass('disabled');
+                            $('#step1Card').removeClass('failed pending').addClass('completed');
+                            $('#step1Number').removeClass('failed pending').addClass('completed');
+                            $('#step1Subtitle').html('<span class="text-success" style="font-size:11px;">Email verified \u2014 new to the system</span>');
+                            $('#btnParseResume').prop('disabled', true).html('<i class="fas fa-check me-1"></i>Parsed');
+                            $('#step2Card').removeClass('disabled failed').addClass('pending');
+                            $('#step2Number').removeClass('failed').addClass('pending');
                             $('#step2Subtitle').html(defaultSubtitles[2]);
                             if (currentRecord && currentRecord.selectedIRFId && currentRecord.selectedIRFName) {
-                                $('#step3Card').removeClass('disabled');
+                                $('#step3Card').removeClass('disabled failed');
                             }
                             if (currentRecord && currentRecord.invitationEmailSent === true) {
-                                $('#step4Card').removeClass('disabled');
+                                $('#step4Card').removeClass('disabled failed');
                             }
                         }
                         $('#step1Result .s1-status-msg').html(newStatusMsg);
