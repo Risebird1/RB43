@@ -373,7 +373,7 @@
 
                 @{
                     int cParsed = Model.Count(r => r.ResumeParseCompleted == true);
-                    int cChannel = Model.Count(r => r.SelectedIRFId.HasValue && r.SelectedIRFId > 0);
+                    int cChannel = Model.Count(r => !string.IsNullOrEmpty(r.ApplicationLink));
                     int cInvited = Model.Count(r => r.InvitationEmailSent == true);
                     int cSelfReg = Model.Count(r => r.SelfRegistrationCompleted == true || r.OnboardingCompleted == true);
                     int cAwaiting = Model.Count(r => r.InvitationEmailSent == true && r.SelfRegistrationCompleted != true && r.OnboardingCompleted != true && string.IsNullOrEmpty(r.ProspectResponse));
@@ -386,7 +386,7 @@
                         <div class="card border-0 shadow-sm text-center py-3"><div class="sv" style="color:#0d6efd;">@cParsed</div><div class="sl">Resume Parsed</div></div>
                     </div>
                     <div class="col-6 col-sm-4 col-lg-2">
-                        <div class="card border-0 shadow-sm text-center py-3"><div class="sv" style="color:#6f42c1;">@cChannel</div><div class="sl">Channel Selected</div></div>
+                        <div class="card border-0 shadow-sm text-center py-3"><div class="sv" style="color:#6f42c1;">@cChannel</div><div class="sl">MAG Link Generated</div></div>
                     </div>
                     <div class="col-6 col-sm-4 col-lg-2">
                         <div class="card border-0 shadow-sm text-center py-3"><div class="sv" style="color:#0dcaf0;">@cInvited</div><div class="sl">Invited</div></div>
@@ -468,7 +468,7 @@
                                             <th scope="colgroup" colspan="4" class="text-center">
                                                 Pipeline Steps
                                             </th>
-                                            <th scope="col">Skill Channel</th>
+                                            <th scope="col">MAG Link</th>
                                             <th scope="col">EV</th>
                                             <th scope="col">AI Fitment</th>
                                             <th scope="col">Prospect Response</th>
@@ -496,7 +496,7 @@
                                         {
                                             bool parsed = r.ResumeParseCompleted == true;
                                             bool isDuplicate = parsed && r.IsExistingInterviewer == true;
-                                            bool channelSelected = r.SelectedIRFId.HasValue && r.SelectedIRFId > 0;
+                                            bool channelSelected = !string.IsNullOrEmpty(r.ApplicationLink);
                                             bool invited = r.InvitationEmailSent == true;
                                             bool selfReg = r.SelfRegistrationCompleted == true || r.OnboardingCompleted == true;
 
@@ -576,11 +576,11 @@
                                                 <td style="text-align:center;">@Html.Raw(stepDot(invited))</td>
                                                 <td style="text-align:center;">@Html.Raw(stepDot(selfReg))</td>
 
-                                                @* Skill Channel *@
+                                                @* MAG Link *@
                                                 <td style="font-size:11px;">
                                                     @if (channelSelected)
                                                     {
-                                                        <span title="IRF #@r.SelectedIRFId">@r.SelectedIRFName</span>
+                                                        <a href="@r.ApplicationLink" target="_blank" title="@r.ApplicationLink" style="word-break:break-all;"><i class="fas fa-external-link-alt me-1"></i>MAG Link</a>
                                                     }
                                                     else
                                                     {

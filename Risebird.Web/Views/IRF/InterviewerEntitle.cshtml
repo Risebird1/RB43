@@ -1,4 +1,4 @@
-﻿@*@model IEnumerable<Risebird.Entities.ViewModel.InterviewerVM>*@
+@*@model IEnumerable<Risebird.Entities.ViewModel.InterviewerVM>*@
 @*@model X.PagedList.IPagedList<Risebird.Entities.ViewModel.AssignmentVM>*@
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
@@ -140,6 +140,11 @@
                                                             <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Generate Internal Interviewers' Application Url for MAG" style="width:25px!important;height:25px!important; background:#9f809cb8 !important; border-color:#9f809cb8!important">
                                                                 <span onclick="javascript:CopyInternalInterviewerMAGApplicationLink('@item.id', '@item.AssessmentGroup');" title="Generate Internal Interviewers' Application Url for MAG">
                                                                     <i class="fa fa-user" style="color: white;font-size: 13px;position: relative;left: -3px;"></i><img style="position:relative;top: -25px;width: 11px;left: 6px;" src="/img/generate-icon.png">
+                                                                </span>
+                                                            </button>
+                                                            <button class="btn shadow btn-xs sharp me-1" aria-label="Generate External MAG Application Link" style="width:25px!important;height:25px!important;position:relative; background:#3b7dd8b8!important; border: 1px solid #3b7dd8b8!important;">
+                                                                <span onclick="javascript:CopyExternalMAGApplicationLink('@item.id', '@item.AssessmentGroup');" title="Generate External MAG Application Link (for prospects)">
+                                                                    <i class="fa fa-external-link-alt" style="color: white;font-size: 11px;position: relative;top: 1px;"></i>
                                                                 </span>
                                                             </button>
                                                         }
@@ -378,6 +383,7 @@
 </div> *@
 @await Html.PartialAsync("~/Views/Common/_AssessmentGroupsListPartial.cshtml")
 @await Html.PartialAsync("~/Views/Common/_GenerateInternalInterviewerMAGApplicationUrl.cshtml")
+@await Html.PartialAsync("~/Views/Common/_GenerateExternalMAGApplicationUrl.cshtml")
 
 <div id="SkillChannelListModal" class="modal modal-bg">
     <!-- Modal content -->

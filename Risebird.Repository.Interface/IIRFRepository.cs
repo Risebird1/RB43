@@ -1,4 +1,4 @@
-﻿using Risebird.Entities.Data;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -299,5 +299,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Users>> GetClientUsersByIRFandAdmin(int irfId);
         Task<CallibrationCallVM> GetCalibrationMeetingDetailsById(int id);
         Task<bool> SaveCalibrationMeetingNotesById(int id, string Notes);
+        Task<int?> GetLatestActiveIRFIdForAssessmentGroupAsync(int assessmentGroupId);
     }
 }
