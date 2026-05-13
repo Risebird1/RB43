@@ -792,12 +792,17 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(email))
                     return Json(new { success = false, error = "Prospect email not available. Parse the resume first." });
 
-                if (string.IsNullOrWhiteSpace(record.ApplicationLink))
-                    return Json(new { success = false, error = "No application link generated. Select a skill channel first." });
+                if (!record.ResolvedAssessmentGroupId.HasValue || record.ResolvedAssessmentGroupId.Value <= 0)
+                    return Json(new { success = false, error = "No MAG resolved for this prospect. Ensure the MAG name is set." });
+
+                int agId = record.ResolvedAssessmentGroupId.Value;
+                var encryptedAgId = await _encryptionHelper.EncryptStringValue(agId.ToString());
+                var appLink = $"https://portal.risebird.io/Interviewer/MagApplicationForm?id={System.Web.HttpUtility.UrlEncode(encryptedAgId)}";
+
+                await _repository.UpdateSelectedIRFAsync(id, 0, null, appLink, agId);
 
                 string candidateName = record.CandidateName ?? "there";
-                string magName = record.MagName ?? record.SelectedIRFName ?? "Interviewer";
-                string appLink = record.ApplicationLink;
+                string magName = record.MagName ?? record.AssessmentGroupName ?? "Interviewer";
 
                 string responseBaseUrl = $"{Request.Scheme}://{Request.Host}/NaukriOnboarding/ProspectResponseAction";
                 string needClarityLink = $"{responseBaseUrl}?id={id}&response=NeedClarity";
@@ -817,9 +822,9 @@ namespace Risebird.Web.Controllers
                 await _repository.UpdateInvitationEmailSentAsync(id);
                 var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                 await _repository.InsertHistoryAsync(id, "InvitationEmailSent", "\u2014",
-                    $"Sent to: {email}, Channel: {record.SelectedIRFName ?? "\u2014"}", user);
+                    $"Sent to: {email}, MAG: {magName} (AG: {agId}), Link: {appLink}", user);
 
-                return Json(new { success = true, message = "Invitation email sent to " + email + "." });
+                return Json(new { success = true, message = "Invitation email sent to " + email + ".", applicationLink = appLink });
             }
             catch (Exception ex)
             {

@@ -31,20 +31,19 @@ BEGIN
           AND ISNULL(np.InvitationEmailSent, 0) = 0
           AND ISNULL(np.AutomationStatus, '') NOT IN (
               'Cold', 'ManualRequired', 'EmailSent', 'Completed', 'Error',
-              'ParsingResume', 'SelectingChannel', 'SendingEmail'
+              'ParsingResume', 'ResolvingMAG', 'SendingEmail'
           )
-          -- Not currently in an active call
           AND ISNULL(np.PlivoCallStatus, '') NOT IN ('initiated', 'triggered')
-          -- Must have a resume link to process
           AND np.ResumeLink IS NOT NULL AND np.ResumeLink <> ''
-          -- Either: needs resume parse, needs channel, needs call (within limits), needs email, or needs disposition cleanup
           AND (
               -- Needs resume parse
               ISNULL(np.ResumeParseCompleted, 0) = 0
-              -- OR: Resume parsed, not duplicate, needs channel
-              OR (np.ResumeParseCompleted = 1 AND ISNULL(np.IsExistingInterviewer, 0) = 0 AND np.SelectedIRFId IS NULL)
-              -- OR: Channel selected, needs call (within limits), phone present
-              OR (np.SelectedIRFId IS NOT NULL AND ISNULL(np.PlivoCallAttemptsTotal, 0) < 5
+              -- OR: Resume parsed, not duplicate, needs MAG link
+              OR (np.ResumeParseCompleted = 1 AND ISNULL(np.IsExistingInterviewer, 0) = 0
+                  AND (np.ApplicationLink IS NULL OR np.ApplicationLink = ''))
+              -- OR: MAG link generated, needs call (within limits), phone present
+              OR (np.ApplicationLink IS NOT NULL AND np.ApplicationLink <> ''
+                  AND ISNULL(np.PlivoCallAttemptsTotal, 0) < 5
                   AND ISNULL(np.PlivoCallAttemptsToday, 0) < 2
                   AND ISNULL(np.PlivoCallStatus, '') NOT IN ('completed', 'answered')
                   AND np.ParsedPhone IS NOT NULL AND np.ParsedPhone <> '')

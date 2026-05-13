@@ -4017,6 +4017,7 @@ namespace Risebird.Repository
                     parameters.Add("@timeNow", DateTime.Now);
                     parameters.Add("@PerformedBy", obj.EmailId);
                     parameters.Add("@ReferredBy", obj.ReferredBy);
+                    parameters.Add("@assessmentGroupId", obj.AssessmentGroupId > 0 ? obj.AssessmentGroupId : (int?)null);
                     parameters.Add("@result", dbType: DbType.Boolean, direction: ParameterDirection.Output, size: 5215585);
                     parameters.Add("@id", dbType: DbType.Int32, direction: ParameterDirection.Output, size: 5215585);
                     parameters.Add("@assessmentGroup", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
