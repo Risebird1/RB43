@@ -3,14 +3,15 @@ IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'usp_GetNaukriP
 GO
 
 CREATE PROCEDURE [dbo].[usp_GetNaukriProspectiveInterviewers]
-    @Status         VARCHAR(50)  = NULL,
-    @CandidateName  NVARCHAR(200)= NULL,
-    @MagName        NVARCHAR(200)= NULL,
-    @Source         VARCHAR(50)  = NULL,
-    @DateFrom       DATETIME     = NULL,
-    @DateTo         DATETIME     = NULL,
-    @Page           INT          = 1,
-    @PageSize       INT          = 25
+    @Status             VARCHAR(50)  = NULL,
+    @CandidateName      NVARCHAR(200)= NULL,
+    @MagName            NVARCHAR(200)= NULL,
+    @Source             VARCHAR(50)  = NULL,
+    @AutomationStatus   VARCHAR(50)  = NULL,
+    @DateFrom           DATETIME     = NULL,
+    @DateTo             DATETIME     = NULL,
+    @Page               INT          = 1,
+    @PageSize           INT          = 25
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -29,6 +30,12 @@ BEGIN
             AND (@CandidateName IS NULL OR np.CandidateName LIKE '%' + @CandidateName + '%')
             AND (@MagName IS NULL OR np.MagName LIKE '%' + @MagName + '%')
             AND (@Source IS NULL OR np.[Source] = @Source)
+            AND (
+                @AutomationStatus IS NULL
+                OR (@AutomationStatus = '_any_' AND ISNULL(np.AutomationStatus, '') <> '')
+                OR (@AutomationStatus = '_none_' AND ISNULL(np.AutomationStatus, '') = '')
+                OR (@AutomationStatus NOT IN ('_any_', '_none_') AND np.AutomationStatus = @AutomationStatus)
+            )
             AND (@DateFrom IS NULL OR np.ReceivedAt >= @DateFrom)
             AND (@DateTo IS NULL OR np.ReceivedAt < DATEADD(DAY, 1, @DateTo))
     )

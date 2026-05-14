@@ -291,7 +291,7 @@ Declare @v_User_Id int;
  select @outputUserId=@v_User_Id 
  select @uniqueid = uniqueid from [dbo].[UserList] where id = @v_User_Id;
 
- if(@TargetIrfId > 0)
+   if(@TargetIrfId > 0)
  Begin
 	declare @rate int
 	set @rate =   (select Rate from PlanTypeChargesMaster where CountryType = (select JobCountry from IRF where id = @TargetIrfId) 
@@ -304,6 +304,35 @@ Declare @v_User_Id int;
             values (@TargetIrfId, @InterviewerProfileId, @v_User_Id, 1, 0, @rate)
         End
 	 
+ End
+ Else If(@AssessmentGroupId IS NOT NULL AND @AssessmentGroupId <> '' AND @AssessmentGroupId <> '0')
+ Begin
+    -- MAG-direct onboarding: add interviewer to ALL active skill channels under this AG
+    DECLARE @agIdInt INT = TRY_CAST(@AssessmentGroupId AS INT)
+    IF @agIdInt > 0
+    BEGIN
+        INSERT INTO TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate, AddedAt, Source)
+        SELECT 
+            irf.id,
+            @InterviewerProfileId,
+            @v_User_Id,
+            1,  -- IsAvailable
+            0,  -- IsActive (pending activation)
+            (SELECT TOP 1 Rate FROM PlanTypeChargesMaster 
+             WHERE CountryType = irf.JobCountry 
+               AND PlanTypeEnumValue = irf.Heuristicsscore 
+               AND CompanyType = irf.CompanyType),
+            DATEADD(MINUTE, 330, GETDATE()),
+            'MAG-Direct'
+        FROM IRF irf
+        WHERE irf.AssessmentGroupId = @agIdInt
+          AND irf.IsPaused = 0
+          AND ISNULL(irf.IsDeleted, 0) = 0
+          AND NOT EXISTS (
+              SELECT 1 FROM TransInterviewer ti 
+              WHERE ti.UserId = @v_User_Id AND ti.IRFId = irf.id
+          )
+    END
  End
 
 
