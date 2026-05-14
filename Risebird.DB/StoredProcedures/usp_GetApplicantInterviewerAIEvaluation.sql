@@ -12,9 +12,14 @@ Create PROCEDURE usp_GetApplicantInterviewerAIEvaluation
 AS
 BEGIN
 
-select top 1 ida.*, irf.JDTiltle, irf.AssessmentGroupId from InterviewerDirectApplication ida
-join IRF on irf.id = ida.IRFId
-where ida.id =@id order by ida.CreatedAt desc
+select top 1
+    ida.*,
+    COALESCE(irf.JDTiltle, ag.AssessmentGroup) AS JDTiltle,
+    COALESCE(irf.AssessmentGroupId, ida.AssessmentGroupId) AS AssessmentGroupId
+from InterviewerDirectApplication ida
+left join IRF irf on irf.id = ida.IRFId and ida.IRFId > 0
+left join AssessmentGroup ag on ag.id = ida.AssessmentGroupId
+where ida.id = @id order by ida.CreatedAt desc
 
 END
 Go

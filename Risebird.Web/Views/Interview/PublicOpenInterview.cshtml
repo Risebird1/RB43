@@ -29,6 +29,54 @@
     /*.mob_h {
                 display: none !important
             }*/
+
+    .assign-success-compact {
+        text-align: left;
+        margin: 0 auto;
+        max-width: 420px;
+        padding: 10px 12px 4px;
+        background: linear-gradient(135deg, #f4fbf4 0%, #eef6ff 100%);
+        border: 1px solid #c8e6c9;
+        border-radius: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+
+        .assign-success-compact__lead {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1b5e20;
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .assign-success-compact__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            color: #0d47a1;
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 6px;
+            padding: 4px 10px;
+            margin-bottom: 8px;
+        }
+
+        .assign-success-compact__list {
+            margin: 0;
+            padding: 0 0 0 18px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.45;
+        }
+
+            .assign-success-compact__list li {
+                margin-bottom: 6px;
+            }
 </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
@@ -305,25 +353,55 @@
     }
 </script>
 
+<script type="text/javascript">
+    function formatAssignYourselfMessage(raw) {
+        if (raw == null) return '';
+        var s = String(raw);
+        if (s.indexOf('|VIDEO_MANDATE') !== -1) {
+            return '<div class="assign-success-compact">'
+                + '<div class="assign-success-compact__lead">Interview assigned successfully</div>'
+                + '<div class="assign-success-compact__badge" title="Client requirement"><span class="material-icons" style="font-size:18px;line-height:1;vertical-align:middle;">videocam</span> Video on required</div>'
+                + '<ul class="assign-success-compact__list">'
+                + '<li>Unassign at least <strong>4 hours</strong> before start if you cannot comply.</li>'
+                + '<li>Use a <strong>virtual background</strong>.</li>'
+                + '<li>Your data is <strong>100% secure</strong>.</li>'
+                + '</ul></div>';
+        }
+        return $('<div/>').text(s).html();
+    }
+    function fireAssignResultSwal(raw, isSuccess) {
+        if (typeof swal === 'undefined' || !swal.fire) return;
+        var html = formatAssignYourselfMessage(raw);
+        if (isSuccess) {
+            swal.fire({
+                title: 'Assigned successfully',
+                html: html,
+                icon: 'success',
+                width: 460,
+                customClass: { popup: 'swal2-popup-assign' }
+            });
+        } else {
+            swal.fire({ title: 'Failed', html: html, icon: 'error', width: 420 });
+        }
+    }
+</script>
 
 @if (ViewBag.Message != null)
 {
+    var assignMessageJsonPublic = JsonConvert.SerializeObject(ViewBag.Message.ToString());
     <script type="text/javascript">
         $(document).ready(function () {
             my_code();
         });
         function my_code() {
-            var msg = '@ViewBag.Message';
-            if (msg.includes("Success")) {
-                swal.fire("Assigned Successfully", '@ViewBag.Message', "success");
+            var msg = @Html.Raw(assignMessageJsonPublic);
+            if (typeof msg === 'string' && msg.indexOf('Success') !== -1) {
+                fireAssignResultSwal(msg, true);
             }
             else {
-               swal.fire("Failed", '@ViewBag.Message', "error");
+                fireAssignResultSwal(msg, false);
             }
-
         }
-
-        //window.onload = my_code();
     </script>
 }
 

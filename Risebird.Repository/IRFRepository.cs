@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
@@ -10294,6 +10294,26 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+
+        public async Task<int?> GetLatestActiveIRFIdForAssessmentGroupAsync(int assessmentGroupId)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    return await con.QueryFirstOrDefaultAsync<int?>(
+                        @"SELECT TOP 1 id FROM TransInterviewer 
+                          WHERE AssessmentGroupId = @AgId AND ISNULL(IsActive, 0) = 1 AND ISNULL(IsDeleted, 0) = 0 
+                          ORDER BY id DESC",
+                        new { AgId = assessmentGroupId });
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

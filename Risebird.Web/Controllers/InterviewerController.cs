@@ -899,6 +899,48 @@ namespace Risebird.Web.Controllers
 
         }
 
+        /// <summary>
+        /// MAG-based application form for external prospects.
+        /// Decrypts the Assessment Group id and serves ApplyRenewed.
+        /// The prospect is mapped directly to the Assessment Group — no IRF involved.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> MagApplicationForm(string id)
+        {
+            try
+            {
+                int agId;
+                string decodedEncryptedId = string.Empty;
+
+                if (int.TryParse(id, out agId))
+                {
+                    // plain int
+                }
+                else
+                {
+                    decodedEncryptedId = System.Net.WebUtility.UrlDecode(id);
+                    agId = Convert.ToInt32(await _encryptionHelper.DecryptStringValue(decodedEncryptedId));
+                }
+
+                if (agId <= 0)
+                    return Json("Bad Request!");
+
+                var model = new InterviewerDirectApplicationVM
+                {
+                    IRFId = 0,
+                    AssessmentGroupId = agId,
+                    EncryptedAssessmentGroupId = decodedEncryptedId
+                };
+
+                return View("ApplyRenewed", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Something's wrong. Please try again later.");
+            }
+        }
+
         //[HttpPost]
         //public async Task<IActionResult> ApplyRenewed(InterviewerDirectApplicationVM model)//, int irf
         //{

@@ -75,9 +75,18 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedAt                   { get; set; }
         public DateTime? UpdatedAt                  { get; set; }
 
+        // Automation tracking
+        public string   AutomationStatus            { get; set; }
+        public DateTime? AutomationLastProcessedAt  { get; set; }
+        public int      PlivoCallAttemptsTotal      { get; set; }
+        public int      PlivoCallAttemptsToday      { get; set; }
+        public DateTime? PlivoCallLastAttemptDate   { get; set; }
+
         // Resolved from MasterAssessmentGroup / AssessmentGroup
         public int?     ResolvedAssessmentGroupId   { get; set; }
         public string   AssessmentGroupName         { get; set; }
+
+        public bool HasResumeLink => !string.IsNullOrWhiteSpace(ResumeLink);
 
         // Pagination
         public int      TotalCount                  { get; set; }
