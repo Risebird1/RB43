@@ -147,5 +147,8 @@ namespace Risebird.Repository.Interface
 
         Task<int> SaveProxyCandidateChecklist(Risebird.Entities.Data.InterviewerProxyCandidateChecklist model);
         Task<IEnumerable<Risebird.Entities.Data.InterviewerProxyCandidateChecklist>> GetProxyCandidateChecklist(string interviewerEmail = null, int? id = null);
+
+        Task<int> SaveInterviewerTrainingChecklist(Risebird.Entities.Data.InterviewerTrainingChecklist model);
+        Task<IEnumerable<Risebird.Entities.Data.InterviewerTrainingChecklist>> GetInterviewerTrainingChecklist(string interviewerEmail, string trainingModuleCode);
     }
 }

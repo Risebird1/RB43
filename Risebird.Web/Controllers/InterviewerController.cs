@@ -1591,6 +1591,75 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>Professional interview conduct training (interviewer-only).</summary>
+        [HttpGet]
+        public async Task<IActionResult> ProfessionalInterviewConductTraining()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        return View();
+                    }
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("InterviewerIndex", "Dashboard");
+            }
+        }
+
+        /// <summary>AI interview report analysis training (interviewer-only).</summary>
+        [HttpGet]
+        public async Task<IActionResult> AIInterviewReportAnalysisTraining()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        return View();
+                    }
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("InterviewerIndex", "Dashboard");
+            }
+        }
+
+        /// <summary>AI interview verdict contradiction training — Module 07 (interviewer-only).</summary>
+        [HttpGet]
+        public async Task<IActionResult> AIInterviewVerdictContradictionTraining()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        return View();
+                    }
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("InterviewerIndex", "Dashboard");
+            }
+        }
+
         /// <summary>Saves proxy-detection checklist selections (JSON) for the logged-in interviewer to blob storage.</summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -1638,6 +1707,122 @@ namespace Risebird.Web.Controllers
                 };
 
                 var savedId = await _interviewerRepository.SaveProxyCandidateChecklist(checklistRecord);
+                if (savedId > 0)
+                    return Json(new { success = true, message = "Checklist saved successfully." });
+
+                return Json(new { success = false, message = "Could not save the checklist. Please try again." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not save right now. Please try again." });
+            }
+        }
+
+        private static readonly HashSet<string> AllowedInterviewerTrainingChecklistModules =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "AIReportAnalysis", "AIVerdictContradiction", "ProfessionalConduct" };
+
+        /// <summary>Loads saved self-review checklist for an interviewer training module (JSON).</summary>
+        [HttpGet]
+        public async Task<IActionResult> GetInterviewerTrainingChecklistState(string moduleCode)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { success = false, message = "Your session has expired. Please sign in again." });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName != "Interviewer")
+                    return Json(new { success = false, message = "Not authorized." });
+
+                if (string.IsNullOrWhiteSpace(moduleCode) || !AllowedInterviewerTrainingChecklistModules.Contains(moduleCode.Trim()))
+                    return Json(new { success = false, message = "Invalid module." });
+
+                var sessionEmail = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var records = await _interviewerRepository.GetInterviewerTrainingChecklist(sessionEmail, moduleCode.Trim());
+                var latest = records?.FirstOrDefault();
+
+                if (latest == null)
+                    return Json(new { success = true, record = (object)null });
+
+                Dictionary<string, bool> checklistState = null;
+                if (!string.IsNullOrWhiteSpace(latest.ChecklistStateJson))
+                {
+                    try { checklistState = JsonConvert.DeserializeObject<Dictionary<string, bool>>(latest.ChecklistStateJson); }
+                    catch { /* malformed JSON */ }
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    record = new
+                    {
+                        checklistState,
+                        totalItems = latest.TotalItems,
+                        totalChecked = latest.TotalChecked,
+                        createdOn = latest.CreatedOn
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not load checklist." });
+            }
+        }
+
+        /// <summary>Saves interviewer training checklist state (same pattern as proxy checklist — form POST + JSON payload).</summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveInterviewerTrainingChecklist([FromForm] string payload)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { success = false, message = "Your session has expired. Please sign in again." });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName != "Interviewer")
+                    return Json(new { success = false, message = "Not authorized." });
+
+                if (string.IsNullOrWhiteSpace(payload))
+                    return Json(new { success = false, message = "No checklist data was sent." });
+
+                TrainingChecklistSubmitVM model;
+                try
+                {
+                    model = JsonConvert.DeserializeObject<TrainingChecklistSubmitVM>(payload);
+                }
+                catch (JsonException)
+                {
+                    return Json(new { success = false, message = "Invalid data format." });
+                }
+
+                if (model == null || string.IsNullOrWhiteSpace(model.TrainingModuleCode))
+                    return Json(new { success = false, message = "Invalid payload." });
+
+                if (!AllowedInterviewerTrainingChecklistModules.Contains(model.TrainingModuleCode.Trim()))
+                    return Json(new { success = false, message = "Invalid training module." });
+
+                if (model.ChecklistState == null)
+                    model.ChecklistState = new Dictionary<string, bool>();
+
+                var sessionEmail = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var totalCheckedFromState = model.ChecklistState.Count(kv => kv.Value);
+                var totalItems = model.TotalItems > 0 ? model.TotalItems : model.ChecklistState.Count;
+                var totalChecked = model.TotalItems > 0 ? model.TotalChecked : totalCheckedFromState;
+
+                var checklistRecord = new InterviewerTrainingChecklist
+                {
+                    InterviewerEmail = sessionEmail,
+                    TrainingModuleCode = model.TrainingModuleCode.Trim(),
+                    ChecklistStateJson = JsonConvert.SerializeObject(model.ChecklistState),
+                    TotalItems = totalItems,
+                    TotalChecked = totalChecked,
+                    CreatedBy = sessionEmail
+                };
+
+                var savedId = await _interviewerRepository.SaveInterviewerTrainingChecklist(checklistRecord);
                 if (savedId > 0)
                     return Json(new { success = true, message = "Checklist saved successfully." });
 
