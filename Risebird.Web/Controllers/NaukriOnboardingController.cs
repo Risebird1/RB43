@@ -71,14 +71,15 @@ namespace Risebird.Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Index(
-            string status        = null,
-            string candidateName = null,
-            string magName       = null,
-            string source        = null,
-            string dateFrom      = null,
-            string dateTo        = null,
-            int    page          = 1,
-            int    pageSize      = 25)
+            string status            = null,
+            string candidateName     = null,
+            string magName           = null,
+            string source            = null,
+            string automationStatus  = null,
+            string dateFrom          = null,
+            string dateTo            = null,
+            int    page              = 1,
+            int    pageSize          = 25)
         {
             try
             {
@@ -90,7 +91,7 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pTo)) dtTo = pTo;
 
-                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize);
+                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus);
 
                 var first = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -104,6 +105,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.CandidateName = candidateName ?? string.Empty;
                 ViewBag.MagName = magName ?? string.Empty;
                 ViewBag.Source = source ?? string.Empty;
+                ViewBag.AutomationStatus = automationStatus ?? string.Empty;
                 ViewBag.DateFrom = dateFrom ?? string.Empty;
                 ViewBag.DateTo = dateTo ?? string.Empty;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
@@ -116,6 +118,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
                 ViewBag.Status = status; ViewBag.CandidateName = candidateName; ViewBag.MagName = magName;
                 ViewBag.Source = source ?? string.Empty;
+                ViewBag.AutomationStatus = automationStatus ?? string.Empty;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
                 return View(new List<NaukriProspectiveInterviewerVM>());

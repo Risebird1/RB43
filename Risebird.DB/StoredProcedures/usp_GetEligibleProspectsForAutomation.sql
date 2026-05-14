@@ -3,6 +3,7 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_GetEligibleProspectsForAutomation]
 AS
 BEGIN
     SET NOCOUNT ON;
+	set @BatchSize = 3
 
     DECLARE @Today DATE = CAST(GETUTCDATE() AS DATE);
 
@@ -18,7 +19,19 @@ BEGIN
             np.*,
             magInfo.AssessmentGroupId AS ResolvedAssessmentGroupId,
             magInfo.AssessmentGroupName,
-            ROW_NUMBER() OVER (ORDER BY np.ReceivedAt ASC, np.Id ASC) AS RowNum
+            ROW_NUMBER() OVER (ORDER BY
+                -- Priority 1: Call completed with interested disposition — ready for email
+                CASE WHEN np.PlivoCallStatus IN ('completed', 'answered')
+                          AND LOWER(ISNULL(np.PlivoProspectDisposition, '')) = 'interested'
+                          AND ISNULL(np.InvitationEmailSent, 0) = 0
+                     THEN 0 ELSE 1 END ASC,
+                -- Priority 2: Call completed with non-interested disposition — needs cleanup
+                CASE WHEN np.PlivoCallStatus IN ('completed', 'answered')
+                          AND LOWER(ISNULL(np.PlivoProspectDisposition, '')) <> 'interested'
+                     THEN 0 ELSE 1 END ASC,
+                -- Then chronological
+                np.ReceivedAt ASC, np.Id ASC
+            ) AS RowNum
         FROM NaukriProspectiveInterviewer np
         OUTER APPLY (
             SELECT TOP 1 mag.AssessmentGroupId, ag.AssessmentGroup AS AssessmentGroupName

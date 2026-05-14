@@ -11,6 +11,7 @@
     string selName = ViewBag.CandidateName as string ?? string.Empty;
     string selMag = ViewBag.MagName as string ?? string.Empty;
     string selSource = ViewBag.Source as string ?? string.Empty;
+    string selAutoStatus = ViewBag.AutomationStatus as string ?? string.Empty;
     string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
@@ -19,6 +20,7 @@
 
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selName)
                    || !string.IsNullOrEmpty(selMag) || !string.IsNullOrEmpty(selSource)
+                   || !string.IsNullOrEmpty(selAutoStatus)
                    || !string.IsNullOrEmpty(selDateFrom) || !string.IsNullOrEmpty(selDateTo);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
@@ -31,6 +33,7 @@
         if (!string.IsNullOrEmpty(selName)) q += $"&candidateName={Uri.EscapeDataString(selName)}";
         if (!string.IsNullOrEmpty(selMag)) q += $"&magName={Uri.EscapeDataString(selMag)}";
         if (!string.IsNullOrEmpty(selSource)) q += $"&source={Uri.EscapeDataString(selSource)}";
+        if (!string.IsNullOrEmpty(selAutoStatus)) q += $"&automationStatus={Uri.EscapeDataString(selAutoStatus)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return Url.Action("Index", "NaukriOnboarding") + q;
@@ -239,6 +242,24 @@
                                     <option value="">All sources</option>
                                     @if (selSource == "Naukri") { <option value="Naukri" selected>Naukri</option> } else { <option value="Naukri">Naukri</option> }
                                     @if (selSource == "LinkedIn") { <option value="LinkedIn" selected>LinkedIn</option> } else { <option value="LinkedIn">LinkedIn</option> }
+                                </select>
+                                <select name="automationStatus" class="form-select nk-filter-control" style="flex:1 1 0;min-width:130px;max-width:165px;" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">All automation</option>
+                                    @{ var autoOpts = new[] {
+                                        ("_any_", "Any (automated)"),
+                                        ("_none_", "Not automated"),
+                                        ("EmailSent", "Email Sent"),
+                                        ("CallTriggered", "Calling"),
+                                        ("AwaitingRetry", "Retry Pending"),
+                                        ("Cold", "Cold"),
+                                        ("ManualRequired", "Manual Required"),
+                                        ("Completed", "Completed"),
+                                        ("Error", "Error")
+                                    };}
+                                    @foreach (var (val, label) in autoOpts)
+                                    {
+                                        if (selAutoStatus == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
+                                    }
                                 </select>
                                 <input type="date" name="dateFrom" class="form-control nk-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
                                 <span class="text-muted flex-shrink-0" style="font-size:11px;">\u2013</span>
