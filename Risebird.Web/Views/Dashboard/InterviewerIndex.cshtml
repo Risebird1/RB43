@@ -691,6 +691,26 @@
                                                                 <span style="display:inline-block;background:#ca1414;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;vertical-align:middle;margin-left:8px;letter-spacing:0.5px;text-transform:uppercase;">New</span></a> Complete the Proxy Candidate Detection Checklist training and implement it during every interview to ensure 100% proxy candidate detection. Skipping this quick training puts your account at risk.
                                                             <a style="text-decoration:none;" target="_blank" rel="noopener noreferrer" href="@Url.Action("ProxyCandidateDetectionChecklist", "Interviewer")"><span style="color:#0d6efd;text-decoration:underline;padding:0px 2px;">Open checklist &amp; training</span></a>
                                                         </li>
+
+
+                                                        <li style="margin:10px 0px 0px 0px; background-size: 17px;">
+                                                            <strong>
+                                                                AI Interview Transcript Penalty - complete this training material to avoid penalty from AI interview transcript analysis agent
+                                                                <a style="text-decoration:none;" target="_blank" rel="noopener noreferrer" href="@Url.Action("ProfessionalInterviewConductTraining", "Interviewer")">
+                                                                    <span style="color:#0d6efd;text-decoration:underline;padding:0px 2px;">AI interview transcript analysis agent</span>
+                                                                </a>.
+                                                                
+                                                            </strong>
+                                                        </li>
+
+                                                        <li style="margin:10px 0px 0px 0px; background-size: 17px;">
+                                                            <strong>
+                                                                AI Interview Report Penalty- complete this training material to avoid penalty from
+                                                                <a style="text-decoration:none;" target="_blank" rel="noopener noreferrer" href="@Url.Action("AIInterviewReportAnalysisTraining", "Interviewer")">
+                                                                    <span style="color:#0d6efd;text-decoration:underline;padding:0px 2px;">AI interview report analysis agent</span>
+                                                                </a>.
+                                                            </strong>
+                                                        </li>
                                                         @if (Model.AcknowledgementStatus.ToUpper() == "NO")
                                                         {
                                                             <li style="margin:10px 0px 0px 0px; background-size: 17px;">
@@ -700,7 +720,16 @@
                                                                 <a style="text-decoration:none;color:blue;cursor:pointer" onclick="InterviewerAcknowledgment()">Click here to complete it now</a>
                                                             </li>
                                                         }
+                                                       
 
+                                                        <li style="margin:10px 0px 0px 0px; background-size: 17px;">
+                                                            <strong>
+                                                                AI Interview verdict contradiction penalty — complete this training material to avoid penalty from
+                                                                <a style="text-decoration:none;" target="_blank" rel="noopener noreferrer" href="@Url.Action("AIInterviewVerdictContradictionTraining", "Interviewer")">
+                                                                    <span style="color:#0d6efd;text-decoration:underline;padding:0px 2px;">AI interview verdict contradiction analysis agent</span>
+                                                                </a>.
+                                                            </strong>
+                                                        </li>
                                                         <li style="margin:10px 0px 0px 0px; background-size: 17px;">
                                                             <strong>
                                                                 Mandatory Video-On Policy Acknowledgement Pending:
