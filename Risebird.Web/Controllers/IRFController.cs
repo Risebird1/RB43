@@ -10716,7 +10716,7 @@ namespace Risebird.Web.Controllers
                     if (assessmentGroupId > 0)
                     {
                         var encryptedId = await _encryptionHelper.EncryptStringValue(assessmentGroupId.ToString());
-                        var url = "https://portal.risebird.io/Interviewer/MagApplicationForm?id=" + HttpUtility.UrlEncode(encryptedId);
+                        var url = "https://portal.risebird.io/Interviewer/MagApplicationForm?id=" + Uri.EscapeDataString(encryptedId);
                         return Json(url);
                     }
                     else

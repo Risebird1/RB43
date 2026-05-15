@@ -40,7 +40,7 @@ BEGIN
             WHERE LTRIM(RTRIM(LOWER(mag.MAGName))) = LTRIM(RTRIM(LOWER(np.MagName)))
               AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
         ) magInfo
-        WHERE np.Status = 'Open'
+        WHERE np.Status IN ('Open', 'InProgress')
           AND ISNULL(np.InvitationEmailSent, 0) = 0
           AND ISNULL(np.AutomationStatus, '') NOT IN (
               'Cold', 'ManualRequired', 'EmailSent', 'Completed', 'Error',

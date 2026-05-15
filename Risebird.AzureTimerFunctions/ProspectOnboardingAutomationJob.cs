@@ -400,7 +400,7 @@ namespace Risebird.AzureTimerFunctions
 
                 var encryptedAgId = await _encryptionHelper.EncryptStringValue(agId.Value.ToString());
                 var portalBase = _configuration["ApplicationUrl"] ?? "https://portal.risebird.io";
-                string appLink = $"{portalBase}/Interviewer/MagApplicationForm?id={System.Web.HttpUtility.UrlEncode(encryptedAgId)}";
+                string appLink = $"{portalBase}/Interviewer/MagApplicationForm?id={Uri.EscapeDataString(encryptedAgId)}";
 
                 await _repository.UpdateSelectedIRFAsync(p.Id, 0, null, appLink, agId.Value);
                 await _repository.InsertHistoryAsync(p.Id, "MAGLinkGenerated", "—",
