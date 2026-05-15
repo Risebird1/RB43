@@ -106,7 +106,7 @@ namespace Risebird.Repository
         public async Task<List<NaukriProspectiveInterviewerVM>> GetListAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
-            string automationStatus = null)
+            string automationStatus = null, string callStatus = null, string disposition = null)
         {
             try
             {
@@ -117,6 +117,8 @@ namespace Risebird.Repository
                 p.Add("@MagName", string.IsNullOrWhiteSpace(magName) ? null : magName);
                 p.Add("@Source", string.IsNullOrWhiteSpace(source) ? null : source);
                 p.Add("@AutomationStatus", string.IsNullOrWhiteSpace(automationStatus) ? null : automationStatus);
+                p.Add("@CallStatus", string.IsNullOrWhiteSpace(callStatus) ? null : callStatus);
+                p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
                 p.Add("@DateFrom", dateFrom);
                 p.Add("@DateTo", dateTo);
                 p.Add("@Page", page);

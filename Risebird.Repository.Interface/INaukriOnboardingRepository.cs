@@ -16,7 +16,7 @@ namespace Risebird.Repository.Interface
         Task<List<NaukriProspectiveInterviewerVM>> GetListAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
-            string automationStatus = null);
+            string automationStatus = null, string callStatus = null, string disposition = null);
 
         Task<NaukriProspectiveInterviewerVM> GetByIdAsync(int id);
 
