@@ -3565,18 +3565,18 @@ namespace Risebird.Business
                 if (!payoutResult.Success)
                     return Tuple.Create(false, payoutResult.ErrorMessage ?? "Cashfree payout initiation failed.");
 
-                // 6. Insert payment history record and get the new id
-                var paymentHistoryIdStr = await InsertPaymentHistory(email, payableAmount, totalAmount, "Done", commentvalue);
-                if (string.IsNullOrEmpty(paymentHistoryIdStr))
-                    paymentHistoryIdStr = "0";
-                int.TryParse(paymentHistoryIdStr, out var paymentHistoryId);
+                //// 6. Insert payment history record and get the new id
+                //var paymentHistoryIdStr = await InsertPaymentHistory(email, payableAmount, totalAmount, "Done", commentvalue);
+                //if (string.IsNullOrEmpty(paymentHistoryIdStr))
+                //    paymentHistoryIdStr = "0";
+                //int.TryParse(paymentHistoryIdStr, out var paymentHistoryId);
 
-                // 7. Mark interview points as paid using the real PaymentHistoryId
-                var confirmResult = await RBConfirmPayment(id, index, st, se.AddDays(1), paymentHistoryId);
-                if (confirmResult != "Success")
+                //// 7. Mark interview points as paid using the real PaymentHistoryId
+                //var confirmResult = await RBConfirmPayment(id, index, st, se.AddDays(1), paymentHistoryId);
+                //if (confirmResult != "Success")
                     return Tuple.Create(false, $"Payout succeeded but interview points update failed. Ref: {payoutResult.PayoutId}");
 
-                return Tuple.Create(true, $"Payment initiated via Cashfree. Reference: {payoutResult.PayoutId}");
+                //return Tuple.Create(true, $"Payment initiated via Cashfree. Reference: {payoutResult.PayoutId}");
             }
             catch (Exception e)
             {
