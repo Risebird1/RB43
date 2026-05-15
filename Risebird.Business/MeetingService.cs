@@ -34,8 +34,9 @@ namespace Risebird.Business
         private readonly ICandidateService _candidateService;
         private readonly IZoomHelper _zoomHelper;
         private readonly IZohoMeetingHelper _zoho;
+        private readonly ICashfreePayoutService _cashfreePayoutService;
 
-        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService, IZohoMeetingHelper zoho)
+        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService, IZohoMeetingHelper zoho, ICashfreePayoutService cashfreePayoutService)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -53,6 +54,7 @@ namespace Risebird.Business
             _candidateService = candidateService;
             _zoomHelper = zoomHelper;
             _zoho = zoho;
+            _cashfreePayoutService = cashfreePayoutService;
         }
 
         public async Task<List<MeetingVM>> GetMeetingList()
@@ -3505,6 +3507,130 @@ namespace Risebird.Business
                 return null;
             }
         }
+        /// <summary>
+        /// Validates bank details, checks idempotency, initiates a Cashfree bank payout,
+        /// persists the result, and marks interview points as paid.
+        /// </summary>
+        public async Task<Tuple<bool, string>> ConfirmPaymentViaCashfree(int id, int index, string email, string amount, DateTime st, DateTime se)
+        {
+            try
+            {
+                // 1. Fetch interviewer pay details
+                var resultset = await RBInterviewerDetails(id, index);
+                if (resultset == null || resultset.Count == 0)
+                    return Tuple.Create(false, "No interview records found for payment.");
+
+                if (index == 2)
+                {
+                    var advances = resultset.Where(x => x.Status == "Advance").ToList();
+                    resultset = resultset.Where(x => x.Date >= st && x.Date <= se.AddDays(1)).ToList();
+                    resultset = resultset.Union(advances).ToList();
+                }
+
+                // 2. Calculate amounts
+                var totalAmount    = resultset.Where(x => x.Status != "Advance").Sum(x => (double)x.Points)
+                                   - resultset.Where(x => x.Status == "Advance").Sum(x => (double)x.Points);
+                var payableAmount  = (int)Math.Round(
+                    resultset.Where(x => x.Status != "Advance").Sum(x => x.Points * 0.9)
+                    - resultset.Where(x => x.Status == "Advance").Sum(x => (double)x.Points));
+
+                if (payableAmount < 1)
+                    return Tuple.Create(false, "Payable amount must be at least ₹1.");
+
+                // 3. Fetch bank details
+                var payoutDetailsList = await FetchAllPayoutDetails();
+                var bankDetails = payoutDetailsList?.FirstOrDefault(x => x.Userid == id);
+                if (bankDetails == null || string.IsNullOrWhiteSpace(bankDetails.AccountNumber) || string.IsNullOrWhiteSpace(bankDetails.IFSCCode))
+                    return Tuple.Create(false, "Bank account details are missing or incomplete for this interviewer.");
+
+                // 4. Idempotency guard — prevent double payout for the same period
+                var commentvalue = $"{st} to {se}";
+                var existingPayout = await _meetingRespository.FetchExistingCashfreePayout(id, st, se.AddDays(1));
+                if (existingPayout != null)
+                    return Tuple.Create(false, $"A Cashfree payout has already been initiated for this period. Ref: {existingPayout.PayoutReferenceId}");
+
+                // 5. Build a unique transfer id (alphanumeric + underscore, ≤ 40 chars)
+                var transferId = $"RB_{id}_{DateTime.Now:yyyyMMddHHmmss}";
+                if (transferId.Length > 40)
+                    transferId = transferId.Substring(0, 40);
+
+                // 6. Call Cashfree
+                var payoutResult = await _cashfreePayoutService.CreatePayoutToBankAsync(
+                    accountName:   bankDetails.AccountName ?? bankDetails.FirstName,
+                    accountNumber: bankDetails.AccountNumber,
+                    ifscCode:      bankDetails.IFSCCode,
+                    email:         bankDetails.InterviewerEmailid ?? email,
+                    phone:         "0000000000",
+                    amount:        payableAmount,
+                    transferId:    transferId,
+                    remarks:       "Risebird interviewer payout");
+
+                if (!payoutResult.Success)
+                    return Tuple.Create(false, payoutResult.ErrorMessage ?? "Cashfree payout initiation failed.");
+
+                var payoutId = payoutResult.PayoutId;
+
+                // 7. Persist payment record
+                var paymentHistoryId = await _meetingRespository.InsertPaymentHistoryWithGateway(
+                    interviewer:      email,
+                    amount:           payableAmount,
+                    totalAmount:      (int)Math.Round(totalAmount),
+                    status:           "Done",
+                    comment:          commentvalue,
+                    payoutReferenceId: payoutId,
+                    paymentGateway:   "Cashfree",
+                    gatewayStatus:    payoutResult.Status ?? "ACCEPTED",
+                    fees:             payoutResult.Fees);
+
+                if (string.IsNullOrEmpty(paymentHistoryId) || paymentHistoryId == "0")
+                    return Tuple.Create(false, $"Saving payment record failed. Reference: {payoutId}");
+
+                // 8. Mark interview points as paid
+                var confirmResult = await RBConfirmPayment(id, index, st, se.AddDays(1), Convert.ToInt32(paymentHistoryId));
+                if (confirmResult != "Success")
+                    return Tuple.Create(false, $"Payout succeeded but interview points update failed. Ref: {payoutId}");
+
+                return Tuple.Create(true, $"Payment initiated via Cashfree. Reference: {payoutId}");
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Tuple.Create(false, "An unexpected error occurred. Please try again.");
+            }
+        }
+
+        /// <summary>
+        /// Inserts a gateway-aware payment history row. Delegates to the repository.
+        /// </summary>
+        public async Task<string> InsertPaymentHistoryWithGateway(string interviewer, int amount, int totalAmount, string status, string comment, string payoutReferenceId, string paymentGateway, string gatewayStatus, decimal fees)
+        {
+            try
+            {
+                return await _meetingRespository.InsertPaymentHistoryWithGateway(interviewer, amount, totalAmount, status, comment, payoutReferenceId, paymentGateway, gatewayStatus, fees);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the current Cashfree transfer status for the given transferId.
+        /// </summary>
+        public async Task<CashfreePayoutResult> GetCashfreePayoutStatus(string transferId)
+        {
+            try
+            {
+                return await _cashfreePayoutService.GetPayoutStatusAsync(transferId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new CashfreePayoutResult { Success = false, ErrorMessage = "An unexpected error occurred while fetching payout status." };
+            }
+        }
+
         public async Task<bool> UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid)
         {
             try

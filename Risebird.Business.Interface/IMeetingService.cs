@@ -269,5 +269,21 @@ namespace Risebird.Business.Interface
         Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId);
         Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId);
         Task<IEnumerable<PaymentSLAVM>> GetAutoApprovalPaymentSLAPendingList();
+
+        /// <summary>
+        /// Validates bank details, applies an idempotency guard, initiates a Cashfree bank payout,
+        /// persists it to PaymentHistory, and marks the interviewer's points as paid.
+        /// </summary>
+        Task<Tuple<bool, string>> ConfirmPaymentViaCashfree(int id, int index, string email, string amount, DateTime st, DateTime se);
+
+        /// <summary>
+        /// Inserts a gateway-aware payment history row and returns the new row id string.
+        /// </summary>
+        Task<string> InsertPaymentHistoryWithGateway(string interviewer, int amount, int totalAmount, string status, string comment, string payoutReferenceId, string paymentGateway, string gatewayStatus, decimal fees);
+
+        /// <summary>
+        /// Fetches the current transfer status from Cashfree for the given transferId.
+        /// </summary>
+        Task<CashfreePayoutResult> GetCashfreePayoutStatus(string transferId);
     }
 }

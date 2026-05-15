@@ -4305,6 +4305,100 @@ namespace Risebird.Repository
                 return "";
             }
         }
+        /// <summary>
+        /// Inserts a PaymentHistory row with gateway metadata (PayoutReferenceId, PaymentGateway, GatewayStatus, Fees).
+        /// Returns the new row id on success, empty string on failure.
+        /// </summary>
+        public async Task<string> InsertPaymentHistoryWithGateway(
+            string interviewer,
+            int amount,
+            int totalAmount,
+            string status,
+            string comment,
+            string payoutReferenceId,
+            string paymentGateway,
+            string gatewayStatus,
+            decimal fees)
+        {
+            try
+            {
+                int userid = 0;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(
+                        "SELECT id FROM UserList WHERE Emailid = @Emailid",
+                        new { Emailid = interviewer });
+                    userid = results.FirstOrDefault();
+                }
+
+                if (userid == 0)
+                    return "";
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var sql = @"INSERT INTO PaymentHistory
+                                    (Userid, PaymentDate, Amount, TotalAmount, Status, Comment,
+                                     PayoutReferenceId, PaymentGateway, GatewayStatus, Fees)
+                                OUTPUT INSERTED.id
+                                VALUES
+                                    (@Userid, @PaymentDate, @Amount, @TotalAmount, @Status, @Comment,
+                                     @PayoutReferenceId, @PaymentGateway, @GatewayStatus, @Fees)";
+
+                    var newId = await con.QuerySingleOrDefaultAsync<int>(sql, new
+                    {
+                        Userid           = userid,
+                        PaymentDate      = DateTime.Now,
+                        Amount           = amount,
+                        TotalAmount      = totalAmount,
+                        Status           = status,
+                        Comment          = comment,
+                        PayoutReferenceId = payoutReferenceId,
+                        PaymentGateway   = paymentGateway,
+                        GatewayStatus    = gatewayStatus,
+                        Fees             = fees
+                    });
+
+                    return newId > 0 ? newId.ToString() : "";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+
+        /// <summary>
+        /// Returns the first active (non-failed, non-reversed) Cashfree payout row for the given user
+        /// and date range. Returns null if no match exists. Used as an idempotency guard.
+        /// </summary>
+        public async Task<PaymentHistoryGatewayRow> FetchExistingCashfreePayout(int userId, DateTime st, DateTime se)
+        {
+            try
+            {
+                var sql = @"SELECT TOP 1 id AS Id, PayoutReferenceId, GatewayStatus
+                            FROM PaymentHistory
+                            WHERE Userid = @UserId
+                              AND PaymentGateway = 'Cashfree'
+                              AND CAST(PaymentDate AS DATE) >= CAST(@St AS DATE)
+                              AND CAST(PaymentDate AS DATE) <= CAST(@Se AS DATE)
+                              AND GatewayStatus NOT IN ('failed', 'reversed', 'FAILED', 'REVERSED')";
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var row = await con.QuerySingleOrDefaultAsync<PaymentHistoryGatewayRow>(
+                        sql,
+                        new { UserId = userId, St = st, Se = se });
+                    return row;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<List<RBInterviewDetails>> FetchFNPaymentHistory()
         {
             try
