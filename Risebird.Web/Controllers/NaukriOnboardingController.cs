@@ -800,7 +800,7 @@ namespace Risebird.Web.Controllers
 
                 int agId = record.ResolvedAssessmentGroupId.Value;
                 var encryptedAgId = await _encryptionHelper.EncryptStringValue(agId.ToString());
-                var appLink = $"https://portal.risebird.io/Interviewer/MagApplicationForm?id={System.Web.HttpUtility.UrlEncode(encryptedAgId)}";
+                var appLink = $"https://portal.risebird.io/Interviewer/MagApplicationForm?id={Uri.EscapeDataString(encryptedAgId)}";
 
                 await _repository.UpdateSelectedIRFAsync(id, 0, null, appLink, agId);
 
