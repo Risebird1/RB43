@@ -12,6 +12,8 @@
     string selMag = ViewBag.MagName as string ?? string.Empty;
     string selSource = ViewBag.Source as string ?? string.Empty;
     string selAutoStatus = ViewBag.AutomationStatus as string ?? string.Empty;
+    string selCallStatus = ViewBag.CallStatus as string ?? string.Empty;
+    string selDisposition = ViewBag.Disposition as string ?? string.Empty;
     string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
@@ -21,6 +23,7 @@
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selName)
                    || !string.IsNullOrEmpty(selMag) || !string.IsNullOrEmpty(selSource)
                    || !string.IsNullOrEmpty(selAutoStatus)
+                   || !string.IsNullOrEmpty(selCallStatus) || !string.IsNullOrEmpty(selDisposition)
                    || !string.IsNullOrEmpty(selDateFrom) || !string.IsNullOrEmpty(selDateTo);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
@@ -34,6 +37,8 @@
         if (!string.IsNullOrEmpty(selMag)) q += $"&magName={Uri.EscapeDataString(selMag)}";
         if (!string.IsNullOrEmpty(selSource)) q += $"&source={Uri.EscapeDataString(selSource)}";
         if (!string.IsNullOrEmpty(selAutoStatus)) q += $"&automationStatus={Uri.EscapeDataString(selAutoStatus)}";
+        if (!string.IsNullOrEmpty(selCallStatus)) q += $"&callStatus={Uri.EscapeDataString(selCallStatus)}";
+        if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return Url.Action("Index", "NaukriOnboarding") + q;
@@ -259,6 +264,22 @@
                                     @foreach (var (val, label) in autoOpts)
                                     {
                                         if (selAutoStatus == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
+                                    }
+                                </select>
+                                <select name="callStatus" class="form-select nk-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">All calls</option>
+                                    @{ var callOpts = new[] { ("completed", "Completed"), ("triggered", "Triggered"), ("initiated", "Initiated"), ("trigger-failed", "Failed"), ("no_answer", "No Answer"), ("busy", "Busy") }; }
+                                    @foreach (var (val, label) in callOpts)
+                                    {
+                                        if (selCallStatus == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
+                                    }
+                                </select>
+                                <select name="disposition" class="form-select nk-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">All dispositions</option>
+                                    @{ var dispOpts = new[] { ("interested", "Interested"), ("not_interested", "Not Interested"), ("unsubscribe", "Unsubscribe") }; }
+                                    @foreach (var (val, label) in dispOpts)
+                                    {
+                                        if (selDisposition == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
                                     }
                                 </select>
                                 <input type="date" name="dateFrom" class="form-control nk-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
@@ -715,6 +736,82 @@
                         </div>
                     </div>
 
+                    <!-- ═══════════════ Manual Onboarding Section ═══════════════ -->
+                    <div id="manualOnboardSection" style="display:none;">
+                        <hr class="my-3" />
+                        <div id="manualOnboardBanner" class="alert alert-warning py-2 px-3 mb-3" style="font-size:12px;display:none;">
+                            <i class="fas fa-hand-paper me-1"></i><strong>Manual onboarding required.</strong>
+                            <span id="manualOnboardReason"></span>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="fw-bold mb-0" style="font-size:13px;"><i class="fas fa-user-cog me-2" style="color:#e67e22;"></i>Manual Onboarding</h6>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="btnToggleManualSteps" style="font-size:11px;padding:3px 10px;">
+                                <i class="fas fa-chevron-down me-1" id="manualToggleIcon"></i>Expand
+                            </button>
+                        </div>
+
+                        <div id="manualStepsBody" style="display:none;">
+                            <!-- M1: Employment Verification -->
+                            <div class="mgm-action-card pending" id="mStep1Card">
+                                <div class="d-flex align-items-start gap-3">
+                                    <span class="mgm-step-number pending" id="mStep1Number" style="background:#e67e22;color:#fff;font-size:11px;">EV</span>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                                            <div class="flex-grow-1" style="min-width:180px;">
+                                                <strong style="font-size:13px;">Employment Verification</strong>
+                                                <div class="text-muted mt-1" style="font-size:11.5px;" id="mStep1Subtitle">Verify the prospect's current employment via Signzy</div>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <button type="button" class="btn btn-warning btn-sm mgm-action-btn text-white" id="btnTriggerEV"><i class="fas fa-building me-1"></i>Verify Employment</button>
+                                                <button type="button" class="btn btn-outline-warning btn-sm mgm-action-btn" id="btnRetryEV" style="display:none;"><i class="fas fa-redo me-1"></i>Retry EV</button>
+                                            </div>
+                                        </div>
+                                        <div class="mgm-result-block" id="mStep1Result" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- M2: AI Resume Fitment Analysis -->
+                            <div class="mgm-action-card pending disabled" id="mStep2Card">
+                                <div class="d-flex align-items-start gap-3">
+                                    <span class="mgm-step-number pending" id="mStep2Number" style="background:#fd7e14;color:#fff;font-size:11px;">AI</span>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                                            <div class="flex-grow-1" style="min-width:180px;">
+                                                <strong style="font-size:13px;">AI Resume Fitment Analysis</strong>
+                                                <div class="text-muted mt-1" style="font-size:11.5px;" id="mStep2Subtitle">AI evaluates the resume against the MAG's specialization</div>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <button type="button" class="btn btn-info btn-sm mgm-action-btn text-white" id="btnRunAIAnalysis"><i class="fas fa-robot me-1"></i>Run AI Analysis</button>
+                                            </div>
+                                        </div>
+                                        <div class="mgm-result-block" id="mStep2Result" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- M3: Onboard Interviewer -->
+                            <div class="mgm-action-card pending disabled" id="mStep3Card">
+                                <div class="d-flex align-items-start gap-3">
+                                    <span class="mgm-step-number pending" id="mStep3Number" style="background:#198754;color:#fff;font-size:10px;"><i class="fas fa-user-plus"></i></span>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                                            <div class="flex-grow-1" style="min-width:180px;">
+                                                <strong style="font-size:13px;">Onboard Interviewer</strong>
+                                                <div class="text-muted mt-1" style="font-size:11.5px;" id="mStep3Subtitle">Create interviewer profile, map to Assessment Group, and send acknowledgement email</div>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <button type="button" class="btn btn-success btn-sm mgm-action-btn" id="btnManualOnboard"><i class="fas fa-user-plus me-1"></i>Onboard</button>
+                                            </div>
+                                        </div>
+                                        <div class="mgm-result-block" id="mStep3Result" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -890,6 +987,23 @@
         $('#mgmCompany').text('\u2014'); $('#mgmEmployed').text('\u2014');
         $('#magDropdown').hide();
         $('#step2MagDisplay').text('\u2014');
+
+        // Manual onboarding section reset
+        $('#manualOnboardSection').hide();
+        $('#manualOnboardBanner').hide();
+        $('#manualStepsBody').hide();
+        $('#manualToggleIcon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        $('#btnToggleManualSteps').html('<i class="fas fa-chevron-down me-1" id="manualToggleIcon"></i>Expand');
+        ['mStep1Card','mStep2Card','mStep3Card'].forEach(function(id){ $('#'+id).removeClass('completed failed disabled').addClass('pending'); });
+        $('#mStep2Card, #mStep3Card').addClass('disabled');
+        $('#mStep1Result, #mStep2Result, #mStep3Result').hide().empty();
+        $('#btnTriggerEV').prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment').show();
+        $('#btnRetryEV').hide();
+        $('#btnRunAIAnalysis').prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Run AI Analysis');
+        $('#btnManualOnboard').prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Onboard');
+        $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
+        $('#mStep2Subtitle').html('AI evaluates the resume against the MAG\'s specialization');
+        $('#mStep3Subtitle').html('Create interviewer profile, map to Assessment Group, and send acknowledgement email');
     }
 
     /* ── MAG edit dropdown (Step 2) ──────────────────────────────── */
@@ -986,6 +1100,7 @@
             return;
         }
         markStep(2, 'completed', '<i class="fas fa-check-circle text-success me-1"></i>MAG confirmed: <strong>' + $('<span>').text(magName).html() + '</strong> (AG #' + agId + ')');
+        showManualSectionIfReady();
     });
 
     function syncPipeline(r) {
@@ -1060,6 +1175,9 @@
             if (step2Done) { $('#plivoCallCard').removeClass('disabled'); $('#step3Card').removeClass('disabled'); }
             if (step3Done) { $('#step4Card').removeClass('disabled'); $('#step4Subtitle').html('Waiting for prospect to respond or self-register...'); }
         }
+
+        // ── Manual onboarding section sync ──
+        syncManualOnboarding(r, step1Done, step2Done);
 
         // Sync Plivo button disabled state with card disabled state
         if ($('#plivoCallCard').hasClass('disabled')) {
@@ -1177,6 +1295,7 @@
                     $('#mgmParsedEmail').text(res.parsedEmail || '\u2014');
                     $('#mgmParsedPhone').text(res.parsedPhone || '\u2014');
                     if (currentRecord) { currentRecord.parsedEmail = res.parsedEmail; currentRecord.parsedPhone = res.parsedPhone; currentRecord.resumeParseCompleted = true; currentRecord.isExistingInterviewer = res.isExistingInterviewer; }
+                    if (!res.isExistingInterviewer) showManualSectionIfReady();
                 } else {
                     var errHtml = res.error || 'Parse failed.';
                     if (res.needsUpload) errHtml += '<br/><em style="font-size:11px;">Upload a valid resume to proceed.</em>';
@@ -1342,6 +1461,7 @@
                             $('#step2Card').removeClass('disabled failed').addClass('pending');
                             $('#step2Number').removeClass('failed').addClass('pending');
                             $('#step2Subtitle').html(defaultSubtitles[2]);
+                            showManualSectionIfReady();
                         }
                         $('#step1Result .s1-status-msg').html(newStatusMsg);
                     } else {
@@ -1443,6 +1563,243 @@
     }
 
     $('#btnViewHistory').on('click', function () { openHistoryModal(currentRecordId); });
+
+    /* ══════════ Manual Onboarding Section ══════════ */
+
+    function showManualSectionIfReady() {
+        if (!currentRecord) return;
+        var r = currentRecord;
+        var step1Ok = r.resumeParseCompleted === true && r.isExistingInterviewer !== true;
+        var step2Ok = r.resolvedAssessmentGroupId > 0 && ($('#step2Card').hasClass('completed') || r.applicationLink || r.invitationEmailSent === true);
+
+        var pref = (r.plivoOnboardingPreference || '').toLowerCase();
+        var resp = (r.prospectResponse || '');
+        var needsManual = pref === 'manual_onboarding' || pref === 'need_clarity' || pref === 'facing_errors'
+                       || resp === 'ManualSupport' || resp === 'NeedClarity';
+
+        if (step1Ok && step2Ok) {
+            $('#manualOnboardSection').show();
+        } else if (step1Ok && needsManual) {
+            $('#manualOnboardSection').show();
+            $('#manualOnboardBanner').show();
+        }
+    }
+
+    function syncManualOnboarding(r, step1Done, step2Done) {
+        var needsManual = false;
+        var reason = '';
+        var pref = (r.plivoOnboardingPreference || '').toLowerCase();
+        var disp = (r.plivoProspectDisposition || '').toLowerCase();
+        var resp = (r.prospectResponse || '');
+
+        if (pref === 'manual_onboarding' || pref === 'need_clarity' || pref === 'facing_errors') {
+            needsManual = true;
+            var prefLabels = { 'manual_onboarding': 'manual onboarding', 'need_clarity': 'clarity on the process', 'facing_errors': 'help with errors' };
+            reason = 'The prospect indicated a preference for <strong>' + (prefLabels[pref] || pref) + '</strong> during the call.';
+        }
+        if (resp === 'ManualSupport') {
+            needsManual = true;
+            reason = 'The prospect clicked <strong>Manual Support</strong> in the invitation email.';
+        }
+        if (resp === 'NeedClarity') {
+            needsManual = true;
+            reason = 'The prospect clicked <strong>Need Clarity</strong> in the invitation email.';
+        }
+
+        // Always show the manual section if step 1 is done (operator may choose manual onboarding at any time)
+        if (step1Done && step2Done) {
+            $('#manualOnboardSection').show();
+        } else if (step1Done && needsManual) {
+            $('#manualOnboardSection').show();
+        }
+
+        if (needsManual) {
+            $('#manualOnboardBanner').show();
+            $('#manualOnboardReason').html(reason);
+            // Auto-expand manual steps
+            $('#manualStepsBody').show();
+            $('#btnToggleManualSteps').html('<i class="fas fa-chevron-up me-1" id="manualToggleIcon"></i>Collapse');
+        }
+
+        // Sync existing EV / AI / Onboard state
+        if (r.employmentVerified === true) {
+            var evHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Verified</span>';
+            if (r.employmentCompanyName) evHtml += ' &mdash; <strong>' + $('<span>').text(r.employmentCompanyName).html() + '</strong>';
+            if (r.employmentIsEmployed === true) evHtml += ' <span class="employed-yes">(Employed)</span>';
+            else if (r.employmentIsEmployed === false) evHtml += ' <span class="employed-no">(Not Employed)</span>';
+            mMarkStep(1, 'completed', evHtml);
+        }
+
+        if (r.resumeAIAnalysisCompleted === true) {
+            var verdict = r.aiVerdict || 'N/A';
+            var isPositive = verdict.toLowerCase().indexOf('yes') >= 0;
+            var aiHtml = '<span class="' + (isPositive ? 'text-success' : 'text-danger') + '"><i class="fas ' + (isPositive ? 'fa-check-circle' : 'fa-times-circle') + ' me-1"></i>Verdict: <strong>' + $('<span>').text(verdict).html() + '</strong></span>';
+            if (r.aiFitmentScore != null) aiHtml += ' &mdash; Score: <strong>' + r.aiFitmentScore + '</strong>';
+            mMarkStep(2, isPositive ? 'completed' : 'failed', aiHtml);
+        }
+
+        if (r.onboardingCompleted === true) {
+            var obHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Interviewer onboarded successfully!</span>';
+            if (r.onboardedUserId) obHtml += '<br/><strong>UserId:</strong> ' + r.onboardedUserId;
+            if (r.onboardedProfileId) obHtml += ' &mdash; <strong>ProfileId:</strong> ' + r.onboardedProfileId;
+            mMarkStep(3, 'completed', obHtml);
+        }
+    }
+
+    function mMarkStep(step, state, message) {
+        var card = $('#mStep'+step+'Card'), num = $('#mStep'+step+'Number'), result = $('#mStep'+step+'Result');
+        card.removeClass('pending completed failed disabled');
+        if (state === 'completed') {
+            card.addClass('completed');
+            if (step === 1) { $('#btnTriggerEV').hide(); $('#btnRetryEV').hide(); $('#mStep1Subtitle').html('<span class="text-success" style="font-size:11px;">Employment verified</span>'); }
+            if (step === 2) { $('#btnRunAIAnalysis').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed'); $('#mStep2Subtitle').html('<span class="text-success" style="font-size:11px;">AI analysis complete</span>'); }
+            if (step === 3) { $('#btnManualOnboard').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Onboarded'); $('#mStep3Subtitle').html('<span class="text-success" style="font-size:11px;">Interviewer onboarded</span>'); }
+        } else if (state === 'failed') {
+            card.addClass('failed');
+        } else { card.addClass('pending'); }
+        if (message) result.html(message).show();
+
+        if (step === 1 && (state === 'completed' || state === 'failed')) { $('#mStep2Card').removeClass('disabled'); }
+        if (step === 2 && state === 'completed') { $('#mStep3Card').removeClass('disabled'); }
+    }
+
+    $('#btnToggleManualSteps').on('click', function () {
+        var $body = $('#manualStepsBody');
+        if ($body.is(':visible')) {
+            $body.slideUp(200);
+            $(this).html('<i class="fas fa-chevron-down me-1" id="manualToggleIcon"></i>Expand');
+        } else {
+            $body.slideDown(200);
+            $(this).html('<i class="fas fa-chevron-up me-1" id="manualToggleIcon"></i>Collapse');
+        }
+    });
+
+    /* ── M1: Employment Verification ── */
+
+    $('#btnTriggerEV, #btnRetryEV').on('click', function () {
+        if (!currentRecordId || !currentRecord) return;
+        var email = currentRecord.parsedEmail, phone = currentRecord.parsedPhone;
+        if (!email) { alert('No email parsed. Complete Step 1 first.'); return; }
+        if (!phone) { alert('No phone number parsed. EV requires a phone number.'); return; }
+
+        var btn = $('#btnTriggerEV'); var retryBtn = $('#btnRetryEV');
+        btn.show().prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Verifying...');
+        retryBtn.hide();
+        $('#mStep1Subtitle').text('Running employment verification...');
+
+        $.ajax({
+            url: '/Aadhaar/EvVerification', type: 'POST', timeout: 60000,
+            data: { mobilenumber: phone, candidateemail: email },
+            success: function (result) {
+                var verified = true;
+                var companyName = result.companyName || '';
+                var isEmployed = (result.message == null && companyName !== '');
+                var details = result.message || '';
+
+                if (result.message == null) {
+                    var evHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Verified</span>';
+                    if (companyName) evHtml += ' &mdash; <strong>' + $('<span>').text(companyName).html() + '</strong>';
+                    evHtml += ' <span class="employed-yes">(Employed)</span>';
+                    mMarkStep(1, 'completed', evHtml);
+                    $('#mgmCompany').text(companyName || '\u2014');
+                    $('#mgmEmployed').html('<span class="employed-yes">Yes</span>');
+                } else {
+                    var evHtml2 = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Verification completed</span>';
+                    evHtml2 += ' &mdash; <span class="employed-no">Not Employed / Not Found</span>';
+                    if (details) evHtml2 += '<br/><span style="font-size:11px;">' + $('<span>').text(details).html() + '</span>';
+                    mMarkStep(1, 'failed', evHtml2);
+                    btn.hide(); retryBtn.show().prop('disabled', false);
+                    $('#mgmEmployed').html('<span class="employed-no">No</span>');
+                }
+
+                // Save EV result to DB
+                $.ajax({
+                    url: '@Url.Action("SaveEmploymentResult", "NaukriOnboarding")', type: 'POST',
+                    data: { __RequestVerificationToken: verificationToken, id: currentRecordId, verified: verified, companyName: companyName, isEmployed: isEmployed, details: details }
+                });
+
+                if (currentRecord) {
+                    currentRecord.employmentVerified = true;
+                    currentRecord.employmentCompanyName = companyName;
+                    currentRecord.employmentIsEmployed = isEmployed;
+                }
+            },
+            error: function () {
+                mMarkStep(1, 'failed', '<span class="text-danger">EV request failed. Try again.</span>');
+                btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment');
+                $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
+            }
+        });
+    });
+
+    /* ── M2: AI Resume Fitment Analysis ── */
+
+    $('#btnRunAIAnalysis').on('click', function () {
+        if (!currentRecordId) return; var btn = $(this);
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Analyzing (may take 30s)...');
+        $('#mStep2Subtitle').text('AI is analyzing the resume...');
+
+        $.ajax({
+            url: '@Url.Action("AnalyzeResume", "NaukriOnboarding")', type: 'POST', timeout: 120000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            success: function (res) {
+                if (res.success) {
+                    var verdict = res.verdict || 'N/A';
+                    var isPositive = verdict.toLowerCase().indexOf('yes') >= 0;
+                    var aiHtml = '<span class="' + (isPositive ? 'text-success' : 'text-danger') + '"><i class="fas ' + (isPositive ? 'fa-check-circle' : 'fa-times-circle') + ' me-1"></i>Verdict: <strong>' + $('<span>').text(verdict).html() + '</strong></span>';
+                    if (res.fitmentScore != null) aiHtml += ' &mdash; Score: <strong>' + res.fitmentScore + '</strong>';
+                    if (res.completeFitmentAnalysis) aiHtml += '<br/><span style="font-size:11px;line-height:1.5;display:block;margin-top:4px;">' + $('<span>').text(res.completeFitmentAnalysis).html() + '</span>';
+                    mMarkStep(2, isPositive ? 'completed' : 'failed', aiHtml);
+                    if (currentRecord) { currentRecord.resumeAIAnalysisCompleted = true; currentRecord.aiVerdict = verdict; currentRecord.aiFitmentScore = res.fitmentScore; }
+                } else {
+                    var errMsg = res.error || 'Analysis failed.';
+                    if (res.needsUpload) errMsg += ' Upload a valid resume first.';
+                    mMarkStep(2, 'failed', '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + errMsg + '</span>');
+                    btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry');
+                }
+            },
+            error: function (xhr, status) {
+                var msg = status === 'timeout' ? 'Request timed out. Try again.' : 'Request failed.';
+                mMarkStep(2, 'failed', '<span class="text-danger">' + msg + '</span>');
+                btn.prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Retry');
+                $('#mStep2Subtitle').html('AI evaluates the resume against the MAG\'s specialization');
+            }
+        });
+    });
+
+    /* ── M3: Onboard Interviewer ── */
+
+    $('#btnManualOnboard').on('click', function () {
+        if (!currentRecordId) return;
+        if (!confirm('This will create a UserList and InterviewerProfile entry and map the interviewer to the Assessment Group. Proceed?')) return;
+        var btn = $(this);
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Onboarding...');
+        $('#mStep3Subtitle').text('Creating interviewer profile...');
+
+        $.ajax({
+            url: '@Url.Action("OnboardInterviewer", "NaukriOnboarding")', type: 'POST', timeout: 120000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            success: function (res) {
+                if (res.success) {
+                    var obHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message || 'Interviewer onboarded successfully!') + '</span>';
+                    if (res.userId) obHtml += '<br/><strong>UserId:</strong> ' + res.userId;
+                    if (res.profileId) obHtml += ' &mdash; <strong>ProfileId:</strong> ' + res.profileId;
+                    mMarkStep(3, 'completed', obHtml);
+                    updateStatusBadge('Onboarded');
+                    if (currentRecord) { currentRecord.onboardingCompleted = true; currentRecord.onboardedUserId = res.userId; }
+                } else {
+                    mMarkStep(3, 'failed', '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Onboarding failed.') + '</span>');
+                    btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry');
+                    $('#mStep3Subtitle').html('Create interviewer profile, map to Assessment Group, and send acknowledgement email');
+                }
+            },
+            error: function () {
+                mMarkStep(3, 'failed', '<span class="text-danger">Request failed.</span>');
+                btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry');
+                $('#mStep3Subtitle').html('Create interviewer profile, map to Assessment Group, and send acknowledgement email');
+            }
+        });
+    });
 
     /* ── Plivo Call ─────────────────────────────────────────── */
 
