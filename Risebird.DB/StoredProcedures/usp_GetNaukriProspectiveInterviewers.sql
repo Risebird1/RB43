@@ -8,6 +8,8 @@ CREATE PROCEDURE [dbo].[usp_GetNaukriProspectiveInterviewers]
     @MagName            NVARCHAR(200)= NULL,
     @Source             VARCHAR(50)  = NULL,
     @AutomationStatus   VARCHAR(50)  = NULL,
+    @CallStatus         VARCHAR(50)  = NULL,
+    @Disposition        VARCHAR(50)  = NULL,
     @DateFrom           DATETIME     = NULL,
     @DateTo             DATETIME     = NULL,
     @Page               INT          = 1,
@@ -36,6 +38,8 @@ BEGIN
                 OR (@AutomationStatus = '_none_' AND ISNULL(np.AutomationStatus, '') = '')
                 OR (@AutomationStatus NOT IN ('_any_', '_none_') AND np.AutomationStatus = @AutomationStatus)
             )
+            AND (@CallStatus IS NULL OR LOWER(ISNULL(np.PlivoCallStatus, '')) = LOWER(@CallStatus))
+            AND (@Disposition IS NULL OR LOWER(ISNULL(np.PlivoProspectDisposition, '')) = LOWER(@Disposition))
             AND (@DateFrom IS NULL OR np.ReceivedAt >= @DateFrom)
             AND (@DateTo IS NULL OR np.ReceivedAt < DATEADD(DAY, 1, @DateTo))
     )

@@ -76,6 +76,8 @@ namespace Risebird.Web.Controllers
             string magName           = null,
             string source            = null,
             string automationStatus  = null,
+            string callStatus        = null,
+            string disposition       = null,
             string dateFrom          = null,
             string dateTo            = null,
             int    page              = 1,
@@ -91,7 +93,7 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pTo)) dtTo = pTo;
 
-                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus);
+                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition);
 
                 var first = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -106,6 +108,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.MagName = magName ?? string.Empty;
                 ViewBag.Source = source ?? string.Empty;
                 ViewBag.AutomationStatus = automationStatus ?? string.Empty;
+                ViewBag.CallStatus = callStatus ?? string.Empty;
+                ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.DateFrom = dateFrom ?? string.Empty;
                 ViewBag.DateTo = dateTo ?? string.Empty;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
@@ -119,6 +123,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.Status = status; ViewBag.CandidateName = candidateName; ViewBag.MagName = magName;
                 ViewBag.Source = source ?? string.Empty;
                 ViewBag.AutomationStatus = automationStatus ?? string.Empty;
+                ViewBag.CallStatus = callStatus ?? string.Empty;
+                ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
                 return View(new List<NaukriProspectiveInterviewerVM>());
