@@ -2952,11 +2952,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment)
+        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string transferId = null, string cfTransferId = null, string payoutStatus = null)
         {
             try
             {
-                var result = _meetingRespository.InsertPaymentHistory(Interviewer, Amount, TotalAmount, actionvalue, Comment);
+                var result = _meetingRespository.InsertPaymentHistory(Interviewer, Amount, TotalAmount, actionvalue, Comment, transferId, cfTransferId, payoutStatus);
                 return result.Result;
             }
             catch (Exception e)
@@ -3555,28 +3555,32 @@ namespace Risebird.Business
                 var mobilenumber = NormalizeMobile(bankDetails.MobileNumber);
                 // 5. Call Cashfree
                 var payoutResult = await _cashfreePayoutService.CreatePayoutToBankAsync(
-                    accountName:   bankDetails.AccountName ?? bankDetails.FirstName,
+                    accountName: bankDetails.AccountName ?? bankDetails.FirstName,
                     accountNumber: bankDetails.AccountNumber,
-                    ifscCode:      bankDetails.IFSCCode,
-                    email:         bankDetails.InterviewerEmailid ?? email,
-                    phone:         mobilenumber,
-                    amount:        payableAmount,
-                    transferId:    transferId,
-                    remarks:       "Risebird interviewer payout");
+                    ifscCode: bankDetails.IFSCCode,
+                    email: bankDetails.InterviewerEmailid ?? email,
+                    phone: mobilenumber,
+                    amount: payableAmount,
+                    transferId: transferId,
+                    remarks: "Risebird interviewer payout");
 
                 if (!payoutResult.Success)
                     return Tuple.Create(false, payoutResult.ErrorMessage ?? "Cashfree payout initiation failed.");
 
-                //// 6. Insert payment history record and get the new id
-                //var paymentHistoryIdStr = await InsertPaymentHistory(email, payableAmount, totalAmount, "Done", commentvalue);
-                //if (string.IsNullOrEmpty(paymentHistoryIdStr))
-                //    paymentHistoryIdStr = "0";
-                //int.TryParse(paymentHistoryIdStr, out var paymentHistoryId);
+                // 6. Insert payment history record (with CashFree transfer IDs) and get the new id
+                var paymentHistoryIdStr = await InsertPaymentHistory(
+                    email, payableAmount, totalAmount, "Done", commentvalue,
+                    transferId:   payoutResult.PayoutId,
+                    cfTransferId: payoutResult.CFPayoutId,
+                    payoutStatus: payoutResult.Status);
+                if (string.IsNullOrEmpty(paymentHistoryIdStr))
+                    paymentHistoryIdStr = "0";
+                int.TryParse(paymentHistoryIdStr, out var paymentHistoryId);
 
-                //// 7. Mark interview points as paid using the real PaymentHistoryId
-                //var confirmResult = await RBConfirmPayment(id, index, st, se.AddDays(1), paymentHistoryId);
-                //if (confirmResult != "Success")
-                    //return Tuple.Create(false, $"Payout succeeded but interview points update failed. Ref: {payoutResult.PayoutId}");
+                // 7. Mark interview points as paid using the real PaymentHistoryId
+                var confirmResult = await RBConfirmPayment(id, index, st, se.AddDays(1), paymentHistoryId);
+                if (confirmResult != "Success")
+                    return Tuple.Create(false, $"Payout succeeded but interview points update failed. Ref: {payoutResult.PayoutId}");
 
                 return Tuple.Create(true, $"Payment initiated via Cashfree. Reference: {payoutResult.PayoutId}");
             }

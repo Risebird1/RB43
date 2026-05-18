@@ -4246,7 +4246,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment)
+        public async Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string transferId = null, string cfTransferId = null, string payoutStatus = null)
         {
             try
             {
@@ -4277,26 +4277,18 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@userid", userid);
-                    parameters.Add("@PaymentDate", PaymentDate);
-                    parameters.Add("@Amount", Amount);
-                    parameters.Add("@status", status);
-                    parameters.Add("@Comment", Comment);
-                    parameters.Add("@TotalAmount", TotalAmount);
+                    parameters.Add("@userid",       userid);
+                    parameters.Add("@PaymentDate",  PaymentDate);
+                    parameters.Add("@Amount",       Amount);
+                    parameters.Add("@status",       status);
+                    parameters.Add("@Comment",      Comment);
+                    parameters.Add("@TotalAmount",  TotalAmount);
+                    parameters.Add("@TransferId",   transferId);
+                    parameters.Add("@CfTransferId", cfTransferId);
+                    parameters.Add("@PayoutStatus", payoutStatus);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_InsertPaymentHistory", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
-                    //string sqlInsertReport = "Insert Into PaymentHistory (userid, PaymentDate,Amount,Status,Comment,TotalAmount) Values (@userid, @PaymentDate, @Amount, @status,@Comment,@TotalAmount);";
-                    //var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
-                    //{
-                    //    userid,
-                    //    PaymentDate,
-                    //    Amount,
-                    //    status,
-                    //    Comment,
-                    //    TotalAmount
-                    //});
-                    //return "Success";
                 }
             }
             catch (SqlException ex)
