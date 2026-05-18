@@ -134,7 +134,7 @@ namespace Risebird.Business.Interface
         IEnumerable<SurveyDetails> FetchSurveyClientName(List<SurveyDetails> _lst);
         IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst);
 
-        Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment);
+        Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string transferId = null, string cfTransferId = null, string payoutStatus = null);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<Meeting>> FetchOpenMeetingById(string id);
@@ -270,5 +270,15 @@ namespace Risebird.Business.Interface
         Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId);
         Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId);
         Task<IEnumerable<PaymentSLAVM>> GetAutoApprovalPaymentSLAPendingList();
+
+        /// <summary>
+        /// Validates bank details, initiates a Cashfree bank payout, and marks interview points as paid.
+        /// </summary>
+        Task<Tuple<bool, string>> ConfirmPaymentViaCashfree(int id, int index, string email, string amount, DateTime st, DateTime se);
+
+        /// <summary>
+        /// Fetches the current transfer status from Cashfree for the given transferId.
+        /// </summary>
+        Task<CashfreePayoutResult> GetCashfreePayoutStatus(string transferId);
     }
 }

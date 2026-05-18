@@ -155,7 +155,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<SurveyDetails> FetchSurveyClientName(List<SurveyDetails> _lst);
         IEnumerable<SurveyDetails> FetchSurveyCandidateEmails(List<SurveyDetails> _lst);
 
-        Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment);
+        Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string transferId = null, string cfTransferId = null, string payoutStatus = null);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailID, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         Task<IEnumerable<PendingVideoMeetingsData>> GetPendingVideoMeetings();
@@ -319,5 +319,29 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> FetchMoreDetailsInterview(int interviewId);
         Task<int> GetAIInterviewVideoCount(string sessionId);
         Task<IEnumerable<PaymentSLAVM>> GetAutoApprovalPaymentSLAPendingList();
+
+        /// <summary>
+        /// Inserts a PaymentHistory row that includes gateway-specific fields (PayoutReferenceId, PaymentGateway, GatewayStatus, Fees).
+        /// Returns the new row id as a string, or null/empty on failure.
+        /// </summary>
+        Task<string> InsertPaymentHistoryWithGateway(string interviewer, int amount, int totalAmount, string status, string comment, string payoutReferenceId, string paymentGateway, string gatewayStatus, decimal fees);
+
+        /// <summary>
+        /// Returns the first non-failed/non-reversed Cashfree PaymentHistory row for the given user in the given date range, or null if none exists.
+        /// Used as an idempotency guard before initiating a new payout.
+        /// </summary>
+        Task<PaymentHistoryGatewayRow> FetchExistingCashfreePayout(int userId, DateTime st, DateTime se);
+
+        /// <summary>
+        /// Updates the <c>PayoutStatus</c> (and optionally <c>CfTransferId</c>) on a
+        /// PaymentHistory row identified by <paramref name="transferId"/> and/or
+        /// <paramref name="cfTransferId"/> received from a Cashfree Payout webhook event.
+        /// Either parameter alone is enough for the match; both are used when available.
+        /// </summary>
+        /// <param name="transferId">Your internal transfer_id sent when the payout was created.</param>
+        /// <param name="cfTransferId">Cashfree's own numeric cf_transfer_id.</param>
+        /// <param name="payoutStatus">Terminal status from the webhook: SUCCESS | FAILED | REVERSED.</param>
+        /// <returns>Number of rows updated (0 if no matching row was found).</returns>
+        Task<int> UpdatePaymentHistoryTransferStatus(string transferId, string cfTransferId, string payoutStatus);
     }
 }
