@@ -32,7 +32,8 @@ namespace Risebird.Repository
             int page = 1, int pageSize = 50,
             string status = null, string purpose = null,
             string meeting = null, string disposition = null,
-            DateTime? dateFrom = null, DateTime? dateTo = null)
+            DateTime? dateFrom = null, DateTime? dateTo = null,
+            string clientName = null)
         {
             try
             {
@@ -48,7 +49,8 @@ namespace Risebird.Repository
                         Meeting     = string.IsNullOrWhiteSpace(meeting)     ? null : meeting,
                         Disposition = string.IsNullOrWhiteSpace(disposition) ? null : disposition,
                         DateFrom    = dateFrom,
-                        DateTo      = dateTo
+                        DateTo      = dateTo,
+                        ClientName  = string.IsNullOrWhiteSpace(clientName)  ? null : clientName
                     },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
@@ -395,7 +397,6 @@ namespace Risebird.Repository
             try
             {
                 using var conn = new SqlConnection(_connectionString);
-                // Candidate.id → CandidatesMaster → UserList.EmailId
                 const string sql = @"
                     SELECT TOP 1 ul.EmailId
                     FROM   Candidate        ca
@@ -408,6 +409,22 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        public async Task<List<string>> GetAllClientNamesAsync()
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var results = await conn.QueryAsync<string>(
+                    "SELECT Name FROM Client WHERE Name IS NOT NULL ORDER BY Name");
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<string>();
             }
         }
     }

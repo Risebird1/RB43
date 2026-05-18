@@ -22,6 +22,7 @@
     string fPurpose     = ViewBag.Purpose     as string;
     string fMeeting     = ViewBag.Meeting     as string;
     string fDisposition = ViewBag.Disposition as string;
+    string fClientName  = ViewBag.ClientName  as string;
     string fDateFrom    = ViewBag.DateFrom    as string;
     string fDateTo      = ViewBag.DateTo      as string;
 
@@ -34,6 +35,7 @@
             purpose     = fPurpose,
             meeting     = fMeeting,
             disposition = fDisposition,
+            clientName  = fClientName,
             dateFrom    = fDateFrom,
             dateTo      = fDateTo
         }) ?? string.Empty;
@@ -246,6 +248,25 @@
                         @if (dSel_cantSay)      { <option value="cant_say"     selected>Can't Say</option>    } else { <option value="cant_say">Can't Say</option>    }
                     </select>
                 </div>
+                @{
+                    var allClientNames = (ViewBag.AllClientNames as List<string>) ?? new List<string>();
+                }
+                <div class="col-auto">
+                    <select id="clientNameFilter" class="form-select cx-filter-control" onchange="applyServerFilter('clientName', this.value)">
+                        <option value="">All clients</option>
+                        @foreach (var cn in allClientNames)
+                        {
+                            if (fClientName == cn)
+                            {
+                                <option value="@cn" selected>@cn</option>
+                            }
+                            else
+                            {
+                                <option value="@cn">@cn</option>
+                            }
+                        }
+                    </select>
+                </div>
                 <div class="col-auto d-flex align-items-center gap-1">
                     <label class="text-muted small mb-0 text-nowrap">Call date:</label>
                     <input type="date" id="dateFromInput" class="form-control cx-filter-control"
@@ -261,6 +282,7 @@
                 @{
                     bool anyFilterActive = !string.IsNullOrEmpty(fStatus)      || !string.IsNullOrEmpty(fPurpose)
                                        || !string.IsNullOrEmpty(fMeeting)      || !string.IsNullOrEmpty(fDisposition)
+                                       || !string.IsNullOrEmpty(fClientName)
                                        || !string.IsNullOrEmpty(fDateFrom)     || !string.IsNullOrEmpty(fDateTo);
                     string clearUrl = Url.Action("Index", new { page = 1, pageSize }) ?? string.Empty;
                 }
@@ -753,6 +775,7 @@
         purpose:     '@(fPurpose     ?? "")',
         meeting:     '@(fMeeting     ?? "")',
         disposition: '@(fDisposition ?? "")',
+        clientName:  '@(fClientName  ?? "")',
         dateFrom:    '@(fDateFrom    ?? "")',
         dateTo:      '@(fDateTo      ?? "")',
         pageSize:    '@pageSize',
