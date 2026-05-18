@@ -330,5 +330,17 @@ namespace Risebird.Repository.Interface
         /// Used as an idempotency guard before initiating a new payout.
         /// </summary>
         Task<PaymentHistoryGatewayRow> FetchExistingCashfreePayout(int userId, DateTime st, DateTime se);
+
+        /// <summary>
+        /// Updates the <c>PayoutStatus</c> (and optionally <c>CfTransferId</c>) on a
+        /// PaymentHistory row identified by <paramref name="transferId"/> and/or
+        /// <paramref name="cfTransferId"/> received from a Cashfree Payout webhook event.
+        /// Either parameter alone is enough for the match; both are used when available.
+        /// </summary>
+        /// <param name="transferId">Your internal transfer_id sent when the payout was created.</param>
+        /// <param name="cfTransferId">Cashfree's own numeric cf_transfer_id.</param>
+        /// <param name="payoutStatus">Terminal status from the webhook: SUCCESS | FAILED | REVERSED.</param>
+        /// <returns>Number of rows updated (0 if no matching row was found).</returns>
+        Task<int> UpdatePaymentHistoryTransferStatus(string transferId, string cfTransferId, string payoutStatus);
     }
 }
