@@ -67,7 +67,8 @@ namespace Risebird.Services.Controllers
         ///   401 Unauthorized – HMAC signature mismatch.
         ///   500 Internal     – Unexpected exception.
         /// </summary>
-        [HttpPost("TransactionStatus")]
+        [HttpPost]
+        [Route("TransactionStatus")]
         public async Task<IActionResult> TransactionStatus()
         {
             string rawBody = string.Empty;
@@ -224,6 +225,7 @@ namespace Risebird.Services.Controllers
             }
         }
         [HttpGet]
+        [Route("TransctionApiCheck")]
         public async Task<IActionResult> TransctionApiCheck()
         {
             return Ok("Working Fine!");
