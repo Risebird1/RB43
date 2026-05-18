@@ -1045,27 +1045,30 @@
         if (!$(e.target).closest('.mag-dropdown-wrap').length) $('#magDropdown').hide();
     });
 
-    $('#magSearchInput').on('input', function () { renderMagList($(this).val()); });
+    $('#magSearchInput').on('input', function () { renderMagList($(this).val()); })
+        .on('click', function (e) { e.stopPropagation(); });
 
     function renderMagList(filter) {
         var $list = $('#magList').empty();
         var lf = (filter || '').toLowerCase();
         var currentMag = currentRecord ? (currentRecord.magName || '') : '';
         var count = 0;
-        $.each(allMags, function (_, m) {
+        $.each(allMags, function (idx, m) {
             var display = m.magName + (m.assessmentGroupName ? ' \u2192 ' + m.assessmentGroupName : '');
             if (lf && display.toLowerCase().indexOf(lf) === -1) return;
             var cls = 'mag-item' + (m.magName === currentMag ? ' active' : '');
-            var $item = $('<div class="' + cls + '">').html('<span>' + $('<span>').text(m.magName).html() + '</span><span class="mag-ag">' + $('<span>').text(m.assessmentGroupName || '').html() + '</span>');
-            $item.data('mag', m);
+            var $item = $('<div class="' + cls + '" data-mag-idx="' + idx + '">').html('<span>' + $('<span>').text(m.magName).html() + '</span><span class="mag-ag">' + $('<span>').text(m.assessmentGroupName || '').html() + '</span>');
             $list.append($item);
             count++;
         });
         if (count === 0) $list.append('<div class="mag-no-results">No matching MAGs found</div>');
     }
 
-    $(document).on('click', '#magList .mag-item', function () {
-        var m = $(this).data('mag');
+    $(document).on('click', '#magList .mag-item', function (e) {
+        e.stopPropagation();
+        var idx = $(this).attr('data-mag-idx');
+        if (idx === undefined || idx === null) return;
+        var m = allMags[parseInt(idx)];
         if (!m || !currentRecordId) return;
         var oldMag = currentRecord ? (currentRecord.magName || '') : '';
         if (m.magName === oldMag) { $('#magDropdown').hide(); return; }
@@ -1086,7 +1089,8 @@
                     }
                 } else { alert(res.error || 'Failed to update MAG.'); }
                 $('#magDropdown').hide();
-            }
+            },
+            error: function () { alert('Request failed. Please try again.'); }
         });
     });
 

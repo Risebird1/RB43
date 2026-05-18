@@ -65,6 +65,8 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateAutomationStatusAsync(int id, string automationStatus, bool incrementCallAttempt = false);
         Task<int?> GetLatestActiveIRFForAssessmentGroupAsync(int assessmentGroupId);
         Task<bool> UpdateMagNameAsync(int id, string magName);
+        Task<bool> UpdateParsedEmailAsync(int id, string email);
+        Task<bool> UpdateParsedPhoneAsync(int id, string phone);
     }
 
     public class ActiveIRFItem

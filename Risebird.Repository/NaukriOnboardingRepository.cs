@@ -604,5 +604,39 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> UpdateParsedEmailAsync(int id, string email)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.ExecuteAsync(
+                    "UPDATE NaukriProspectiveInterviewer SET ParsedEmail = @Email, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
+                    new { Id = id, Email = email });
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateParsedPhoneAsync(int id, string phone)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.ExecuteAsync(
+                    "UPDATE NaukriProspectiveInterviewer SET ParsedPhone = @Phone, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
+                    new { Id = id, Phone = phone });
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
