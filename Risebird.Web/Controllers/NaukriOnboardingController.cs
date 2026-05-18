@@ -261,6 +261,58 @@ namespace Risebird.Web.Controllers
             return Json(new { success = ok, status });
         }
 
+        // ── Inline field update (MAG, Email, Phone) ──────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateField(int id, string fieldName, string oldValue, string newValue)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            if (id <= 0 || string.IsNullOrWhiteSpace(fieldName))
+                return Json(new { success = false, error = "Invalid request." });
+
+            var changedBy = HttpContext.Session.GetString("email").Trim('"');
+
+            try
+            {
+                bool ok = false;
+                switch (fieldName)
+                {
+                    case "MagName":
+                        ok = await _repository.UpdateMagNameAsync(id, newValue?.Trim());
+                        break;
+                    case "ParsedEmail":
+                        ok = await _repository.UpdateParsedEmailAsync(id, newValue?.Trim());
+                        break;
+                    case "ParsedPhone":
+                        ok = await _repository.UpdateParsedPhoneAsync(id, newValue?.Trim());
+                        break;
+                    default:
+                        return Json(new { success = false, error = $"Field '{fieldName}' is not editable." });
+                }
+
+                if (ok)
+                {
+                    string eventType = fieldName switch
+                    {
+                        "MagName" => "MagChange",
+                        "ParsedEmail" => "EmailChange",
+                        "ParsedPhone" => "PhoneChange",
+                        _ => "FieldChange"
+                    };
+                    await _repository.InsertHistoryAsync(id, eventType, oldValue ?? "—", newValue ?? "—", changedBy);
+                }
+                return Json(new { success = ok });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
         // ── Delete Record (AJAX — Admin / SupportAdmin only) ────────────────────────
 
         [HttpPost]
