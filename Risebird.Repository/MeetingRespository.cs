@@ -5599,7 +5599,8 @@ namespace Risebird.Repository
                                              AccountName = c.AccountName,
                                              AccountNumber = c.AccountNumber,
                                              PAN = c.PAN,
-                                             IFSCCode = c.IFSCCode
+                                             IFSCCode = c.IFSCCode,
+                                             MobileNumber=c.MobileNumber
                                          }).ToList();
                         return resultset.ToList();
                     }

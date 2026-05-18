@@ -119,7 +119,7 @@ namespace Risebird.Business
                 beneficiary_contact_details = new
                 {
                     beneficiary_email = email,
-                    beneficiary_phone = SanitizePhone(phone)
+                    beneficiary_phone = phone
                 }
             };
 

@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -3551,13 +3552,14 @@ namespace Risebird.Business
                 if (transferId.Length > 40)
                     transferId = transferId.Substring(0, 40);
 
+                var mobilenumber = NormalizeMobile(bankDetails.MobileNumber);
                 // 5. Call Cashfree
                 var payoutResult = await _cashfreePayoutService.CreatePayoutToBankAsync(
                     accountName:   bankDetails.AccountName ?? bankDetails.FirstName,
                     accountNumber: bankDetails.AccountNumber,
                     ifscCode:      bankDetails.IFSCCode,
                     email:         bankDetails.InterviewerEmailid ?? email,
-                    phone:         "0000000000",
+                    phone:         mobilenumber,
                     amount:        payableAmount,
                     transferId:    transferId,
                     remarks:       "Risebird interviewer payout");
@@ -3574,9 +3576,9 @@ namespace Risebird.Business
                 //// 7. Mark interview points as paid using the real PaymentHistoryId
                 //var confirmResult = await RBConfirmPayment(id, index, st, se.AddDays(1), paymentHistoryId);
                 //if (confirmResult != "Success")
-                    return Tuple.Create(false, $"Payout succeeded but interview points update failed. Ref: {payoutResult.PayoutId}");
+                    //return Tuple.Create(false, $"Payout succeeded but interview points update failed. Ref: {payoutResult.PayoutId}");
 
-                //return Tuple.Create(true, $"Payment initiated via Cashfree. Reference: {payoutResult.PayoutId}");
+                return Tuple.Create(true, $"Payment initiated via Cashfree. Reference: {payoutResult.PayoutId}");
             }
             catch (Exception e)
             {
@@ -4820,6 +4822,24 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        private string NormalizeMobile(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+            // Remove spaces, hyphens, brackets etc.
+            string cleaned = Regex.Replace(input, @"[^\d]", "");
+            // Remove leading 91 if present
+            if (cleaned.StartsWith("91") && cleaned.Length == 12)
+            {
+                cleaned = cleaned.Substring(2);
+            }
+            // Validate final number
+            if (Regex.IsMatch(cleaned, @"^[6-9]\d{9}$"))
+            {
+                return cleaned;
+            }
+            return null;
         }
     }
 }

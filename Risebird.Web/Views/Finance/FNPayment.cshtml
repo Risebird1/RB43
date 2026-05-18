@@ -771,13 +771,11 @@
                         type: "POST",
                         data: { id: interviewerid, index: Generateinvoiceflag, email: $("#hidcomment_" + interviewerid).val(), amount: $("#hidpoint_" + interviewerid).val(), st: St_date, se: Se_date },
                         dataType: 'json',
-                        success: function (message) {
-                            swal.fire(message);
+                        success: function (data) {
+                            swal.fire(data.message);
                             FinacneChangePage(_Currentpage);
-                            //Fetchinvoice(actionbutton, 1);
                         }
                     });
-                    //window.location.href = "/Finance/ConfirmPayment?id=" + interviewerid + "&index=" + Generateinvoiceflag + "&email=" + $("#hidcomment_" + interviewerid).val() + "&amount=" + $("#hidpoint_" + interviewerid).val() + "&st=" + St_date + "&se=" + Se_date;
                 }
             })
             confirmationpayment = 0;
