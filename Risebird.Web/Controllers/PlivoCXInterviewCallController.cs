@@ -69,7 +69,8 @@ namespace Risebird.Web.Controllers
             string meeting     = null,
             string disposition = null,
             string dateFrom    = null,
-            string dateTo      = null)
+            string dateTo      = null,
+            string clientName  = null)
         {
             try
             {
@@ -82,7 +83,9 @@ namespace Risebird.Web.Controllers
 
                 var calls = await _repository.GetCallLogDetailsAsync(
                     page, pageSize, status, purpose, meeting, disposition,
-                    parsedDateFrom, parsedDateTo);
+                    parsedDateFrom, parsedDateTo, clientName);
+
+                var allClientNames = await _repository.GetAllClientNamesAsync();
 
                 var first = calls.FirstOrDefault();
                 int total = first?.TotalCount ?? 0;
@@ -96,6 +99,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.Purpose     = purpose;
                 ViewBag.Meeting     = meeting;
                 ViewBag.Disposition = disposition;
+                ViewBag.ClientName  = clientName;
+                ViewBag.AllClientNames = allClientNames;
                 ViewBag.DateFrom    = parsedDateFrom.HasValue ? parsedDateFrom.Value.ToString("yyyy-MM-dd") : null;
                 ViewBag.DateTo      = parsedDateTo.HasValue   ? parsedDateTo.Value.ToString("yyyy-MM-dd")   : null;
 
@@ -107,6 +112,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
                 ViewBag.Status = status; ViewBag.Purpose = purpose;
                 ViewBag.Meeting = meeting; ViewBag.Disposition = disposition;
+                ViewBag.ClientName = clientName;
+                ViewBag.AllClientNames = new System.Collections.Generic.List<string>();
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 return View(new System.Collections.Generic.List<Risebird.Entities.ViewModel.PlivoCXCallLogDetailVM>());
             }

@@ -20,6 +20,7 @@
 --   @Disposition – filter by CandidateDisposition (NULL = all)
 --   @DateFrom    – filter calls on or after this date (NULL = no lower bound)
 --   @DateTo      – filter calls on or before this date (NULL = no upper bound)
+--   @ClientName  – filter by Client.Name via IRF.ClientId (NULL = all)
 --
 -- Run to deploy:
 --   Execute this script against productProdDB in SSMS.
@@ -33,7 +34,8 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_GetPlivoCXCallLogDetails]
     @Meeting     NVARCHAR(3)   = NULL,
     @Disposition NVARCHAR(50)  = NULL,
     @DateFrom    DATE          = NULL,
-    @DateTo      DATE          = NULL
+    @DateTo      DATE          = NULL,
+    @ClientName  NVARCHAR(150) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -50,7 +52,7 @@ BEGIN
             pcl.RecipientPhone,
             irf.IRFId,
             irf.JDTiltle,
-            pcl.ClientName,
+            c.Name                          AS ClientName,
             pcl.TriggeredBy,
             pcl.PlivoCXConversationId,
             pcl.CallPurpose,
@@ -94,6 +96,7 @@ BEGIN
 
         FROM      PlivoCXCallLogs   pcl
         JOIN      IRF               irf ON irf.id = pcl.IRFId
+        JOIN      Client            c   ON c.id   = irf.ClientId
         LEFT JOIN InterviewMeetings  im
                ON im.candidateEmail    = pcl.RecipientEmail
               AND im.IRFId             = irf.IRFId
@@ -116,6 +119,7 @@ BEGIN
             AND (@Disposition IS NULL OR pcl.CandidateDisposition  = @Disposition)
             AND (@DateFrom    IS NULL OR CAST(pcl.CreatedAt AS DATE) >= @DateFrom)
             AND (@DateTo      IS NULL OR CAST(pcl.CreatedAt AS DATE) <= @DateTo)
+            AND (@ClientName  IS NULL OR c.Name = @ClientName)
     )
     SELECT
         -- ── Pagination / aggregate metadata (window functions over filtered set) ──
