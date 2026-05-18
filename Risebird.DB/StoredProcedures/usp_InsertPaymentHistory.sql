@@ -8,18 +8,26 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create Procedure usp_InsertPaymentHistory
-@userid int,
-@PaymentDate datetime,
-@Amount int,
-@status varchar(10),
-@Comment varchar(100),
-@TotalAmount int
+
+CREATE PROCEDURE usp_InsertPaymentHistory
+    @userid       INT,
+    @PaymentDate  DATETIME,
+    @Amount       INT,
+    @status       VARCHAR(10),
+    @Comment      VARCHAR(100),
+    @TotalAmount  INT,
+    @TransferId   NVARCHAR(50)  = NULL,
+    @CfTransferId NVARCHAR(100) = NULL,
+    @PayoutStatus NVARCHAR(50)  = NULL
 AS
 BEGIN
-Insert Into PaymentHistory (userid, PaymentDate,Amount,Status,Comment,TotalAmount) Values 
-(@userid, @PaymentDate, @Amount, @status,@Comment,@TotalAmount)
+    SET NOCOUNT ON;
 
-Select SCOPE_IDENTITY()
+    INSERT INTO PaymentHistory
+        (Userid, PaymentDate, Amount, Status, Comment, TotalAmount, TransferId, CfTransferId, PayoutStatus)
+    VALUES
+        (@userid, @PaymentDate, @Amount, @status, @Comment, @TotalAmount, @TransferId, @CfTransferId, @PayoutStatus);
+
+    SELECT SCOPE_IDENTITY();
 END
 GO
