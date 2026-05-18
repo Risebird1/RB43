@@ -4391,6 +4391,41 @@ namespace Risebird.Repository
             }
         }
 
+        /// <summary>
+        /// Updates PaymentHistory.PayoutStatus (and back-fills CfTransferId when provided)
+        /// using TransferId and/or CfTransferId as the lookup key.
+        /// Delegates to stored procedure <c>usp_UpdatePaymentHistoryTransferStatus</c>.
+        /// Returns the number of rows updated (0 means no matching record found).
+        /// </summary>
+        public async Task<int> UpdatePaymentHistoryTransferStatus(
+            string transferId,
+            string cfTransferId,
+            string payoutStatus)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@TransferId",   transferId   ?? string.Empty);
+                parameters.Add("@CfTransferId", cfTransferId ?? string.Empty);
+                parameters.Add("@PayoutStatus", payoutStatus);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QuerySingleOrDefaultAsync<int>(
+                        "usp_UpdatePaymentHistoryTransferStatus",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
         public async Task<List<RBInterviewDetails>> FetchFNPaymentHistory()
         {
             try
