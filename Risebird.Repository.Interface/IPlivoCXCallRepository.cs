@@ -14,7 +14,8 @@ namespace Risebird.Repository.Interface
             int page = 1, int pageSize = 50,
             string status = null, string purpose = null,
             string meeting = null, string disposition = null,
-            System.DateTime? dateFrom = null, System.DateTime? dateTo = null);
+            System.DateTime? dateFrom = null, System.DateTime? dateTo = null,
+            string clientName = null);
 
         // ── Call logs ────────────────────────────────────────────────────────────
         Task<int>              SaveCallLogAsync(PlivoCXCallLog callLog);
@@ -51,5 +52,7 @@ namespace Risebird.Repository.Interface
         /// Called after every completed Plivo CX call.
         /// </summary>
         Task UpdateCandidateDispositionAsync(int candidateId, string disposition);
+
+        Task<List<string>> GetAllClientNamesAsync();
     }
 }
