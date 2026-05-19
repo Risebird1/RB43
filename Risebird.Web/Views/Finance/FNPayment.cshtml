@@ -184,6 +184,13 @@
                                                                                 </svg>
                                                                             </span>
                                                                         </button>
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Confirm cashfree">
+                                                                            <span title="Confirm cashfree" onclick="confirmpaymentCashfree(@item.id)" class="mdc-fab__icon material-icons">
+                                                                                <svg style=" top: 3px; position: relative; left: 3px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 24 24">
+                                                                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                                                                </svg>
+                                                                            </span>
+                                                                        </button>
                                                                     }
                                                                 </td>
                                                             </tr>
@@ -470,6 +477,13 @@
                 html += '  </svg>';
                 html += ' </span>';
                 html += ' </button>';
+                html += ' <button class="mdc-fab app-fab--absolute" aria-label="Confirm cashfree">';
+                html += ' <span title="Confirm cashfree" onclick="confirmpaymentCashfree(' + data[i].id + ')" class="mdc-fab__icon material-icons">';
+                html += '   <svg style=" top: 3px; position: relative; left: 3px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 24 24">';
+                html += '  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />';
+                html += '  </svg>';
+                html += ' </span>';
+                html += ' </button>';
             }
             html += '</td>';
             html += ' </tr>';
@@ -735,6 +749,33 @@
                         }
                     });
                     //window.location.href = "/Finance/ConfirmPayment?id=" + interviewerid + "&index=" + Generateinvoiceflag + "&email=" + $("#hidcomment_" + interviewerid).val() + "&amount=" + $("#hidpoint_" + interviewerid).val() + "&st=" + St_date + "&se=" + Se_date;
+                }
+            })
+            confirmationpayment = 0;
+        }
+    }
+    function confirmpaymentCashfree(interviewerid) {
+        if (confirmationpayment == 0) {
+            confirmationpayment = 1;
+            var paymentamount = $("#hidpoint_" + interviewerid).val();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you want to confirm this payment of ' + paymentamount + '? ',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: "/Finance/ConfirmPaymentViaCashfree",
+                        type: "POST",
+                        data: { id: interviewerid, index: Generateinvoiceflag, email: $("#hidcomment_" + interviewerid).val(), amount: $("#hidpoint_" + interviewerid).val(), st: St_date, se: Se_date },
+                        dataType: 'json',
+                        success: function (data) {
+                            swal.fire(data.message);
+                            FinacneChangePage(_Currentpage);
+                        }
+                    });
                 }
             })
             confirmationpayment = 0;

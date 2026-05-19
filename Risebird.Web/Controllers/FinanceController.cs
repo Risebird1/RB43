@@ -33,8 +33,9 @@ namespace Risebird.Web.Controllers
         private readonly IProjectService _projectService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IClientService _clientService;
+        private readonly ICashfreePayoutService _cashfreePayoutService;
 
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService)
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService, ICashfreePayoutService cashfreePayoutService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -46,6 +47,7 @@ namespace Risebird.Web.Controllers
             _projectService = projectService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _clientService = clientService;
+            _cashfreePayoutService = cashfreePayoutService;
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
@@ -650,6 +652,124 @@ namespace Risebird.Web.Controllers
 
             //return RedirectToAction("FNPayment");
         }
+        /// <summary>
+        /// Finance Team triggers a Cashfree bank payout for an interviewer.
+        /// Returns structured JSON: { success, message, payoutId }.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> ConfirmPaymentViaCashfree(int id, int index, string email, string amount, DateTime st, DateTime se)
+        {
+            try
+            {
+                var (success, message) = await _meetingService.ConfirmPaymentViaCashfree(id, index, email, amount, st, se);
+
+                if (success)
+                {
+                    // Extract payoutId from message e.g. "Payment initiated via Cashfree. Reference: RB_123_..."
+                    var payoutId = string.Empty;
+                    var refIndex = message.IndexOf("Reference:", StringComparison.OrdinalIgnoreCase);
+                    if (refIndex >= 0)
+                        payoutId = message.Substring(refIndex + "Reference:".Length).Trim();
+
+                    // Fire-and-forget: build notification table and send email + WhatsApp
+                    //try
+                    //{
+                    //    var resultset = await _meetingService.RBInterviewerDetails(id, index);
+                    //    if (resultset != null && resultset.Count > 0)
+                    //    {
+                    //        if (index == 2)
+                    //        {
+                    //            var advances = resultset.Where(x => x.Status == "Advance").ToList();
+                    //            resultset = resultset.Where(x => x.Date >= st && x.Date <= se.AddDays(1)).ToList();
+                    //            resultset = resultset.Union(advances).ToList();
+                    //        }
+
+                    //        StringBuilder sb = new StringBuilder();
+                    //        sb.Append("<table cellspacing='0' width='100%'><thead><tr><th>Date</th><th>Payment for</th><th>Type</th><th>Status</th><th>Total Amount</th><th>Payable Amount</th></tr></thead><tbody>");
+                    //        foreach (var item in resultset)
+                    //        {
+                    //            sb.Append("<tr>");
+                    //            sb.Append("<td>" + item.Date.ToString() + "</td>");
+                    //            sb.Append("<td>" + item.Comment + "</td>");
+                    //            sb.Append("<td>" + item.Type + "</td>");
+                    //            sb.Append("<td>" + (item.Status == "Advance" ? item.Status : "Paid") + "</td>");
+                    //            sb.Append("<td>" + item.Points + "</td>");
+                    //            sb.Append("<td>" + (item.Status != "Advance" ? Math.Round(item.Points - item.Points * .1) : (object)item.Points) + "</td>");
+                    //            sb.Append("</tr>");
+                    //        }
+                    //        sb.Append("</tbody></table>");
+
+                    //        var payableDisplay = (int)Math.Round(
+                    //            resultset.Where(x => x.Status != "Advance").Sum(x => x.Points * 0.9)
+                    //            - resultset.Where(x => x.Status == "Advance").Sum(x => (double)x.Points));
+
+                    //        Mail _mail = new Mail
+                    //        {
+                    //            TO      = email,
+                    //            CC      = "finance@risebird.io",
+                    //            Subject = "RiseBird: Finance Team has done payment via Cashfree"
+                    //        };
+                    //        await _notificationHelper.RBFNPaymentConfirmationNotification(_mail, payableDisplay.ToString(), sb);
+
+                    //        WhatsAppVM _whatsApp = new WhatsAppVM
+                    //        {
+                    //            Emailid       = email,
+                    //            InterviewDate = payableDisplay.ToString(),
+                    //            Event         = "Payment Notification"
+                    //        };
+                    //        _whatsAppHelper.WhatsAppSendOnAssignation(_whatsApp);
+                    //    }
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    //}
+
+                    return Json(new { success = true, message, payoutId });
+                }
+
+                return Json(new { success = false, message });
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { success = false, message = "An unexpected error occurred. Please try again." });
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the Cashfree transfer status for a previously initiated payout.
+        /// Returns structured JSON: { success, payoutId, status, amount, utr, updated } on success.
+        /// </summary>
+        [HttpGet]
+        public async Task<JsonResult> GetPayoutStatus(string payoutId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(payoutId))
+                    return Json(new { success = false, message = "payoutId is required." });
+
+                var result = await _meetingService.GetCashfreePayoutStatus(payoutId);
+                if (!result.Success)
+                    return Json(new { success = false, message = result.ErrorMessage ?? "Failed to fetch payout status." });
+
+                return Json(new
+                {
+                    success  = true,
+                    payoutId = result.PayoutId,
+                    status   = result.Status,
+                    amount   = result.Amount,
+                    utr      = result.Utr,
+                    updated  = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                });
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { success = false, message = "An unexpected error occurred while fetching payout status." });
+            }
+        }
+
         /// <summary>
         /// Search functionlity implement
         /// </summary>

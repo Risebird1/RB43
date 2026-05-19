@@ -32,6 +32,7 @@ builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<ISkillService, SkillService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IMeetingService, MeetingService>();
+builder.Services.AddHttpClient<ICashfreePayoutService, CashfreePayoutService>();
 builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
