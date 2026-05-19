@@ -70,10 +70,11 @@ namespace Risebird.Repository.Interface
 
         // Batch call
         Task<List<BatchCallMagSummary>> GetMAGsWithCallableProspectCountsAsync();
-        Task<List<NaukriProspectiveInterviewerVM>> GetCallableProspectsForMAGAsync(string magName);
+        Task<List<NaukriProspectiveInterviewerVM>> GetCallableProspectsForMAGAsync(string magName, bool onlyUncalled = true);
         Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalProspects);
         Task CompleteBatchCallLogAsync(int id, int succeeded, int failed, int skipped, string status);
         Task<List<BatchCallLogEntry>> GetBatchCallHistoryAsync(string magName);
+        Task<List<NaukriProspectiveInterviewerVM>> GetProspectCallOutcomesForMAGAsync(string magName);
     }
 
     public class BatchCallMagSummary
@@ -83,6 +84,7 @@ namespace Risebird.Repository.Interface
         public int TotalProspects { get; set; }
         public int CallableCount { get; set; }
         public int AlreadyCalled { get; set; }
+        public int UncalledCount { get; set; }
         public int Interested { get; set; }
         public int NotInterested { get; set; }
         public string LastBatchBy { get; set; }

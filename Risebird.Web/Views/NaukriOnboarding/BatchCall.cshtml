@@ -1,0 +1,451 @@
+@{
+    ViewData["Title"] = "Batch Call — By MAG";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .bc-page { font-family:'Roboto','Segoe UI',sans-serif; }
+
+    .bc-mag-card { background:#fff; border:1px solid #e2e8f0; border-radius:10px; transition:box-shadow .15s; margin-bottom:12px; }
+    .bc-mag-card:hover { box-shadow:0 4px 16px rgba(0,0,0,.08); }
+    .bc-mag-header { padding:14px 20px; cursor:pointer; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    .bc-mag-name { font-weight:700; font-size:14px; color:#1e293b; flex:1 1 200px; min-width:0; }
+    .bc-mag-name small { font-weight:400; font-size:11.5px; color:#64748b; display:block; margin-top:2px; }
+    .bc-mag-stats { display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+    .bc-mag-stat { text-align:center; min-width:48px; }
+    .bc-mag-stat .val { font-weight:700; font-size:14px; }
+    .bc-mag-stat .lbl { font-size:10px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; }
+
+    .bc-actions { display:flex; gap:6px; align-items:center; flex-shrink:0; }
+    .bc-expand-body { display:none; border-top:1px solid #e2e8f0; }
+
+    .bc-tab-bar { background:#f8fafc; padding:8px 20px; display:flex; gap:6px; border-bottom:1px solid #e2e8f0; }
+    .bc-tab { font-size:12px; padding:5px 14px; border-radius:6px; border:1px solid #cbd5e1; background:#fff; cursor:pointer; font-weight:500; color:#475569; }
+    .bc-tab.active { background:#0d6efd; color:#fff; border-color:#0d6efd; }
+
+    .bc-panel { padding:16px 20px; }
+    .bc-outcome-tbl { font-size:12px; }
+    .bc-outcome-tbl th { font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; font-weight:600; padding:8px 10px; background:#f8fafc; position:sticky; top:0; z-index:2; box-shadow:0 1px 0 #e2e8f0; }
+    .bc-outcome-tbl td { padding:7px 10px; vertical-align:middle; }
+    .bc-outcome-tbl .bc-disp { font-weight:600; font-size:11.5px; padding:3px 8px; border-radius:10px; display:inline-block; }
+    .bc-disp-interested { background:#dcfce7; color:#166534; }
+    .bc-disp-not_interested { background:#fee2e2; color:#991b1b; }
+    .bc-disp-unsubscribe { background:#fef3c7; color:#92400e; }
+
+    .bc-hist-tbl { font-size:12px; }
+    .bc-hist-tbl th { font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; font-weight:600; padding:6px 10px; background:#f8fafc; }
+    .bc-hist-tbl td { padding:6px 10px; }
+
+    .btn-call-single { font-size:10.5px; padding:2px 8px; border-radius:6px; white-space:nowrap; }
+    .btn-call-single.calling { pointer-events:none; opacity:.6; }
+</style>
+
+<form id="__AjaxAntiForgeryForm" asp-controller="NaukriOnboarding" asp-action="BatchCall" method="post">
+    @Html.AntiForgeryToken()
+</form>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="content client">
+            <div class="container-fluid py-4 bc-page">
+
+                <div class="row mb-3 align-items-center">
+                    <div class="col">
+                        <h4 class="fw-bold mb-0"><i class="fas fa-phone-volume text-success me-2"></i>Batch Call — By MAG</h4>
+                        <p class="text-muted mb-0 mt-1">Trigger Plivo recruitment calls to prospects grouped by Master Assessment Group</p>
+                    </div>
+                    <div class="col-auto d-flex gap-2">
+                        <a href="@Url.Action("Index", "NaukriOnboarding")" class="btn btn-sm btn-outline-primary"><i class="fas fa-arrow-left me-1"></i>Back to Onboarding</a>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="loadMAGs()"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <input type="text" id="bcSearchMAG" class="form-control" placeholder="Search MAGs..." style="max-width:360px;border-radius:8px;font-size:13px;" />
+                </div>
+
+                <div id="bcLoadingPage" class="text-center py-5"><div class="spinner-border text-primary"></div><div class="text-muted mt-2">Loading MAGs...</div></div>
+                <div id="bcEmptyPage" class="text-center text-muted py-5" style="display:none;"><i class="fas fa-inbox me-2"></i>No MAGs found.</div>
+                <div id="bcMagList"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+<script>
+    var allMags = [], verificationToken = $('#__AjaxAntiForgeryForm input[name="__RequestVerificationToken"]').val() || '';
+    var bcStopRequested = false, bcCurrentLogId = 0;
+
+    $(function () { loadMAGs(); });
+
+    function loadMAGs() {
+        $('#bcLoadingPage').show(); $('#bcEmptyPage').hide(); $('#bcMagList').empty();
+        $.ajax({
+            url: '@Url.Action("GetBatchCallMAGs", "NaukriOnboarding")', type: 'GET',
+            success: function (res) {
+                $('#bcLoadingPage').hide();
+                if (!res.success) { alert(res.error || 'Failed'); return; }
+                allMags = res.mags || [];
+                if (!allMags.length) { $('#bcEmptyPage').show(); return; }
+                renderMAGs(allMags);
+            },
+            error: function () { $('#bcLoadingPage').hide(); alert('Failed to load.'); }
+        });
+    }
+
+    $('#bcSearchMAG').on('input', function () {
+        var q = $(this).val().toLowerCase();
+        var filtered = allMags.filter(function (m) {
+            return (m.magName || '').toLowerCase().indexOf(q) >= 0 || (m.assessmentGroupName || '').toLowerCase().indexOf(q) >= 0;
+        });
+        renderMAGs(filtered);
+    });
+
+    function renderMAGs(mags) {
+        var $list = $('#bcMagList').empty();
+        for (var i = 0; i < mags.length; i++) {
+            var m = mags[i];
+            var id = 'mag_' + i;
+            var magNameAttr = esc(m.magName).replace(/"/g, '&quot;');
+            var uncalled = m.uncalledCount || 0;
+
+            var lastBatchHtml = '<span class="text-muted" style="font-size:11px;">No batches yet</span>';
+            if (m.lastBatchAt) {
+                lastBatchHtml = '<span style="font-size:11px;">' + m.lastBatchAt + ' by ' + (m.lastBatchBy || '—') +
+                    ' &mdash; <strong>' + (m.lastBatchSucceeded || 0) + '</strong>/' + (m.lastBatchCount || 0) + ' ok</span>';
+            }
+
+            var actionBtns = '';
+            if (uncalled > 0) {
+                actionBtns += '<button class="btn btn-success btn-sm btn-call-mag" data-mag-name="' + magNameAttr + '" data-only-uncalled="true" style="font-size:12px;padding:4px 12px;" title="Call only prospects who haven\'t been called yet"><i class="fas fa-phone-alt me-1"></i>Call Uncalled (' + uncalled + ')</button>';
+            }
+            if (m.callableCount > 0 && m.alreadyCalled > 0) {
+                actionBtns += '<button class="btn btn-outline-success btn-sm btn-call-mag" data-mag-name="' + magNameAttr + '" data-only-uncalled="false" style="font-size:11px;padding:3px 10px;" title="Re-call all prospects including already called"><i class="fas fa-redo me-1"></i>Recall All (' + m.callableCount + ')</button>';
+            } else if (m.callableCount > 0 && uncalled === 0) {
+                actionBtns += '<button class="btn btn-outline-success btn-sm btn-call-mag" data-mag-name="' + magNameAttr + '" data-only-uncalled="false" style="font-size:12px;padding:4px 12px;" title="Re-call all prospects"><i class="fas fa-redo me-1"></i>Recall All (' + m.callableCount + ')</button>';
+            }
+            if (!actionBtns) actionBtns = '<span class="text-muted" style="font-size:11px;">No callable</span>';
+
+            var $card = $('<div class="bc-mag-card" id="' + id + '" data-mag-name="' + magNameAttr + '">' +
+                '<div class="bc-mag-header" data-card-id="' + id + '">' +
+                    '<div class="bc-mag-name">' + esc(m.magName) + (m.assessmentGroupName ? '<small>' + esc(m.assessmentGroupName) + '</small>' : '') + '</div>' +
+                    '<div class="bc-mag-stats">' +
+                        '<div class="bc-mag-stat"><div class="val">' + m.totalProspects + '</div><div class="lbl">Prospects</div></div>' +
+                        '<div class="bc-mag-stat"><div class="val text-primary">' + m.callableCount + '</div><div class="lbl">With Phone</div></div>' +
+                        '<div class="bc-mag-stat"><div class="val">' + m.alreadyCalled + '</div><div class="lbl">Called</div></div>' +
+                        '<div class="bc-mag-stat"><div class="val text-success">' + m.interested + '</div><div class="lbl">Interested</div></div>' +
+                        '<div class="bc-mag-stat"><div class="val text-danger">' + m.notInterested + '</div><div class="lbl">Declined</div></div>' +
+                    '</div>' +
+                    '<div class="bc-actions">' + actionBtns + '</div>' +
+                    '<i class="fas fa-chevron-down text-muted ms-2" style="font-size:12px;"></i>' +
+                '</div>' +
+                '<div class="bc-expand-body" id="body_' + id + '">' +
+                    '<div class="bc-tab-bar">' +
+                        '<div class="bc-tab active" data-tab="outcomes" data-card-id="' + id + '">Call Outcomes</div>' +
+                        '<div class="bc-tab" data-tab="history" data-card-id="' + id + '">Batch History' + (m.totalBatches > 0 ? ' (' + m.totalBatches + ')' : '') + '</div>' +
+                        '<div class="bc-tab" data-tab="progress" data-card-id="' + id + '" style="display:none;">Live Progress</div>' +
+                    '</div>' +
+                    '<div class="bc-panel" id="panel_outcomes_' + id + '"><div class="text-center text-muted py-3" style="font-size:12px;"><div class="spinner-border spinner-border-sm"></div> Loading outcomes...</div></div>' +
+                    '<div class="bc-panel" id="panel_history_' + id + '" style="display:none;"><div class="text-center text-muted py-3" style="font-size:12px;"><div class="spinner-border spinner-border-sm"></div> Loading history...</div></div>' +
+                    '<div class="bc-progress-wrap" id="panel_progress_' + id + '" style="display:none;"></div>' +
+                '</div>' +
+                '</div>');
+
+            $list.append($card);
+        }
+    }
+
+    function esc(s) { return $('<span>').text(s || '').html(); }
+
+    /* ── Expand / collapse ──────────────────────────── */
+
+    $(document).on('click', '.bc-mag-header', function (e) {
+        if ($(e.target).closest('.btn-call-mag, .btn-call-single').length) return;
+        var cardId = $(this).attr('data-card-id');
+        var $body = $('#body_' + cardId);
+        var $icon = $(this).find('.fa-chevron-down, .fa-chevron-up');
+        if ($body.is(':visible')) {
+            $body.slideUp(200);
+            $icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        } else {
+            $body.slideDown(200);
+            $icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+            var $outPanel = $('#panel_outcomes_' + cardId);
+            if ($outPanel.find('table').length === 0) loadOutcomes(cardId);
+            var $histPanel = $('#panel_history_' + cardId);
+            if ($histPanel.find('table').length === 0) loadHistory(cardId);
+        }
+    });
+
+    /* ── Tabs ──────────────────────────────────────── */
+
+    $(document).on('click', '.bc-tab', function () {
+        var tab = $(this).attr('data-tab');
+        var cardId = $(this).attr('data-card-id');
+        $(this).siblings('.bc-tab').removeClass('active');
+        $(this).addClass('active');
+        $('#panel_outcomes_' + cardId + ', #panel_history_' + cardId + ', #panel_progress_' + cardId).hide();
+        $('#panel_' + tab + '_' + cardId).show();
+    });
+
+    /* ── Load call outcomes ─────────────────────────── */
+
+    function getMagNameFromCard(cardId) {
+        return $('#' + cardId).attr('data-mag-name') || '';
+    }
+
+    function loadOutcomes(cardId) {
+        var magName = getMagNameFromCard(cardId);
+        if (!magName) return;
+        var $panel = $('#panel_outcomes_' + cardId);
+        $panel.html('<div class="text-center text-muted py-3"><div class="spinner-border spinner-border-sm"></div> Loading...</div>');
+
+        $.ajax({
+            url: '@Url.Action("GetProspectCallOutcomes", "NaukriOnboarding")', type: 'GET',
+            data: { magName: magName },
+            success: function (res) {
+                if (!res.success || !res.prospects || !res.prospects.length) {
+                    $panel.html('<div class="text-center text-muted py-3" style="font-size:12px;">No prospects with phone numbers found for this MAG.</div>');
+                    return;
+                }
+                var html = '<div class="table-responsive" style="max-height:420px;overflow-y:auto;">' +
+                    '<table class="table table-hover bc-outcome-tbl mb-0">' +
+                    '<thead><tr>' +
+                    '<th>#</th><th>Candidate</th><th>Phone</th><th>Exp</th><th>Call Status</th>' +
+                    '<th>Disposition</th><th>Preference</th><th>Duration</th><th>Called At</th><th>Called By</th><th>Summary</th><th>Action</th>' +
+                    '</tr></thead><tbody>';
+
+                $.each(res.prospects, function (i, p) {
+                    html += buildOutcomeRow(p);
+                });
+                html += '</tbody></table></div>';
+                $panel.html(html);
+            },
+            error: function () { $panel.html('<div class="text-center text-danger py-3">Failed to load.</div>'); }
+        });
+    }
+
+    function buildOutcomeRow(p) {
+        var dispCls = '', dispText = p.plivoProspectDisposition || '—';
+        if (dispText === 'interested') { dispCls = 'bc-disp-interested'; dispText = 'Interested'; }
+        else if (dispText === 'not_interested') { dispCls = 'bc-disp-not_interested'; dispText = 'Not Interested'; }
+        else if (dispText === 'unsubscribe') { dispCls = 'bc-disp-unsubscribe'; dispText = 'Unsubscribe'; }
+
+        var statusBadge = '';
+        if (p.plivoCallStatus === 'completed' || p.plivoCallStatus === 'answered') statusBadge = '<span class="badge bg-success">' + p.plivoCallStatus + '</span>';
+        else if (p.plivoCallStatus === 'triggered' || p.plivoCallStatus === 'initiated') statusBadge = '<span class="badge bg-info">' + p.plivoCallStatus + '</span>';
+        else if (p.plivoCallStatus === 'trigger-failed' || p.plivoCallStatus === 'failed') statusBadge = '<span class="badge bg-danger">' + p.plivoCallStatus + '</span>';
+        else if (p.plivoCallStatus === 'no_answer') statusBadge = '<span class="badge bg-warning text-dark">No Answer</span>';
+        else if (p.plivoCallStatus) statusBadge = '<span class="badge bg-secondary">' + p.plivoCallStatus + '</span>';
+        else statusBadge = '<span class="text-muted">—</span>';
+
+        var prefMap = { 'self_registration': 'Self-register', 'manual_onboarding': 'Manual', 'need_clarity': 'Needs clarity', 'facing_errors': 'Facing errors' };
+        var prefText = prefMap[p.plivoOnboardingPreference] || p.plivoOnboardingPreference || '—';
+
+        var summary = p.plivoCallSummary ? '<span title="' + esc(p.plivoCallSummary) + '" style="cursor:help;max-width:120px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.plivoCallSummary) + '</span>' : '—';
+
+        var callBtnHtml = '<button class="btn btn-outline-success btn-sm btn-call-single" data-prospect-id="' + p.id + '" title="Call this prospect"><i class="fas fa-phone-alt"></i></button>';
+
+        return '<tr data-prospect-id="' + p.id + '">' +
+            '<td>' + p.id + '</td>' +
+            '<td><strong>' + esc(p.candidateName) + '</strong>' + (p.currentRole ? '<br/><span style="font-size:10.5px;color:#64748b;">' + esc(p.currentRole) + '</span>' : '') + '</td>' +
+            '<td style="white-space:nowrap;">' + esc(p.parsedPhone) + '</td>' +
+            '<td>' + esc(p.experienceYears || '—') + '</td>' +
+            '<td>' + statusBadge + '</td>' +
+            '<td><span class="bc-disp ' + dispCls + '">' + dispText + '</span></td>' +
+            '<td>' + prefText + '</td>' +
+            '<td>' + (p.plivoCallDuration ? p.plivoCallDuration + 's' : '—') + '</td>' +
+            '<td style="white-space:nowrap;font-size:11px;">' + (p.plivoCallAt || '—') + '</td>' +
+            '<td style="font-size:11px;">' + esc(p.plivoCalledBy || '—') + '</td>' +
+            '<td>' + summary + '</td>' +
+            '<td>' + callBtnHtml + '</td></tr>';
+    }
+
+    /* ── Individual call ────────────────────────────── */
+
+    $(document).on('click', '.btn-call-single', function (e) {
+        e.stopPropagation();
+        var $btn = $(this);
+        var prospectId = parseInt($btn.attr('data-prospect-id'));
+        if (!prospectId || $btn.hasClass('calling')) return;
+
+        if (!confirm('Trigger a Plivo call to prospect #' + prospectId + '?')) return;
+
+        $btn.addClass('calling').html('<i class="fas fa-spinner fa-spin"></i>');
+
+        $.ajax({
+            url: '@Url.Action("BatchCallSingle", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: prospectId },
+            success: function (res) {
+                if (res.success) {
+                    $btn.removeClass('calling btn-outline-success').addClass('btn-success').html('<i class="fas fa-check me-1"></i>Triggered');
+                    var $row = $btn.closest('tr');
+                    $row.find('td:eq(4)').html('<span class="badge bg-info">triggered</span>');
+                    setTimeout(function () {
+                        $btn.removeClass('btn-success').addClass('btn-outline-success').html('<i class="fas fa-phone-alt"></i>');
+                        $btn.removeClass('calling');
+                    }, 3000);
+                } else {
+                    $btn.removeClass('calling').html('<i class="fas fa-phone-alt"></i>');
+                    alert('Call failed: ' + (res.error || 'Unknown error'));
+                }
+            },
+            error: function () {
+                $btn.removeClass('calling').html('<i class="fas fa-phone-alt"></i>');
+                alert('Request failed. Please try again.');
+            }
+        });
+    });
+
+    /* ── Load batch history ─────────────────────────── */
+
+    function loadHistory(cardId) {
+        var magName = getMagNameFromCard(cardId);
+        if (!magName) return;
+        var $panel = $('#panel_history_' + cardId);
+        $panel.html('<div class="text-center text-muted py-3"><div class="spinner-border spinner-border-sm"></div> Loading...</div>');
+
+        $.ajax({
+            url: '@Url.Action("GetBatchCallHistory", "NaukriOnboarding")', type: 'GET',
+            data: { magName: magName },
+            success: function (res) {
+                if (!res.success || !res.history || !res.history.length) {
+                    $panel.html('<div class="text-center text-muted py-3" style="font-size:12px;">No batch call history yet for this MAG.</div>');
+                    return;
+                }
+                var html = '<div class="table-responsive"><table class="table table-sm bc-hist-tbl mb-0">' +
+                    '<thead><tr><th>When</th><th>Initiated By</th><th>Attempted</th><th class="text-success">Succeeded</th><th class="text-danger">Failed</th><th class="text-warning">Skipped</th><th>Status</th></tr></thead><tbody>';
+                $.each(res.history, function (_, h) {
+                    var sBadge = h.status === 'Completed' ? '<span class="badge bg-success">Completed</span>'
+                               : h.status === 'Stopped' ? '<span class="badge bg-warning text-dark">Stopped</span>'
+                               : h.status === 'Running' ? '<span class="badge bg-info">Running</span>'
+                               : '<span class="badge bg-secondary">' + h.status + '</span>';
+                    html += '<tr><td style="white-space:nowrap;">' + h.initiatedAt + '</td><td>' + esc(h.initiatedBy) + '</td>' +
+                        '<td class="text-center">' + h.prospectsAttempted + '</td>' +
+                        '<td class="text-center text-success fw-bold">' + h.prospectsSucceeded + '</td>' +
+                        '<td class="text-center text-danger fw-bold">' + h.prospectsFailed + '</td>' +
+                        '<td class="text-center text-warning fw-bold">' + h.prospectsSkipped + '</td>' +
+                        '<td>' + sBadge + '</td></tr>';
+                });
+                html += '</tbody></table></div>';
+                $panel.html(html);
+            },
+            error: function () { $panel.html('<div class="text-center text-danger py-3">Failed to load.</div>'); }
+        });
+    }
+
+    /* ── Trigger batch call ─────────────────────────── */
+
+    $(document).on('click', '.btn-call-mag', function (e) {
+        e.stopPropagation();
+        var $btn = $(this);
+        if ($btn.prop('disabled')) return;
+        var magName = $btn.attr('data-mag-name');
+        var onlyUncalled = $btn.attr('data-only-uncalled') === 'true';
+        if (!magName) return;
+        var cardId = $btn.closest('.bc-mag-card').attr('id');
+        var label = onlyUncalled ? 'uncalled' : 'all callable';
+        if (!confirm('Trigger Plivo calls to ' + label + ' prospects under "' + magName + '"?\n\nCalls will start immediately.')) return;
+        startBatchCall(magName, onlyUncalled, cardId);
+    });
+
+    function startBatchCall(magName, onlyUncalled, cardId) {
+        bcStopRequested = false; bcCurrentLogId = 0;
+        var $card = $('#' + cardId);
+        $card.find('.btn-call-mag').prop('disabled', true).addClass('disabled');
+        var $body = $('#body_' + cardId);
+        $body.slideDown(200);
+        var $progTab = $body.find('.bc-tab[data-tab="progress"]').show().click();
+        var $panel = $('#panel_progress_' + cardId);
+        $panel.html(
+            '<div class="d-flex align-items-center justify-content-between mb-2">' +
+                '<strong>' + esc(magName) + ' <span class="text-muted fw-normal" style="font-size:12px;">(' + (onlyUncalled ? 'uncalled only' : 'all callable') + ')</span></strong>' +
+                '<button class="btn btn-sm btn-outline-danger btn-stop-batch" style="font-size:11px;padding:3px 12px;"><i class="fas fa-stop me-1"></i>Stop</button>' +
+            '</div>' +
+            '<div class="progress mb-2" style="height:8px;border-radius:8px;"><div class="progress-bar progress-bar-striped progress-bar-animated" id="pb_' + cardId + '" style="width:0%;border-radius:8px;"></div></div>' +
+            '<div class="text-muted mb-2" style="font-size:12px;" id="pbCount_' + cardId + '">Fetching prospects...</div>' +
+            '<div id="log_' + cardId + '" style="max-height:260px;overflow-y:auto;font-size:11.5px;font-family:Consolas,monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;"></div>' +
+            '<div id="done_' + cardId + '" style="display:none;" class="text-center mt-3"><div class="alert alert-success py-2 px-3 mb-0" style="font-size:12.5px;border-radius:8px;"><i class="fas fa-check-circle me-1"></i><span id="summary_' + cardId + '"></span></div></div>'
+        ).show();
+
+        $panel.find('.btn-stop-batch').on('click', function () { bcStopRequested = true; $(this).prop('disabled', true).text('Stopping...'); });
+
+        $.ajax({
+            url: '@Url.Action("GetCallableProspectsForMAG", "NaukriOnboarding")', type: 'GET',
+            data: { magName: magName, onlyUncalled: onlyUncalled },
+            success: function (res) {
+                if (!res.success || !res.prospects || !res.prospects.length) {
+                    logLine(cardId, 'No ' + (onlyUncalled ? 'uncalled ' : '') + 'callable prospects found.', 'skip');
+                    finishBatch(cardId, 0, 0, 0, magName);
+                    return;
+                }
+                var prospects = res.prospects;
+                $('#pbCount_' + cardId).text('0 / ' + prospects.length);
+                logLine(cardId, 'Starting batch: ' + prospects.length + ' prospect(s)' + (onlyUncalled ? ' (uncalled only)' : ''), 'ok');
+
+                $.ajax({
+                    url: '@Url.Action("StartBatchCallLog", "NaukriOnboarding")', type: 'POST',
+                    data: { __RequestVerificationToken: verificationToken, magName: magName, totalProspects: prospects.length },
+                    success: function (logRes) { bcCurrentLogId = logRes.logId || 0; },
+                    error: function () { logLine(cardId, 'Warning: failed to create batch log entry', 'skip'); },
+                    complete: function () { processBatch(cardId, prospects, 0, 0, 0, 0, magName); }
+                });
+            },
+            error: function () { logLine(cardId, 'Failed to fetch prospects.', 'err'); finishBatch(cardId, 0, 0, 0, magName); }
+        });
+    }
+
+    function processBatch(cardId, prospects, idx, ok, err, skip, magName) {
+        if (bcStopRequested || idx >= prospects.length) { finishBatch(cardId, ok, err, skip, magName); return; }
+        var p = prospects[idx], total = prospects.length;
+        var pct = Math.round((idx / total) * 100);
+        $('#pb_' + cardId).css('width', pct + '%');
+        $('#pbCount_' + cardId).text((idx + 1) + ' / ' + total);
+        logLine(cardId, '<strong>#' + p.id + '</strong> ' + (p.candidateName || 'Unknown') + ' (' + (p.parsedPhone || '') + ') — calling...', '');
+
+        $.ajax({
+            url: '@Url.Action("BatchCallSingle", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: p.id },
+            success: function (res) {
+                if (res.success) { logLine(cardId, '&nbsp;&nbsp;\u2714 Call triggered' + (res.conversationId ? ' [' + res.conversationId + ']' : ''), 'ok'); ok++; }
+                else if (res.skipped) { logLine(cardId, '&nbsp;&nbsp;\u25CB Skipped: ' + (res.error || ''), 'skip'); skip++; }
+                else { logLine(cardId, '&nbsp;&nbsp;\u2718 Failed: ' + (res.error || ''), 'err'); err++; }
+                setTimeout(function () { processBatch(cardId, prospects, idx + 1, ok, err, skip, magName); }, 1200);
+            },
+            error: function () { logLine(cardId, '&nbsp;&nbsp;\u2718 Request failed', 'err'); err++; setTimeout(function () { processBatch(cardId, prospects, idx + 1, ok, err, skip, magName); }, 1200); }
+        });
+    }
+
+    function finishBatch(cardId, ok, err, skip, magName) {
+        $('#pb_' + cardId).css('width', '100%').removeClass('progress-bar-animated');
+        var $card = $('#' + cardId);
+        $card.find('.btn-call-mag').prop('disabled', false).removeClass('disabled');
+        var summary = ok + ' triggered';
+        if (skip > 0) summary += ', ' + skip + ' skipped';
+        if (err > 0) summary += ', ' + err + ' failed';
+        $('#summary_' + cardId).text(summary);
+        $('#done_' + cardId).show();
+        logLine(cardId, 'Batch complete: ' + summary, 'ok');
+
+        if (bcCurrentLogId > 0) {
+            $.ajax({
+                url: '@Url.Action("CompleteBatchCallLog", "NaukriOnboarding")', type: 'POST',
+                data: { __RequestVerificationToken: verificationToken, logId: bcCurrentLogId, succeeded: ok, failed: err, skipped: skip, status: bcStopRequested ? 'Stopped' : 'Completed' }
+            });
+        }
+        loadOutcomes(cardId);
+        var $histPanel = $('#panel_history_' + cardId);
+        $histPanel.empty();
+        loadHistory(cardId);
+    }
+
+    function logLine(cardId, msg, type) {
+        var cls = type === 'ok' ? 'bc-log-ok' : type === 'err' ? 'bc-log-err' : type === 'skip' ? 'bc-log-skip' : '';
+        var $log = $('#log_' + cardId);
+        $log.append('<div style="padding:2px 0;border-bottom:1px solid #f1f5f9;" class="' + cls + '"><span style="color:#94a3b8;margin-right:6px;">' + new Date().toLocaleTimeString() + '</span>' + msg + '</div>');
+        $log.scrollTop($log[0].scrollHeight);
+    }
+</script>
+}
