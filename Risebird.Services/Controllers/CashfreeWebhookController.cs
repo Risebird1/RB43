@@ -47,8 +47,8 @@ namespace Risebird.Services.Controllers
             IMeetingRespository meetingRepository,
             IApplicationErrorLogger applicationErrorLogger)
         {
-            _configuration       = configuration;
-            _meetingRepository   = meetingRepository;
+            _configuration = configuration;
+            _meetingRepository = meetingRepository;
             _applicationErrorLogger = applicationErrorLogger;
         }
 
@@ -67,7 +67,8 @@ namespace Risebird.Services.Controllers
         ///   401 Unauthorized – HMAC signature mismatch.
         ///   500 Internal     – Unexpected exception.
         /// </summary>
-        [HttpPost("TransactionStatus")]
+        [HttpPost]
+        [Route("TransactionStatus")]
         public async Task<IActionResult> TransactionStatus()
         {
             string rawBody = string.Empty;
@@ -92,7 +93,7 @@ namespace Risebird.Services.Controllers
                     return BadRequest(new { success = false, message = "Request body is empty." });
 
                 // ── 2. Verify HMAC-SHA256 signature ───────────────────── //
-                var timestamp   = Request.Headers["x-webhook-timestamp"].ToString();
+                var timestamp = Request.Headers["x-webhook-timestamp"].ToString();
                 var receivedSig = Request.Headers["x-webhook-signature"].ToString();
 
                 if (!VerifySignature(timestamp, rawBody, receivedSig))
@@ -127,7 +128,7 @@ namespace Risebird.Services.Controllers
                 //  Match by TransferId OR CfTransferId (whichever is present).
                 //  PayoutStatus is set to the terminal status from the event.
                 var rowsUpdated = await _meetingRepository.UpdatePaymentHistoryTransferStatus(
-                    transferId:   transfer.TransferId,
+                    transferId: transfer.TransferId,
                     cfTransferId: transfer.CfTransferId,
                     payoutStatus: transfer.TransferStatus);
 
@@ -147,9 +148,9 @@ namespace Risebird.Services.Controllers
                 var response = new CashfreeWebhookResponse
                 {
                     SignatureValid = true,
-                    EventType      = payload.Type,
-                    Transaction    = transaction,
-                    RowsUpdated    = rowsUpdated
+                    EventType = payload.Type,
+                    Transaction = transaction,
+                    RowsUpdated = rowsUpdated
                 };
                 response.Transactions.Add(transaction);
 
@@ -172,19 +173,19 @@ namespace Risebird.Services.Controllers
             var t = payload.Data.Transfer;
             return new CashfreeTransactionStatus
             {
-                EventType       = payload.Type,
-                TransferId      = t.TransferId,
-                CfTransferId    = t.CfTransferId,
-                TransferStatus  = t.TransferStatus,
-                TransferAmount  = t.TransferAmount,
-                TransferUtr     = t.TransferUtr,
-                TransferMode    = t.TransferMode,
-                ServiceCharge   = t.TransferServiceCharge,
-                ServiceTax      = t.TransferServiceTax,
-                BeneficiaryId   = t.BeneficiaryDetails?.BeneficiaryId,
+                EventType = payload.Type,
+                TransferId = t.TransferId,
+                CfTransferId = t.CfTransferId,
+                TransferStatus = t.TransferStatus,
+                TransferAmount = t.TransferAmount,
+                TransferUtr = t.TransferUtr,
+                TransferMode = t.TransferMode,
+                ServiceCharge = t.TransferServiceCharge,
+                ServiceTax = t.TransferServiceTax,
+                BeneficiaryId = t.BeneficiaryDetails?.BeneficiaryId,
                 BeneficiaryName = t.BeneficiaryDetails?.BeneficiaryName,
-                EventTime       = payload.EventTime,
-                ReceivedAtUtc   = DateTime.UtcNow
+                EventTime = payload.EventTime,
+                ReceivedAtUtc = DateTime.UtcNow
             };
         }
 
@@ -207,12 +208,12 @@ namespace Risebird.Services.Controllers
 
             try
             {
-                var message    = timestamp + rawBody;
-                var keyBytes   = Encoding.UTF8.GetBytes(secret);
-                var msgBytes   = Encoding.UTF8.GetBytes(message);
+                var message = timestamp + rawBody;
+                var keyBytes = Encoding.UTF8.GetBytes(secret);
+                var msgBytes = Encoding.UTF8.GetBytes(message);
 
                 using var hmac = new HMACSHA256(keyBytes);
-                var computed   = Convert.ToBase64String(hmac.ComputeHash(msgBytes));
+                var computed = Convert.ToBase64String(hmac.ComputeHash(msgBytes));
 
                 return CryptographicOperations.FixedTimeEquals(
                     Encoding.UTF8.GetBytes(computed),
@@ -222,6 +223,12 @@ namespace Risebird.Services.Controllers
             {
                 return false;
             }
+        }
+        [HttpGet]
+        [Route("TransctionApiCheck")]
+        public async Task<IActionResult> TransctionApiCheck()
+        {
+            return Ok("Working Fine!");
         }
     }
 }
