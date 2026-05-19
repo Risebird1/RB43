@@ -184,6 +184,18 @@
     #magList .mag-item.active { background:#0d6efd; color:#fff; }
     #magList .mag-item .mag-ag { font-size:10px; opacity:.7; }
     #magList .mag-no-results { padding:12px; text-align:center; color:#6c757d; font-size:12px; }
+
+    #batchCallModal .modal-dialog { max-width:960px; }
+    #batchCallModal .bc-mag-row { transition:background .15s; }
+    #batchCallModal .bc-mag-row:hover { background:#f1f5f9 !important; }
+    #batchCallModal .bc-mag-name { font-weight:600; color:#1e293b; }
+    #batchCallModal .bc-ag-name { font-size:10.5px; color:#64748b; display:block; margin-top:1px; }
+    #batchCallModal .bc-badge { font-size:10.5px; padding:3px 8px; border-radius:12px; font-weight:600; }
+    #batchCallModal .btn-call-mag { font-size:11.5px; padding:4px 14px; border-radius:6px; font-weight:600; white-space:nowrap; }
+    #bcProgressLog .bc-log-ok { color:#16a34a; }
+    #bcProgressLog .bc-log-err { color:#dc2626; }
+    #bcProgressLog .bc-log-skip { color:#d97706; }
+    #bcProgressLog .bc-log-line { padding:2px 0; border-bottom:1px solid #f1f5f9; }
 </style>
 
 <div id="loadingOverlay">
@@ -204,6 +216,7 @@
                         <p class="text-muted mb-0 mt-1">Prospective interviewers sourced from Naukri / LinkedIn, processed via Relay.app</p>
                     </div>
                     <div class="col-auto d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-success" id="btnOpenBatchCall"><i class="fas fa-phone-volume me-1"></i>Batch Call</button>
                         <a href="@Url.Action("ProspectProgress", "NaukriOnboarding")" class="btn btn-sm btn-outline-primary"><i class="fas fa-chart-line me-1"></i>Progress Tracker</a>
                         <button type="button" class="btn btn-sm nk-page-refresh" onclick="location.reload()" title="Reload this page"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
                     </div>
@@ -820,6 +833,95 @@
                     <button type="button" class="btn btn-sm btn-refresh-manage" id="btnRefreshManage"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
                     <button type="button" class="btn btn-sm btn-outline-secondary btn-history" id="btnViewHistory"><i class="fas fa-history me-1"></i>History</button>
                 </div>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Batch Call Modal -->
+<div class="modal fade" id="batchCallModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content" style="border:none;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15);">
+            <div class="modal-header" style="background:linear-gradient(135deg,#0d6efd 0%,#0b5ed7 100%);border:none;padding:1rem 1.5rem;">
+                <div>
+                    <h5 class="modal-title text-white mb-0" style="font-size:16px;font-weight:700;"><i class="fas fa-phone-volume me-2"></i>Batch Call — By MAG</h5>
+                    <small class="text-white-50" style="font-size:11.5px;">Trigger Plivo recruitment calls to all eligible prospects under a MAG</small>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="bcLoading" class="text-center py-5"><div class="spinner-border spinner-border-sm text-primary"></div> Loading MAGs&hellip;</div>
+                <div id="bcEmpty" class="text-center text-muted py-5" style="display:none;"><i class="fas fa-inbox me-2"></i>No MAGs with callable prospects found.</div>
+                <div id="bcContent" style="display:none;">
+                    <div class="px-3 pt-3 pb-2">
+                        <input type="text" id="bcMagSearch" class="form-control form-control-sm" placeholder="Search MAGs..." style="border-radius:8px;font-size:12px;" />
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" style="font-size:12.5px;">
+                            <thead style="background:#f1f5f9;position:sticky;top:0;z-index:2;">
+                                <tr>
+                                    <th style="padding:10px 16px;font-weight:600;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.04em;">MAG</th>
+                                    <th class="text-center" style="padding:10px 8px;font-weight:600;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.04em;">Total</th>
+                                    <th class="text-center" style="padding:10px 8px;font-weight:600;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.04em;">Callable</th>
+                                    <th class="text-center" style="padding:10px 8px;font-weight:600;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.04em;">Called</th>
+                                    <th class="text-center" style="padding:10px 8px;font-weight:600;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.04em;"><i class="fas fa-thumbs-up text-success"></i></th>
+                                    <th class="text-center" style="padding:10px 8px;font-weight:600;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.04em;"><i class="fas fa-thumbs-down text-danger"></i></th>
+                                    <th style="padding:10px 8px;font-weight:600;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.04em;">Last batch</th>
+                                    <th style="padding:10px 16px;font-weight:600;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.04em;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bcMagTableBody"></tbody>
+                        </table>
+                    </div>
+                    <!-- Batch history sub-panel (outside table-responsive so it's not clipped) -->
+                    <div id="bcHistoryPanel" style="display:none;border-top:2px solid #0d6efd;">
+                        <div class="px-3 pt-3 pb-1 d-flex align-items-center justify-content-between">
+                            <strong style="font-size:13px;"><i class="fas fa-history me-1 text-primary"></i>Batch history for <span id="bcHistoryMagName"></span></strong>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="bcCloseHistory" style="font-size:11px;padding:2px 10px;"><i class="fas fa-times me-1"></i>Close</button>
+                        </div>
+                        <div id="bcHistoryLoading" class="text-center py-3"><div class="spinner-border spinner-border-sm text-primary"></div></div>
+                        <div id="bcHistoryEmpty" class="text-center text-muted py-3" style="display:none;font-size:12px;">No batch call history yet.</div>
+                        <div class="table-responsive" id="bcHistoryTableWrap" style="display:none;">
+                            <table class="table table-sm mb-0" style="font-size:12px;">
+                                <thead style="background:#eef2ff;">
+                                    <tr>
+                                        <th style="padding:6px 12px;">When</th>
+                                        <th style="padding:6px 8px;">By</th>
+                                        <th class="text-center" style="padding:6px 8px;">Attempted</th>
+                                        <th class="text-center" style="padding:6px 8px;"><span class="text-success">OK</span></th>
+                                        <th class="text-center" style="padding:6px 8px;"><span class="text-danger">Fail</span></th>
+                                        <th class="text-center" style="padding:6px 8px;"><span class="text-warning">Skip</span></th>
+                                        <th style="padding:6px 8px;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bcHistoryTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Progress panel (shown when batch is running) -->
+                <div id="bcProgressPanel" style="display:none;" class="px-4 py-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div>
+                            <strong style="font-size:14px;" id="bcProgressMag"></strong>
+                            <span class="text-muted ms-2" style="font-size:12px;" id="bcProgressCount"></span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger" id="bcStopBatch" style="font-size:11px;padding:3px 12px;"><i class="fas fa-stop me-1"></i>Stop</button>
+                    </div>
+                    <div class="progress mb-2" style="height:8px;border-radius:8px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="bcProgressBar" style="width:0%;border-radius:8px;"></div>
+                    </div>
+                    <div id="bcProgressLog" style="max-height:280px;overflow-y:auto;font-size:11.5px;font-family:'Consolas','Courier New',monospace;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;"></div>
+                    <div class="text-center mt-3" id="bcProgressDone" style="display:none;">
+                        <div class="alert alert-success py-2 px-3 mb-2" style="font-size:12.5px;border-radius:8px;">
+                            <i class="fas fa-check-circle me-1"></i><span id="bcDoneSummary"></span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-primary" id="bcBackToList"><i class="fas fa-arrow-left me-1"></i>Back to MAG list</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer py-2 px-3" style="background:#f8fafc;border-top:1px solid #e2e8f0;">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -1974,5 +2076,262 @@
             }
         });
     }
+
+    /* ═══════════════════════════════════════════════════════════════
+       Batch Call — MAG-level voice campaign
+       ═══════════════════════════════════════════════════════════════ */
+
+    var bcAllMags = [], bcStopRequested = false;
+
+    $('#btnOpenBatchCall').on('click', function () {
+        bcShowList();
+        var modal = new bootstrap.Modal(document.getElementById('batchCallModal'));
+        modal.show();
+        loadBatchCallMAGs();
+    });
+
+    function bcShowList() {
+        $('#bcLoading').hide(); $('#bcEmpty').hide(); $('#bcContent').hide(); $('#bcProgressPanel').hide();
+        $('#bcLoading').show();
+    }
+
+    function loadBatchCallMAGs() {
+        $.ajax({
+            url: '@Url.Action("GetBatchCallMAGs", "NaukriOnboarding")', type: 'GET',
+            success: function (res) {
+                $('#bcLoading').hide();
+                if (!res.success) {
+                    $('#bcEmpty').html('<i class="fas fa-exclamation-triangle text-danger me-2"></i>' + (res.error || 'Failed to load MAGs.')).show();
+                    return;
+                }
+                bcAllMags = res.mags || [];
+                if (bcAllMags.length === 0) { $('#bcEmpty').show(); return; }
+                renderBatchCallTable(bcAllMags);
+                $('#bcContent').show();
+            },
+            error: function () { $('#bcLoading').hide(); alert('Failed to load MAGs.'); }
+        });
+    }
+
+    function renderBatchCallTable(mags) {
+        var $body = $('#bcMagTableBody').empty();
+        $('#bcHistoryPanel').hide();
+        for (var i = 0; i < mags.length; i++) {
+            var m = mags[i];
+            var callableBadge = m.callableCount > 0
+                ? '<span class="bc-badge bg-primary text-white">' + m.callableCount + '</span>'
+                : '<span class="bc-badge bg-light text-muted">0</span>';
+
+            var actions = '';
+            if (m.callableCount > 0)
+                actions += '<button class="btn btn-success btn-call-mag btn-sm me-1" data-mag-idx="' + i + '" style="font-size:11px;padding:3px 10px;"><i class="fas fa-phone-alt me-1"></i>Call ' + m.callableCount + '</button>';
+            var histBtnCls = m.totalBatches > 0 ? 'btn-outline-primary' : 'btn-outline-secondary';
+            var histLabel = m.totalBatches > 0 ? '<i class="fas fa-history me-1"></i>' + m.totalBatches : '<i class="fas fa-history"></i>';
+            actions += '<button class="btn ' + histBtnCls + ' btn-batch-history btn-sm" data-mag-name="' + $('<span>').text(m.magName).html() + '" style="font-size:10.5px;padding:3px 8px;" title="Batch call history">' + histLabel + '</button>';
+
+            var lastBatchHtml = '—';
+            if (m.lastBatchAt) {
+                var statusCls = m.lastBatchStatus === 'Completed' ? 'text-success' : m.lastBatchStatus === 'Stopped' ? 'text-warning' : 'text-info';
+                lastBatchHtml = '<div style="line-height:1.35;">' +
+                    '<span style="font-size:11px;">' + m.lastBatchAt + '</span><br/>' +
+                    '<span style="font-size:10.5px;color:#64748b;">' + $('<span>').text(m.lastBatchBy || '').html() + '</span><br/>' +
+                    '<span class="' + statusCls + '" style="font-size:10.5px;font-weight:600;">' +
+                    (m.lastBatchSucceeded || 0) + ' ok / ' + (m.lastBatchCount || 0) + ' total</span></div>';
+            }
+
+            var $row = $('<tr class="bc-mag-row">' +
+                '<td style="padding:10px 16px;"><span class="bc-mag-name">' + $('<span>').text(m.magName).html() + '</span>' +
+                    (m.assessmentGroupName ? '<span class="bc-ag-name">' + $('<span>').text(m.assessmentGroupName).html() + '</span>' : '') + '</td>' +
+                '<td class="text-center" style="padding:10px 8px;">' + m.totalProspects + '</td>' +
+                '<td class="text-center" style="padding:10px 8px;">' + callableBadge + '</td>' +
+                '<td class="text-center" style="padding:10px 8px;">' + m.alreadyCalled + '</td>' +
+                '<td class="text-center" style="padding:10px 8px;"><span class="text-success fw-bold">' + m.interested + '</span></td>' +
+                '<td class="text-center" style="padding:10px 8px;"><span class="text-danger fw-bold">' + m.notInterested + '</span></td>' +
+                '<td style="padding:10px 8px;">' + lastBatchHtml + '</td>' +
+                '<td style="padding:10px 16px;white-space:nowrap;">' + actions + '</td>' +
+                '</tr>');
+            $body.append($row);
+        }
+    }
+
+    $('#bcMagSearch').on('input', function () {
+        var q = $(this).val().toLowerCase();
+        var filtered = bcAllMags.filter(function (m) {
+            return (m.magName || '').toLowerCase().indexOf(q) >= 0 || (m.assessmentGroupName || '').toLowerCase().indexOf(q) >= 0;
+        });
+        renderBatchCallTable(filtered);
+    });
+
+    $(document).on('click', '.btn-call-mag', function () {
+        var idx = parseInt($(this).attr('data-mag-idx'));
+        var m = bcAllMags[idx];
+        if (!m || m.callableCount === 0) return;
+        if (!confirm('Trigger Plivo calls to all ' + m.callableCount + ' callable prospects under "' + m.magName + '"?\n\nThis will start calling immediately.')) return;
+        startBatchCall(m);
+    });
+
+    var bcCurrentLogId = 0, bcCurrentMagName = '';
+
+    function startBatchCall(mag) {
+        bcStopRequested = false; bcCurrentLogId = 0; bcCurrentMagName = mag.magName;
+        $('#bcContent').hide();
+        $('#bcProgressPanel').show();
+        $('#bcProgressDone').hide();
+        $('#bcStopBatch').show().prop('disabled', false).html('<i class="fas fa-stop me-1"></i>Stop');
+        $('#bcProgressMag').text(mag.magName);
+        $('#bcProgressCount').text('Fetching prospects...');
+        $('#bcProgressBar').css('width', '0%').addClass('progress-bar-animated');
+        $('#bcProgressLog').empty();
+
+        $.ajax({
+            url: '@Url.Action("GetCallableProspectsForMAG", "NaukriOnboarding")', type: 'GET',
+            data: { magName: mag.magName },
+            success: function (res) {
+                if (!res.success || !res.prospects || res.prospects.length === 0) {
+                    bcLog('No callable prospects found.', 'skip');
+                    bcFinish(0, 0, 0);
+                    return;
+                }
+                var prospects = res.prospects;
+                $('#bcProgressCount').text('0 / ' + prospects.length);
+                bcLog('Starting batch: ' + prospects.length + ' prospect(s) to call', 'ok');
+
+                $.ajax({
+                    url: '@Url.Action("StartBatchCallLog", "NaukriOnboarding")', type: 'POST',
+                    data: { __RequestVerificationToken: verificationToken, magName: mag.magName, totalProspects: prospects.length },
+                    success: function (logRes) { bcCurrentLogId = logRes.logId || 0; },
+                    complete: function () { processBatchQueue(prospects, 0, 0, 0, 0); }
+                });
+            },
+            error: function () {
+                bcLog('Failed to fetch prospects.', 'err');
+                bcFinish(0, 0, 0);
+            }
+        });
+    }
+
+    function processBatchQueue(prospects, index, okCount, errCount, skipCount) {
+        if (bcStopRequested) {
+            bcLog('Batch stopped by user after ' + index + ' prospect(s).', 'skip');
+            bcFinish(okCount, errCount, skipCount);
+            return;
+        }
+        if (index >= prospects.length) {
+            bcFinish(okCount, errCount, skipCount);
+            return;
+        }
+
+        var p = prospects[index];
+        var total = prospects.length;
+        var pct = Math.round(((index) / total) * 100);
+        $('#bcProgressBar').css('width', pct + '%');
+        $('#bcProgressCount').text((index + 1) + ' / ' + total);
+
+        bcLog('<strong>#' + p.id + '</strong> ' + (p.candidateName || 'Unknown') + ' (' + (p.parsedPhone || '—') + ') — calling...', '');
+
+        $.ajax({
+            url: '@Url.Action("BatchCallSingle", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: p.id },
+            success: function (res) {
+                if (res.success) {
+                    bcLog('&nbsp;&nbsp;\u2714 Call triggered' + (res.conversationId ? ' [' + res.conversationId + ']' : ''), 'ok');
+                    okCount++;
+                } else if (res.skipped) {
+                    bcLog('&nbsp;&nbsp;\u25CB Skipped: ' + (res.error || 'already called'), 'skip');
+                    skipCount++;
+                } else {
+                    bcLog('&nbsp;&nbsp;\u2718 Failed: ' + (res.error || 'unknown'), 'err');
+                    errCount++;
+                }
+                setTimeout(function () { processBatchQueue(prospects, index + 1, okCount, errCount, skipCount); }, 1200);
+            },
+            error: function () {
+                bcLog('&nbsp;&nbsp;\u2718 Request failed', 'err');
+                errCount++;
+                setTimeout(function () { processBatchQueue(prospects, index + 1, okCount, errCount, skipCount); }, 1200);
+            }
+        });
+    }
+
+    function bcFinish(ok, err, skip) {
+        $('#bcProgressBar').css('width', '100%').removeClass('progress-bar-animated');
+        $('#bcStopBatch').hide();
+        var summary = ok + ' call(s) triggered';
+        if (skip > 0) summary += ', ' + skip + ' skipped';
+        if (err > 0) summary += ', ' + err + ' failed';
+        $('#bcDoneSummary').text(summary);
+        $('#bcProgressDone').show();
+        bcLog('Batch complete: ' + summary, 'ok');
+
+        if (bcCurrentLogId > 0) {
+            var finalStatus = bcStopRequested ? 'Stopped' : 'Completed';
+            $.ajax({
+                url: '@Url.Action("CompleteBatchCallLog", "NaukriOnboarding")', type: 'POST',
+                data: { __RequestVerificationToken: verificationToken, logId: bcCurrentLogId, succeeded: ok, failed: err, skipped: skip, status: finalStatus }
+            });
+        }
+    }
+
+    function bcLog(msg, type) {
+        var cls = type === 'ok' ? 'bc-log-ok' : type === 'err' ? 'bc-log-err' : type === 'skip' ? 'bc-log-skip' : '';
+        var $line = $('<div class="bc-log-line ' + cls + '">').html('<span style="color:#94a3b8;margin-right:6px;">' + new Date().toLocaleTimeString() + '</span>' + msg);
+        var $log = $('#bcProgressLog');
+        $log.append($line);
+        $log.scrollTop($log[0].scrollHeight);
+    }
+
+    $('#bcStopBatch').on('click', function () { bcStopRequested = true; $(this).prop('disabled', true).text('Stopping...'); });
+
+    $('#bcBackToList').on('click', function () {
+        $('#bcProgressPanel').hide();
+        $('#bcProgressBar').addClass('progress-bar-animated');
+        bcShowList();
+        loadBatchCallMAGs();
+    });
+
+    /* ── Batch history panel ──────────────────────────────────── */
+
+    $(document).on('click', '.btn-batch-history', function (e) {
+        e.stopPropagation();
+        var magName = $(this).attr('data-mag-name');
+        $('#bcHistoryMagName').text(magName);
+        $('#bcHistoryPanel').show();
+        $('#bcHistoryLoading').show();
+        $('#bcHistoryEmpty').hide();
+        $('#bcHistoryTableWrap').hide();
+
+        setTimeout(function () {
+            var panel = document.getElementById('bcHistoryPanel');
+            if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+
+        $.ajax({
+            url: '@Url.Action("GetBatchCallHistory", "NaukriOnboarding")', type: 'GET',
+            data: { magName: magName },
+            success: function (res) {
+                $('#bcHistoryLoading').hide();
+                if (!res.success || !res.history || res.history.length === 0) { $('#bcHistoryEmpty').show(); return; }
+                var $tbody = $('#bcHistoryTableBody').empty();
+                $.each(res.history, function (_, h) {
+                    var statusBadge = h.status === 'Completed' ? '<span class="badge bg-success">' + h.status + '</span>'
+                                    : h.status === 'Stopped'   ? '<span class="badge bg-warning text-dark">' + h.status + '</span>'
+                                    : h.status === 'Running'   ? '<span class="badge bg-info">' + h.status + '</span>'
+                                    : '<span class="badge bg-secondary">' + h.status + '</span>';
+                    $tbody.append('<tr>' +
+                        '<td style="padding:6px 12px;white-space:nowrap;">' + h.initiatedAt + '</td>' +
+                        '<td style="padding:6px 8px;">' + $('<span>').text(h.initiatedBy).html() + '</td>' +
+                        '<td class="text-center" style="padding:6px 8px;">' + h.prospectsAttempted + '</td>' +
+                        '<td class="text-center" style="padding:6px 8px;"><strong class="text-success">' + h.prospectsSucceeded + '</strong></td>' +
+                        '<td class="text-center" style="padding:6px 8px;"><strong class="text-danger">' + h.prospectsFailed + '</strong></td>' +
+                        '<td class="text-center" style="padding:6px 8px;"><strong class="text-warning">' + h.prospectsSkipped + '</strong></td>' +
+                        '<td style="padding:6px 8px;">' + statusBadge + '</td></tr>');
+                });
+                $('#bcHistoryTableWrap').show();
+            },
+            error: function () { $('#bcHistoryLoading').hide(); $('#bcHistoryEmpty').text('Failed to load history.').show(); }
+        });
+    });
+
+    $('#bcCloseHistory').on('click', function () { $('#bcHistoryPanel').hide(); });
 </script>
 }

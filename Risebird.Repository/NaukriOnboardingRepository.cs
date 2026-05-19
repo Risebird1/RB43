@@ -638,5 +638,85 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<List<BatchCallMagSummary>> GetMAGsWithCallableProspectCountsAsync()
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<BatchCallMagSummary>(
+                "usp_GetBatchCallMAGSummary",
+                commandType: System.Data.CommandType.StoredProcedure);
+            return result.AsList();
+        }
+
+        public async Task<List<NaukriProspectiveInterviewerVM>> GetCallableProspectsForMAGAsync(string magName)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var result = await con.QueryAsync<NaukriProspectiveInterviewerVM>(
+                    "usp_GetProspectsForMAGBatchCall",
+                    new { MagName = magName },
+                    commandType: System.Data.CommandType.StoredProcedure);
+                return result.AsList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<NaukriProspectiveInterviewerVM>();
+            }
+        }
+
+        public async Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalProspects)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@MagName", magName);
+                p.Add("@InitiatedBy", initiatedBy);
+                p.Add("@TotalProspects", totalProspects);
+                p.Add("@NewId", dbType: System.Data.DbType.Int32, direction: System.Data.ParameterDirection.Output);
+                await con.ExecuteAsync("usp_InsertBatchCallLog", p, commandType: System.Data.CommandType.StoredProcedure);
+                return p.Get<int>("@NewId");
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task CompleteBatchCallLogAsync(int id, int succeeded, int failed, int skipped, string status)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync("usp_CompleteBatchCallLog",
+                    new { Id = id, ProspectsSucceeded = succeeded, ProspectsFailed = failed, ProspectsSkipped = skipped, Status = status },
+                    commandType: System.Data.CommandType.StoredProcedure);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        public async Task<List<BatchCallLogEntry>> GetBatchCallHistoryAsync(string magName)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var result = await con.QueryAsync<BatchCallLogEntry>(
+                    "usp_GetBatchCallHistory",
+                    new { MagName = magName },
+                    commandType: System.Data.CommandType.StoredProcedure);
+                return result.AsList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<BatchCallLogEntry>();
+            }
+        }
     }
 }

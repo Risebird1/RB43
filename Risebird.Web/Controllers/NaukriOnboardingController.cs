@@ -1764,6 +1764,190 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
+        // ── Batch Call — MAG list with callable counts ─────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetBatchCallMAGs()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var mags = await _repository.GetMAGsWithCallableProspectCountsAsync();
+                return Json(new { success = true, mags, count = mags.Count });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Batch Call — trigger call for a single prospect (reused by batch JS) ──
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BatchCallSingle(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                string phone = record.ParsedPhone;
+                if (string.IsNullOrWhiteSpace(phone))
+                    return Json(new { success = false, error = "No phone number." });
+
+                if (phone.Length == 10 && !phone.StartsWith("+"))
+                    phone = "+91" + phone;
+                else if (phone.Length > 10 && !phone.StartsWith("+"))
+                    phone = "+" + phone;
+
+                var calledBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+
+                await _repository.UpdatePlivoCallStatusAsync(id, "initiated", null,
+                    DateTime.UtcNow, null, null, null, null, null, null, calledBy);
+
+                var callerId = _configuration["PlivoCX:OnboardingCallerId"]
+                            ?? _configuration["Plivo:FromNumber"]
+                            ?? "+918031136547";
+
+                var triggerRequest = new PlivoCXOnboardingTriggerRequest
+                {
+                    CallerId        = callerId,
+                    PhoneNumber     = phone,
+                    ProspectName    = record.CandidateName ?? "there",
+                    ProspectEmail   = record.ParsedEmail,
+                    Specialization  = record.MagName ?? record.KeySkills ?? "Technical",
+                    ExperienceYears = record.ExperienceYears,
+                    LogId           = id.ToString(),
+                    TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                };
+
+                var response = await _plivoCXService.TriggerOnboardingCallAsync(triggerRequest);
+
+                if (!string.IsNullOrEmpty(response?.Error))
+                {
+                    await _repository.UpdatePlivoCallStatusAsync(id, "trigger-failed", null,
+                        null, null, null, response.Error, null, null, null, null);
+                    return Json(new { success = false, error = $"Plivo trigger failed: {response.Error}" });
+                }
+
+                string conversationId = response?.ConversationId;
+                await _repository.UpdatePlivoCallStatusAsync(id, "triggered", conversationId,
+                    null, null, null, null, null, null, null, null);
+                await _repository.InsertHistoryAsync(id, "BatchCallInitiated", "—",
+                    $"Batch call triggered to {phone}. ConversationId: {conversationId ?? "N/A"}", calledBy);
+
+                return Json(new { success = true, conversationId, candidateName = record.CandidateName, phone });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Batch Call — get callable prospect IDs for a MAG ──────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetCallableProspectsForMAG(string magName)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var prospects = await _repository.GetCallableProspectsForMAGAsync(magName);
+                var items = prospects.Select(p => new
+                {
+                    p.Id, p.CandidateName, p.ParsedPhone, p.ParsedEmail,
+                    p.ExperienceYears, p.PlivoCallAttemptsTotal
+                });
+                return Json(new { success = true, prospects = items });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Batch Call — logging and history ──────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> StartBatchCallLog(string magName, int totalProspects)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var initiatedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "Unknown";
+                var logId = await _repository.InsertBatchCallLogAsync(magName, initiatedBy, totalProspects);
+                return Json(new { success = logId > 0, logId });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CompleteBatchCallLog(int logId, int succeeded, int failed, int skipped, string status)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                await _repository.CompleteBatchCallLogAsync(logId, succeeded, failed, skipped, status ?? "Completed");
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetBatchCallHistory(string magName)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var history = await _repository.GetBatchCallHistoryAsync(magName);
+                return Json(new
+                {
+                    success = true,
+                    history = history.Select(h => new
+                    {
+                        h.Id, h.InitiatedBy,
+                        initiatedAt = h.InitiatedAt.ToString("dd MMM yyyy, HH:mm"),
+                        h.ProspectsAttempted, h.ProspectsSucceeded, h.ProspectsFailed, h.ProspectsSkipped,
+                        completedAt = h.CompletedAt?.ToString("dd MMM yyyy, HH:mm"),
+                        h.Status
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
         private static string BuildInvitationEmailHtml(string candidateName, string magName, string appLink,
             string needClarityLink, string manualSupportLink, string notInterestedLink)
         {

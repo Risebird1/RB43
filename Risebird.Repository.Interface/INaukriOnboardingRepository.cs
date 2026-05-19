@@ -67,6 +67,44 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateMagNameAsync(int id, string magName);
         Task<bool> UpdateParsedEmailAsync(int id, string email);
         Task<bool> UpdateParsedPhoneAsync(int id, string phone);
+
+        // Batch call
+        Task<List<BatchCallMagSummary>> GetMAGsWithCallableProspectCountsAsync();
+        Task<List<NaukriProspectiveInterviewerVM>> GetCallableProspectsForMAGAsync(string magName);
+        Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalProspects);
+        Task CompleteBatchCallLogAsync(int id, int succeeded, int failed, int skipped, string status);
+        Task<List<BatchCallLogEntry>> GetBatchCallHistoryAsync(string magName);
+    }
+
+    public class BatchCallMagSummary
+    {
+        public string MagName { get; set; }
+        public string AssessmentGroupName { get; set; }
+        public int TotalProspects { get; set; }
+        public int CallableCount { get; set; }
+        public int AlreadyCalled { get; set; }
+        public int Interested { get; set; }
+        public int NotInterested { get; set; }
+        public string LastBatchBy { get; set; }
+        public DateTime? LastBatchAt { get; set; }
+        public int? LastBatchCount { get; set; }
+        public int? LastBatchSucceeded { get; set; }
+        public string LastBatchStatus { get; set; }
+        public int TotalBatches { get; set; }
+    }
+
+    public class BatchCallLogEntry
+    {
+        public int Id { get; set; }
+        public string MagName { get; set; }
+        public string InitiatedBy { get; set; }
+        public DateTime InitiatedAt { get; set; }
+        public int ProspectsAttempted { get; set; }
+        public int ProspectsSucceeded { get; set; }
+        public int ProspectsFailed { get; set; }
+        public int ProspectsSkipped { get; set; }
+        public DateTime? CompletedAt { get; set; }
+        public string Status { get; set; }
     }
 
     public class ActiveIRFItem

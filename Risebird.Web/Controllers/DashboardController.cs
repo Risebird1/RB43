@@ -1163,9 +1163,9 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                var apiUrl = "https://superflow-sandbox.surepass.app/api/v1/workflows/initialize-workflow";
+                var apiUrl = "https://superflow-sandbox.surepass.app/api/v1/workflows/sync/initialize-workflow";
                 var workflowId = _configuration["Surepass:WorkflowId"] ?? "workflow_3CiBVnvlqqnMyJWASBaR7N5JNHW";
-                var mobileNumber = _configuration["Surepass:TestMobileNumber"] ?? "9999999999";
+                var mobileNumber = _configuration["Surepass:TestMobileNumber"] ?? "8571967928";
 
                 testResults.Add($"API URL:       {apiUrl}");
                 testResults.Add($"Workflow ID:   {workflowId}");
@@ -1176,10 +1176,13 @@ namespace Risebird.Web.Controllers
                 {
                     workflow_id = workflowId,
                     interface_type = "detached",
+                    block_input_data = true,
+                    block_id_list = new[] { "mobile_to_pan", "pan_to_tan", "fetch_tan_details" },
                     advance_parameters = new
                     {
                         mobile_number = mobileNumber
-                    }
+                    },
+                    timeout = 180
                 };
 
                 var jsonBody = JsonConvert.SerializeObject(requestBody, Formatting.Indented);
