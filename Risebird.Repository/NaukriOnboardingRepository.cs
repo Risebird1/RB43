@@ -648,14 +648,14 @@ namespace Risebird.Repository
             return result.AsList();
         }
 
-        public async Task<List<NaukriProspectiveInterviewerVM>> GetCallableProspectsForMAGAsync(string magName)
+        public async Task<List<NaukriProspectiveInterviewerVM>> GetCallableProspectsForMAGAsync(string magName, bool onlyUncalled = true)
         {
             try
             {
                 using var con = new SqlConnection(_connectionString);
                 var result = await con.QueryAsync<NaukriProspectiveInterviewerVM>(
                     "usp_GetProspectsForMAGBatchCall",
-                    new { MagName = magName },
+                    new { MagName = magName, OnlyUncalled = onlyUncalled },
                     commandType: System.Data.CommandType.StoredProcedure);
                 return result.AsList();
             }
@@ -716,6 +716,24 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return new List<BatchCallLogEntry>();
+            }
+        }
+
+        public async Task<List<NaukriProspectiveInterviewerVM>> GetProspectCallOutcomesForMAGAsync(string magName)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var result = await con.QueryAsync<NaukriProspectiveInterviewerVM>(
+                    "usp_GetProspectCallOutcomesForMAG",
+                    new { MagName = magName },
+                    commandType: System.Data.CommandType.StoredProcedure);
+                return result.AsList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<NaukriProspectiveInterviewerVM>();
             }
         }
     }
