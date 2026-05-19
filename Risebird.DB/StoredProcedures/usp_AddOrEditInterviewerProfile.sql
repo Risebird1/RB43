@@ -62,6 +62,8 @@ Create PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 AS              
 Begin
 
+SET XACT_ABORT ON;
+
 begin try  
  begin tran 
 
@@ -80,6 +82,7 @@ begin try
    if exists(select top 1 assessmentGroupId from @temp where TotalInterviewers >=2000)  
    Begin  
   set @assessmentGroupList = (select STRING_AGG(asg.AssessmentGroup, ',') from @temp tp join AssessmentGroup asg on asg.id = tp.assessmentGroupId where tp.TotalInterviewers >= 2000)  
+  rollback tran  
   return  
    End  
       
