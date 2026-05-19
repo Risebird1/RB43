@@ -1764,6 +1764,48 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
+        // ── Batch Call — dedicated page ────────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> BatchCall()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return RedirectToAction("Login", "Login");
+
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProspectCallOutcomes(string magName)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var prospects = await _repository.GetProspectCallOutcomesForMAGAsync(magName);
+                return Json(new
+                {
+                    success = true,
+                    prospects = prospects.Select(p => new
+                    {
+                        p.Id, p.CandidateName, p.ParsedEmail, p.ParsedPhone,
+                        p.ExperienceYears, p.CurrentRole, p.Location,
+                        p.PlivoCallStatus, p.PlivoProspectDisposition,
+                        p.PlivoOnboardingPreference, p.PlivoKycAccepted,
+                        p.PlivoCallDuration, p.PlivoCalledBy, p.PlivoCallSummary,
+                        plivoCallAt = p.PlivoCallAt?.ToString("dd MMM yyyy, HH:mm"),
+                        p.PlivoCallAttemptsTotal, p.InvitationEmailSent, p.Status
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
         // ── Batch Call — MAG list with callable counts ─────────────────────────────
 
         [HttpGet]
@@ -1856,18 +1898,18 @@ namespace Risebird.Web.Controllers
         // ── Batch Call — get callable prospect IDs for a MAG ──────────────────────
 
         [HttpGet]
-        public async Task<IActionResult> GetCallableProspectsForMAG(string magName)
+        public async Task<IActionResult> GetCallableProspectsForMAG(string magName, bool onlyUncalled = true)
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
             try
             {
-                var prospects = await _repository.GetCallableProspectsForMAGAsync(magName);
+                var prospects = await _repository.GetCallableProspectsForMAGAsync(magName, onlyUncalled);
                 var items = prospects.Select(p => new
                 {
                     p.Id, p.CandidateName, p.ParsedPhone, p.ParsedEmail,
-                    p.ExperienceYears, p.PlivoCallAttemptsTotal
+                    p.ExperienceYears, p.PlivoCallAttemptsTotal, p.PlivoCallStatus
                 });
                 return Json(new { success = true, prospects = items });
             }
