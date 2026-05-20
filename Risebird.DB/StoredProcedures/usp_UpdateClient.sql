@@ -36,7 +36,8 @@ Create PROCEDURE [dbo].[usp_UpdateClient]
 @IsTranscript bit,
 @IsPlanFlixable bit,
 @PlanType int,
-@IsVideoRequired bit
+@IsVideoRequired bit,
+@BillingModel int
 AS          
 Begin          
       
@@ -71,6 +72,7 @@ SET
   ,[IsPlanFlixable]=@IsPlanFlixable
   ,[PlanType]=@PlanType
   ,[IsVideoRequired]=@IsVideoRequired
+  ,[BillingModel]=@BillingModel
 WHERE          
       Id = @id          
 End     

@@ -349,6 +349,15 @@ BEGIN
     ALTER TABLE Client
     Add ModifiedInterviewStatus bit
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'BillingModel')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add BillingModel int NULL
+END
 
 END
 

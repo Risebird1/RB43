@@ -35,7 +35,8 @@ CREATE PROCEDURE [dbo].[usp_AddClient]
 @IsTranscript bit,
 @IsPlanFlixable bit,
 @PlanType int,
-@IsVideoRequired bit
+@IsVideoRequired bit,
+@BillingModel int
 AS            
 Begin            
  Declare @Clientid int          
@@ -65,7 +66,8 @@ Begin
  ,[IsTranscript]
  ,[IsPlanFlixable]
  ,[PlanType]
- ,[IsVideoRequired])          
+ ,[IsVideoRequired]
+ ,[BillingModel])          
      VALUES            
      (@clientName            
      ,@clientDescr            
@@ -90,7 +92,8 @@ Begin
   ,@IsTranscript
   ,@IsPlanFlixable
   ,@PlanType
-  ,@IsVideoRequired)            
+  ,@IsVideoRequired
+  ,@BillingModel)            
         
 set @Clientid=SCOPE_IDENTITY()  
 Insert into SeniorHR Select id as Userid,@Clientid as Clientid from UserList where idprofile=32  
