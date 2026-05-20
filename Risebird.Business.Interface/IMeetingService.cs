@@ -150,6 +150,8 @@ namespace Risebird.Business.Interface
         Task<List<InvoiceDetailsVM>> FetchFNInvoiceDetails(string Startdate, string Enddate);
         Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id);
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
+        Task<List<InvoiceListVM>> GetInvoiceList(int month, int year);
+        Task<string> SaveInvoiceList(InvoiceListVM model);
         List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null);
         Task<List<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid, DateTime startdate, DateTime enddate);
         List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid);

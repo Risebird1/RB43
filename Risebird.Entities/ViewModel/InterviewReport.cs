@@ -513,4 +513,35 @@ namespace Risebird.Entities.ViewModel
         public int TDSAmount { get; set; }
         public bool GSTApplicable { get; set; }
     }
+
+    public class InvoiceListVM
+    {
+        public int id { get; set; }
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public string InvoiceModel { get; set; }
+        public int BillingOwner { get; set; }
+        public string BillingOwnerEmail { get; set; }
+        public string InvoiceNumber { get; set; }
+        public string IRN { get; set; }
+        public decimal GrossAmount { get; set; }
+        public int Status { get; set; }
+        public string StatusDesc { get; set; }
+        public string Owner { get; set; }
+        public string LatestRemark { get; set; }
+        public string UTRTrxn { get; set; }
+        public int BillingType { get; set; }
+        public int InvoiceMonth { get; set; }
+        public int InvoiceYear { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+    }
+
+    public class InvoiceListFilter
+    {
+        public string Month { get; set; }
+        public string Year { get; set; }
+        public string[] Client { get; set; }
+        public string[] Status { get; set; }
+    }
 }

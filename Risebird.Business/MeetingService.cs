@@ -3119,6 +3119,33 @@ namespace Risebird.Business
                 return "Fail";
             }
         }
+
+        public async Task<List<InvoiceListVM>> GetInvoiceList(int month, int year)
+        {
+            try
+            {
+                return await _meetingRespository.GetInvoiceList(month, year);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<InvoiceListVM>();
+            }
+        }
+
+        public async Task<string> SaveInvoiceList(InvoiceListVM model)
+        {
+            try
+            {
+                return await _meetingRespository.SaveInvoiceList(model);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Fail";
+            }
+        }
+
         public List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null)
         {
             try

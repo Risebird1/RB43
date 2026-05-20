@@ -1771,6 +1771,132 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        #region InvoiceList
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InvoiceList()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var currentMonth = DateTime.Now.Month;
+                    var currentYear  = DateTime.Now.Year;
+                    var prevMonth    = DateTime.Now.AddMonths(-1).Month;
+                    var prevYear     = DateTime.Now.AddMonths(-1).Year;
+                    int month = prevMonth;
+                    int year  = prevYear;
+
+                    var model = new List<InvoiceListVM>();
+
+                    if (HttpContext.Session.GetString("InvoiceListFilter") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<InvoiceListFilter>(HttpContext.Session.GetString("InvoiceListFilter"));
+                        if (filter.Month != null && filter.Year != null)
+                        {
+                            month = Convert.ToInt32(filter.Month);
+                            year  = Convert.ToInt32(filter.Year);
+                        }
+                        model = await _meetingService.GetInvoiceList(month, year);
+                        if (model == null) model = new List<InvoiceListVM>();
+                        filter.Client = filter.Client == null
+                            ? model.Select(x => x.ClientName).ToArray()
+                            : filter.Client;
+                        filter.Status = filter.Status == null
+                            ? model.Select(x => x.Status.ToString()).Distinct().ToArray()
+                            : filter.Status;
+                        model = model.Where(x =>
+                            filter.Client.Contains(x.ClientName) &&
+                            filter.Status.Contains(x.Status.ToString())).ToList();
+                    }
+                    else
+                    {
+                        model = await _meetingService.GetInvoiceList(month, year);
+                        if (model == null) model = new List<InvoiceListVM>();
+                    }
+
+                    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                    ViewBag.SelectedMonth = month;
+                    ViewBag.SelectedYear  = year;
+                    ViewBag.DateResult    = mfi.GetMonthName(month) + " " + year;
+                    ViewBag.TotalGross    = model.Sum(x => x.GrossAmount);
+                    ViewBag.ClientList    = _projectService.GetClients().Select(x => x.Name).Where(x => !string.IsNullOrEmpty(x)).Distinct();
+
+                    if (TempData["InvoiceListMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["InvoiceListMessage"].ToString();
+                        TempData.Remove("InvoiceListMessage");
+                    }
+
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult InvoiceList(InvoiceListFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("InvoiceListFilter", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("InvoiceList");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ResetInvoiceList()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("InvoiceListFilter");
+                    return RedirectToAction("InvoiceList");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        #endregion
+
         [HttpGet]
         public async Task<IActionResult> GetInvoiceDetails(int id, string startdate, string enddate, string Clientname, string jobcountry)
         {
