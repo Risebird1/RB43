@@ -5111,6 +5111,81 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<InvoiceDetailVM> GetGeneratedInvoiceById(int invoiceId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@InvoiceId", invoiceId);
+                    using (var multi = await SqlMapper.QueryMultipleAsync(con, "usp_GetGeneratedInvoiceById", parameters,
+                        commandType: CommandType.StoredProcedure))
+                    {
+                        var header    = (await multi.ReadAsync<InvoiceDetailVM>()).FirstOrDefault();
+                        var lineItems = (await multi.ReadAsync<InvoiceLineItemVM>()).ToList();
+                        if (header != null) header.LineItems = lineItems;
+                        return header;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, int status,
+            decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@InvoiceId",     invoiceId);
+                    parameters.Add("@GSTNumber",     gstNumber);
+                    parameters.Add("@CreditPeriod",  creditPeriod);
+                    parameters.Add("@IRN",           irn);
+                    parameters.Add("@Status",        status);
+                    parameters.Add("@Subtotal",      subtotal);
+                    parameters.Add("@GSTAmount",     gstAmount);
+                    parameters.Add("@InvoiceValue",  invoiceValue);
+                    parameters.Add("@TDSAmount",     tdsAmount);
+                    parameters.Add("@NetReceivable", netReceivable);
+                    var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_UpdateInvoiceDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return (result.FirstOrDefault()?.UpdatedRows ?? 0) > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task UpdateInvoiceLineItem(int lineItemId, decimal unitRate, decimal lineTotal)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@LineItemId", lineItemId);
+                    parameters.Add("@UnitRate",   unitRate);
+                    parameters.Add("@LineTotal",  lineTotal);
+                    await SqlMapper.ExecuteAsync(con, "usp_UpdateInvoiceLineItems", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
         public async Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year)
         {
             try

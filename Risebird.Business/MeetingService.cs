@@ -3159,6 +3159,31 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<InvoiceDetailVM> GetGeneratedInvoiceById(int invoiceId)
+        {
+            try { return await _meetingRespository.GetGeneratedInvoiceById(invoiceId); }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return null; }
+        }
+
+        public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, int status,
+            decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
+            List<InvoiceLineItemVM> lineItems)
+        {
+            try
+            {
+                // Update each edited line item first
+                if (lineItems != null && lineItems.Any())
+                {
+                    var tasks = lineItems.Select(li =>
+                        _meetingRespository.UpdateInvoiceLineItem(li.id, li.UnitRate, li.LineTotal));
+                    await Task.WhenAll(tasks);
+                }
+                return await _meetingRespository.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, status,
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable);
+            }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return false; }
+        }
+
         public async Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year)
         {
             try

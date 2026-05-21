@@ -184,6 +184,10 @@ namespace Risebird.Repository.Interface
         Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0);
         Task<List<BillingOwnerOption>> GetClientBillingOwners(int clientId);
         Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year);
+        Task<InvoiceDetailVM> GetGeneratedInvoiceById(int invoiceId);
+        Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, int status,
+            decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable);
+        Task UpdateInvoiceLineItem(int lineItemId, decimal unitRate, decimal lineTotal);
         Task<string> GetNextInvoiceNumber(int month, int year);
         Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model);
         Task SaveGeneratedInvoiceLineItems(int invoiceId, List<InvoiceLineItemVM> lineItems);

@@ -585,6 +585,33 @@ namespace Risebird.Entities.ViewModel
         public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
     }
 
+    public class InvoiceDetailVM
+    {
+        public int id { get; set; }
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public int BillingOwnerId { get; set; }
+        public string BillingOwnerEmail { get; set; }
+        public string InvoiceNumber { get; set; }
+        public int InvoiceMonth { get; set; }
+        public int InvoiceYear { get; set; }
+        public string CreditPeriod { get; set; }
+        public string GSTNumber { get; set; }
+        public int TaxScenario { get; set; }
+        public string IRN { get; set; }
+        public decimal Subtotal { get; set; }
+        public decimal GSTAmount { get; set; }
+        public decimal InvoiceValue { get; set; }
+        public decimal TDSAmount { get; set; }
+        public decimal NetReceivable { get; set; }
+        public int Status { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+        public int BillingType { get; set; }
+        public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
+    }
+
     public class DuplicateInvoiceCheckVM
     {
         public int id { get; set; }

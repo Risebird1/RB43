@@ -1872,6 +1872,77 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ViewInvoice(int invoiceId)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
+                    if (invoice == null)
+                    {
+                        TempData["InvoiceListMessage"] = "Error: Invoice not found.";
+                        return RedirectToAction("InvoiceList");
+                    }
+                    if (TempData["ViewInvoiceMsg"] != null)
+                        ViewBag.Message = TempData["ViewInvoiceMsg"].ToString();
+                    return View(invoice);
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetInvoiceById(int invoiceId)
+        {
+            try
+            {
+                var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
+                if (invoice == null) return Json(new { error = "Invoice not found." });
+                return Json(invoice);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { error = "Failed to load invoice." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod,
+            string irn, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
+            decimal tdsAmount, decimal netReceivable, string lineItemsJson)
+        {
+            try
+            {
+                List<InvoiceLineItemVM> lineItems = null;
+                if (!string.IsNullOrWhiteSpace(lineItemsJson))
+                {
+                    try { lineItems = JsonConvert.DeserializeObject<List<InvoiceLineItemVM>>(lineItemsJson); }
+                    catch { lineItems = new List<InvoiceLineItemVM>(); }
+                }
+                var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, status,
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems);
+                return Json(new
+                {
+                    success,
+                    message    = success ? "Invoice updated successfully." : "Failed to update invoice.",
+                    redirectUrl = success ? Url.Action("ViewInvoice", "Finance", new { invoiceId }) : (string)null
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred." });
+            }
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> SaveGeneratedInvoice(GenerateInvoiceVM model, string LineItemsJson)
         {

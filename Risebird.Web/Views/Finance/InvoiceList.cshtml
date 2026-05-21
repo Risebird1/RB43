@@ -199,6 +199,7 @@
                                                         <th>Owner</th>
                                                         <th>Latest Remark</th>
                                                         <th>UTR / Trxn</th>
+                                                        <th>Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tfoot>
@@ -215,6 +216,7 @@
                                                         <th>Owner</th>
                                                         <th>Latest Remark</th>
                                                         <th>UTR / Trxn</th>
+                                                        <th>Actions</th>
                                                     </tr>
                                                 </tfoot>
                                                 <tbody id="tblBodyInvoiceList">
@@ -257,6 +259,14 @@
                                                                     : item.LatestRemark)
                                                             </td>
                                                             <td>@item.UTRTrxn</td>
+                                                            <td class="text-center">
+                                                                <a href="@Url.Action("ViewInvoice","Finance", new { invoiceId = item.id })"
+                                                                   target="_blank"
+                                                                   class="btn btn-sm btn-outline-primary"
+                                                                   title="View / Edit Invoice">
+                                                                    <i class="fa fa-eye"></i> View
+                                                                </a>
+                                                            </td>
                                                         </tr>
                                                         rowNo++;
                                                     }
@@ -276,6 +286,7 @@
     </div>
 
 </div>
+
 
 @if (ViewBag.Message != null)
 {
@@ -346,6 +357,7 @@
         setTimeout(applyDataTable, 1000);
     }
 </script>
+
 
 <script type="text/javascript">
     $(".dataloading").hide();
