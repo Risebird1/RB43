@@ -1,0 +1,289 @@
+@model Risebird.Entities.ViewModel.InvoiceDetailVM
+@using System.Globalization
+@{
+    ViewData["Title"] = "View Invoice";
+    ViewBag.PageHeader = "View Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var months = new[] { "", "January", "February", "March", "April", "May", "June",
+                         "July", "August", "September", "October", "November", "December" };
+    var periodLabel = (Model.InvoiceMonth >= 1 && Model.InvoiceMonth <= 12
+                        ? months[Model.InvoiceMonth] : Model.InvoiceMonth.ToString())
+                      + " " + Model.InvoiceYear;
+}
+
+<link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .vi-card           { background:#fff; border-radius:8px; padding:24px; box-shadow:0 1px 4px rgba(0,0,0,.10); margin-bottom:16px; }
+    .vi-section-title  { font-size:13px; font-weight:700; color:#5c6bc0; letter-spacing:.5px; text-transform:uppercase; margin-bottom:14px; border-bottom:2px solid #e8eaf6; padding-bottom:6px; }
+    .vi-label          { font-size:12px; font-weight:600; color:#555; margin-bottom:4px; }
+    .auto-field        { background:#f5f7fa !important; color:#333; }
+    .editable-field    { background:#fffde7 !important; border:1px solid #ffe082; }
+    .totals-table td   { padding:6px 12px; font-size:14px; }
+    .totals-table .label-col  { color:#666; width:60%; text-align:right; padding-right:20px; }
+    .totals-table .val-col    { font-weight:600; text-align:right; min-width:130px; }
+    .invoice-value-row td     { font-size:16px; font-weight:700; color:#1a237e; border-top:2px solid #c5cae9; border-bottom:2px solid #c5cae9; }
+    .line-items-table th      { background:#e8eaf6; font-size:12px; font-weight:700; }
+    .line-items-table td, .line-items-table th { vertical-align:middle; }
+    .tag-edit { font-size:10px; color:#999; font-style:italic; margin-left:4px; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <div class="mobile-view"><h4 class="card-title">View Invoice</h4></div>
+                    <label style="font-weight:700; font-size:14px; color:#3949ab;">
+                        @Model.InvoiceNumber &nbsp;|&nbsp; @Model.ClientName &nbsp;|&nbsp; @periodLabel
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert @(ViewBag.Message.ToString().StartsWith("Success") ? "alert-success" : "alert-danger")" style="margin:10px 15px;">
+            @ViewBag.Message
+        </div>
+    }
+    <div id="divSaveMsg" class="alert" style="display:none; margin:10px 15px;"></div>
+
+    <div class="content">
+
+        <!-- ── Section 1: Invoice Summary (read-only) ── -->
+        <div class="vi-card">
+            <div class="vi-section-title">Invoice Summary</div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="vi-label">Client</label>
+                    <input type="text" class="form-control auto-field" value="@Model.ClientName" readonly />
+                </div>
+                <div class="col-md-4">
+                    <label class="vi-label">Invoice Number</label>
+                    <input type="text" class="form-control auto-field" value="@Model.InvoiceNumber" readonly />
+                </div>
+                <div class="col-md-4">
+                    <label class="vi-label">Period</label>
+                    <input type="text" class="form-control auto-field" value="@periodLabel" readonly />
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="vi-label">Billing Owner</label>
+                    <input type="text" class="form-control auto-field"
+                           value="@(Model.BillingType == 1 ? Model.BillingOwnerEmail : "Client")" readonly />
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="vi-label">Created By</label>
+                    <input type="text" class="form-control auto-field" value="@Model.CreatedBy" readonly />
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="vi-label">Created On</label>
+                    <input type="text" class="form-control auto-field"
+                           value="@Model.CreatedOn?.ToString("dd MMM yyyy")" readonly />
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Section 2: Editable Fields ── -->
+        <div class="vi-card">
+            <div class="vi-section-title">Update Details</div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="vi-label">GST Number <span class="tag-edit">(editable)</span></label>
+                    <input type="text" id="editGSTNumber" class="form-control editable-field"
+                           value="@Model.GSTNumber" placeholder="GST Number" />
+                </div>
+                <div class="col-md-4">
+                    <label class="vi-label">Credit Period <span class="tag-edit">(editable)</span></label>
+                    <input type="text" id="editCreditPeriod" class="form-control editable-field"
+                           value="@Model.CreditPeriod" placeholder="e.g. 30 Days" />
+                </div>
+                <div class="col-md-4">
+                    <label class="vi-label">IRN <span class="tag-edit">(editable)</span></label>
+                    <input type="text" id="editIRN" class="form-control editable-field"
+                           value="@Model.IRN" placeholder="IRN" />
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="vi-label">Status <span class="tag-edit">(editable)</span></label>
+                    <select id="editStatus" class="form-control editable-field">
+                        @if (Model.Status == 0) { <option value="0" selected="selected">Draft</option> } else { <option value="0">Draft</option> }
+                        @if (Model.Status == 1) { <option value="1" selected="selected">Generated</option> } else { <option value="1">Generated</option> }
+                        @if (Model.Status == 2) { <option value="2" selected="selected">Paid</option> } else { <option value="2">Paid</option> }
+                        @if (Model.Status == 3) { <option value="3" selected="selected">Partially Paid</option> } else { <option value="3">Partially Paid</option> }
+                        @if (Model.Status == 4) { <option value="4" selected="selected">Overdue</option> } else { <option value="4">Overdue</option> }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Section 3: Line Items ── -->
+        <div class="vi-card">
+            <div class="vi-section-title">Line Items</div>
+            <div class="table-responsive">
+                <table class="table table-bordered line-items-table" id="tblLineItems">
+                    <thead>
+                        <tr>
+                            <th>IRF / Product</th>
+                            <th>Description</th>
+                            <th class="text-right" style="width:90px;">Qty</th>
+                            <th class="text-center" style="width:140px;">Unit Rate &#8377; <span class="tag-edit">(editable)</span></th>
+                            <th class="text-right" style="width:130px;">Line Total (&#8377;)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblLineItemsBody">
+                        @if (Model.LineItems != null && Model.LineItems.Any())
+                        {
+                            @foreach (var li in Model.LineItems)
+                            {
+                                <tr data-id="@li.id" data-qty="@li.Qty">
+                                    <td>@li.ProductName</td>
+                                    <td>@li.Description</td>
+                                    <td class="text-right">@li.Qty.ToString("N2")</td>
+                                    <td class="text-center">
+                                        <input type="number" class="form-control form-control-sm unit-rate-input text-right"
+                                               value="@li.UnitRate.ToString("N2", CultureInfo.InvariantCulture)"
+                                               min="0" step="0.01" style="width:120px;" />
+                                    </td>
+                                    <td class="text-right line-total-cell">@li.LineTotal.ToString("N2")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center text-muted">No line items found.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── Section 4: Totals ── -->
+        <div class="vi-card">
+            <div class="vi-section-title">Totals</div>
+            <table class="totals-table" style="margin-left:auto;">
+                <tr>
+                    <td class="label-col">Subtotal</td>
+                    <td class="val-col">&#8377; <span id="spnSubtotal">@Model.Subtotal.ToString("N2")</span></td>
+                </tr>
+                <tr>
+                    <td class="label-col">GST (@Html.Raw(Model.TaxScenario == 1 ? "18%" : "0%"))</td>
+                    <td class="val-col">&#8377; <span id="spnGSTAmount">@Model.GSTAmount.ToString("N2")</span></td>
+                </tr>
+                <tr class="invoice-value-row">
+                    <td class="label-col">Invoice Value</td>
+                    <td class="val-col">&#8377; <span id="spnInvoiceValue">@Model.InvoiceValue.ToString("N2")</span></td>
+                </tr>
+                <tr>
+                    <td class="label-col">TDS (10%)</td>
+                    <td class="val-col">&#8377; <span id="spnTDSAmount">@Model.TDSAmount.ToString("N2")</span></td>
+                </tr>
+                <tr>
+                    <td class="label-col"><strong>Net Receivable</strong></td>
+                    <td class="val-col"><strong>&#8377; <span id="spnNetReceivable">@Model.NetReceivable.ToString("N2")</span></strong></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ── Action Buttons ── -->
+        <div class="vi-card">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button type="button" id="btnSaveChanges"
+                            class="mdc-button mdc-button--raised mdc-ripple-upgraded"
+                            onclick="saveChanges()">
+                        <font style="font-size:12px;">Save Changes</font>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+</div>
+
+<input type="hidden" id="hidInvoiceId"  value="@Model.id" />
+<input type="hidden" id="hidTaxScenario" value="@Model.TaxScenario" />
+
+<script>
+    // Live recalculate when unit rate changes
+    $('#tblLineItemsBody').on('input', '.unit-rate-input', function () {
+        var row   = $(this).closest('tr');
+        var qty   = parseFloat(row.data('qty') || 0);
+        var rate  = parseFloat($(this).val() || 0);
+        row.find('.line-total-cell').text((qty * rate).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        refreshTotals();
+    });
+
+    function refreshTotals() {
+        var taxScenario = parseInt($('#hidTaxScenario').val() || 0);
+        var subtotal = 0;
+        $('#tblLineItemsBody .line-total-cell').each(function () {
+            subtotal += parseFloat($(this).text().replace(/,/g, '') || 0);
+        });
+        var gstAmount     = taxScenario === 1 ? Math.round(subtotal * 18 / 100 * 100) / 100 : 0;
+        var invoiceValue  = subtotal + gstAmount;
+        var tdsAmount     = Math.round(subtotal * 10 / 100 * 100) / 100;
+        var netReceivable = invoiceValue - tdsAmount;
+
+        var fmt = function (n) { return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); };
+        $('#spnSubtotal').text(fmt(subtotal));
+        $('#spnGSTAmount').text(fmt(gstAmount));
+        $('#spnInvoiceValue').text(fmt(invoiceValue));
+        $('#spnTDSAmount').text(fmt(tdsAmount));
+        $('#spnNetReceivable').text(fmt(netReceivable));
+    }
+
+    function saveChanges() {
+        var taxScenario = parseInt($('#hidTaxScenario').val() || 0);
+
+        // Collect line items
+        var lineItems = [];
+        $('#tblLineItemsBody tr[data-id]').each(function () {
+            var id    = parseInt($(this).data('id'));
+            var qty   = parseFloat($(this).data('qty') || 0);
+            var rate  = parseFloat($(this).find('.unit-rate-input').val() || 0);
+            lineItems.push({ id: id, unitRate: rate, lineTotal: qty * rate });
+        });
+
+        var subtotal      = lineItems.reduce(function (s, li) { return s + li.lineTotal; }, 0);
+        var gstAmount     = taxScenario === 1 ? Math.round(subtotal * 18 / 100 * 100) / 100 : 0;
+        var invoiceValue  = subtotal + gstAmount;
+        var tdsAmount     = Math.round(subtotal * 10 / 100 * 100) / 100;
+        var netReceivable = invoiceValue - tdsAmount;
+
+        $('#btnSaveChanges').prop('disabled', true).html('<font style="font-size:12px;">Saving…</font>');
+
+        $.ajax({
+            type: 'POST',
+            url: '/Finance/UpdateInvoiceDetails',
+            data: {
+                invoiceId:     $('#hidInvoiceId').val(),
+                gstNumber:     $('#editGSTNumber').val().trim(),
+                creditPeriod:  $('#editCreditPeriod').val().trim(),
+                irn:           $('#editIRN').val().trim(),
+                status:        $('#editStatus').val(),
+                subtotal:      subtotal.toFixed(2),
+                gstAmount:     gstAmount.toFixed(2),
+                invoiceValue:  invoiceValue.toFixed(2),
+                tdsAmount:     tdsAmount.toFixed(2),
+                netReceivable: netReceivable.toFixed(2),
+                lineItemsJson: JSON.stringify(lineItems)
+            },
+            success: function (res) {
+                $('#btnSaveChanges').prop('disabled', false)
+                    .html('<font style="font-size:12px;">Save Changes</font>');
+                var cls = res.success ? 'alert-success' : 'alert-danger';
+                $('#divSaveMsg').attr('class', 'alert ' + cls).html(res.message).show();
+                if (res.success) {
+                    refreshTotals();
+                    $('html, body').animate({ scrollTop: 0 }, 400);
+                }
+            },
+            error: function () {
+                $('#btnSaveChanges').prop('disabled', false)
+                    .html('<font style="font-size:12px;">Save Changes</font>');
+                $('#divSaveMsg').attr('class', 'alert alert-danger').html('An error occurred.').show();
+            }
+        });
+    }
+</script>
