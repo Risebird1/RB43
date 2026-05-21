@@ -29,20 +29,6 @@ CREATE TABLE [dbo].[GeneratedInvoices](
 END
 GO
 
--- Add tracking columns to existing tables that were created before this version
-IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'GeneratedInvoices' AND COLUMN_NAME = 'BillingOwnerId')
-    ALTER TABLE GeneratedInvoices ADD [BillingOwnerId] INT NULL DEFAULT 0
-GO
-IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'GeneratedInvoices' AND COLUMN_NAME = 'Owner')
-    ALTER TABLE GeneratedInvoices ADD [Owner] VARCHAR(200) NULL
-GO
-IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'GeneratedInvoices' AND COLUMN_NAME = 'LatestRemark')
-    ALTER TABLE GeneratedInvoices ADD [LatestRemark] VARCHAR(500) NULL
-GO
-IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'GeneratedInvoices' AND COLUMN_NAME = 'UTRTrxn')
-    ALTER TABLE GeneratedInvoices ADD [UTRTrxn] VARCHAR(200) NULL
-GO
-
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'GeneratedInvoiceLineItems')
 BEGIN
 CREATE TABLE [dbo].[GeneratedInvoiceLineItems](
