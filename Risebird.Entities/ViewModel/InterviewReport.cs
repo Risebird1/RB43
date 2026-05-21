@@ -544,4 +544,64 @@ namespace Risebird.Entities.ViewModel
         public string[] Client { get; set; }
         public string[] Status { get; set; }
     }
+
+    public class InvoiceLineItemVM
+    {
+        public int id { get; set; }
+        public int InvoiceId { get; set; }
+        public string ProductName { get; set; }
+        public string Description { get; set; }
+        public decimal Qty { get; set; }
+        public decimal UnitRate { get; set; }
+        public decimal LineTotal { get; set; }
+        public string Basis { get; set; }
+    }
+
+    public class GenerateInvoiceVM
+    {
+        public int id { get; set; }
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public string InvoiceNumber { get; set; }
+        public int InvoiceMonth { get; set; }
+        public int InvoiceYear { get; set; }
+        public string BillingOwnerEmail { get; set; }
+        public int BillingOwnerId { get; set; }
+        public string CreditPeriod { get; set; }
+        public string GSTNumber { get; set; }
+        public bool GSTApplicable { get; set; }
+        public int TaxScenario { get; set; }
+        public string IRN { get; set; }
+        public int BillingType { get; set; }
+        public decimal PerInterviewRate { get; set; }
+        public decimal Subtotal { get; set; }
+        public decimal GSTAmount { get; set; }
+        public decimal InvoiceValue { get; set; }
+        public decimal TDSAmount { get; set; }
+        public decimal NetReceivable { get; set; }
+        public int Status { get; set; }
+        public string CreatedBy { get; set; }
+        public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
+    }
+
+    public class BillingOwnerOption
+    {
+        public int BillingOwnerId { get; set; }
+        public string BillingOwnerEmail { get; set; }
+    }
+
+    public class ClientInvoiceFormDataVM
+    {
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public string GSTNumber { get; set; }
+        public int PaymentTerm { get; set; }
+        public bool GSTApplicable { get; set; }
+        public int BillingType { get; set; }
+        public decimal PerInterviewRate { get; set; }
+        public string BillingOwnerEmail { get; set; }
+        public int BillingOwnerId { get; set; }
+        public string InvoiceNumber { get; set; }
+        public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
+    }
 }

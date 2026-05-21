@@ -1771,6 +1771,108 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        #region GenerateInvoice
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GenerateInvoice()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var clients = _projectService.GetClients()
+                        .Where(x => !string.IsNullOrEmpty(x.Name))
+                        .OrderBy(x => x.Name)
+                        .ToList();
+                    ViewBag.ClientList = new SelectList(clients, "id", "Name");
+                    ViewBag.CurrentMonth = DateTime.Now.Month;
+                    ViewBag.CurrentYear  = DateTime.Now.Year;
+                    return View(new GenerateInvoiceVM());
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetClientInvoiceData(int clientId, int month, int year)
+        {
+            try
+            {
+                var dataTask          = _meetingService.GetClientInvoiceFormData(clientId, month, year);
+                var invoiceNumTask    = _meetingService.GetNextInvoiceNumber(month, year);
+                var billingOwnersTask = _meetingService.GetClientBillingOwners(clientId);
+
+                await Task.WhenAll(dataTask, invoiceNumTask, billingOwnersTask);
+
+                var data          = dataTask.Result;
+                data.InvoiceNumber = invoiceNumTask.Result;
+                var billingOwners = billingOwnersTask.Result;
+
+                var subtotal      = data.LineItems?.Sum(x => x.LineTotal) ?? 0;
+                var gstAmount     = data.GSTApplicable ? Math.Round(subtotal * 18 / 100, 2) : 0;
+                var invoiceValue  = subtotal + gstAmount;
+                var tdsAmount     = Math.Round(subtotal * 10 / 100, 2);
+                var netReceivable = invoiceValue - tdsAmount;
+
+                return Json(new
+                {
+                    invoiceNumber     = data.InvoiceNumber,
+                    billingOwnerEmail = data.BillingOwnerEmail,
+                    billingOwnerId    = data.BillingOwnerId,
+                    billingOwners     = billingOwners,
+                    creditPeriod      = data.PaymentTerm > 0 ? data.PaymentTerm + " Days" : string.Empty,
+                    gstNumber         = data.GSTNumber,
+                    gstApplicable     = data.GSTApplicable,
+                    billingType       = data.BillingType,
+                    perInterviewRate  = data.PerInterviewRate,
+                    lineItems         = data.LineItems,
+                    subtotal          = subtotal,
+                    gstAmount         = gstAmount,
+                    invoiceValue      = invoiceValue,
+                    tdsAmount         = tdsAmount,
+                    netReceivable     = netReceivable
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { error = "Failed to load invoice data." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> SaveGeneratedInvoice(GenerateInvoiceVM model, string LineItemsJson)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var emailid     = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    model.CreatedBy = emailid;
+                    if (!string.IsNullOrWhiteSpace(LineItemsJson))
+                    {
+                        try { model.LineItems = JsonConvert.DeserializeObject<List<InvoiceLineItemVM>>(LineItemsJson); }
+                        catch { model.LineItems = new List<InvoiceLineItemVM>(); }
+                    }
+                    var invoiceId = await _meetingService.SaveGeneratedInvoice(model);
+                    TempData["GenerateInvoiceMsg"] = invoiceId > 0
+                        ? "Success: Invoice saved successfully."
+                        : "Error: Could not save invoice.";
+                    return RedirectToAction("GenerateInvoice");
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        #endregion
+
         #region InvoiceList
 
         [Authorize]

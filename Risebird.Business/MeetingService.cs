@@ -3146,6 +3146,63 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year)
+        {
+            try
+            {
+                return await _meetingRespository.GetClientInvoiceFormData(clientId, month, year);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new ClientInvoiceFormDataVM();
+            }
+        }
+
+        public async Task<List<BillingOwnerOption>> GetClientBillingOwners(int clientId)
+        {
+            try
+            {
+                return await _meetingRespository.GetClientBillingOwners(clientId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<BillingOwnerOption>();
+            }
+        }
+
+        public async Task<string> GetNextInvoiceNumber(int month, int year)
+        {
+            try
+            {
+                return await _meetingRespository.GetNextInvoiceNumber(month, year);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return string.Empty;
+            }
+        }
+
+        public async Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model)
+        {
+            try
+            {
+                int invoiceId = await _meetingRespository.SaveGeneratedInvoice(model);
+                if (invoiceId > 0 && model.LineItems != null && model.LineItems.Any())
+                {
+                    await _meetingRespository.SaveGeneratedInvoiceLineItems(invoiceId, model.LineItems);
+                }
+                return invoiceId;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
         public List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null)
         {
             try

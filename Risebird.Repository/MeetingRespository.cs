@@ -5085,6 +5085,132 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ClientId", clientId);
+                    parameters.Add("@Month", month);
+                    parameters.Add("@Year", year);
+                    using (var multi = await con.QueryMultipleAsync("usp_GetClientInvoiceFormData", parameters, commandType: CommandType.StoredProcedure))
+                    {
+                        var clientData = (await multi.ReadAsync<ClientInvoiceFormDataVM>()).FirstOrDefault() ?? new ClientInvoiceFormDataVM();
+                        clientData.LineItems = (await multi.ReadAsync<InvoiceLineItemVM>()).ToList();
+                        return clientData;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new ClientInvoiceFormDataVM();
+            }
+        }
+
+        public async Task<List<BillingOwnerOption>> GetClientBillingOwners(int clientId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ClientId", clientId);
+                    var result = await SqlMapper.QueryAsync<BillingOwnerOption>(con, "usp_GetClientBillingOwners", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<BillingOwnerOption>();
+            }
+        }
+
+        public async Task<string> GetNextInvoiceNumber(int month, int year)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Month", month);
+                    parameters.Add("@Year", year);
+                    var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_GetNextInvoiceNumber", parameters, commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault()?.InvoiceNumber ?? string.Empty;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
+        }
+
+        public async Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id",                model.id);
+                    parameters.Add("@ClientId",          model.ClientId);
+                    parameters.Add("@InvoiceNumber",     model.InvoiceNumber);
+                    parameters.Add("@InvoiceMonth",      model.InvoiceMonth);
+                    parameters.Add("@InvoiceYear",       model.InvoiceYear);
+                    parameters.Add("@BillingOwnerEmail", model.BillingOwnerEmail);
+                    parameters.Add("@CreditPeriod",      model.CreditPeriod);
+                    parameters.Add("@GSTNumber",         model.GSTNumber);
+                    parameters.Add("@TaxScenario",       model.TaxScenario);
+                    parameters.Add("@IRN",               model.IRN);
+                    parameters.Add("@Subtotal",          model.Subtotal);
+                    parameters.Add("@GSTAmount",         model.GSTAmount);
+                    parameters.Add("@InvoiceValue",      model.InvoiceValue);
+                    parameters.Add("@TDSAmount",         model.TDSAmount);
+                    parameters.Add("@NetReceivable",     model.NetReceivable);
+                    parameters.Add("@Status",            model.Status);
+                    parameters.Add("@CreatedBy",         model.CreatedBy);
+                    var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_SaveGeneratedInvoice", parameters, commandType: CommandType.StoredProcedure);
+                    return (int)(result.FirstOrDefault()?.NewId ?? 0);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task SaveGeneratedInvoiceLineItems(int invoiceId, List<InvoiceLineItemVM> lineItems)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    foreach (var item in lineItems)
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@InvoiceId",   invoiceId);
+                        parameters.Add("@ProductName", item.ProductName);
+                        parameters.Add("@Description", item.Description);
+                        parameters.Add("@Qty",         item.Qty);
+                        parameters.Add("@UnitRate",    item.UnitRate);
+                        parameters.Add("@LineTotal",   item.LineTotal);
+                        parameters.Add("@Basis",       item.Basis);
+                        await SqlMapper.ExecuteAsync(con, "usp_SaveGeneratedInvoiceLineItems", parameters, commandType: CommandType.StoredProcedure);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
         public async Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null)
         {
             try

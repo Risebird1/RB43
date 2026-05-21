@@ -152,6 +152,10 @@ namespace Risebird.Business.Interface
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
         Task<List<InvoiceListVM>> GetInvoiceList(int month, int year);
         Task<string> SaveInvoiceList(InvoiceListVM model);
+        Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year);
+        Task<List<BillingOwnerOption>> GetClientBillingOwners(int clientId);
+        Task<string> GetNextInvoiceNumber(int month, int year);
+        Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model);
         List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null);
         Task<List<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid, DateTime startdate, DateTime enddate);
         List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid);
