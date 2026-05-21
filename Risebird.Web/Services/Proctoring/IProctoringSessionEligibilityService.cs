@@ -8,5 +8,10 @@ namespace Risebird.Web.Services.Proctoring
     public interface IProctoringSessionEligibilityService
     {
         Task<bool> ShouldPersistProctoringEventsAsync(ProctoringTokenPayload payload);
+
+        /// <summary>
+        /// Screenshot/chunk telemetry rows (with blobUrl metadata) — valid session identity, not gated on interview time window.
+        /// </summary>
+        Task<bool> ShouldPersistProctoringMediaAsync(ProctoringTokenPayload payload);
     }
 }

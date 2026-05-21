@@ -25,6 +25,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
+using Risebird.Web.Helpers;
 using Risebird.Web.Services.Proctoring;
 using System;
 using System.Collections.Generic;
@@ -117,7 +118,7 @@ namespace Risebird.Web.Controllers
                 //two scenarios possible, one where the interview hasnt started as yet. The second where the interview has already started.
                 if (meetingDetails != null)
                 {
-                    ApplyAiProctoringViewBag(meetingDetails, sid);
+                    await ApplyAiProctoringViewBagAsync(meetingDetails, sid);
                     if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                     {
                         var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
@@ -811,7 +812,7 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>Chrome extension: session token + policy for AI interview page (meeting not in a terminal state).</summary>
-        private void ApplyAiProctoringViewBag(MeetingVM meetingDetails, Guid sid)
+        private async Task ApplyAiProctoringViewBagAsync(MeetingVM meetingDetails, Guid sid)
         {
             // Always emit proctoring bootstrap on the live AI interview page when we have a session + interview row.
             // Do not gate on InterviewComments.MeetingStatus (often stale vs. a valid candidate session).
@@ -822,6 +823,41 @@ namespace Risebird.Web.Controllers
                 _configuration,
                 sid.ToString(),
                 issueProctoringBootstrapEvenIfMeetingStatusTerminal: true);
+            ViewBag.ProctoringResumeCaptureAfterInterrupt =
+                await ShouldResumeProctoringCaptureAfterInterruptAsync(meetingDetails);
+        }
+
+        /// <summary>
+        /// True when the candidate is resuming an in-progress AI interview (abrupt stop, audio error, manual exit)
+        /// but not when the meeting is completed or they have never started.
+        /// </summary>
+        private async Task<bool> ShouldResumeProctoringCaptureAfterInterruptAsync(MeetingVM meetingDetails)
+        {
+            if (meetingDetails == null)
+                return false;
+            if (meetingDetails.MeetingStatus == (int)MeetingStatus.Completed)
+                return false;
+
+            var interviewId = meetingDetails.InterviewId > 0
+                ? meetingDetails.InterviewId
+                : (meetingDetails.id > 0 ? meetingDetails.id : meetingDetails.imid);
+            if (interviewId <= 0)
+                return false;
+
+            try
+            {
+                var eventCount = await _proctoringSessionEventRepository.GetCountByInterviewIdAsync(interviewId);
+                if (eventCount > 0)
+                    return true;
+            }
+            catch
+            {
+                /* optional telemetry — fall through to timer heuristic */
+            }
+
+            var durationSec = (meetingDetails.interviewDuration > 0 ? meetingDetails.interviewDuration : 60) * 60;
+            var timeLeft = meetingDetails.TimeLeftInSeconds;
+            return durationSec > 0 && timeLeft > 0 && timeLeft < durationSec;
         }
 
         [HttpPost]
@@ -834,7 +870,7 @@ namespace Risebird.Web.Controllers
                 // ViewBag is not carried from GET to POST — re-apply so _RisebirdProctoringAiInterview has token, interview id, name, email on every render.
                 var meetingForProctoring = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(model.SessionId);
                 if (meetingForProctoring != null)
-                    ApplyAiProctoringViewBag(meetingForProctoring, model.SessionId);
+                    await ApplyAiProctoringViewBagAsync(meetingForProctoring, model.SessionId);
 
                 if (model.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                 {
@@ -1875,13 +1911,32 @@ namespace Risebird.Web.Controllers
                 return NotFound();
 
             var events = await _proctoringSessionEventRepository.GetByInterviewIdOrderedAsync(meetingDetails.InterviewId);
+            var fallbackScreenshots = await ProctoringAzureMediaLister.ListForInterviewAsync(
+                _azureStorageHelper,
+                _configuration,
+                meetingDetails.InterviewId,
+                "ScreenshotContainerName",
+                "screenshot");
+            var fallbackVideoChunks = await ProctoringAzureMediaLister.ListForInterviewAsync(
+                _azureStorageHelper,
+                _configuration,
+                meetingDetails.InterviewId,
+                "ScreenChunkContainerName",
+                "screen_chunk");
             var model = new ProctoringSessionEventsResultViewModel
             {
                 SessionId = seId,
                 InterviewId = meetingDetails.InterviewId,
                 CandidateName = meetingDetails.candidateName,
                 CandidateEmail = meetingDetails.candidateEmail,
-                Events = events
+                Events = events,
+                FallbackScreenshots = fallbackScreenshots,
+                FallbackVideoChunks = fallbackVideoChunks,
+                MediaDiagnostics = ProctoringMediaDiagnosticsHelper.Build(
+                    meetingDetails,
+                    events,
+                    fallbackScreenshots,
+                    fallbackVideoChunks),
             };
             ViewData["Title"] = "Proctoring session events";
 

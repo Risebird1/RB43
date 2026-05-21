@@ -58,6 +58,33 @@ namespace Risebird.Web.Services.Proctoring
             return true;
         }
 
+        public async Task<bool> ShouldPersistProctoringMediaAsync(ProctoringTokenPayload payload)
+        {
+            if (payload == null)
+                return false;
+
+            if (string.IsNullOrWhiteSpace(payload.AiSessionId) || !Guid.TryParse(payload.AiSessionId, out var sessionGuid))
+                return false;
+
+            MeetingVM details;
+            try
+            {
+                details = await _aiInterviewerService.GetAIInterviewDetailsBySessionId(sessionGuid);
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (details == null || details.InterviewId != payload.InterviewId)
+                return false;
+            if (!string.IsNullOrEmpty(details.candidateEmail) &&
+                !string.Equals(details.candidateEmail.Trim(), payload.Email?.Trim(), StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            return true;
+        }
+
         private static bool IsTerminalMeetingStatus(int? ms)
         {
             if (!ms.HasValue)

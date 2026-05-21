@@ -51,6 +51,9 @@ namespace Risebird.Web.Controllers.Api
         private int MaxScreenChunkBytes =>
             ParseIntOrDefault(_configuration["ProctoringSettings:MaxScreenChunkBytes"], 15 * 1024 * 1024, 256 * 1024, 100 * 1024 * 1024);
 
+        private int MinScreenChunkBytes =>
+            ParseIntOrDefault(_configuration["ProctoringSettings:MinScreenChunkBytes"], 4096, 512, 65536);
+
         private int BlobReadSasMinutes =>
             ParseIntOrDefault(_configuration["ProctoringSettings:BlobReadSasMinutes"], 240, 5, 24 * 60);
 
@@ -244,6 +247,26 @@ namespace Risebird.Web.Controllers.Api
             return true;
         }
 
+        private async Task<bool> PersistMediaEventAsync(ProctoringTokenPayload payload, Func<Task<long>> insertRow)
+        {
+            if (!await _proctoringEligibility.ShouldPersistProctoringMediaAsync(payload))
+            {
+                _logger.LogDebug(
+                    "Proctoring media metadata not persisted (session identity) for interview {InterviewId}",
+                    payload.InterviewId);
+                return false;
+            }
+            var id = await insertRow();
+            if (id <= 0)
+            {
+                _logger.LogWarning(
+                    "Proctoring media DB insert failed for interview {InterviewId}",
+                    payload.InterviewId);
+                return false;
+            }
+            return true;
+        }
+
         [HttpPost("join")]
         public async Task<IActionResult> Join([FromBody] ProctoringJoinDto body)
         {
@@ -314,6 +337,7 @@ namespace Risebird.Web.Controllers.Api
         }
 
         [HttpPost("screenshot")]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> Screenshot([FromBody] ProctoringScreenshotDto body)
         {
             var payload = AuthorizeBearer();
@@ -352,7 +376,7 @@ namespace Risebird.Web.Controllers.Api
             blobUrl = uploadResult.blobUrl;
             uploadError = uploadResult.uploadError;
 
-            await PersistIfEligibleAsync(payload, () => _proctoringSessionEvents.InsertAsync(new ProctoringSessionEvent
+            await PersistMediaEventAsync(payload, () => _proctoringSessionEvents.InsertAsync(new ProctoringSessionEvent
             {
                 InterviewId = payload.InterviewId,
                 CandidateEmail = payload.Email,
@@ -363,6 +387,9 @@ namespace Risebird.Web.Controllers.Api
                 {
                     imageBase64Length = len,
                     imageBytesLength = imageBytes.Length,
+                    capturedAt = body?.CapturedAt,
+                    captureSource = body?.CaptureSource,
+                    captureContext = body?.CaptureContext,
                     blobUrl,
                     blobPath,
                     container = ProctoringScreenshotContainer,
@@ -395,6 +422,7 @@ namespace Risebird.Web.Controllers.Api
         }
 
         [HttpPost("screen-chunk")]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> ScreenChunk([FromBody] ProctoringScreenChunkDto body)
         {
             var payload = AuthorizeBearer();
@@ -420,6 +448,9 @@ namespace Risebird.Web.Controllers.Api
 
             if (chunkBytes.Length == 0)
                 return BadRequest("Screen chunk is empty.");
+
+            if (chunkBytes.Length < MinScreenChunkBytes)
+                return BadRequest($"Screen chunk is too small ({chunkBytes.Length} bytes; minimum {MinScreenChunkBytes}). Likely blank capture.");
 
             if (chunkBytes.Length > MaxScreenChunkBytes)
                 return BadRequest($"Screen chunk exceeds max allowed size ({MaxScreenChunkBytes} bytes).");
@@ -447,7 +478,7 @@ namespace Risebird.Web.Controllers.Api
                 uploadError = uploadResult.uploadError;
             }
 
-            await PersistIfEligibleAsync(payload, () => _proctoringSessionEvents.InsertAsync(new ProctoringSessionEvent
+            await PersistMediaEventAsync(payload, () => _proctoringSessionEvents.InsertAsync(new ProctoringSessionEvent
             {
                 InterviewId = payload.InterviewId,
                 CandidateEmail = payload.Email,
@@ -459,6 +490,8 @@ namespace Risebird.Web.Controllers.Api
                     chunkSeq = body?.ChunkSeq,
                     mimeType,
                     capturedAt = body?.CapturedAt,
+                    captureSource = body?.CaptureSource,
+                    captureContext = body?.CaptureContext,
                     dataLength = body?.Data?.Length ?? 0,
                     bytesLength = chunkBytes.Length,
                     blobUrl,
@@ -522,6 +555,9 @@ namespace Risebird.Web.Controllers.Api
     {
         public int? InterviewId { get; set; }
         public string? ImageBase64 { get; set; }
+        public long? CapturedAt { get; set; }
+        public string? CaptureSource { get; set; }
+        public object? CaptureContext { get; set; }
     }
 
     public sealed class ProctoringHeartbeatDto
@@ -540,5 +576,7 @@ namespace Risebird.Web.Controllers.Api
         public string? MimeType { get; set; }
         public long? CapturedAt { get; set; }
         public string? Data { get; set; }
+        public string? CaptureSource { get; set; }
+        public object? CaptureContext { get; set; }
     }
 }

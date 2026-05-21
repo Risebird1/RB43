@@ -1,0 +1,197 @@
+Risebird Proctoring Assistant — Load unpacked in Chrome
+=======================================================
+
+1. Open Chrome and go to: chrome://extensions
+
+2. Turn ON "Developer mode" (top right).
+
+3. Click "Load unpacked".
+
+4. IMPORTANT: Select THIS folder (the one containing manifest.json):
+   ...\Risebird-mvp-v2\chrome-proctor-extension
+
+   Do NOT select the parent folder "Risebird-mvp-v2" only — Chrome will error
+   because manifest.json is inside chrome-proctor-extension, not at repo root.
+
+5. After loading, pin the extension if you want.
+
+--- Candidate flow (AI Interview only) — v1.8.2 ---
+
+1. From the dashboard, open the AI Interview (session link), e.g.
+   .../AIInterview/Index?sid=...
+2. The content script runs only on URLs whose path includes /AIInterview.
+   The page passes the server-issued session token to the extension automatically.
+3. After the extension is ready, Chrome asks for entire-screen share once. Reloading
+   the interview tab reuses the same capture (no second picker) until you stop share
+   or the meeting ends. Screenshots and video chunks upload to Azure blob storage.
+4. Reload the unpacked extension at chrome://extensions after updating files.
+
+The extension popup "Join session" / "Start session" only work while the active
+tab is the AI Interview page (same URL rule).
+
+If Chrome still errors, check that these files exist next to manifest.json:
+  service-worker.js, content-monitor.js, popup.html, popup.js, popup.css,
+  rules\restricted-sites.json
+
+Chrome Web Store — smoother review (do this before submit)
+------------------------------------------------------------
+A) Account & package
+  1. Use a dedicated Chrome Web Store developer account (one-time fee if needed).
+  2. Zip ONLY the extension folder contents (manifest.json, JS, HTML, CSS, rules\).
+     Do NOT include: _metadata, .git, .vs, or the whole repo — Chrome rejects junk.
+  3. Load the same zip via "Pack extension" or unzip and "Load unpacked" once
+     to confirm it runs.
+
+B) Privacy & trust (required for broad host access)
+  1. Publish a privacy policy URL (your site) that states: what you collect during
+     proctoring (name, email, interview id, tab URLs/titles/hosts, events,
+     heartbeats, visible-tab screenshots), why, retention, and contact.
+  2. Use the SAME policy URL in the store listing field.
+
+C) Listing text (reduces back-and-forth with reviewers)
+  1. Single purpose: one sentence — proctoring for Risebird AI Interview only.
+  2. Short description: use manifest description or expand slightly; no unrelated
+     marketing.
+  3. Permission justifications: for EACH permission, one sentence tied to a real
+     feature (tabs = read active URL/title for tab-switch events; windows = blur;
+     webNavigation = blocked-nav fallback; storage = local session + event log;
+     declarativeNetRequest = block restricted URLs; declarativeNetRequestFeedback =
+     log when a block rule matched).
+  4. Host permission ("Read and change all your data on all websites" or similar):
+     paste a paragraph that http+https access is required to (1) read which site
+     is active when the candidate switches tabs during an exam, (2) capture
+     optional screenshots of the visible tab, (3) apply server-provided block
+     lists to any hostname. State you do not inject ads or unrelated scripts.
+
+D) Optional but helpful
+  1. Screenshots (1280x800 or store-required sizes) showing: popup, join flow,
+     violation list — so reviewers see the UI matches the description.
+  2. A short screen recording (if the form asks) walking through join + one tab
+     switch — speeds trust.
+  3. If review asks for a test login, provide a time-limited test interview link
+     and steps in "Notes to reviewer".
+
+E) Manifest note (this repo) — broad host access & store review
+  - Default host_permissions are NARROW: Risebird (*.risebird.io), localhost /
+    127.0.0.1 (incl. port 44329), and Mettl (tests.mettl.com + *.mettl.com).
+  - Full cross-site proctoring uses optional_host_permissions: "http://*/*" and
+    "https://*/*". The popup shows “Allow full tab monitoring” after join if needed;
+    do not call chrome.permissions.request from the service worker on dashboard
+     handshake (no user gesture — join would fail before the popup opened; fixed v1.4.1).
+
+F) v1.6.6 screen-share lifecycle
+  - Land on AI Interview: HELLO/reply on every ping, auto join, then force entire-screen picker once.
+  - Reuse live offscreen stream without a second picker; resume/health_retry reset the setup lock.
+  - Yellow banner only when share is lost; hidden when capture is active; one auto re-prompt per loss.
+
+F2) v1.6.4 screen-share picker on landing
+  - Uses chrome.desktopCapture.chooseDesktopMedia (interview tab) so the share dialog appears on page load.
+  - Offscreen getDisplayMedia alone often never shows a picker without a user click.
+  - Extension popup opens after screen share succeeds (not during join), so it does not hide the picker.
+  - Page waits for RB_PROCTORING_EXTENSION_READY before JOIN.
+
+F2) v1.6.3 recording upload order
+  - Server /start runs before offscreen capture so screenshots/video chunks are not dropped.
+  - Early uploads while session is starting are queued for retry instead of discarded.
+
+F2) v1.6.2 join-then-share (fixes missing share dialog)
+  - AI Interview page waits for RB_PROCTORING_JOIN_OK before RB_COMPLETE_TEST_SETUP.
+  - Avoids "Join session first" race and a stuck completeSetupForwarded flag after a failed setup.
+
+F14) v1.9.10 capture recovery (started but no media)
+  - Detects stale session: /start persisted but no live share and no screenshot/chunk uploads after ~45s.
+  - Re-arms offscreen recorder if share exists; otherwise resets picker flag and nudges Entire screen share again (max once per 2 min).
+  - Tab visible + keepalive also trigger recovery; no change to initial prepare-then-share flow.
+
+F13) v1.9.9 video chunks upload like screenshots (setup flow unchanged)
+  - MediaRecorder timeslice + merge small partial blobs before upload (fixes silent drops).
+  - Lower video bitrate for reliable POST size; chunk-specific retries and queue priority.
+  - Retries HTTP 500 (Azure blob failures); screenshots still have tab-capture fallback, video does not.
+
+F10) v1.9.6 prepare then share (original UX order)
+  - Phase 1 on landing: extension ready, join, POST /start, offscreen warm (no share dialog).
+  - Phase 2 immediately after prepare: Chrome entire-screen picker once, then capture.
+  - Matches earlier behavior: backend ready first, then screen share prompt.
+
+F9) v1.9.5 entire-screen picker once per session
+  - Retries no longer re-open the Chrome share dialog after the user picked once.
+  - Reuses live offscreen stream; waits if setup is in-flight instead of a second picker.
+  - Join runs once; recovery only nudges start without re-joining.
+
+F8) v1.9.4 silent fast setup (no page banner)
+  - Removed interview-page proctoring status banner; retries are silent (console only).
+  - Join handshake and /join API retry aggressively; setup recovery every 5s.
+  - Join/start failures no longer surface RB_PROCTORING_JOIN_FAILED to the page UI.
+
+F8) v1.9.14 resume capture after abrupt interview stop only
+  - Server sets bootstrap resumeCaptureAfterInterrupt when meeting is not completed and the
+    candidate already started (proctoring events or timer elapsed).
+  - Extension re-opens Entire screen picker once on resume — not for stale recovery, timer END_EXAM,
+    or share-lost mid-session (those keep share-once / share-lost rules).
+  - Manual exit with time left: page calls risebirdMarkProctoringSoftInterrupt (pauses capture, no END_EXAM).
+
+F7) v1.9.3 fix "Unknown offscreen action" on join
+  - chrome.runtime.sendMessage broadcasts to every extension listener (SW + offscreen).
+  - Offscreen was answering JOIN_DASHBOARD_HANDSHAKE with "Unknown offscreen action" before the
+    service worker could join — showed as "Proctoring could not connect".
+  - SW and offscreen now ignore messages not meant for them (OFFSCREEN_* only in offscreen).
+
+F6) v1.9.2 network resilience
+  - join/start/screenshot/chunk API calls retry on transient network and 502/503/504.
+  - online event: resume /start, drain upload queue, retry screen setup from the interview tab.
+  - Interview page banner for offline / reconnect / setup retry (audio issues are separate).
+
+F5) v1.9.1 reliable join → start → capture
+  - POST /start is awaited with retries during join (before screen picker); fixes “join but no start”.
+  - Screen-share setup retries automatically; stale setup lock clears after 90s.
+  - Captures: ≥2/min each — screenshots and chunks scheduled every 20–30s (jittered).
+  - First screenshot ~8s and first video chunk ~10s after share is live.
+
+F4) v1.9.0 jittered capture (review-friendly)
+  - Screenshots and video chunks: 30s target with offscreen-owned timers.
+  - Service worker keepalive only ensures recording + upload queue (no duplicate screenshots).
+
+F3) v1.8.9 faster landing handshake
+  - Interview page HELLO/wire runs as soon as the bootstrap partial parses (not DOMContentLoaded).
+  - Content script starts join + screen share when #risebird-proctoring-bootstrap appears (document_start observer).
+  - Server /start is kicked off during join so the picker is not blocked on a second /start round-trip.
+
+F2) v1.6.1 capture tuning
+  - Screen share prompt runs immediately (0 ms) after join on first visit.
+  - Page reload: syncs with existing offscreen share (no dialog) or re-prompts only if
+    share was lost; optional "Resume entire screen sharing" banner on failure.
+  - Capture cadence superseded by v1.9.0: 30s ±20% for both screenshots and chunks (~2/min each).
+
+G) v1.5.0 capture improvements
+  - Screenshots and video chunks are taken from the shared ENTIRE SCREEN stream, so they
+    continue when the candidate switches tabs or windows (as long as screen share stays on).
+  - Video chunks default to 30 seconds each (was 8s) for clearer activity review.
+  - Failed blob uploads are retried (immediate retries + IndexedDB queue + alarm).
+  - Each upload stores captureContext (interview page visible/focused, which tab is focused).
+  - activeTab is included for toolbar / explicit-tab flows per Chrome guidance.
+  - APIs: activeTab, tabs, windows, webNavigation, storage, declarativeNetRequest,
+    declarativeNetRequestFeedback.
+  - Store listing: explain that optional “all websites” access is requested at
+    join/start for tab monitoring, screenshots, and dynamic URL blocking — not at
+    install.
+  - Optional: add icons (16 / 48 / 128 PNG) under icons\ and an "icons" entry in
+    manifest.json for toolbar + listing polish.
+
+--- Where event logs are saved ---
+
+1) In the extension (candidate machine)
+   - chrome.storage.local key: proctoringEvents (events list in popup is hidden in the UI; data remains in storage).
+
+2) On the Risebird API (when the browser can reach your site)
+   - POST /api/proctoring/session/event — persisted only inside the configured
+     interview time window (see server ProctoringSessionEligibilityService).
+
+3) Service worker console (developers only)
+   - chrome://extensions → Risebird Proctoring Assistant → "service worker"
+     (Inspect) — look for warnings if the event POST fails; events are still
+     kept locally via proctoringEvents.
+
+Tab-switch hostnames and restricted-domain blocks require: Join session first,
+and Chrome 121+ with declarativeNetRequestFeedback (already in manifest).
+Restricted-domain events fire while joined OR while the exam session is active,
+after DNR rules are applied from the join handshake.

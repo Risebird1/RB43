@@ -3453,6 +3453,10 @@
         modalConfirm.addEventListener('click', function() {
             hideCustomModal();
 
+            if (totalSecondsLeft > 0 && typeof window.risebirdMarkProctoringSoftInterrupt === 'function') {
+                window.risebirdMarkProctoringSoftInterrupt();
+            }
+
             // Hide the entire AI interview section
             const interviewContainer = document.querySelector('.rb-aiinterview-container');
             if (interviewContainer) {
