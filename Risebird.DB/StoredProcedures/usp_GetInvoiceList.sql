@@ -18,7 +18,7 @@ BEGIN
         cil.id,
         c.id        AS ClientId,
         c.Name      AS ClientName,
-        cil.InvoiceModel,
+        ISNULL(c.BillingModel, 0)                             AS BillingModel,
         ul.EmailId  AS BillingOwnerEmail,
         cil.BillingOwner,
         cil.InvoiceNumber,
