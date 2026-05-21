@@ -5052,38 +5052,6 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<string> SaveInvoiceList(InvoiceListVM model)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@id", model.id);
-                    parameters.Add("@ClientId", model.ClientId);
-                    parameters.Add("@InvoiceModel", model.InvoiceModel);
-                    parameters.Add("@BillingType", model.BillingType);
-                    parameters.Add("@BillingOwner", model.BillingOwner);
-                    parameters.Add("@InvoiceNumber", model.InvoiceNumber);
-                    parameters.Add("@IRN", model.IRN);
-                    parameters.Add("@GrossAmount", model.GrossAmount);
-                    parameters.Add("@Status", model.Status);
-                    parameters.Add("@Owner", model.Owner);
-                    parameters.Add("@LatestRemark", model.LatestRemark);
-                    parameters.Add("@UTRTrxn", model.UTRTrxn);
-                    parameters.Add("@InvoiceMonth", model.InvoiceMonth);
-                    parameters.Add("@InvoiceYear", model.InvoiceYear);
-                    await SqlMapper.ExecuteAsync(con, "usp_SaveInvoiceList", parameters,
-                        commandType: CommandType.StoredProcedure);
-                    return "Success";
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Fail";
-            }
-        }
 
         public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0)
         {
