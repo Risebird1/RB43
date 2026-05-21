@@ -479,7 +479,7 @@
                 '<td>' + (i + 1) + '</td>' +
                 '<td>' + escHtml(item.productName) + '</td>' +
                 '<td>' + escHtml(item.description) + '</td>' +
-                '<td class="text-right">' + formatNum(item.qty) + '</td>' +
+                '<td class="text-right">' + (parseInt(item.qty) || 0) + '</td>' +
                 '<td class="text-right">&#8377; ' + formatNum(item.unitRate) + '</td>' +
                 '<td class="text-right">&#8377; ' + formatNum(lt) + '</td>' +
                 '<td>' + escHtml(item.basis) + '</td>' +

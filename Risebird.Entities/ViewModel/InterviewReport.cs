@@ -552,7 +552,7 @@ namespace Risebird.Entities.ViewModel
         public int InvoiceId { get; set; }
         public string ProductName { get; set; }
         public string Description { get; set; }
-        public decimal Qty { get; set; }
+        public int Qty { get; set; }
         public decimal UnitRate { get; set; }
         public decimal LineTotal { get; set; }
         public string Basis { get; set; }
