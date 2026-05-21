@@ -5085,7 +5085,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year)
+        public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0)
         {
             try
             {
@@ -5095,6 +5095,7 @@ namespace Risebird.Repository
                     parameters.Add("@ClientId", clientId);
                     parameters.Add("@Month", month);
                     parameters.Add("@Year", year);
+                    parameters.Add("@BillingOwnerId", billingOwnerId);
                     using (var multi = await con.QueryMultipleAsync("usp_GetClientInvoiceFormData", parameters, commandType: CommandType.StoredProcedure))
                     {
                         var clientData = (await multi.ReadAsync<ClientInvoiceFormDataVM>()).FirstOrDefault() ?? new ClientInvoiceFormDataVM();
@@ -5107,6 +5108,29 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return new ClientInvoiceFormDataVM();
+            }
+        }
+
+        public async Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ClientId",       clientId);
+                    parameters.Add("@BillingOwnerId", billingOwnerId);
+                    parameters.Add("@InvoiceMonth",   month);
+                    parameters.Add("@InvoiceYear",    year);
+                    var result = await SqlMapper.QueryAsync<DuplicateInvoiceCheckVM>(con, "usp_CheckDuplicateInvoice", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
 
@@ -5159,6 +5183,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@id",                model.id);
                     parameters.Add("@ClientId",          model.ClientId);
+                    parameters.Add("@BillingOwnerId",    model.BillingOwnerId);
                     parameters.Add("@InvoiceNumber",     model.InvoiceNumber);
                     parameters.Add("@InvoiceMonth",      model.InvoiceMonth);
                     parameters.Add("@InvoiceYear",       model.InvoiceYear);

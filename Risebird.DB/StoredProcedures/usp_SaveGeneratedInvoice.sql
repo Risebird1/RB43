@@ -10,6 +10,7 @@ GO
 CREATE PROCEDURE usp_SaveGeneratedInvoice
     @id                INT,
     @ClientId          INT,
+    @BillingOwnerId    INT,
     @InvoiceNumber     VARCHAR(50),
     @InvoiceMonth      INT,
     @InvoiceYear       INT,
@@ -29,25 +30,44 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Duplicate check: ClientId + BillingOwnerId + Month + Year must be unique for Generated invoices.
+    -- Allow saving a Draft (Status=0) freely; block a second Generated (Status=1) invoice.
+    IF @id = 0 AND @Status = 1
+    BEGIN
+        IF EXISTS (
+            SELECT 1 FROM GeneratedInvoices
+            WHERE ClientId      = @ClientId
+              AND BillingOwnerId = @BillingOwnerId
+              AND InvoiceMonth  = @InvoiceMonth
+              AND InvoiceYear   = @InvoiceYear
+              AND Status        = 1
+        )
+        BEGIN
+            SELECT -1 AS NewId, 'Invoice already generated for this Client, Billing Owner, Month and Year.' AS ErrorMessage
+            RETURN
+        END
+    END
+
     IF @id = 0
     BEGIN
         INSERT INTO GeneratedInvoices
-            (ClientId, InvoiceNumber, InvoiceMonth, InvoiceYear, BillingOwnerEmail,
-             CreditPeriod, GSTNumber, TaxScenario, IRN,
+            (ClientId, BillingOwnerId, InvoiceNumber, InvoiceMonth, InvoiceYear,
+             BillingOwnerEmail, CreditPeriod, GSTNumber, TaxScenario, IRN,
              Subtotal, GSTAmount, InvoiceValue, TDSAmount, NetReceivable,
              Status, CreatedOn, CreatedBy)
         VALUES
-            (@ClientId, @InvoiceNumber, @InvoiceMonth, @InvoiceYear, @BillingOwnerEmail,
-             @CreditPeriod, @GSTNumber, @TaxScenario, @IRN,
+            (@ClientId, @BillingOwnerId, @InvoiceNumber, @InvoiceMonth, @InvoiceYear,
+             @BillingOwnerEmail, @CreditPeriod, @GSTNumber, @TaxScenario, @IRN,
              @Subtotal, @GSTAmount, @InvoiceValue, @TDSAmount, @NetReceivable,
              @Status, GETDATE(), @CreatedBy)
 
-        SELECT SCOPE_IDENTITY() AS NewId
+        SELECT SCOPE_IDENTITY() AS NewId, '' AS ErrorMessage
     END
     ELSE
     BEGIN
         UPDATE GeneratedInvoices SET
             ClientId          = @ClientId,
+            BillingOwnerId    = @BillingOwnerId,
             InvoiceNumber     = @InvoiceNumber,
             InvoiceMonth      = @InvoiceMonth,
             InvoiceYear       = @InvoiceYear,
@@ -65,7 +85,7 @@ BEGIN
             ModifiedOn        = GETDATE()
         WHERE id = @id
 
-        SELECT @id AS NewId
+        SELECT @id AS NewId, '' AS ErrorMessage
     END
 END
 GO

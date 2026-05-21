@@ -234,13 +234,20 @@
 
             <!-- ── Action Buttons ── -->
             <div class="gen-inv-card" id="divActionsCard" style="display:none;">
+                <!-- Duplicate invoice warning -->
+                <div id="divDuplicateWarning"
+                     class="alert alert-danger"
+                     role="alert"
+                     style="display:none; font-size:13px; margin-bottom:10px;">
+                </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded btn-draft"
                                 onclick="submitInvoice(0)" style="margin-right:8px;">
                             <font style="font-size:12px;">Save as Draft</font>
                         </button>
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-generate"
+                        <button type="button" id="btnGenerateInvoice"
+                                class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-generate"
                                 onclick="submitInvoice(1)">
                             <font style="font-size:12px;">Generate Invoice</font>
                         </button>
@@ -253,108 +260,200 @@
 </div>
 
 <script>
-    var invoiceData = null;
+    var invoiceData      = null;
+    var BILLING_TYPE_OWNER = 1;
 
     $(document).ready(function () {
-        $('#ddlClient').change(loadInvoiceData);
-        $('#ddlMonth').change(loadInvoiceData);
-        $('#ddlYear').change(loadInvoiceData);
+        $('#ddlClient').change(onClientOrPeriodChange);
+        $('#ddlMonth').change(onClientOrPeriodChange);
+        $('#ddlYear').change(onClientOrPeriodChange);
 
         $('#ddlTaxScenario').change(function () {
-            if (invoiceData) recalcTotals(invoiceData.subtotal, parseInt($(this).val()));
+            var sub = parseFloat($('#hidSubtotal').val()) || 0;
+            recalcTotals(sub, parseInt($(this).val()));
         });
     });
 
-    function loadInvoiceData() {
+    // ── Step 1: client / month / year changed ─────────────────────────────────
+    // Fetch header info. Line items are loaded immediately for BillingType 2/3,
+    // but deferred for BillingType 1 until a billing owner is chosen.
+    function onClientOrPeriodChange() {
         var clientId = $('#ddlClient').val();
         var month    = $('#ddlMonth').val();
         var year     = $('#ddlYear').val();
         if (!clientId || clientId === '') return;
 
+        hideLineItemsSection();
+
         $.ajax({
             type: 'GET',
             url: '/Finance/GetClientInvoiceData',
-            data: { clientId: clientId, month: month, year: year },
+            data: { clientId: clientId, month: month, year: year, billingOwnerId: 0 },
             success: function (data) {
                 if (data.error) { alert(data.error); return; }
                 invoiceData = data;
-                populateForm(data);
+                populateHeader(data);
+
+                if (data.billingType === BILLING_TYPE_OWNER) {
+                    // BillingType=1: duplicate check is deferred until billing owner is selected
+                    hideDuplicateWarning();
+                    showLineItemsPlaceholder('Select a billing owner above to load line items.');
+                } else {
+                    // BillingType=2/3: check duplicate now (billingOwnerId = 0 for client-based billing)
+                    checkDuplicate(clientId, 0, month, year, null);
+                    renderLineItems(data.lineItems || []);
+                    recalcTotals(data.subtotal, parseInt($('#ddlTaxScenario').val()));
+                    showLineItemsSection();
+                }
             },
             error: function () { alert('Failed to load invoice data.'); }
         });
     }
 
-    var BILLING_TYPE_OWNER = 1;
+    // ── Step 2: billing owner selected (BillingType=1 only) ───────────────────
+    function onBillingOwnerChange(ownerId) {
+        var clientId = $('#ddlClient').val();
+        var month    = $('#ddlMonth').val();
+        var year     = $('#ddlYear').val();
+        if (!ownerId || ownerId === 0) { hideLineItemsSection(); return; }
 
-    function populateForm(data) {
+        checkDuplicate(clientId, ownerId, month, year, function () {
+            $.ajax({
+                type: 'GET',
+                url: '/Finance/GetClientInvoiceData',
+                data: { clientId: clientId, month: month, year: year, billingOwnerId: ownerId },
+                success: function (data) {
+                    if (data.error) { alert(data.error); return; }
+                    renderLineItems(data.lineItems || []);
+                    recalcTotals(data.subtotal, parseInt($('#ddlTaxScenario').val()));
+                    showLineItemsSection();
+                },
+                error: function () { alert('Failed to load line items.'); }
+            });
+        });
+    }
+
+    // ── Duplicate invoice check ────────────────────────────────────────────────
+    // Calls server; if a Generated invoice already exists, shows warning and
+    // disables the Generate Invoice button. Calls onAllowed() to continue loading.
+    function checkDuplicate(clientId, billingOwnerId, month, year, onAllowed) {
+        $.ajax({
+            type: 'GET',
+            url: '/Finance/CheckDuplicateInvoice',
+            data: { clientId: clientId, billingOwnerId: billingOwnerId, month: month, year: year },
+            success: function (res) {
+                hideDuplicateWarning();
+                if (res.isDuplicate) {
+                    showDuplicateWarning(res.invoiceNumber, res.createdBy, res.createdOn);
+                } else {
+                    enableGenerateButton();
+                }
+                if (onAllowed) onAllowed();
+            },
+            error: function () { if (onAllowed) onAllowed(); }
+        });
+    }
+
+    function showDuplicateWarning(invNo, by, on) {
+        var msg = '⚠ Invoice <strong>' + invNo + '</strong> already generated for this combination'
+                + (by ? ' by <strong>' + by + '</strong>' : '')
+                + (on ? ' on ' + on : '') + '.';
+        $('#divDuplicateWarning').html(msg).show();
+        $('#btnGenerateInvoice').prop('disabled', true).css('opacity', '0.5');
+    }
+
+    function hideDuplicateWarning() {
+        $('#divDuplicateWarning').hide().html('');
+        enableGenerateButton();
+    }
+
+    function enableGenerateButton() {
+        $('#btnGenerateInvoice').prop('disabled', false).css('opacity', '1');
+    }
+
+    // ── Populate header fields (no line items) ────────────────────────────────
+    function populateHeader(data) {
         $('#txtInvoiceNumber').val(data.invoiceNumber);
         $('#txtCreditPeriod').val(data.creditPeriod || '');
         $('#txtGSTNumber').val(data.gstNumber || '');
         $('#hidBillingType').val(data.billingType || 0);
 
-        // Billing Owner:
-        //   BillingType == 1 → dropdown (selectable)
-        //   BillingType == 2 or 3 → disabled text "Not Applicable"
-        //   other → editable text (auto-populated)
+        var taxScenario = data.gstApplicable ? 1 : 0;
+        $('#ddlTaxScenario').val(taxScenario);
+
+        // ── Billing Owner field ──────────────────────────────────────────────
         if (data.billingType === BILLING_TYPE_OWNER) {
+            // Dropdown — populated, user must choose
             $('#lblBillingOwnerTag').text('');
             var ddl = $('#ddlBillingOwner').prop('disabled', false).empty();
-            ddl.append('<option value="">-- Select Billing Owner --</option>');
+            ddl.append('<option value="" data-id="0">-- Select Billing Owner --</option>');
             if (data.billingOwners && data.billingOwners.length) {
                 $.each(data.billingOwners, function (i, bo) {
-                    var opt = $('<option></option>')
-                        .val(bo.billingOwnerEmail)
-                        .text(bo.billingOwnerEmail)
-                        .attr('data-id', bo.billingOwnerId);
-                    if (bo.billingOwnerEmail === data.billingOwnerEmail) opt.prop('selected', true);
-                    ddl.append(opt);
+                    ddl.append(
+                        $('<option></option>')
+                            .val(bo.billingOwnerEmail)
+                            .text(bo.billingOwnerEmail)
+                            .attr('data-id', bo.billingOwnerId)
+                    );
                 });
             }
             ddl.off('change').on('change', function () {
-                var sel = $(this).find('option:selected');
-                $('#hidBillingOwnerId').val(sel.data('id') || 0);
+                var sel     = $(this).find('option:selected');
+                var ownerId = parseInt(sel.data('id')) || 0;
+                $('#hidBillingOwnerId').val(ownerId);
+                onBillingOwnerChange(ownerId);
             });
-            var selOpt = ddl.find('option:selected');
-            $('#hidBillingOwnerId').val(selOpt.data('id') || data.billingOwnerId || 0);
+            $('#hidBillingOwnerId').val(0);
             $('#ddlBillingOwner').show();
             $('#txtBillingOwner').hide();
+
         } else if (data.billingType === 2 || data.billingType === 3) {
+            // Not Applicable — disabled
             $('#lblBillingOwnerTag').text('');
             $('#txtBillingOwner').val('Not Applicable')
                 .prop('disabled', true)
-                .removeClass('auto-field-editable')
-                .addClass('auto-field')
+                .removeClass('auto-field-editable').addClass('auto-field')
                 .show();
             $('#ddlBillingOwner').hide();
             $('#hidBillingOwnerId').val(0);
+
         } else {
+            // Editable auto-filled text
             $('#lblBillingOwnerTag').text('auto');
             $('#txtBillingOwner').val(data.billingOwnerEmail || '')
                 .prop('disabled', false)
-                .removeClass('auto-field')
-                .addClass('auto-field-editable')
+                .removeClass('auto-field').addClass('auto-field-editable')
                 .show();
             $('#hidBillingOwnerId').val(data.billingOwnerId || 0);
             $('#ddlBillingOwner').hide();
         }
 
-        // Tax scenario: auto-set from GSTApplicable
-        var taxScenario = data.gstApplicable ? 1 : 0;
-        $('#ddlTaxScenario').val(taxScenario);
-
-        // Show auto fields
         $('#divAutoFields').show();
         $('#divInvoiceHeader').show();
         $('#lblInvoiceNum').text(data.invoiceNumber);
+        $('#divActionsCard').show();
+    }
 
-        // Line items (auto-populate only when billingType = 1 = Billing Owner)
-        renderLineItems(data.lineItems || []);
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function hideLineItemsSection() {
+        $('#divLineItemsCard').hide();
+        $('#divTotalsCard').hide();
+        $('#tblLineItemsBody').empty();
+        $('#hidLineItemsJson').val('');
+    }
 
-        recalcTotals(data.subtotal, taxScenario);
-
+    function showLineItemsSection() {
         $('#divLineItemsCard').show();
         $('#divTotalsCard').show();
-        $('#divActionsCard').show();
+    }
+
+    function showLineItemsPlaceholder(msg) {
+        $('#tblLineItemsBody').empty();
+        $('#divNoLineItems').text(msg).show();
+        $('#divLineItemsTable').hide();
+        $('#tblLineItems tfoot').hide();
+        $('#divLineItemsCard').show();
+        $('#divTotalsCard').hide();
     }
 
     function renderLineItems(items) {
@@ -389,8 +488,7 @@
         });
 
         $('#tdSubtotal').text(formatNum(subtotal));
-
-        // Store line items as JSON for form submission
+        $('#hidSubtotal').val(subtotal.toFixed(2));
         $('#hidLineItemsJson').val(JSON.stringify(items));
     }
 

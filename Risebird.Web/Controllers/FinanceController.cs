@@ -1798,11 +1798,11 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<JsonResult> GetClientInvoiceData(int clientId, int month, int year)
+        public async Task<JsonResult> GetClientInvoiceData(int clientId, int month, int year, int billingOwnerId = 0)
         {
             try
             {
-                var dataTask          = _meetingService.GetClientInvoiceFormData(clientId, month, year);
+                var dataTask          = _meetingService.GetClientInvoiceFormData(clientId, month, year, billingOwnerId);
                 var invoiceNumTask    = _meetingService.GetNextInvoiceNumber(month, year);
                 var billingOwnersTask = _meetingService.GetClientBillingOwners(clientId);
 
@@ -1845,6 +1845,33 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year)
+        {
+            try
+            {
+                var existing = await _meetingService.CheckDuplicateInvoice(clientId, billingOwnerId, month, year);
+                if (existing != null && existing.id > 0)
+                {
+                    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                    return Json(new
+                    {
+                        isDuplicate   = true,
+                        invoiceNumber = existing.InvoiceNumber,
+                        createdBy     = existing.CreatedBy,
+                        createdOn     = existing.CreatedOn?.ToString("dd MMM yyyy")
+                    });
+                }
+                return Json(new { isDuplicate = false });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { isDuplicate = false });
+            }
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> SaveGeneratedInvoice(GenerateInvoiceVM model, string LineItemsJson)
         {
@@ -1860,11 +1887,16 @@ namespace Risebird.Web.Controllers
                         try { model.LineItems = JsonConvert.DeserializeObject<List<InvoiceLineItemVM>>(LineItemsJson); }
                         catch { model.LineItems = new List<InvoiceLineItemVM>(); }
                     }
-                    var invoiceId = await _meetingService.SaveGeneratedInvoice(model);
-                    TempData["GenerateInvoiceMsg"] = invoiceId > 0
-                        ? "Success: Invoice saved successfully."
-                        : "Error: Could not save invoice.";
-                    return RedirectToAction("GenerateInvoice");
+                            var invoiceId = await _meetingService.SaveGeneratedInvoice(model);
+                            if (invoiceId > 0)
+                            {
+                                TempData["InvoiceListMessage"] = "Success: Invoice saved successfully.";
+                                return RedirectToAction("InvoiceList");
+                            }
+                            TempData["GenerateInvoiceMsg"] = invoiceId == -1
+                                ? "Error: An invoice has already been generated for this Client, Billing Owner, Month and Year. Duplicate invoices are not allowed."
+                                : "Error: Could not save invoice.";
+                            return RedirectToAction("GenerateInvoice");
                 }
                 return RedirectToAction("SignOut", "Session");
             }
@@ -1906,6 +1938,9 @@ namespace Risebird.Web.Controllers
                         }
                         model = await _meetingService.GetInvoiceList(month, year);
                         if (model == null) model = new List<InvoiceListVM>();
+                        model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                            ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                            : string.Empty);
                         filter.Client = filter.Client == null
                             ? model.Select(x => x.ClientName).ToArray()
                             : filter.Client;
@@ -1920,6 +1955,9 @@ namespace Risebird.Web.Controllers
                     {
                         model = await _meetingService.GetInvoiceList(month, year);
                         if (model == null) model = new List<InvoiceListVM>();
+                        model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                            ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                            : string.Empty);
                     }
 
                     System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();

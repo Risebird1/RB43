@@ -181,8 +181,9 @@ namespace Risebird.Repository.Interface
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
         Task<List<InvoiceListVM>> GetInvoiceList(int month, int year);
         Task<string> SaveInvoiceList(InvoiceListVM model);
-        Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year);
+        Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0);
         Task<List<BillingOwnerOption>> GetClientBillingOwners(int clientId);
+        Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year);
         Task<string> GetNextInvoiceNumber(int month, int year);
         Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model);
         Task SaveGeneratedInvoiceLineItems(int invoiceId, List<InvoiceLineItemVM> lineItems);

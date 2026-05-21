@@ -520,6 +520,7 @@ namespace Risebird.Entities.ViewModel
         public int ClientId { get; set; }
         public string ClientName { get; set; }
         public string InvoiceModel { get; set; }
+        public int BillingModel { get; set; }
         public int BillingOwner { get; set; }
         public string BillingOwnerEmail { get; set; }
         public string InvoiceNumber { get; set; }
@@ -582,6 +583,15 @@ namespace Risebird.Entities.ViewModel
         public int Status { get; set; }
         public string CreatedBy { get; set; }
         public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
+    }
+
+    public class DuplicateInvoiceCheckVM
+    {
+        public int id { get; set; }
+        public string InvoiceNumber { get; set; }
+        public int Status { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public string CreatedBy { get; set; }
     }
 
     public class BillingOwnerOption

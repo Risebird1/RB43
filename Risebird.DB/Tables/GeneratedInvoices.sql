@@ -3,6 +3,7 @@ BEGIN
 CREATE TABLE [dbo].[GeneratedInvoices](
     [id]               [int] IDENTITY(1,1) NOT NULL,
     [ClientId]         [int] NULL,
+    [BillingOwnerId]   [int] NULL DEFAULT 0,
     [InvoiceNumber]    [varchar](50) NULL,
     [InvoiceMonth]     [int] NULL,
     [InvoiceYear]      [int] NULL,
@@ -16,13 +17,30 @@ CREATE TABLE [dbo].[GeneratedInvoices](
     [InvoiceValue]     [decimal](18,2) NULL DEFAULT 0,
     [TDSAmount]        [decimal](18,2) NULL DEFAULT 0,
     [NetReceivable]    [decimal](18,2) NULL DEFAULT 0,
-    [Status]           [int] NULL DEFAULT 0,   -- 0=Draft 1=Generated
+    [Status]           [int] NULL DEFAULT 0,   -- 0=Draft 1=Generated 2=Paid 3=Partially Paid 4=Overdue
+    [Owner]            [varchar](200) NULL,
+    [LatestRemark]     [varchar](500) NULL,
+    [UTRTrxn]          [varchar](200) NULL,
     [CreatedOn]        [datetime] NULL DEFAULT GETDATE(),
     [ModifiedOn]       [datetime] NULL,
     [CreatedBy]        [varchar](200) NULL,
  CONSTRAINT [PK_GeneratedInvoices] PRIMARY KEY CLUSTERED ([id] ASC)
 ) ON [PRIMARY]
 END
+GO
+
+-- Add tracking columns to existing tables that were created before this version
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'GeneratedInvoices' AND COLUMN_NAME = 'BillingOwnerId')
+    ALTER TABLE GeneratedInvoices ADD [BillingOwnerId] INT NULL DEFAULT 0
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'GeneratedInvoices' AND COLUMN_NAME = 'Owner')
+    ALTER TABLE GeneratedInvoices ADD [Owner] VARCHAR(200) NULL
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'GeneratedInvoices' AND COLUMN_NAME = 'LatestRemark')
+    ALTER TABLE GeneratedInvoices ADD [LatestRemark] VARCHAR(500) NULL
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'GeneratedInvoices' AND COLUMN_NAME = 'UTRTrxn')
+    ALTER TABLE GeneratedInvoices ADD [UTRTrxn] VARCHAR(200) NULL
 GO
 
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'GeneratedInvoiceLineItems')

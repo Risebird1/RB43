@@ -3146,16 +3146,29 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year)
+        public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0)
         {
             try
             {
-                return await _meetingRespository.GetClientInvoiceFormData(clientId, month, year);
+                return await _meetingRespository.GetClientInvoiceFormData(clientId, month, year, billingOwnerId);
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return new ClientInvoiceFormDataVM();
+            }
+        }
+
+        public async Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year)
+        {
+            try
+            {
+                return await _meetingRespository.CheckDuplicateInvoice(clientId, billingOwnerId, month, year);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
 

@@ -138,8 +138,8 @@
                                                             <div class="col-md-12">
                                                                 <select id="FilterStatus" name="Status" data-placeholder="All Statuses"
                                                                         class="form-control multiselect" multiple="multiple">
-                                                                    <option value="0">Pending</option>
-                                                                    <option value="1">Invoice Raised</option>
+                                                                    <option value="0">Draft</option>
+                                                                    <option value="1">Generated</option>
                                                                     <option value="2">Paid</option>
                                                                     <option value="3">Partially Paid</option>
                                                                     <option value="4">Overdue</option>
@@ -223,7 +223,7 @@
                                                             <td>@item.ClientName</td>
                                                             <td>@item.InvoiceModel</td>
                                                             <td>@item.BillingType</td>
-                                                            <td>@item.BillingOwnerEmail</td>
+                                                            <td>@(item.BillingType == 1 ? item.BillingOwnerEmail : "Client")</td>
                                                             <td>@item.InvoiceNumber</td>
                                                             <td>@item.IRN</td>
                                                             <td class="text-right">@item.GrossAmount.ToString("N2")</td>
@@ -231,12 +231,12 @@
                                                                 @{
                                                                     string statusBadge = item.Status switch
                                                                     {
-                                                                        0 => "<span class='badge badge-warning'>Pending</span>",
-                                                                        1 => "<span class='badge badge-info'>Invoice Raised</span>",
+                                                                        0 => "<span class='badge badge-secondary'>Draft</span>",
+                                                                        1 => "<span class='badge badge-info'>Generated</span>",
                                                                         2 => "<span class='badge badge-success'>Paid</span>",
                                                                         3 => "<span class='badge badge-primary'>Partially Paid</span>",
                                                                         4 => "<span class='badge badge-danger'>Overdue</span>",
-                                                                        _ => "<span class='badge badge-secondary'>Unknown</span>"
+                                                                        _ => "<span class='badge badge-warning'>Unknown</span>"
                                                                     };
                                                                 }
                                                                 @Html.Raw(statusBadge)

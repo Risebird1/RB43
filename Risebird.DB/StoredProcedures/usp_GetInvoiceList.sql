@@ -14,30 +14,32 @@ CREATE PROCEDURE usp_GetInvoiceList
     @Year  INT
 AS
 BEGIN
+    SET NOCOUNT ON;
+
     SELECT
-        cil.id,
-        c.id        AS ClientId,
-        c.Name      AS ClientName,
+        gi.id,
+        gi.ClientId,
+        ISNULL(c.Name, '')                                    AS ClientName,
         ISNULL(c.BillingModel, 0)                             AS BillingModel,
-        ul.EmailId  AS BillingOwnerEmail,
-        cil.BillingOwner,
-        cil.InvoiceNumber,
-        cil.IRN,
-        cil.GrossAmount,
-        cil.Status,
-        cil.Owner,
-        cil.LatestRemark,
-        cil.UTRTrxn,
-        cil.BillingType,
-        cil.InvoiceMonth,
-        cil.InvoiceYear,
-        cil.CreatedOn,
-        cil.ModifiedOn
-    FROM ClientInvoiceList cil
-    LEFT JOIN Client c    ON c.id = cil.ClientId
-    LEFT JOIN UserList ul ON ul.id = cil.BillingOwner
-    WHERE cil.InvoiceMonth = @Month
-      AND cil.InvoiceYear  = @Year
-    ORDER BY c.Name, cil.id
+        gi.BillingOwnerId                                     AS BillingOwner,
+        ISNULL(NULLIF(gi.BillingOwnerEmail, ''), ul.EmailId)  AS BillingOwnerEmail,
+        gi.InvoiceNumber,
+        gi.IRN,
+        gi.InvoiceValue                                       AS GrossAmount,
+        gi.Status,
+        gi.CreatedBy                                          AS Owner,
+        NULL                                                  AS LatestRemark,
+        NULL                                                  AS UTRTrxn,
+        ISNULL(c.BillingType, 0)                              AS BillingType,
+        gi.InvoiceMonth,
+        gi.InvoiceYear,
+        gi.CreatedOn,
+        gi.ModifiedOn
+    FROM GeneratedInvoices gi
+    LEFT JOIN Client   c  ON c.id  = gi.ClientId
+    LEFT JOIN UserList ul ON ul.id = gi.BillingOwnerId
+    WHERE gi.InvoiceMonth = @Month
+      AND gi.InvoiceYear  = @Year
+    ORDER BY c.Name, gi.id
 END
 GO
