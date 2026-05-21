@@ -36,7 +36,7 @@ CREATE TABLE [dbo].[GeneratedInvoiceLineItems](
     [InvoiceId]   [int] NULL,
     [ProductName] [varchar](200) NULL,
     [Description] [varchar](500) NULL,
-    [Qty]         [decimal](18,2) NULL DEFAULT 0,
+    [Qty]         [int] NULL DEFAULT 0,
     [UnitRate]    [decimal](18,2) NULL DEFAULT 0,
     [LineTotal]   [decimal](18,2) NULL DEFAULT 0,
     [Basis]       [varchar](100) NULL,

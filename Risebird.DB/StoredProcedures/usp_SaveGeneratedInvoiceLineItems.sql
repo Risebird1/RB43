@@ -11,7 +11,7 @@ CREATE PROCEDURE usp_SaveGeneratedInvoiceLineItems
     @InvoiceId   INT,
     @ProductName VARCHAR(200),
     @Description VARCHAR(500),
-    @Qty         DECIMAL(18,2),
+    @Qty         INT,
     @UnitRate    DECIMAL(18,2),
     @LineTotal   DECIMAL(18,2),
     @Basis       VARCHAR(100)
