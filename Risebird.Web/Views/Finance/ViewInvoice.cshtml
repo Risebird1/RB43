@@ -139,7 +139,7 @@
                                 <tr data-id="@li.id" data-qty="@li.Qty">
                                     <td>@li.ProductName</td>
                                     <td>@li.Description</td>
-                                    <td class="text-right">@li.Qty.ToString("N2")</td>
+                                    <td class="text-right">@li.Qty</td>
                                     <td class="text-center">
                                         <input type="number" class="form-control form-control-sm unit-rate-input text-right"
                                                value="@li.UnitRate.ToString("N2", CultureInfo.InvariantCulture)"
@@ -208,7 +208,7 @@
     // Live recalculate when unit rate changes
     $('#tblLineItemsBody').on('input', '.unit-rate-input', function () {
         var row   = $(this).closest('tr');
-        var qty   = parseFloat(row.data('qty') || 0);
+        var qty   = parseInt(row.data('qty') || 0);
         var rate  = parseFloat($(this).val() || 0);
         row.find('.line-total-cell').text((qty * rate).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
         refreshTotals();
@@ -240,7 +240,7 @@
         var lineItems = [];
         $('#tblLineItemsBody tr[data-id]').each(function () {
             var id    = parseInt($(this).data('id'));
-            var qty   = parseFloat($(this).data('qty') || 0);
+            var qty   = parseInt($(this).data('qty') || 0);
             var rate  = parseFloat($(this).find('.unit-rate-input').val() || 0);
             lineItems.push({ id: id, unitRate: rate, lineTotal: qty * rate });
         });
