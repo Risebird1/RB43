@@ -353,5 +353,25 @@ namespace Risebird.Repository.Interface
         /// <param name="payoutStatus">Terminal status from the webhook: SUCCESS | FAILED | REVERSED.</param>
         /// <returns>Number of rows updated (0 if no matching row was found).</returns>
         Task<int> UpdatePaymentHistoryTransferStatus(string transferId, string cfTransferId, string payoutStatus);
+
+        /// <summary>
+        /// Inserts a single row into <c>PaymentLogs</c> capturing the full context of one
+        /// <c>TransactionStatus</c> webhook call (input, output, errors, parsed fields).
+        /// </summary>
+        Task InsertPaymentLog(
+            string endpoint,
+            string requestBody,
+            string responseBody,
+            int? httpStatusCode,
+            string logLevel,
+            string eventType        = null,
+            string transferId       = null,
+            string cfTransferId     = null,
+            string transferStatus   = null,
+            string signatureTimestamp = null,
+            string signatureReceived  = null,
+            int?   rowsUpdated      = null,
+            string errorMessage     = null,
+            string callerIp         = null);
     }
 }

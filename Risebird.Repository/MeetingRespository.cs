@@ -4426,6 +4426,58 @@ namespace Risebird.Repository
             }
         }
 
+        /// <summary>
+        /// Inserts one row into <c>PaymentLogs</c> via <c>usp_InsertPaymentLog</c>.
+        /// Swallows all exceptions so logging never breaks the caller.
+        /// </summary>
+        public async Task InsertPaymentLog(
+            string endpoint,
+            string requestBody,
+            string responseBody,
+            int?   httpStatusCode,
+            string logLevel,
+            string eventType          = null,
+            string transferId         = null,
+            string cfTransferId       = null,
+            string transferStatus     = null,
+            string signatureTimestamp = null,
+            string signatureReceived  = null,
+            int?   rowsUpdated        = null,
+            string errorMessage       = null,
+            string callerIp           = null)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Endpoint",           endpoint);
+                parameters.Add("@RequestBody",        requestBody);
+                parameters.Add("@ResponseBody",       responseBody);
+                parameters.Add("@HttpStatusCode",     httpStatusCode);
+                parameters.Add("@LogLevel",           logLevel);
+                parameters.Add("@EventType",          eventType);
+                parameters.Add("@TransferId",         transferId);
+                parameters.Add("@CfTransferId",       cfTransferId);
+                parameters.Add("@TransferStatus",     transferStatus);
+                parameters.Add("@SignatureTimestamp", signatureTimestamp);
+                parameters.Add("@SignatureReceived",  signatureReceived);
+                parameters.Add("@RowsUpdated",        rowsUpdated);
+                parameters.Add("@ErrorMessage",       errorMessage);
+                parameters.Add("@CallerIp",           callerIp);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await con.ExecuteAsync(
+                        "usp_InsertPaymentLog",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
         public async Task<List<RBInterviewDetails>> FetchFNPaymentHistory()
         {
             try
