@@ -1180,6 +1180,11 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
+                string relayEmail = payload.CandidateEmail?.Trim();
+                string relayPhone = payload.CandidatePhone?.Trim();
+                bool preParsed = !string.IsNullOrWhiteSpace(relayEmail)
+                              || !string.IsNullOrWhiteSpace(relayPhone);
+
                 var record = new NaukriProspectiveInterviewer
                 {
                     SenderEmail     = payload.SenderEmail?.Trim(),
@@ -1196,6 +1201,9 @@ namespace Risebird.Web.Controllers
                     ExperienceYears = payload.ExperienceYears?.Trim(),
                     Salary          = payload.Salary?.Trim(),
                     MagName         = payload.MagName?.Trim(),
+                    ParsedEmail     = relayEmail,
+                    ParsedPhone     = relayPhone,
+                    ResumeParseCompleted = preParsed ? true : null,
                     ResumeLink      = blobResumeUrl ?? sourceResumeUrl,
                     HasAttachment   = !string.IsNullOrWhiteSpace(blobResumeUrl) || payload.HasAttachment,
                     Source          = "Naukri"
@@ -1204,8 +1212,13 @@ namespace Risebird.Web.Controllers
                 var newId = await _repository.InsertAsync(record);
 
                 if (newId > 0)
+                {
                     await _repository.InsertHistoryAsync(newId, "RecordCreated", "\u2014",
                         $"Candidate: {record.CandidateName}, MAG: {record.MagName}, Source: Naukri", "Relay Webhook");
+                    if (preParsed)
+                        await _repository.InsertHistoryAsync(newId, "RelayPreParsed", "\u2014",
+                            $"Email: {relayEmail ?? "—"}, Phone: {relayPhone ?? "—"} (extracted by Relay agent)", "Relay Webhook");
+                }
 
                 return Ok(new
                 {
@@ -1299,6 +1312,10 @@ namespace Risebird.Web.Controllers
                 }
 
                 string magName = payload.JobTitle?.Trim();
+                string relayEmail = payload.CandidateEmail?.Trim();
+                string relayPhone = payload.CandidatePhone?.Trim();
+                bool preParsed = !string.IsNullOrWhiteSpace(relayEmail)
+                              || !string.IsNullOrWhiteSpace(relayPhone);
 
                 var record = new NaukriProspectiveInterviewer
                 {
@@ -1312,6 +1329,9 @@ namespace Risebird.Web.Controllers
                     KeySkills       = payload.SkillsMatch?.Trim(),
                     CurrentRole     = payload.Headline?.Trim(),
                     MagName         = magName,
+                    ParsedEmail     = relayEmail,
+                    ParsedPhone     = relayPhone,
+                    ResumeParseCompleted = preParsed ? true : null,
                     ResumeLink      = blobResumeUrl ?? sourceResumeUrl,
                     HasAttachment   = !string.IsNullOrWhiteSpace(blobResumeUrl) || payload.HasAttachment,
                     Source          = "LinkedIn"
@@ -1320,8 +1340,13 @@ namespace Risebird.Web.Controllers
                 var newId = await _repository.InsertAsync(record);
 
                 if (newId > 0)
+                {
                     await _repository.InsertHistoryAsync(newId, "RecordCreated", "—",
                         $"Candidate: {record.CandidateName}, MAG: {record.MagName}, Source: LinkedIn", "Relay Webhook");
+                    if (preParsed)
+                        await _repository.InsertHistoryAsync(newId, "RelayPreParsed", "—",
+                            $"Email: {relayEmail ?? "—"}, Phone: {relayPhone ?? "—"} (extracted by Relay agent)", "Relay Webhook");
+                }
 
                 return Ok(new
                 {
