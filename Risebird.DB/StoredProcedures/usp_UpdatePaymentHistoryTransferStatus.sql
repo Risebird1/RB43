@@ -11,27 +11,27 @@ GO
 
 -- ============================================================
 -- Procedure : usp_UpdatePaymentHistoryTransferStatus
--- Purpose   : Updates PayoutStatus (and back-fills CfTransferId)
---             on a PaymentHistory row identified by TransferId
---             and/or CfTransferId received from a Cashfree
---             Payout webhook event.
+-- Purpose   : Updates PayoutStatus, TransferUtr (and back-fills
+--             CfTransferId) on a PaymentHistory row identified by
+--             TransferId and/or CfTransferId received from a
+--             Cashfree Payout webhook event.
 --
 -- Match logic:
 --   A row is matched when EITHER:
 --     • TransferId   = @TransferId   (when @TransferId is supplied)
 --     • CfTransferId = @CfTransferId (when @CfTransferId is supplied)
 --
--- CfTransferId back-fill:
---   If the row was originally inserted without a CfTransferId
---   (e.g. payout was async), the webhook supplies it and this
---   procedure stores it alongside the new PayoutStatus.
+-- CfTransferId / TransferUtr back-fill:
+--   Both fields are kept if already populated and the webhook
+--   does not supply a new value.
 --
 -- Returns   : @@ROWCOUNT — number of rows updated (0 = no match).
 -- ============================================================
 CREATE PROCEDURE usp_UpdatePaymentHistoryTransferStatus
     @TransferId   NVARCHAR(50)  = NULL,
     @CfTransferId NVARCHAR(100) = NULL,
-    @PayoutStatus NVARCHAR(50)
+    @PayoutStatus NVARCHAR(50),
+    @TransferUtr  VARCHAR(100)  = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -42,7 +42,12 @@ BEGIN
         CfTransferId  = CASE
                             WHEN @CfTransferId IS NOT NULL AND @CfTransferId <> ''
                             THEN @CfTransferId
-                            ELSE CfTransferId       -- keep existing value if not supplied
+                            ELSE CfTransferId
+                        END,
+        TransferUtr   = CASE
+                            WHEN @TransferUtr IS NOT NULL AND @TransferUtr <> ''
+                            THEN @TransferUtr
+                            ELSE TransferUtr
                         END
     WHERE
         (
