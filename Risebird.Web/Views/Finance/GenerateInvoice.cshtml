@@ -1,0 +1,533 @@
+@model Risebird.Entities.ViewModel.GenerateInvoiceVM
+@{
+    ViewData["Title"] = "Generate Invoice";
+    ViewBag.PageHeader = "Generate Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .gen-inv-card { background: #fff; border-radius: 8px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,.10); margin-bottom: 16px; }
+    .gen-inv-section-title { font-size: 13px; font-weight: 700; color: #5c6bc0; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 14px; border-bottom: 2px solid #e8eaf6; padding-bottom: 6px; }
+    .gen-inv-label { font-size: 12px; font-weight: 600; color: #555; margin-bottom: 4px; }
+    .auto-field          { background: #f5f7fa !important; color: #333; }
+    .auto-field-editable { background: #fffde7 !important; color: #333; border: 1px solid #ffe082; }
+    .totals-table td { padding: 6px 12px; font-size: 14px; }
+    .totals-table .label-col { color: #666; width: 60%; text-align: right; padding-right: 20px; }
+    .totals-table .val-col { font-weight: 600; text-align: right; min-width: 130px; }
+    .invoice-value-row td { font-size: 16px; font-weight: 700; color: #1a237e; border-top: 2px solid #c5cae9; border-bottom: 2px solid #c5cae9; }
+    .line-items-table th { background: #e8eaf6; font-size: 12px; font-weight: 700; }
+    .line-items-table td, .line-items-table th { vertical-align: middle; }
+    .btn-draft    { background: #fff; border: 1px solid #5c6bc0; color: #5c6bc0; }
+    .btn-draft:hover { background: #e8eaf6; }
+    .btn-generate { background: #3949ab; color: #fff; }
+    .btn-generate:hover { background: #283593; }
+    .tag-auto { font-size: 10px; color: #999; font-style: italic; margin-left: 4px; }
+    #divNoLineItems { color: #aaa; font-size: 13px; padding: 16px 0; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <div class="mobile-view"><h4 class="card-title">Generate Invoice</h4></div>
+                    <div id="divInvoiceHeader" style="display:none;">
+                        <label id="lblInvoiceNum" style="font-weight:700;font-size:14px;color:#3949ab;"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["GenerateInvoiceMsg"] != null)
+    {
+        <div id="divMsg" class="alert @(TempData["GenerateInvoiceMsg"].ToString().StartsWith("Success") ? "alert-success" : "alert-danger")" style="margin:10px 15px;">
+            @TempData["GenerateInvoiceMsg"]
+        </div>
+    }
+
+    <div class="content">
+        <form id="invoiceForm" method="post" action="@Url.Action("SaveGeneratedInvoice","Finance")">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="hidId"            name="id"            value="0" />
+            <input type="hidden" id="hidStatus"        name="Status"        value="0" />
+            <input type="hidden" id="hidLineItemsJson" name="LineItemsJson" value="" />
+
+            <!-- ── Section 1: Client & Period ── -->
+            <div class="gen-inv-card">
+                <div class="gen-inv-section-title">Invoice Details</div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="gen-inv-label">CLIENT <span class="text-danger">*</span></label>
+                            @Html.DropDownList("ClientId",
+                                (SelectList)ViewBag.ClientList,
+                                "-- Select Client --",
+                                new { @class = "form-control", id = "ddlClient", required = "required" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="gen-inv-label">MONTH <span class="text-danger">*</span></label>
+                            @{
+                                int curMonth = (int)ViewBag.CurrentMonth;
+                                int curYear  = (int)ViewBag.CurrentYear;
+                                var months   = new[] {
+                                    (1,"January"),(2,"February"),(3,"March"),(4,"April"),
+                                    (5,"May"),(6,"June"),(7,"July"),(8,"August"),
+                                    (9,"September"),(10,"October"),(11,"November"),(12,"December")
+                                };
+                            }
+                            <select id="ddlMonth" name="InvoiceMonth" class="form-control" required>
+                                @foreach (var m in months)
+                                {
+                                    if (m.Item1 == curMonth)
+                                    {
+                                        <option value="@m.Item1" selected="selected">@m.Item2</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@m.Item1">@m.Item2</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="gen-inv-label">YEAR <span class="text-danger">*</span></label>
+                            <select id="ddlYear" name="InvoiceYear" class="form-control" required>
+                                @for (int y = DateTime.Now.Year; y >= 2020; y--)
+                                {
+                                    if (y == curYear)
+                                    {
+                                        <option value="@y" selected="selected">@y</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@y">@y</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="divAutoFields" style="display:none;">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="gen-inv-label">INVOICE NUMBER <span class="tag-auto">auto</span></label>
+                            <input type="text" id="txtInvoiceNumber" name="InvoiceNumber" class="form-control auto-field" readonly />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="gen-inv-label">BILLING OWNER ENTITY <span class="tag-auto" id="lblBillingOwnerTag">auto</span></label>
+                            <select id="ddlBillingOwner" name="BillingOwnerEmail" class="form-control" style="display:none;"></select>
+                            <input type="text" id="txtBillingOwner" name="BillingOwnerEmail" class="form-control auto-field-editable" placeholder="Billing owner email" maxlength="200" style="display:none;" />
+                            <input type="hidden" id="hidBillingOwnerId" name="BillingOwnerId" value="0" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="gen-inv-label">CREDIT PERIOD <span class="tag-auto">auto</span></label>
+                            <input type="text" id="txtCreditPeriod" name="CreditPeriod" class="form-control auto-field-editable" placeholder="e.g. 45 Days" maxlength="100" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="gen-inv-label">GST NUMBER <span class="tag-auto">auto</span></label>
+                            <input type="text" id="txtGSTNumber" name="GSTNumber" class="form-control auto-field-editable" placeholder="GST number" maxlength="100" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="gen-inv-label">TAX SCENARIO</label>
+                            <select id="ddlTaxScenario" name="TaxScenario" class="form-control">
+                                <option value="0">Non-GST</option>
+                                <option value="1">GST 18%</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="gen-inv-label">IRN</label>
+                            <input type="text" id="txtIRN" name="IRN" class="form-control" placeholder="Enter IRN after upload" maxlength="200" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Section 2: Line Items ── -->
+            <div class="gen-inv-card" id="divLineItemsCard" style="display:none;">
+                <div class="gen-inv-section-title">
+                    Line Items
+                    <span class="tag-auto">auto-populated from wallet</span>
+                </div>
+                <div id="divNoLineItems" class="text-center" style="display:none;">No interviews found for the selected client &amp; month.</div>
+                <div class="table-responsive" id="divLineItemsTable">
+                    <table class="table table-bordered line-items-table" id="tblLineItems">
+                        <thead>
+                            <tr>
+                                <th style="width:5%">#</th>
+                                <th>Product</th>
+                                <th>Description</th>
+                                <th class="text-right" style="width:10%">Qty</th>
+                                <th class="text-right" style="width:12%">Unit (&#8377;)</th>
+                                <th class="text-right" style="width:14%">Line Total (&#8377;)</th>
+                                <th style="width:10%">Basis</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblLineItemsBody"></tbody>
+                        <tfoot>
+                            <tr style="background:#f5f7fa;font-weight:700;">
+                                <td colspan="5" class="text-right">Subtotal</td>
+                                <td class="text-right" id="tdSubtotal">0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── Section 3: Totals ── -->
+            <div class="gen-inv-card" id="divTotalsCard" style="display:none;">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-6">
+                        <table class="totals-table" style="width:100%;">
+                            <tbody>
+                                <tr>
+                                    <td class="label-col">Subtotal</td>
+                                    <td class="val-col" id="tdTotSubtotal">&#8377; 0.00</td>
+                                </tr>
+                                <tr id="trGST">
+                                    <td class="label-col" id="tdGSTLabel">GST 18%</td>
+                                    <td class="val-col" id="tdGSTAmount">&#8377; 0.00</td>
+                                </tr>
+                                <tr class="invoice-value-row">
+                                    <td class="label-col">Invoice Value</td>
+                                    <td class="val-col" id="tdInvoiceValue">&#8377; 0.00</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-col">TDS 10% (net payment)</td>
+                                    <td class="val-col" style="color:#c62828;" id="tdTDSAmount">- &#8377; 0.00</td>
+                                </tr>
+                                <tr style="font-weight:700;font-size:15px;">
+                                    <td class="label-col">Net Receivable</td>
+                                    <td class="val-col" style="color:#2e7d32;" id="tdNetReceivable">&#8377; 0.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- hidden fields for totals -->
+                        <input type="hidden" name="Subtotal"      id="hidSubtotal"      value="0" />
+                        <input type="hidden" name="GSTAmount"     id="hidGSTAmount"     value="0" />
+                        <input type="hidden" name="InvoiceValue"  id="hidInvoiceValue"  value="0" />
+                        <input type="hidden" name="TDSAmount"     id="hidTDSAmount"     value="0" />
+                        <input type="hidden" name="NetReceivable" id="hidNetReceivable" value="0" />
+                        <input type="hidden" name="BillingType"   id="hidBillingType"   value="0" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Action Buttons ── -->
+            <div class="gen-inv-card" id="divActionsCard" style="display:none;">
+                <!-- Duplicate invoice warning -->
+                <div id="divDuplicateWarning"
+                     class="alert alert-danger"
+                     role="alert"
+                     style="display:none; font-size:13px; margin-bottom:10px;">
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded btn-draft"
+                                onclick="submitInvoice(0)" style="margin-right:8px;">
+                            <font style="font-size:12px;">Save as Draft</font>
+                        </button>
+                        <button type="button" id="btnGenerateInvoice"
+                                class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-generate"
+                                onclick="submitInvoice(1)">
+                            <font style="font-size:12px;">Generate Invoice</font>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    var invoiceData      = null;
+    var BILLING_TYPE_OWNER = 1;
+
+    $(document).ready(function () {
+        $('#ddlClient').change(onClientOrPeriodChange);
+        $('#ddlMonth').change(onClientOrPeriodChange);
+        $('#ddlYear').change(onClientOrPeriodChange);
+
+        $('#ddlTaxScenario').change(function () {
+            var sub = parseFloat($('#hidSubtotal').val()) || 0;
+            recalcTotals(sub, parseInt($(this).val()));
+        });
+    });
+
+    // ── Step 1: client / month / year changed ─────────────────────────────────
+    // Fetch header info. Line items are loaded immediately for BillingType 2/3,
+    // but deferred for BillingType 1 until a billing owner is chosen.
+    function onClientOrPeriodChange() {
+        var clientId = $('#ddlClient').val();
+        var month    = $('#ddlMonth').val();
+        var year     = $('#ddlYear').val();
+        if (!clientId || clientId === '') return;
+
+        hideLineItemsSection();
+
+        $.ajax({
+            type: 'GET',
+            url: '/Finance/GetClientInvoiceData',
+            data: { clientId: clientId, month: month, year: year, billingOwnerId: 0 },
+            success: function (data) {
+                if (data.error) { alert(data.error); return; }
+                invoiceData = data;
+                populateHeader(data);
+
+                if (data.billingType === BILLING_TYPE_OWNER) {
+                    // BillingType=1: duplicate check is deferred until billing owner is selected
+                    hideDuplicateWarning();
+                    showLineItemsPlaceholder('Select a billing owner above to load line items.');
+                } else {
+                    // BillingType=2/3: check duplicate now (billingOwnerId = 0 for client-based billing)
+                    checkDuplicate(clientId, 0, month, year, null);
+                    renderLineItems(data.lineItems || []);
+                    recalcTotals(data.subtotal, parseInt($('#ddlTaxScenario').val()));
+                    showLineItemsSection();
+                }
+            },
+            error: function () { alert('Failed to load invoice data.'); }
+        });
+    }
+
+    // ── Step 2: billing owner selected (BillingType=1 only) ───────────────────
+    function onBillingOwnerChange(ownerId) {
+        var clientId = $('#ddlClient').val();
+        var month    = $('#ddlMonth').val();
+        var year     = $('#ddlYear').val();
+        if (!ownerId || ownerId === 0) { hideLineItemsSection(); return; }
+
+        checkDuplicate(clientId, ownerId, month, year, function () {
+            $.ajax({
+                type: 'GET',
+                url: '/Finance/GetClientInvoiceData',
+                data: { clientId: clientId, month: month, year: year, billingOwnerId: ownerId },
+                success: function (data) {
+                    if (data.error) { alert(data.error); return; }
+                    renderLineItems(data.lineItems || []);
+                    recalcTotals(data.subtotal, parseInt($('#ddlTaxScenario').val()));
+                    showLineItemsSection();
+                },
+                error: function () { alert('Failed to load line items.'); }
+            });
+        });
+    }
+
+    // ── Duplicate invoice check ────────────────────────────────────────────────
+    // Calls server; if a Generated invoice already exists, shows warning and
+    // disables the Generate Invoice button. Calls onAllowed() to continue loading.
+    function checkDuplicate(clientId, billingOwnerId, month, year, onAllowed) {
+        $.ajax({
+            type: 'GET',
+            url: '/Finance/CheckDuplicateInvoice',
+            data: { clientId: clientId, billingOwnerId: billingOwnerId, month: month, year: year },
+            success: function (res) {
+                hideDuplicateWarning();
+                if (res.isDuplicate) {
+                    showDuplicateWarning(res.invoiceNumber, res.createdBy, res.createdOn);
+                } else {
+                    enableGenerateButton();
+                }
+                if (onAllowed) onAllowed();
+            },
+            error: function () { if (onAllowed) onAllowed(); }
+        });
+    }
+
+    function showDuplicateWarning(invNo, by, on) {
+        var msg = '⚠ Invoice <strong>' + invNo + '</strong> already generated for this combination'
+                + (by ? ' by <strong>' + by + '</strong>' : '')
+                + (on ? ' on ' + on : '') + '.';
+        $('#divDuplicateWarning').html(msg).show();
+        $('#btnGenerateInvoice').prop('disabled', true).css('opacity', '0.5');
+    }
+
+    function hideDuplicateWarning() {
+        $('#divDuplicateWarning').hide().html('');
+        enableGenerateButton();
+    }
+
+    function enableGenerateButton() {
+        $('#btnGenerateInvoice').prop('disabled', false).css('opacity', '1');
+    }
+
+    // ── Populate header fields (no line items) ────────────────────────────────
+    function populateHeader(data) {
+        $('#txtInvoiceNumber').val(data.invoiceNumber);
+        $('#txtCreditPeriod').val(data.creditPeriod || '');
+        $('#txtGSTNumber').val(data.gstNumber || '');
+        $('#hidBillingType').val(data.billingType || 0);
+
+        var taxScenario = data.gstApplicable ? 1 : 0;
+        $('#ddlTaxScenario').val(taxScenario);
+
+        // ── Billing Owner field ──────────────────────────────────────────────
+        if (data.billingType === BILLING_TYPE_OWNER) {
+            // Dropdown — populated, user must choose
+            $('#lblBillingOwnerTag').text('');
+            var ddl = $('#ddlBillingOwner').prop('disabled', false).empty();
+            ddl.append('<option value="" data-id="0">-- Select Billing Owner --</option>');
+            if (data.billingOwners && data.billingOwners.length) {
+                $.each(data.billingOwners, function (i, bo) {
+                    ddl.append(
+                        $('<option></option>')
+                            .val(bo.billingOwnerEmail)
+                            .text(bo.billingOwnerEmail)
+                            .attr('data-id', bo.billingOwnerId)
+                    );
+                });
+            }
+            ddl.off('change').on('change', function () {
+                var sel     = $(this).find('option:selected');
+                var ownerId = parseInt(sel.data('id')) || 0;
+                $('#hidBillingOwnerId').val(ownerId);
+                onBillingOwnerChange(ownerId);
+            });
+            $('#hidBillingOwnerId').val(0);
+            $('#ddlBillingOwner').show();
+            $('#txtBillingOwner').hide();
+
+        } else if (data.billingType === 2 || data.billingType === 3) {
+            // Not Applicable — disabled
+            $('#lblBillingOwnerTag').text('');
+            $('#txtBillingOwner').val('Not Applicable')
+                .prop('disabled', true)
+                .removeClass('auto-field-editable').addClass('auto-field')
+                .show();
+            $('#ddlBillingOwner').hide();
+            $('#hidBillingOwnerId').val(0);
+
+        } else {
+            // Editable auto-filled text
+            $('#lblBillingOwnerTag').text('auto');
+            $('#txtBillingOwner').val(data.billingOwnerEmail || '')
+                .prop('disabled', false)
+                .removeClass('auto-field').addClass('auto-field-editable')
+                .show();
+            $('#hidBillingOwnerId').val(data.billingOwnerId || 0);
+            $('#ddlBillingOwner').hide();
+        }
+
+        $('#divAutoFields').show();
+        $('#divInvoiceHeader').show();
+        $('#lblInvoiceNum').text(data.invoiceNumber);
+        $('#divActionsCard').show();
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function hideLineItemsSection() {
+        $('#divLineItemsCard').hide();
+        $('#divTotalsCard').hide();
+        $('#tblLineItemsBody').empty();
+        $('#hidLineItemsJson').val('');
+    }
+
+    function showLineItemsSection() {
+        $('#divLineItemsCard').show();
+        $('#divTotalsCard').show();
+    }
+
+    function showLineItemsPlaceholder(msg) {
+        $('#tblLineItemsBody').empty();
+        $('#divNoLineItems').text(msg).show();
+        $('#divLineItemsTable').hide();
+        $('#tblLineItems tfoot').hide();
+        $('#divLineItemsCard').show();
+        $('#divTotalsCard').hide();
+    }
+
+    function renderLineItems(items) {
+        var tbody = $('#tblLineItemsBody');
+        tbody.empty();
+
+        if (!items || items.length === 0) {
+            $('#divNoLineItems').show();
+            $('#divLineItemsTable').hide();
+            $('#tblLineItems tfoot').hide();
+            return;
+        }
+
+        $('#divNoLineItems').hide();
+        $('#divLineItemsTable').show();
+        $('#tblLineItems tfoot').show();
+
+        var subtotal = 0;
+        $.each(items, function (i, item) {
+            var lt = parseFloat(item.lineTotal) || 0;
+            subtotal += lt;
+            var row = '<tr>' +
+                '<td>' + (i + 1) + '</td>' +
+                '<td>' + escHtml(item.productName) + '</td>' +
+                '<td>' + escHtml(item.description) + '</td>' +
+                '<td class="text-right">' + (parseInt(item.qty) || 0) + '</td>' +
+                '<td class="text-right">&#8377; ' + formatNum(item.unitRate) + '</td>' +
+                '<td class="text-right">&#8377; ' + formatNum(lt) + '</td>' +
+                '<td>' + escHtml(item.basis) + '</td>' +
+                '</tr>';
+            tbody.append(row);
+        });
+
+        $('#tdSubtotal').text(formatNum(subtotal));
+        $('#hidSubtotal').val(subtotal.toFixed(2));
+        $('#hidLineItemsJson').val(JSON.stringify(items));
+    }
+
+    function recalcTotals(subtotal, taxScenario) {
+        subtotal = parseFloat(subtotal) || 0;
+        var gstAmt     = taxScenario === 1 ? Math.round(subtotal * 18) / 100 : 0;
+        var invValue   = subtotal + gstAmt;
+        var tdsAmt     = Math.round(subtotal * 10) / 100;
+        var netRec     = invValue - tdsAmt;
+
+        $('#tdTotSubtotal').text('₹ ' + formatNum(subtotal));
+        $('#tdGSTAmount').text('₹ ' + formatNum(gstAmt));
+        $('#tdGSTLabel').text(taxScenario === 1 ? 'GST 18%' : 'GST (Non-GST)');
+        $('#trGST').css('opacity', taxScenario === 1 ? 1 : 0.4);
+        $('#tdInvoiceValue').text('₹ ' + formatNum(invValue));
+        $('#tdTDSAmount').text('- ₹ ' + formatNum(tdsAmt));
+        $('#tdNetReceivable').text('₹ ' + formatNum(netRec));
+
+        $('#hidSubtotal').val(subtotal.toFixed(2));
+        $('#hidGSTAmount').val(gstAmt.toFixed(2));
+        $('#hidInvoiceValue').val(invValue.toFixed(2));
+        $('#hidTDSAmount').val(tdsAmt.toFixed(2));
+        $('#hidNetReceivable').val(netRec.toFixed(2));
+    }
+
+    function submitInvoice(status) {
+        if (!$('#ddlClient').val()) { alert('Please select a client.'); return; }
+        if (!$('#txtInvoiceNumber').val()) { alert('Invoice number not generated. Please reselect client & month.'); return; }
+        $('#hidStatus').val(status);
+        $('#invoiceForm').submit();
+    }
+
+    function formatNum(n) {
+        n = parseFloat(n) || 0;
+        return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function escHtml(s) {
+        if (!s) return '';
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+</script>

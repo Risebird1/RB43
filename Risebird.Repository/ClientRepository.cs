@@ -237,6 +237,7 @@ namespace Risebird.Repository
             parameters.Add("@IsPlanFlixable", entity.IsPlanFlixable);
             parameters.Add("@PlanType", entity.PlanType);
             parameters.Add("@IsVideoRequired", entity.IsVideoRequired);
+            parameters.Add("@BillingModel", entity.BillingModel);
             if (entity.GSTApplicable == 1)
             {
                 parameters.Add("@GSTApplicable", true);

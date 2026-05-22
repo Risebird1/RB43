@@ -4234,8 +4234,8 @@ namespace Risebird.Web.Controllers
             var _list = new List<SelectListItem>();
             var selectItem = new SelectListItem { Text = "Billing Owner", Value = Convert.ToString(1) };
             _list.Add(selectItem);
-            var selectItem1 = new SelectListItem { Text = "Skill Channel", Value = Convert.ToString(2) };
-            _list.Add(selectItem1);
+            //var selectItem1 = new SelectListItem { Text = "Skill Channel", Value = Convert.ToString(2) };
+            //_list.Add(selectItem1);
             var selectItem2 = new SelectListItem { Text = "Client", Value = Convert.ToString(3) };
             _list.Add(selectItem2);
             model.BillingTypeDrop = _list;

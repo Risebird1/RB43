@@ -1771,6 +1771,343 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        #region GenerateInvoice
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GenerateInvoice()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var clients = _projectService.GetClients()
+                        .Where(x => !string.IsNullOrEmpty(x.Name))
+                        .OrderBy(x => x.Name)
+                        .ToList();
+                    ViewBag.ClientList = new SelectList(clients, "id", "Name");
+                    ViewBag.CurrentMonth = DateTime.Now.Month;
+                    ViewBag.CurrentYear  = DateTime.Now.Year;
+                    return View(new GenerateInvoiceVM());
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetClientInvoiceData(int clientId, int month, int year, int billingOwnerId = 0)
+        {
+            try
+            {
+                var dataTask          = _meetingService.GetClientInvoiceFormData(clientId, month, year, billingOwnerId);
+                var invoiceNumTask    = _meetingService.GetNextInvoiceNumber(month, year);
+                var billingOwnersTask = _meetingService.GetClientBillingOwners(clientId);
+
+                await Task.WhenAll(dataTask, invoiceNumTask, billingOwnersTask);
+
+                var data          = dataTask.Result;
+                data.InvoiceNumber = invoiceNumTask.Result;
+                var billingOwners = billingOwnersTask.Result;
+
+                var subtotal      = data.LineItems?.Sum(x => x.LineTotal) ?? 0;
+                var gstAmount     = data.GSTApplicable ? Math.Round(subtotal * 18 / 100, 2) : 0;
+                var invoiceValue  = subtotal + gstAmount;
+                var tdsAmount     = Math.Round(subtotal * 10 / 100, 2);
+                var netReceivable = invoiceValue - tdsAmount;
+
+                return Json(new
+                {
+                    invoiceNumber     = data.InvoiceNumber,
+                    billingOwnerEmail = data.BillingOwnerEmail,
+                    billingOwnerId    = data.BillingOwnerId,
+                    billingOwners     = billingOwners,
+                    creditPeriod      = data.PaymentTerm > 0 ? data.PaymentTerm + " Days" : string.Empty,
+                    gstNumber         = data.GSTNumber,
+                    gstApplicable     = data.GSTApplicable,
+                    billingType       = data.BillingType,
+                    perInterviewRate  = data.PerInterviewRate,
+                    lineItems         = data.LineItems,
+                    subtotal          = subtotal,
+                    gstAmount         = gstAmount,
+                    invoiceValue      = invoiceValue,
+                    tdsAmount         = tdsAmount,
+                    netReceivable     = netReceivable
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { error = "Failed to load invoice data." });
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year)
+        {
+            try
+            {
+                var existing = await _meetingService.CheckDuplicateInvoice(clientId, billingOwnerId, month, year);
+                if (existing != null && existing.id > 0)
+                {
+                    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                    return Json(new
+                    {
+                        isDuplicate   = true,
+                        invoiceNumber = existing.InvoiceNumber,
+                        createdBy     = existing.CreatedBy,
+                        createdOn     = existing.CreatedOn?.ToString("dd MMM yyyy")
+                    });
+                }
+                return Json(new { isDuplicate = false });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { isDuplicate = false });
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ViewInvoice(int invoiceId)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
+                    if (invoice == null)
+                    {
+                        TempData["InvoiceListMessage"] = "Error: Invoice not found.";
+                        return RedirectToAction("InvoiceList");
+                    }
+                    if (TempData["ViewInvoiceMsg"] != null)
+                        ViewBag.Message = TempData["ViewInvoiceMsg"].ToString();
+                    return View(invoice);
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetInvoiceById(int invoiceId)
+        {
+            try
+            {
+                var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
+                if (invoice == null) return Json(new { error = "Invoice not found." });
+                return Json(invoice);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { error = "Failed to load invoice." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod,
+            string irn, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
+            decimal tdsAmount, decimal netReceivable, string lineItemsJson)
+        {
+            try
+            {
+                List<InvoiceLineItemVM> lineItems = null;
+                if (!string.IsNullOrWhiteSpace(lineItemsJson))
+                {
+                    try { lineItems = JsonConvert.DeserializeObject<List<InvoiceLineItemVM>>(lineItemsJson); }
+                    catch { lineItems = new List<InvoiceLineItemVM>(); }
+                }
+                var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, status,
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems);
+                return Json(new
+                {
+                    success,
+                    message    = success ? "Invoice updated successfully." : "Failed to update invoice.",
+                    redirectUrl = success ? Url.Action("ViewInvoice", "Finance", new { invoiceId }) : (string)null
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> SaveGeneratedInvoice(GenerateInvoiceVM model, string LineItemsJson)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var emailid     = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    model.CreatedBy = emailid;
+                    if (!string.IsNullOrWhiteSpace(LineItemsJson))
+                    {
+                        try { model.LineItems = JsonConvert.DeserializeObject<List<InvoiceLineItemVM>>(LineItemsJson); }
+                        catch { model.LineItems = new List<InvoiceLineItemVM>(); }
+                    }
+                            var invoiceId = await _meetingService.SaveGeneratedInvoice(model);
+                            if (invoiceId > 0)
+                            {
+                                TempData["InvoiceListMessage"] = "Success: Invoice saved successfully.";
+                                return RedirectToAction("InvoiceList");
+                            }
+                            TempData["GenerateInvoiceMsg"] = invoiceId == -1
+                                ? "Error: An invoice has already been generated for this Client, Billing Owner, Month and Year. Duplicate invoices are not allowed."
+                                : "Error: Could not save invoice.";
+                            return RedirectToAction("GenerateInvoice");
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        #endregion
+
+        #region InvoiceList
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InvoiceList()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var currentMonth = DateTime.Now.Month;
+                    var currentYear  = DateTime.Now.Year;
+                    var prevMonth    = DateTime.Now.AddMonths(-1).Month;
+                    var prevYear     = DateTime.Now.AddMonths(-1).Year;
+                    int month = prevMonth;
+                    int year  = prevYear;
+
+                    var model = new List<InvoiceListVM>();
+
+                    if (HttpContext.Session.GetString("InvoiceListFilter") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<InvoiceListFilter>(HttpContext.Session.GetString("InvoiceListFilter"));
+                        if (filter.Month != null && filter.Year != null)
+                        {
+                            month = Convert.ToInt32(filter.Month);
+                            year  = Convert.ToInt32(filter.Year);
+                        }
+                        model = await _meetingService.GetInvoiceList(month, year);
+                        if (model == null) model = new List<InvoiceListVM>();
+                        model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                            ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                            : string.Empty);
+                        filter.Client = filter.Client == null
+                            ? model.Select(x => x.ClientName).ToArray()
+                            : filter.Client;
+                        filter.Status = filter.Status == null
+                            ? model.Select(x => x.Status.ToString()).Distinct().ToArray()
+                            : filter.Status;
+                        model = model.Where(x =>
+                            filter.Client.Contains(x.ClientName) &&
+                            filter.Status.Contains(x.Status.ToString())).ToList();
+                    }
+                    else
+                    {
+                        model = await _meetingService.GetInvoiceList(month, year);
+                        if (model == null) model = new List<InvoiceListVM>();
+                        model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                            ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                            : string.Empty);
+                    }
+
+                    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                    ViewBag.SelectedMonth = month;
+                    ViewBag.SelectedYear  = year;
+                    ViewBag.DateResult    = mfi.GetMonthName(month) + " " + year;
+                    ViewBag.TotalGross    = model.Sum(x => x.GrossAmount);
+                    ViewBag.ClientList    = _projectService.GetClients().Select(x => x.Name).Where(x => !string.IsNullOrEmpty(x)).Distinct();
+
+                    if (TempData["InvoiceListMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["InvoiceListMessage"].ToString();
+                        TempData.Remove("InvoiceListMessage");
+                    }
+
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult InvoiceList(InvoiceListFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("InvoiceListFilter", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("InvoiceList");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ResetInvoiceList()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("InvoiceListFilter");
+                    return RedirectToAction("InvoiceList");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        #endregion
+
         [HttpGet]
         public async Task<IActionResult> GetInvoiceDetails(int id, string startdate, string enddate, string Clientname, string jobcountry)
         {
