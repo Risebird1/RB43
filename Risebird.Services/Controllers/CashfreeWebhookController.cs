@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -133,10 +134,62 @@ namespace Risebird.Services.Controllers
                 //}
 
                 // ── 3. Deserialise JSON payload ────────────────────────── //
+
+                // Peek at the root keys to decide which event shape we received.
+                // Transfer events use "type" at the root; account-level alerts
+                // (e.g. LOW_BALANCE_ALERT) use "event" at the root instead.
+                JObject rootObj;
+                try
+                {
+                    rootObj = JObject.Parse(rawBody);
+                }
+                catch (JsonException ex)
+                {
+                    var parseError = new { success = false, message = "Malformed JSON payload." };
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    await _meetingRepository.InsertPaymentLog(
+                        endpoint:           endpoint,
+                        requestBody:        rawBody,
+                        responseBody:       JsonConvert.SerializeObject(parseError),
+                        httpStatusCode:     400,
+                        logLevel:           "Error",
+                        signatureTimestamp: timestamp,
+                        signatureReceived:  receivedSig,
+                        errorMessage:       $"Malformed JSON: {ex.Message}",
+                        callerIp:           callerIp);
+                    return BadRequest(parseError);
+                }
+
+                // ── 3a. Non-transfer alert (e.g. LOW_BALANCE_ALERT) ───────── //
+                if (rootObj.ContainsKey("event") && !rootObj.ContainsKey("type"))
+                {
+                    var alert = rootObj.ToObject<CashfreeBalanceAlertPayload>();
+                    var alertResponse = new
+                    {
+                        success   = true,
+                        message   = $"Non-transfer event '{alert?.Event}' acknowledged.",
+                        eventType = alert?.Event
+                    };
+
+                    await _meetingRepository.InsertPaymentLog(
+                        endpoint:           endpoint,
+                        requestBody:        rawBody,
+                        responseBody:       JsonConvert.SerializeObject(alertResponse),
+                        httpStatusCode:     200,
+                        logLevel:           "Info",
+                        eventType:          alert?.Event,
+                        signatureTimestamp: timestamp,
+                        signatureReceived:  receivedSig,
+                        callerIp:           callerIp);
+
+                    return Ok(alertResponse);
+                }
+
+                // ── 3b. Transfer event ────────────────────────────────────── //
                 CashfreeWebhookPayload payload;
                 try
                 {
-                    payload = JsonConvert.DeserializeObject<CashfreeWebhookPayload>(rawBody);
+                    payload = rootObj.ToObject<CashfreeWebhookPayload>();
                 }
                 catch (JsonException ex)
                 {

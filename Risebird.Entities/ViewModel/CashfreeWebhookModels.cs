@@ -132,6 +132,36 @@ namespace Risebird.Entities.ViewModel
             string.Equals(TransferStatus, "SUCCESS", StringComparison.OrdinalIgnoreCase);
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    //  Non-transfer event model  (e.g. LOW_BALANCE_ALERT)
+    //  Shape: { "event":"LOW_BALANCE_ALERT", "currentBalance":"100.00",
+    //           "alertTime":"2026-05-22 14:10:24", "signature":"…" }
+    // ──────────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Represents Cashfree account-level alert notifications that are not
+    /// associated with a specific transfer (e.g. LOW_BALANCE_ALERT).
+    /// These use the <c>event</c> key at the root instead of <c>type</c>.
+    /// </summary>
+    public class CashfreeBalanceAlertPayload
+    {
+        /// <summary>Event name, e.g. "LOW_BALANCE_ALERT".</summary>
+        [JsonProperty("event")]
+        public string Event { get; set; }
+
+        /// <summary>Current wallet balance reported by Cashfree.</summary>
+        [JsonProperty("currentBalance")]
+        public string CurrentBalance { get; set; }
+
+        /// <summary>Timestamp of the alert as sent by Cashfree, e.g. "2026-05-22 14:10:24".</summary>
+        [JsonProperty("alertTime")]
+        public string AlertTime { get; set; }
+
+        /// <summary>Cashfree-computed signature for this alert payload.</summary>
+        [JsonProperty("signature")]
+        public string Signature { get; set; }
+    }
+
     /// <summary>
     /// Envelope returned by POST /api/CashfreeWebhook/TransactionStatus.
     /// Contains the signature check result, event type, DB update count, and the parsed transaction.
