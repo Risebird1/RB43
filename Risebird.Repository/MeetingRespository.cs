@@ -4392,7 +4392,7 @@ namespace Risebird.Repository
         }
 
         /// <summary>
-        /// Updates PaymentHistory.PayoutStatus (and back-fills CfTransferId when provided)
+        /// Updates PaymentHistory.PayoutStatus, TransferUtr (and back-fills CfTransferId when provided)
         /// using TransferId and/or CfTransferId as the lookup key.
         /// Delegates to stored procedure <c>usp_UpdatePaymentHistoryTransferStatus</c>.
         /// Returns the number of rows updated (0 means no matching record found).
@@ -4400,7 +4400,8 @@ namespace Risebird.Repository
         public async Task<int> UpdatePaymentHistoryTransferStatus(
             string transferId,
             string cfTransferId,
-            string payoutStatus)
+            string payoutStatus,
+            string transferUtr = null)
         {
             try
             {
@@ -4408,11 +4409,44 @@ namespace Risebird.Repository
                 parameters.Add("@TransferId",   transferId   ?? string.Empty);
                 parameters.Add("@CfTransferId", cfTransferId ?? string.Empty);
                 parameters.Add("@PayoutStatus", payoutStatus);
+                parameters.Add("@TransferUtr",  transferUtr);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await con.QuerySingleOrDefaultAsync<int>(
                         "usp_UpdatePaymentHistoryTransferStatus",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Updates PaymentHistory.GatewayPaymentStatus matched by CfPaymentId.
+        /// Delegates to stored procedure <c>usp_UpdatePaymentHistoryGatewayStatus</c>.
+        /// Returns the number of rows updated (0 means no matching record found).
+        /// </summary>
+        public async Task<int> UpdatePaymentHistoryGatewayStatus(
+            string cfPaymentId,
+            string gatewayPaymentStatus)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CfPaymentId",          cfPaymentId ?? string.Empty);
+                parameters.Add("@GatewayPaymentStatus", gatewayPaymentStatus);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QuerySingleOrDefaultAsync<int>(
+                        "usp_UpdatePaymentHistoryGatewayStatus",
                         parameters,
                         commandType: CommandType.StoredProcedure);
 

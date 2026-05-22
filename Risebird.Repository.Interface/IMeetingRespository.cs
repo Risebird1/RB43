@@ -344,7 +344,7 @@ namespace Risebird.Repository.Interface
         Task<PaymentHistoryGatewayRow> FetchExistingCashfreePayout(int userId, DateTime st, DateTime se);
 
         /// <summary>
-        /// Updates the <c>PayoutStatus</c> (and optionally <c>CfTransferId</c>) on a
+        /// Updates <c>PayoutStatus</c>, <c>TransferUtr</c> (and optionally <c>CfTransferId</c>) on a
         /// PaymentHistory row identified by <paramref name="transferId"/> and/or
         /// <paramref name="cfTransferId"/> received from a Cashfree Payout webhook event.
         /// Either parameter alone is enough for the match; both are used when available.
@@ -352,8 +352,19 @@ namespace Risebird.Repository.Interface
         /// <param name="transferId">Your internal transfer_id sent when the payout was created.</param>
         /// <param name="cfTransferId">Cashfree's own numeric cf_transfer_id.</param>
         /// <param name="payoutStatus">Terminal status from the webhook: SUCCESS | FAILED | REVERSED.</param>
+        /// <param name="transferUtr">Bank UTR number — saved when present in the webhook.</param>
         /// <returns>Number of rows updated (0 if no matching row was found).</returns>
-        Task<int> UpdatePaymentHistoryTransferStatus(string transferId, string cfTransferId, string payoutStatus);
+        Task<int> UpdatePaymentHistoryTransferStatus(string transferId, string cfTransferId, string payoutStatus, string transferUtr = null);
+
+        /// <summary>
+        /// Updates <c>GatewayPaymentStatus</c> on a PaymentHistory row matched by
+        /// <paramref name="cfPaymentId"/> from a Cashfree Payment Gateway webhook
+        /// (e.g. PAYMENT_SUCCESS_WEBHOOK, PAYMENT_FAILED_WEBHOOK).
+        /// </summary>
+        /// <param name="cfPaymentId">Cashfree's cf_payment_id from the webhook — matches PaymentHistory.CfPaymentId.</param>
+        /// <param name="gatewayPaymentStatus">Payment status: SUCCESS | FAILED | PENDING | USER_DROPPED.</param>
+        /// <returns>Number of rows updated (0 if no matching row was found).</returns>
+        Task<int> UpdatePaymentHistoryGatewayStatus(string cfPaymentId, string gatewayPaymentStatus);
 
         /// <summary>
         /// Inserts a single row into <c>PaymentLogs</c> capturing the full context of one
