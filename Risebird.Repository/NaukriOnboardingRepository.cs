@@ -86,6 +86,9 @@ namespace Risebird.Repository
                 p.Add("@ExperienceYears", record.ExperienceYears);
                 p.Add("@Salary", record.Salary);
                 p.Add("@MagName", record.MagName);
+                p.Add("@ParsedEmail", record.ParsedEmail);
+                p.Add("@ParsedPhone", record.ParsedPhone);
+                p.Add("@ResumeParseCompleted", record.ResumeParseCompleted);
                 p.Add("@ResumeLink", record.ResumeLink);
                 p.Add("@HasAttachment", record.HasAttachment);
                 p.Add("@Source", record.Source ?? "Naukri");
