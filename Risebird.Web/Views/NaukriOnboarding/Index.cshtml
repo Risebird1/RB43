@@ -1629,11 +1629,17 @@
 
         // Sync existing EV / AI / Onboard state
         if (r.employmentVerified === true) {
-            var evHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Verified</span>';
-            if (r.employmentCompanyName) evHtml += ' &mdash; <strong>' + $('<span>').text(r.employmentCompanyName).html() + '</strong>';
-            if (r.employmentIsEmployed === true) evHtml += ' <span class="employed-yes">(Employed)</span>';
-            else if (r.employmentIsEmployed === false) evHtml += ' <span class="employed-no">(Not Employed)</span>';
-            mMarkStep(1, 'completed', evHtml);
+            if (r.employmentIsEmployed === true || r.employmentCompanyName) {
+                var evHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Verified</span>';
+                if (r.employmentCompanyName) evHtml += ' &mdash; <strong>' + $('<span>').text(r.employmentCompanyName).html() + '</strong>';
+                evHtml += ' <span class="employed-yes">(Employed)</span>';
+                mMarkStep(1, 'completed', evHtml);
+            } else {
+                var evHtml2 = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Verified</span>';
+                evHtml2 += ' <span class="employed-no">(Not Employed)</span>';
+                mMarkStep(1, 'failed', evHtml2);
+                $('#btnTriggerEV').hide(); $('#btnRetryEV').show().prop('disabled', false);
+            }
         }
 
         if (r.resumeAIAnalysisCompleted === true) {
@@ -1665,7 +1671,7 @@
         } else { card.addClass('pending'); }
         if (message) result.html(message).show();
 
-        if (step === 1 && (state === 'completed' || state === 'failed')) { $('#mStep2Card').removeClass('disabled'); }
+        if (step === 1 && state === 'completed') { $('#mStep2Card').removeClass('disabled'); }
         if (step === 2 && state === 'completed') { $('#mStep3Card').removeClass('disabled'); }
     }
 
@@ -1702,12 +1708,12 @@
                 var isEmployed = (result.message == null && companyName !== '');
                 var details = result.message || '';
 
-                if (result.message == null) {
+                if (isEmployed) {
                     var evHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Verified</span>';
-                    if (companyName) evHtml += ' &mdash; <strong>' + $('<span>').text(companyName).html() + '</strong>';
+                    evHtml += ' &mdash; <strong>' + $('<span>').text(companyName).html() + '</strong>';
                     evHtml += ' <span class="employed-yes">(Employed)</span>';
                     mMarkStep(1, 'completed', evHtml);
-                    $('#mgmCompany').text(companyName || '\u2014');
+                    $('#mgmCompany').text(companyName);
                     $('#mgmEmployed').html('<span class="employed-yes">Yes</span>');
                 } else {
                     var evHtml2 = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Verification completed</span>';
