@@ -136,13 +136,44 @@ namespace Risebird.Services.Controllers
 
                 // ── 3. Deserialise JSON payload ────────────────────────── //
 
+                // Strip BOM / zero-width spaces that certain HTTP clients or proxies
+                // prepend — these cause JObject.Parse to throw even on otherwise valid JSON.
+                var cleanBody = rawBody.Trim().TrimStart('\uFEFF', '\u200B');
+
                 // Peek at the root keys to decide which event shape we received.
                 // Transfer events use "type" at the root; account-level alerts
                 // (e.g. LOW_BALANCE_ALERT) use "event" at the root instead.
                 JObject rootObj;
                 try
                 {
-                    rootObj = JObject.Parse(rawBody);
+                    // Use JToken.Parse (accepts any JSON value) then validate the root
+                    // is an object.  This prevents a crash when Cashfree test webhooks
+                    // send a JSON array or bare null instead of the expected object.
+                    var token = JToken.Parse(cleanBody);
+                    if (token is JObject parsedObj)
+                    {
+                        rootObj = parsedObj;
+                    }
+                    else
+                    {
+                        var typeError = new { success = false, message = $"Expected a JSON object but received {token.Type}." };
+                        await _applicationErrorLogger.LogMessage(
+                            LogLevelInfo.Warning,
+                            new Exception(
+                                $"[CashfreeWebhook] Unexpected JSON root type '{token.Type}'. " +
+                                $"Raw (first 200): {rawBody.Substring(0, Math.Min(200, rawBody.Length))}"));
+                        await _meetingRepository.InsertPaymentLog(
+                            endpoint:           endpoint,
+                            requestBody:        rawBody,
+                            responseBody:       JsonConvert.SerializeObject(typeError),
+                            httpStatusCode:     400,
+                            logLevel:           "Error",
+                            signatureTimestamp: timestamp,
+                            signatureReceived:  receivedSig,
+                            errorMessage:       $"Expected JSON object, received {token.Type}.",
+                            callerIp:           callerIp);
+                        return BadRequest(typeError);
+                    }
                 }
                 catch (JsonException ex)
                 {
