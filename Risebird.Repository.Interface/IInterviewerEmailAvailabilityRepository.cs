@@ -1,5 +1,6 @@
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace Risebird.Repository.Interface
 
         Task<List<InterviewerEmailAvailabilityVM>> GetEmailAvailabilityAsync(
             string status, string senderEmail, string resumeFitment,
-            System.DateTime? dateFrom, System.DateTime? dateTo, int page, int pageSize);
+            DateTime? dateFrom, DateTime? dateTo, int page, int pageSize);
 
         Task<InterviewerEmailAvailabilityVM> GetEmailAvailabilityByIdAsync(int id);
 
@@ -35,5 +36,83 @@ namespace Risebird.Repository.Interface
         Task<bool> DropInterviewerProfileAsync(int interviewerProfileId, string modifiedBy);
 
         Task<bool> UpdateResumeLinkAsync(int id, string resumeLink);
+
+        // Plivo call
+        Task<bool> UpdatePlivoCallStatusAsync(int id, string callStatus, string conversationId,
+            DateTime? callAt, int? duration, string transcript, string summary,
+            string intent, bool? assignmentHelp, bool? emailReceived, bool? callbackRequested,
+            string notes, string calledBy);
+        Task<int?> FindByPhoneAndCallStatusAsync(string phone, string callStatus);
+
+        // Batch call
+        Task<List<IABatchCallMagSummary>> GetMAGsWithCallableInterviewerCountsAsync();
+        Task<List<IACallableInterviewer>> GetCallableInterviewersForMAGAsync(string magName, bool onlyUncalled = true);
+        Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalInterviewers);
+        Task CompleteBatchCallLogAsync(int id, int succeeded, int failed, int skipped, string status);
+        Task<List<IABatchCallLogEntry>> GetBatchCallHistoryAsync(string magName);
+        Task<List<IAInterviewerCallOutcome>> GetInterviewerCallOutcomesForMAGAsync(string magName);
+    }
+
+    public class IABatchCallMagSummary
+    {
+        public string MagName { get; set; }
+        public string AssessmentGroupName { get; set; }
+        public int TotalInterviewers { get; set; }
+        public int CallableCount { get; set; }
+        public int AlreadyCalled { get; set; }
+        public int UncalledCount { get; set; }
+        public int Available { get; set; }
+        public int NotAvailable { get; set; }
+        public string LastBatchBy { get; set; }
+        public DateTime? LastBatchAt { get; set; }
+        public int? LastBatchCount { get; set; }
+        public int? LastBatchSucceeded { get; set; }
+        public string LastBatchStatus { get; set; }
+        public int TotalBatches { get; set; }
+    }
+
+    public class IACallableInterviewer
+    {
+        public int Id { get; set; }
+        public string InterviewerName { get; set; }
+        public string SenderEmail { get; set; }
+        public string Phone { get; set; }
+        public decimal? ExperienceYears { get; set; }
+        public string PlivoCallStatus { get; set; }
+    }
+
+    public class IABatchCallLogEntry
+    {
+        public int Id { get; set; }
+        public string MagName { get; set; }
+        public string InitiatedBy { get; set; }
+        public DateTime InitiatedAt { get; set; }
+        public int InterviewersAttempted { get; set; }
+        public int InterviewersSucceeded { get; set; }
+        public int InterviewersFailed { get; set; }
+        public int InterviewersSkipped { get; set; }
+        public DateTime? CompletedAt { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class IAInterviewerCallOutcome
+    {
+        public int Id { get; set; }
+        public string InterviewerName { get; set; }
+        public string SenderEmail { get; set; }
+        public string Phone { get; set; }
+        public decimal? Experience { get; set; }
+        public string CurrentRole { get; set; }
+        public string PlivoCallStatus { get; set; }
+        public string PlivoIntent { get; set; }
+        public bool? PlivoAssignmentHelp { get; set; }
+        public bool? PlivoEmailReceived { get; set; }
+        public bool? PlivoCallbackRequested { get; set; }
+        public int? PlivoCallDuration { get; set; }
+        public string PlivoCalledBy { get; set; }
+        public string PlivoCallSummary { get; set; }
+        public string PlivoNotes { get; set; }
+        public DateTime? PlivoCallAt { get; set; }
+        public string Status { get; set; }
     }
 }

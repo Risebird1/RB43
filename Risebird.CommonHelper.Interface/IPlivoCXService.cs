@@ -27,5 +27,11 @@ namespace Risebird.CommonHelper.Interface
         /// Uses PlivoCX:OnboardingTriggerEndpointUrl.
         /// </summary>
         Task<PlivoCXTriggerResponse> TriggerOnboardingCallAsync(PlivoCXOnboardingTriggerRequest request);
+
+        /// <summary>
+        /// Triggers the availability check call to an existing interviewer.
+        /// Uses PlivoCX:AvailabilityTriggerEndpointUrl.
+        /// </summary>
+        Task<PlivoCXTriggerResponse> TriggerAvailabilityCallAsync(PlivoCXAvailabilityTriggerRequest request);
     }
 }
