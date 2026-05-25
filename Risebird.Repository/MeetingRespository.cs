@@ -4392,7 +4392,7 @@ namespace Risebird.Repository
         }
 
         /// <summary>
-        /// Updates PaymentHistory.PayoutStatus (and back-fills CfTransferId when provided)
+        /// Updates PaymentHistory.PayoutStatus, TransferUtr (and back-fills CfTransferId when provided)
         /// using TransferId and/or CfTransferId as the lookup key.
         /// Delegates to stored procedure <c>usp_UpdatePaymentHistoryTransferStatus</c>.
         /// Returns the number of rows updated (0 means no matching record found).
@@ -4400,7 +4400,8 @@ namespace Risebird.Repository
         public async Task<int> UpdatePaymentHistoryTransferStatus(
             string transferId,
             string cfTransferId,
-            string payoutStatus)
+            string payoutStatus,
+            string transferUtr = null)
         {
             try
             {
@@ -4408,6 +4409,7 @@ namespace Risebird.Repository
                 parameters.Add("@TransferId",   transferId   ?? string.Empty);
                 parameters.Add("@CfTransferId", cfTransferId ?? string.Empty);
                 parameters.Add("@PayoutStatus", payoutStatus);
+                parameters.Add("@TransferUtr",  transferUtr);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -4423,6 +4425,90 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
+            }
+        }
+
+        /// <summary>
+        /// Updates PaymentHistory.GatewayPaymentStatus matched by CfPaymentId.
+        /// Delegates to stored procedure <c>usp_UpdatePaymentHistoryGatewayStatus</c>.
+        /// Returns the number of rows updated (0 means no matching record found).
+        /// </summary>
+        public async Task<int> UpdatePaymentHistoryGatewayStatus(
+            string cfPaymentId,
+            string gatewayPaymentStatus)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CfPaymentId",          cfPaymentId ?? string.Empty);
+                parameters.Add("@GatewayPaymentStatus", gatewayPaymentStatus);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QuerySingleOrDefaultAsync<int>(
+                        "usp_UpdatePaymentHistoryGatewayStatus",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Inserts one row into <c>PaymentLogs</c> via <c>usp_InsertPaymentLog</c>.
+        /// Swallows all exceptions so logging never breaks the caller.
+        /// </summary>
+        public async Task InsertPaymentLog(
+            string endpoint,
+            string requestBody,
+            string responseBody,
+            int?   httpStatusCode,
+            string logLevel,
+            string eventType          = null,
+            string transferId         = null,
+            string cfTransferId       = null,
+            string transferStatus     = null,
+            string signatureTimestamp = null,
+            string signatureReceived  = null,
+            int?   rowsUpdated        = null,
+            string errorMessage       = null,
+            string callerIp           = null)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Endpoint",           endpoint);
+                parameters.Add("@RequestBody",        requestBody);
+                parameters.Add("@ResponseBody",       responseBody);
+                parameters.Add("@HttpStatusCode",     httpStatusCode);
+                parameters.Add("@LogLevel",           logLevel);
+                parameters.Add("@EventType",          eventType);
+                parameters.Add("@TransferId",         transferId);
+                parameters.Add("@CfTransferId",       cfTransferId);
+                parameters.Add("@TransferStatus",     transferStatus);
+                parameters.Add("@SignatureTimestamp", signatureTimestamp);
+                parameters.Add("@SignatureReceived",  signatureReceived);
+                parameters.Add("@RowsUpdated",        rowsUpdated);
+                parameters.Add("@ErrorMessage",       errorMessage);
+                parameters.Add("@CallerIp",           callerIp);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await con.ExecuteAsync(
+                        "usp_InsertPaymentLog",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
 
