@@ -211,6 +211,7 @@
                         <p class="text-muted mb-0 mt-1">Interviewer availability emails processed via Relay.app</p>
                     </div>
                     <div class="col-auto d-flex gap-2">
+                        <a href="@Url.Action("BatchCall", "InterviewerAvailability")" class="btn btn-sm btn-info text-white" title="Batch availability calls by MAG"><i class="fas fa-phone-volume me-1"></i>Batch Call</a>
                         <button type="button" class="btn btn-sm ia-page-refresh" onclick="location.reload()" title="Reload this page"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
                     </div>
                 </div>
@@ -553,8 +554,12 @@
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-sm btn-refresh-manage" id="btnRefreshManage"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
                     <button type="button" class="btn btn-sm btn-outline-secondary btn-history" id="btnViewHistory"><i class="fas fa-history me-1"></i>History</button>
+                    <button type="button" class="btn btn-sm btn-info text-white" id="btnCallInterviewer" style="display:none;"><i class="fas fa-phone-alt me-1"></i>Call Interviewer</button>
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                <div class="d-flex gap-2 align-items-center">
+                    <span id="plivoCallBadge" style="display:none;font-size:11px;"></span>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1007,5 +1012,76 @@
     }
 
     $('#btnViewHistory').on('click', function () { openHistoryModal(currentRecordId); });
+
+    // ── Plivo Call ──────────────────────────────────────────────────────────
+    function syncPlivoCallUI(r) {
+        var $btn = $('#btnCallInterviewer'), $badge = $('#plivoCallBadge');
+        var hasPhone = r && (r.userMobileNumber || r.phone);
+        if (!hasPhone) { $btn.hide(); $badge.hide(); return; }
+
+        $btn.show();
+        if (r.plivoCallStatus) {
+            var s = r.plivoCallStatus;
+            var retryable = ['trigger-failed','no_answer','busy_rejected','failed','no-answer','busy'];
+            if (retryable.indexOf(s) >= 0) {
+                $btn.prop('disabled', false).html('<i class="fas fa-redo me-1"></i>Retry Call');
+                $badge.html('<span class="badge bg-warning text-dark">' + s + '</span>').show();
+            } else if (s === 'completed' || s === 'answered') {
+                $btn.prop('disabled', true).html('<i class="fas fa-check me-1"></i>Called');
+                var intentBadge = '';
+                if (r.plivoIntent === 'available') intentBadge = ' <span class="badge bg-success ms-1">Available</span>';
+                else if (r.plivoIntent === 'not_available') intentBadge = ' <span class="badge bg-danger ms-1">Not Available</span>';
+                else if (r.plivoIntent === 'unsubscribe') intentBadge = ' <span class="badge bg-warning text-dark ms-1">Unsubscribe</span>';
+                else if (r.plivoIntent) intentBadge = ' <span class="badge bg-secondary ms-1">' + r.plivoIntent + '</span>';
+                $badge.html('<span class="badge bg-success">' + s + '</span>' + intentBadge + (r.plivoCallDuration ? ' <span class="text-muted ms-1">' + r.plivoCallDuration + 's</span>' : '')).show();
+            } else if (s === 'triggered' || s === 'initiated') {
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Calling...');
+                $badge.html('<span class="badge bg-info">' + s + '</span>').show();
+            } else {
+                $btn.prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Interviewer');
+                $badge.html('<span class="badge bg-secondary">' + s + '</span>').show();
+            }
+        } else {
+            $btn.prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Interviewer');
+            $badge.hide();
+        }
+    }
+
+    // Hook into populateModal
+    var _origPopulateModal = populateModal;
+    populateModal = function(r) {
+        _origPopulateModal(r);
+        syncPlivoCallUI(r);
+    };
+
+    $('#btnCallInterviewer').on('click', function () {
+        if (!currentRecordId || !currentRecord) return;
+        var name = currentRecord.interviewerName || currentRecord.interviewerNickName || 'this interviewer';
+        if (!confirm('Trigger an availability check call to ' + name + '?')) return;
+
+        var $btn = $(this);
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Calling...');
+        $('#plivoCallBadge').html('<span class="badge bg-info">initiating...</span>').show();
+
+        $.ajax({
+            url: '@Url.Action("InitiatePlivoCall", "InterviewerAvailability")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            success: function (res) {
+                if (res.success) {
+                    $btn.html('<i class="fas fa-check me-1"></i>Triggered');
+                    $('#plivoCallBadge').html('<span class="badge bg-info">triggered</span>' + (res.conversationId ? ' <span class="text-muted" style="font-size:10px;">' + res.conversationId + '</span>' : '')).show();
+                    if (currentRecord) { currentRecord.plivoCallStatus = 'triggered'; currentRecord.plivoConversationId = res.conversationId; }
+                } else {
+                    $btn.prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Interviewer');
+                    alert('Call failed: ' + (res.error || 'Unknown error'));
+                    if (res.alreadyCalled) syncPlivoCallUI(currentRecord);
+                }
+            },
+            error: function () {
+                $btn.prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Interviewer');
+                alert('Request failed. Please try again.');
+            }
+        });
+    });
 </script>
 }

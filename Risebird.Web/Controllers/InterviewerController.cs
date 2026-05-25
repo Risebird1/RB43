@@ -4337,7 +4337,8 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrEmpty(resumeLink) && userid != 0)
                 {
                     //call method to redact resume and save the redacted resume
-                    var redactedResumeLink = await RedactResume(resumeLink, userid);
+                    //var redactedResumeLink = await RedactResume(resumeLink, userid);
+                    string redactedResumeLink = string.Empty;
                     if (!string.IsNullOrEmpty(redactedResumeLink))
                     {
                         return Json(redactedResumeLink);
