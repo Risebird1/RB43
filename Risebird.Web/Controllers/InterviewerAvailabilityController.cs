@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.PlivoCXModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Business.Interface;
@@ -32,6 +33,8 @@ namespace Risebird.Web.Controllers
         private readonly IWhatsAppHelper                         _whatsAppHelper;
         private readonly IAzureStorageHelper                     _azureStorageHelper;
         private readonly IFileMimeTypeHelper                     _fileMimeTypeHelper;
+        private readonly IPlivoCXService                         _plivoCXService;
+        private readonly IPlivoCXCallRepository                  _cpRepo;
 
         public InterviewerAvailabilityController(
             IInterviewerEmailAvailabilityRepository repository,
@@ -45,7 +48,9 @@ namespace Risebird.Web.Controllers
             IIRFService                             irfService,
             IWhatsAppHelper                         whatsAppHelper,
             IAzureStorageHelper                     azureStorageHelper,
-            IFileMimeTypeHelper                     fileMimeTypeHelper)
+            IFileMimeTypeHelper                     fileMimeTypeHelper,
+            IPlivoCXService                         plivoCXService,
+            IPlivoCXCallRepository                  cpRepo)
         {
             _repository             = repository;
             _logger                 = logger;
@@ -59,6 +64,8 @@ namespace Risebird.Web.Controllers
             _whatsAppHelper         = whatsAppHelper;
             _azureStorageHelper     = azureStorageHelper;
             _fileMimeTypeHelper     = fileMimeTypeHelper;
+            _plivoCXService         = plivoCXService;
+            _cpRepo                 = cpRepo;
         }
 
         // ── Dashboard ───────────────────────────────────────────────────────────────
@@ -180,7 +187,18 @@ namespace Risebird.Web.Controllers
                         record.AssessmentGroupName,
                         hasResumeLink = !string.IsNullOrEmpty(record.ResumeLink)
                                         && !string.Equals(record.ResumeLink, "None", StringComparison.OrdinalIgnoreCase),
-                        hasProfileResumeLink = !string.IsNullOrEmpty(record.ProfileResumeLink)
+                        hasProfileResumeLink = !string.IsNullOrEmpty(record.ProfileResumeLink),
+                        record.PlivoCallStatus,
+                        record.PlivoConversationId,
+                        plivoCallAt = record.PlivoCallAt?.ToString("dd MMM yyyy, HH:mm"),
+                        record.PlivoCallDuration,
+                        record.PlivoCallSummary,
+                        record.PlivoIntent,
+                        record.PlivoAssignmentHelp,
+                        record.PlivoEmailReceived,
+                        record.PlivoCallbackRequested,
+                        record.PlivoNotes,
+                        record.PlivoCalledBy
                     }
                 });
             }
@@ -646,6 +664,576 @@ namespace Risebird.Web.Controllers
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new object[0]);
             }
+        }
+
+        // ── Plivo CX Availability Call — Initiate (AJAX) ─────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InitiatePlivoCall(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetEmailAvailabilityByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                string phone = record.UserMobileNumber ?? record.Phone;
+                if (string.IsNullOrWhiteSpace(phone))
+                    return Json(new { success = false, error = "No phone number available for this interviewer." });
+
+                phone = NormalizePhone(phone);
+
+                var retryableStatuses = new[] { "trigger-failed", "no_answer", "busy_rejected", "failed", "no-answer", "busy" };
+                if (!string.IsNullOrEmpty(record.PlivoCallStatus) &&
+                    !Array.Exists(retryableStatuses, s => s.Equals(record.PlivoCallStatus, StringComparison.OrdinalIgnoreCase)))
+                    return Json(new { success = false, error = $"A call has already been made (status: {record.PlivoCallStatus}).", alreadyCalled = true });
+
+                var calledBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+
+                await _repository.UpdatePlivoCallStatusAsync(id, "initiated", null,
+                    DateTime.UtcNow, null, null, null, null, null, null, null, null, calledBy);
+
+                var callerId = _configuration["PlivoCX:AvailabilityCallerId"]
+                            ?? _configuration["PlivoCX:OnboardingCallerId"]
+                            ?? _configuration["Plivo:FromNumber"]
+                            ?? "+918031136547";
+
+                var triggerRequest = new PlivoCXAvailabilityTriggerRequest
+                {
+                    CallerId        = callerId,
+                    PhoneNumber     = phone,
+                    InterviewerName = record.InterviewerName ?? record.InterviewerNickName ?? "there",
+                    InterviewerEmail = record.SenderEmail,
+                    MagName         = record.MagName ?? record.JobTitle ?? "Technical",
+                    LogId           = id.ToString(),
+                    TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                };
+
+                var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
+
+                if (!string.IsNullOrEmpty(response?.Error))
+                {
+                    await _repository.UpdatePlivoCallStatusAsync(id, "trigger-failed", null,
+                        null, null, null, response.Error, null, null, null, null, null, null);
+                    return Json(new { success = false, error = $"Plivo CX trigger failed: {response.Error}" });
+                }
+
+                string conversationId = response?.ConversationId;
+                await _repository.UpdatePlivoCallStatusAsync(id, "triggered", conversationId,
+                    null, null, null, null, null, null, null, null, null, null);
+
+                await _repository.InsertHistoryAsync(id, "PlivoCallInitiated", "—",
+                    $"Availability call triggered to {phone}. ConversationId: {conversationId ?? "N/A"}", calledBy);
+
+                return Json(new { success = true, conversationId, message = $"Call initiated to {record.InterviewerName} ({phone})." });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = "Failed to initiate call: " + ex.Message });
+            }
+        }
+
+        // ── Plivo CX Availability Call — Hangup Webhook (public endpoint) ────────
+
+        [AllowAnonymous]
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> PlivoAvailabilityHangup()
+        {
+            await SaveIaCp("ia_hangup_received",
+                $"PlivoAvailabilityHangup hit — Content-Type: {Request.ContentType}");
+
+            string rawBody;
+            try
+            {
+                using (var reader = new StreamReader(Request.Body))
+                    rawBody = await reader.ReadToEndAsync();
+                await SaveIaCp("ia_hangup_body_read",
+                    $"Raw body length: {rawBody?.Length ?? 0}",
+                    extra: rawBody?.Length > 800 ? rawBody.Substring(0, 800) + "…" : rawBody);
+            }
+            catch (Exception ex)
+            {
+                await SaveIaCp("ia_hangup_body_read_failed", $"Body read FAILED: {ex.Message}");
+                return BadRequest(new { error = "Could not read request body." });
+            }
+
+            if (string.IsNullOrWhiteSpace(rawBody))
+            {
+                await SaveIaCp("ia_hangup_empty_body", "Empty request body received.");
+                return BadRequest(new { error = "Empty request body." });
+            }
+
+            PlivoCXAvailabilityHangupPayload payload = null;
+            int? recordId = null;
+            string parseMethod = "none";
+
+            // Strategy 1: Nested Plivo CX event envelope
+            try
+            {
+                var nestedEvent = JsonConvert.DeserializeObject<PlivoCXHangupEvent>(rawBody);
+                if (nestedEvent?.Data?.Object?.EventData != null)
+                {
+                    var ed = nestedEvent.Data.Object.EventData;
+                    payload = new PlivoCXAvailabilityHangupPayload
+                    {
+                        ConversationId    = nestedEvent.Data.Object.ConversationId,
+                        CallUUID          = nestedEvent.Data.Object.CallUuid,
+                        CallStatus        = GetEventValue(ed, "call_status"),
+                        Duration          = GetEventValue(ed, "duration"),
+                        Transcript        = GetEventValue(ed, "transcript"),
+                        Summary           = GetEventValue(ed, "summary"),
+                        LogId             = GetEventValue(ed, "log_id"),
+                        Intent            = GetEventValue(ed, "intent"),
+                        AssignmentHelp    = GetEventValue(ed, "assignment_help"),
+                        EmailReceived     = GetEventValue(ed, "email_received"),
+                        CallbackRequested = GetEventValue(ed, "callback_requested"),
+                        Notes             = GetEventValue(ed, "notes"),
+                        HangupCause       = GetEventValue(ed, "hangup_cause")
+                    };
+                    parseMethod = "nested_event";
+                    await SaveIaCp("ia_hangup_nested_parsed",
+                        $"Nested parse OK — log_id={payload.LogId}, intent={payload.Intent}",
+                        convId: payload.ConversationId);
+                }
+            }
+            catch (Exception ex)
+            {
+                await SaveIaCp("ia_hangup_nested_parse_failed", $"Nested parse failed: {ex.Message}");
+            }
+
+            // Strategy 2: Flat JSON
+            if (payload == null || string.IsNullOrEmpty(payload.LogId))
+            {
+                try
+                {
+                    payload = JsonConvert.DeserializeObject<PlivoCXAvailabilityHangupPayload>(rawBody,
+                        new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore });
+                    parseMethod = "flat_json";
+                    await SaveIaCp("ia_hangup_flat_parsed",
+                        $"Flat JSON parse — log_id={payload?.LogId}, intent={payload?.Intent}");
+                }
+                catch (Exception ex)
+                {
+                    await SaveIaCp("ia_hangup_flat_parse_failed", $"Flat parse failed: {ex.Message}");
+                }
+            }
+
+            // Strategy 3: Wrapper {"none":{},"json":{...}}
+            if (payload == null || string.IsNullOrEmpty(payload.LogId))
+            {
+                try
+                {
+                    var wrapper = JsonConvert.DeserializeObject<Dictionary<string, object>>(rawBody);
+                    if (wrapper != null && wrapper.ContainsKey("json"))
+                    {
+                        var innerJson = wrapper["json"]?.ToString();
+                        if (!string.IsNullOrEmpty(innerJson))
+                        {
+                            payload = JsonConvert.DeserializeObject<PlivoCXAvailabilityHangupPayload>(innerJson,
+                                new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore });
+                            parseMethod = "wrapper_json";
+                            await SaveIaCp("ia_hangup_wrapper_parsed",
+                                $"Wrapper JSON parse — log_id={payload?.LogId}, intent={payload?.Intent}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await SaveIaCp("ia_hangup_wrapper_parse_failed", $"Wrapper parse failed: {ex.Message}");
+                }
+            }
+
+            if (payload == null)
+            {
+                await SaveIaCp("ia_hangup_parse_failed", "All parse strategies failed — payload is null.");
+                return BadRequest(new { error = "Could not parse hangup payload." });
+            }
+
+            // Resolve record ID
+            if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int parsedId))
+                recordId = parsedId;
+
+            if (!recordId.HasValue && !string.IsNullOrEmpty(payload.PhoneNumber))
+            {
+                await SaveIaCp("ia_hangup_logid_missing",
+                    $"log_id missing. Trying phone lookup: {payload.PhoneNumber}");
+                var foundId = await _repository.FindByPhoneAndCallStatusAsync(payload.PhoneNumber, "initiated");
+                if (!foundId.HasValue)
+                    foundId = await _repository.FindByPhoneAndCallStatusAsync(payload.PhoneNumber, "triggered");
+                if (foundId.HasValue)
+                {
+                    recordId = foundId.Value;
+                    await SaveIaCp("ia_hangup_phone_lookup_ok", $"Phone lookup matched record #{recordId}");
+                }
+            }
+
+            if (!recordId.HasValue)
+            {
+                await SaveIaCp("ia_hangup_no_record",
+                    $"Could not resolve record. log_id='{payload.LogId}', phone='{payload.PhoneNumber}'");
+                return BadRequest(new { error = $"Missing log_id. log_id='{payload.LogId}', phone='{payload.PhoneNumber}'" });
+            }
+
+            try
+            {
+                int? duration = null;
+                if (!string.IsNullOrEmpty(payload.Duration) && int.TryParse(payload.Duration, out int dur))
+                    duration = dur;
+
+                bool? assignmentHelp = null;
+                if (!string.IsNullOrEmpty(payload.AssignmentHelp))
+                    assignmentHelp = payload.AssignmentHelp.Equals("true", StringComparison.OrdinalIgnoreCase);
+
+                bool? emailReceived = null;
+                if (!string.IsNullOrEmpty(payload.EmailReceived))
+                    emailReceived = payload.EmailReceived.Equals("true", StringComparison.OrdinalIgnoreCase);
+
+                bool? callbackRequested = null;
+                if (!string.IsNullOrEmpty(payload.CallbackRequested))
+                    callbackRequested = payload.CallbackRequested.Equals("true", StringComparison.OrdinalIgnoreCase);
+
+                string callStatus = !string.IsNullOrEmpty(payload.CallStatus) ? payload.CallStatus.ToLower() : "completed";
+
+                await _repository.UpdatePlivoCallStatusAsync(
+                    recordId.Value, callStatus, payload.ConversationId,
+                    DateTime.UtcNow, duration, payload.Transcript, payload.Summary,
+                    payload.Intent?.ToLower(), assignmentHelp, emailReceived, callbackRequested,
+                    payload.Notes, null);
+
+                string historyDetail = $"Status: {callStatus}";
+                if (!string.IsNullOrEmpty(payload.Intent))
+                    historyDetail += $", Intent: {payload.Intent}";
+                if (assignmentHelp == true)
+                    historyDetail += ", Wants assignment help";
+                if (duration.HasValue)
+                    historyDetail += $", Duration: {duration}s";
+
+                await _repository.InsertHistoryAsync(recordId.Value, "PlivoCallCompleted", "—",
+                    historyDetail, "PlivoCX Webhook");
+
+                await SaveIaCp("ia_hangup_complete",
+                    $"Processing finished for record #{recordId}. parseMethod={parseMethod}",
+                    callLogId: recordId);
+
+                return Ok(new { success = true, recordId = recordId.Value });
+            }
+            catch (Exception ex)
+            {
+                await SaveIaCp("ia_hangup_db_exception",
+                    $"DB update exception for record #{recordId}: {ex.Message}", callLogId: recordId);
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        // ── Get Plivo Call Details (AJAX) ─────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> GetPlivoCallDetails(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetEmailAvailabilityByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                return Json(new
+                {
+                    success = true,
+                    plivoCallStatus = record.PlivoCallStatus,
+                    plivoConversationId = record.PlivoConversationId,
+                    plivoCallAt = record.PlivoCallAt?.ToString("dd MMM yyyy, HH:mm"),
+                    plivoCallDuration = record.PlivoCallDuration,
+                    plivoCallTranscript = record.PlivoCallTranscript,
+                    plivoCallSummary = record.PlivoCallSummary,
+                    plivoIntent = record.PlivoIntent,
+                    plivoAssignmentHelp = record.PlivoAssignmentHelp,
+                    plivoEmailReceived = record.PlivoEmailReceived,
+                    plivoCallbackRequested = record.PlivoCallbackRequested,
+                    plivoNotes = record.PlivoNotes,
+                    plivoCalledBy = record.PlivoCalledBy
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Batch Call — dedicated page ────────────────────────────────────────────
+
+        [HttpGet]
+        public IActionResult BatchCall()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return RedirectToAction("Login", "Login");
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetBatchCallMAGs()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                var mags = await _repository.GetMAGsWithCallableInterviewerCountsAsync();
+                return Json(new { success = true, mags, count = mags.Count });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInterviewerCallOutcomes(string magName)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                var interviewers = await _repository.GetInterviewerCallOutcomesForMAGAsync(magName);
+                return Json(new
+                {
+                    success = true,
+                    interviewers = interviewers.Select(p => new
+                    {
+                        p.Id, p.InterviewerName, p.SenderEmail, p.Phone,
+                        p.Experience, p.CurrentRole,
+                        p.PlivoCallStatus, p.PlivoIntent, p.PlivoAssignmentHelp,
+                        p.PlivoEmailReceived, p.PlivoCallbackRequested,
+                        p.PlivoCallDuration, p.PlivoCalledBy, p.PlivoCallSummary, p.PlivoNotes,
+                        plivoCallAt = p.PlivoCallAt?.ToString("dd MMM yyyy, HH:mm"),
+                        p.Status
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BatchCallSingle(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetEmailAvailabilityByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                string phone = record.UserMobileNumber ?? record.Phone;
+                if (string.IsNullOrWhiteSpace(phone))
+                    return Json(new { success = false, error = "No phone number." });
+
+                phone = NormalizePhone(phone);
+
+                var calledBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+
+                await _repository.UpdatePlivoCallStatusAsync(id, "initiated", null,
+                    DateTime.UtcNow, null, null, null, null, null, null, null, null, calledBy);
+
+                var callerId = _configuration["PlivoCX:AvailabilityCallerId"]
+                            ?? _configuration["PlivoCX:OnboardingCallerId"]
+                            ?? _configuration["Plivo:FromNumber"]
+                            ?? "+918031136547";
+
+                var triggerRequest = new PlivoCXAvailabilityTriggerRequest
+                {
+                    CallerId        = callerId,
+                    PhoneNumber     = phone,
+                    InterviewerName = record.InterviewerName ?? record.InterviewerNickName ?? "there",
+                    InterviewerEmail = record.SenderEmail,
+                    MagName         = record.MagName ?? record.JobTitle ?? "Technical",
+                    LogId           = id.ToString(),
+                    TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                };
+
+                var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
+
+                if (!string.IsNullOrEmpty(response?.Error))
+                {
+                    await _repository.UpdatePlivoCallStatusAsync(id, "trigger-failed", null,
+                        null, null, null, response.Error, null, null, null, null, null, null);
+                    return Json(new { success = false, error = $"Plivo trigger failed: {response.Error}" });
+                }
+
+                string conversationId = response?.ConversationId;
+                await _repository.UpdatePlivoCallStatusAsync(id, "triggered", conversationId,
+                    null, null, null, null, null, null, null, null, null, null);
+                await _repository.InsertHistoryAsync(id, "BatchCallInitiated", "—",
+                    $"Availability batch call triggered to {phone}. ConversationId: {conversationId ?? "N/A"}", calledBy);
+
+                return Json(new { success = true, conversationId, interviewerName = record.InterviewerName, phone });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCallableInterviewersForMAG(string magName, bool onlyUncalled = true)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                var interviewers = await _repository.GetCallableInterviewersForMAGAsync(magName, onlyUncalled);
+                var items = interviewers.Select(p => new
+                {
+                    p.Id, p.InterviewerName, p.Phone, p.SenderEmail,
+                    p.ExperienceYears, p.PlivoCallStatus
+                });
+                return Json(new { success = true, interviewers = items });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> StartBatchCallLog(string magName, int totalInterviewers)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                var initiatedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "Unknown";
+                var logId = await _repository.InsertBatchCallLogAsync(magName, initiatedBy, totalInterviewers);
+                return Json(new { success = logId > 0, logId });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CompleteBatchCallLog(int logId, int succeeded, int failed, int skipped, string status)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                await _repository.CompleteBatchCallLogAsync(logId, succeeded, failed, skipped, status ?? "Completed");
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetBatchCallHistory(string magName)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                var history = await _repository.GetBatchCallHistoryAsync(magName);
+                return Json(new
+                {
+                    success = true,
+                    history = history.Select(h => new
+                    {
+                        h.Id, h.InitiatedBy,
+                        initiatedAt = h.InitiatedAt.ToString("dd MMM yyyy, HH:mm"),
+                        h.InterviewersAttempted, h.InterviewersSucceeded, h.InterviewersFailed, h.InterviewersSkipped,
+                        completedAt = h.CompletedAt?.ToString("dd MMM yyyy, HH:mm"),
+                        h.Status
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Checkpoint helpers ────────────────────────────────────────────────────
+
+        private async Task SaveIaCp(
+            string name, string msg, string convId = null, int? callLogId = null, string extra = null)
+        {
+            try
+            {
+                await _cpRepo.SaveCheckpointAsync(new PlivoCXWebhookCheckpoint
+                {
+                    CheckpointName = name,
+                    Message        = msg,
+                    ConversationId = convId,
+                    CallLogId      = callLogId,
+                    AdditionalData = extra
+                });
+            }
+            catch { }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AvailabilityCheckpoints(int count = 100)
+        {
+            try
+            {
+                var all = await _cpRepo.GetRecentCheckpointsAsync(count);
+                var ia = all.Where(c => c.CheckpointName.StartsWith("ia_")).ToList();
+                return Json(ia);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { error = ex.Message });
+            }
+        }
+
+        private static string GetEventValue(Dictionary<string, string> eventData, string keySuffix)
+        {
+            if (eventData == null) return null;
+            foreach (var kvp in eventData)
+            {
+                if (kvp.Key.EndsWith("." + keySuffix, StringComparison.OrdinalIgnoreCase)
+                    || kvp.Key.Equals(keySuffix, StringComparison.OrdinalIgnoreCase))
+                    return kvp.Value;
+            }
+            return null;
+        }
+
+        private static string NormalizePhone(string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone)) return phone;
+            phone = phone.Trim();
+            if (phone.Length == 10 && !phone.StartsWith("+"))
+                return "+91" + phone;
+            if (phone.Length > 10 && !phone.StartsWith("+"))
+                return "+" + phone;
+            return phone;
         }
 
         // ── Relay webhook (Relay.app → our server) ──────────────────────────────────

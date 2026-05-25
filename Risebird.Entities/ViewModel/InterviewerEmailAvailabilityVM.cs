@@ -53,6 +53,20 @@ namespace Risebird.Entities.ViewModel
         public int?     ResolvedAssessmentGroupId   { get; set; }
         public string   AssessmentGroupName         { get; set; }
 
+        // Plivo call
+        public string   PlivoCallStatus             { get; set; }
+        public string   PlivoConversationId         { get; set; }
+        public DateTime? PlivoCallAt                { get; set; }
+        public int?     PlivoCallDuration           { get; set; }
+        public string   PlivoCallTranscript         { get; set; }
+        public string   PlivoCallSummary            { get; set; }
+        public string   PlivoIntent                 { get; set; }
+        public bool?    PlivoAssignmentHelp         { get; set; }
+        public bool?    PlivoEmailReceived          { get; set; }
+        public bool?    PlivoCallbackRequested      { get; set; }
+        public string   PlivoNotes                  { get; set; }
+        public string   PlivoCalledBy               { get; set; }
+
         // Pagination
         public int      TotalCount                  { get; set; }
         public int      OpenCount                   { get; set; }
