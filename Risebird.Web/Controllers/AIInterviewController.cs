@@ -1697,7 +1697,6 @@ namespace Risebird.Web.Controllers
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
                 EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
-                ViewBag.RawAIReply = aiReport?.Replies?.FirstOrDefault();
                 ViewBag.IsAdaptive = false;
                 List<TypingSpeedAssessment> typingAssessments;
                 try { typingAssessments = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessments = new List<TypingSpeedAssessment>(); }
