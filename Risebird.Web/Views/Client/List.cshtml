@@ -167,18 +167,24 @@
 
                                             <td class="text-right" style="padding-right:30px;">
 
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
+                                                @* <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
                                                     <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
                                                 </button>
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
                                                     <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
-                                                </button>
-                                                @if (ViewBag.profile == "Admin")
+                                                </button> *@
+                                                @if (ViewBag.profile == "Admin" || ViewBag.profile == "Finance")
                                                 {
-                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add Wallet Balance">
-                                                        <span onclick="OpenAddWalletBalanceModal(@item.id)" title="Add Wallet Balance" class="fa fa-wallet"></span>
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Wallet">
+                                                        <span onclick="location.href='@Url.Action("ClientWallet", "Wallet", new { clientId = item.id })'" title="Client Wallet" class="fa fa-wallet"></span>
                                                     </button>
                                                 }
+                                                @* @if (ViewBag.profile == "Admin")
+                                                {
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add Wallet Balance">
+                                                        <span onclick="OpenAddWalletBalanceModal(@item.id)" title="Add Wallet Balance" class="fa fa-coins"></span>
+                                                    </button>
+                                                } *@
                                                 <button class="mdc-fab app-fab--absolute" aria-label="View Details">
                                                     <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
                                                 </button>
