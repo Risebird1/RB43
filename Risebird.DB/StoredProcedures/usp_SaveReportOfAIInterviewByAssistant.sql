@@ -22,10 +22,22 @@ declare @interviewId int
 
 set @interviewId = (select id from InterviewMeetings where SessionId = @SessionId)
 
+if @interviewId is null
+Begin
+	return
+End
+
 if not exists (select top 1 id from BotInterviewQuestionVideos where SessionId = @SessionId)
 Begin
 	set @interviewStatus = null
 End
+
+-- Ensure InterviewComments row exists before attempting update
+IF NOT EXISTS (SELECT 1 FROM InterviewComments WHERE InterviewId = @interviewId)
+BEGIN
+	INSERT INTO InterviewComments (InterviewId, MeetingStatus, CreatedOn)
+	VALUES (@interviewId, 2, ISNULL(@timeNow, GETDATE()))
+END
 
 if(@meetingStatus is null)
 Begin
@@ -47,6 +59,17 @@ begin
 	ModifiedOn = @timeNow  where InterviewId  = @interviewId
 end
 
+-- Ensure InterviewReport row exists
+IF NOT EXISTS (SELECT 1 FROM InterviewReport WHERE InterviewId = @interviewId)
+BEGIN
+	declare @irfIntId int
+	set @irfIntId = (select id from IRF where IRFId = (select IRFId from InterviewMeetings where id = @interviewId))
+	IF @irfIntId IS NOT NULL
+	BEGIN
+		INSERT INTO InterviewReport (InterviewId, IRFId, CreatedOn)
+		VALUES (@interviewId, @irfIntId, ISNULL(@timeNow, GETDATE()))
+	END
+END
 
 END
 GO

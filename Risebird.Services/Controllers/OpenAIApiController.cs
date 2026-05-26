@@ -228,7 +228,10 @@ namespace Risebird.Services.Controllers
                 }
                 else
                 {
-                    return null;
+                    // QuestionAnswerSetInJson is empty and isExit is false — no Q&A data to evaluate.
+                    // Still save what we can (ensure InterviewComments row exists) and return empty result.
+                    isReportSavedToDb = await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, null, input.isExit);
+                    return Ok(new InterviewReportResult { SessionId = input.SessionId, IsReportSavedToDB = isReportSavedToDb });
                 }
 
 
@@ -282,9 +285,10 @@ namespace Risebird.Services.Controllers
                      !string.IsNullOrEmpty(strict.FinalVerdict) || !string.IsNullOrEmpty(strict.FinalComment) ||
                      strict.OverallTechnicalScore != 0 || strict.OverallCommunicationScore != 0))
                 {
+                    var rootForFix = JsonConvert.DeserializeObject<JObject>(cleaned);
+
                     if (strict.RubricScoreSummary != null && strict.RubricScoreSummary.Any(r => string.IsNullOrEmpty(r.RubricItem)))
                     {
-                        var rootForFix = JsonConvert.DeserializeObject<JObject>(cleaned);
                         var rArr = rootForFix?["rubric_score_summary"] as JArray;
                         if (rArr != null)
                         {
@@ -297,6 +301,48 @@ namespace Risebird.Services.Controllers
                             }).ToList();
                         }
                     }
+
+                    if (strict.QuestionRatings == null && rootForFix != null)
+                    {
+                        var qArr = (JArray)(rootForFix["question_ratings"] ?? rootForFix["questions"] ?? rootForFix["questionRatings"] ?? rootForFix["question_evaluations"]);
+                        if (qArr != null)
+                        {
+                            strict.QuestionRatings = qArr.Select(q => new QuestionRating
+                            {
+                                Question = q.Value<string>("question") ?? q.Value<string>("text") ?? q.Value<string>("question_id"),
+                                Verdict = q.Value<string>("verdict") ?? q.Value<string>("evaluation_summary"),
+                                Score = q.Value<int?>("score") ?? 0,
+                                Comment = q.Value<string>("comment") ?? q.Value<string>("evaluation_summary"),
+                                CommunicationScore = q.Value<int?>("communication_score") ?? 0,
+                                CommunicationComment = q.Value<string>("communication_comment")
+                            }).ToList();
+                        }
+                    }
+
+                    if (strict.RubricScoreSummary == null && rootForFix != null)
+                    {
+                        var rArr = (JArray)(rootForFix["rubric_score_summary"] ?? rootForFix["category_scores"] ?? rootForFix["rubric_summary"] ?? rootForFix["rubric"]);
+                        if (rArr != null)
+                        {
+                            strict.RubricScoreSummary = rArr.Select(r => new RubricScoreSummary
+                            {
+                                RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("score_rubric_parameter") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
+                                ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
+                                ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("summary"),
+                                Score = r.Value<float?>("score") ?? r.Value<float?>("average_score") ?? 0
+                            }).ToList();
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(strict.FinalVerdict) && rootForFix != null)
+                    {
+                        strict.FinalVerdict = rootForFix.Value<string>("final_verdict") ?? rootForFix.Value<string>("verdict") ?? rootForFix.Value<string>("overall_recommendation");
+                    }
+                    if (string.IsNullOrEmpty(strict.FinalComment) && rootForFix != null)
+                    {
+                        strict.FinalComment = rootForFix.Value<string>("final_comment") ?? rootForFix.Value<string>("comment") ?? rootForFix.Value<string>("overall_summary");
+                    }
+
                     return strict;
                 }
             }
@@ -310,35 +356,35 @@ namespace Risebird.Services.Controllers
                 var eval = new AIInterviewEvaluation
                 {
                     OverallTechnicalScore = root.Value<int?>("overall_technical_score") ?? root.Value<int?>("overall_score") ?? 0,
-                    FinalVerdict = root.Value<string>("final_verdict") ?? root.Value<string>("verdict"),
-                    FinalComment = root.Value<string>("final_comment") ?? root.Value<string>("comment"),
+                    FinalVerdict = root.Value<string>("final_verdict") ?? root.Value<string>("verdict") ?? root.Value<string>("overall_recommendation"),
+                    FinalComment = root.Value<string>("final_comment") ?? root.Value<string>("comment") ?? root.Value<string>("overall_summary"),
                     OverallCommunicationScore = root.Value<int?>("overall_communication_score") ?? root.Value<int?>("communication_score") ?? 0,
                     OverallCommunicationScoreReasoning = root.Value<string>("overall_communication_score reasoning") ?? root.Value<string>("overall_communication_score_reasoning")
                 };
 
-                var qNode = (JArray)(root["question_ratings"] ?? root["questions"] ?? root["questionRatings"]);
+                var qNode = (JArray)(root["question_ratings"] ?? root["questions"] ?? root["questionRatings"] ?? root["question_evaluations"]);
                 if (qNode != null)
                 {
                     eval.QuestionRatings = qNode.Select(q => new QuestionRating
                     {
-                        Question = q.Value<string>("question") ?? q.Value<string>("text"),
-                        Verdict = q.Value<string>("verdict"),
+                        Question = q.Value<string>("question") ?? q.Value<string>("text") ?? q.Value<string>("question_id"),
+                        Verdict = q.Value<string>("verdict") ?? q.Value<string>("evaluation_summary"),
                         Score = q.Value<int?>("score") ?? 0,
-                        Comment = q.Value<string>("comment"),
+                        Comment = q.Value<string>("comment") ?? q.Value<string>("evaluation_summary"),
                         CommunicationScore = q.Value<int?>("communication_score") ?? 0,
                         CommunicationComment = q.Value<string>("communication_comment")
                     }).ToList();
                 }
 
-                var rNode = (JArray)(root["rubric_score_summary"] ?? root["rubric_summary"] ?? root["rubric"]);
+                var rNode = (JArray)(root["rubric_score_summary"] ?? root["rubric_summary"] ?? root["rubric"] ?? root["category_scores"]);
                 if (rNode != null)
                 {
                     eval.RubricScoreSummary = rNode.Select(r => new RubricScoreSummary
                     {
-                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
+                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("score_rubric_parameter") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
                         ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
-                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("observed_at"),
-                        Score = r.Value<float?>("score") ?? 0
+                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("summary"),
+                        Score = r.Value<float?>("score") ?? r.Value<float?>("average_score") ?? 0
                     }).ToList();
                 }
 
