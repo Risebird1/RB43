@@ -2053,6 +2053,14 @@
             <div style="flex:1; height:2px; background: linear-gradient(90deg, #56e0cb 0%, #4eda92 60%, transparent 100%); border-radius:2px; opacity:0.5;"></div>
         </div>
 
+        @if (!string.IsNullOrEmpty(ViewBag.RawAIReply))
+        {
+            <div style="background:#f8f9fa;border:1px solid #ddd;border-radius:8px;padding:12px;margin-bottom:16px;max-height:300px;overflow:auto;">
+                <strong style="color:#666;">Debug - Raw AI Response (remove after diagnosis):</strong>
+                <pre style="white-space:pre-wrap;word-break:break-all;font-size:11px;margin-top:8px;">@ViewBag.RawAIReply</pre>
+            </div>
+        }
+
         <div>
             <div class="rb-report-section" style="margin-bottom:20px;">
 
@@ -2220,10 +2228,6 @@
                                                     </div>
                                                 }
                                             </div>
-                                        }
-                                        else
-                                        {
-                                            <p class="nodata" style="margin: 50px 10px;background: #eeebeb91;padding: 20px;"><img src="/img/no-question.png" style="width:25px;margin-right:6px;position:relative;top:-3px;"><span style="font-size:16px;line-height:25px">No Comment Found</span></p>
                                         }
 
 
