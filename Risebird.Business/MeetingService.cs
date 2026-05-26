@@ -3132,6 +3132,116 @@ namespace Risebird.Business
                 return "Fail";
             }
         }
+
+        public async Task<List<InvoiceListVM>> GetInvoiceList(int month, int year)
+        {
+            try
+            {
+                return await _meetingRespository.GetInvoiceList(month, year);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<InvoiceListVM>();
+            }
+        }
+
+
+        public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0)
+        {
+            try
+            {
+                return await _meetingRespository.GetClientInvoiceFormData(clientId, month, year, billingOwnerId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new ClientInvoiceFormDataVM();
+            }
+        }
+
+        public async Task<InvoiceDetailVM> GetGeneratedInvoiceById(int invoiceId)
+        {
+            try { return await _meetingRespository.GetGeneratedInvoiceById(invoiceId); }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return null; }
+        }
+
+        public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, int status,
+            decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
+            List<InvoiceLineItemVM> lineItems)
+        {
+            try
+            {
+                // Update each edited line item first
+                if (lineItems != null && lineItems.Any())
+                {
+                    var tasks = lineItems.Select(li =>
+                        _meetingRespository.UpdateInvoiceLineItem(li.id, li.UnitRate, li.LineTotal));
+                    await Task.WhenAll(tasks);
+                }
+                return await _meetingRespository.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, status,
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable);
+            }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return false; }
+        }
+
+        public async Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year)
+        {
+            try
+            {
+                return await _meetingRespository.CheckDuplicateInvoice(clientId, billingOwnerId, month, year);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<List<BillingOwnerOption>> GetClientBillingOwners(int clientId)
+        {
+            try
+            {
+                return await _meetingRespository.GetClientBillingOwners(clientId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<BillingOwnerOption>();
+            }
+        }
+
+        public async Task<string> GetNextInvoiceNumber(int month, int year)
+        {
+            try
+            {
+                return await _meetingRespository.GetNextInvoiceNumber(month, year);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return string.Empty;
+            }
+        }
+
+        public async Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model)
+        {
+            try
+            {
+                int invoiceId = await _meetingRespository.SaveGeneratedInvoice(model);
+                if (invoiceId > 0 && model.LineItems != null && model.LineItems.Any())
+                {
+                    await _meetingRespository.SaveGeneratedInvoiceLineItems(invoiceId, model.LineItems);
+                }
+                return invoiceId;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
         public List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null)
         {
             try

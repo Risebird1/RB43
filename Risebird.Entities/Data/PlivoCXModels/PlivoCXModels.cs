@@ -333,4 +333,81 @@ namespace Risebird.Entities.Data.PlivoCXModels
         [JsonProperty("confirmed_name")]
         public string ConfirmedName { get; set; }
     }
+
+    // ─── Interviewer Availability Call (Plivo CX) ─────────────────────────────
+
+    public class PlivoCXAvailabilityTriggerRequest
+    {
+        [JsonProperty("caller_id")]
+        public string CallerId { get; set; }
+
+        [JsonProperty("phone_number")]
+        public string PhoneNumber { get; set; }
+
+        [JsonProperty("interviewer_name")]
+        public string InterviewerName { get; set; }
+
+        [JsonProperty("interviewer_email")]
+        public string InterviewerEmail { get; set; }
+
+        [JsonProperty("mag_name")]
+        public string MagName { get; set; }
+
+        [JsonProperty("log_id")]
+        public string LogId { get; set; }
+
+        [JsonProperty("today_date")]
+        public string TodayDate { get; set; }
+    }
+
+    public class PlivoCXAvailabilityHangupPayload
+    {
+        [JsonProperty("conversation_id")]
+        public string ConversationId { get; set; }
+
+        [JsonProperty("call_uuid")]
+        public string CallUUID { get; set; }
+
+        [JsonProperty("call_status")]
+        public string CallStatus { get; set; }
+
+        [JsonProperty("duration")]
+        public string Duration { get; set; }
+
+        [JsonProperty("hangup_cause")]
+        public string HangupCause { get; set; }
+
+        [JsonProperty("transcript")]
+        public string Transcript { get; set; }
+
+        [JsonProperty("summary")]
+        public string Summary { get; set; }
+
+        [JsonProperty("log_id")]
+        public string LogId { get; set; }
+
+        [JsonProperty("phone_number")]
+        public string PhoneNumber { get; set; }
+
+        [JsonProperty("interviewer_name")]
+        public string InterviewerName { get; set; }
+
+        [JsonProperty("interviewer_email")]
+        public string InterviewerEmail { get; set; }
+
+        [JsonProperty("intent")]
+        public string Intent { get; set; }
+
+        [JsonProperty("assignment_help")]
+        public string AssignmentHelp { get; set; }
+
+        [JsonProperty("email_received")]
+        public string EmailReceived { get; set; }
+
+        [JsonProperty("callback_requested")]
+        public string CallbackRequested { get; set; }
+
+        [JsonProperty("notes")]
+        public string Notes { get; set; }
+    }
 }

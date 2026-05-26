@@ -136,6 +136,12 @@ namespace Risebird.Entities.ViewModel
         [JsonProperty("mag_name")]
         public string MagName                   { get; set; }
 
+        [JsonProperty("candidate_email")]
+        public string CandidateEmail            { get; set; }
+
+        [JsonProperty("candidate_phone")]
+        public string CandidatePhone            { get; set; }
+
         [JsonProperty("resume_link")]
         public string ResumeLink                { get; set; }
 
@@ -174,6 +180,12 @@ namespace Risebird.Entities.ViewModel
 
         [JsonProperty("skills_match")]
         public string SkillsMatch               { get; set; }
+
+        [JsonProperty("candidate_email")]
+        public string CandidateEmail            { get; set; }
+
+        [JsonProperty("candidate_phone")]
+        public string CandidatePhone            { get; set; }
 
         [JsonProperty("resume_link")]
         public string ResumeLink                { get; set; }

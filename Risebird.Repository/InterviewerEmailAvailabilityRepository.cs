@@ -11,6 +11,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Risebird.Entities.Data.PlivoCXModels;
 
 namespace Risebird.Repository
 {
@@ -320,6 +321,106 @@ namespace Risebird.Repository
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return new List<MagDropdownItem>();
             }
+        }
+
+        // ── Plivo call ─────────────────────────────────────────────────────────────
+
+        public async Task<bool> UpdatePlivoCallStatusAsync(int id, string callStatus, string conversationId,
+            DateTime? callAt, int? duration, string transcript, string summary,
+            string intent, bool? assignmentHelp, bool? emailReceived, bool? callbackRequested,
+            string notes, string calledBy)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var p = new DynamicParameters();
+            p.Add("@Id", id);
+            p.Add("@PlivoCallStatus", callStatus);
+            p.Add("@PlivoConversationId", conversationId);
+            p.Add("@PlivoCallAt", callAt);
+            p.Add("@PlivoCallDuration", duration);
+            p.Add("@PlivoCallTranscript", transcript);
+            p.Add("@PlivoCallSummary", summary);
+            p.Add("@PlivoIntent", intent);
+            p.Add("@PlivoAssignmentHelp", assignmentHelp);
+            p.Add("@PlivoEmailReceived", emailReceived);
+            p.Add("@PlivoCallbackRequested", callbackRequested);
+            p.Add("@PlivoNotes", notes);
+            p.Add("@PlivoCalledBy", calledBy);
+
+            var rows = await con.QueryFirstOrDefaultAsync<int>(
+                "usp_UpdateIAEmailAvailabilityPlivoCallStatus", p,
+                commandType: CommandType.StoredProcedure, commandTimeout: 60);
+            return rows > 0;
+        }
+
+        public async Task<int?> FindByPhoneAndCallStatusAsync(string phone, string callStatus)
+        {
+            using var con = new SqlConnection(_connectionString);
+            return await con.QueryFirstOrDefaultAsync<int?>(
+                "usp_FindIAByPhoneAndCallStatus",
+                new { Phone = phone, CallStatus = callStatus },
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+        }
+
+        // ── Batch call ─────────────────────────────────────────────────────────────
+
+        public async Task<List<IABatchCallMagSummary>> GetMAGsWithCallableInterviewerCountsAsync()
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<IABatchCallMagSummary>(
+                "usp_GetIABatchCallMAGSummary",
+                commandType: CommandType.StoredProcedure, commandTimeout: 120);
+            return result.ToList();
+        }
+
+        public async Task<List<IACallableInterviewer>> GetCallableInterviewersForMAGAsync(string magName, bool onlyUncalled = true)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<IACallableInterviewer>(
+                "usp_GetInterviewersForMAGBatchCall",
+                new { MagName = magName, OnlyUncalled = onlyUncalled },
+                commandType: CommandType.StoredProcedure, commandTimeout: 60);
+            return result.ToList();
+        }
+
+        public async Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalInterviewers)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var p = new DynamicParameters();
+            p.Add("@MagName", magName);
+            p.Add("@InitiatedBy", initiatedBy);
+            p.Add("@TotalInterviewers", totalInterviewers);
+            p.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            await con.ExecuteAsync("usp_InsertIABatchCallLog", p,
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            return p.Get<int>("@NewId");
+        }
+
+        public async Task CompleteBatchCallLogAsync(int id, int succeeded, int failed, int skipped, string status)
+        {
+            using var con = new SqlConnection(_connectionString);
+            await con.ExecuteAsync("usp_CompleteIABatchCallLog",
+                new { Id = id, Succeeded = succeeded, Failed = failed, Skipped = skipped, Status = status },
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+        }
+
+        public async Task<List<IABatchCallLogEntry>> GetBatchCallHistoryAsync(string magName)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<IABatchCallLogEntry>(
+                "usp_GetIABatchCallHistory",
+                new { MagName = magName },
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            return result.ToList();
+        }
+
+        public async Task<List<IAInterviewerCallOutcome>> GetInterviewerCallOutcomesForMAGAsync(string magName)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<IAInterviewerCallOutcome>(
+                "usp_GetInterviewerCallOutcomesForMAG",
+                new { MagName = magName },
+                commandType: CommandType.StoredProcedure, commandTimeout: 60);
+            return result.ToList();
         }
     }
 }

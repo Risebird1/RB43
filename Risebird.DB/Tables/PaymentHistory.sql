@@ -67,6 +67,36 @@ BEGIN
     ALTER TABLE PaymentHistory
     ADD PayoutStatus NVARCHAR(50) NULL
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'TransferUtr'
+      AND Object_ID = Object_ID(N'PaymentHistory'))
+BEGIN
+    ALTER TABLE PaymentHistory
+    ADD TransferUtr VARCHAR(100) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'CfPaymentId'
+      AND Object_ID = Object_ID(N'PaymentHistory'))
+BEGIN
+    ALTER TABLE PaymentHistory
+    ADD CfPaymentId VARCHAR(100) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'GatewayPaymentStatus'
+      AND Object_ID = Object_ID(N'PaymentHistory'))
+BEGIN
+    ALTER TABLE PaymentHistory
+    ADD GatewayPaymentStatus NVARCHAR(50) NULL
+END
 END
 GO
 

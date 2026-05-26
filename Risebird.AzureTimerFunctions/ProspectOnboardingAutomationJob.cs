@@ -117,26 +117,46 @@ namespace Risebird.AzureTimerFunctions
             _log.LogInformation($"[OnboardAuto] #{p.Id} '{p.CandidateName}' — resume={p.ResumeParseCompleted}, irf={p.SelectedIRFId}, call={p.PlivoCallStatus}, email={p.InvitationEmailSent}");
 
             // ── Step 1: Parse Resume ──────────────────────────────────────────────
+            // If Relay agent already extracted email/phone, this step is skipped.
             if (p.ResumeParseCompleted != true)
             {
-                await _repository.UpdateAutomationStatusAsync(p.Id, "ParsingResume");
-                var parsed = await ParseResumeAsync(p);
-                if (!parsed)
+                if (!string.IsNullOrWhiteSpace(p.ParsedEmail) || !string.IsNullOrWhiteSpace(p.ParsedPhone))
                 {
-                    await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
-                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        "Automation: resume parse failed — manual intervention needed.", "AutomationJob");
-                    return;
+                    _log.LogInformation($"[OnboardAuto] #{p.Id} — email/phone pre-populated by Relay, marking parse complete.");
+                    await _repository.UpdateResumeParseResultAsync(p.Id, p.ParsedEmail, p.ParsedPhone);
+                    p.ResumeParseCompleted = true;
+                    var refreshed0 = await _repository.GetByIdAsync(p.Id);
+                    if (refreshed0 != null)
+                    {
+                        p.IsExistingInterviewer = refreshed0.IsExistingInterviewer;
+                        p.ResolvedAssessmentGroupId = refreshed0.ResolvedAssessmentGroupId;
+                    }
                 }
+                else
+                {
+                    await _repository.UpdateAutomationStatusAsync(p.Id, "ParsingResume");
+                    var parsed = await ParseResumeAsync(p);
+                    if (!parsed)
+                    {
+                        await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
+                        await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                            "Automation: resume parse failed — manual intervention needed.", "AutomationJob");
+                        return;
+                    }
 
-                var refreshed = await _repository.GetByIdAsync(p.Id);
-                if (refreshed == null) return;
+                    var refreshed = await _repository.GetByIdAsync(p.Id);
+                    if (refreshed == null) return;
 
-                p.ParsedEmail = refreshed.ParsedEmail;
-                p.ParsedPhone = refreshed.ParsedPhone;
-                p.IsExistingInterviewer = refreshed.IsExistingInterviewer;
-                p.ResumeParseCompleted = refreshed.ResumeParseCompleted;
-                p.ResolvedAssessmentGroupId = refreshed.ResolvedAssessmentGroupId;
+                    p.ParsedEmail = refreshed.ParsedEmail;
+                    p.ParsedPhone = refreshed.ParsedPhone;
+                    p.IsExistingInterviewer = refreshed.IsExistingInterviewer;
+                    p.ResumeParseCompleted = refreshed.ResumeParseCompleted;
+                    p.ResolvedAssessmentGroupId = refreshed.ResolvedAssessmentGroupId;
+                }
+            }
+            else
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — resume already parsed (Relay pre-parsed or prior run), skipping Step 1.");
             }
 
             if (p.IsExistingInterviewer == true)
