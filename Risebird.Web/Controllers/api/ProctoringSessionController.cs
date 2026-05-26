@@ -435,7 +435,7 @@ namespace Risebird.Web.Controllers.Api
             {
                 var ext = FileExtensionFromMime(mimeType);
                 var seq = body?.ChunkSeq ?? 0;
-                blobPath = $"{payload.InterviewId}/{capturedAtUtc:yyyyMMdd}/chunks/{capturedAtUtc:yyyyMMddHHmmssfff}-{seq}.{ext}";
+                blobPath = $"{payload.InterviewId}/{capturedAtUtc:yyyyMMdd}/chunks/{capturedAtUtc:yyyyMMddHHmmssfff}-{seq}." + ext;
                 var uploadResult = await UploadBlobWithRetryAsync(
                     chunkBytes,
                     blobPath,

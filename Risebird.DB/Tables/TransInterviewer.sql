@@ -207,6 +207,16 @@ BEGIN
     Add AIScreeningScore int null
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewCapacity')
+      AND Object_ID = Object_ID(N'TransInterviewer'))
+BEGIN
+    ALTER TABLE TransInterviewer
+    Add InterviewCapacity int NOT NULL CONSTRAINT DF_TransInterviewer_InterviewCapacity DEFAULT 0
+END
+
 END
 
 GO

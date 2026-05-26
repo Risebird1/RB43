@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace Risebird.Entities.ViewModel
 {
-    public class TransInterviewer
+    public partial class TransInterviewer
     {
         public int id { get; set; }
         public int IRFId { get; set; }

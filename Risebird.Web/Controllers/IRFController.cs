@@ -8682,6 +8682,45 @@ namespace Risebird.Web.Controllers
             return View(interviewlist);
         }
         #region Delivery Head Instruction
+
+        [HttpGet]
+        public async Task<JsonResult> GetDmInterviewerCvState(int irfId, int userId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { ok = false });
+                }
+
+                var model = await _irfService.GetEditIRF(irfId, 0, false);
+                var iv = model?.InterviewerCollection?
+                    .Where(x => x.IsActive)
+                    .FirstOrDefault(x => x.UserId == userId);
+                if (iv == null)
+                {
+                    return Json(new { ok = false });
+                }
+
+                return Json(new
+                {
+                    ok = true,
+                    resumeLink = iv.ResumeLink ?? "",
+                    codedCvLink = iv.CodedResumeLink ?? "",
+                    cvCode = !string.IsNullOrEmpty(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : "",
+                    isResumeRedactAttempted = iv.IsResumeRedactAttempted,
+                    aiVerdict = iv.AIVerdict ?? "",
+                    aiScore = iv.AIScreeningScore,
+                    aiReasonFull = iv.OpenAIScreeningResponse ?? ""
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false });
+            }
+        }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> DeliveryHeadInstruction(int irfid, string Type = null)//Type = "ublc" stands for public here
@@ -8719,11 +8758,19 @@ namespace Risebird.Web.Controllers
                     return View(model);
                 }
                 model = await _irfService.GetEditIRF(irfid, 0, false);
+                if (model == null)
+                {
+                    ViewBag.Message = "Skill Channel not found.";
+                    return View(new IRFVm { id = irfid });
+                }
 
                 model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfid);
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
                 model.CandidateVideo = _irfService.GetVideoConsentForm(irfid).Result;
-                model.InterviewerCollection = model.InterviewerCollection.Where(x => x.IsActive).ToList();
+                if (!model.DmIvLockNew)
+                {
+                    model.InterviewerCollection = model.InterviewerCollection.Where(x => x.IsActive).ToList();
+                }
                 await checkSkillSetandSeperate(model);
                 return View(model);
             }
@@ -8961,8 +9008,85 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> DeleteSkillChannelSampleQuestions(int questionid)
         {
             var result = await _irfService.DeleteSkillChannelSampleQuestions(questionid);
-            return Json("success");
+            return Json(new { success = result });
         }
+
+        [HttpPost]
+        public async Task<JsonResult> GetDeliveryHeadSampleQuestionsJson(int irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, questions = new List<SkillComment>() });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var questions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfId, emailid);
+                return Json(new { success = true, questions = questions ?? new List<SkillComment>() });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, questions = new List<SkillComment>() });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SaveDeliveryHeadSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, int? id = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                if (string.IsNullOrWhiteSpace(skillName) || string.IsNullOrWhiteSpace(comment))
+                {
+                    return Json(new { success = false, message = "Skill and question are required." });
+                }
+                if (comment.Length > 300)
+                {
+                    return Json(new { success = false, message = "Question must not exceed 300 characters." });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                if (id.HasValue && id.Value > 0)
+                {
+                    var ok = await _irfService.UpdateSkillChannelSampleQuestion(id.Value, comment.Trim(), expectedAnswer?.Trim());
+                    return Json(new { success = ok, id = id.Value });
+                }
+                var model = new TechSkillComments
+                {
+                    IRFId = irfId,
+                    CreatedBy = emailid,
+                    SkillCollection = new List<SkillComment>
+                    {
+                        new SkillComment
+                        {
+                            SkillName = skillName.Trim(),
+                            Comment = comment.Trim(),
+                            ExpectedAnswer = expectedAnswer?.Trim(),
+                            CreatedBy = emailid
+                        }
+                    }
+                };
+                var added = await _irfService.AddIRFSampleQuestions(model);
+                if (!added)
+                {
+                    return Json(new { success = false, message = "Failed to save question." });
+                }
+                var questions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfId, emailid);
+                var created = questions?.OrderByDescending(q => q.id)
+                    .FirstOrDefault(q => string.Equals(q.SkillName, skillName, StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(q.Comment, comment.Trim(), StringComparison.Ordinal));
+                return Json(new { success = true, id = created?.id ?? 0 });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Save failed." });
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> DeliveryHeadSkillDetails(int id)
         {
@@ -11301,6 +11425,230 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(false);
 
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateInterviewerRbVet(int transInterviewerId, bool isVerified, int irfId, int userId, string interviewerEmail)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var interviewers = new List<TransInterviewer>
+                {
+                    new TransInterviewer { id = transInterviewerId, IsSMEVerified = isVerified }
+                };
+                var ok = await _interviewerService.UpdateVerifiedInterviewers(interviewers, emailid);
+
+                if (ok)
+                {
+                    if (isVerified)
+                    {
+                        await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfId, interviewerEmail, "Shortlisted");
+                        await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, true, irfId, emailid);
+                    }
+                    else
+                    {
+                        await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfId, interviewerEmail, "Rejected");
+                        await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, false, irfId, emailid);
+                    }
+                }
+
+                return Json(new { success = ok, active = isVerified, transId = transInterviewerId, irfId, userId, email = interviewerEmail });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateInterviewerClientVet(int irfId, string interviewerEmail, bool isApproved, int userId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var action = isApproved ? "Shortlisted" : "Rejected";
+                var ok = await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfId, interviewerEmail, action);
+
+                if (ok)
+                {
+                    // active = (rbVet === yes) && (clientVet !== no)
+                    // Client Vet buttons are disabled when RB Vet = No (UI guard),
+                    // so isApproved=true implies RB Vet is already Yes → activate.
+                    // isApproved=false → deactivate (SP already sets IsActive=0; also clear availability).
+                    bool newActive = isApproved;
+                    await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, newActive, irfId, emailid);
+                }
+
+                return Json(new { success = ok, clientAction = action, active = isApproved });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetInterviewerResumeSummary(string resumeLink)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false });
+
+                if (string.IsNullOrEmpty(resumeLink))
+                    return View("~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml", (ResumeSummaryVM)null);
+
+                var summary = await _candidateService.ResumeSummaryFromLink(resumeLink);
+                return View("~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml", summary);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View("~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml", (ResumeSummaryVM)null);
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> RequestVideoKYC(string interviewerEmail, string interviewerName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+
+                var dashboardLink = $"https://{Request.Host}/Dashboard/InterviewerIndex";
+                var result = await _notificationHelper.SendRequestVideoKYCEmail(interviewerEmail, interviewerName ?? interviewerEmail, dashboardLink);
+                bool sent = !string.IsNullOrEmpty(result) && !result.Contains("Failed");
+                return Json(new { success = sent });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SaveDmIvPolicy(int irfId, bool dmIvLockNew, string dmAssignmentPolicy, int dmDefaultInterviewCap)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var policy = string.Equals(dmAssignmentPolicy, "limited", StringComparison.OrdinalIgnoreCase) ? "limited" : "free";
+                var cap = Math.Max(1, Math.Min(99, dmDefaultInterviewCap));
+                var ok = await _irfService.UpdateDmIvPolicy(irfId, dmIvLockNew, policy, cap, emailid);
+                return Json(new { success = ok });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateInterviewerCapacity(int transInterviewerId, int interviewCapacity)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var cap = Math.Max(0, Math.Min(99, interviewCapacity));
+                var ok = await _irfService.UpdateTransInterviewerCapacity(transInterviewerId, cap, emailid);
+                return Json(new { success = ok, interviewCapacity = cap });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateInterviewerPerSuccessRate(int transInterviewerId, int perSuccessRate)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var rate = Math.Max(0, perSuccessRate);
+                var ok = await _irfService.UpdateTransInterviewerPerSuccessRate(transInterviewerId, rate, emailid);
+                return Json(new { success = ok, perSuccessRate = rate });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ApplyDefaultInterviewCap(int irfId, int defaultCap)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var cap = Math.Max(1, Math.Min(99, defaultCap));
+                var ok = await _irfService.ApplyDefaultInterviewCapToIrf(irfId, cap, emailid);
+                return Json(new { success = ok, defaultCap = cap });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
             }
         }
 

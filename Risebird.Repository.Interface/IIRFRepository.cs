@@ -229,6 +229,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddIRFSampleQuestions(TechSkillComments obj);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
         Task<bool> DeleteSkillChannelSampleQuestions(int id);
+        Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer);
         Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl);
         Task<bool> ApproveDM(int id, string emailid);
         Task<bool> UpdateAffindaIndexFlag(string irfId, bool isIndexCreated);
@@ -280,6 +281,10 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<InterviewersBillingRateVM>> GetInterviewersWithOutBillingRate();
         Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser);
         Task<bool> UpdateInterviewerSurcharge(int userId, int surcharge, int irfId, string loggedInUser);
+        Task<bool> UpdateDmIvPolicy(int irfId, bool dmIvLockNew, string dmAssignmentPolicy, int dmDefaultInterviewCap, string loggedInUser);
+        Task<bool> UpdateTransInterviewerCapacity(int transInterviewerId, int interviewCapacity, string loggedInUser);
+        Task<bool> UpdateTransInterviewerPerSuccessRate(int transInterviewerId, int perSuccessRate, string loggedInUser);
+        Task<bool> ApplyDefaultInterviewCapToIrf(int irfId, int defaultCap, string loggedInUser);
         Task<SkillChannelnAGDetails> CheckExistenceofSkillChannelAgainstRequestId(string requestId, string jobTitle);
         int GetIRFIdByIRFNametenantId(string IRFId, string tenantId);
         Task<bool> UpdateVideoConsentFile(int irfid, string uploadedFileURL);

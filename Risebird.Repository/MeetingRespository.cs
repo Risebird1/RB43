@@ -4798,6 +4798,59 @@ namespace Risebird.Repository
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
+
+        public CapCheckResult CheckInterviewerCapForAssignment(int irfIntId, string interviewerEmail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfIntId", irfIntId);
+                    parameters.Add("@interviewerEmail", interviewerEmail);
+                    var row = con.QueryFirstOrDefault<dynamic>("usp_CheckInterviewerCapForAssignment", parameters, commandType: CommandType.StoredProcedure);
+                    if (row == null) return CapCheckResult.AllowedResult;
+                    return new CapCheckResult
+                    {
+                        Allowed = (int)row.Allowed == 1,
+                        IsLocked = (int)row.IsLocked == 1,
+                        Assigned = (int)row.Assigned,
+                        Capacity = (int)row.Capacity
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return CapCheckResult.AllowedResult;
+            }
+        }
+
+        public CapCheckResult CheckInterviewerCapForAssignmentByMeeting(int meetingId, string interviewerEmail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@meetingId", meetingId);
+                    parameters.Add("@interviewerEmail", interviewerEmail);
+                    var row = con.QueryFirstOrDefault<dynamic>("usp_CheckInterviewerCapForAssignment", parameters, commandType: CommandType.StoredProcedure);
+                    if (row == null) return CapCheckResult.AllowedResult;
+                    return new CapCheckResult
+                    {
+                        Allowed = (int)row.Allowed == 1,
+                        IsLocked = (int)row.IsLocked == 1,
+                        Assigned = (int)row.Assigned,
+                        Capacity = (int)row.Capacity
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return CapCheckResult.AllowedResult;
+            }
+        }
+
         public string ReAssignMeeting(int id, string interviewerMail)
         {
             try

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
@@ -153,6 +153,7 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateFormat(int irf, string format);
         Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf);
         Task<bool> AddIRFSampleQuestions(TechSkillComments skillComments);
+        Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
         Task<bool> DeleteSkillChannelSampleQuestions(int id);
         Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl);
@@ -203,6 +204,10 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<InterviewersBillingRateVM>> GetInterviewersWithOutBillingRate();
         Task<bool> UpdateUSTJobTitle(int agId, string ustJobTitle, string loggedInUser);
         Task<bool> UpdateInterviewerSurcharge(int userId, int surcharge, int irfId, string loggedInUser);
+        Task<bool> UpdateDmIvPolicy(int irfId, bool dmIvLockNew, string dmAssignmentPolicy, int dmDefaultInterviewCap, string loggedInUser);
+        Task<bool> UpdateTransInterviewerCapacity(int transInterviewerId, int interviewCapacity, string loggedInUser);
+        Task<bool> UpdateTransInterviewerPerSuccessRate(int transInterviewerId, int perSuccessRate, string loggedInUser);
+        Task<bool> ApplyDefaultInterviewCapToIrf(int irfId, int defaultCap, string loggedInUser);
         Task<bool> AddIRFInterviewersV2(List<TransInterviewer> interviewers, string loggedInUser);
         Task<bool> UpdateVideoConsentFile(int irfid, string uploadedFileURL);
         Task<string> GetVideoConsentForm(int irfid);

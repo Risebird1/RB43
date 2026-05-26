@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
 using System;
@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
 {
-    public class IRFVm
+    public partial class IRFVm
     {
         public IRFVm()
         {
