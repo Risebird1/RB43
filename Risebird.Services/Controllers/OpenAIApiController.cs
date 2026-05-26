@@ -100,7 +100,7 @@ namespace Risebird.Services.Controllers
 
             var replies = await _ai.GetMessagesAsync(threadId);
 
-            if(replies != null && replies.Count()>0)
+            if (replies != null && replies.Count() > 0)
             {
                 await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", replies.FirstOrDefault());
 
@@ -151,17 +151,17 @@ namespace Risebird.Services.Controllers
         {
             bool isReportSavedToDb = false;
             //var threadId = await _aIInterviewerService.GetThreadId(input.SessionId);
-            if(input?.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
+            if (input?.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
             {
                 var meetingDetails = await _aIInterviewerService.GetAIInterviewDetailsBySessionId(input.SessionId);
 
-                if(string.IsNullOrEmpty(meetingDetails.QuestionAnswerSetInJson) && input.isExit)
+                if (string.IsNullOrEmpty(meetingDetails.QuestionAnswerSetInJson) && input.isExit)
                 {
                     //mark as no show
                     isReportSavedToDb = await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, null, input.isExit, null, null, 1);
                     return Ok(new InterviewReportResult { SessionId = input.SessionId, IsReportSavedToDB = true });
                 }
-                else if((!string.IsNullOrEmpty(meetingDetails.QuestionAnswerSetInJson)))
+                else if ((!string.IsNullOrEmpty(meetingDetails.QuestionAnswerSetInJson)))
                 {
                     var threadId = await _ai.CreateThreadAsync();
                     //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
@@ -174,7 +174,7 @@ namespace Risebird.Services.Controllers
                     var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
 
                     int counter = 0;
-                    if(replies != null && replies.Count() == 0)
+                    if (replies != null && replies.Count() == 0)
                     {
                         do
                         {
@@ -183,7 +183,7 @@ namespace Risebird.Services.Controllers
                             counter++;
                         }
                         while (counter < 2 && replies != null && replies.Count() == 0);
-                        
+
                     }
                     if (replies != null)//&& replies.Count() > 0
                     {
@@ -208,9 +208,9 @@ namespace Risebird.Services.Controllers
                             }
                         }
                         int? meetingStatus = null;
-                        if(input.isExit)
+                        if (input.isExit)
                         {
-                            if(interviewStatus == 2 || interviewStatus == 3)
+                            if (interviewStatus == 2 || interviewStatus == 3)
                             {
                                 meetingStatus = 4;
                             }
@@ -230,8 +230,8 @@ namespace Risebird.Services.Controllers
                 {
                     return null;
                 }
-                
-                
+
+
 
             }
             else
@@ -263,7 +263,7 @@ namespace Risebird.Services.Controllers
 
                 return Ok(new { input.SessionId, threadId, replies, isReportSavedToDb });
             }
-            
+
         }
         private AIInterviewEvaluation TryParseEvaluation(string raw)
         {
@@ -282,10 +282,25 @@ namespace Risebird.Services.Controllers
                      !string.IsNullOrEmpty(strict.FinalVerdict) || !string.IsNullOrEmpty(strict.FinalComment) ||
                      strict.OverallTechnicalScore != 0 || strict.OverallCommunicationScore != 0))
                 {
+                    if (strict.RubricScoreSummary != null && strict.RubricScoreSummary.Any(r => string.IsNullOrEmpty(r.RubricItem)))
+                    {
+                        var rootForFix = JsonConvert.DeserializeObject<JObject>(cleaned);
+                        var rArr = rootForFix?["rubric_score_summary"] as JArray;
+                        if (rArr != null)
+                        {
+                            strict.RubricScoreSummary = rArr.Select(r => new RubricScoreSummary
+                            {
+                                RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
+                                ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
+                                ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("observed_at"),
+                                Score = r.Value<float?>("score") ?? 0
+                            }).ToList();
+                        }
+                    }
                     return strict;
                 }
             }
-            catch(Exception ex) { return null; }
+            catch (Exception ex) { return null; }
 
             try
             {
@@ -320,10 +335,10 @@ namespace Risebird.Services.Controllers
                 {
                     eval.RubricScoreSummary = rNode.Select(r => new RubricScoreSummary
                     {
-                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("item"),
-                        ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected"),
-                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed"),
-                        Score = r.Value<int?>("score") ?? 0
+                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
+                        ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
+                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("observed_at"),
+                        Score = r.Value<float?>("score") ?? 0
                     }).ToList();
                 }
 
