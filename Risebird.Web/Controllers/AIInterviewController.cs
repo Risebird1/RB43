@@ -2279,6 +2279,21 @@ namespace Risebird.Web.Controllers
                      !string.IsNullOrEmpty(strict.FinalVerdict) || !string.IsNullOrEmpty(strict.FinalComment) ||
                      strict.OverallTechnicalScore != 0 || strict.OverallCommunicationScore != 0))
                 {
+                    if (strict.RubricScoreSummary != null && strict.RubricScoreSummary.Any(r => string.IsNullOrEmpty(r.RubricItem)))
+                    {
+                        var rootForFix = JsonConvert.DeserializeObject<JObject>(cleaned);
+                        var rArr = rootForFix?["rubric_score_summary"] as JArray;
+                        if (rArr != null)
+                        {
+                            strict.RubricScoreSummary = rArr.Select(r => new RubricScoreSummary
+                            {
+                                RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
+                                ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
+                                ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("observed_at"),
+                                Score = r.Value<float?>("score") ?? 0
+                            }).ToList();
+                        }
+                    }
                     return strict;
                 }
             }
@@ -2317,10 +2332,10 @@ namespace Risebird.Web.Controllers
                 {
                     eval.RubricScoreSummary = rNode.Select(r => new RubricScoreSummary
                     {
-                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("item"),
-                        ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected"),
-                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed"),
-                        Score = r.Value<int?>("score") ?? 0
+                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
+                        ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
+                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("observed_at"),
+                        Score = r.Value<float?>("score") ?? 0
                     }).ToList();
                 }
 
