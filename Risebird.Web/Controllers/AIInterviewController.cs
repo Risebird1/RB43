@@ -1695,7 +1695,9 @@ namespace Risebird.Web.Controllers
                 reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
                 //reportModel.chatMessageViewModel = chatMessageModel; 
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
+                EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
+                ViewBag.RawAIReply = aiReport?.Replies?.FirstOrDefault();
                 ViewBag.IsAdaptive = false;
                 List<TypingSpeedAssessment> typingAssessments;
                 try { typingAssessments = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessments = new List<TypingSpeedAssessment>(); }
@@ -1835,6 +1837,7 @@ namespace Risebird.Web.Controllers
                 //reportModel.chatMessageViewModel = chatMessageModel;
 
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault()); //JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
+                EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = true;
                 List<TypingSpeedAssessment> typingAssessmentsAdaptive;
@@ -2106,6 +2109,7 @@ namespace Risebird.Web.Controllers
                 var reportModel = new AIInterviewReportWrapperClass();
                 reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
+                EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
                 reportModel.CandidateEmail = meetingDetails?.candidateEmail;
                 reportModel.CandidateName = meetingDetails?.candidateName;
                 reportModel.InterviewDate = meetingDetails?.interviewDate ?? DateTime.MinValue;
@@ -2262,6 +2266,31 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        private void EnrichQuestionRatingsWithActualQuestions(AIInterviewEvaluation evaluation, List<BotInterviewQuestionVideos> videoDetails)
+        {
+            if (evaluation?.QuestionRatings == null || videoDetails == null || !videoDetails.Any())
+                return;
+
+            for (int i = 0; i < evaluation.QuestionRatings.Count; i++)
+            {
+                var qr = evaluation.QuestionRatings[i];
+                if (string.IsNullOrWhiteSpace(qr.Question) || System.Text.RegularExpressions.Regex.IsMatch(qr.Question, @"^Q\d+$"))
+                {
+                    int index = -1;
+                    var match = System.Text.RegularExpressions.Regex.Match(qr.Question ?? "", @"\d+");
+                    if (match.Success)
+                        index = int.Parse(match.Value) - 1;
+                    else
+                        index = i;
+
+                    if (index >= 0 && index < videoDetails.Count && !string.IsNullOrWhiteSpace(videoDetails[index].question))
+                    {
+                        qr.Question = videoDetails[index].question;
+                    }
+                }
+            }
+        }
+
         private AIInterviewEvaluation TryParseEvaluation(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw)) return null;
@@ -2279,9 +2308,10 @@ namespace Risebird.Web.Controllers
                      !string.IsNullOrEmpty(strict.FinalVerdict) || !string.IsNullOrEmpty(strict.FinalComment) ||
                      strict.OverallTechnicalScore != 0 || strict.OverallCommunicationScore != 0))
                 {
+                    var rootForFix = JsonConvert.DeserializeObject<JObject>(cleaned);
+
                     if (strict.RubricScoreSummary != null && strict.RubricScoreSummary.Any(r => string.IsNullOrEmpty(r.RubricItem)))
                     {
-                        var rootForFix = JsonConvert.DeserializeObject<JObject>(cleaned);
                         var rArr = rootForFix?["rubric_score_summary"] as JArray;
                         if (rArr != null)
                         {
@@ -2294,6 +2324,48 @@ namespace Risebird.Web.Controllers
                             }).ToList();
                         }
                     }
+
+                    if (strict.QuestionRatings == null && rootForFix != null)
+                    {
+                        var qArr = (JArray)(rootForFix["question_ratings"] ?? rootForFix["questions"] ?? rootForFix["questionRatings"] ?? rootForFix["question_evaluations"]);
+                        if (qArr != null)
+                        {
+                            strict.QuestionRatings = qArr.Select(q => new QuestionRating
+                            {
+                                Question = q.Value<string>("question") ?? q.Value<string>("text") ?? q.Value<string>("question_id"),
+                                Verdict = q.Value<string>("verdict") ?? q.Value<string>("evaluation_summary"),
+                                Score = q.Value<int?>("score") ?? 0,
+                                Comment = q.Value<string>("comment") ?? q.Value<string>("evaluation_summary"),
+                                CommunicationScore = q.Value<int?>("communication_score") ?? 0,
+                                CommunicationComment = q.Value<string>("communication_comment")
+                            }).ToList();
+                        }
+                    }
+
+                    if (strict.RubricScoreSummary == null && rootForFix != null)
+                    {
+                        var rArr = (JArray)(rootForFix["rubric_score_summary"] ?? rootForFix["category_scores"] ?? rootForFix["rubric_summary"] ?? rootForFix["rubric"]);
+                        if (rArr != null)
+                        {
+                            strict.RubricScoreSummary = rArr.Select(r => new RubricScoreSummary
+                            {
+                                RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("score_rubric_parameter") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
+                                ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
+                                ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("summary"),
+                                Score = r.Value<float?>("score") ?? r.Value<float?>("average_score") ?? 0
+                            }).ToList();
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(strict.FinalVerdict) && rootForFix != null)
+                    {
+                        strict.FinalVerdict = rootForFix.Value<string>("final_verdict") ?? rootForFix.Value<string>("verdict") ?? rootForFix.Value<string>("overall_recommendation");
+                    }
+                    if (string.IsNullOrEmpty(strict.FinalComment) && rootForFix != null)
+                    {
+                        strict.FinalComment = rootForFix.Value<string>("final_comment") ?? rootForFix.Value<string>("comment") ?? rootForFix.Value<string>("overall_summary");
+                    }
+
                     return strict;
                 }
             }
@@ -2307,35 +2379,35 @@ namespace Risebird.Web.Controllers
                 var eval = new AIInterviewEvaluation
                 {
                     OverallTechnicalScore = root.Value<int?>("overall_technical_score") ?? root.Value<int?>("overall_score") ?? 0,
-                    FinalVerdict = root.Value<string>("final_verdict") ?? root.Value<string>("verdict"),
-                    FinalComment = root.Value<string>("final_comment") ?? root.Value<string>("comment"),
+                    FinalVerdict = root.Value<string>("final_verdict") ?? root.Value<string>("verdict") ?? root.Value<string>("overall_recommendation"),
+                    FinalComment = root.Value<string>("final_comment") ?? root.Value<string>("comment") ?? root.Value<string>("overall_summary"),
                     OverallCommunicationScore = root.Value<int?>("overall_communication_score") ?? root.Value<int?>("communication_score") ?? 0,
                     OverallCommunicationScoreReasoning = root.Value<string>("overall_communication_score reasoning") ?? root.Value<string>("overall_communication_score_reasoning")
                 };
 
-                var qNode = (JArray)(root["question_ratings"] ?? root["questions"] ?? root["questionRatings"]);
+                var qNode = (JArray)(root["question_ratings"] ?? root["questions"] ?? root["questionRatings"] ?? root["question_evaluations"]);
                 if (qNode != null)
                 {
                     eval.QuestionRatings = qNode.Select(q => new QuestionRating
                     {
-                        Question = q.Value<string>("question") ?? q.Value<string>("text"),
-                        Verdict = q.Value<string>("verdict"),
+                        Question = q.Value<string>("question") ?? q.Value<string>("text") ?? q.Value<string>("question_id"),
+                        Verdict = q.Value<string>("verdict") ?? q.Value<string>("evaluation_summary"),
                         Score = q.Value<int?>("score") ?? 0,
-                        Comment = q.Value<string>("comment"),
+                        Comment = q.Value<string>("comment") ?? q.Value<string>("evaluation_summary"),
                         CommunicationScore = q.Value<int?>("communication_score") ?? 0,
                         CommunicationComment = q.Value<string>("communication_comment")
                     }).ToList();
                 }
 
-                var rNode = (JArray)(root["rubric_score_summary"] ?? root["rubric_summary"] ?? root["rubric"]);
+                var rNode = (JArray)(root["rubric_score_summary"] ?? root["rubric_summary"] ?? root["rubric"] ?? root["category_scores"]);
                 if (rNode != null)
                 {
                     eval.RubricScoreSummary = rNode.Select(r => new RubricScoreSummary
                     {
-                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
+                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("score_rubric_parameter") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
                         ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
-                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("observed_at"),
-                        Score = r.Value<float?>("score") ?? 0
+                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("summary"),
+                        Score = r.Value<float?>("score") ?? r.Value<float?>("average_score") ?? 0
                     }).ToList();
                 }
 
