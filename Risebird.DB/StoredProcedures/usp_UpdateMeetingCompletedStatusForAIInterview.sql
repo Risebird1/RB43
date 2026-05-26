@@ -36,6 +36,13 @@ begin
     end
 end
 
+-- Ensure InterviewComments row exists before attempting update
+IF NOT EXISTS (SELECT 1 FROM InterviewComments WHERE InterviewId = @interviewId)
+BEGIN
+    INSERT INTO InterviewComments (InterviewId, MeetingStatus, CreatedOn)
+    VALUES (@interviewId, 2, ISNULL(@timeNow, GETDATE()))
+END
+
 update InterviewComments set MeetingStatus = 4, ModifiedOn = @timeNow, ModifiedBy = @ModifiedBy  where InterviewId  = @interviewId
 
 END
