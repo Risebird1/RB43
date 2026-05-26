@@ -1,0 +1,53 @@
+@model List<Risebird.Entities.ViewModel.WalletVM>
+
+<div class="wallet-history-panel">
+    <p class="text-muted" style="font-size:13px;margin-bottom:12px;">
+        Overall cash credit additions posted to wallet (all periods).
+    </p>
+    @if (Model != null && Model.Any())
+    {
+        var totalCash = Model.Sum(x => x.Credit);
+        <div style="margin-bottom:12px;">
+            <span class="badge badge-success">Total Cash Added: &#8377;@totalCash.ToString("N0")</span>
+            <span class="badge badge-secondary">@Model.Count entries</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-sm journey">
+                <thead>
+                    <tr>
+                        <th>Transaction Date</th>
+                        <th>Reference</th>
+                        @if ((int)ViewBag.BillingType == 1) { <th>Billing Owner</th> }
+                        <th>Linked PO</th>
+                        <th class="text-right">Amount</th>
+                        <th>Type</th>
+                        <th>Added By</th>
+                        <th>Wallet Entry Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@(item.TransactionDate?.ToString("dd MMM yyyy") ?? "—")</td>
+                            <td>@(string.IsNullOrEmpty(item.TransactionRefNumber) ? "—" : item.TransactionRefNumber)</td>
+                            @if ((int)ViewBag.BillingType == 1)
+                            {
+                                <td>@(string.IsNullOrEmpty(item.BillingOwnerEmail) ? "—" : item.BillingOwnerEmail)</td>
+                            }
+                            <td>@(string.IsNullOrEmpty(item.PONumber) ? "—" : item.PONumber)</td>
+                            <td class="text-right">&#8377; @item.Credit.ToString("N0")</td>
+                            <td>@item.TransactionType</td>
+                            <td>@item.CreatedBy</td>
+                            <td>@(item.CreatedOn?.ToString("dd MMM yyyy HH:mm") ?? "—")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">No cash credit history found for this client.</div>
+    }
+</div>
