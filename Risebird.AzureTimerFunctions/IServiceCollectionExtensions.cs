@@ -178,6 +178,9 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
             services.AddScoped<ITranscriptOptimizationHelper, TranscriptOptimizationHelper>();
             services.AddScoped<IReportQCOptimizationHelper, ReportQCOptimizationHelper>();
+            services.AddScoped<ICashfreePayoutService, CashfreePayoutService>();
+            services.AddScoped<IWalletService, WalletService>();
+            services.AddScoped<IWalletRepository, WalletRepository>();
             return services;
         }
     }
