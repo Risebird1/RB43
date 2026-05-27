@@ -2163,6 +2163,70 @@
 
 
 
+    function formatVoiceTime(seconds) {
+        if (!isFinite(seconds) || seconds < 0) return '0:00';
+        var m = Math.floor(seconds / 60);
+        var s = Math.floor(seconds % 60);
+        return m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function initDmV4VoiceHero() {
+        var audio = document.getElementById('dmV4VoiceAudio');
+        var $playBtn = $('#dmV4VoicePlayBtn');
+        var $time = $('#dmV4VoiceTime');
+        var $wave = $('#dmV4VoiceWaveform');
+        if (!audio || !$playBtn.length) return;
+
+        var $bars = $wave.find('.dm-v4-voice-waveform__bar');
+        var playedCount = 0;
+
+        function syncWaveProgress() {
+            if (!audio.duration) return;
+            var ratio = audio.currentTime / audio.duration;
+            playedCount = Math.floor(ratio * $bars.length);
+            $bars.each(function (i) {
+                $(this).toggleClass('is-played', i < playedCount);
+            });
+        }
+
+        function updateTimeLabel() {
+            var cur = formatVoiceTime(audio.currentTime);
+            var dur = audio.duration ? formatVoiceTime(audio.duration) : '—';
+            $time.text(cur + ' / ' + dur);
+            var $badge = $('#dmV4VoiceRecordedBadge');
+            if ($badge.length && audio.duration) {
+                $badge.text('RECORDED · ' + dur);
+            }
+        }
+
+        audio.addEventListener('loadedmetadata', function () {
+            updateTimeLabel();
+            syncWaveProgress();
+        });
+        audio.addEventListener('timeupdate', function () {
+            updateTimeLabel();
+            syncWaveProgress();
+        });
+        audio.addEventListener('ended', function () {
+            $playBtn.removeClass('is-playing');
+            playedCount = 0;
+            $bars.removeClass('is-played');
+            updateTimeLabel();
+        });
+
+        $playBtn.on('click', function () {
+            if (audio.paused) {
+                audio.play();
+                $playBtn.addClass('is-playing');
+            } else {
+                audio.pause();
+                $playBtn.removeClass('is-playing');
+            }
+        });
+
+        updateTimeLabel();
+    }
+
     window.applyDmV4Layout = function applyDmV4Layout() {
 
         moveLevelFormat();
@@ -2182,6 +2246,8 @@
         initDmV4Collapses();
 
         initAdvancedV4();
+
+        initDmV4VoiceHero();
 
         if (typeof window.dmV4InitQuestions === 'function') {
             window.dmV4InitQuestions();

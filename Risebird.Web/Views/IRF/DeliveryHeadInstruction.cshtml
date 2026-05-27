@@ -117,7 +117,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20240529v" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20240527v6" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -223,37 +223,106 @@
 
                                 <div class="dm-v4-content col-md-12 pull-left pad10" style="padding-bottom:0;">
 
-                                    @* 1 · Voice brief (always visible) *@
+                                    @* 1 · Voice brief (V4 hero — existing record / playback flow) *@
+                                    @{
+                                        var dmV4HasVoice = !string.IsNullOrEmpty(Model.AudioComment);
+                                        var dmV4HasTranscript = !string.IsNullOrWhiteSpace(Model.VoiceInstructionTranscript);
+                                    }
                                     <div class="col-md-12 pull-left pad10 dm-v4-block dm-v4-block--order-voice" style="padding:0;">
                                         <section class="dm-v4-section dm-v4-section--pinned">
-                                            <div class="dm-v4-section__head">
-                                                <h2>Voice instructions</h2>
-                                                <p>Record context for the interviewer panel. Uses your existing voice recording flow.</p>
-                                            </div>
-                                            <div class="dm-v4-voice-hero">
+                                            <div class="dm-v4-voice-hero" id="dmV4VoiceHero">
+                                                <div class="dm-v4-voice-hero__blob" aria-hidden="true"></div>
                                                 <div class="dm-v4-voice-hero__inner">
                                                     <button type="button" class="dm-v4-voice-record-btn" onclick="OpenVoiceRecordingModal(@Model.id)" title="Record voice instructions" aria-label="Record voice instructions">
-                                                        <i class="fa fa-microphone" style="font-size:22px;"></i>
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22" aria-hidden="true">
+                                                            <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" />
+                                                            <path d="M5 11a7 7 0 0014 0M12 18v3M9 21h6" stroke-linecap="round" />
+                                                        </svg>
                                                     </button>
-                                                    <div style="flex:1;min-width:0;">
-                                                        <div class="dm-v4-voice-hero__badges">
+                                                    <div class="dm-v4-voice-hero__main">
+                                                        <div class="dm-v4-voice-hero__title-row">
+                                                            <span class="dm-v4-voice-hero__title">Voice instructions</span>
                                                             <span class="dm-v4-badge dm-v4-badge--indigo">PLAYS BEFORE INTERVIEW</span>
-                                                            @if (!string.IsNullOrEmpty(Model.AudioComment))
+                                                            @if (dmV4HasVoice)
                                                             {
-                                                                <span class="dm-v4-badge dm-v4-badge--recorded">RECORDED</span>
+                                                                <span class="dm-v4-badge dm-v4-badge--green" id="dmV4VoiceRecordedBadge">RECORDED</span>
                                                             }
                                                         </div>
-                                                        <div class="dm-v4-voice-hero__copy">
-                                                            Record expectations and edge-cases interviewers should hear before this candidate. Re-use the recording for rubric and sample-question setup when ready.
+                                                        <p class="dm-v4-voice-hero__copy">
+                                                            Record context, expectations and edge-cases the interviewer panel should hear before this candidate. We'll transcribe automatically — you can re-use the transcript to seed the rubric or sample questions.
+                                                        </p>
+                                                        @if (dmV4HasVoice)
+                                                        {
+                                                            <audio id="dmV4VoiceAudio" preload="metadata" src="@Model.AudioComment" style="display:none;"></audio>
+                                                        }
+                                                        <div class="dm-v4-voice-preview-grid@(dmV4HasVoice ? "" : " dm-v4-voice-preview-grid--empty")">
+                                                            <div class="dm-v4-voice-preview-card dm-v4-voice-preview-card--recording">
+                                                                <div class="dm-v4-voice-preview-card__head">
+                                                                    <span class="dm-v4-voice-preview-card__label">Recording</span>
+                                                                    @if (dmV4HasVoice)
+                                                                    {
+                                                                        <span class="dm-v4-voice-preview-card__meta" id="dmV4VoiceTime">0:00 / —</span>
+                                                                    }
+                                                                </div>
+                                                                @if (dmV4HasVoice)
+                                                                {
+                                                                    <div class="dm-v4-voice-wave-row">
+                                                                        <button type="button" class="dm-v4-voice-play-btn" id="dmV4VoicePlayBtn" aria-label="Play recording">
+                                                                            <svg class="dm-v4-voice-play-icon dm-v4-voice-play-icon--play" viewBox="0 0 12 12" fill="currentColor" width="8" height="8" aria-hidden="true"><path d="M3 2l6 4-6 4V2z" /></svg>
+                                                                            <svg class="dm-v4-voice-play-icon dm-v4-voice-play-icon--pause" viewBox="0 0 12 12" fill="currentColor" width="8" height="8" aria-hidden="true"><path d="M3 2h2v8H3V2zm4 0h2v8H7V2z" /></svg>
+                                                                        </button>
+                                                                        <div class="dm-v4-voice-waveform" id="dmV4VoiceWaveform" aria-hidden="true">
+                                                                            @for (var dmV4Bar = 0; dmV4Bar < 64; dmV4Bar++)
+                                                                            {
+                                                                                var dmV4BarH = 6 + (int)(Math.Abs(Math.Sin(dmV4Bar * 0.5) * Math.Sin(dmV4Bar * 0.18)) * 28) + (dmV4Bar % 3 == 0 ? 4 : 0);
+                                                                                <span class="dm-v4-voice-waveform__bar" style="height:@(dmV4BarH)px" data-bar="@dmV4Bar"></span>
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <p class="dm-v4-voice-preview-card__empty">No recording yet. Use the mic button or Record below.</p>
+                                                                }
+                                                            </div>
+                                                            <div class="dm-v4-voice-preview-card dm-v4-voice-preview-card--transcript" id="dmV4VoiceTranscriptWrap">
+                                                                <div class="dm-v4-voice-preview-card__head">
+                                                                    <span class="dm-v4-voice-preview-card__label">Transcript</span>
+                                                                    <span class="dm-v4-badge dm-v4-badge--indigo">WHISPER</span>
+                                                                </div>
+                                                                <p class="dm-v4-voice-transcript__empty" id="dmV4VoiceTranscriptEmpty" @(dmV4HasTranscript ? "hidden" : "")>Record voice instructions to transcribe automatically, or type a brief below.</p>
+                                                                <textarea class="dm-v4-voice-transcript__input" id="dmV4VoiceTranscriptInput" rows="5" placeholder="Transcript appears here after recording. Edit and save — this text seeds rubric and sample questions.">@(Model.VoiceInstructionTranscript ?? "")</textarea>
+                                                                <p class="dm-v4-voice-transcript__meta" id="dmV4VoiceTranscriptMeta" data-updated-on="@(Model.VoiceInstructionTranscriptUpdatedOn?.ToString("o") ?? "")" @(dmV4HasTranscript ? "" : "style=\"display:none\"")>
+                                                                    @if (dmV4HasTranscript && Model.VoiceInstructionTranscriptUpdatedOn.HasValue)
+                                                                    {
+                                                                        <text>Last saved @Model.VoiceInstructionTranscriptUpdatedOn.Value.ToLocalTime().ToString("g")</text>
+                                                                    }
+                                                                    else if (dmV4HasTranscript)
+                                                                    {
+                                                                        <text>Edit and save to set the canonical brief for AI generation.</text>
+                                                                    }
+                                                                </p>
+                                                                <div class="dm-v4-voice-transcript__actions">
+                                                                    <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4SaveTranscriptBtn">Save transcript</button>
+                                                                    @if (dmV4HasVoice)
+                                                                    {
+                                                                        <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4RetranscribeBtn" title="Re-run speech-to-text on the saved recording">Re-transcribe</button>
+                                                                    }
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         <div class="dm-v4-voice-hero__actions">
-                                                            <button type="button" class="dm-v4-btn dm-v4-btn--primary" onclick="OpenVoiceRecordingModal(@Model.id)"><i class="fa fa-microphone"></i> Record / manage</button>
-                                                            @if (!string.IsNullOrEmpty(Model.AudioComment))
+                                                            @if (dmV4HasVoice)
                                                             {
-                                                                <video id="vidvoicebriefpreview" controls="controls" preload="metadata" style="max-width:100%;margin-top:8px;border-radius:8px;">
-                                                                    <source src="@Model.AudioComment" type="video/mp4" />
-                                                                </video>
+                                                                <span class="dm-v4-voice-hero__actions-spacer" aria-hidden="true"></span>
+                                                                <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" onclick="OpenVoiceRecordingModal(@Model.id)">Re-record</button>
                                                             }
+                                                            else
+                                                            {
+                                                                <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" onclick="OpenVoiceRecordingModal(@Model.id)"><i class="fa fa-microphone"></i> Record instructions</button>
+                                                            }
+                                                            <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4GenerateRubricFromVoiceBtn" @(dmV4HasTranscript ? "" : "disabled") title="Generate score rubric from saved transcript"><i class="fa fa-magic"></i> Rubric from voice</button>
+                                                            <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4GenerateQuestionsFromVoiceBtn" @(dmV4HasTranscript ? "" : "disabled") title="Generate sample questions using transcript + rubric"><i class="fa fa-magic"></i> Questions from voice</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1654,56 +1723,117 @@
     </div>
 </aside>
 
-<div id="VoiceRecordingModal" class="modal modal-bg">
-    <!-- Modal content -->
+<div id="VoiceRecordingModal" class="modal modal-bg dm-v4-voice-modal" role="dialog" aria-labelledby="dmV4VoiceModalTitle" aria-modal="true">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span class="fa fa-file-audio-o" style="font-size:24px;"></span>
-                </div>
-                <h5 class="modal-title pull-left">Record Audio</h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true" style="cursor:pointer;" onclick="closeVoiceRecordingModal(@Model.id)">&times;</span>
-            </button>
-            <div class="modal-body">
-                <div class="row" id="divIRFaudioRecording">
-                </div>
-            </div>
-            <div class="modal-body">
-                <div id="playUploadedAudioTwo">
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="multiple_row">
-                                <h2>Uploaded Feedback Audio</h2>
-                            </div><!--end of multiple location-->
-                        </div><!--end of col-md-12-->
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="table-responsive-sm">
-                                <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
-                                    <thead>
-                                        <tr>
-                                            <th width="30%">File</th>
-                                            <th width="35%">Play</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <a id="anchorAudioId" asp-append-version="true" download>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <audio id="controlAudioId" asp-append-version="true" controls></audio>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div><!--end of col-md-12-->
+        <div class="modal-content dm-v4-voice-modal__content">
+            <div class="dm-v4-voice-modal__blob" aria-hidden="true"></div>
+            <div class="dm-v4-voice-modal__head">
+                <div class="dm-v4-voice-modal__head-main">
+                    <div class="dm-v4-voice-modal__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                            <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" />
+                            <path d="M5 11a7 7 0 0014 0M12 18v3M9 21h6" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="dm-v4-voice-modal__head-text">
+                        <div class="dm-v4-voice-modal__eyebrow">Voice instructions</div>
+                        <h5 class="dm-v4-voice-modal__title" id="dmV4VoiceModalTitle">Record audio brief</h5>
                     </div>
                 </div>
+                <button type="button" class="dm-v4-voice-modal__close" aria-label="Close" onclick="closeVoiceRecordingModal(@Model.id)">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round" /></svg>
+                </button>
+            </div>
+            <div class="modal-body dm-v4-voice-modal__body">
+                <ul class="dm-v4-voice-modal__steps" aria-label="Recording steps">
+                    <li><span class="dm-v4-voice-modal__step-num">1</span> Allow microphone access</li>
+                    <li><span class="dm-v4-voice-modal__step-num">2</span> Record your brief</li>
+                    <li><span class="dm-v4-voice-modal__step-num">3</span> Stop to upload automatically</li>
+                </ul>
+                <div class="dm-v4-voice-modal__studio">
+                    <div id="divIRFaudioRecording" class="dm-v4-voice-recorder" data-irf-id="@Model.id">
+                        <div class="dm-v4-voice-recorder__idle" id="dmV4RecorderIdle">
+                            <div class="dm-v4-voice-recorder__start-zone">
+                                <div class="dm-v4-voice-recorder__mic-wrap">
+                                    <span class="dm-v4-voice-recorder__pulse" aria-hidden="true"></span>
+                                    <button type="button" class="dm-v4-voice-record-btn dm-v4-voice-record-btn--modal" id="startRecButton" onclick="startRecording()" title="Start recording" aria-label="Start recording">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" aria-hidden="true">
+                                            <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" />
+                                            <path d="M5 11a7 7 0 0014 0M12 18v3M9 21h6" stroke-linecap="round" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <span class="dm-v4-voice-recorder__start-label">Record</span>
+                            </div>
+                            <p class="dm-v4-voice-recorder__hint">Tap Record to capture your voice brief</p>
+                            <p class="dm-v4-voice-recorder__subhint">Plays for interviewers before each session on this skill channel.</p>
+                        </div>
+                        <div class="dm-v4-voice-preview-card dm-v4-voice-recorder__live" id="dmV4RecorderLive" hidden>
+                            <div class="dm-v4-voice-recorder__transport">
+                                <div class="dm-v4-voice-recorder__toolbar">
+                                    <div class="dm-v4-voice-recorder__toolbar-meta">
+                                        <span class="dm-v4-voice-recorder__rec-pill"><span class="dm-v4-voice-recorder__rec-dot" aria-hidden="true"></span> Recording</span>
+                                        <span class="dm-v4-voice-recorder__timer" id="dmV4RecorderTimer" aria-label="Elapsed time">0:00</span>
+                                    </div>
+                                    <button type="button" class="dm-v4-voice-stop-btn dm-v4-voice-stop-btn--toolbar" id="stopRecButton" onclick="stopIRFRecording(@Model.id)" title="Stop and save" disabled aria-label="Stop recording">
+                                        <span class="dm-v4-voice-stop-btn__sq" aria-hidden="true"></span>
+                                        <span class="dm-v4-voice-stop-btn__label">Stop</span>
+                                    </button>
+                                </div>
+                                <div class="dm-v4-voice-recorder__wave-track" aria-hidden="true">
+                                    <div class="dm-v4-voice-waveform dm-v4-voice-waveform--live" id="dmV4RecorderWaveform">
+                                        @for (var dmV4RecBar = 0; dmV4RecBar < 48; dmV4RecBar++)
+                                        {
+                                            var dmV4RecH = 6 + (int)(Math.Abs(Math.Sin(dmV4RecBar * 0.55) * Math.Sin(dmV4RecBar * 0.2)) * 24) + (dmV4RecBar % 4 == 0 ? 3 : 0);
+                                            <span class="dm-v4-voice-waveform__bar" style="height:@(dmV4RecH)px" data-i="@dmV4RecBar"></span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dm-v4-voice-recorder__live-actions">
+                                <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="cancelRecButton" onclick="cancelRecording()" title="Cancel recording" disabled>Discard take</button>
+                            </div>
+                        </div>
+                        <p class="dm-v4-voice-recorder__status" id="recordingStatus" role="status" aria-live="polite" hidden></p>
+                        <div class="row" id="recordingRow" style="display:none">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div id="recordingsList" class="dm-v4-voice-recorder__preview-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="playUploadedAudioTwo" class="dm-v4-voice-modal__saved dm-v4-voice-modal__saved--empty">
+                    <div class="dm-v4-voice-preview-card dm-v4-voice-modal__saved-card">
+                        <div class="dm-v4-voice-preview-card__head">
+                            <span class="dm-v4-voice-preview-card__label">Current upload</span>
+                            <span class="dm-v4-badge dm-v4-badge--green">ON FILE</span>
+                        </div>
+                        <div class="dm-v4-voice-modal__saved-player">
+                            <audio id="controlAudioId" class="dm-v4-voice-modal__saved-audio" asp-append-version="true" controls preload="metadata"></audio>
+                        </div>
+                        <a id="anchorAudioId" class="dm-v4-voice-modal__file-link" asp-append-version="true" download>
+                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12" aria-hidden="true"><path d="M8 2v8M5 8l3 3 3-3M3 13h10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                            <span class="dm-v4-voice-modal__file-name"></span>
+                        </a>
+                    </div>
+                    <p class="dm-v4-voice-modal__saved-empty-msg">No file uploaded yet. Record above to replace any previous brief.</p>
+                </div>
+                <div class="dm-v4-voice-modal__transcript" id="dmV4ModalTranscriptSection" style="display:none;">
+                    <div class="dm-v4-voice-preview-card dm-v4-voice-preview-card--transcript">
+                        <div class="dm-v4-voice-preview-card__head">
+                            <span class="dm-v4-voice-preview-card__label">Transcript</span>
+                            <span class="dm-v4-badge dm-v4-badge--indigo">EDIT &amp; SAVE</span>
+                        </div>
+                        <textarea class="dm-v4-voice-transcript__input" id="dmV4ModalTranscriptInput" rows="6" placeholder="Transcription will appear here after you stop recording…"></textarea>
+                        <div class="dm-v4-voice-transcript__actions">
+                            <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4ModalSaveTranscriptBtn">Save transcript</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dm-v4-voice-modal__foot">
+                <p class="dm-v4-voice-modal__foot-hint">Close this dialog to refresh the voice brief on the page.</p>
+                <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" onclick="closeVoiceRecordingModal(@Model.id)">Done</button>
             </div>
         </div>
     </div>
@@ -2251,46 +2381,199 @@
         });
     });
 
+    function dmV4SetVoiceModalSavedLink(url) {
+        var $saved = $('#playUploadedAudioTwo');
+        var anchor = document.getElementById('anchorAudioId');
+        var audio = document.getElementById('controlAudioId');
+        if (!url || !String(url).trim()) {
+            $saved.addClass('dm-v4-voice-modal__saved--empty');
+            if (anchor) {
+                anchor.removeAttribute('href');
+                var nameEl = anchor.querySelector('.dm-v4-voice-modal__file-name');
+                if (nameEl) nameEl.textContent = '';
+            }
+            if (audio) audio.removeAttribute('src');
+            return;
+        }
+        $saved.removeClass('dm-v4-voice-modal__saved--empty');
+        if (audio) audio.src = url;
+        if (anchor) {
+            anchor.href = url;
+            var fileName = url.split('/').pop() || 'audio';
+            var nameEl = anchor.querySelector('.dm-v4-voice-modal__file-name');
+            if (nameEl) nameEl.textContent = fileName;
+        }
+    }
+
+    function dmV4SetRecordingStatus(message, state) {
+        var el = document.getElementById('recordingStatus');
+        if (!el) return;
+        var base = 'dm-v4-voice-recorder__status';
+        el.className = base + (state ? ' ' + base + '--' + state : '');
+        if (message) {
+            el.textContent = message;
+            el.hidden = false;
+        } else {
+            el.textContent = '';
+            el.hidden = true;
+        }
+    }
+
+    function dmV4ResetVoiceRecorderUi() {
+        var $root = $('#divIRFaudioRecording');
+        $root.removeClass('is-recording is-uploading');
+        $('#dmV4RecorderIdle').prop('hidden', false);
+        $('#dmV4RecorderLive').prop('hidden', true);
+        $('#dmV4RecorderWaveform').removeClass('is-active');
+        $('#dmV4RecorderTimer').text('0:00');
+        dmV4SetRecordingStatus('', null);
+        var startBtn = document.getElementById('startRecButton');
+        var stopBtn = document.getElementById('stopRecButton');
+        var cancelBtn = document.getElementById('cancelRecButton');
+        if (startBtn) startBtn.disabled = false;
+        if (stopBtn) stopBtn.disabled = true;
+        if (cancelBtn) cancelBtn.disabled = true;
+        if (window.dmV4VoiceRecorderTimerStop) window.dmV4VoiceRecorderTimerStop();
+    }
+
     function OpenVoiceRecordingModal(irfid) {
+        dmV4ResetVoiceRecorderUi();
+        $('#divIRFaudioRecording').attr('data-irf-id', irfid);
+        var stopBtn = document.getElementById('stopRecButton');
+        if (stopBtn) stopBtn.setAttribute('onclick', 'stopIRFRecording(' + irfid + ')');
+        dmV4SetVoiceModalSavedLink('');
         $.ajax({
             type: "POST",
             url: "/IRF/FetchIRFAudioLink",
             data: { 'irfid': irfid },
             success: function (data) {
-                document.getElementById('anchorAudioId').href = data;
-                splitData = data.split("/");
-                document.getElementById('anchorAudioId').innerHTML = splitData[splitData.length - 1];
-                document.getElementById('controlAudioId').src = data;
+                dmV4SetVoiceModalSavedLink(data || '');
             }
         });
-        var modalBct = document.getElementById("VoiceRecordingModal");
-        modalBct.style.display = "block";
-        var html = '';
-        html += '<div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">';
-        html += '<div class="pull-left"><button style="margin-top:20px;" id="startRecButton" onclick="startRecording()" title="Start Recording"><i class="fa fa-play" ></i></button></div>';
-        html += '<div class="pull-left"><button style="margin-top:20px;" id="stopRecButton" type="button" onclick="stopIRFRecording(' + irfid + ')" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>';
-        html += '<div class="pull-left"><button style="margin-top:20px;" id="cancelRecButton" type="button" onclick="cancelRecording()" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>';
-        html += '   </div>';
-        html += '<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">';
-        html += '<div class="row">';
-        html += '   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">';
-        html += '       <p style="font-size:18px" id="recordingStatus"></p>';
-        html += '   </div>';
-        html += '</div>';
-        html += '<div class="row" id="recordingRow" style="display:none">';
-        html += '   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">';
-        html += '       <div id="recordingsList"></div>';
-        html += '   </div>';
-        html += '</div>';
-        html += '</div>';
-        $("#divIRFaudioRecording").empty().html(html);
+        if (typeof dmV4RefreshVoiceBrief === 'function') {
+            dmV4RefreshVoiceBrief(irfid);
+        }
+        document.getElementById("VoiceRecordingModal").style.display = "block";
+        document.body.classList.add('dm-v4-voice-modal-open');
     }
+
     function closeVoiceRecordingModal(irfid) {
-        var modalBct = document.getElementById("VoiceRecordingModal");
-        modalBct.style.display = "none";
-        cancelRecording();
-        location.reload();
+        document.getElementById("VoiceRecordingModal").style.display = "none";
+        document.body.classList.remove('dm-v4-voice-modal-open');
+        try { cancelRecording(); } catch (e) { }
+        dmV4ResetVoiceRecorderUi();
+        if (typeof dmV4RefreshVoiceBrief === 'function') {
+            dmV4RefreshVoiceBrief(irfid);
+        } else {
+            location.reload();
+        }
     }
+
+    (function () {
+        if (window.dmV4VoiceRecorderHooksInstalled) return;
+        window.dmV4VoiceRecorderHooksInstalled = true;
+
+        var timerId = null;
+        var startedAt = 0;
+
+        function formatRecTime(sec) {
+            sec = Math.max(0, Math.floor(sec));
+            var m = Math.floor(sec / 60);
+            var s = sec % 60;
+            return m + ':' + (s < 10 ? '0' : '') + s;
+        }
+
+        window.dmV4VoiceRecorderTimerStop = function () {
+            if (timerId) {
+                clearInterval(timerId);
+                timerId = null;
+            }
+        };
+
+        function showLivePanel() {
+            $('#dmV4RecorderIdle').prop('hidden', true);
+            $('#dmV4RecorderLive').prop('hidden', false);
+            $('#divIRFaudioRecording').addClass('is-recording');
+            $('#dmV4RecorderWaveform').addClass('is-active');
+        }
+
+        function showIdlePanel() {
+            $('#dmV4RecorderIdle').prop('hidden', false);
+            $('#dmV4RecorderLive').prop('hidden', true);
+            $('#divIRFaudioRecording').removeClass('is-recording');
+            $('#dmV4RecorderWaveform').removeClass('is-active');
+            window.dmV4VoiceRecorderTimerStop();
+        }
+
+        function onRecordingStart() {
+            showLivePanel();
+            startedAt = Date.now();
+            $('#dmV4RecorderTimer').text('0:00');
+            window.dmV4VoiceRecorderTimerStop();
+            timerId = setInterval(function () {
+                $('#dmV4RecorderTimer').text(formatRecTime((Date.now() - startedAt) / 1000));
+            }, 250);
+            dmV4SetRecordingStatus('Recording in progress — speak clearly, then tap Stop', 'active');
+        }
+
+        function onRecordingEnd() {
+            window.dmV4VoiceRecorderTimerStop();
+            $('#divIRFaudioRecording').removeClass('is-recording');
+            $('#dmV4RecorderWaveform').removeClass('is-active');
+        }
+
+        var origStart = window.startRecording;
+        if (typeof origStart === 'function') {
+            window.startRecording = function () {
+                origStart.apply(this, arguments);
+                onRecordingStart();
+            };
+        }
+
+        var origStop = window.stopIRFRecording;
+        if (typeof origStop === 'function') {
+            window.stopIRFRecording = function (id) {
+                onRecordingEnd();
+                $('#divIRFaudioRecording').addClass('is-uploading');
+                origStop.apply(this, arguments);
+                dmV4SetRecordingStatus('Saving your recording…', 'uploading');
+            };
+        }
+
+        var origCancel = window.cancelRecording;
+        if (typeof origCancel === 'function') {
+            window.cancelRecording = function () {
+                if (typeof gumStream !== 'undefined' && gumStream) {
+                    try { origCancel.apply(this, arguments); } catch (e) { }
+                }
+                onRecordingEnd();
+                dmV4ResetVoiceRecorderUi();
+            };
+        }
+
+        window.dmV4OnVoiceUploadComplete = function (data) {
+            $('#divIRFaudioRecording').removeClass('is-uploading');
+            if (data) dmV4SetVoiceModalSavedLink(data);
+            showIdlePanel();
+            dmV4SetRecordingStatus('Upload complete — transcribing…', 'uploading');
+            $('#playUploadedAudioTwo').addClass('dm-v4-voice-modal__saved--flash');
+            $('#dmV4ModalTranscriptSection').show();
+            window.setTimeout(function () {
+                $('#playUploadedAudioTwo').removeClass('dm-v4-voice-modal__saved--flash');
+            }, 1200);
+            var irfId = $('#divIRFaudioRecording').data('irf-id') || $('#divIRFaudioRecording').attr('data-irf-id');
+            if (irfId && typeof dmV4TranscribeVoiceInstruction === 'function') {
+                dmV4TranscribeVoiceInstruction(parseInt(irfId, 10));
+            }
+        };
+
+        var origCreate = window.createIRFDownloadLink;
+        if (typeof origCreate === 'function') {
+            window.createIRFDownloadLink = function (blob) {
+                origCreate.apply(this, arguments);
+            };
+        }
+    })();
 </script>
 <script>
     function OpenVideoInstructionModal(irfid) {
@@ -2955,7 +3238,8 @@ else
         white-space:normal;
     }
 </style>
-<script src="~/js/dm-v4-layout.js?v=20240529v"></script>
+<script src="~/js/dm-v4-voice.js?v=20240527"></script>
+<script src="~/js/dm-v4-layout.js?v=20240527v"></script>
 <script src="~/js/dm-v4-questions.js?v=20240521i"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>

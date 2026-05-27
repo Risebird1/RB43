@@ -112,6 +112,8 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid);
         string FetchIRFAudioLink(int irfid);
         bool SaveIRFAudioLink(int irfid, string commentAudioLink);
+        VoiceInstructionBriefVm FetchVoiceInstructionBrief(int irfid);
+        bool SaveVoiceInstructionTranscript(int irfid, string transcript, string updatedBy);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid);
         Task<bool> IsClonableTemplateNameInUse(string name);
         IEnumerable<TransInterviewer> GetInterviewersByAssessmentGroupId(int assessmentGroupId);

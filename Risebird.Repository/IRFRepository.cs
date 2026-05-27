@@ -6375,6 +6375,56 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public VoiceInstructionBriefVm FetchVoiceInstructionBrief(int irfid)
+        {
+            try
+            {
+                var query = @"SELECT ISNULL(AudioComment,'') AS AudioUrl,
+                                     ISNULL(VoiceInstructionTranscript,'') AS Transcript,
+                                     VoiceInstructionTranscriptUpdatedOn AS TranscriptUpdatedOn,
+                                     VoiceInstructionTranscriptUpdatedBy AS TranscriptUpdatedBy
+                              FROM IRF WHERE id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", irfid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return con.QueryFirstOrDefault<VoiceInstructionBriefVm>(query, dynamicParameters)
+                           ?? new VoiceInstructionBriefVm();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new VoiceInstructionBriefVm();
+        }
+
+        public bool SaveVoiceInstructionTranscript(int irfid, string transcript, string updatedBy)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", irfid);
+                dynamicParameters.Add("@Transcript", transcript ?? string.Empty);
+                dynamicParameters.Add("@UpdatedBy", updatedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_SaveVoiceInstructionTranscript", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid)
         {
             try

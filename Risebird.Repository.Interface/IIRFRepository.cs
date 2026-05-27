@@ -176,6 +176,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupIRFList(int Assessmentid);
         string FetchIRFAudioLink(int irfid);
         bool SaveIRFAudioLink(int irfid, string commentAudioLink);
+        VoiceInstructionBriefVm FetchVoiceInstructionBrief(int irfid);
+        bool SaveVoiceInstructionTranscript(int irfid, string transcript, string updatedBy);
         Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid);
         IEnumerable<TransSkill> GetClonableTechSkillsbyId(int id);
         IEnumerable<TransSkillGeneral> GetClonableIRFSkillsGeneralbyId(int id);

@@ -193,6 +193,8 @@ namespace Risebird.Entities.ViewModel
         public SelectList LevelTech { get; set; }
         public SelectList SkillsList { get; set; }
         public string AudioComment { get; set; }
+        public string VoiceInstructionTranscript { get; set; }
+        public DateTime? VoiceInstructionTranscriptUpdatedOn { get; set; }
         public bool IsEdit { get; set; }
         public string Profile { get; set; }
         public string OldJDTitle { get; set; }

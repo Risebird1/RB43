@@ -14,6 +14,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Data.VapiModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -76,13 +77,15 @@ namespace Risebird.Web.Controllers
         private readonly ITwilioHelper _twilioHelper;
         private readonly IActivityTrackerService _activityTrackerService;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
+        private readonly IOpenAISpeechToTextService _speechToTextService;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
             HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper,
-            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper, IActivityTrackerService activityTrackerService, IAssistantServiceHelper assistantServiceHelper)
+            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper, IActivityTrackerService activityTrackerService, IAssistantServiceHelper assistantServiceHelper,
+            IOpenAISpeechToTextService speechToTextService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -113,6 +116,7 @@ namespace Risebird.Web.Controllers
             _twilioHelper = twilioHelper;
             _activityTrackerService = activityTrackerService;
             _assistantServiceHelper = assistantServiceHelper;
+            _speechToTextService = speechToTextService;
         }
 
         [Authorize]
@@ -7202,6 +7206,213 @@ namespace Risebird.Web.Controllers
             _irfService.SaveIRFAudioLink(Convert.ToInt32(Irfid), uploadedfbaudioFileURL);
             return uploadedfbaudioFileURL;
         }
+
+        /// <summary>
+        /// Transcribes the HM voice brief already stored on IRF.AudioComment using OpenAI Whisper (same path as AI Interview STT).
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> TranscribeVoiceInstruction(int irfId, bool isMultiLingual = false)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+
+                var audioUrl = _irfService.FetchIRFAudioLink(irfId);
+                if (string.IsNullOrWhiteSpace(audioUrl))
+                    return Json(new { success = false, message = "No voice recording found. Record and upload audio first." });
+
+                using var downloadClient = new HttpClient();
+                await using var remoteStream = await downloadClient.GetStreamAsync(audioUrl);
+                using var audioBuffer = new MemoryStream();
+                await remoteStream.CopyToAsync(audioBuffer);
+                audioBuffer.Position = 0;
+
+                var transcript = await _speechToTextService.TranscribeAsync(audioBuffer, "voice_instruction.wav", isMultiLingual);
+                if (!IsVoiceInstructionTranscriptionValid(transcript, isMultiLingual))
+                    return Json(new { success = false, message = "Could not produce a clear transcript. Try re-recording in a quiet environment." });
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                _irfService.SaveVoiceInstructionTranscript(irfId, transcript, emailid);
+                var brief = _irfService.FetchVoiceInstructionBrief(irfId);
+                return Json(new
+                {
+                    success = true,
+                    transcript,
+                    audioUrl = brief?.AudioUrl,
+                    transcriptUpdatedOn = brief?.TranscriptUpdatedOn
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Transcription failed: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult FetchVoiceInstructionBrief(int irfid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+
+                var brief = _irfService.FetchVoiceInstructionBrief(irfid);
+                return Json(new
+                {
+                    success = true,
+                    audioUrl = brief?.AudioUrl,
+                    transcript = brief?.Transcript,
+                    transcriptUpdatedOn = brief?.TranscriptUpdatedOn,
+                    transcriptUpdatedBy = brief?.TranscriptUpdatedBy
+                });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult UpdateVoiceInstructionTranscript(int irfId, string transcript)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+
+                if (string.IsNullOrWhiteSpace(transcript))
+                    return Json(new { success = false, message = "Transcript cannot be empty." });
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var saved = _irfService.SaveVoiceInstructionTranscript(irfId, transcript.Trim(), emailid);
+                if (!saved)
+                    return Json(new { success = false, message = "Could not save transcript." });
+
+                var brief = _irfService.FetchVoiceInstructionBrief(irfId);
+                return Json(new
+                {
+                    success = true,
+                    transcript = brief?.Transcript,
+                    transcriptUpdatedOn = brief?.TranscriptUpdatedOn
+                });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GenerateRubricFromVoice(int irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+
+                var brief = _irfService.FetchVoiceInstructionBrief(irfId);
+                if (string.IsNullOrWhiteSpace(brief?.Transcript))
+                    return Json(new { success = false, message = "Save a voice transcript first (record audio and transcribe, or enter text manually)." });
+
+                var irfVm = await _irfService.GetEditIRF(irfId, 0, false);
+                if (irfVm == null)
+                    return Json(new { success = false, message = "Skill channel not found." });
+
+                var prompt = $"Hiring manager voice brief for role {irfVm.IRFId}:\n\n{brief.Transcript.Trim()}";
+                var result = await _assistantServiceHelper.GenerateTechRubric(prompt);
+                if (result == null)
+                    return Json(new { success = false, message = "Rubric generation returned no result." });
+
+                var rawJson = result.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
+                if (string.IsNullOrWhiteSpace(rawJson))
+                    return Json(new { success = false, message = "Rubric generation returned empty content." });
+
+                var model = JsonConvert.DeserializeObject<RubricSchema>(rawJson);
+                var techSkills = new List<TransSkill>();
+                if (model?.Rubric != null)
+                {
+                    foreach (var skill in model.Rubric)
+                    {
+                        var techSkill = new TransSkill();
+                        var levelDesc = skill.ProficiencyLevel;
+                        if (Enum.TryParse(typeof(LevelTechEnum), levelDesc, true, out var parsedLevel))
+                            techSkill.LevelId = (int)parsedLevel;
+                        techSkill.SkillName = skill.Skill;
+                        techSkill.Weightage = skill.Weight;
+                        if (skill.CoreConcepts != null)
+                            techSkill.Concepts = string.Join(",", skill.CoreConcepts);
+                        techSkill.Natureofquestion = skill.KeyExpectations;
+                        techSkill.Timelimit = Convert.ToInt16(skill.EvaluationTime);
+                        techSkill.isEliminationskill = skill.Mandatory != null && skill.Mandatory.Equals("yes", StringComparison.OrdinalIgnoreCase);
+                        techSkill.IRFId = irfId;
+                        techSkills.Add(techSkill);
+                    }
+                }
+
+                if (!techSkills.Any())
+                    return Json(new { success = false, message = "No rubric skills could be parsed from the voice brief." });
+
+                // usp_TechSkillBulkInsert deletes all TransTechSkill rows for the IRF then re-inserts the list passed in.
+                // Merge with existing rubric so we never wipe skills the HM already configured on the form.
+                var mergedSkills = new List<TransSkill>();
+                if (irfVm.SkillCollection != null)
+                {
+                    foreach (var existing in irfVm.SkillCollection)
+                    {
+                        if (existing == null || string.IsNullOrWhiteSpace(existing.SkillName)) continue;
+                        existing.IRFId = irfId;
+                        mergedSkills.Add(existing);
+                    }
+                }
+                var addedFromVoice = 0;
+                foreach (var generated in techSkills)
+                {
+                    var duplicate = mergedSkills.FirstOrDefault(s =>
+                        string.Equals(s.SkillName?.Trim(), generated.SkillName?.Trim(), StringComparison.OrdinalIgnoreCase));
+                    if (duplicate != null)
+                        continue;
+                    mergedSkills.Add(generated);
+                    addedFromVoice++;
+                }
+
+                if (!mergedSkills.Any())
+                    return Json(new { success = false, message = "No rubric skills to save." });
+
+                var updated = await _irfService.UpdateTechSkills(mergedSkills);
+                if (!updated)
+                    return Json(new { success = false, message = "Generated rubric could not be saved." });
+
+                var message = addedFromVoice > 0
+                    ? $"{addedFromVoice} new skill(s) added from voice brief. Existing rubric skills were kept."
+                    : "No new skills were added (names already exist on the rubric). Existing rubric was not changed.";
+                return Json(new { success = true, skillCount = mergedSkills.Count, addedFromVoice, message });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
+
+        private static bool IsVoiceInstructionTranscriptionValid(string text, bool isMultilingual)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+            if (!isMultilingual)
+            {
+                var cleaned = new string(text.Where(c => char.IsLetter(c) || char.IsDigit(c)).ToArray());
+                if (text.Length == 0) return false;
+                double validRatio = (double)cleaned.Length / text.Length;
+                if (validRatio < 0.5)
+                    return false;
+            }
+            return true;
+        }
+
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
         [RequestSizeLimit(1048576000)]
@@ -8766,6 +8977,9 @@ namespace Risebird.Web.Controllers
 
                 model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfid);
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
+                var voiceBrief = _irfService.FetchVoiceInstructionBrief(irfid);
+                model.VoiceInstructionTranscript = voiceBrief?.Transcript;
+                model.VoiceInstructionTranscriptUpdatedOn = voiceBrief?.TranscriptUpdatedOn;
                 model.CandidateVideo = _irfService.GetVideoConsentForm(irfid).Result;
                 if (!model.DmIvLockNew)
                 {
@@ -9032,7 +9246,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GenerateQuestionsFromRubric(int irfId)
+        public async Task<JsonResult> GenerateQuestionsFromRubric(int irfId, bool useVoiceTranscript = false)
         {
             try
             {
@@ -9049,6 +9263,15 @@ namespace Risebird.Web.Controllers
                     $"Skill: {s.SkillName}, Level: {s.LevelName ?? "N/A"}, Weightage: {s.Weightage}%, Concepts: {s.Concepts ?? "N/A"}, Expectations: {s.Natureofquestion ?? "N/A"}, Time: {s.Timelimit} min, Elimination: {(s.isEliminationskill ? "Yes" : "No")}"
                 );
                 var rubricInput = $"Role: {irfVm.IRFId}\nInterview Type: Technical\n\nRubric:\n" + string.Join("\n", rubricLines);
+
+                if (useVoiceTranscript)
+                {
+                    var voiceBrief = _irfService.FetchVoiceInstructionBrief(irfId);
+                    if (!string.IsNullOrWhiteSpace(voiceBrief?.Transcript))
+                    {
+                        rubricInput = $"Hiring manager voice brief (canonical):\n{voiceBrief.Transcript.Trim()}\n\n{rubricInput}";
+                    }
+                }
 
                 var assistantId = _configuration["OpenAI:RubricQuestionAssistantId"];
                 if (string.IsNullOrEmpty(assistantId))

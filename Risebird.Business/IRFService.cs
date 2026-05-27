@@ -2839,6 +2839,32 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public VoiceInstructionBriefVm FetchVoiceInstructionBrief(int irfid)
+        {
+            try
+            {
+                return _irfRepository.FetchVoiceInstructionBrief(irfid);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new VoiceInstructionBriefVm();
+            }
+        }
+
+        public bool SaveVoiceInstructionTranscript(int irfid, string transcript, string updatedBy)
+        {
+            try
+            {
+                return _irfRepository.SaveVoiceInstructionTranscript(irfid, transcript, updatedBy);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid)
         {
             try

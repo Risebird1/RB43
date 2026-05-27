@@ -735,6 +735,36 @@ BEGIN
     Add DmDefaultInterviewCap int NOT NULL CONSTRAINT DF_IRF_DmDefaultInterviewCap DEFAULT 20
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VoiceInstructionTranscript')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD VoiceInstructionTranscript NVARCHAR(MAX) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VoiceInstructionTranscriptUpdatedOn')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD VoiceInstructionTranscriptUpdatedOn DATETIME NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VoiceInstructionTranscriptUpdatedBy')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD VoiceInstructionTranscriptUpdatedBy VARCHAR(100) NULL
+END
+
 END
 
 
