@@ -208,12 +208,12 @@
                 var html = '<div class="table-responsive" style="max-height:420px;overflow-y:auto;">' +
                     '<table class="table table-hover bc-outcome-tbl mb-0">' +
                     '<thead><tr>' +
-                    '<th>#</th><th>Interviewer</th><th>Phone</th><th>Exp</th><th>Call Status</th>' +
+                    '<th>#</th><th>Source</th><th>Interviewer</th><th>Phone</th><th>Exp</th><th>Call Status</th>' +
                     '<th>Intent</th><th>Assign Help</th><th>Callback</th><th>Duration</th><th>Called At</th><th>Called By</th><th>Notes</th><th>Action</th>' +
                     '</tr></thead><tbody>';
 
                 $.each(res.interviewers, function (i, p) {
-                    html += buildOutcomeRow(p);
+                    html += buildOutcomeRow(p, magName);
                 });
                 html += '</tbody></table></div>';
                 $panel.html(html);
@@ -222,7 +222,7 @@
         });
     }
 
-    function buildOutcomeRow(p) {
+    function buildOutcomeRow(p, magName) {
         var intentCls = '', intentText = p.plivoIntent || '—';
         if (intentText === 'available') { intentCls = 'bc-intent-available'; intentText = 'Available'; }
         else if (intentText === 'not_available') { intentCls = 'bc-intent-not_available'; intentText = 'Not Available'; }
@@ -241,10 +241,15 @@
         var callback = p.plivoCallbackRequested === true ? '<span class="badge bg-warning text-dark">Yes</span>' : '—';
         var notes = p.plivoNotes ? '<span title="' + esc(p.plivoNotes) + '" style="cursor:help;max-width:120px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.plivoNotes) + '</span>' : (p.plivoCallSummary ? '<span title="' + esc(p.plivoCallSummary) + '" style="cursor:help;max-width:120px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.plivoCallSummary) + '</span>' : '—');
 
-        var callBtnHtml = '<button class="btn btn-outline-info btn-sm btn-call-single" data-interviewer-id="' + p.id + '" title="Call this interviewer"><i class="fas fa-phone-alt"></i></button>';
+        var src = p.source || 'EA';
+        var srcBadge = src === 'EA' ? '<span class="badge bg-primary" style="font-size:10px;">Email</span>'
+                                    : '<span class="badge bg-secondary" style="font-size:10px;">Profile</span>';
 
-        return '<tr data-interviewer-id="' + p.id + '">' +
+        var callBtnHtml = '<button class="btn btn-outline-info btn-sm btn-call-single" data-interviewer-id="' + p.id + '" data-source="' + src + '" data-mag-name="' + esc(magName || '').replace(/"/g, '&quot;') + '" title="Call this interviewer"><i class="fas fa-phone-alt"></i></button>';
+
+        return '<tr data-interviewer-id="' + p.id + '" data-source="' + src + '">' +
             '<td>' + p.id + '</td>' +
+            '<td>' + srcBadge + '</td>' +
             '<td><strong>' + esc(p.interviewerName) + '</strong>' + (p.currentRole ? '<br/><span style="font-size:10.5px;color:#64748b;">' + esc(p.currentRole) + '</span>' : '') + '</td>' +
             '<td style="white-space:nowrap;">' + esc(p.phone) + '</td>' +
             '<td>' + (p.experience || '—') + '</td>' +
@@ -263,19 +268,27 @@
         e.stopPropagation();
         var $btn = $(this);
         var interviewerId = parseInt($btn.attr('data-interviewer-id'));
+        var source = $btn.attr('data-source') || 'EA';
+        var magName = $btn.attr('data-mag-name') || '';
         if (!interviewerId || $btn.hasClass('calling')) return;
-        if (!confirm('Trigger an availability check call to interviewer #' + interviewerId + '?')) return;
+        var srcLabel = source === 'Profile' ? ' (Profile interviewer)' : '';
+        if (!confirm('Trigger an availability check call to interviewer #' + interviewerId + srcLabel + '?')) return;
 
         $btn.addClass('calling').html('<i class="fas fa-spinner fa-spin"></i>');
 
         $.ajax({
             url: '@Url.Action("BatchCallSingle", "InterviewerAvailability")', type: 'POST',
-            data: { __RequestVerificationToken: verificationToken, id: interviewerId },
+            data: { __RequestVerificationToken: verificationToken, id: interviewerId, source: source, magName: magName },
             success: function (res) {
                 if (res.success) {
                     $btn.removeClass('calling btn-outline-info').addClass('btn-info').html('<i class="fas fa-check me-1"></i>Triggered');
                     var $row = $btn.closest('tr');
-                    $row.find('td:eq(4)').html('<span class="badge bg-info">triggered</span>');
+                    $row.find('td:eq(5)').html('<span class="badge bg-info">triggered</span>');
+                    if (source === 'Profile' && res.eaId) {
+                        $row.attr('data-source', 'EA');
+                        $btn.attr('data-source', 'EA').attr('data-interviewer-id', res.eaId);
+                        $row.find('td:eq(1)').html('<span class="badge bg-primary" style="font-size:10px;">Email</span>');
+                    }
                     setTimeout(function () {
                         $btn.removeClass('btn-info').addClass('btn-outline-info').html('<i class="fas fa-phone-alt"></i>');
                         $btn.removeClass('calling');
@@ -394,11 +407,12 @@
         var pct = Math.round((idx / total) * 100);
         $('#pb_' + cardId).css('width', pct + '%');
         $('#pbCount_' + cardId).text((idx + 1) + ' / ' + total);
-        logLine(cardId, '<strong>#' + p.id + '</strong> ' + (p.interviewerName || 'Unknown') + ' (' + (p.phone || '') + ') — calling...', '');
+        var srcTag = p.source === 'Profile' ? ' [Profile]' : '';
+        logLine(cardId, '<strong>#' + p.id + '</strong> ' + (p.interviewerName || 'Unknown') + srcTag + ' (' + (p.phone || '') + ') — calling...', '');
 
         $.ajax({
             url: '@Url.Action("BatchCallSingle", "InterviewerAvailability")', type: 'POST',
-            data: { __RequestVerificationToken: verificationToken, id: p.id },
+            data: { __RequestVerificationToken: verificationToken, id: p.id, source: p.source || 'EA', magName: magName },
             success: function (res) {
                 if (res.success) { logLine(cardId, '&nbsp;&nbsp;\u2714 Call triggered' + (res.conversationId ? ' [' + res.conversationId + ']' : ''), 'ok'); ok++; }
                 else { logLine(cardId, '&nbsp;&nbsp;\u2718 Failed: ' + (res.error || ''), 'err'); err++; }
