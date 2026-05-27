@@ -51,6 +51,8 @@ namespace Risebird.Repository.Interface
         Task CompleteBatchCallLogAsync(int id, int succeeded, int failed, int skipped, string status);
         Task<List<IABatchCallLogEntry>> GetBatchCallHistoryAsync(string magName);
         Task<List<IAInterviewerCallOutcome>> GetInterviewerCallOutcomesForMAGAsync(string magName);
+
+        Task<int> EnsureEARecordForProfileInterviewerAsync(int interviewerProfileId, string magName);
     }
 
     public class IABatchCallMagSummary
@@ -74,11 +76,13 @@ namespace Risebird.Repository.Interface
     public class IACallableInterviewer
     {
         public int Id { get; set; }
+        public int? InterviewerProfileId { get; set; }
         public string InterviewerName { get; set; }
         public string SenderEmail { get; set; }
         public string Phone { get; set; }
         public decimal? ExperienceYears { get; set; }
         public string PlivoCallStatus { get; set; }
+        public string Source { get; set; }
     }
 
     public class IABatchCallLogEntry
@@ -98,6 +102,7 @@ namespace Risebird.Repository.Interface
     public class IAInterviewerCallOutcome
     {
         public int Id { get; set; }
+        public int? InterviewerProfileId { get; set; }
         public string InterviewerName { get; set; }
         public string SenderEmail { get; set; }
         public string Phone { get; set; }
@@ -114,5 +119,6 @@ namespace Risebird.Repository.Interface
         public string PlivoNotes { get; set; }
         public DateTime? PlivoCallAt { get; set; }
         public string Status { get; set; }
+        public string Source { get; set; }
     }
 }
