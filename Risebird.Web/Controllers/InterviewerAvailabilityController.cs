@@ -1010,13 +1010,13 @@ namespace Risebird.Web.Controllers
                     success = true,
                     interviewers = interviewers.Select(p => new
                     {
-                        p.Id, p.InterviewerName, p.SenderEmail, p.Phone,
+                        p.Id, p.InterviewerProfileId, p.InterviewerName, p.SenderEmail, p.Phone,
                         p.Experience, p.CurrentRole,
                         p.PlivoCallStatus, p.PlivoIntent, p.PlivoAssignmentHelp,
                         p.PlivoEmailReceived, p.PlivoCallbackRequested,
                         p.PlivoCallDuration, p.PlivoCalledBy, p.PlivoCallSummary, p.PlivoNotes,
                         plivoCallAt = p.PlivoCallAt?.ToString("dd MMM yyyy, HH:mm"),
-                        p.Status
+                        p.Status, p.Source
                     })
                 });
             }
@@ -1029,14 +1029,23 @@ namespace Risebird.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BatchCallSingle(int id)
+        public async Task<IActionResult> BatchCallSingle(int id, string source = "EA", string magName = null)
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
             try
             {
-                var record = await _repository.GetEmailAvailabilityByIdAsync(id);
+                int eaId = id;
+
+                if (source == "Profile" && !string.IsNullOrEmpty(magName))
+                {
+                    eaId = await _repository.EnsureEARecordForProfileInterviewerAsync(id, magName);
+                    if (eaId <= 0)
+                        return Json(new { success = false, error = "Could not create availability record for this interviewer." });
+                }
+
+                var record = await _repository.GetEmailAvailabilityByIdAsync(eaId);
                 if (record == null)
                     return Json(new { success = false, error = "Record not found." });
 
@@ -1048,7 +1057,7 @@ namespace Risebird.Web.Controllers
 
                 var calledBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
 
-                await _repository.UpdatePlivoCallStatusAsync(id, "initiated", null,
+                await _repository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
                     DateTime.UtcNow, null, null, null, null, null, null, null, null, calledBy);
 
                 var callerId = _configuration["PlivoCX:AvailabilityCallerId"]
@@ -1063,7 +1072,7 @@ namespace Risebird.Web.Controllers
                     InterviewerName = record.InterviewerName ?? record.InterviewerNickName ?? "there",
                     InterviewerEmail = record.SenderEmail,
                     MagName         = record.MagName ?? record.JobTitle ?? "Technical",
-                    LogId           = id.ToString(),
+                    LogId           = eaId.ToString(),
                     TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
                 };
 
@@ -1071,18 +1080,18 @@ namespace Risebird.Web.Controllers
 
                 if (!string.IsNullOrEmpty(response?.Error))
                 {
-                    await _repository.UpdatePlivoCallStatusAsync(id, "trigger-failed", null,
+                    await _repository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
                         null, null, null, response.Error, null, null, null, null, null, null);
                     return Json(new { success = false, error = $"Plivo trigger failed: {response.Error}" });
                 }
 
                 string conversationId = response?.ConversationId;
-                await _repository.UpdatePlivoCallStatusAsync(id, "triggered", conversationId,
+                await _repository.UpdatePlivoCallStatusAsync(eaId, "triggered", conversationId,
                     null, null, null, null, null, null, null, null, null, null);
-                await _repository.InsertHistoryAsync(id, "BatchCallInitiated", "—",
+                await _repository.InsertHistoryAsync(eaId, "BatchCallInitiated", "—",
                     $"Availability batch call triggered to {phone}. ConversationId: {conversationId ?? "N/A"}", calledBy);
 
-                return Json(new { success = true, conversationId, interviewerName = record.InterviewerName, phone });
+                return Json(new { success = true, conversationId, interviewerName = record.InterviewerName, phone, eaId });
             }
             catch (Exception ex)
             {
@@ -1101,8 +1110,8 @@ namespace Risebird.Web.Controllers
                 var interviewers = await _repository.GetCallableInterviewersForMAGAsync(magName, onlyUncalled);
                 var items = interviewers.Select(p => new
                 {
-                    p.Id, p.InterviewerName, p.Phone, p.SenderEmail,
-                    p.ExperienceYears, p.PlivoCallStatus
+                    p.Id, p.InterviewerProfileId, p.InterviewerName, p.Phone, p.SenderEmail,
+                    p.ExperienceYears, p.PlivoCallStatus, p.Source
                 });
                 return Json(new { success = true, interviewers = items });
             }
