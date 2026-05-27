@@ -422,5 +422,15 @@ namespace Risebird.Repository
                 commandType: CommandType.StoredProcedure, commandTimeout: 60);
             return result.ToList();
         }
+
+        public async Task<int> EnsureEARecordForProfileInterviewerAsync(int interviewerProfileId, string magName)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var id = await con.QueryFirstOrDefaultAsync<int>(
+                "usp_EnsureEARecordForProfileInterviewer",
+                new { InterviewerProfileId = interviewerProfileId, MagName = magName },
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            return id;
+        }
     }
 }
