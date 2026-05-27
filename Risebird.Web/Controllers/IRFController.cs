@@ -9032,6 +9032,194 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
+        public async Task<JsonResult> GenerateQuestionsFromRubric(int irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                var irfVm = await _irfService.GetEditIRF(irfId, 0, false);
+                if (irfVm == null || irfVm.SkillCollection == null || !irfVm.SkillCollection.Any())
+                    return Json(new { success = false, message = "No rubric skills found for this channel." });
+
+                var rubricLines = irfVm.SkillCollection.Select(s =>
+                    $"Skill: {s.SkillName}, Level: {s.LevelName ?? "N/A"}, Weightage: {s.Weightage}%, Concepts: {s.Concepts ?? "N/A"}, Expectations: {s.Natureofquestion ?? "N/A"}, Time: {s.Timelimit} min, Elimination: {(s.isEliminationskill ? "Yes" : "No")}"
+                );
+                var rubricInput = $"Role: {irfVm.IRFId}\nInterview Type: Technical\n\nRubric:\n" + string.Join("\n", rubricLines);
+
+                var assistantId = _configuration["OpenAI:RubricQuestionAssistantId"];
+                if (string.IsNullOrEmpty(assistantId))
+                    return Json(new { success = false, message = "Rubric question assistant not configured." });
+
+                var apiKey = _configuration["OpenAI:ApiKey"];
+                if (string.IsNullOrEmpty(apiKey))
+                    return Json(new { success = false, message = "OpenAI API key not configured." });
+
+                string threadId, runId, raw;
+                using (var http = new HttpClient())
+                {
+                    http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+                    http.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
+                    http.Timeout = TimeSpan.FromSeconds(120);
+
+                    var threadResp = await http.PostAsync("https://api.openai.com/v1/threads",
+                        new StringContent("{}", System.Text.Encoding.UTF8, "application/json"));
+                    var threadJson = Newtonsoft.Json.Linq.JObject.Parse(await threadResp.Content.ReadAsStringAsync());
+                    threadId = threadJson["id"]?.ToString();
+                    if (string.IsNullOrEmpty(threadId))
+                        return Json(new { success = false, message = "Failed to create OpenAI thread." });
+
+                    var msgPayload = Newtonsoft.Json.JsonConvert.SerializeObject(new { role = "user", content = rubricInput });
+                    var msgResp = await http.PostAsync($"https://api.openai.com/v1/threads/{threadId}/messages",
+                        new StringContent(msgPayload, System.Text.Encoding.UTF8, "application/json"));
+                    if (!msgResp.IsSuccessStatusCode)
+                        return Json(new { success = false, message = "Failed to send message to OpenAI." });
+
+                    var runPayload = Newtonsoft.Json.JsonConvert.SerializeObject(new { assistant_id = assistantId });
+                    var runResp = await http.PostAsync($"https://api.openai.com/v1/threads/{threadId}/runs",
+                        new StringContent(runPayload, System.Text.Encoding.UTF8, "application/json"));
+                    var runJson = Newtonsoft.Json.Linq.JObject.Parse(await runResp.Content.ReadAsStringAsync());
+                    runId = runJson["id"]?.ToString();
+                    var runStatus = runJson["status"]?.ToString();
+                    if (string.IsNullOrEmpty(runId))
+                        return Json(new { success = false, message = "Failed to start AI run. " + (runJson["last_error"]?["message"]?.ToString() ?? "") });
+
+                    var pollStart = DateTime.UtcNow;
+                    while (runStatus == "queued" || runStatus == "in_progress")
+                    {
+                        if ((DateTime.UtcNow - pollStart).TotalSeconds > 90)
+                            return Json(new { success = false, message = "AI generation timed out after 90 seconds. The rubric may be too large. Please try again." });
+
+                        await System.Threading.Tasks.Task.Delay(3000);
+                        var statusResp = await http.GetAsync($"https://api.openai.com/v1/threads/{threadId}/runs/{runId}");
+                        var statusJson = Newtonsoft.Json.Linq.JObject.Parse(await statusResp.Content.ReadAsStringAsync());
+                        runStatus = statusJson["status"]?.ToString() ?? "unknown";
+                    }
+
+                    if (runStatus != "completed")
+                        return Json(new { success = false, message = "AI run ended with status: " + runStatus });
+
+                    var msgsResp = await http.GetAsync($"https://api.openai.com/v1/threads/{threadId}/messages");
+                    var msgsJson = Newtonsoft.Json.Linq.JObject.Parse(await msgsResp.Content.ReadAsStringAsync());
+                    var dataArr = msgsJson["data"] as Newtonsoft.Json.Linq.JArray;
+                    raw = null;
+                    if (dataArr != null)
+                    {
+                        foreach (var msg in dataArr)
+                        {
+                            if (msg["role"]?.ToString() == "assistant")
+                            {
+                                var contentArr = msg["content"] as Newtonsoft.Json.Linq.JArray;
+                                if (contentArr != null)
+                                {
+                                    foreach (var block in contentArr)
+                                    {
+                                        if (block["type"]?.ToString() == "text")
+                                        {
+                                            raw = block["text"]?["value"]?.ToString();
+                                            if (!string.IsNullOrWhiteSpace(raw)) break;
+                                        }
+                                    }
+                                }
+                                if (!string.IsNullOrWhiteSpace(raw)) break;
+                            }
+                        }
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(raw))
+                    return Json(new { success = false, message = "AI returned an empty response." });
+
+                var cleaned = raw.Trim();
+                if (cleaned.StartsWith("```json", StringComparison.OrdinalIgnoreCase))
+                    cleaned = cleaned.Substring(7).TrimStart();
+                else if (cleaned.StartsWith("```"))
+                    cleaned = cleaned.Substring(3).TrimStart();
+                if (cleaned.EndsWith("```"))
+                    cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
+
+                var jsonStart = cleaned.IndexOf('{');
+                var jsonEnd = cleaned.LastIndexOf('}');
+                if (jsonStart >= 0 && jsonEnd > jsonStart)
+                    cleaned = cleaned.Substring(jsonStart, jsonEnd - jsonStart + 1);
+
+                Newtonsoft.Json.Linq.JObject jsonObj;
+                try { jsonObj = Newtonsoft.Json.Linq.JObject.Parse(cleaned); }
+                catch (Newtonsoft.Json.JsonException parseEx)
+                {
+                    var preview = cleaned.Length > 300 ? cleaned.Substring(0, 300) + "..." : cleaned;
+                    return Json(new { success = false, message = "AI returned a non-JSON response: " + preview, parseError = parseEx.Message });
+                }
+
+                var bank = (jsonObj["question_answer_score_bank"]
+                    ?? jsonObj["questions"]
+                    ?? jsonObj["question_bank"]
+                    ?? jsonObj["sample_questions"]) as Newtonsoft.Json.Linq.JArray;
+
+                if (bank == null)
+                {
+                    var firstArr = jsonObj.Properties()
+                        .FirstOrDefault(p => p.Value is Newtonsoft.Json.Linq.JArray arr && arr.Count > 0 && arr[0] is Newtonsoft.Json.Linq.JObject);
+                    bank = firstArr?.Value as Newtonsoft.Json.Linq.JArray;
+                }
+
+                if (bank == null || !bank.Any())
+                    return Json(new { success = false, message = "AI did not return any questions in the expected format." });
+
+                var rubricSkillNames = irfVm.SkillCollection
+                    .Select(s => s.SkillName?.Trim())
+                    .Where(s => !string.IsNullOrEmpty(s))
+                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+
+                var saved = new List<object>();
+                var mismatches = new List<string>();
+
+                foreach (var q in bank)
+                {
+                    var skill = q["skill_or_competency"]?.ToString()?.Trim();
+                    if (string.IsNullOrEmpty(skill))
+                        skill = q["rubric_parameter"]?.ToString()?.Trim();
+                    if (string.IsNullOrEmpty(skill))
+                        skill = q["rubric_sub_parameter"]?.ToString()?.Trim();
+
+                    var matchedSkill = rubricSkillNames.FirstOrDefault(r => string.Equals(r, skill, StringComparison.OrdinalIgnoreCase));
+                    if (matchedSkill == null)
+                        matchedSkill = rubricSkillNames.FirstOrDefault(r =>
+                            r.IndexOf(skill ?? "", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            (skill ?? "").IndexOf(r, StringComparison.OrdinalIgnoreCase) >= 0);
+                    if (matchedSkill == null)
+                    {
+                        mismatches.Add(skill ?? "(empty)");
+                        matchedSkill = skill ?? "Ungrouped";
+                    }
+
+                    var question = (q["interviewer_question"] ?? q["question"] ?? q["question_text"])?.ToString() ?? "";
+                    var strongAnswer = q["expected_candidate_answer"]?["strong_answer"]?.ToString()
+                        ?? q["expected_answer"]?.ToString()
+                        ?? q["strong_answer"]?.ToString()
+                        ?? q["answer"]?.ToString() ?? "";
+                    var payload = q.ToString(Newtonsoft.Json.Formatting.None);
+
+                    var newId = await _irfService.AddAIGeneratedSampleQuestion(irfId, matchedSkill, question, strongAnswer, payload, emailid);
+                    if (newId > 0)
+                        saved.Add(new { id = newId, skillName = matchedSkill, comment = question, expectedAnswer = strongAnswer, isGeneratedByAi = true });
+                }
+
+                // Skill mismatches are logged but not blocking
+
+                return Json(new { success = true, questions = saved, count = saved.Count });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
         public async Task<JsonResult> SaveDeliveryHeadSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, int? id = null)
         {
             try

@@ -369,9 +369,40 @@
 
 
         $(document).off('click.dmV4GenQ', '#dmV4GenerateQuestionsBtn').on('click.dmV4GenQ', '#dmV4GenerateQuestionsBtn', function () {
+            var $btn = $(this);
+            if ($btn.prop('disabled')) return;
+            var irfId = getIrfId();
+            if (!irfId) return;
 
-            openQuestionPopup(null);
+            $btn.prop('disabled', true);
+            var origHtml = $btn.html();
+            $btn.html('<i class="fa fa-spinner fa-spin"></i> Generating questions from your rubric\u2026');
 
+            $.ajax({
+                url: '/IRF/GenerateQuestionsFromRubric',
+                type: 'POST',
+                data: { irfId: irfId },
+                timeout: 300000
+            })
+            .done(function (res) {
+                if (res && res.success) {
+                    loadQuestions();
+                    if (typeof swal !== 'undefined') swal.fire('Questions Generated', res.count + ' question(s) created from rubric.', 'success');
+                } else {
+                    if (typeof swal !== 'undefined') swal.fire('Generation Failed', res.message || 'Could not generate questions.', 'error');
+                    else alert(res.message || 'Could not generate questions.');
+                }
+            })
+            .fail(function (xhr, textStatus) {
+                var msg = textStatus === 'timeout'
+                    ? 'Request timed out — AI generation can take up to a minute. Please try again.'
+                    : 'Server error (' + (xhr.status || 'unknown') + ').';
+                if (typeof swal !== 'undefined') swal.fire('Error', msg, 'error');
+                else alert(msg);
+            })
+            .always(function () {
+                $btn.prop('disabled', false).html(origHtml);
+            });
         });
 
         $(document).off('click.dmV4AddQ', '.dm-v4-add-question-btn').on('click.dmV4AddQ', '.dm-v4-add-question-btn', function () {

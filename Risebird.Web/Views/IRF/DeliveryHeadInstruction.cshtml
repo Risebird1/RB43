@@ -3,6 +3,8 @@
 @using Risebird.Entities.Data
 @using System.Collections.Generic
 @using System.Linq
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 @using System.Text.RegularExpressions
 @using Newtonsoft.Json
 @functions {
@@ -876,11 +878,14 @@
                                                         <span class="dm-v4-questions-ai-icon"><i class="fa fa-magic"></i></span>
                                                         <div>
                                                             <div class="dm-v4-questions-ai-title">Generate sample questions from rubric</div>
-@*                                                             <div class="dm-v4-questions-ai-sub">2 questions per skill, balanced across rubric skills. Includes expected answers when using AI interview preset.</div>
- *@                                                        </div>
+                                                             <div class="dm-v4-questions-ai-sub">2 questions per skill, balanced across rubric skills. Includes expected answers when using AI interview preset.</div>
+                                                        </div>
                                                     </div>
-@*                                                     <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4GenerateQuestionsBtn"><i class="fa fa-magic"></i> Generate with AI</button>
- *@                                                </div>
+                                                    @{
+                                                        var aiQGenEnabled = Configuration.GetValue<bool>("FeatureFlags:EnableAIQuestionGeneration");
+                                                    }
+                                                    <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4GenerateQuestionsBtn" @(aiQGenEnabled ? "" : "disabled") title="@(aiQGenEnabled ? "Generate questions from rubric using AI" : "AI question generation is not enabled yet")"><i class="fa fa-magic"></i> Generate with AI</button>
+                                              </div>
                                                 <div id="dmV4QuestionsSkills" class="dm-v4-questions-skills"></div>
                                             </div>
                                         </div>

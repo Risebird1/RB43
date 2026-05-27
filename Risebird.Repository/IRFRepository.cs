@@ -8280,6 +8280,31 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@IRFId", irfId);
+                    parameters.Add("@SkillName", skillName);
+                    parameters.Add("@Comment", comment);
+                    parameters.Add("@ExpectedAnswer", expectedAnswer);
+                    parameters.Add("@GeneratedPayload", generatedPayload);
+                    parameters.Add("@CreatedBy", createdBy);
+                    var result = await SqlMapper.QueryFirstOrDefaultAsync<dynamic>(con, "usp_AddAIGeneratedSampleQuestion", parameters, commandType: CommandType.StoredProcedure);
+                    return result != null ? (int)(decimal)result.NewId : 0;
+                }
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
         public async Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id)
         {
             try
