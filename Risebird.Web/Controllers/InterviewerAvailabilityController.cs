@@ -998,16 +998,19 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetInterviewerCallOutcomes(string magName)
+        public async Task<IActionResult> GetInterviewerCallOutcomes(string magName, int page = 1, int pageSize = 25)
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
             try
             {
-                var interviewers = await _repository.GetInterviewerCallOutcomesForMAGAsync(magName);
+                var (interviewers, totalCount) = await _repository.GetInterviewerCallOutcomesForMAGAsync(magName, page, pageSize);
                 return Json(new
                 {
                     success = true,
+                    totalCount,
+                    page,
+                    pageSize,
                     interviewers = interviewers.Select(p => new
                     {
                         p.Id, p.InterviewerProfileId, p.InterviewerName, p.SenderEmail, p.Phone,

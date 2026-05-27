@@ -413,14 +413,35 @@ namespace Risebird.Repository
             return result.ToList();
         }
 
-        public async Task<List<IAInterviewerCallOutcome>> GetInterviewerCallOutcomesForMAGAsync(string magName)
+        public async Task<(List<IAInterviewerCallOutcome> Items, int TotalCount)> GetInterviewerCallOutcomesForMAGAsync(string magName, int page = 1, int pageSize = 25)
         {
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 ? 25 : (pageSize > 200 ? 200 : pageSize);
+
             using var con = new SqlConnection(_connectionString);
-            var result = await con.QueryAsync<IAInterviewerCallOutcome>(
-                "usp_GetInterviewerCallOutcomesForMAG",
-                new { MagName = magName },
-                commandType: CommandType.StoredProcedure, commandTimeout: 60);
-            return result.ToList();
+            try
+            {
+                var p = new DynamicParameters();
+                p.Add("@MagName", magName);
+                p.Add("@Page", page);
+                p.Add("@PageSize", pageSize);
+                p.Add("@TotalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                var result = await con.QueryAsync<IAInterviewerCallOutcome>(
+                    "usp_GetInterviewerCallOutcomesForMAG",
+                    p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+                return (result.ToList(), p.Get<int>("@TotalCount"));
+            }
+            catch (SqlException)
+            {
+                var all = (await con.QueryAsync<IAInterviewerCallOutcome>(
+                    "usp_GetInterviewerCallOutcomesForMAG",
+                    new { MagName = magName },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60)).ToList();
+                var total = all.Count;
+                var items = all.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                return (items, total);
+            }
         }
 
         public async Task<int> EnsureEARecordForProfileInterviewerAsync(int interviewerProfileId, string magName)

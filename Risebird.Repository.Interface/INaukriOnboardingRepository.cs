@@ -74,7 +74,7 @@ namespace Risebird.Repository.Interface
         Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalProspects);
         Task CompleteBatchCallLogAsync(int id, int succeeded, int failed, int skipped, string status);
         Task<List<BatchCallLogEntry>> GetBatchCallHistoryAsync(string magName);
-        Task<List<NaukriProspectiveInterviewerVM>> GetProspectCallOutcomesForMAGAsync(string magName);
+        Task<(List<NaukriProspectiveInterviewerVM> Items, int TotalCount)> GetProspectCallOutcomesForMAGAsync(string magName, int page = 1, int pageSize = 25);
     }
 
     public class BatchCallMagSummary
