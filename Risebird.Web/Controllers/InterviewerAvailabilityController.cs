@@ -760,13 +760,13 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await SaveIaCp("ia_hangup_body_read_failed", $"Body read FAILED: {ex.Message}");
-                return BadRequest(new { error = "Could not read request body." });
+                return Content("Error: Could not read request body.", "text/html");
             }
 
             if (string.IsNullOrWhiteSpace(rawBody))
             {
                 await SaveIaCp("ia_hangup_empty_body", "Empty request body received.");
-                return BadRequest(new { error = "Empty request body." });
+                return Content("Error: Empty request body.", "text/html");
             }
 
             PlivoCXAvailabilityHangupPayload payload = null;
@@ -852,7 +852,7 @@ namespace Risebird.Web.Controllers
             if (payload == null)
             {
                 await SaveIaCp("ia_hangup_parse_failed", "All parse strategies failed — payload is null.");
-                return BadRequest(new { error = "Could not parse hangup payload." });
+                return Content("Error: Could not parse hangup payload.", "text/html");
             }
 
             // Resolve record ID
@@ -877,7 +877,7 @@ namespace Risebird.Web.Controllers
             {
                 await SaveIaCp("ia_hangup_no_record",
                     $"Could not resolve record. log_id='{payload.LogId}', phone='{payload.PhoneNumber}'");
-                return BadRequest(new { error = $"Missing log_id. log_id='{payload.LogId}', phone='{payload.PhoneNumber}'" });
+                return Content($"Error: Missing log_id. log_id='{payload.LogId}', phone='{payload.PhoneNumber}'", "text/html");
             }
 
             try
@@ -921,14 +921,14 @@ namespace Risebird.Web.Controllers
                     $"Processing finished for record #{recordId}. parseMethod={parseMethod}",
                     callLogId: recordId);
 
-                return Ok(new { success = true, recordId = recordId.Value });
+                return Content($"OK. recordId={recordId.Value}", "text/html");
             }
             catch (Exception ex)
             {
                 await SaveIaCp("ia_hangup_db_exception",
                     $"DB update exception for record #{recordId}: {ex.Message}", callLogId: recordId);
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return StatusCode(500, new { error = ex.Message });
+                return Content($"Error: {ex.Message}", "text/html");
             }
         }
 
