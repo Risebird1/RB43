@@ -1,0 +1,241 @@
+/**
+ * DM Approval V4 — voice brief recording, Whisper transcription, editable transcript, seed rubric/questions.
+ */
+(function ($) {
+    'use strict';
+
+    function getIrfId() {
+        var $root = $('#divIRFaudioRecording');
+        var id = $root.data('irf-id') || $root.attr('data-irf-id');
+        if (id) return parseInt(id, 10);
+        var m = /irfid=(\d+)/i.exec(window.location.search);
+        return m ? parseInt(m[1], 10) : 0;
+    }
+
+    function formatTranscriptDate(iso) {
+        if (!iso) return '';
+        try {
+            var d = new Date(iso);
+            if (isNaN(d.getTime())) return '';
+            return d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function setTranscriptUiState(state) {
+        var $wrap = $('#dmV4VoiceTranscriptWrap');
+        $wrap.removeClass('is-transcribing is-saving is-empty');
+        if (state) $wrap.addClass(state);
+    }
+
+    function applyTranscriptToHero(transcript, updatedOn) {
+        var $ta = $('#dmV4VoiceTranscriptInput');
+        var $meta = $('#dmV4VoiceTranscriptMeta');
+        var $empty = $('#dmV4VoiceTranscriptEmpty');
+        var hasText = transcript && String(transcript).trim().length > 0;
+
+        if ($ta.length) {
+            $ta.val(hasText ? transcript : '');
+            $ta.prop('readonly', false);
+        }
+        if ($empty.length) $empty.toggle(!hasText);
+        if ($meta.length) {
+            if (hasText && updatedOn) {
+                $meta.text('Last saved ' + formatTranscriptDate(updatedOn)).show();
+            } else if (hasText) {
+                $meta.text('Edit and save to set the canonical brief for AI generation.').show();
+            } else {
+                $meta.hide().text('');
+            }
+        }
+        setTranscriptUiState(hasText ? '' : 'is-empty');
+
+        $('#dmV4GenerateRubricFromVoiceBtn, #dmV4GenerateQuestionsFromVoiceBtn').prop('disabled', !hasText);
+    }
+
+    function applyTranscriptToModal(transcript) {
+        var $ta = $('#dmV4ModalTranscriptInput');
+        var $wrap = $('#dmV4ModalTranscriptSection');
+        if (!$ta.length) return;
+        var hasText = transcript && String(transcript).trim().length > 0;
+        $ta.val(hasText ? transcript : '');
+        $wrap.toggle(hasText || $('#playUploadedAudioTwo').not('.dm-v4-voice-modal__saved--empty').length > 0);
+    }
+
+    window.dmV4RefreshVoiceBrief = function (irfId) {
+        irfId = irfId || getIrfId();
+        if (!irfId) return $.Deferred().reject().promise();
+
+        return $.ajax({
+            type: 'POST',
+            url: '/IRF/FetchVoiceInstructionBrief',
+            data: { irfid: irfId }
+        }).done(function (res) {
+            if (!res || !res.success) return;
+            if (res.audioUrl) {
+                if (typeof dmV4SetVoiceModalSavedLink === 'function') {
+                    dmV4SetVoiceModalSavedLink(res.audioUrl);
+                }
+                var $audio = $('#dmV4VoiceAudio');
+                if ($audio.length) {
+                    $audio.attr('src', res.audioUrl);
+                }
+                $('#dmV4VoiceRecordedBadge').show();
+                $('.dm-v4-voice-preview-grid').removeClass('dm-v4-voice-preview-grid--empty');
+            }
+            applyTranscriptToHero(res.transcript, res.transcriptUpdatedOn);
+            applyTranscriptToModal(res.transcript);
+        });
+    };
+
+    window.dmV4TranscribeVoiceInstruction = function (irfId) {
+        irfId = irfId || getIrfId();
+        if (!irfId) return $.Deferred().reject().promise();
+
+        setTranscriptUiState('is-transcribing');
+        if (typeof dmV4SetRecordingStatus === 'function') {
+            dmV4SetRecordingStatus('Transcribing your recording with AI…', 'uploading');
+        }
+
+        return $.ajax({
+            type: 'POST',
+            url: '/IRF/TranscribeVoiceInstruction',
+            data: { irfId: irfId, isMultiLingual: false },
+            timeout: 180000
+        }).done(function (res) {
+            if (res && res.success) {
+                applyTranscriptToHero(res.transcript, res.transcriptUpdatedOn);
+                applyTranscriptToModal(res.transcript);
+                if (typeof dmV4SetRecordingStatus === 'function') {
+                    dmV4SetRecordingStatus('Transcript ready — review below, edit if needed, then save.', 'success');
+                }
+            } else {
+                var msg = (res && res.message) ? res.message : 'Transcription failed.';
+                if (typeof dmV4SetRecordingStatus === 'function') {
+                    dmV4SetRecordingStatus(msg, 'active');
+                }
+                if (typeof swal !== 'undefined') swal.fire('Transcription', msg, 'warning');
+            }
+        }).fail(function (xhr, textStatus) {
+            var msg = textStatus === 'timeout'
+                ? 'Transcription timed out. Try again or save a shorter recording.'
+                : 'Transcription request failed.';
+            if (typeof dmV4SetRecordingStatus === 'function') {
+                dmV4SetRecordingStatus(msg, 'active');
+            }
+            if (typeof swal !== 'undefined') swal.fire('Transcription', msg, 'error');
+        }).always(function () {
+            setTranscriptUiState($('#dmV4VoiceTranscriptInput').val().trim() ? '' : 'is-empty');
+        });
+    };
+
+    window.dmV4SaveVoiceTranscript = function (irfId, transcript, $btn) {
+        irfId = irfId || getIrfId();
+        transcript = (transcript != null ? transcript : $('#dmV4VoiceTranscriptInput').val() || $('#dmV4ModalTranscriptInput').val() || '').trim();
+        if (!irfId || !transcript) {
+            if (typeof swal !== 'undefined') swal.fire('Save transcript', 'Enter transcript text before saving.', 'warning');
+            return $.Deferred().reject().promise();
+        }
+
+        var origHtml = $btn && $btn.length ? $btn.html() : '';
+        if ($btn && $btn.length) {
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving…');
+        }
+        setTranscriptUiState('is-saving');
+
+        return $.ajax({
+            type: 'POST',
+            url: '/IRF/UpdateVoiceInstructionTranscript',
+            data: { irfId: irfId, transcript: transcript }
+        }).done(function (res) {
+            if (res && res.success) {
+                applyTranscriptToHero(res.transcript, res.transcriptUpdatedOn);
+                applyTranscriptToModal(res.transcript);
+                if (typeof swal !== 'undefined') swal.fire('Saved', 'Voice brief transcript saved.', 'success');
+            } else {
+                var msg = (res && res.message) ? res.message : 'Could not save transcript.';
+                if (typeof swal !== 'undefined') swal.fire('Save failed', msg, 'error');
+            }
+        }).fail(function () {
+            if (typeof swal !== 'undefined') swal.fire('Save failed', 'Server error while saving transcript.', 'error');
+        }).always(function () {
+            setTranscriptUiState($('#dmV4VoiceTranscriptInput').val().trim() ? '' : 'is-empty');
+            if ($btn && $btn.length) $btn.prop('disabled', false).html(origHtml);
+        });
+    };
+
+    function initVoiceBriefPage() {
+        if (!$('#dmV4VoiceHero').length) return;
+
+        var initialTranscript = ($('#dmV4VoiceTranscriptInput').val() || '').trim();
+        var initialUpdated = $('#dmV4VoiceTranscriptMeta').data('updated-on');
+        applyTranscriptToHero(initialTranscript, initialUpdated);
+
+        $(document).off('click.dmV4SaveTx', '#dmV4SaveTranscriptBtn, #dmV4ModalSaveTranscriptBtn')
+            .on('click.dmV4SaveTx', '#dmV4SaveTranscriptBtn, #dmV4ModalSaveTranscriptBtn', function () {
+                dmV4SaveVoiceTranscript(getIrfId(), null, $(this));
+            });
+
+        $(document).off('click.dmV4Retranscribe', '#dmV4RetranscribeBtn')
+            .on('click.dmV4Retranscribe', '#dmV4RetranscribeBtn', function () {
+                dmV4TranscribeVoiceInstruction(getIrfId());
+            });
+
+        $(document).off('click.dmV4GenRubricVoice', '#dmV4GenerateRubricFromVoiceBtn')
+            .on('click.dmV4GenRubricVoice', '#dmV4GenerateRubricFromVoiceBtn', function () {
+                var $btn = $(this);
+                var irfId = getIrfId();
+                if (!irfId || $btn.prop('disabled')) return;
+                var orig = $btn.html();
+                $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Generating rubric…');
+                $.ajax({
+                    type: 'POST',
+                    url: '/IRF/GenerateRubricFromVoice',
+                    data: { irfId: irfId },
+                    timeout: 300000
+                }).done(function (res) {
+                    if (res && res.success) {
+                        if (typeof swal !== 'undefined') swal.fire('Rubric updated', res.message || 'Skills generated from voice brief.', 'success');
+                        window.location.reload();
+                    } else {
+                        if (typeof swal !== 'undefined') swal.fire('Rubric generation', (res && res.message) || 'Failed.', 'error');
+                    }
+                }).fail(function () {
+                    if (typeof swal !== 'undefined') swal.fire('Error', 'Rubric generation request failed.', 'error');
+                }).always(function () {
+                    $btn.prop('disabled', !$('#dmV4VoiceTranscriptInput').val().trim()).html(orig);
+                });
+            });
+
+        $(document).off('click.dmV4GenQVoice', '#dmV4GenerateQuestionsFromVoiceBtn')
+            .on('click.dmV4GenQVoice', '#dmV4GenerateQuestionsFromVoiceBtn', function () {
+                var $btn = $(this);
+                var irfId = getIrfId();
+                if (!irfId || $btn.prop('disabled')) return;
+                var orig = $btn.html();
+                $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Generating…');
+                $.ajax({
+                    type: 'POST',
+                    url: '/IRF/GenerateQuestionsFromRubric',
+                    data: { irfId: irfId, useVoiceTranscript: true },
+                    timeout: 300000
+                }).done(function (res) {
+                    if (res && res.success) {
+                        if (typeof window.dmV4RefreshQuestions === 'function') window.dmV4RefreshQuestions();
+                        if (typeof swal !== 'undefined') swal.fire('Questions generated', (res.count || 0) + ' question(s) created using voice brief + rubric.', 'success');
+                    } else {
+                        if (typeof swal !== 'undefined') swal.fire('Generation failed', (res && res.message) || 'Could not generate.', 'error');
+                    }
+                }).fail(function () {
+                    if (typeof swal !== 'undefined') swal.fire('Error', 'Question generation request failed.', 'error');
+                }).always(function () {
+                    $btn.prop('disabled', !$('#dmV4VoiceTranscriptInput').val().trim()).html(orig);
+                });
+            });
+
+        patchVoiceUploadComplete();
+    }
+
+    $(initVoiceBriefPage);
+})(jQuery);

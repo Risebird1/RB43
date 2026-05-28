@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
+@model IEnumerable<Risebird.Entities.Data.Meeting>
 
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
@@ -355,11 +355,14 @@
         if ($("#txtsharetext1").val().trim() != "") {
             var urlcurrent = $("#zoomlink_" + $("#myassiinterviewid").val()).val();
             $.ajax({
-                //type: "POST",
                 url: "/Interview/ReassignMeeting",
                 data: { id: $("#myassiinterviewid").val(), meetingid: $("#myassimeetingid").val(), Emailid: $("#txtsharetext1").val() },
                 success: function (data) {
                     closeAssignationPopUp();
+                    if (data.code === 'CAP_REACHED') {
+                        swal.fire('Interview Limit Reached', data.meetings, 'warning');
+                        return;
+                    }
                     swal.fire(data.meetings);
                     if (data.meetings == "Interview assigned Successfully.") {
                         $("#txtvideoUrls").text(urlcurrent);

@@ -26,8 +26,9 @@ Select @UserId=id from UserList where uniqueid=@uniqueid
 Select @InterviewerId=id From InterviewerProfile where UserId=@UserId
 if not exists(select 1 from TransInterviewer where UserId = @UserId and IRFId = @IRFId)
 Begin
+DECLARE @isLocked bit = ISNULL((SELECT DmIvLockNew FROM IRF WHERE id = @IRFId), 0)
 Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, AddedAt) 
-values(@IRFId,@InterviewerId,@UserId,1,1, getdate())
+values(@IRFId,@InterviewerId,@UserId,CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,1, getdate())
 End
 
 end
