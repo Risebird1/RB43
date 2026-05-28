@@ -1,15 +1,44 @@
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetInterviewerCallOutcomesForMAG]
-    @MagName NVARCHAR(200)
+    @MagName NVARCHAR(200),
+    @Page INT = 1,
+    @PageSize INT = 25,
+    @TotalCount INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
+
+    IF @Page < 1 SET @Page = 1;
+    IF @PageSize < 1 SET @PageSize = 25;
+    IF @PageSize > 200 SET @PageSize = 200;
 
     DECLARE @AgId INT;
     SELECT TOP 1 @AgId = mag.AssessmentGroupId
     FROM MasterAssessmentGroup mag
     WHERE mag.MAGName = @MagName AND ISNULL(mag.IsDeleted, 0) = 0;
 
-    -- EA interviewers (priority — listed first)
+    CREATE TABLE #Combined (
+        Id INT NOT NULL,
+        InterviewerProfileId INT NULL,
+        InterviewerName NVARCHAR(500) NULL,
+        SenderEmail NVARCHAR(500) NULL,
+        Phone NVARCHAR(50) NULL,
+        Experience DECIMAL(18,2) NULL,
+        CurrentRole NVARCHAR(500) NULL,
+        PlivoCallStatus VARCHAR(50) NULL,
+        PlivoIntent VARCHAR(50) NULL,
+        PlivoAssignmentHelp BIT NULL,
+        PlivoEmailReceived BIT NULL,
+        PlivoCallbackRequested BIT NULL,
+        PlivoCallDuration INT NULL,
+        PlivoCalledBy VARCHAR(150) NULL,
+        PlivoCallSummary NVARCHAR(MAX) NULL,
+        PlivoNotes NVARCHAR(MAX) NULL,
+        PlivoCallAt DATETIME NULL,
+        Status NVARCHAR(50) NULL,
+        Source VARCHAR(20) NOT NULL,
+        SortPriority INT NOT NULL
+    );
+
     ;WITH EAList AS (
         SELECT ea.Id, ea.InterviewerProfileId,
                ea.InterviewerName, ea.SenderEmail,
@@ -37,7 +66,6 @@ BEGIN
         GROUP BY ea.InterviewerProfileId
     ),
 
-    -- Profile interviewers not in EA
     ProfileList AS (
         SELECT ip.Id, ip.Id AS InterviewerProfileId,
                ip.NickName AS InterviewerName,
@@ -66,6 +94,14 @@ BEGIN
           AND NOT EXISTS (SELECT 1 FROM EAProfileIds ep WHERE ep.InterviewerProfileId = ip.Id)
     )
 
+    INSERT INTO #Combined (
+        Id, InterviewerProfileId, InterviewerName, SenderEmail, Phone,
+        Experience, CurrentRole,
+        PlivoCallStatus, PlivoIntent, PlivoAssignmentHelp,
+        PlivoEmailReceived, PlivoCallbackRequested,
+        PlivoCallDuration, PlivoCalledBy, PlivoCallSummary, PlivoNotes,
+        PlivoCallAt, Status, Source, SortPriority
+    )
     SELECT Id, InterviewerProfileId, InterviewerName, SenderEmail, Phone,
            Experience, CurrentRole,
            PlivoCallStatus, PlivoIntent, PlivoAssignmentHelp,
@@ -80,7 +116,21 @@ BEGIN
            PlivoEmailReceived, PlivoCallbackRequested,
            PlivoCallDuration, PlivoCalledBy, PlivoCallSummary, PlivoNotes,
            PlivoCallAt, Status, Source, SortPriority
-    FROM ProfileList
+    FROM ProfileList;
+
+    SELECT @TotalCount = COUNT(*) FROM #Combined;
+
+    SELECT Id, InterviewerProfileId, InterviewerName, SenderEmail, Phone,
+           Experience, CurrentRole,
+           PlivoCallStatus, PlivoIntent, PlivoAssignmentHelp,
+           PlivoEmailReceived, PlivoCallbackRequested,
+           PlivoCallDuration, PlivoCalledBy, PlivoCallSummary, PlivoNotes,
+           PlivoCallAt, Status, Source
+    FROM #Combined
     ORDER BY SortPriority, PlivoCallAt DESC, Id DESC
+    OFFSET (@Page - 1) * @PageSize ROWS
+    FETCH NEXT @PageSize ROWS ONLY;
+
+    DROP TABLE #Combined;
 END
 GO

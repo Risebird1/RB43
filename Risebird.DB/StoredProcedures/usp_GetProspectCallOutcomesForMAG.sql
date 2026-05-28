@@ -1,12 +1,21 @@
-IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'usp_GetProspectCallOutcomesForMAG')
-    DROP PROCEDURE usp_GetProspectCallOutcomesForMAG
-GO
-
-CREATE PROCEDURE [dbo].[usp_GetProspectCallOutcomesForMAG]
-    @MagName NVARCHAR(200)
+CREATE OR ALTER PROCEDURE [dbo].[usp_GetProspectCallOutcomesForMAG]
+    @MagName NVARCHAR(200),
+    @Page INT = 1,
+    @PageSize INT = 25,
+    @TotalCount INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
+
+    IF @Page < 1 SET @Page = 1;
+    IF @PageSize < 1 SET @PageSize = 25;
+    IF @PageSize > 200 SET @PageSize = 200;
+
+    SELECT @TotalCount = COUNT(*)
+    FROM NaukriProspectiveInterviewer np
+    WHERE np.MagName = @MagName
+      AND np.ParsedPhone IS NOT NULL
+      AND LEN(LTRIM(RTRIM(np.ParsedPhone))) >= 10;
 
     SELECT
         np.Id,
@@ -38,5 +47,7 @@ BEGIN
         CASE WHEN np.PlivoCallStatus IS NOT NULL THEN 0 ELSE 1 END ASC,
         np.PlivoCallAt DESC,
         np.ReceivedAt ASC
+    OFFSET (@Page - 1) * @PageSize ROWS
+    FETCH NEXT @PageSize ROWS ONLY;
 END
 GO

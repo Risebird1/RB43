@@ -722,21 +722,29 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<List<NaukriProspectiveInterviewerVM>> GetProspectCallOutcomesForMAGAsync(string magName)
+        public async Task<(List<NaukriProspectiveInterviewerVM> Items, int TotalCount)> GetProspectCallOutcomesForMAGAsync(string magName, int page = 1, int pageSize = 25)
         {
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 ? 25 : (pageSize > 200 ? 200 : pageSize);
+
             try
             {
                 using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@MagName", magName);
+                p.Add("@Page", page);
+                p.Add("@PageSize", pageSize);
+                p.Add("@TotalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
                 var result = await con.QueryAsync<NaukriProspectiveInterviewerVM>(
                     "usp_GetProspectCallOutcomesForMAG",
-                    new { MagName = magName },
+                    p,
                     commandType: System.Data.CommandType.StoredProcedure);
-                return result.AsList();
+                return (result.AsList(), p.Get<int>("@TotalCount"));
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return new List<NaukriProspectiveInterviewerVM>();
+                return (new List<NaukriProspectiveInterviewerVM>(), 0);
             }
         }
     }

@@ -5214,7 +5214,7 @@ NEVER:
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> InterviewerVideoKYC(int returnBack)
+        public async Task<IActionResult> InterviewerVideoKYC(int returnBack, string email = null)
         {
             try
             {
@@ -5226,6 +5226,7 @@ NEVER:
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
                     ViewBag.ReturnBack = returnBack;
+                    ViewBag.FilterEmail = email;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = await _dashboardService.GeInterviewerVideoKYC();

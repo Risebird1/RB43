@@ -1,0 +1,289 @@
+================================================================================
+RISEBIRD — DM V4 INTERVIEWER POLICY FEATURES
+Full summary: Interviewer Lock, Assignment Policy, Interview Cap
+================================================================================
+Document purpose: Shareable overview of what each feature does and how it works
+Page context: Delivery Head Instruction (DHI) — per skill channel / IRF
+Last aligned to codebase: Risebird (IRFController, dm-v4-layout.js, SQL procs)
+================================================================================
+
+
+--------------------------------------------------------------------------------
+WHERE THESE SETTINGS LIVE
+--------------------------------------------------------------------------------
+
+UI location:
+  Delivery Head Instruction → Interviewers section → policy bar (3 columns)
+
+Database (skill channel / IRF level):
+  Table: IRF
+    - DmIvLockNew              (bit)      — Interviewer lock on/off
+    - DmAssignmentPolicy       (varchar)  — "free" or "limited"
+    - DmDefaultInterviewCap    (int)      — Default cap (default 20)
+
+Per interviewer:
+  Table: TransInterviewer
+    - InterviewCapacity        (int)      — Max future interviews on this channel
+
+API — save all three policy fields together:
+  POST /IRF/SaveDmIvPolicy
+    Parameters: irfId, dmIvLockNew, dmAssignmentPolicy, dmDefaultInterviewCap
+    → IRFService.UpdateDmIvPolicy → usp_UpdateDmIvPolicy
+
+API — per-interviewer cap:
+  POST /IRF/UpdateInterviewerCapacity
+    Parameters: transInterviewerId, interviewCapacity (0–99)
+
+API — apply default cap to every interviewer on the channel:
+  POST /IRF/ApplyDefaultInterviewCapToIrf
+    Parameters: irfId, defaultCap (1–99)
+
+API — vetting (works with Interviewer lock):
+  POST /IRF/UpdateInterviewerRbVet
+  POST /IRF/UpdateInterviewerClientVet
+
+Who can edit policy settings:
+  Internal Risebird roles only.
+  NOT editable by: Client, Interviewer, Public profiles.
+
+
+--------------------------------------------------------------------------------
+PANEL CONCEPTS (INTERVIEWERS GRID)
+--------------------------------------------------------------------------------
+
+RB Vet       = Risebird verified (IsSMEVerified)
+Client Vet   = Client shortlist (ClientAction = "Shortlisted")
+On panel     = Both RB Vet AND Client Vet are Yes
+
+Badges on section: candidate count, RB-VETTED, CLIENT-APPROVED, ON PANEL
+
+
+================================================================================
+1. INTERVIEWER LOCK (DmIvLockNew)
+================================================================================
+
+WHAT IT DOES
+------------
+Controls how NEW interviewers join a skill channel: either they are
+auto-activated and auto-vetted, or they start in a pending state until
+Risebird completes RB Vet (and Client Vet follows that workflow).
+
+
+UI MODES
+--------
+  OFF  —  "Auto-activate"
+          New interviewers are auto-RB-vetted and auto-Client-approved.
+          DM can still override per row.
+
+  ON   —  "Lock — Risebird vets first"
+          New interviewers join as RB Vet pending.
+          Client Vet stays pending until Risebird clears RB Vet.
+
+
+FUNCTIONALITY
+-------------
+
+A) When interviewers are ADDED to the channel
+   (bulk add, assessment group add, availability signup, etc.)
+
+   Lock ON  → TransInterviewer.IsActive = 0  (inactive until vetted)
+   Lock OFF → TransInterviewer.IsActive = 1  (active immediately)
+
+   Used in stored procedures including:
+     - usp_AddIRFInterviewersV2
+     - usp_AddAGInterviewerToSkillChannel
+     - usp_UpdateIntervieweravailbilityStatus
+
+B) On Delivery Head Instruction page load
+
+   Lock OFF → Interviewer list shows only ACTIVE interviewers
+   Lock ON  → Pending (inactive) interviewers are also shown so DM can vet them
+
+   Code: IRFController.DeliveryHeadInstruction filters InterviewerCollection
+         when DmIvLockNew is false.
+
+C) Per-row vetting (separate from lock toggle, but designed to work together)
+
+   RB Vet toggle    → POST /IRF/UpdateInterviewerRbVet
+   Client Vet toggle → POST /IRF/UpdateInterviewerClientVet
+
+   Turning RB Vet OFF also clears Client Vet in the UI flow.
+
+D) Side effect: enables SERVER-SIDE interview cap checks
+
+   Stored procedure usp_CheckInterviewerCapForAssignment only enforces
+   capacity limits when DmIvLockNew = 1.
+
+   When lock is OFF, that procedure returns "allowed" without checking caps.
+   (See section 3 and "How the three work together".)
+
+
+================================================================================
+2. ASSIGNMENT POLICY (DmAssignmentPolicy)
+================================================================================
+
+WHAT IT DOES
+------------
+Controls whether the Delivery Head Instruction UI treats this skill channel
+as unlimited assignment or as capacity-managed (per-interviewer limits).
+
+
+VALUES
+------
+  free     (default)
+    UI label: "Free assignment"
+    Meaning: Active interviewers can be assigned without cap review in the UI.
+
+  limited
+    UI label: "Limit future assignments"
+    Meaning: Show and edit per-interviewer interview caps in the grid;
+              emphasize assigned vs limit and "cap reached" states.
+
+
+FUNCTIONALITY
+-------------
+
+A) Saved on the IRF
+   Saved together with lock and default cap via POST /IRF/SaveDmIvPolicy.
+
+B) UI behavior (dm-v4-layout.js)
+   - Sets data-cap-enforced on the interviewer panel.
+   - limited → capacity pills, progress bars, inline cap edit, warnings.
+   - free    → capacity UI de-emphasized / not enforced in the grid.
+
+C) Database usage today (important)
+   DmAssignmentPolicy is STORED on IRF but is NOT referenced in assignment
+   stored procedures except usp_UpdateDmIvPolicy.
+
+   Server-side assignment blocking for caps uses DmIvLockNew in
+   usp_CheckInterviewerCapForAssignment — NOT DmAssignmentPolicy.
+
+   Practical meaning:
+   - "Limit future assignments" = full cap UX on DHI.
+   - Hard block when assigning/reassigning meetings = happens when
+     Interviewer lock is ON and assigned count >= cap (see section 3).
+
+   If you use "limited" without "lock", users see caps in the UI but
+   assign/reassign may NOT reject over-cap assignments unless lock is also ON.
+
+
+================================================================================
+3. INTERVIEW CAP (Default + Per interviewer)
+================================================================================
+
+WHAT IT DOES
+------------
+Limits how many FUTURE interviews an interviewer can have on this skill channel.
+
+
+TWO LEVELS
+----------
+
+  Default interview cap (IRF level)
+    Field: IRF.DmDefaultInterviewCap (default 20 if not set)
+    Purpose: Default for newly added interviewers.
+    UI: Stepper (+ / −) and "Apply to all" button.
+
+  Per-interviewer cap
+    Field: TransInterviewer.InterviewCapacity
+    Purpose: Each interviewer's max on this IRF.
+    UI: Inline edit on capacity pill in interviewer row.
+
+
+UI FUNCTIONALITY
+----------------
+  - Default cap stepper: range 1–99 when saved via SaveDmIvPolicy.
+  - "Apply to all" → updates ALL TransInterviewer.InterviewCapacity rows
+    for this IRF (usp_ApplyDefaultInterviewCapToIrf).
+  - Per row: click cap → edit → POST /IRF/UpdateInterviewerCapacity (0–99).
+  - Display: assigned count vs cap (TotalFuture vs InterviewCapacity),
+    progress bar states: ok / near (≥80%) / full (at or over cap).
+
+
+HOW "ASSIGNED" IS COUNTED (BACKEND)
+-----------------------------------
+  Stored procedure: usp_CheckInterviewerCapForAssignment
+
+  - Counts InterviewMeetings on this IRF for the interviewer email where
+    interviewDate is in the future (proc uses +330 minute offset on GETDATE).
+  - Effective cap = TransInterviewer.InterviewCapacity;
+    if 0 or null → falls back to IRF.DmDefaultInterviewCap (default 20).
+
+
+WHEN ASSIGNMENT IS BLOCKED
+--------------------------
+  Called from meeting services, e.g.:
+    - MeetingService.UpdateMeeting (assigning interviewer to meeting)
+    - MeetingService.ReassignMeeting
+    - MeetingService.ReassignMeetingByTeam
+
+  If not allowed, user sees error like:
+    CAP_REACHED|Interview limit reached (X). You have Y of X interviews
+    assigned on this channel.
+
+  Enforcement runs only when DmIvLockNew = 1 (see Interviewer lock section).
+  When lock is OFF, the cap check procedure always allows assignment.
+
+
+================================================================================
+HOW THE THREE FEATURES WORK TOGETHER
+================================================================================
+
+Delivery Head Instruction (per skill channel / IRF)
+│
+├─ Interviewer lock
+│    ├─ Gates NEW interviewers (active vs pending)
+│    ├─ Drives RB / Client vet workflow on the grid
+│    └─ Enables SERVER-SIDE cap checks on assign/reassign
+│
+├─ Assignment policy
+│    ├─ "free"     → no cap emphasis in UI
+│    └─ "limited"  → show & edit caps per row in UI
+│
+└─ Interview cap
+     ├─ Default cap on IRF (+ Apply to all)
+     ├─ Per-interviewer InterviewCapacity
+     └─ Enforced on assignment when Interviewer lock is ON
+
+
+TYPICAL CONFIGURATIONS
+----------------------
+
+  Strict / controlled channel:
+    Interviewer lock     = ON  (Lock — Risebird vets first)
+    Assignment policy    = limited
+    Default / per-IV caps = set as needed (e.g. 20)
+    Result: New IVs pending vetting; UI shows limits; assign/reassign
+            respects caps when lock is on.
+
+  Loose / fast onboarding:
+    Interviewer lock     = OFF (Auto-activate)
+    Assignment policy  = free
+    Result: Interviewers go live quickly; caps not enforced on assignment
+            in the database procedure.
+
+
+================================================================================
+API QUICK REFERENCE
+================================================================================
+
+  Save lock + policy + default cap     POST /IRF/SaveDmIvPolicy
+  Set one interviewer's cap            POST /IRF/UpdateInterviewerCapacity
+  Apply default cap to all rows        POST /IRF/ApplyDefaultInterviewCapToIrf
+  RB Vet toggle                        POST /IRF/UpdateInterviewerRbVet
+  Client Vet toggle                    POST /IRF/UpdateInterviewerClientVet
+
+
+================================================================================
+OPTIONAL FUTURE IMPROVEMENT (NOT IMPLEMENTED TODAY)
+================================================================================
+
+If assignment blocking should follow "Limit future assignments" even when
+Interviewer lock is OFF, usp_CheckInterviewerCapForAssignment would need to
+also check IRF.DmAssignmentPolicy = 'limited' (today only DmIvLockNew gates
+the cap logic).
+
+
+================================================================================
+END OF DOCUMENT
+================================================================================

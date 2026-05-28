@@ -170,8 +170,13 @@
 
 <script>
     $(document).ready(function () {
-      
         applyDataTable();
+        var params = new URLSearchParams(window.location.search);
+        var email = params.get('email');
+        if (email) {
+            var table = $('#detailsTable').DataTable();
+            table.search(email).draw();
+        }
     });
     function applyDataTable() {
         $('#detailsTable').DataTable({
