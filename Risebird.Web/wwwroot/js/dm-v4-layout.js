@@ -1412,7 +1412,7 @@
 
     function saveDmIvPolicy() {
         var $bar = getPolicyBar();
-        if (!$bar.length || $bar.data('can-edit') !== '1') return;
+        if (!$bar.length || ($bar.data('can-edit') !== '1' && $bar.data('can-edit') !== 1)) return;
         $.post('/IRF/SaveDmIvPolicy', {
             irfId: parseInt($bar.data('irf-id'), 10),
             dmIvLockNew: $bar.data('lock') === '1',

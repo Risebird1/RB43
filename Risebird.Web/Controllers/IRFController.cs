@@ -8981,7 +8981,7 @@ namespace Risebird.Web.Controllers
                 model.VoiceInstructionTranscript = voiceBrief?.Transcript;
                 model.VoiceInstructionTranscriptUpdatedOn = voiceBrief?.TranscriptUpdatedOn;
                 model.CandidateVideo = _irfService.GetVideoConsentForm(irfid).Result;
-                if (!model.DmIvLockNew)
+                if (!model.DmIvLockNew && model.InterviewerCollection != null)
                 {
                     model.InterviewerCollection = model.InterviewerCollection.Where(x => x.IsActive).ToList();
                 }
@@ -11848,6 +11848,11 @@ namespace Risebird.Web.Controllers
                 {
                     return Json(new { success = false, message = "Unauthorized" });
                 }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 var interviewers = new List<TransInterviewer>
                 {
@@ -11886,6 +11891,11 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
                 }
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 var action = isApproved ? "Shortlisted" : "Rejected";
