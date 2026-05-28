@@ -320,6 +320,14 @@
                                                     @Html.TextBoxFor(m => m.InterviewerAccDetails.PAN, null, new { @class = "form-control text-box single-line" })
                                                 </div>
                                             </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <button type="button" id="btnVerifyBankAccount" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                                        Verify bank account
+                                                    </button>
+                                                    <span id="bankVerifyStatus" class="ml-2" style="display:none;"></span>
+                                                </div>
+                                            </div>
 
 
                                         </div>
@@ -353,6 +361,52 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
+    $('#btnVerifyBankAccount').on('click', function () {
+        var accountName = $('#InterviewerAccDetails_AccountName').val();
+        var accountNumber = $('#InterviewerAccDetails_AccountNumber').val();
+        var ifscCode = $('#InterviewerAccDetails_IFSCCode').val();
+        var phone = $('#MobileNumber').val();
+
+        if (!accountNumber || !ifscCode) {
+            swal.fire('Required', 'Please enter account number and IFSC before verifying.', 'warning');
+            return;
+        }
+
+        var $btn = $(this);
+        var $status = $('#bankVerifyStatus');
+        $btn.prop('disabled', true);
+        $status.show().text('Verifying…').css('color', '#666');
+
+        $.ajax({
+            url: '@Url.Action("VerifyBankAccount", "Interviewer")',
+            type: 'POST',
+            data: {
+                accountName: accountName,
+                accountNumber: accountNumber,
+                ifscCode: ifscCode,
+                phone: phone
+            },
+            success: function (res) {
+                if (res.success) {
+                    var detail = res.nameAtBank ? ' Name at bank: ' + res.nameAtBank + '.' : '';
+                    if (res.bankName) detail += ' Bank: ' + res.bankName + '.';
+                    $status.text('Verified' + detail).css('color', 'green');
+                    swal.fire('Verified', res.message || 'Bank account verified successfully.', 'success');
+                } else {
+                    $status.text(res.message || 'Verification failed').css('color', 'red');
+                    swal.fire('Not verified', res.message || 'Bank account could not be verified.', 'error');
+                }
+            },
+            error: function () {
+                $status.text('Verification request failed').css('color', 'red');
+                swal.fire('Error', 'Could not reach the server. Please try again.', 'error');
+            },
+            complete: function () {
+                $btn.prop('disabled', false);
+            }
+        });
+    });
+
     $('.tab-menu li a').on('click', function () {
         var target = $(this).attr('data-rel');
         $('.tab-menu li a').removeClass('active');
