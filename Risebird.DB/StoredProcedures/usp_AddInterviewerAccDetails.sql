@@ -11,35 +11,79 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-Create PROCEDURE [dbo].[usp_AddInterviewerAccDetails]
-
-@InterviewerProfileId int,
-@AccountName varchar(200),
-@AccountNumber nvarchar(200),
-@IFSCCode nvarchar(200),
-@UPIId nvarchar(250),
-@PAN nvarchar(200)
-
+CREATE PROCEDURE [dbo].[usp_AddInterviewerAccDetails]
+    @InterviewerProfileId   int,
+    @AccountName            varchar(200),
+    @AccountNumber          nvarchar(200),
+    @IFSCCode               nvarchar(200),
+    @UPIId                  nvarchar(250),
+    @PAN                    nvarchar(200),
+    @IsBankVerified         bit = 0,
+    @VerifiedOn             datetime = null,
+    @VerifiedAccountNumber  nvarchar(200) = null,
+    @VerifiedIFSCCode       nvarchar(200) = null,
+    @VerifiedAccountName    varchar(200) = null,
+    @NameAtBank             varchar(200) = null,
+    @CashfreeReferenceId    bigint = null
 AS
-Begin
-INSERT INTO [dbo].[TransInterviewerAccDetails]
-           ([InterviewerProfileId]
-           ,[AccountName]
-           ,[AccountNumber]
-           ,[IFSCCode]
-           ,[UPIId]
-           ,[PAN])
-     VALUES
-           (@InterviewerProfileId,
-			@AccountName,
-			@AccountNumber,
-			@IFSCCode,
-			@UPIId,
-			@PAN)
+BEGIN
+    SET NOCOUNT ON;
 
-End
+    IF EXISTS (
+        SELECT 1
+        FROM [dbo].[TransInterviewerAccDetails]
+        WHERE InterviewerProfileId = @InterviewerProfileId)
+    BEGIN
+        UPDATE [dbo].[TransInterviewerAccDetails]
+        SET
+            [AccountName]           = @AccountName,
+            [AccountNumber]         = @AccountNumber,
+            [IFSCCode]              = @IFSCCode,
+            [UPIId]                 = @UPIId,
+            [PAN]                   = @PAN,
+            [IsBankVerified]        = @IsBankVerified,
+            [VerifiedOn]            = @VerifiedOn,
+            [VerifiedAccountNumber] = @VerifiedAccountNumber,
+            [VerifiedIFSCCode]      = @VerifiedIFSCCode,
+            [VerifiedAccountName]   = @VerifiedAccountName,
+            [NameAtBank]            = @NameAtBank,
+            [CashfreeReferenceId]   = @CashfreeReferenceId
+        WHERE InterviewerProfileId = @InterviewerProfileId;
+    END
+    ELSE
+    BEGIN
+        INSERT INTO [dbo].[TransInterviewerAccDetails]
+        (
+            [InterviewerProfileId],
+            [AccountName],
+            [AccountNumber],
+            [IFSCCode],
+            [UPIId],
+            [PAN],
+            [IsBankVerified],
+            [VerifiedOn],
+            [VerifiedAccountNumber],
+            [VerifiedIFSCCode],
+            [VerifiedAccountName],
+            [NameAtBank],
+            [CashfreeReferenceId]
+        )
+        VALUES
+        (
+            @InterviewerProfileId,
+            @AccountName,
+            @AccountNumber,
+            @IFSCCode,
+            @UPIId,
+            @PAN,
+            @IsBankVerified,
+            @VerifiedOn,
+            @VerifiedAccountNumber,
+            @VerifiedIFSCCode,
+            @VerifiedAccountName,
+            @NameAtBank,
+            @CashfreeReferenceId
+        );
+    END
+END
 GO
-
