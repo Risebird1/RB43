@@ -4,6 +4,7 @@
 }
 
 <style>
+
     .bc-page { font-family:'Roboto','Segoe UI',sans-serif; }
 
     .bc-mag-card { background:#fff; border:1px solid #e2e8f0; border-radius:10px; transition:box-shadow .15s; margin-bottom:12px; }
@@ -16,17 +17,93 @@
     .bc-mag-stat .val { font-weight:700; font-size:14px; }
     .bc-mag-stat .lbl { font-size:10px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; }
 
-    .bc-actions { display:flex; gap:6px; align-items:center; flex-shrink:0; }
+    .bc-actions { display:flex; gap:6px; align-items:center; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end; }
     .bc-expand-body { display:none; border-top:1px solid #e2e8f0; }
+
+    .bc-action-btn {
+        display:inline-flex; align-items:center; gap:6px;
+        font-size:12px; font-weight:500; line-height:1.2;
+        padding:6px 11px; border-radius:6px;
+        border:1px solid #e2e8f0; background:#fff; color:#475569;
+        transition:background .12s, border-color .12s, color .12s;
+        box-shadow:none;
+    }
+    .bc-action-btn i { font-size:11px; opacity:.75; }
+    .bc-action-btn:hover { background:#f8fafc; border-color:#cbd5e1; color:#334155; }
+    .bc-action-btn:disabled { opacity:.5; cursor:not-allowed; }
+
+    .bc-action-primary {
+        border-color: #cbd5e1;
+        color: #334155;font-weight:600;
+        background:#eeeeee94;
+    }
+    .bc-action-primary:hover { background:#f1f5f9; border-color:#94a3b8; }
+
+    .bc-action-secondary {
+        background: #f1f5f9;
+        border-color: #e2e8f0;
+        color: #475569;
+        padding: 6px 8px;
+        font-weight: 600;
+    }
+    .bc-action-secondary:hover { background:#f1f5f9; border-color:#e2e8f0; color:#475569; }
+    .bc-action-meta {
+        font-size:10px; font-weight:600; color:#64748b;
+        background:#dee7f0; padding:1px 5px; border-radius:4px;
+        min-width:16px; text-align:center; letter-spacing:.01em;
+    }
 
     .bc-tab-bar { background:#f8fafc; padding:8px 20px; display:flex; gap:6px; border-bottom:1px solid #e2e8f0; }
     .bc-tab { font-size:12px; padding:5px 14px; border-radius:6px; border:1px solid #cbd5e1; background:#fff; cursor:pointer; font-weight:500; color:#475569; }
     .bc-tab.active { background:#0d6efd; color:#fff; border-color:#0d6efd; }
 
     .bc-panel { padding:16px 20px; }
-    .bc-outcome-tbl { font-size:12px; }
-    .bc-outcome-tbl th { font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; font-weight:600; padding:8px 10px; background:#f8fafc; position:sticky; top:0; z-index:2; box-shadow:0 1px 0 #e2e8f0; }
+    .bc-outcome-wrap { border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; }
+    .bc-outcome-scroll { max-height:440px; overflow:auto; }
+    .bc-outcome-tbl { font-size:12px; margin-bottom:0; }
+    .bc-outcome-tbl th { font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; font-weight:600; padding:8px 10px; background:#f8fafc; position:sticky; top:0; z-index:2; box-shadow:0 1px 0 #e2e8f0; white-space:nowrap; }
     .bc-outcome-tbl td { padding:7px 10px; vertical-align:middle; }
+    .bc-outcome-tbl .bc-col-src { position:sticky; left:0; z-index:1; min-width:88px; background:#fff; box-shadow:2px 0 4px rgba(0,0,0,.04); }
+    .bc-outcome-tbl thead .bc-col-src { z-index:3; background:#f8fafc; }
+    .bc-outcome-tbl tbody tr:hover .bc-col-src { background:#f8fafc; }
+    .bc-src-badge {
+        display:inline-flex; align-items:center; gap:4px;
+        font-size:10.5px; font-weight:600; padding:4px 8px; border-radius:6px;
+        white-space:nowrap; letter-spacing:.02em;
+    }
+    .bc-src-ea { background:#f8fafc; color:#475569; border:1px solid #e2e8f0; }
+    .bc-src-profile { background:#fafafa; color:#57534e; border:1px solid #e7e5e4; }
+
+    .bc-call-status {
+        display:inline-flex; align-items:center; gap:6px;
+        font-size:11px; font-weight:500; color:#475569; white-space:nowrap;
+    }
+    .bc-call-status-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; background:#cbd5e1; }
+    .bc-status-none .bc-call-status-dot { background:#e2e8f0; }
+    .bc-status-none { color:#94a3b8; }
+    .bc-status-success .bc-call-status-dot { background:#22c55e; }
+    .bc-status-success { color:#166534; }
+    .bc-status-progress .bc-call-status-dot { background:#3b82f6; }
+    .bc-status-progress { color:#1d4ed8; }
+    .bc-status-failed .bc-call-status-dot { background:#ef4444; }
+    .bc-status-failed { color:#b91c1c; }
+    .bc-status-warning .bc-call-status-dot { background:#f59e0b; }
+    .bc-status-warning { color:#b45309; }
+    .bc-status-neutral .bc-call-status-dot { background:#94a3b8; }
+    .bc-status-neutral { color:#64748b; }
+
+    .bc-flag-yes, .bc-flag-no {
+        font-size:10.5px; font-weight:500; padding:2px 7px; border-radius:4px;
+    }
+    .bc-flag-yes { background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; }
+    .bc-flag-no { color:#cbd5e1; }
+    .bc-pagination {
+        display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+        padding:10px 14px; background:#f8fafc; border-top:1px solid #e2e8f0; font-size:12px;
+    }
+    .bc-pagination .bc-page-info { color:#64748b; }
+    .bc-pagination .bc-page-btns { display:flex; gap:4px; align-items:center; }
+    .bc-pagination .bc-page-size select { font-size:12px; padding:2px 8px; border-radius:6px; border:1px solid #cbd5e1; }
     .bc-outcome-tbl .bc-intent { font-weight:600; font-size:11.5px; padding:3px 8px; border-radius:10px; display:inline-block; }
     .bc-intent-available { background:#dcfce7; color:#166534; }
     .bc-intent-not_available { background:#fee2e2; color:#991b1b; }
@@ -37,8 +114,55 @@
     .bc-hist-tbl th { font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; font-weight:600; padding:6px 10px; background:#f8fafc; }
     .bc-hist-tbl td { padding:6px 10px; }
 
-    .btn-call-single { font-size:10.5px; padding:2px 8px; border-radius:6px; white-space:nowrap; }
+    .btn-call-single {
+        font-size:11px; padding:3px 8px; border-radius:5px; white-space:nowrap;
+        border:1px solid #e2e8f0; color:#64748b; background:#fff;
+    }
+    .btn-call-single:hover { background:#f8fafc; border-color:#cbd5e1; color:#334155; }
     .btn-call-single.calling { pointer-events:none; opacity:.6; }
+
+    .bc-search-toolbar {
+        display:flex; align-items:center; justify-content:space-between;
+        flex-wrap:wrap; gap:12px 16px;
+        padding:12px 16px; background:#fff;
+        border:1px solid #e2e8f0; border-radius:10px;
+        box-shadow:0 1px 2px rgba(15,23,42,.04);
+    }
+    .bc-search-wrap {
+        position:relative; flex:1 1 280px; max-width:480px; min-width:200px;
+    }
+    .bc-search-icon {
+        position:absolute; left:13px; top:50%; transform:translateY(-50%);
+        font-size:13px; color:#94a3b8; pointer-events:none;
+    }
+    .bc-search-input {
+        width:100%; height:38px; padding:0 36px 0 38px;
+        font-size:13px; color:#334155;
+        border:1px solid #e2e8f0; border-radius:8px;
+        background:#f8fafc; outline:none;
+        transition:border-color .15s, background .15s, box-shadow .15s;
+    }
+    .bc-search-input::placeholder { color:#94a3b8; }
+    .bc-search-input:hover { background:#fff; border-color:#cbd5e1; }
+    .bc-search-input:focus {
+        background:#fff; border-color:#94a3b8;
+        box-shadow:0 0 0 3px rgba(148,163,184,.18);
+    }
+    .bc-search-clear {
+        position:absolute; right:8px; top:50%; transform:translateY(-50%);
+        width:24px; height:24px; padding:0; border:none; border-radius:5px;
+        background:transparent; color:#94a3b8; font-size:11px; line-height:1;
+        cursor:pointer; display:flex; align-items:center; justify-content:center;
+        transition:background .12s, color .12s;
+    }
+    .bc-search-clear:hover { background:#f1f5f9; color:#475569; }
+    .bc-search-hint { font-size:12px; color:#64748b; white-space:nowrap; }
+    .bc-search-hint strong { color:#334155; font-weight:600; }
+    .bc-search-empty {
+        text-align:center; padding:32px 16px; color:#64748b; font-size:13px;
+        background:#f8fafc; border:1px dashed #e2e8f0; border-radius:10px;
+    }
+    .bc-search-empty i { color:#94a3b8; margin-right:6px; }
 </style>
 
 <form id="__AjaxAntiForgeryForm" asp-controller="InterviewerAvailability" asp-action="BatchCall" method="post">
@@ -61,12 +185,24 @@
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <input type="text" id="bcSearchMAG" class="form-control" placeholder="Search MAGs..." style="max-width:360px;border-radius:8px;font-size:13px;" />
+                <div class="bc-search-toolbar mb-3">
+                    <div class="bc-search-wrap">
+                        <i class="fas fa-search bc-search-icon" aria-hidden="true"></i>
+                        <input type="search" id="bcSearchMAG" class="bc-search-input"
+                               placeholder="Search by MAG or assessment group…"
+                               autocomplete="off" spellcheck="false" />
+                        <button type="button" id="bcSearchClear" class="bc-search-clear" title="Clear search" style="display:none;" aria-label="Clear search">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <span id="bcSearchHint" class="bc-search-hint"></span>
                 </div>
 
                 <div id="bcLoadingPage" class="text-center py-5"><div class="spinner-border text-primary"></div><div class="text-muted mt-2">Loading MAGs...</div></div>
                 <div id="bcEmptyPage" class="text-center text-muted py-5" style="display:none;"><i class="fas fa-inbox me-2"></i>No MAGs found.</div>
+                <div id="bcSearchEmpty" class="bc-search-empty" style="display:none;">
+                    <i class="fas fa-search"></i>No MAGs match your search. <a href="#" id="bcSearchReset" class="text-decoration-none">Clear filter</a>
+                </div>
                 <div id="bcMagList"></div>
 
             </div>
@@ -78,30 +214,63 @@
 <script>
     var allMags = [], verificationToken = $('#__AjaxAntiForgeryForm input[name="__RequestVerificationToken"]').val() || '';
     var bcStopRequested = false, bcCurrentLogId = 0;
+    var bcOutcomePageState = {};
+    var BC_OUTCOME_PAGE_SIZE = 25;
 
     $(function () { loadMAGs(); });
 
     function loadMAGs() {
-        $('#bcLoadingPage').show(); $('#bcEmptyPage').hide(); $('#bcMagList').empty();
+        $('#bcLoadingPage').show(); $('#bcEmptyPage').hide(); $('#bcSearchEmpty').hide(); $('#bcMagList').empty();
         $.ajax({
             url: '@Url.Action("GetBatchCallMAGs", "InterviewerAvailability")', type: 'GET',
             success: function (res) {
                 $('#bcLoadingPage').hide();
                 if (!res.success) { alert(res.error || 'Failed'); return; }
                 allMags = res.mags || [];
-                if (!allMags.length) { $('#bcEmptyPage').show(); return; }
-                renderMAGs(allMags);
+                if (!allMags.length) { $('#bcEmptyPage').show(); updateSearchHint(0); return; }
+                applyMagFilter();
             },
             error: function () { $('#bcLoadingPage').hide(); alert('Failed to load.'); }
         });
     }
 
-    $('#bcSearchMAG').on('input', function () {
-        var q = $(this).val().toLowerCase();
-        var filtered = allMags.filter(function (m) {
-            return (m.magName || '').toLowerCase().indexOf(q) >= 0 || (m.assessmentGroupName || '').toLowerCase().indexOf(q) >= 0;
-        });
+    function updateSearchHint(shown) {
+        var total = allMags.length;
+        var q = ($('#bcSearchMAG').val() || '').trim();
+        var $hint = $('#bcSearchHint');
+        if (!total) { $hint.text(''); return; }
+        if (q) {
+            $hint.html('Showing <strong>' + shown + '</strong> of <strong>' + total + '</strong> MAGs');
+        } else {
+            $hint.html('<strong>' + total + '</strong> MAG' + (total === 1 ? '' : 's'));
+        }
+    }
+
+    function applyMagFilter() {
+        var q = ($('#bcSearchMAG').val() || '').trim().toLowerCase();
+        var hasQuery = q.length > 0;
+        $('#bcSearchClear').toggle(hasQuery);
+        var filtered = hasQuery ? allMags.filter(function (m) {
+            return (m.magName || '').toLowerCase().indexOf(q) >= 0
+                || (m.assessmentGroupName || '').toLowerCase().indexOf(q) >= 0;
+        }) : allMags;
+        $('#bcSearchEmpty').toggle(hasQuery && filtered.length === 0);
+        $('#bcMagList').toggle(!(hasQuery && filtered.length === 0));
         renderMAGs(filtered);
+        updateSearchHint(filtered.length);
+    }
+
+    $('#bcSearchMAG').on('input', applyMagFilter);
+    $('#bcSearchClear, #bcSearchReset').on('click', function (e) {
+        e.preventDefault();
+        $('#bcSearchMAG').val('').focus();
+        applyMagFilter();
+    });
+    $('#bcSearchMAG').on('keydown', function (e) {
+        if (e.key === 'Escape') {
+            $('#bcSearchMAG').val('');
+            applyMagFilter();
+        }
     });
 
     function renderMAGs(mags) {
@@ -120,14 +289,15 @@
 
             var actionBtns = '';
             if (uncalled > 0) {
-                actionBtns += '<button class="btn btn-info btn-sm btn-call-mag" data-mag-name="' + magNameAttr + '" data-only-uncalled="true" style="font-size:12px;padding:4px 12px;" title="Call only interviewers who haven\'t been called yet"><i class="fas fa-phone-alt me-1"></i>Call Uncalled (' + uncalled + ')</button>';
+                actionBtns += '<button type="button" class="bc-action-btn bc-action-primary btn-call-mag" data-mag-name="' + magNameAttr + '" data-only-uncalled="true" title="Call interviewers not yet contacted">' +
+                    '<i class="fas fa-phone-alt"></i><span>Call uncalled</span><span class="bc-action-meta">' + uncalled + '</span></button>';
             }
             if (m.callableCount > 0 && m.alreadyCalled > 0) {
-                actionBtns += '<button class="btn btn-outline-info btn-sm btn-call-mag" data-mag-name="' + magNameAttr + '" data-only-uncalled="false" style="font-size:11px;padding:3px 10px;" title="Re-call all interviewers including already called"><i class="fas fa-redo me-1"></i>Recall All (' + m.callableCount + ')</button>';
+                actionBtns += '<button type="button" class="bc-action-btn bc-action-secondary btn-call-mag" data-mag-name="' + magNameAttr + '" data-only-uncalled="false" title="Re-call all callable interviewers"><i class="fas fa-redo-alt"></i><span>Recall all</span><span class="bc-action-meta">' + m.callableCount + '</span></button>';
             } else if (m.callableCount > 0 && uncalled === 0) {
-                actionBtns += '<button class="btn btn-outline-info btn-sm btn-call-mag" data-mag-name="' + magNameAttr + '" data-only-uncalled="false" style="font-size:12px;padding:4px 12px;" title="Re-call all interviewers"><i class="fas fa-redo me-1"></i>Recall All (' + m.callableCount + ')</button>';
+                actionBtns += '<button type="button" class="bc-action-btn bc-action-secondary btn-call-mag" data-mag-name="' + magNameAttr + '" data-only-uncalled="false" title="Re-call all callable interviewers"><i class="fas fa-redo-alt"></i><span>Recall all</span><span class="bc-action-meta">' + m.callableCount + '</span></button>';
             }
-            if (!actionBtns) actionBtns = '<span class="text-muted" style="font-size:11px;">No callable</span>';
+            if (!actionBtns) actionBtns = '<span class="text-muted" style="font-size:11px;"><i class="fas fa-ban me-1"></i>No callable</span>';
 
             var $card = $('<div class="bc-mag-card" id="' + id + '" data-mag-name="' + magNameAttr + '">' +
                 '<div class="bc-mag-header" data-card-id="' + id + '">' +
@@ -160,6 +330,22 @@
 
     function esc(s) { return $('<span>').text(s || '').html(); }
 
+    function formatCallStatus(status) {
+        if (!status) return '<span class="bc-call-status bc-status-none"><span class="bc-call-status-dot"></span>Not called</span>';
+        var s = (status + '').toLowerCase().replace(/_/g, '-');
+        var label, cls;
+        if (s === 'completed' || s === 'answered') { label = 'Completed'; cls = 'bc-status-success'; }
+        else if (s === 'triggered' || s === 'initiated' || s === 'ringing' || s === 'in-progress') { label = 'In progress'; cls = 'bc-status-progress'; }
+        else if (s === 'trigger-failed' || s === 'failed' || s === 'busy' || s === 'canceled' || s === 'cancelled') { label = titleCaseStatus(s); cls = 'bc-status-failed'; }
+        else if (s === 'no-answer' || s === 'no answer') { label = 'No answer'; cls = 'bc-status-warning'; }
+        else { label = titleCaseStatus(s); cls = 'bc-status-neutral'; }
+        return '<span class="bc-call-status ' + cls + '"><span class="bc-call-status-dot"></span>' + esc(label) + '</span>';
+    }
+
+    function titleCaseStatus(s) {
+        return (s || '').replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    }
+
     $(document).on('click', '.bc-mag-header', function (e) {
         if ($(e.target).closest('.btn-call-mag, .btn-call-single').length) return;
         var cardId = $(this).attr('data-card-id');
@@ -187,40 +373,107 @@
         $('#panel_' + tab + '_' + cardId).show();
     });
 
-    function getMagNameFromCard(cardId) {
-        return $('#' + cardId).attr('data-mag-name') || '';
+    function decodeHtmlAttr(s) {
+        if (!s) return '';
+        var el = document.createElement('textarea');
+        el.innerHTML = s;
+        return el.value;
     }
 
-    function loadOutcomes(cardId) {
+    function getMagNameFromCard(cardId) {
+        return decodeHtmlAttr($('#' + cardId).attr('data-mag-name') || '');
+    }
+
+    function loadOutcomes(cardId, page) {
         var magName = getMagNameFromCard(cardId);
         if (!magName) return;
+        var state = bcOutcomePageState[cardId] || { page: 1, pageSize: BC_OUTCOME_PAGE_SIZE, totalCount: 0 };
+        page = page || state.page || 1;
+        state.page = page;
+        bcOutcomePageState[cardId] = state;
+
         var $panel = $('#panel_outcomes_' + cardId);
-        $panel.html('<div class="text-center text-muted py-3"><div class="spinner-border spinner-border-sm"></div> Loading...</div>');
+        $panel.html('<div class="text-center text-muted py-4"><div class="spinner-border spinner-border-sm text-primary"></div><div class="mt-2" style="font-size:12px;">Loading interviewers...</div></div>');
 
         $.ajax({
             url: '@Url.Action("GetInterviewerCallOutcomes", "InterviewerAvailability")', type: 'GET',
-            data: { magName: magName },
+            data: { magName: magName, page: state.page, pageSize: state.pageSize },
             success: function (res) {
-                if (!res.success || !res.interviewers || !res.interviewers.length) {
-                    $panel.html('<div class="text-center text-muted py-3" style="font-size:12px;">No interviewers with phone numbers found for this MAG.</div>');
+                if (!res.success) {
+                    $panel.html('<div class="text-center text-danger py-3" style="font-size:12px;"><i class="fas fa-exclamation-circle me-1"></i>' + esc(res.error || 'Failed to load outcomes.') + '</div>');
                     return;
                 }
-                var html = '<div class="table-responsive" style="max-height:420px;overflow-y:auto;">' +
-                    '<table class="table table-hover bc-outcome-tbl mb-0">' +
+                state.totalCount = res.totalCount || 0;
+                state.pageSize = res.pageSize || state.pageSize;
+                state.page = res.page || state.page;
+                bcOutcomePageState[cardId] = state;
+
+                if (!res.interviewers || !res.interviewers.length) {
+                    $panel.html('<div class="text-center text-muted py-3" style="font-size:12px;"><i class="fas fa-users-slash me-1"></i>No interviewers found for this MAG.</div>');
+                    return;
+                }
+
+                var totalPages = Math.max(1, Math.ceil(state.totalCount / state.pageSize));
+                var first = (state.page - 1) * state.pageSize + 1;
+                var last = Math.min(state.page * state.pageSize, state.totalCount);
+
+                var html = '<div class="bc-outcome-wrap" data-card-id="' + cardId + '">' +
+                    '<div class="bc-outcome-scroll">' +
+                    '<table class="table table-hover bc-outcome-tbl">' +
                     '<thead><tr>' +
-                    '<th>#</th><th>Source</th><th>Interviewer</th><th>Phone</th><th>Exp</th><th>Call Status</th>' +
+                    '<th class="bc-col-src">Source</th><th>#</th><th>Interviewer</th><th>Phone</th><th>Exp</th><th>Call Status</th>' +
                     '<th>Intent</th><th>Assign Help</th><th>Callback</th><th>Duration</th><th>Called At</th><th>Called By</th><th>Notes</th><th>Action</th>' +
                     '</tr></thead><tbody>';
 
                 $.each(res.interviewers, function (i, p) {
                     html += buildOutcomeRow(p, magName);
                 });
-                html += '</tbody></table></div>';
+                html += '</tbody></table></div>' +
+                    '<div class="bc-pagination">' +
+                        '<span class="bc-page-info">Showing <strong>' + first + '–' + last + '</strong> of <strong>' + state.totalCount + '</strong></span>' +
+                        '<div class="d-flex align-items-center gap-3 flex-wrap">' +
+                            '<label class="bc-page-size mb-0">Rows <select class="bc-outcome-page-size" data-card-id="' + cardId + '">' +
+                                '<option value="25"' + (state.pageSize === 25 ? ' selected' : '') + '>25</option>' +
+                                '<option value="50"' + (state.pageSize === 50 ? ' selected' : '') + '>50</option>' +
+                                '<option value="100"' + (state.pageSize === 100 ? ' selected' : '') + '>100</option>' +
+                            '</select></label>' +
+                            '<div class="bc-page-btns">' +
+                                '<button type="button" class="btn btn-sm btn-outline-secondary bc-outcome-page" data-card-id="' + cardId + '" data-page="1"' + (state.page <= 1 ? ' disabled' : '') + '><i class="fas fa-angle-double-left"></i></button>' +
+                                '<button type="button" class="btn btn-sm btn-outline-secondary bc-outcome-page" data-card-id="' + cardId + '" data-page="' + (state.page - 1) + '"' + (state.page <= 1 ? ' disabled' : '') + '><i class="fas fa-angle-left"></i></button>' +
+                                '<span class="px-2 text-muted">Page ' + state.page + ' / ' + totalPages + '</span>' +
+                                '<button type="button" class="btn btn-sm btn-outline-secondary bc-outcome-page" data-card-id="' + cardId + '" data-page="' + (state.page + 1) + '"' + (state.page >= totalPages ? ' disabled' : '') + '><i class="fas fa-angle-right"></i></button>' +
+                                '<button type="button" class="btn btn-sm btn-outline-secondary bc-outcome-page" data-card-id="' + cardId + '" data-page="' + totalPages + '"' + (state.page >= totalPages ? ' disabled' : '') + '><i class="fas fa-angle-double-right"></i></button>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div></div>';
                 $panel.html(html);
             },
-            error: function () { $panel.html('<div class="text-center text-danger py-3">Failed to load.</div>'); }
+            error: function (xhr) {
+                var msg = 'Failed to load.';
+                if (xhr.responseJSON && xhr.responseJSON.error) msg = xhr.responseJSON.error;
+                else if (xhr.responseText) {
+                    try { var j = JSON.parse(xhr.responseText); if (j.error) msg = j.error; } catch (e) { }
+                }
+                $panel.html('<div class="text-center text-danger py-3" style="font-size:12px;"><i class="fas fa-exclamation-circle me-1"></i>' + esc(msg) + '</div>');
+            }
         });
     }
+
+    $(document).on('click', '.bc-outcome-page', function () {
+        if ($(this).prop('disabled')) return;
+        var cardId = $(this).attr('data-card-id');
+        var page = parseInt($(this).attr('data-page'), 10);
+        if (cardId && page > 0) loadOutcomes(cardId, page);
+    });
+
+    $(document).on('change', '.bc-outcome-page-size', function () {
+        var cardId = $(this).attr('data-card-id');
+        var size = parseInt($(this).val(), 10) || BC_OUTCOME_PAGE_SIZE;
+        bcOutcomePageState[cardId] = bcOutcomePageState[cardId] || {};
+        bcOutcomePageState[cardId].pageSize = size;
+        bcOutcomePageState[cardId].page = 1;
+        loadOutcomes(cardId, 1);
+    });
 
     function buildOutcomeRow(p, magName) {
         var intentCls = '', intentText = p.plivoIntent || '—';
@@ -229,27 +482,22 @@
         else if (intentText === 'unsubscribe') { intentCls = 'bc-intent-unsubscribe'; intentText = 'Unsubscribe'; }
         else if (intentText === 'no_answer') { intentCls = 'bc-intent-no_answer'; intentText = 'No Answer'; }
 
-        var statusBadge = '';
-        if (p.plivoCallStatus === 'completed' || p.plivoCallStatus === 'answered') statusBadge = '<span class="badge bg-success">' + p.plivoCallStatus + '</span>';
-        else if (p.plivoCallStatus === 'triggered' || p.plivoCallStatus === 'initiated') statusBadge = '<span class="badge bg-info">' + p.plivoCallStatus + '</span>';
-        else if (p.plivoCallStatus === 'trigger-failed' || p.plivoCallStatus === 'failed') statusBadge = '<span class="badge bg-danger">' + p.plivoCallStatus + '</span>';
-        else if (p.plivoCallStatus === 'no_answer') statusBadge = '<span class="badge bg-warning text-dark">No Answer</span>';
-        else if (p.plivoCallStatus) statusBadge = '<span class="badge bg-secondary">' + p.plivoCallStatus + '</span>';
-        else statusBadge = '<span class="text-muted">—</span>';
+        var statusBadge = formatCallStatus(p.plivoCallStatus);
 
-        var assignHelp = p.plivoAssignmentHelp === true ? '<span class="badge bg-success">Yes</span>' : '—';
-        var callback = p.plivoCallbackRequested === true ? '<span class="badge bg-warning text-dark">Yes</span>' : '—';
+        var assignHelp = p.plivoAssignmentHelp === true ? '<span class="bc-flag-yes">Yes</span>' : '<span class="bc-flag-no">—</span>';
+        var callback = p.plivoCallbackRequested === true ? '<span class="bc-flag-yes">Yes</span>' : '<span class="bc-flag-no">—</span>';
         var notes = p.plivoNotes ? '<span title="' + esc(p.plivoNotes) + '" style="cursor:help;max-width:120px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.plivoNotes) + '</span>' : (p.plivoCallSummary ? '<span title="' + esc(p.plivoCallSummary) + '" style="cursor:help;max-width:120px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.plivoCallSummary) + '</span>' : '—');
 
-        var src = p.source || 'EA';
-        var srcBadge = src === 'EA' ? '<span class="badge bg-primary" style="font-size:10px;">Email</span>'
-                                    : '<span class="badge bg-secondary" style="font-size:10px;">Profile</span>';
+        var src = (p.source || 'EA').toString();
+        var srcBadge = src === 'Profile'
+            ? '<span class="bc-src-badge bc-src-profile" title="From interviewer profile (not yet in email availability)"><i class="fas fa-user"></i> Profile</span>'
+            : '<span class="bc-src-badge bc-src-ea" title="Email availability record"><i class="fas fa-envelope"></i> Email</span>';
 
-        var callBtnHtml = '<button class="btn btn-outline-info btn-sm btn-call-single" data-interviewer-id="' + p.id + '" data-source="' + src + '" data-mag-name="' + esc(magName || '').replace(/"/g, '&quot;') + '" title="Call this interviewer"><i class="fas fa-phone-alt"></i></button>';
+        var callBtnHtml = '<button type="button" class="btn btn-sm btn-call-single" data-interviewer-id="' + p.id + '" data-source="' + src + '" data-mag-name="' + esc(magName || '').replace(/"/g, '&quot;') + '" title="Call this interviewer"><i class="fas fa-phone-alt"></i></button>';
 
         return '<tr data-interviewer-id="' + p.id + '" data-source="' + src + '">' +
+            '<td class="bc-col-src">' + srcBadge + '</td>' +
             '<td>' + p.id + '</td>' +
-            '<td>' + srcBadge + '</td>' +
             '<td><strong>' + esc(p.interviewerName) + '</strong>' + (p.currentRole ? '<br/><span style="font-size:10.5px;color:#64748b;">' + esc(p.currentRole) + '</span>' : '') + '</td>' +
             '<td style="white-space:nowrap;">' + esc(p.phone) + '</td>' +
             '<td>' + (p.experience || '—') + '</td>' +
@@ -269,7 +517,7 @@
         var $btn = $(this);
         var interviewerId = parseInt($btn.attr('data-interviewer-id'));
         var source = $btn.attr('data-source') || 'EA';
-        var magName = $btn.attr('data-mag-name') || '';
+        var magName = decodeHtmlAttr($btn.attr('data-mag-name') || '');
         if (!interviewerId || $btn.hasClass('calling')) return;
         var srcLabel = source === 'Profile' ? ' (Profile interviewer)' : '';
         if (!confirm('Trigger an availability check call to interviewer #' + interviewerId + srcLabel + '?')) return;
@@ -281,17 +529,16 @@
             data: { __RequestVerificationToken: verificationToken, id: interviewerId, source: source, magName: magName },
             success: function (res) {
                 if (res.success) {
-                    $btn.removeClass('calling btn-outline-info').addClass('btn-info').html('<i class="fas fa-check me-1"></i>Triggered');
+                    $btn.removeClass('calling').html('<i class="fas fa-check"></i>');
                     var $row = $btn.closest('tr');
-                    $row.find('td:eq(5)').html('<span class="badge bg-info">triggered</span>');
+                    $row.find('td').filter(function () { return $(this).index() === 5; }).html(formatCallStatus('triggered'));
                     if (source === 'Profile' && res.eaId) {
                         $row.attr('data-source', 'EA');
                         $btn.attr('data-source', 'EA').attr('data-interviewer-id', res.eaId);
-                        $row.find('td:eq(1)').html('<span class="badge bg-primary" style="font-size:10px;">Email</span>');
+                        $row.find('.bc-col-src').html('<span class="bc-src-badge bc-src-ea" title="Email availability record"><i class="fas fa-envelope"></i> Email</span>');
                     }
                     setTimeout(function () {
-                        $btn.removeClass('btn-info').addClass('btn-outline-info').html('<i class="fas fa-phone-alt"></i>');
-                        $btn.removeClass('calling');
+                        $btn.html('<i class="fas fa-phone-alt"></i>').removeClass('calling');
                     }, 3000);
                 } else {
                     $btn.removeClass('calling').html('<i class="fas fa-phone-alt"></i>');
@@ -344,7 +591,7 @@
         e.stopPropagation();
         var $btn = $(this);
         if ($btn.prop('disabled')) return;
-        var magName = $btn.attr('data-mag-name');
+        var magName = decodeHtmlAttr($btn.attr('data-mag-name'));
         var onlyUncalled = $btn.attr('data-only-uncalled') === 'true';
         if (!magName) return;
         var cardId = $btn.closest('.bc-mag-card').attr('id');
@@ -439,7 +686,7 @@
                 data: { __RequestVerificationToken: verificationToken, logId: bcCurrentLogId, succeeded: ok, failed: err, skipped: skip, status: bcStopRequested ? 'Stopped' : 'Completed' }
             });
         }
-        loadOutcomes(cardId);
+        loadOutcomes(cardId, bcOutcomePageState[cardId] ? bcOutcomePageState[cardId].page : 1);
         var $histPanel = $('#panel_history_' + cardId);
         $histPanel.empty();
         loadHistory(cardId);

@@ -1801,17 +1801,20 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProspectCallOutcomes(string magName)
+        public async Task<IActionResult> GetProspectCallOutcomes(string magName, int page = 1, int pageSize = 25)
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
             try
             {
-                var prospects = await _repository.GetProspectCallOutcomesForMAGAsync(magName);
+                var (prospects, totalCount) = await _repository.GetProspectCallOutcomesForMAGAsync(magName, page, pageSize);
                 return Json(new
                 {
                     success = true,
+                    totalCount,
+                    page,
+                    pageSize,
                     prospects = prospects.Select(p => new
                     {
                         p.Id, p.CandidateName, p.ParsedEmail, p.ParsedPhone,
