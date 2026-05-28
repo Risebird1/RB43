@@ -119,18 +119,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
-                    int maxPollInterval = 30000; // Max 30 seconds
+                    int pollInterval = 10000;
+                    int maxPollInterval = 30000;
+                    int maxAttempts = 12;
+                    int attempts = 0;
 
-                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
                         await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
-                        if (runStatus == "failed")
+                        attempts++;
+                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                            || runStatus == null || attempts >= maxAttempts)
                             break;
-
-                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
 
@@ -190,18 +191,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
-                    int maxPollInterval = 30000; // Max 30 seconds
+                    int pollInterval = 10000;
+                    int maxPollInterval = 30000;
+                    int maxAttempts = 12;
+                    int attempts = 0;
 
-                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
                         await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
-                        if (runStatus == "failed")
+                        attempts++;
+                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                            || runStatus == null || attempts >= maxAttempts)
                             break;
-
-                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
 
@@ -1144,18 +1146,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    int pollInterval = 10000; // Start with 10 seconds (was 4s)
-                    int maxPollInterval = 30000; // Max 30 seconds
+                    int pollInterval = 10000;
+                    int maxPollInterval = 30000;
+                    int maxAttempts = 12;
+                    int attempts = 0;
 
-                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
                         await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
-                        if (runStatus == "failed")
+                        attempts++;
+                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                            || runStatus == null || attempts >= maxAttempts)
                             break;
-
-                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
 
@@ -1216,18 +1219,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
-                    int maxPollInterval = 30000; // Max 30 seconds
+                    int pollInterval = 10000;
+                    int maxPollInterval = 30000;
+                    int maxAttempts = 12;
+                    int attempts = 0;
 
-                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
                         await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
-                        if (runStatus == "failed")
+                        attempts++;
+                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                            || runStatus == null || attempts >= maxAttempts)
                             break;
-
-                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
 
@@ -1273,11 +1277,15 @@ namespace Risebird.CommonHelper
                 string runStatus = string.Empty;
                 int pollInterval = 10000;
                 int maxPollInterval = 30000;
+                int maxAttempts = 12;
+                int attempts = 0;
                 while (runStatus != "completed")
                 {
                     await Task.Delay(pollInterval);
                     runStatus = await RetrieveRun(runId, threadId);
-                    if (runStatus == "failed")
+                    attempts++;
+                    if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                        || runStatus == null || attempts >= maxAttempts)
                         break;
                     pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                 }
@@ -1310,11 +1318,15 @@ namespace Risebird.CommonHelper
                 string runStatus = string.Empty;
                 int pollInterval = 10000;
                 int maxPollInterval = 30000;
+                int maxAttempts = 12;
+                int attempts = 0;
                 while (runStatus != "completed")
                 {
                     await Task.Delay(pollInterval);
                     runStatus = await RetrieveRun(runId, threadId);
-                    if (runStatus == "failed")
+                    attempts++;
+                    if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                        || runStatus == null || attempts >= maxAttempts)
                         break;
                     pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                 }
@@ -1353,18 +1365,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
-                    int maxPollInterval = 30000; // Max 30 seconds
+                    int pollInterval = 10000;
+                    int maxPollInterval = 30000;
+                    int maxAttempts = 12;
+                    int attempts = 0;
 
-                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
                         await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
-                        if (runStatus == "failed")
+                        attempts++;
+                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                            || runStatus == null || attempts >= maxAttempts)
                             break;
-
-                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
 
@@ -1412,18 +1425,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
-                    int maxPollInterval = 30000; // Max 30 seconds
+                    int pollInterval = 10000;
+                    int maxPollInterval = 30000;
+                    int maxAttempts = 12;
+                    int attempts = 0;
 
-                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
                         await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
-                        if (runStatus == "failed")
+                        attempts++;
+                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                            || runStatus == null || attempts >= maxAttempts)
                             break;
-
-                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
 
@@ -1472,18 +1486,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
-                    int maxPollInterval = 30000; // Max 30 seconds
+                    int pollInterval = 10000;
+                    int maxPollInterval = 30000;
+                    int maxAttempts = 12;
+                    int attempts = 0;
 
-                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
                         await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
-                        if (runStatus == "failed")
+                        attempts++;
+                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                            || runStatus == null || attempts >= maxAttempts)
                             break;
-
-                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
 
@@ -1532,18 +1547,19 @@ namespace Risebird.CommonHelper
                 if (!string.IsNullOrEmpty(runId))
                 {
                     string runStatus = string.Empty;
-                    int pollInterval = 10000; // Start with 10 seconds (was 5s)
-                    int maxPollInterval = 30000; // Max 30 seconds
+                    int pollInterval = 10000;
+                    int maxPollInterval = 30000;
+                    int maxAttempts = 12;
+                    int attempts = 0;
 
-                    //retrieve a run with exponential backoff
                     while (runStatus != "completed")
                     {
                         await Task.Delay(pollInterval);
                         runStatus = await RetrieveRun(runId, threadId);
-                        if (runStatus == "failed")
+                        attempts++;
+                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                            || runStatus == null || attempts >= maxAttempts)
                             break;
-
-                        // Exponential backoff: 10s -> 15s -> 20s -> 25s -> 30s (max)
                         pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                     }
 
@@ -1600,12 +1616,16 @@ namespace Risebird.CommonHelper
                 string runStatus = string.Empty;
                 int pollInterval = 10000;
                 int maxPollInterval = 30000;
+                int maxAttempts = 12;
+                int attempts = 0;
 
                 while (runStatus != "completed")
                 {
                     await Task.Delay(pollInterval);
                     runStatus = await RetrieveRun(runId, threadId);
-                    if (runStatus == "failed")
+                    attempts++;
+                    if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                        || runStatus == null || attempts >= maxAttempts)
                         break;
                     pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                 }

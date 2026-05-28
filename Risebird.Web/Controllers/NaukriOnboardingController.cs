@@ -1652,7 +1652,7 @@ namespace Risebird.Web.Controllers
                     $"Processing finished for record #{recordId}. parseMethod={parseMethod}",
                     callLogId: recordId);
 
-                return Ok(new { success = true, recordId = recordId.Value });
+                return Content($"OK. recordId={recordId.Value}", "text/html");
             }
             catch (Exception ex)
             {
@@ -1660,7 +1660,7 @@ namespace Risebird.Web.Controllers
                     $"DB update exception for record #{recordId}: {ex.Message}",
                     callLogId: recordId);
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return StatusCode(500, new { error = ex.Message });
+                return Content($"Error: {ex.Message}", "text/html");
             }
         }
 
