@@ -417,6 +417,7 @@ namespace Risebird.Entities.ViewModel
         public int InterviewId { get; set; }
         public int IRFinid { get; set; }
         public string Comment { get; set; }
+        public bool IsBankVerified { get; set; }
         public string Status { get; set; }
         public DateTime Date { get; set; }
         public string PreferredLocation { get; set; }

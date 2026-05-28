@@ -134,6 +134,7 @@
                                                         <tr>
                                                             <th>Name</th>
                                                             <th>Amount</th>
+                                                            <th>Account Verified</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
@@ -142,13 +143,14 @@
 
                                                             <th>Name</th>
                                                             <th>Amount</th>
+                                                            <th>Account Verified</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </tfoot>
                                                     <tbody id="tblbodyPayment">
                                                         @if (Model.Count == 0)
                                                         {
-                                                            <tr><td colspan="3" style="text-align:center">No Result found</td></tr>
+                                                            <tr><td colspan="4" style="text-align:center">No Result found</td></tr>
                                                         }
                                                         @foreach (var item in Model)
                                                         {
@@ -156,6 +158,16 @@
                                                             <tr>
                                                                 <td>@item.Comment<input type="hidden" id="hidcomment_@item.id" value="@item.Comment" /></td>
                                                                 <td>@item.Points<input type="hidden" id="hidpoint_@item.id" value="@item.Points" /></td>
+                                                                <td>
+                                                                    @if (item.IsBankVerified)
+                                                                    {
+                                                                        <span class="text-success" title="Bank account verified">Yes</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="text-danger" title="Bank account not verified">No</span>
+                                                                    }
+                                                                </td>
                                                                 <td>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
                                                                         <span onclick="DetailedView(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
@@ -439,15 +451,20 @@
         var html = '';
         if (data.length == 0) {
             html += '  <tr>';
-            html += ' <td colspan="9" class="text-center">No data available in table</td>';
+            html += ' <td colspan="4" class="text-center">No data available in table</td>';
             html += ' </tr>';
         }
 
         for (var i = 0; i < data.length; i++) {
             var pointdetails = data[i].points;
+            var isVerified = data[i].isBankVerified === true || data[i].isBankVerified === 'true' || data[i].IsBankVerified === true;
+            var verifiedLabel = isVerified
+                ? '<span class="text-success" title="Bank account verified via Cashfree">Yes</span>'
+                : '<span class="text-danger" title="Bank account not verified">No</span>';
             html += '  <tr>';
             html += '  <td>' + data[i].comment + '</td>';
             html += ' <td>' + pointdetails + '</td> ';
+            html += '  <td>' + verifiedLabel + '</td>';
             html += '  <td>';
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Detail View">';
             html += '   <span onclick = "DetailedView(' + data[i].id + ')" title = "Detail View" class="mdc-fab__icon material-icons">';
@@ -526,12 +543,12 @@
                 }
             } else if (i == nextset) {
                 if (Generateinvoiceflag == 2) {
-                    html += '<li class="disabled PagedList-ellipses"><a>Ö</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
                     html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(' + next + ')" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
                 }
                 else {
-                    html += '<li class="disabled PagedList-ellipses"><a>Ö</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
                     html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=' + next + '&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
                 }
@@ -540,11 +557,11 @@
             }
             if (pagecount <= 10 && i == pagecount && i != 1) {
                 if (Generateinvoiceflag == 2) {
-                    html += '<li class="disabled PagedList-ellipses"><a>Ö</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
                     html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(' + next + ')" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
                 } else {
-                    html += '<li class="disabled PagedList-ellipses"><a>Ö</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
                     html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=' + next + '&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
                 }
@@ -1018,7 +1035,7 @@
     function bindtableDataChangeMonth() {
         var html = '';
         html += '  <tr>';
-        html += ' <td colspan="9" class="text-center">No data available in table</td>';
+        html += ' <td colspan="4" class="text-center">No data available in table</td>';
         html += ' </tr>';
         $("#tblbodyPayment").empty().html(html);
     }

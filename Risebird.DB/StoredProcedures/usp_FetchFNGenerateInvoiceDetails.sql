@@ -73,6 +73,13 @@ where ip.Status='Advance' and interviewerid=0 and Interviewid=0)
 Insert into @AdvancedPoints
 Select Comment,id,Sum(Points) as Points from CTE group by Comment,id
 
-Select sp.id,(Isnull(sp.Points,0)-Isnull(ap.Points,0)) as Points,sp.Comment From @SubmitedPoints sp left join @AdvancedPoints ap on sp.id=ap.id
+Select sp.id,
+       (Isnull(sp.Points,0)-Isnull(ap.Points,0)) as Points,
+       sp.Comment,
+       ISNULL(tic.IsBankVerified, 0) as IsBankVerified
+From @SubmitedPoints sp
+left join @AdvancedPoints ap on sp.id = ap.id
+left join InterviewerProfile irp on irp.UserId = sp.id
+left join TransInterviewerAccDetails tic on tic.InterviewerProfileId = irp.id
 END
 GO
