@@ -40,10 +40,12 @@ begin try
 					and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @IRFId)
 					and CompanyType = (select CompanyType from IRF where id = @IRFId))
 
+			DECLARE @isLocked bit = ISNULL((SELECT DmIvLockNew FROM IRF WHERE id = @IRFId), 0)
+
 			if not exists(select 1 from TransInterviewer where UserId = @userId and IRFId = @IRFId)
 			Begin
 				insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted)
-				values (@IRFId, @InterviewerProfileId, @userId, 1, 1, @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1)
+				values (@IRFId, @InterviewerProfileId, @userId, 1, CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END, @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1)
 			End
 
 			UPDATE InterviewerProfile
@@ -108,10 +110,12 @@ begin try
 					and PlanTypeEnumValue = (select Heuristicsscore from IRF where id = @targetIRFId)
 					and CompanyType = (select CompanyType from IRF where id = @targetIRFId))
 
+				DECLARE @isLocked2 bit = ISNULL((SELECT DmIvLockNew FROM IRF WHERE id = @targetIRFId), 0)
+
 				if not exists(select 1 from TransInterviewer where UserId = @userId2 and IRFId = @targetIRFId)
 				Begin
 					insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted)
-					values (@targetIRFId, @InterviewerProfileId2, @userId2, 1, 1, @rate2, @OpenAIScreeningResponse, @verdict, 'Internal MAG Link', @score, 1)
+					values (@targetIRFId, @InterviewerProfileId2, @userId2, 1, CASE WHEN @isLocked2 = 1 THEN 0 ELSE 1 END, @rate2, @OpenAIScreeningResponse, @verdict, 'Internal MAG Link', @score, 1)
 				End
 
 				delete from @tbl_targetIRFs where irfId = @targetIRFId

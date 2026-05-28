@@ -449,24 +449,34 @@
             contentType: false,
             processData: false,
             data: formdata,
+            timeout: 300000,
             success: function (data) {
-                if (data != null && (data.errorMessage == '' || data.errorMessage.includes('bypassed'))) {
+                if (data != null && typeof data === 'object' && (data.errorMessage == '' || (data.errorMessage && data.errorMessage.includes('bypassed')))) {
                     if (data.isfavourableVerdict) {
                         buttonAI.innerHTML = "Processed!";
                         swal.fire("Processed! An acknowledgement mail has been sent. Kindly confirm.");
-                    } else if (!data.isfavourableVerdict && data.errorMessage.includes('bypassed')) {
+                    } else if (!data.isfavourableVerdict && data.errorMessage && data.errorMessage.includes('bypassed')) {
                         buttonAI.innerHTML = "Error";
                         swal.fire("Error processing. Please try again later.");
                     } else {
                         buttonAI.innerHTML = "Processed";
                         swal.fire("Processed. Unfortunately, your profile does not match the current requirement. Thank you for applying!");
                     }
-                } else if (data != null && data.errorMessage != '') {
+                } else if (data != null && typeof data === 'object' && data.errorMessage != '') {
                     buttonAI.innerHTML = "Error";
                     swal.fire(data.errorMessage);
                 } else {
                     buttonAI.innerHTML = "Error";
                     swal.fire("Error processing. Please try again later.");
+                }
+            },
+            error: function (xhr, status, error) {
+                buttonAI.disabled = false;
+                buttonAI.innerHTML = "Submit";
+                if (status === 'timeout') {
+                    swal.fire("The request timed out. Please try again.");
+                } else {
+                    swal.fire("Something went wrong. Please try again later.");
                 }
             }
         });

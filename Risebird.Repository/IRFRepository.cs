@@ -650,6 +650,9 @@ namespace Risebird.Repository
                             _resultVM.IsTechQC = !string.IsNullOrEmpty(dt.Rows[0]["IsTechQC"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsTechQC"]) : false; ;
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.generateTranscriptSummary = !string.IsNullOrEmpty(dt.Rows[0]["generateTranscriptSummary"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["generateTranscriptSummary"]) : false;
+                            _resultVM.DmIvLockNew = dt.Columns.Contains("DmIvLockNew") && !string.IsNullOrEmpty(dt.Rows[0]["DmIvLockNew"].ToString()) && Convert.ToBoolean(dt.Rows[0]["DmIvLockNew"]);
+                            _resultVM.DmAssignmentPolicy = dt.Columns.Contains("DmAssignmentPolicy") && !string.IsNullOrEmpty(dt.Rows[0]["DmAssignmentPolicy"].ToString()) ? dt.Rows[0]["DmAssignmentPolicy"].ToString() : "free";
+                            _resultVM.DmDefaultInterviewCap = dt.Columns.Contains("DmDefaultInterviewCap") && !string.IsNullOrEmpty(dt.Rows[0]["DmDefaultInterviewCap"].ToString()) ? Convert.ToInt32(dt.Rows[0]["DmDefaultInterviewCap"]) : 20;
 
                         }
                     }
@@ -757,7 +760,14 @@ namespace Risebird.Repository
                                     IsResumeRedactAttempted = !string.IsNullOrEmpty(dt.Rows[i]["IsResumeRedactAttempted"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsResumeRedactAttempted"]) : false,
                                     IsCampaignActivity = !string.IsNullOrEmpty(dt.Rows[i]["IsCampaignActivity"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsCampaignActivity"]) : false,
                                     CampaignName = !string.IsNullOrEmpty(dt.Rows[i]["CampaignName"].ToString()) ? dt.Rows[i]["CampaignName"].ToString() : null,
-                                    AIVerdict = !string.IsNullOrEmpty(dt.Rows[i]["AIVerdict"].ToString()) ? dt.Rows[i]["AIVerdict"].ToString() : null
+                                    AIVerdict = !string.IsNullOrEmpty(dt.Rows[i]["AIVerdict"].ToString()) ? dt.Rows[i]["AIVerdict"].ToString() : null,
+                                    AIScreeningScore = dt.Columns.Contains("AIScreeningScore") && !string.IsNullOrEmpty(dt.Rows[i]["AIScreeningScore"].ToString()) ? Convert.ToInt32(dt.Rows[i]["AIScreeningScore"]) : 0,
+                                    OpenAIScreeningResponse = dt.Columns.Contains("OpenAIScreeningResponse") && !string.IsNullOrEmpty(dt.Rows[i]["OpenAIScreeningResponse"].ToString()) ? dt.Rows[i]["OpenAIScreeningResponse"].ToString() : null,
+                                    TotalInterview = dt.Columns.Contains("TotalInterview") && !string.IsNullOrEmpty(dt.Rows[i]["TotalInterview"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalInterview"]) : 0,
+                                    TotalFuture = dt.Columns.Contains("TotalFuture") && !string.IsNullOrEmpty(dt.Rows[i]["TotalFuture"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalFuture"]) : 0,
+                                    VideoLink = dt.Columns.Contains("VideoLink") && !string.IsNullOrEmpty(dt.Rows[i]["VideoLink"].ToString()) ? dt.Rows[i]["VideoLink"].ToString() : null,
+                                    IsVideoApproved = dt.Columns.Contains("IsVideoApproved") && !string.IsNullOrEmpty(dt.Rows[i]["IsVideoApproved"].ToString()) && Convert.ToBoolean(dt.Rows[i]["IsVideoApproved"]),
+                                    InterviewCapacity = dt.Columns.Contains("InterviewCapacity") && !string.IsNullOrEmpty(dt.Rows[i]["InterviewCapacity"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewCapacity"]) : 0,
 
                                 });
                             }
@@ -6365,6 +6375,56 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public VoiceInstructionBriefVm FetchVoiceInstructionBrief(int irfid)
+        {
+            try
+            {
+                var query = @"SELECT ISNULL(AudioComment,'') AS AudioUrl,
+                                     ISNULL(VoiceInstructionTranscript,'') AS Transcript,
+                                     VoiceInstructionTranscriptUpdatedOn AS TranscriptUpdatedOn,
+                                     VoiceInstructionTranscriptUpdatedBy AS TranscriptUpdatedBy
+                              FROM IRF WHERE id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", irfid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return con.QueryFirstOrDefault<VoiceInstructionBriefVm>(query, dynamicParameters)
+                           ?? new VoiceInstructionBriefVm();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new VoiceInstructionBriefVm();
+        }
+
+        public bool SaveVoiceInstructionTranscript(int irfid, string transcript, string updatedBy)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", irfid);
+                dynamicParameters.Add("@Transcript", transcript ?? string.Empty);
+                dynamicParameters.Add("@UpdatedBy", updatedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_SaveVoiceInstructionTranscript", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid)
         {
             try
@@ -8051,7 +8111,7 @@ namespace Risebird.Repository
 
                         foreach (var item in techskills)
                         {
-                            techSkillDt.Rows.Add(item.IRFId, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet);
+                            techSkillDt.Rows.Add(item.IRFId, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet, item.SkillName);
                         }
 
                         SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
@@ -8270,6 +8330,31 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@IRFId", irfId);
+                    parameters.Add("@SkillName", skillName);
+                    parameters.Add("@Comment", comment);
+                    parameters.Add("@ExpectedAnswer", expectedAnswer);
+                    parameters.Add("@GeneratedPayload", generatedPayload);
+                    parameters.Add("@CreatedBy", createdBy);
+                    var result = await SqlMapper.QueryFirstOrDefaultAsync<dynamic>(con, "usp_AddAIGeneratedSampleQuestion", parameters, commandType: CommandType.StoredProcedure);
+                    return result != null ? (int)(decimal)result.NewId : 0;
+                }
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
         public async Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id)
         {
             try
@@ -8298,6 +8383,28 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<SkillComment>(con, "usp_DeleteSkillSampleQuestions", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@comment", comment);
+                dynamicParameters.Add("@expectedAnswer", expectedAnswer);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.ExecuteAsync(con, "usp_UpdateSkillChannelSampleQuestion", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -9827,6 +9934,93 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> UpdateDmIvPolicy(int irfId, bool dmIvLockNew, string dmAssignmentPolicy, int dmDefaultInterviewCap, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@dmIvLockNew", dmIvLockNew);
+                    parameters.Add("@dmAssignmentPolicy", dmAssignmentPolicy);
+                    parameters.Add("@dmDefaultInterviewCap", dmDefaultInterviewCap);
+                    parameters.Add("@performedBy", loggedInUser);
+                    await SqlMapper.ExecuteAsync(con, "usp_UpdateDmIvPolicy", parameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateTransInterviewerCapacity(int transInterviewerId, int interviewCapacity, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@transInterviewerId", transInterviewerId);
+                    parameters.Add("@interviewCapacity", interviewCapacity);
+                    parameters.Add("@performedBy", loggedInUser);
+                    await SqlMapper.ExecuteAsync(con, "usp_UpdateTransInterviewerCapacity", parameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateTransInterviewerPerSuccessRate(int transInterviewerId, int perSuccessRate, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@transInterviewerId", transInterviewerId);
+                    parameters.Add("@perSuccessRate", perSuccessRate);
+                    parameters.Add("@performedBy", loggedInUser);
+                    await SqlMapper.ExecuteAsync(con, "usp_UpdateTransInterviewerPerSuccessRate", parameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> ApplyDefaultInterviewCapToIrf(int irfId, int defaultCap, string loggedInUser)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@defaultCap", defaultCap);
+                    parameters.Add("@performedBy", loggedInUser);
+                    await SqlMapper.ExecuteAsync(con, "usp_ApplyDefaultInterviewCapToIrf", parameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public int GetIRFIdByIRFName(string IRFId, string tenantId)
         {
             try

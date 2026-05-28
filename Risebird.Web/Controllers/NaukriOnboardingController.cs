@@ -1652,7 +1652,7 @@ namespace Risebird.Web.Controllers
                     $"Processing finished for record #{recordId}. parseMethod={parseMethod}",
                     callLogId: recordId);
 
-                return Ok(new { success = true, recordId = recordId.Value });
+                return Content($"OK. recordId={recordId.Value}", "text/html");
             }
             catch (Exception ex)
             {
@@ -1660,7 +1660,7 @@ namespace Risebird.Web.Controllers
                     $"DB update exception for record #{recordId}: {ex.Message}",
                     callLogId: recordId);
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return StatusCode(500, new { error = ex.Message });
+                return Content($"Error: {ex.Message}", "text/html");
             }
         }
 
@@ -1801,17 +1801,20 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProspectCallOutcomes(string magName)
+        public async Task<IActionResult> GetProspectCallOutcomes(string magName, int page = 1, int pageSize = 25)
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
             try
             {
-                var prospects = await _repository.GetProspectCallOutcomesForMAGAsync(magName);
+                var (prospects, totalCount) = await _repository.GetProspectCallOutcomesForMAGAsync(magName, page, pageSize);
                 return Json(new
                 {
                     success = true,
+                    totalCount,
+                    page,
+                    pageSize,
                     prospects = prospects.Select(p => new
                     {
                         p.Id, p.CandidateName, p.ParsedEmail, p.ParsedPhone,
