@@ -1086,11 +1086,81 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> SaveBankVerificationAsync(
+            int interviewerProfileId,
+            TransInterviewerAccDetails accountDetails,
+            CashfreeBankVerificationResult verificationResult)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewerProfileId", interviewerProfileId);
+                parameters.Add("@AccountName", accountDetails?.AccountName);
+                parameters.Add("@AccountNumber", BankAccountVerificationHelper.NormalizeAccountNumber(accountDetails?.AccountNumber));
+                parameters.Add("@IFSCCode", BankAccountVerificationHelper.NormalizeIfsc(accountDetails?.IFSCCode));
+                parameters.Add("@IsBankVerified", verificationResult?.IsValid == true);
+                parameters.Add("@VerifiedOn", verificationResult?.IsValid == true ? DateTime.UtcNow : (DateTime?)null);
+                parameters.Add("@VerifiedAccountNumber", BankAccountVerificationHelper.NormalizeAccountNumber(accountDetails?.AccountNumber));
+                parameters.Add("@VerifiedIFSCCode", BankAccountVerificationHelper.NormalizeIfsc(accountDetails?.IFSCCode));
+                parameters.Add("@VerifiedAccountName", BankAccountVerificationHelper.NormalizeName(accountDetails?.AccountName));
+                parameters.Add("@NameAtBank", verificationResult?.NameAtBank);
+                parameters.Add("@CashfreeReferenceId", verificationResult?.ReferenceId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_SaveInterviewerBankVerification", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+                return true;
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        private static void AddBankVerificationParameters(
+            DynamicParameters paramsAccount,
+            TransInterviewerAccDetails previous,
+            TransInterviewerAccDetails current)
+        {
+            var preserveVerification = previous?.IsBankVerified == true
+                && !BankAccountVerificationHelper.CoreBankDetailsChanged(previous, current);
+
+            if (preserveVerification)
+            {
+                paramsAccount.Add("@IsBankVerified", true);
+                paramsAccount.Add("@VerifiedOn", previous.VerifiedOn);
+                paramsAccount.Add("@VerifiedAccountNumber", previous.VerifiedAccountNumber);
+                paramsAccount.Add("@VerifiedIFSCCode", previous.VerifiedIFSCCode);
+                paramsAccount.Add("@VerifiedAccountName", previous.VerifiedAccountName);
+                paramsAccount.Add("@NameAtBank", previous.NameAtBank);
+                paramsAccount.Add("@CashfreeReferenceId", previous.CashfreeReferenceId);
+            }
+            else
+            {
+                paramsAccount.Add("@IsBankVerified", false);
+                paramsAccount.Add("@VerifiedOn", null);
+                paramsAccount.Add("@VerifiedAccountNumber", null);
+                paramsAccount.Add("@VerifiedIFSCCode", null);
+                paramsAccount.Add("@VerifiedAccountName", null);
+                paramsAccount.Add("@NameAtBank", null);
+                paramsAccount.Add("@CashfreeReferenceId", null);
+            }
+        }
+
         #region Interviewer My Profile Repository function
         public async Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile)
         {
             try
             {
+                var previousAccDetails = await GetAccDetailsList(interviewerProfile.id);
 
                 // In this case, Only passing the required parameters to fil in the tables
                 var parameters = new DynamicParameters();
@@ -1139,6 +1209,10 @@ namespace Risebird.Repository
                 paramsAccount.Add("@IFSCCode", interviewerProfile.InterviewerAccDetails.IFSCCode);
                 paramsAccount.Add("@UPIId", interviewerProfile.InterviewerAccDetails.UPIId);
                 paramsAccount.Add("@PAN", interviewerProfile.InterviewerAccDetails.PAN);
+                AddBankVerificationParameters(
+                    paramsAccount,
+                    previousAccDetails,
+                    interviewerProfile.InterviewerAccDetails);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

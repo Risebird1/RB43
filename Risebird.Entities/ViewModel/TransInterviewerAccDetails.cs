@@ -1,4 +1,6 @@
-﻿namespace Risebird.Entities.ViewModel
+﻿using System;
+
+namespace Risebird.Entities.ViewModel
 {
     public class TransInterviewerAccDetails
     {
@@ -10,6 +12,13 @@
         public string UPIId { get; set; }
         public string PAN { get; set; }
         public string AccountLocation { get; set; }
+        public bool IsBankVerified { get; set; }
+        public DateTime? VerifiedOn { get; set; }
+        public string VerifiedAccountNumber { get; set; }
+        public string VerifiedIFSCCode { get; set; }
+        public string VerifiedAccountName { get; set; }
+        public string NameAtBank { get; set; }
+        public long? CashfreeReferenceId { get; set; }
 
     }
 }
