@@ -3656,6 +3656,9 @@ namespace Risebird.Business
                 if (bankDetails == null || string.IsNullOrWhiteSpace(bankDetails.AccountNumber) || string.IsNullOrWhiteSpace(bankDetails.IFSCCode))
                     return Tuple.Create(false, "Bank account details are missing or incomplete for this interviewer.");
 
+                if (!bankDetails.IsBankVerified)
+                    return Tuple.Create(false, "Bank account is not verified. The interviewer must verify their account from My Profile before payment can be processed.");
+
                 // 4. Build a unique transfer id (alphanumeric + underscore, ≤ 40 chars)
                 var commentvalue = $"{st} to {se}";
                 var transferId = $"RB_{id}_{DateTime.Now:yyyyMMddHHmmss}";

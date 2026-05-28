@@ -576,6 +576,23 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> SaveBankVerificationAsync(
+            int interviewerProfileId,
+            TransInterviewerAccDetails accountDetails,
+            CashfreeBankVerificationResult verificationResult)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveBankVerificationAsync(
+                    interviewerProfileId, accountDetails, verificationResult);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         #endregion
         #region  unapproved interviewers
         public IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId)

@@ -486,6 +486,7 @@ namespace Risebird.Entities.ViewModel
         public string IFSCCode { get; set; }
         public string AccountName { get; set; }
         public string MobileNumber { get; set; }
+        public bool IsBankVerified { get; set; }
     }
     public class FnRevenueVM
     {

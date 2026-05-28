@@ -1842,7 +1842,12 @@ namespace Risebird.Web.Controllers
         /// Self-service bank account verification via Cashfree BAV (My Profile → Account Details tab).
         /// </summary>
         [HttpPost]
-        public async Task<JsonResult> VerifyBankAccount(string accountName, string accountNumber, string ifscCode, string phone)
+        public async Task<JsonResult> VerifyBankAccount(
+            int interviewerProfileId,
+            string accountName,
+            string accountNumber,
+            string ifscCode,
+            string phone)
         {
             try
             {
@@ -1853,20 +1858,61 @@ namespace Risebird.Web.Controllers
                 if (profileName != "Interviewer")
                     return Json(new { success = false, message = "Only interviewers can verify bank accounts here." });
 
+                if (interviewerProfileId <= 0)
+                    return Json(new { success = false, message = "Invalid profile. Please refresh the page and try again." });
+
                 if (string.IsNullOrWhiteSpace(accountNumber) || string.IsNullOrWhiteSpace(ifscCode))
                     return Json(new { success = false, message = "Account number and IFSC are required." });
 
+                var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var profile = await _interviewerService.GetInterviewerProfileByEmailId(email, profileName);
+                if (profile == null || profile.id != interviewerProfileId)
+                    return Json(new { success = false, message = "You can only verify your own bank account." });
+
                 if (string.IsNullOrWhiteSpace(phone))
+                    phone = profile.MobileNumber;
+
+                var existingAcc = profile.InterviewerAccDetails;
+                var incomingAcc = new TransInterviewerAccDetails
                 {
-                    var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                    var profile = await _interviewerService.GetInterviewerProfileByEmailId(email, profileName);
-                    phone = profile?.MobileNumber;
+                    AccountName = accountName,
+                    AccountNumber = accountNumber,
+                    IFSCCode = ifscCode
+                };
+                var verifiedSnapshot = new TransInterviewerAccDetails
+                {
+                    AccountNumber = existingAcc?.VerifiedAccountNumber,
+                    IFSCCode = existingAcc?.VerifiedIFSCCode,
+                    AccountName = existingAcc?.VerifiedAccountName
+                };
+                if (existingAcc?.IsBankVerified == true
+                    && !BankAccountVerificationHelper.CoreBankDetailsChanged(verifiedSnapshot, incomingAcc))
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        alreadyVerified = true,
+                        isBankVerified = true,
+                        message = "Your bank account is already verified.",
+                        verifiedOn = existingAcc.VerifiedOn?.ToString("dd MMM yyyy, hh:mm tt") + " UTC",
+                        nameAtBank = existingAcc.NameAtBank
+                    });
                 }
 
                 var result = await _cashfreePayoutService.VerifyBankAccountAsync(accountName, accountNumber, ifscCode, phone);
 
                 if (result.IsValid)
                 {
+                    var accDetails = new TransInterviewerAccDetails
+                    {   
+                        AccountName = accountName,
+                        AccountNumber = accountNumber,
+                        IFSCCode = ifscCode
+                    };
+                    var saved = await _interviewerService.SaveBankVerificationAsync(interviewerProfileId, accDetails, result);
+                    if (!saved)
+                        return Json(new { success = false, message = "Account verified with Cashfree but could not save status. Please try again." });
+
                     var message = string.IsNullOrWhiteSpace(result.ErrorMessage)
                         ? $"Account verified. Name at bank: {result.NameAtBank ?? "—"}."
                         : result.ErrorMessage;
@@ -1874,6 +1920,8 @@ namespace Risebird.Web.Controllers
                     {
                         success = true,
                         isValid = true,
+                        isBankVerified = true,
+                        verifiedOn = DateTime.UtcNow.ToString("dd MMM yyyy, hh:mm tt") + " UTC",
                         message,
                         nameAtBank = result.NameAtBank,
                         bankName = result.BankName,

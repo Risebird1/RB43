@@ -323,10 +323,36 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <button type="button" id="btnVerifyBankAccount" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                                        Verify bank account
+                                                        @(Model.InterviewerAccDetails?.IsBankVerified == true ? "Re-verify bank account" : "Verify bank account")
                                                     </button>
-                                                    <span id="bankVerifyStatus" class="ml-2" style="display:none;"></span>
+                                                    @if (Model.InterviewerAccDetails?.IsBankVerified == true)
+                                                    {
+                                                        <span id="bankVerifyStatus" class="ml-2 text-success"><strong>Account verified</strong></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span id="bankVerifyStatus" class="ml-2"></span>
+                                                    }
                                                 </div>
+                                                @if (Model.InterviewerAccDetails?.IsBankVerified == true)
+                                                {
+                                                    <p id="bankVerifiedInfo" class="text-success" style="margin-top:0;">
+                                                        Your bank account is already verified.
+                                                        Verified on @(Model.InterviewerAccDetails.VerifiedOn?.ToString("dd MMM yyyy, hh:mm tt")) UTC
+                                                        @if (!string.IsNullOrEmpty(Model.InterviewerAccDetails.NameAtBank))
+                                                        {
+                                                            <span> — Name at bank: @Model.InterviewerAccDetails.NameAtBank</span>
+                                                        }
+                                                    </p>
+                                                }
+                                                else if (!string.IsNullOrEmpty(Model.InterviewerAccDetails?.AccountNumber))
+                                                {
+                                                    <p id="bankVerifiedInfo" class="text-warning" style="margin-top:0;">Account not verified. Please verify before receiving payments.</p>
+                                                }
+                                                else
+                                                {
+                                                    <p id="bankVerifiedInfo" class="text-muted" style="margin-top:0;display:none;"></p>
+                                                }
                                             </div>
 
 
@@ -361,51 +387,112 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
-    $('#btnVerifyBankAccount').on('click', function () {
-        var accountName = $('#InterviewerAccDetails_AccountName').val();
-        var accountNumber = $('#InterviewerAccDetails_AccountNumber').val();
-        var ifscCode = $('#InterviewerAccDetails_IFSCCode').val();
-        var phone = $('#MobileNumber').val();
+    (function () {
+        var verifiedSnapshot = {
+            account: '@(Model.InterviewerAccDetails?.VerifiedAccountNumber ?? "")',
+            ifsc: '@(Model.InterviewerAccDetails?.VerifiedIFSCCode ?? "")',
+            name: '@(Model.InterviewerAccDetails?.VerifiedAccountName ?? "")',
+            isVerified: @(Model.InterviewerAccDetails?.IsBankVerified == true ? "true" : "false")
+        };
 
-        if (!accountNumber || !ifscCode) {
-            swal.fire('Required', 'Please enter account number and IFSC before verifying.', 'warning');
-            return;
+        function normalizeAccount(v) { return (v || '').trim(); }
+        function normalizeIfsc(v) { return (v || '').trim().toUpperCase(); }
+        function normalizeName(v) { return (v || '').trim(); }
+
+        function bankCoreChanged() {
+            return normalizeAccount($('#InterviewerAccDetails_AccountNumber').val()) !== normalizeAccount(verifiedSnapshot.account)
+                || normalizeIfsc($('#InterviewerAccDetails_IFSCCode').val()) !== normalizeIfsc(verifiedSnapshot.ifsc)
+                || normalizeName($('#InterviewerAccDetails_AccountName').val()) !== normalizeName(verifiedSnapshot.name);
         }
 
-        var $btn = $(this);
-        var $status = $('#bankVerifyStatus');
-        $btn.prop('disabled', true);
-        $status.show().text('Verifying…').css('color', '#666');
-
-        $.ajax({
-            url: '@Url.Action("VerifyBankAccount", "Interviewer")',
-            type: 'POST',
-            data: {
-                accountName: accountName,
-                accountNumber: accountNumber,
-                ifscCode: ifscCode,
-                phone: phone
-            },
-            success: function (res) {
-                if (res.success) {
-                    var detail = res.nameAtBank ? ' Name at bank: ' + res.nameAtBank + '.' : '';
-                    if (res.bankName) detail += ' Bank: ' + res.bankName + '.';
-                    $status.text('Verified' + detail).css('color', 'green');
-                    swal.fire('Verified', res.message || 'Bank account verified successfully.', 'success');
-                } else {
-                    $status.text(res.message || 'Verification failed').css('color', 'red');
-                    swal.fire('Not verified', res.message || 'Bank account could not be verified.', 'error');
-                }
-            },
-            error: function () {
-                $status.text('Verification request failed').css('color', 'red');
-                swal.fire('Error', 'Could not reach the server. Please try again.', 'error');
-            },
-            complete: function () {
-                $btn.prop('disabled', false);
+        function updateReverifyHint() {
+            var $info = $('#bankVerifiedInfo');
+            if (verifiedSnapshot.isVerified && bankCoreChanged()) {
+                $info.removeClass('text-success text-warning text-muted').addClass('text-warning')
+                    .show().text('Bank details changed — please verify again before receiving payments.');
+                $('#bankVerifyStatus').removeClass('text-success').text('Re-verification required').css('color', '#e67e22');
+                $('#btnVerifyBankAccount').text('Verify bank account');
+            } else if (verifiedSnapshot.isVerified) {
+                $('#bankVerifyStatus').html('<strong>Account verified</strong>').removeClass('text-warning').addClass('text-success').css('color', '');
+                $('#bankVerifiedInfo').removeClass('text-warning text-muted').addClass('text-success')
+                    .show().html('Your bank account is already verified.');
+                $('#btnVerifyBankAccount').text('Re-verify bank account');
             }
+        }
+
+        $('#InterviewerAccDetails_AccountName, #InterviewerAccDetails_AccountNumber, #InterviewerAccDetails_IFSCCode')
+            .on('input change', updateReverifyHint);
+
+        $('#btnVerifyBankAccount').on('click', function () {
+            var accountName = $('#InterviewerAccDetails_AccountName').val();
+            var accountNumber = $('#InterviewerAccDetails_AccountNumber').val();
+            var ifscCode = $('#InterviewerAccDetails_IFSCCode').val();
+            var phone = $('#MobileNumber').val();
+            var interviewerProfileId = $('#id').val();
+
+            if (!accountNumber || !ifscCode) {
+                swal.fire('Required', 'Please enter account number and IFSC before verifying.', 'warning');
+                return;
+            }
+
+            if (verifiedSnapshot.isVerified && !bankCoreChanged()) {
+                swal.fire('Account verified', 'Your bank account is already verified. Change account number, IFSC, or holder name only if you need to verify a different account.', 'info');
+                return;
+            }
+
+            var $btn = $(this);
+            var $status = $('#bankVerifyStatus');
+            $btn.prop('disabled', true);
+            $status.show().text('Verifying…').css('color', '#666');
+
+            $.ajax({
+                url: '@Url.Action("VerifyBankAccount", "Interviewer")',
+                type: 'POST',
+                data: {
+                    interviewerProfileId: interviewerProfileId,
+                    accountName: accountName,
+                    accountNumber: accountNumber,
+                    ifscCode: ifscCode,
+                    phone: phone
+                },
+                success: function (res) {
+                    if (res.success) {
+                        if (res.alreadyVerified) {
+                            swal.fire('Account verified', res.message || 'Your bank account is already verified.', 'info');
+                            updateReverifyHint();
+                            return;
+                        }
+                        verifiedSnapshot.account = normalizeAccount(accountNumber);
+                        verifiedSnapshot.ifsc = normalizeIfsc(ifscCode);
+                        verifiedSnapshot.name = normalizeName(accountName);
+                        verifiedSnapshot.isVerified = true;
+                        var detail = res.nameAtBank ? ' Name at bank: ' + res.nameAtBank + '.' : '';
+                        if (res.bankName) detail += ' Bank: ' + res.bankName + '.';
+                        $status.html('<strong>Account verified</strong>').removeClass('text-warning').addClass('text-success').css('color', '');
+                        $('#btnVerifyBankAccount').text('Re-verify bank account');
+                        $('#bankVerifiedInfo').removeClass('text-warning text-muted').addClass('text-success')
+                            .show().html('Your bank account is already verified. Verified on ' + (res.verifiedOn || 'now') + (res.nameAtBank ? ' — Name at bank: ' + res.nameAtBank : ''));
+                        swal.fire('Verified', res.message || 'Bank account verified successfully.', 'success');
+                    } else {
+                        verifiedSnapshot.isVerified = false;
+                        $status.text(res.message || 'Verification failed').css('color', 'red');
+                        $('#bankVerifiedInfo').removeClass('text-success').addClass('text-warning')
+                            .show().text(res.message || 'Verification failed.');
+                        swal.fire('Not verified', res.message || 'Bank account could not be verified.', 'error');
+                    }
+                },
+                error: function () {
+                    $status.text('Verification request failed').css('color', 'red');
+                    swal.fire('Error', 'Could not reach the server. Please try again.', 'error');
+                },
+                complete: function () {
+                    $btn.prop('disabled', false);
+                }
+            });
         });
-    });
+
+        updateReverifyHint();
+    })();
 
     $('.tab-menu li a').on('click', function () {
         var target = $(this).attr('data-rel');
