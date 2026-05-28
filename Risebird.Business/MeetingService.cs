@@ -562,6 +562,9 @@ namespace Risebird.Business
             {
                 if (!string.IsNullOrEmpty(meetingToUpdate.NewActiveInterviewer))
                 {
+                    var capCheck = _meetingRespository.CheckInterviewerCapForAssignment(meetingToUpdate.irfIntId, meetingToUpdate.NewActiveInterviewer);
+                    if (!capCheck.Allowed)
+                        return false;
                     meetingToUpdate.interviewer = meetingToUpdate.NewActiveInterviewer;
                 }
                 //if (!string.IsNullOrEmpty(meetingToUpdate.NewActiveQCInterviewer))
@@ -3003,6 +3006,11 @@ namespace Risebird.Business
                 {
                     return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
                 }
+                var capCheck = _meetingRespository.CheckInterviewerCapForAssignmentByMeeting(Convert.ToInt32(id), Emailid);
+                if (!capCheck.Allowed)
+                {
+                    return $"CAP_REACHED|Interview limit reached ({capCheck.Capacity}). You have {capCheck.Assigned} of {capCheck.Capacity} interviews assigned on this channel.";
+                }
                 return _meetingRespository.ReAssignMeeting(Convert.ToInt32(id), Emailid);
             }
             catch (Exception ex)
@@ -3019,6 +3027,11 @@ namespace Risebird.Business
                 if (assignedMeeting != "Valid")
                 {
                     return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
+                }
+                var capCheck = _meetingRespository.CheckInterviewerCapForAssignmentByMeeting(Convert.ToInt32(id), Emailid);
+                if (!capCheck.Allowed)
+                {
+                    return $"CAP_REACHED|Interview limit reached ({capCheck.Capacity}). You have {capCheck.Assigned} of {capCheck.Capacity} interviews assigned on this channel.";
                 }
                 return _meetingRespository.ReassignMeetingByTeam(Convert.ToInt32(id), Emailid);
             }

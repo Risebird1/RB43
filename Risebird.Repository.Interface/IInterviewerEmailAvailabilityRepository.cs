@@ -50,7 +50,7 @@ namespace Risebird.Repository.Interface
         Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalInterviewers);
         Task CompleteBatchCallLogAsync(int id, int succeeded, int failed, int skipped, string status);
         Task<List<IABatchCallLogEntry>> GetBatchCallHistoryAsync(string magName);
-        Task<List<IAInterviewerCallOutcome>> GetInterviewerCallOutcomesForMAGAsync(string magName);
+        Task<(List<IAInterviewerCallOutcome> Items, int TotalCount)> GetInterviewerCallOutcomesForMAGAsync(string magName, int page = 1, int pageSize = 25);
 
         Task<int> EnsureEARecordForProfileInterviewerAsync(int interviewerProfileId, string magName);
     }

@@ -58,7 +58,10 @@ End
 Declare @temptable Table(Userid int)  
 Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value in (select distinct AssessmentGroupId from @temp)  
 
-select distinct ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted  
+select distinct ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted,
+ip.VideoLink, isnull(ip.IsVideoApproved, 0) as IsVideoApproved,
+isnull(sti.TotalInterview, 0) as TotalInterview,
+isnull(fti.TotalFuture, 0) as TotalFuture
 from  (SELECT  UserId, NickName, ResumeLink, CodedResumeLink,CompanyName, IsResumeRedactAttempted, PrimarySkill =   
 STUFF((SELECT ', ' + SkillName  
 FROM (select ipr.*,sk.[Name] as SkillName from InterviewerProfile ipr left join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id = tis.SkillId) b   
@@ -68,8 +71,11 @@ FROM (select ipr.*, sk.[Name] as SkillName from InterviewerProfile ipr left join
 GROUP BY Id, UserId, NickName, ResumeLink, CodedResumeLink,CompanyName, IsResumeRedactAttempted) c   
 join  TransInterviewer ti on ti.UserId=c.UserId  
 join UserList ul on ul.id = ti.UserId  
+join InterviewerProfile ip on ip.UserId = c.UserId
 join @temptable tt on tt.userid=ti.Userid  
-left join AGCampaigns agc on agc.id = ti.CampaignId  
+left join AGCampaigns agc on agc.id = ti.CampaignId
+outer apply (select count(im.id) as TotalInterview from InterviewMeetings im where im.IRFId = @irfId and im.interviewer = ul.EmailId) sti
+outer apply (select count(im.id) as TotalFuture from InterviewMeetings im where im.IRFId = @irfId and im.interviewer = ul.EmailId and im.interviewDate > DATEADD(MINUTE, 330, GETDATE())) fti
 where IRFId=@irfId and ul.IsActive=1  
   
 --selectability details  

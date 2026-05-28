@@ -18,5 +18,7 @@ namespace Risebird.Entities.ViewModel
         public string AIQuestionVideoLink { get; set; }
         public string ExpectedAnswer { get; set; }
         public bool IsFlaggedForSentimentAnalysis { get; set; }
+        public string GeneratedPayload { get; set; }
+        public bool IsGeneratedByAi { get; set; }
     }
 }

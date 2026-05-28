@@ -2839,6 +2839,32 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public VoiceInstructionBriefVm FetchVoiceInstructionBrief(int irfid)
+        {
+            try
+            {
+                return _irfRepository.FetchVoiceInstructionBrief(irfid);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new VoiceInstructionBriefVm();
+            }
+        }
+
+        public bool SaveVoiceInstructionTranscript(int irfid, string transcript, string updatedBy)
+        {
+            try
+            {
+                return _irfRepository.SaveVoiceInstructionTranscript(irfid, transcript, updatedBy);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid)
         {
             try
@@ -3783,6 +3809,33 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy)
+        {
+            try
+            {
+                return await _irfRepository.AddAIGeneratedSampleQuestion(irfId, skillName, comment, expectedAnswer, generatedPayload, createdBy);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
+        public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer)
+        {
+            try
+            {
+                return await _irfRepository.UpdateSkillChannelSampleQuestion(id, comment, expectedAnswer);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id)
         {
             try
@@ -4616,6 +4669,59 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> UpdateDmIvPolicy(int irfId, bool dmIvLockNew, string dmAssignmentPolicy, int dmDefaultInterviewCap, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.UpdateDmIvPolicy(irfId, dmIvLockNew, dmAssignmentPolicy, dmDefaultInterviewCap, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateTransInterviewerCapacity(int transInterviewerId, int interviewCapacity, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.UpdateTransInterviewerCapacity(transInterviewerId, interviewCapacity, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateTransInterviewerPerSuccessRate(int transInterviewerId, int perSuccessRate, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.UpdateTransInterviewerPerSuccessRate(transInterviewerId, perSuccessRate, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> ApplyDefaultInterviewCapToIrf(int irfId, int defaultCap, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.ApplyDefaultInterviewCapToIrf(irfId, defaultCap, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<bool> UpdateVideoConsentFile(int irfid, string uploadedFileURL)
         {
             try
