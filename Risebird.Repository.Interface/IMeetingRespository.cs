@@ -165,6 +165,8 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateTranscriptLink(int interviewId, string transcriptLink = null, string clientExternalTranscriptUploadedUrl = null);
         Task<IEnumerable<Meeting>> FetchOpenMeetingById(string id);
         string CheckMeetingAssignationValidation(string Emailid);
+        CapCheckResult CheckInterviewerCapForAssignment(int irfIntId, string interviewerEmail);
+        CapCheckResult CheckInterviewerCapForAssignmentByMeeting(int meetingId, string interviewerEmail);
         string ReAssignMeeting(int id, string interviewerMail);
         string ReassignMeetingByTeam(int id, string interviewerMail);
         Task<InterviewerDetails> FetchInterviewerCodedName(string emailId);

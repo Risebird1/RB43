@@ -3510,5 +3510,27 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail.";
             }
         }
+
+        public async Task<string> SendRequestVideoKYCEmail(string interviewerEmailId, string interviewerName, string dashboardLink)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Risebird : Video KYC Required";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerEmailId, interviewerName));
+
+                string risebirdLogoLink = _configuration["RisebirdDetails:RisebirdLogo"];
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RequestVideoKYCTemplate.html");
+                string msgBody = string.Format(rawEmail, interviewerName, dashboardLink, risebirdLogoLink);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send mail.";
+            }
+        }
     }
 }

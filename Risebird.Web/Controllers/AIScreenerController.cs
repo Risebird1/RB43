@@ -518,6 +518,90 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Same pipeline as ScreenInterviewer; returns JSON for in-page DM Approval updates.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> ScreenInterviewerAjax(string jdTitle, int irfId, int userId, string irfName, bool isRedo = false)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                {
+                    return Json(new { ok = false, message = "Session expired." });
+                }
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName != "Admin" && profileName != "SeniorHR" && profileName != "SupportAdmin"
+                    && profileName != "InterviewerManagement" && profileName != "SeniorInterviewerManagement")
+                {
+                    return Json(new { ok = false, message = "Not authorized." });
+                }
+
+                var interviewer = await _irfService.GetInterviewerOpenAIScreeningResults(irfId, userId);
+                if (interviewer == null || string.IsNullOrWhiteSpace(interviewer.ResumeLink))
+                {
+                    return Json(new { ok = false, message = "No resume on file to screen." });
+                }
+
+                if (!isRedo && !string.IsNullOrEmpty(interviewer.OpenAIScreeningResponse))
+                {
+                    return Json(new
+                    {
+                        ok = true,
+                        cached = true,
+                        aiVerdict = interviewer.AIVerdict,
+                        aiScore = interviewer.AIScreeningScore,
+                        reasoning = interviewer.OpenAIScreeningResponse
+                    });
+                }
+
+                var resumeStringContent = await ReadPdfFromUrlAsync(interviewer.ResumeLink);
+                if (string.IsNullOrWhiteSpace(resumeStringContent))
+                {
+                    return Json(new { ok = false, message = "Could not read resume PDF." });
+                }
+
+                var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, jdTitle);
+                var saveOperationResult = false;
+                var aiVerdict = interviewer.AIVerdict;
+                var aiScore = interviewer.AIScreeningScore;
+                var reasoning = interviewer.OpenAIScreeningResponse;
+
+                if (response != null)
+                {
+                    var aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(
+                        response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", ""));
+                    if (aiAnalysisModel != null)
+                    {
+                        saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResultsV2(irfId, userId, aiAnalysisModel);
+                        aiVerdict = aiAnalysisModel.verdict;
+                        aiScore = aiAnalysisModel.fitmentScore;
+                        reasoning = aiAnalysisModel.completeFitmentAnalysis;
+                    }
+                }
+
+                if (!saveOperationResult)
+                {
+                    return Json(new { ok = false, message = "Failed to save screening results." });
+                }
+
+                return Json(new
+                {
+                    ok = true,
+                    cached = false,
+                    aiVerdict,
+                    aiScore,
+                    reasoning
+                });
+            }
+            catch (System.Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Screening failed." });
+            }
+        }
+
         public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
         {
 

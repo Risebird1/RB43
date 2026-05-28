@@ -5541,9 +5541,14 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> ReassignMeeting(string id, string meetingid, string Emailid)
         {
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
-            var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
+            var result = _meetingService.ReassignMeeting(id, meetingid, Emailid);
+            if (result.StartsWith("CAP_REACHED|"))
+            {
+                var capMsg = result.Substring("CAP_REACHED|".Length);
+                return Json(new { meetings = capMsg, codedname = (string)null, code = "CAP_REACHED" });
+            }
             var codedname = (await _meetingService.FetchInterviewerCodedName(Emailid))?.NickName;
-            return Json(new { meetings = meetings, codedname = codedname });
+            return Json(new { meetings = result, codedname = codedname });
         }
 
         [AllowAnonymous]
@@ -9921,14 +9926,12 @@ namespace Risebird.Web.Controllers
                     await TrackInterviewerRelatedbuttonClient("Interview", currenturl, "Reassign Interview", interviewId, 0);
                     return Json(new { success = true, message = "Interview assigned successfully." });
                 }
-                //string linkurl = "https://portal.risebird.io/Interview/ReassignMeetingByEI?id=" + Meetingid;
-                //Mail _mail = new Mail
-                //{
-                //    TO = interviewer,
-                //    //Subject = "Risebird Urgent Interview-Candidate(" + item.candidateName + ") is waiting for the interviewer."
-                //};
-                ////var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl, item.zoomlink, item.interviewMeetingId, item.JDLink, item.uniqueid);
-                return Json(new { success = true, message = "An error occurred while assigning the interview." });
+                if (result.StartsWith("CAP_REACHED|"))
+                {
+                    var capMsg = result.Substring("CAP_REACHED|".Length);
+                    return Json(new { success = false, message = capMsg, code = "CAP_REACHED" });
+                }
+                return Json(new { success = false, message = result });
             }
             catch (Exception ex)
             {

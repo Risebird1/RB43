@@ -51,7 +51,7 @@ BEGIN
         irf.id,
         @InterviewerProfileId,
         @UserId,
-        1,
+        CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,
         1,
         ISNULL(irf.FlatRate, 0),
         'EmailAvailability',

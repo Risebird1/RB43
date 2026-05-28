@@ -234,11 +234,19 @@ function createIRFDownloadLink(blob) {
         contentType: false,
         type: "POST",
         success: function (data) {
-            document.getElementById("recordingStatus").innerHTML = '';
-            document.getElementById('anchorAudioId').href = data;
-            splitData = data.split("/");
-            document.getElementById('anchorAudioId').innerHTML = splitData[splitData.length - 1];
-            document.getElementById('controlAudioId').src = data;
+            if (typeof dmV4OnVoiceUploadComplete === 'function') {
+                dmV4OnVoiceUploadComplete(data);
+            } else {
+                document.getElementById("recordingStatus").innerHTML = '';
+                var anchor = document.getElementById('anchorAudioId');
+                if (anchor) {
+                    anchor.href = data;
+                    var splitData = data.split("/");
+                    anchor.innerHTML = splitData[splitData.length - 1];
+                }
+                var audio = document.getElementById('controlAudioId');
+                if (audio) audio.src = data;
+            }
         }
     });
     recordingsList.appendChild(li);
