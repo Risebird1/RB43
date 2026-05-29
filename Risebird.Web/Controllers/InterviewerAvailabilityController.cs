@@ -921,6 +921,17 @@ namespace Risebird.Web.Controllers
                     $"Processing finished for record #{recordId}. parseMethod={parseMethod}",
                     callLogId: recordId);
 
+                // Auto-close if disposition is favorable ("available")
+                string intentLower = payload.Intent?.ToLower();
+                if (intentLower == "available")
+                {
+                    _ = Task.Run(async () =>
+                    {
+                        try { await TryAutoCloseAsync(recordId.Value); }
+                        catch { }
+                    });
+                }
+
                 return Content($"OK. recordId={recordId.Value}", "text/html");
             }
             catch (Exception ex)
@@ -981,14 +992,14 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetBatchCallMAGs()
+        public async Task<IActionResult> GetBatchCallMAGs(int page = 1, int pageSize = 20, string search = null)
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
             try
             {
-                var mags = await _repository.GetMAGsWithCallableInterviewerCountsAsync();
-                return Json(new { success = true, mags, count = mags.Count });
+                var (mags, totalCount) = await _repository.GetMAGsWithCallableInterviewerCountsAsync(page, pageSize, search);
+                return Json(new { success = true, mags, totalCount, page, pageSize });
             }
             catch (Exception ex)
             {
@@ -1191,6 +1202,219 @@ namespace Risebird.Web.Controllers
         }
 
         // ── Checkpoint helpers ────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Runs the resume-fitment + assign-to-AG + close pipeline for an EA record
+        /// whose Plivo call disposition was favorable ("available").
+        /// Designed to be fire-and-forget from the webhook so it doesn't block the Plivo response.
+        /// </summary>
+        private async Task TryAutoCloseAsync(int eaId)
+        {
+            const string actor = "PlivoCX AutoClose";
+
+            try
+            {
+                await SaveIaCp("ia_autoclose_start", $"Starting auto-close for record #{eaId}", callLogId: eaId);
+
+                var record = await _repository.GetEmailAvailabilityByIdAsync(eaId);
+                if (record == null)
+                {
+                    await SaveIaCp("ia_autoclose_skip", $"Record #{eaId} not found", callLogId: eaId);
+                    return;
+                }
+
+                if (string.Equals(record.Status, "Closed", StringComparison.OrdinalIgnoreCase))
+                {
+                    await SaveIaCp("ia_autoclose_skip", $"Record #{eaId} already closed", callLogId: eaId);
+                    return;
+                }
+
+                // Step 1: Resume Fitment Analysis (if resume exists and not already analyzed)
+                if (record.ResumeAIAnalysisCompleted != true)
+                {
+                    string resumeUrl = record.ResumeLink;
+                    if (string.IsNullOrWhiteSpace(resumeUrl) || string.Equals(resumeUrl, "None", StringComparison.OrdinalIgnoreCase))
+                        resumeUrl = record.ProfileResumeLink;
+
+                    if (!string.IsNullOrWhiteSpace(resumeUrl))
+                    {
+                        try
+                        {
+                            string jobTitle = record.AssessmentGroupName ?? record.MagName ?? record.JobTitle ?? "General";
+                            string resumeText = null;
+                            bool isDocFile = resumeUrl.EndsWith(".doc", StringComparison.OrdinalIgnoreCase)
+                                          || resumeUrl.EndsWith(".docx", StringComparison.OrdinalIgnoreCase);
+
+                            if (!isDocFile)
+                            {
+                                try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
+                                catch { }
+                            }
+
+                            if (string.IsNullOrWhiteSpace(resumeText))
+                            {
+                                try
+                                {
+                                    string convertedPdfUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
+                                    if (!string.IsNullOrWhiteSpace(convertedPdfUrl))
+                                        resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedPdfUrl);
+                                }
+                                catch { }
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(resumeText))
+                            {
+                                var aiResponse = await _assistantServiceHelper.GenerateResumeAnalysis(resumeText, jobTitle);
+                                var analysisJson = aiResponse?.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value;
+                                if (!string.IsNullOrWhiteSpace(analysisJson))
+                                {
+                                    var analysis = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(analysisJson);
+                                    bool isPositive = analysis != null
+                                        && !string.IsNullOrEmpty(analysis.verdict)
+                                        && analysis.verdict.ToLower().Contains("yes");
+
+                                    await _repository.UpdateEmailAvailabilityVerificationAsync(
+                                        eaId, employmentVerified: null, resumeAIAnalysisCompleted: true,
+                                        resumeAIAnalysisResult: analysisJson, newStatus: isPositive ? "Verified" : "InProgress");
+
+                                    await _repository.InsertHistoryAsync(eaId, "ResumeAnalysis", null,
+                                        $"AutoClose — Verdict: {analysis?.verdict}, Score: {analysis?.fitmentScore}", actor);
+
+                                    await SaveIaCp("ia_autoclose_resume_done",
+                                        $"Resume analysis done for #{eaId}. Verdict: {analysis?.verdict}", callLogId: eaId);
+                                }
+                            }
+                            else
+                            {
+                                await SaveIaCp("ia_autoclose_resume_unreadable",
+                                    $"Could not read resume for #{eaId}, skipping analysis", callLogId: eaId);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            await SaveIaCp("ia_autoclose_resume_error",
+                                $"Resume analysis error for #{eaId}: {ex.Message}", callLogId: eaId);
+                        }
+                    }
+                    else
+                    {
+                        await SaveIaCp("ia_autoclose_no_resume",
+                            $"No resume available for #{eaId}, skipping analysis", callLogId: eaId);
+                    }
+                }
+
+                // Reload record after potential resume analysis update
+                record = await _repository.GetEmailAvailabilityByIdAsync(eaId);
+
+                // Step 2: Assign to Assessment Group (if not already assigned)
+                if (record.InterviewerProfileId.HasValue
+                    && (!record.AssessmentGroupId.HasValue || record.AssessmentGroupId.Value <= 0)
+                    && record.ResolvedAssessmentGroupId.HasValue && record.ResolvedAssessmentGroupId.Value > 0)
+                {
+                    try
+                    {
+                        int agId = record.ResolvedAssessmentGroupId.Value;
+                        int profileId = record.InterviewerProfileId.Value;
+
+                        var assigned = await _repository.AssignInterviewerToAssessmentGroupAsync(
+                            eaId, profileId, agId, actor);
+
+                        if (assigned)
+                        {
+                            await _repository.InsertHistoryAsync(eaId, "AssignedToAG", null,
+                                $"AutoClose — Assigned to AG #{agId}", actor);
+                            await SaveIaCp("ia_autoclose_ag_assigned",
+                                $"Assigned #{eaId} to AG #{agId}", callLogId: eaId);
+
+                            // Send notification email + WhatsApp
+                            try
+                            {
+                                string emailId = record.SenderEmail;
+                                var upcomingInterviews = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified", null, agId);
+                                var interviewerItem = upcomingInterviews?.FirstOrDefault(x => x.EmailId == emailId);
+
+                                if (interviewerItem != null && !string.IsNullOrEmpty(interviewerItem.EmailId))
+                                {
+                                    string sendReportUrl;
+                                    if (string.IsNullOrEmpty(interviewerItem.uniqueid))
+                                    {
+                                        var uniqueId = Guid.NewGuid();
+                                        var savedId = await _clientService.PublicInterviewerUrlSave(interviewerItem.EmailId, uniqueId.ToString());
+                                        sendReportUrl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite?id=" +
+                                            (string.IsNullOrEmpty(savedId) ? uniqueId.ToString() : savedId);
+                                        if (!string.IsNullOrEmpty(savedId))
+                                            interviewerItem.uniqueid = savedId;
+                                    }
+                                    else
+                                    {
+                                        sendReportUrl = "https://portal.risebird.io/Interview/PublicOpenInterviewInvite?id=" + interviewerItem.uniqueid;
+                                    }
+
+                                    var mail = new Mail
+                                    {
+                                        TO = interviewerItem.EmailId,
+                                        CC = "talent@risebird.io",
+                                        Subject = "New interviews have come up! Please assign."
+                                    };
+
+                                    await _notificationHelper.SendInterviewerCommonInterviewNotification(
+                                        mail, sendReportUrl, interviewerItem.Total,
+                                        interviewerItem.uniqueid, agId: agId);
+
+                                    try
+                                    {
+                                        var whatsAppVM = new WhatsAppVM
+                                        {
+                                            Emailid = interviewerItem.EmailId,
+                                            MessageValue = interviewerItem.Total.ToString(),
+                                            buttonlink = !string.IsNullOrEmpty(sendReportUrl)
+                                                ? sendReportUrl.Replace("https://portal.risebird.io/", "")
+                                                : "",
+                                            Event = "Interviewer Common Interview",
+                                            irfId = interviewerItem.irfIntId.HasValue ? interviewerItem.irfIntId.Value : 0
+                                        };
+                                        await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(whatsAppVM);
+                                    }
+                                    catch { }
+
+                                    await SaveIaCp("ia_autoclose_notification_sent",
+                                        $"Notification sent to {emailId} for AG #{agId}", callLogId: eaId);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                await SaveIaCp("ia_autoclose_notification_error",
+                                    $"Notification error for #{eaId}: {ex.Message}", callLogId: eaId);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await SaveIaCp("ia_autoclose_ag_error",
+                            $"AG assignment error for #{eaId}: {ex.Message}", callLogId: eaId);
+                    }
+                }
+                else
+                {
+                    string reason = !record.InterviewerProfileId.HasValue ? "No InterviewerProfileId"
+                        : (record.AssessmentGroupId.HasValue && record.AssessmentGroupId.Value > 0) ? "Already assigned to AG"
+                        : "No ResolvedAssessmentGroupId";
+                    await SaveIaCp("ia_autoclose_ag_skip",
+                        $"Skipping AG assignment for #{eaId}: {reason}", callLogId: eaId);
+                }
+
+                // Step 3: Close the record
+                await _repository.UpdateEmailAvailabilityStatusAsync(eaId, "Closed", actor);
+                await _repository.InsertHistoryAsync(eaId, "StatusChange", record.Status ?? "Open", "Closed", actor);
+                await SaveIaCp("ia_autoclose_done", $"Auto-close completed for #{eaId}", callLogId: eaId);
+            }
+            catch (Exception ex)
+            {
+                await SaveIaCp("ia_autoclose_fatal",
+                    $"Auto-close fatal error for #{eaId}: {ex.Message}", callLogId: eaId);
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
 
         private async Task SaveIaCp(
             string name, string msg, string convId = null, int? callLogId = null, string extra = null)
