@@ -14,11 +14,11 @@ CREATE PROCEDURE [dbo].[usp_GetUnassignedInterviewsMAG]
 AS                
 BEGIN
 
-select distinct mag.AssessmentGroup as MasterAG, ag.AssessmentGroup, Mag.id, Mag.MAGLinkEmailTriggeredBy, Mag.MAGLinkEmailTriggeredOn, AGWiseCount.NoOfUnassigned 
+select distinct mag.AssessmentGroup as MasterAG, ag.AssessmentGroup, Mag.id, Mag.MAGName, Mag.MAGLinkEmailTriggeredBy, Mag.MAGLinkEmailTriggeredOn, AGWiseCount.NoOfUnassigned 
 from InterviewMeetings im
 join IRF on irf.irfid = im.irfid
 join AssessmentGroup ag on ag.id = irf.AssessmentGroupId
-outer apply (select aginner.AssessmentGroup, aginner.id, maginner.MAGLinkEmailTriggeredBy, maginner.MAGLinkEmailTriggeredOn from MasterAssessmentGroup maginner 
+outer apply (select aginner.AssessmentGroup, aginner.id, maginner.MAGName, maginner.MAGLinkEmailTriggeredBy, maginner.MAGLinkEmailTriggeredOn from MasterAssessmentGroup maginner 
 join AssessmentGroup aginner on aginner.id = maginner.AssessmentGroupId where AssessmentGroupId = irf.AssessmentGroupId) Mag
 outer apply (select count(imop.id) as NoOfUnassigned from InterviewMeetings imop join irf irfop on irfop.irfId= imop.IRFId join AssessmentGroup agop 
 on agop.id = irfop.AssessmentGroupId where agop.id = Mag.id and imop.interviewDate >= dateadd(MINUTE, 390, GETDATE()) and imop.confirmationStatus = 1
