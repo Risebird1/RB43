@@ -1,9 +1,12 @@
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetIABatchCallMAGSummary]
+    @Page     INT = 1,
+    @PageSize INT = 20,
+    @Search   NVARCHAR(200) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- All active MAGs
+    -- Materialized MAG base (filtered early)
     ;WITH AllMAGs AS (
         SELECT mag.MAGName AS MagName,
                mag.AssessmentGroupId AS AgId,
@@ -11,9 +14,12 @@ BEGIN
         FROM MasterAssessmentGroup mag
         INNER JOIN AssessmentGroup ag ON ag.Id = mag.AssessmentGroupId
         WHERE ISNULL(mag.IsDeleted, 0) = 0
+          AND (@Search IS NULL OR @Search = ''
+               OR mag.MAGName LIKE '%' + @Search + '%'
+               OR ag.AssessmentGroup LIKE '%' + @Search + '%')
     ),
 
-    -- Counts from InterviewerEmailAvailability
+    -- Pre-aggregate EA counts per MagName
     EACounts AS (
         SELECT
             ea.MagName,
@@ -24,23 +30,13 @@ BEGIN
             SUM(CASE WHEN ea.PlivoIntent = 'available' THEN 1 ELSE 0 END) AS EAAvailable,
             SUM(CASE WHEN ea.PlivoIntent = 'not_available' THEN 1 ELSE 0 END) AS EANotAvailable
         FROM InterviewerEmailAvailability ea
+        INNER JOIN AllMAGs m ON m.MagName = ea.MagName
         LEFT JOIN UserList ul ON ea.UserId = ul.Id
-        WHERE ea.MagName IS NOT NULL AND ea.MagName <> ''
-          AND ea.Status IN ('Open', 'InProgress', 'Verified')
+        WHERE ea.Status IN ('Open', 'InProgress', 'Verified')
         GROUP BY ea.MagName
     ),
 
-    -- Distinct EA InterviewerProfileIds per MAG (for dedup)
-    EAProfileIds AS (
-        SELECT ea.MagName, ea.InterviewerProfileId
-        FROM InterviewerEmailAvailability ea
-        WHERE ea.InterviewerProfileId IS NOT NULL
-          AND ea.MagName IS NOT NULL AND ea.MagName <> ''
-          AND ea.Status IN ('Open', 'InProgress', 'Verified')
-        GROUP BY ea.MagName, ea.InterviewerProfileId
-    ),
-
-    -- Counts from InterviewerProfile via AssessmentGroupInterviewers, excluding those already in EA
+    -- Pre-aggregate Profile counts per MAG (only counting, no dedup detail needed)
     ProfileCounts AS (
         SELECT
             m.MagName,
@@ -53,42 +49,52 @@ BEGIN
         WHERE ISNULL(ip.IsDeleted, 0) = 0
           AND ISNULL(ip.Isavailable, 0) <> 4
           AND NOT EXISTS (
-              SELECT 1 FROM EAProfileIds ep
-              WHERE ep.MagName = m.MagName AND ep.InterviewerProfileId = ip.Id
+              SELECT 1 FROM InterviewerEmailAvailability ea2
+              WHERE ea2.InterviewerProfileId = ip.Id
+                AND ea2.MagName = m.MagName
+                AND ea2.Status IN ('Open', 'InProgress', 'Verified')
           )
         GROUP BY m.MagName
     ),
 
-    -- Batch log info
     BatchInfo AS (
         SELECT bl.MagName, MAX(bl.Id) AS LastBatchId, COUNT(*) AS TotalBatches
         FROM IABatchCallLog bl
+        INNER JOIN AllMAGs m ON m.MagName = bl.MagName
         GROUP BY bl.MagName
+    ),
+
+    Combined AS (
+        SELECT
+            m.MagName,
+            m.AssessmentGroupName,
+            ISNULL(ec.EATotal, 0) + ISNULL(pc.ProfTotal, 0) AS TotalInterviewers,
+            ISNULL(ec.EACallable, 0) + ISNULL(pc.ProfCallable, 0) AS CallableCount,
+            ISNULL(ec.EACalled, 0) AS AlreadyCalled,
+            ISNULL(ec.EAUncalled, 0) + ISNULL(pc.ProfCallable, 0) AS UncalledCount,
+            ISNULL(ec.EAAvailable, 0) AS Available,
+            ISNULL(ec.EANotAvailable, 0) AS NotAvailable,
+            lb.InitiatedBy AS LastBatchBy,
+            lb.InitiatedAt AS LastBatchAt,
+            lb.InterviewersAttempted AS LastBatchCount,
+            lb.InterviewersSucceeded AS LastBatchSucceeded,
+            lb.Status AS LastBatchStatus,
+            ISNULL(bi.TotalBatches, 0) AS TotalBatches,
+            CASE WHEN ISNULL(ec.EATotal, 0) > 0 THEN 0 ELSE 1 END AS SortGroup
+        FROM AllMAGs m
+        LEFT JOIN EACounts ec ON ec.MagName = m.MagName
+        LEFT JOIN ProfileCounts pc ON pc.MagName = m.MagName
+        LEFT JOIN BatchInfo bi ON bi.MagName = m.MagName
+        LEFT JOIN IABatchCallLog lb ON lb.Id = bi.LastBatchId
+        WHERE ISNULL(ec.EATotal, 0) + ISNULL(pc.ProfTotal, 0) > 0
     )
 
     SELECT
-        m.MagName,
-        m.AssessmentGroupName,
-        ISNULL(ec.EATotal, 0) + ISNULL(pc.ProfTotal, 0) AS TotalInterviewers,
-        ISNULL(ec.EACallable, 0) + ISNULL(pc.ProfCallable, 0) AS CallableCount,
-        ISNULL(ec.EACalled, 0) AS AlreadyCalled,
-        ISNULL(ec.EAUncalled, 0) + ISNULL(pc.ProfCallable, 0) AS UncalledCount,
-        ISNULL(ec.EAAvailable, 0) AS Available,
-        ISNULL(ec.EANotAvailable, 0) AS NotAvailable,
-        lb.InitiatedBy AS LastBatchBy,
-        lb.InitiatedAt AS LastBatchAt,
-        lb.InterviewersAttempted AS LastBatchCount,
-        lb.InterviewersSucceeded AS LastBatchSucceeded,
-        lb.Status AS LastBatchStatus,
-        ISNULL(bi.TotalBatches, 0) AS TotalBatches
-    FROM AllMAGs m
-    LEFT JOIN EACounts ec ON ec.MagName = m.MagName
-    LEFT JOIN ProfileCounts pc ON pc.MagName = m.MagName
-    LEFT JOIN BatchInfo bi ON bi.MagName = m.MagName
-    LEFT JOIN IABatchCallLog lb ON lb.Id = bi.LastBatchId
-    WHERE ISNULL(ec.EATotal, 0) + ISNULL(pc.ProfTotal, 0) > 0
-    ORDER BY
-        CASE WHEN ISNULL(ec.EATotal, 0) > 0 THEN 0 ELSE 1 END,
-        ISNULL(ec.EATotal, 0) + ISNULL(pc.ProfTotal, 0) DESC
+        (SELECT COUNT(*) FROM Combined) AS TotalCount,
+        c.*
+    FROM Combined c
+    ORDER BY c.SortGroup, c.TotalInterviewers DESC
+    OFFSET (@Page - 1) * @PageSize ROWS
+    FETCH NEXT @PageSize ROWS ONLY;
 END
 GO

@@ -205,6 +205,20 @@
                 </div>
                 <div id="bcMagList"></div>
 
+                <div id="bcMagPagination" class="bc-pagination mt-2" style="display:none; border-radius:10px; border:1px solid #e2e8f0;">
+                    <span class="bc-page-info" id="bcMagPageInfo"></span>
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                        <label class="bc-page-size mb-0">Per page
+                            <select id="bcMagPageSize" style="font-size:12px; padding:2px 8px; border-radius:6px; border:1px solid #cbd5e1;">
+                                <option value="20" selected>20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </label>
+                        <div class="bc-page-btns" id="bcMagPageBtns"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -212,64 +226,106 @@
 
 @section scripts {
 <script>
-    var allMags = [], verificationToken = $('#__AjaxAntiForgeryForm input[name="__RequestVerificationToken"]').val() || '';
+    var verificationToken = $('#__AjaxAntiForgeryForm input[name="__RequestVerificationToken"]').val() || '';
     var bcStopRequested = false, bcCurrentLogId = 0;
     var bcOutcomePageState = {};
     var BC_OUTCOME_PAGE_SIZE = 25;
 
-    $(function () { loadMAGs(); });
+    var magPagination = { page: 1, pageSize: 20, totalCount: 0, search: '' };
+    var searchDebounceTimer = null;
 
-    function loadMAGs() {
-        $('#bcLoadingPage').show(); $('#bcEmptyPage').hide(); $('#bcSearchEmpty').hide(); $('#bcMagList').empty();
+    $(function () { loadMAGs(1); });
+
+    function loadMAGs(page) {
+        page = page || magPagination.page || 1;
+        magPagination.page = page;
+        var search = magPagination.search || '';
+
+        $('#bcLoadingPage').show(); $('#bcEmptyPage').hide(); $('#bcSearchEmpty').hide();
+        $('#bcMagList').empty(); $('#bcMagPagination').hide();
+
         $.ajax({
             url: '@Url.Action("GetBatchCallMAGs", "InterviewerAvailability")', type: 'GET',
+            data: { page: page, pageSize: magPagination.pageSize, search: search || null },
             success: function (res) {
                 $('#bcLoadingPage').hide();
                 if (!res.success) { alert(res.error || 'Failed'); return; }
-                allMags = res.mags || [];
-                if (!allMags.length) { $('#bcEmptyPage').show(); updateSearchHint(0); return; }
-                applyMagFilter();
+                var mags = res.mags || [];
+                magPagination.totalCount = res.totalCount || 0;
+                magPagination.page = res.page || page;
+                magPagination.pageSize = res.pageSize || magPagination.pageSize;
+
+                if (!mags.length && magPagination.totalCount === 0) {
+                    if (search) { $('#bcSearchEmpty').show(); } else { $('#bcEmptyPage').show(); }
+                    updateSearchHint(0, 0);
+                    return;
+                }
+                renderMAGs(mags);
+                renderMagPagination();
+                updateSearchHint(mags.length, magPagination.totalCount);
             },
             error: function () { $('#bcLoadingPage').hide(); alert('Failed to load.'); }
         });
     }
 
-    function updateSearchHint(shown) {
-        var total = allMags.length;
-        var q = ($('#bcSearchMAG').val() || '').trim();
+    function updateSearchHint(shown, total) {
         var $hint = $('#bcSearchHint');
         if (!total) { $hint.text(''); return; }
-        if (q) {
-            $hint.html('Showing <strong>' + shown + '</strong> of <strong>' + total + '</strong> MAGs');
+        if (magPagination.search) {
+            $hint.html('<strong>' + total + '</strong> MAG' + (total === 1 ? '' : 's') + ' match your search');
         } else {
             $hint.html('<strong>' + total + '</strong> MAG' + (total === 1 ? '' : 's'));
         }
     }
 
-    function applyMagFilter() {
-        var q = ($('#bcSearchMAG').val() || '').trim().toLowerCase();
-        var hasQuery = q.length > 0;
-        $('#bcSearchClear').toggle(hasQuery);
-        var filtered = hasQuery ? allMags.filter(function (m) {
-            return (m.magName || '').toLowerCase().indexOf(q) >= 0
-                || (m.assessmentGroupName || '').toLowerCase().indexOf(q) >= 0;
-        }) : allMags;
-        $('#bcSearchEmpty').toggle(hasQuery && filtered.length === 0);
-        $('#bcMagList').toggle(!(hasQuery && filtered.length === 0));
-        renderMAGs(filtered);
-        updateSearchHint(filtered.length);
+    function renderMagPagination() {
+        var tc = magPagination.totalCount, ps = magPagination.pageSize, pg = magPagination.page;
+        var totalPages = Math.max(1, Math.ceil(tc / ps));
+        if (tc <= ps && pg === 1) { $('#bcMagPagination').hide(); return; }
+        var first = (pg - 1) * ps + 1;
+        var last = Math.min(pg * ps, tc);
+        $('#bcMagPageInfo').html('Showing <strong>' + first + '–' + last + '</strong> of <strong>' + tc + '</strong> MAGs');
+        var btns = '<button type="button" class="btn btn-sm btn-outline-secondary bc-mag-page-btn" data-page="1"' + (pg <= 1 ? ' disabled' : '') + '><i class="fas fa-angle-double-left"></i></button>' +
+            '<button type="button" class="btn btn-sm btn-outline-secondary bc-mag-page-btn" data-page="' + (pg - 1) + '"' + (pg <= 1 ? ' disabled' : '') + '><i class="fas fa-angle-left"></i></button>' +
+            '<span class="px-2 text-muted" style="font-size:12px;">Page ' + pg + ' / ' + totalPages + '</span>' +
+            '<button type="button" class="btn btn-sm btn-outline-secondary bc-mag-page-btn" data-page="' + (pg + 1) + '"' + (pg >= totalPages ? ' disabled' : '') + '><i class="fas fa-angle-right"></i></button>' +
+            '<button type="button" class="btn btn-sm btn-outline-secondary bc-mag-page-btn" data-page="' + totalPages + '"' + (pg >= totalPages ? ' disabled' : '') + '><i class="fas fa-angle-double-right"></i></button>';
+        $('#bcMagPageBtns').html(btns);
+        $('#bcMagPagination').show();
     }
 
-    $('#bcSearchMAG').on('input', applyMagFilter);
+    $(document).on('click', '.bc-mag-page-btn', function () {
+        if ($(this).prop('disabled')) return;
+        var pg = parseInt($(this).attr('data-page'), 10);
+        if (pg > 0) loadMAGs(pg);
+    });
+
+    $(document).on('change', '#bcMagPageSize', function () {
+        magPagination.pageSize = parseInt($(this).val(), 10) || 20;
+        loadMAGs(1);
+    });
+
+    $('#bcSearchMAG').on('input', function () {
+        clearTimeout(searchDebounceTimer);
+        var q = ($(this).val() || '').trim();
+        $('#bcSearchClear').toggle(q.length > 0);
+        searchDebounceTimer = setTimeout(function () {
+            magPagination.search = q;
+            loadMAGs(1);
+        }, 400);
+    });
+
     $('#bcSearchClear, #bcSearchReset').on('click', function (e) {
         e.preventDefault();
         $('#bcSearchMAG').val('').focus();
-        applyMagFilter();
+        magPagination.search = '';
+        loadMAGs(1);
     });
     $('#bcSearchMAG').on('keydown', function (e) {
         if (e.key === 'Escape') {
             $('#bcSearchMAG').val('');
-            applyMagFilter();
+            magPagination.search = '';
+            loadMAGs(1);
         }
     });
 
