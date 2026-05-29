@@ -45,7 +45,7 @@ namespace Risebird.Repository.Interface
         Task<int?> FindByPhoneAndCallStatusAsync(string phone, string callStatus);
 
         // Batch call
-        Task<List<IABatchCallMagSummary>> GetMAGsWithCallableInterviewerCountsAsync();
+        Task<(List<IABatchCallMagSummary> Items, int TotalCount)> GetMAGsWithCallableInterviewerCountsAsync(int page = 1, int pageSize = 20, string search = null);
         Task<List<IACallableInterviewer>> GetCallableInterviewersForMAGAsync(string magName, bool onlyUncalled = true);
         Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalInterviewers);
         Task CompleteBatchCallLogAsync(int id, int succeeded, int failed, int skipped, string status);
@@ -57,6 +57,7 @@ namespace Risebird.Repository.Interface
 
     public class IABatchCallMagSummary
     {
+        public int TotalCount { get; set; }
         public string MagName { get; set; }
         public string AssessmentGroupName { get; set; }
         public int TotalInterviewers { get; set; }
