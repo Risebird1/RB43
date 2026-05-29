@@ -31,6 +31,7 @@ namespace Risebird.Business.Interface
         List<JobFunction> GetJobFunction();
         List<Industry> GetIndustry();
         Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile);
+        Task<bool> SaveBankVerificationAsync(int interviewerProfileId, TransInterviewerAccDetails accountDetails, CashfreeBankVerificationResult verificationResult);
         IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId);
         List<Meeting> GetUnapprovedInterviewerScheduledInterviews(string emailID);
         Task<InterviewerProfileVM> GetInterviewerProfileByEmailId(string emailId, string profile);

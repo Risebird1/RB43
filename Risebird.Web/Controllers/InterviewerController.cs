@@ -56,6 +56,7 @@ namespace Risebird.Web.Controllers
         private readonly IEncryptionHelper _encryptionHelper;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IPdfReaderHelper _pdfReaderHelper;
+        private readonly ICashfreePayoutService _cashfreePayoutService;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
         ISkillService skillService, IProfileService profileService,
@@ -65,7 +66,8 @@ namespace Risebird.Web.Controllers
         IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService,
         IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper,
         IAffIndaResumeParserHelper affIndaResumeParserHelper, IEncryptionHelper encryptionHelper,
-        IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper)
+        IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper,
+        ICashfreePayoutService cashfreePayoutService)
 
         {
             _interviewerService = interviewerService;
@@ -91,6 +93,7 @@ namespace Risebird.Web.Controllers
             _encryptionHelper = encryptionHelper;
             _assistantServiceHelper = assistantServiceHelper;
             _pdfReaderHelper = pdfReaderHelper;
+            _cashfreePayoutService = cashfreePayoutService;
         }
 
 
@@ -1511,12 +1514,12 @@ namespace Risebird.Web.Controllers
                     data = new
                     {
                         interviewerEmail = latest.InterviewerEmail,
-                        totalItems       = latest.TotalItems,
-                        totalChecked     = latest.TotalChecked,
-                        savedOn          = latest.CreatedOn.HasValue
+                        totalItems = latest.TotalItems,
+                        totalChecked = latest.TotalChecked,
+                        savedOn = latest.CreatedOn.HasValue
                                             ? latest.CreatedOn.Value.ToString("dd MMM yyyy, hh:mm tt") + " UTC"
                                             : "—",
-                        checklistState   = checklistState
+                        checklistState = checklistState
                     }
                 });
             }
@@ -1832,6 +1835,115 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = "Could not save right now. Please try again." });
+            }
+        }
+
+        /// <summary>
+        /// Self-service bank account verification via Cashfree BAV (My Profile → Account Details tab).
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> VerifyBankAccount(
+            int interviewerProfileId,
+            string accountName,
+            string accountNumber,
+            string ifscCode,
+            string phone)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { success = false, message = "Session expired. Please sign in again." });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName != "Interviewer")
+                    return Json(new { success = false, message = "Only interviewers can verify bank accounts here." });
+
+                if (interviewerProfileId <= 0)
+                    return Json(new { success = false, message = "Invalid profile. Please refresh the page and try again." });
+
+                if (string.IsNullOrWhiteSpace(accountNumber) || string.IsNullOrWhiteSpace(ifscCode))
+                    return Json(new { success = false, message = "Account number and IFSC are required." });
+
+                var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var profile = await _interviewerService.GetInterviewerProfileByEmailId(email, profileName);
+                if (profile == null || profile.id != interviewerProfileId)
+                    return Json(new { success = false, message = "You can only verify your own bank account." });
+
+                if (string.IsNullOrWhiteSpace(phone))
+                    phone = profile.MobileNumber;
+
+                var existingAcc = profile.InterviewerAccDetails;
+                var incomingAcc = new TransInterviewerAccDetails
+                {
+                    AccountName = accountName,
+                    AccountNumber = accountNumber,
+                    IFSCCode = ifscCode
+                };
+                var verifiedSnapshot = new TransInterviewerAccDetails
+                {
+                    AccountNumber = existingAcc?.VerifiedAccountNumber,
+                    IFSCCode = existingAcc?.VerifiedIFSCCode,
+                    AccountName = existingAcc?.VerifiedAccountName
+                };
+                if (existingAcc?.IsBankVerified == true
+                    && !BankAccountVerificationHelper.CoreBankDetailsChanged(verifiedSnapshot, incomingAcc))
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        alreadyVerified = true,
+                        isBankVerified = true,
+                        message = "Your bank account is already verified.",
+                        verifiedOn = existingAcc.VerifiedOn?.ToString("dd MMM yyyy, hh:mm tt") + " UTC",
+                        nameAtBank = existingAcc.NameAtBank
+                    });
+                }
+
+                var result = await _cashfreePayoutService.VerifyBankAccountAsync(accountName, accountNumber, ifscCode, phone);
+
+                if (result.IsValid)
+                {
+                    var accDetails = new TransInterviewerAccDetails
+                    {   
+                        AccountName = accountName,
+                        AccountNumber = accountNumber,
+                        IFSCCode = ifscCode
+                    };
+                    var saved = await _interviewerService.SaveBankVerificationAsync(interviewerProfileId, accDetails, result);
+                    if (!saved)
+                        return Json(new { success = false, message = "Account verified with Cashfree but could not save status. Please try again." });
+
+                    var message = string.IsNullOrWhiteSpace(result.ErrorMessage)
+                        ? $"Account verified. Name at bank: {result.NameAtBank ?? "—"}."
+                        : result.ErrorMessage;
+                    return Json(new
+                    {
+                        success = true,
+                        isValid = true,
+                        isBankVerified = true,
+                        verifiedOn = DateTime.UtcNow.ToString("dd MMM yyyy, hh:mm tt") + " UTC",
+                        message,
+                        nameAtBank = result.NameAtBank,
+                        bankName = result.BankName,
+                        branch = result.Branch,
+                        nameMatchResult = result.NameMatchResult,
+                        nameMatchScore = result.NameMatchScore,
+                        referenceId = result.ReferenceId
+                    });
+                }
+
+                return Json(new
+                {
+                    success = false,
+                    isValid = false,
+                    message = result.ErrorMessage ?? "Bank account could not be verified.",
+                    accountStatusCode = result.AccountStatusCode
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Verification failed. Please try again later." });
             }
         }
 
