@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.AssignmentVM>
+@model IEnumerable<Risebird.Entities.ViewModel.AssignmentVM>
 @using Risebird.Entities
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
@@ -173,6 +173,15 @@
                                                                     </span>
                                                                 </button>
 
+                                                                <button class="btn shadow btn-xs sharp me-1 btn-batch-call-mag"
+                                                                        aria-label="Batch Call Interviewers"
+                                                                        data-mag-name="@(item.MAGName ?? item.AssessmentGroup)"
+                                                                        data-ag-name="@item.AssessmentGroup"
+                                                                        style="width:25px!important;height:25px!important;background:#17a2b8 !important;border-color:#17a2b8!important"
+                                                                        title="Call interviewers for availability">
+                                                                    <i class="fas fa-phone-alt" style="color:white;font-size:11px;position:relative;left:-2px;top:0;"></i>
+                                                                </button>
+
                                                             </td>
 
 
@@ -220,6 +229,97 @@
 
 <script src="~/js/assessmentgroupfunctionalities.js"></script>
 
+<form id="__AjaxAntiForgeryForm" asp-controller="InterviewerAvailability" asp-action="BatchCall" method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+<style>
+    .bc-modal-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,.45); z-index:1050; display:none; justify-content:center; align-items:flex-start; padding:40px 16px; }
+    .bc-modal { background:#fff; border-radius:12px; width:100%; max-width:960px; max-height:calc(100vh - 80px); display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.2); }
+    .bc-modal-hdr { padding:16px 24px; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; gap:12px; flex-shrink:0; }
+    .bc-modal-hdr h5 { margin:0; font-weight:700; font-size:15px; flex:1; }
+    .bc-modal-body { flex:1; overflow-y:auto; padding:20px 24px; }
+    .bc-modal-close { background:none; border:none; font-size:20px; color:#94a3b8; cursor:pointer; padding:4px 8px; border-radius:6px; }
+    .bc-modal-close:hover { background:#f1f5f9; color:#475569; }
+
+    .bc-stat-row { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; }
+    .bc-stat-card { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 16px; text-align:center; flex:1; min-width:80px; }
+    .bc-stat-card .val { font-weight:700; font-size:18px; }
+    .bc-stat-card .lbl { font-size:10px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; }
+
+    .bc-action-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+    .bc-btn { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:7px 14px; border-radius:7px; border:1px solid #e2e8f0; background:#fff; color:#475569; cursor:pointer; transition:all .12s; }
+    .bc-btn:hover { background:#f8fafc; border-color:#cbd5e1; }
+    .bc-btn:disabled { opacity:.5; cursor:not-allowed; }
+    .bc-btn-primary { background:#0d6efd; color:#fff; border-color:#0d6efd; }
+    .bc-btn-primary:hover { background:#0b5ed7; }
+    .bc-btn-outline { background:#fff; color:#475569; }
+    .bc-btn-danger { background:#fff; color:#dc3545; border-color:#fecaca; }
+    .bc-btn-danger:hover { background:#fef2f2; }
+    .bc-btn .badge { font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(255,255,255,.25); }
+
+    .bc-tabs { display:flex; gap:4px; margin-bottom:12px; border-bottom:1px solid #e2e8f0; padding-bottom:0; }
+    .bc-tab-btn { font-size:12px; font-weight:500; padding:7px 16px; border:none; background:transparent; color:#64748b; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; }
+    .bc-tab-btn.active { color:#0d6efd; border-bottom-color:#0d6efd; font-weight:600; }
+    .bc-tab-panel { display:none; }
+    .bc-tab-panel.active { display:block; }
+
+    .bc-tbl { font-size:12px; margin-bottom:0; }
+    .bc-tbl th { font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; font-weight:600; padding:8px 10px; background:#f8fafc; position:sticky; top:0; z-index:2; white-space:nowrap; }
+    .bc-tbl td { padding:7px 10px; vertical-align:middle; }
+    .bc-tbl-wrap { max-height:350px; overflow-y:auto; border:1px solid #e2e8f0; border-radius:8px; }
+
+    .bc-call-dot { width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:5px; }
+    .bc-status-none .bc-call-dot { background:#e2e8f0; }
+    .bc-status-ok .bc-call-dot { background:#22c55e; }
+    .bc-status-prog .bc-call-dot { background:#3b82f6; }
+    .bc-status-fail .bc-call-dot { background:#ef4444; }
+    .bc-status-warn .bc-call-dot { background:#f59e0b; }
+
+    .bc-intent { font-weight:600; font-size:11px; padding:2px 8px; border-radius:10px; display:inline-block; }
+    .bc-intent-available { background:#dcfce7; color:#166534; }
+    .bc-intent-not_available { background:#fee2e2; color:#991b1b; }
+    .bc-intent-unsubscribe { background:#fef3c7; color:#92400e; }
+    .bc-intent-no_answer { background:#e2e8f0; color:#475569; }
+
+    .bc-progress-log { max-height:200px; overflow-y:auto; font-size:11px; font-family:Consolas,monospace; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px; margin-top:10px; }
+    .bc-hist-tbl { font-size:12px; }
+    .bc-hist-tbl th { font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; font-weight:600; padding:6px 10px; background:#f8fafc; }
+    .bc-hist-tbl td { padding:6px 10px; }
+
+    .bc-pagination { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:8px 12px; background:#f8fafc; border-top:1px solid #e2e8f0; font-size:11.5px; }
+
+    .btn-call-single-m { font-size:11px; padding:2px 7px; border-radius:5px; white-space:nowrap; border:1px solid #e2e8f0; color:#64748b; background:#fff; cursor:pointer; }
+    .btn-call-single-m:hover { background:#f8fafc; border-color:#cbd5e1; }
+    .btn-call-single-m.calling { pointer-events:none; opacity:.5; }
+</style>
+
+<div class="bc-modal-overlay" id="bcModalOverlay">
+    <div class="bc-modal">
+        <div class="bc-modal-hdr">
+            <i class="fas fa-phone-volume text-info"></i>
+            <h5 id="bcModalTitle">Availability Batch Call</h5>
+            <button class="bc-modal-close" id="bcModalClose" title="Close">&times;</button>
+        </div>
+        <div class="bc-modal-body">
+            <div class="bc-stat-row" id="bcStats"></div>
+            <div class="bc-action-row" id="bcActions"></div>
+            <div class="bc-tabs" id="bcTabs">
+                <button class="bc-tab-btn active" data-tab="outcomes">Call Outcomes</button>
+                <button class="bc-tab-btn" data-tab="progress" style="display:none;" id="bcTabProgress">Live Progress</button>
+                <button class="bc-tab-btn" data-tab="history">Batch History</button>
+            </div>
+            <div class="bc-tab-panel active" id="bcPanelOutcomes">
+                <div class="text-center text-muted py-3" style="font-size:12px;"><div class="spinner-border spinner-border-sm"></div> Loading...</div>
+            </div>
+            <div class="bc-tab-panel" id="bcPanelProgress"></div>
+            <div class="bc-tab-panel" id="bcPanelHistory">
+                <div class="text-center text-muted py-3" style="font-size:12px;"><div class="spinner-border spinner-border-sm"></div> Loading...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -264,8 +364,331 @@
 </script>
 <script>
 
+    var bcToken = '', bcCurrentMag = '', bcStopRequested = false, bcCurrentLogId = 0;
+    var bcOutcomePage = 1, bcOutcomeSize = 25, bcOutcomeTotal = 0;
+
+    $(function () {
+        bcToken = $('#__AjaxAntiForgeryForm input[name="__RequestVerificationToken"]').val() || '';
+    });
+
+    function esc(s) { return $('<span>').text(s || '').html(); }
+
+    $(document).on('click', '.btn-batch-call-mag', function (e) {
+        e.stopPropagation();
+        var magName = $(this).attr('data-mag-name');
+        var agName = $(this).attr('data-ag-name');
+        if (!magName) { alert('MAG name not available.'); return; }
+        openBatchCallModal(magName, agName);
+    });
+
+    function openBatchCallModal(magName, agName) {
+        bcCurrentMag = magName;
+        bcStopRequested = false;
+        bcCurrentLogId = 0;
+        bcOutcomePage = 1;
+        $('#bcModalTitle').text('Availability Batch Call — ' + (agName || magName));
+        $('#bcModalOverlay').css('display', 'flex');
+        $('body').css('overflow', 'hidden');
+        loadModalStats(magName);
+        loadModalOutcomes(magName, 1);
+        loadModalHistory(magName);
+        $('#bcTabs .bc-tab-btn').first().click();
+    }
+
+    $('#bcModalClose').on('click', function () {
+        $('#bcModalOverlay').hide();
+        $('body').css('overflow', '');
+    });
+    $('#bcModalOverlay').on('click', function (e) {
+        if (e.target === this) { $('#bcModalOverlay').hide(); $('body').css('overflow', ''); }
+    });
+
+    $(document).on('click', '.bc-tab-btn', function () {
+        var tab = $(this).attr('data-tab');
+        $('.bc-tab-btn').removeClass('active');
+        $(this).addClass('active');
+        $('.bc-tab-panel').removeClass('active');
+        $('#bcPanel' + tab.charAt(0).toUpperCase() + tab.slice(1)).addClass('active');
+    });
+
+    function loadModalStats(magName) {
+        $('#bcStats').html('<div class="text-center text-muted w-100 py-2"><div class="spinner-border spinner-border-sm"></div></div>');
+        $('#bcActions').empty();
+        $.ajax({
+            url: '/InterviewerAvailability/GetBatchCallMAGs', type: 'GET',
+            data: { page: 1, pageSize: 1, search: magName },
+            success: function (res) {
+                if (!res.success || !res.mags || !res.mags.length) {
+                    $('#bcStats').html('<div class="text-muted" style="font-size:12px;">No data found for this MAG.</div>');
+                    return;
+                }
+                var m = res.mags[0];
+                var html = '<div class="bc-stat-card"><div class="val">' + m.totalInterviewers + '</div><div class="lbl">Total</div></div>' +
+                    '<div class="bc-stat-card"><div class="val text-primary">' + m.callableCount + '</div><div class="lbl">With Phone</div></div>' +
+                    '<div class="bc-stat-card"><div class="val">' + m.alreadyCalled + '</div><div class="lbl">Called</div></div>' +
+                    '<div class="bc-stat-card"><div class="val text-success">' + m.available + '</div><div class="lbl">Available</div></div>' +
+                    '<div class="bc-stat-card"><div class="val text-danger">' + m.notAvailable + '</div><div class="lbl">Unavailable</div></div>';
+                $('#bcStats').html(html);
+
+                var uncalled = m.uncalledCount || 0;
+                var btns = '';
+                if (uncalled > 0)
+                    btns += '<button class="bc-btn bc-btn-primary" id="bcBtnCallUncalled" data-only-uncalled="true"><i class="fas fa-phone-alt"></i> Call Uncalled <span class="badge">' + uncalled + '</span></button>';
+                if (m.callableCount > 0 && m.alreadyCalled > 0)
+                    btns += '<button class="bc-btn bc-btn-outline" id="bcBtnRecallAll" data-only-uncalled="false"><i class="fas fa-redo-alt"></i> Recall All <span class="badge bg-secondary text-white">' + m.callableCount + '</span></button>';
+                else if (m.callableCount > 0 && uncalled === 0)
+                    btns += '<button class="bc-btn bc-btn-outline" id="bcBtnRecallAll" data-only-uncalled="false"><i class="fas fa-redo-alt"></i> Call All <span class="badge bg-secondary text-white">' + m.callableCount + '</span></button>';
+                if (!btns) btns = '<span class="text-muted" style="font-size:12px;"><i class="fas fa-ban me-1"></i>No callable interviewers</span>';
+                $('#bcActions').html(btns);
+            },
+            error: function () { $('#bcStats').html('<div class="text-danger" style="font-size:12px;">Failed to load stats.</div>'); }
+        });
+    }
+
+    $(document).on('click', '#bcBtnCallUncalled, #bcBtnRecallAll', function () {
+        var onlyUncalled = $(this).attr('data-only-uncalled') === 'true';
+        var label = onlyUncalled ? 'uncalled' : 'all callable';
+        if (!confirm('Trigger availability calls to ' + label + ' interviewers under "' + bcCurrentMag + '"?')) return;
+        startModalBatchCall(bcCurrentMag, onlyUncalled);
+    });
+
+    function startModalBatchCall(magName, onlyUncalled) {
+        bcStopRequested = false;
+        bcCurrentLogId = 0;
+        $('#bcBtnCallUncalled, #bcBtnRecallAll').prop('disabled', true);
+        $('#bcTabProgress').show().click();
+
+        var $panel = $('#bcPanelProgress');
+        $panel.html(
+            '<div class="d-flex align-items-center justify-content-between mb-2">' +
+                '<strong>' + esc(magName) + ' <span class="text-muted fw-normal" style="font-size:12px;">(' + (onlyUncalled ? 'uncalled only' : 'all callable') + ')</span></strong>' +
+                '<button class="bc-btn bc-btn-danger" id="bcBtnStop"><i class="fas fa-stop"></i> Stop</button>' +
+            '</div>' +
+            '<div class="progress mb-2" style="height:8px;border-radius:8px;"><div class="progress-bar progress-bar-striped progress-bar-animated bg-info" id="bcPB" style="width:0%;border-radius:8px;"></div></div>' +
+            '<div class="text-muted mb-1" style="font-size:12px;" id="bcPBCount">Fetching interviewers...</div>' +
+            '<div class="bc-progress-log" id="bcProgressLog"></div>' +
+            '<div id="bcDone" style="display:none;" class="text-center mt-3"><div class="alert alert-info py-2 px-3 mb-0" style="font-size:12.5px;border-radius:8px;"><i class="fas fa-check-circle me-1"></i><span id="bcSummary"></span></div></div>'
+        );
+
+        $('#bcBtnStop').on('click', function () { bcStopRequested = true; $(this).prop('disabled', true).text('Stopping...'); });
+
+        $.ajax({
+            url: '/InterviewerAvailability/GetCallableInterviewersForMAG', type: 'GET',
+            data: { magName: magName, onlyUncalled: onlyUncalled },
+            success: function (res) {
+                if (!res.success || !res.interviewers || !res.interviewers.length) {
+                    bcLog('No ' + (onlyUncalled ? 'uncalled ' : '') + 'callable interviewers found.', 'skip');
+                    finishModalBatch(0, 0, 0, magName);
+                    return;
+                }
+                var interviewers = res.interviewers;
+                $('#bcPBCount').text('0 / ' + interviewers.length);
+                bcLog('Starting batch: ' + interviewers.length + ' interviewer(s)', 'ok');
+                $.ajax({
+                    url: '/InterviewerAvailability/StartBatchCallLog', type: 'POST',
+                    data: { __RequestVerificationToken: bcToken, magName: magName, totalInterviewers: interviewers.length },
+                    success: function (lr) { bcCurrentLogId = lr.logId || 0; },
+                    error: function () { bcLog('Warning: failed to create batch log', 'skip'); },
+                    complete: function () { processModalBatch(interviewers, 0, 0, 0, 0, magName); }
+                });
+            },
+            error: function () { bcLog('Failed to fetch interviewers.', 'err'); finishModalBatch(0, 0, 0, magName); }
+        });
+    }
+
+    function processModalBatch(interviewers, idx, ok, err, skip, magName) {
+        if (bcStopRequested || idx >= interviewers.length) { finishModalBatch(ok, err, skip, magName); return; }
+        var p = interviewers[idx], total = interviewers.length;
+        $('#bcPB').css('width', Math.round((idx / total) * 100) + '%');
+        $('#bcPBCount').text((idx + 1) + ' / ' + total);
+        var srcTag = p.source === 'Profile' ? ' [Profile]' : '';
+        bcLog('<strong>#' + p.id + '</strong> ' + (p.interviewerName || 'Unknown') + srcTag + ' (' + (p.phone || '') + ') — calling...', '');
+        $.ajax({
+            url: '/InterviewerAvailability/BatchCallSingle', type: 'POST',
+            data: { __RequestVerificationToken: bcToken, id: p.id, source: p.source || 'EA', magName: magName },
+            success: function (res) {
+                if (res.success) { bcLog('&nbsp;&nbsp;\u2714 Call triggered' + (res.conversationId ? ' [' + res.conversationId + ']' : ''), 'ok'); ok++; }
+                else { bcLog('&nbsp;&nbsp;\u2718 Failed: ' + (res.error || ''), 'err'); err++; }
+                setTimeout(function () { processModalBatch(interviewers, idx + 1, ok, err, skip, magName); }, 1200);
+            },
+            error: function () { bcLog('&nbsp;&nbsp;\u2718 Request failed', 'err'); err++; setTimeout(function () { processModalBatch(interviewers, idx + 1, ok, err, skip, magName); }, 1200); }
+        });
+    }
+
+    function finishModalBatch(ok, err, skip, magName) {
+        $('#bcPB').css('width', '100%').removeClass('progress-bar-animated');
+        $('#bcBtnCallUncalled, #bcBtnRecallAll').prop('disabled', false);
+        var summary = ok + ' triggered';
+        if (skip > 0) summary += ', ' + skip + ' skipped';
+        if (err > 0) summary += ', ' + err + ' failed';
+        $('#bcSummary').text(summary);
+        $('#bcDone').show();
+        bcLog('Batch complete: ' + summary, 'ok');
+        if (bcCurrentLogId > 0) {
+            $.ajax({
+                url: '/InterviewerAvailability/CompleteBatchCallLog', type: 'POST',
+                data: { __RequestVerificationToken: bcToken, logId: bcCurrentLogId, succeeded: ok, failed: err, skipped: skip, status: bcStopRequested ? 'Stopped' : 'Completed' }
+            });
+        }
+        loadModalOutcomes(magName, 1);
+        loadModalHistory(magName);
+        loadModalStats(magName);
+    }
+
+    function bcLog(msg, type) {
+        var $log = $('#bcProgressLog');
+        $log.append('<div style="padding:2px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#94a3b8;margin-right:6px;">' + new Date().toLocaleTimeString() + '</span>' + msg + '</div>');
+        $log.scrollTop($log[0].scrollHeight);
+    }
+
+    function loadModalOutcomes(magName, page) {
+        page = page || bcOutcomePage;
+        bcOutcomePage = page;
+        var $panel = $('#bcPanelOutcomes');
+        $panel.html('<div class="text-center text-muted py-3"><div class="spinner-border spinner-border-sm"></div> Loading outcomes...</div>');
+        $.ajax({
+            url: '/InterviewerAvailability/GetInterviewerCallOutcomes', type: 'GET',
+            data: { magName: magName, page: page, pageSize: bcOutcomeSize },
+            success: function (res) {
+                if (!res.success || !res.interviewers || !res.interviewers.length) {
+                    $panel.html('<div class="text-center text-muted py-3" style="font-size:12px;"><i class="fas fa-users-slash me-1"></i>No interviewers found.</div>');
+                    return;
+                }
+                bcOutcomeTotal = res.totalCount || 0;
+                var totalPages = Math.max(1, Math.ceil(bcOutcomeTotal / bcOutcomeSize));
+                var first = (page - 1) * bcOutcomeSize + 1;
+                var last = Math.min(page * bcOutcomeSize, bcOutcomeTotal);
+
+                var html = '<div class="bc-tbl-wrap"><table class="table table-hover bc-tbl"><thead><tr>' +
+                    '<th>Source</th><th>#</th><th>Name</th><th>Phone</th><th>Exp</th><th>Call Status</th>' +
+                    '<th>Intent</th><th>Assign Help</th><th>Callback</th><th>Duration</th><th>Called At</th><th>Notes</th><th>Action</th>' +
+                    '</tr></thead><tbody>';
+                $.each(res.interviewers, function (_, p) {
+                    html += buildOutcomeRowM(p, magName);
+                });
+                html += '</tbody></table></div>';
+                html += '<div class="bc-pagination">' +
+                    '<span style="font-size:11.5px;color:#64748b;">Showing <strong>' + first + '–' + last + '</strong> of <strong>' + bcOutcomeTotal + '</strong></span>' +
+                    '<div class="d-flex align-items-center gap-2">' +
+                        '<button class="btn btn-sm btn-outline-secondary bc-out-pg" data-page="' + (page - 1) + '"' + (page <= 1 ? ' disabled' : '') + '><i class="fas fa-angle-left"></i></button>' +
+                        '<span style="font-size:11.5px;" class="px-1">Page ' + page + ' / ' + totalPages + '</span>' +
+                        '<button class="btn btn-sm btn-outline-secondary bc-out-pg" data-page="' + (page + 1) + '"' + (page >= totalPages ? ' disabled' : '') + '><i class="fas fa-angle-right"></i></button>' +
+                    '</div></div>';
+                $panel.html(html);
+            },
+            error: function () { $panel.html('<div class="text-center text-danger py-3" style="font-size:12px;">Failed to load outcomes.</div>'); }
+        });
+    }
+
+    $(document).on('click', '.bc-out-pg', function () {
+        if ($(this).prop('disabled')) return;
+        var pg = parseInt($(this).attr('data-page'), 10);
+        if (pg > 0) loadModalOutcomes(bcCurrentMag, pg);
+    });
+
+    function buildOutcomeRowM(p, magName) {
+        var src = (p.source || 'EA').toString();
+        var srcBadge = src === 'Profile'
+            ? '<span style="font-size:10px;font-weight:600;padding:3px 7px;border-radius:5px;background:#fafafa;color:#57534e;border:1px solid #e7e5e4;"><i class="fas fa-user" style="margin-right:3px;"></i>Profile</span>'
+            : '<span style="font-size:10px;font-weight:600;padding:3px 7px;border-radius:5px;background:#f8fafc;color:#475569;border:1px solid #e2e8f0;"><i class="fas fa-envelope" style="margin-right:3px;"></i>Email</span>';
+
+        var statusHtml = fmtCallStatus(p.plivoCallStatus);
+        var intentCls = '', intentText = p.plivoIntent || '—';
+        if (intentText === 'available') { intentCls = 'bc-intent-available'; intentText = 'Available'; }
+        else if (intentText === 'not_available') { intentCls = 'bc-intent-not_available'; intentText = 'Not Available'; }
+        else if (intentText === 'unsubscribe') { intentCls = 'bc-intent-unsubscribe'; intentText = 'Unsubscribe'; }
+        else if (intentText === 'no_answer') { intentCls = 'bc-intent-no_answer'; intentText = 'No Answer'; }
+
+        var assignHelp = p.plivoAssignmentHelp === true ? '<span style="font-size:10px;font-weight:500;padding:2px 6px;border-radius:4px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;">Yes</span>' : '—';
+        var callback = p.plivoCallbackRequested === true ? '<span style="font-size:10px;font-weight:500;padding:2px 6px;border-radius:4px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;">Yes</span>' : '—';
+        var notes = p.plivoNotes ? '<span title="' + esc(p.plivoNotes) + '" style="cursor:help;max-width:100px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.plivoNotes) + '</span>' : '—';
+
+        var callBtn = '<button class="btn-call-single-m" data-id="' + p.id + '" data-src="' + src + '" data-mag="' + esc(magName).replace(/"/g,'&quot;') + '" title="Call"><i class="fas fa-phone-alt"></i></button>';
+
+        return '<tr>' +
+            '<td>' + srcBadge + '</td>' +
+            '<td>' + p.id + '</td>' +
+            '<td><strong>' + esc(p.interviewerName) + '</strong>' + (p.currentRole ? '<br/><span style="font-size:10px;color:#64748b;">' + esc(p.currentRole) + '</span>' : '') + '</td>' +
+            '<td style="white-space:nowrap;">' + esc(p.phone) + '</td>' +
+            '<td>' + (p.experience || '—') + '</td>' +
+            '<td>' + statusHtml + '</td>' +
+            '<td><span class="bc-intent ' + intentCls + '">' + intentText + '</span></td>' +
+            '<td class="text-center">' + assignHelp + '</td>' +
+            '<td class="text-center">' + callback + '</td>' +
+            '<td>' + (p.plivoCallDuration ? p.plivoCallDuration + 's' : '—') + '</td>' +
+            '<td style="white-space:nowrap;font-size:11px;">' + (p.plivoCallAt || '—') + '</td>' +
+            '<td>' + notes + '</td>' +
+            '<td>' + callBtn + '</td></tr>';
+    }
+
+    function fmtCallStatus(status) {
+        if (!status) return '<span class="bc-status-none" style="font-size:11px;color:#94a3b8;"><span class="bc-call-dot"></span>Not called</span>';
+        var s = (status + '').toLowerCase().replace(/_/g, '-');
+        if (s === 'completed' || s === 'answered') return '<span class="bc-status-ok" style="font-size:11px;color:#166534;"><span class="bc-call-dot"></span>Completed</span>';
+        if (s === 'triggered' || s === 'initiated' || s === 'ringing' || s === 'in-progress') return '<span class="bc-status-prog" style="font-size:11px;color:#1d4ed8;"><span class="bc-call-dot"></span>In progress</span>';
+        if (s === 'no-answer' || s === 'no answer') return '<span class="bc-status-warn" style="font-size:11px;color:#b45309;"><span class="bc-call-dot"></span>No answer</span>';
+        return '<span class="bc-status-fail" style="font-size:11px;color:#b91c1c;"><span class="bc-call-dot"></span>' + esc(status) + '</span>';
+    }
+
+    $(document).on('click', '.btn-call-single-m', function (e) {
+        e.stopPropagation();
+        var $btn = $(this);
+        if ($btn.hasClass('calling')) return;
+        var id = parseInt($btn.attr('data-id'));
+        var src = $btn.attr('data-src') || 'EA';
+        var magName = $btn.attr('data-mag') || bcCurrentMag;
+        if (!id) return;
+        if (!confirm('Call interviewer #' + id + '?')) return;
+        $btn.addClass('calling').html('<i class="fas fa-spinner fa-spin"></i>');
+        $.ajax({
+            url: '/InterviewerAvailability/BatchCallSingle', type: 'POST',
+            data: { __RequestVerificationToken: bcToken, id: id, source: src, magName: magName },
+            success: function (res) {
+                if (res.success) {
+                    $btn.removeClass('calling').html('<i class="fas fa-check text-success"></i>');
+                    setTimeout(function () { $btn.html('<i class="fas fa-phone-alt"></i>').removeClass('calling'); }, 3000);
+                } else {
+                    $btn.removeClass('calling').html('<i class="fas fa-phone-alt"></i>');
+                    alert('Failed: ' + (res.error || 'Unknown error'));
+                }
+            },
+            error: function () { $btn.removeClass('calling').html('<i class="fas fa-phone-alt"></i>'); alert('Request failed.'); }
+        });
+    });
+
+    function loadModalHistory(magName) {
+        var $panel = $('#bcPanelHistory');
+        $panel.html('<div class="text-center text-muted py-3"><div class="spinner-border spinner-border-sm"></div> Loading history...</div>');
+        $.ajax({
+            url: '/InterviewerAvailability/GetBatchCallHistory', type: 'GET',
+            data: { magName: magName },
+            success: function (res) {
+                if (!res.success || !res.history || !res.history.length) {
+                    $panel.html('<div class="text-center text-muted py-3" style="font-size:12px;">No batch call history yet.</div>');
+                    return;
+                }
+                var html = '<div class="table-responsive"><table class="table table-sm bc-hist-tbl mb-0">' +
+                    '<thead><tr><th>When</th><th>By</th><th>Attempted</th><th class="text-success">OK</th><th class="text-danger">Fail</th><th class="text-warning">Skip</th><th>Status</th></tr></thead><tbody>';
+                $.each(res.history, function (_, h) {
+                    var badge = h.status === 'Completed' ? '<span class="badge bg-success">Completed</span>'
+                        : h.status === 'Stopped' ? '<span class="badge bg-warning text-dark">Stopped</span>'
+                        : h.status === 'Running' ? '<span class="badge bg-info">Running</span>'
+                        : '<span class="badge bg-secondary">' + h.status + '</span>';
+                    html += '<tr><td style="white-space:nowrap;">' + h.initiatedAt + '</td><td>' + esc(h.initiatedBy) + '</td>' +
+                        '<td class="text-center">' + h.interviewersAttempted + '</td>' +
+                        '<td class="text-center text-success fw-bold">' + h.interviewersSucceeded + '</td>' +
+                        '<td class="text-center text-danger fw-bold">' + h.interviewersFailed + '</td>' +
+                        '<td class="text-center text-warning fw-bold">' + h.interviewersSkipped + '</td>' +
+                        '<td>' + badge + '</td></tr>';
+                });
+                html += '</tbody></table></div>';
+                $panel.html(html);
+            },
+            error: function () { $panel.html('<div class="text-center text-danger py-3">Failed to load history.</div>'); }
+        });
+    }
+
     function SendMagApplicationLinks(agId, agName) {
-        debugger;
         swal.fire({
             title: 'Are you sure?',
             text: 'Want to send MAG links for AG ' + agName + ' to all applicable interviewers?',

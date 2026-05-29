@@ -363,13 +363,16 @@ namespace Risebird.Repository
 
         // ── Batch call ─────────────────────────────────────────────────────────────
 
-        public async Task<List<IABatchCallMagSummary>> GetMAGsWithCallableInterviewerCountsAsync()
+        public async Task<(List<IABatchCallMagSummary> Items, int TotalCount)> GetMAGsWithCallableInterviewerCountsAsync(int page = 1, int pageSize = 20, string search = null)
         {
             using var con = new SqlConnection(_connectionString);
             var result = await con.QueryAsync<IABatchCallMagSummary>(
                 "usp_GetIABatchCallMAGSummary",
+                new { Page = page, PageSize = pageSize, Search = string.IsNullOrWhiteSpace(search) ? (string)null : search },
                 commandType: CommandType.StoredProcedure, commandTimeout: 120);
-            return result.ToList();
+            var items = result.ToList();
+            int totalCount = items.FirstOrDefault()?.TotalCount ?? 0;
+            return (items, totalCount);
         }
 
         public async Task<List<IACallableInterviewer>> GetCallableInterviewersForMAGAsync(string magName, bool onlyUncalled = true)
