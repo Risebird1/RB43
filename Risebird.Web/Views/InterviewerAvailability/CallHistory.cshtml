@@ -1,0 +1,508 @@
+@{
+    ViewData["Title"] = "Availability Call History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .ch-page { font-family:'Roboto','Segoe UI',sans-serif; }
+
+    .ch-filter-bar {
+        background:#fff; border:1px solid #e2e8f0; border-radius:10px;
+        padding:14px 18px; display:flex; flex-wrap:wrap; gap:10px 14px; align-items:flex-end;
+        box-shadow:0 1px 2px rgba(15,23,42,.04);
+    }
+    .ch-filter-group { display:flex; flex-direction:column; gap:3px; }
+    .ch-filter-group label { font-size:10px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; font-weight:600; }
+    .ch-filter-group select,
+    .ch-filter-group input { font-size:12.5px; padding:5px 10px; border:1px solid #e2e8f0; border-radius:7px; background:#f8fafc; color:#334155; min-width:140px; height:34px; }
+    .ch-filter-group select:focus,
+    .ch-filter-group input:focus { outline:none; border-color:#94a3b8; box-shadow:0 0 0 3px rgba(148,163,184,.15); }
+    .ch-filter-actions { display:flex; gap:6px; align-items:flex-end; }
+    .ch-btn { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; padding:6px 14px; border-radius:7px; border:1px solid #e2e8f0; background:#fff; color:#475569; cursor:pointer; transition:all .12s; }
+    .ch-btn:hover { background:#f8fafc; border-color:#cbd5e1; }
+    .ch-btn-primary { background:#0d6efd; color:#fff; border-color:#0d6efd; }
+    .ch-btn-primary:hover { background:#0b5ed7; }
+
+    .ch-summary-row { display:flex; gap:12px; flex-wrap:wrap; }
+    .ch-summary-card { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:12px 18px; text-align:center; flex:1; min-width:100px; }
+    .ch-summary-card .val { font-weight:700; font-size:20px; }
+    .ch-summary-card .lbl { font-size:10px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; }
+
+    .ch-tabs { display:flex; gap:2px; border-bottom:2px solid #e2e8f0; margin-bottom:0; }
+    .ch-tab { font-size:13px; font-weight:500; padding:10px 20px; border:none; background:transparent; color:#64748b; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .12s; }
+    .ch-tab.active { color:#0d6efd; border-bottom-color:#0d6efd; font-weight:600; }
+    .ch-tab:hover { color:#334155; }
+    .ch-tab-panel { display:none; }
+    .ch-tab-panel.active { display:block; }
+
+    .ch-tbl-wrap { border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; background:#fff; }
+    .ch-tbl-scroll { overflow-x:auto; }
+    .ch-tbl { font-size:12px; margin-bottom:0; width:100%; }
+    .ch-tbl th { font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:#64748b; font-weight:600; padding:9px 10px; background:#f8fafc; position:sticky; top:0; z-index:2; white-space:nowrap; border-bottom:1px solid #e2e8f0; }
+    .ch-tbl td { padding:7px 10px; vertical-align:middle; border-bottom:1px solid #f1f5f9; }
+    .ch-tbl tbody tr:hover { background:#f8fafc; }
+
+    .ch-intent { font-weight:600; font-size:11px; padding:3px 9px; border-radius:10px; display:inline-block; white-space:nowrap; }
+    .ch-intent-available { background:#dcfce7; color:#166534; }
+    .ch-intent-not_available { background:#fee2e2; color:#991b1b; }
+    .ch-intent-unsubscribe { background:#fef3c7; color:#92400e; }
+    .ch-intent-no_answer { background:#e2e8f0; color:#475569; }
+
+    .ch-status-dot { width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:5px; }
+    .ch-cs-completed .ch-status-dot { background:#22c55e; }
+    .ch-cs-completed { color:#166534; }
+    .ch-cs-triggered .ch-status-dot { background:#3b82f6; }
+    .ch-cs-triggered { color:#1d4ed8; }
+    .ch-cs-failed .ch-status-dot { background:#ef4444; }
+    .ch-cs-failed { color:#b91c1c; }
+    .ch-cs-noanswer .ch-status-dot { background:#f59e0b; }
+    .ch-cs-noanswer { color:#b45309; }
+    .ch-cs-other .ch-status-dot { background:#94a3b8; }
+    .ch-cs-other { color:#64748b; }
+
+    .ch-flag-yes { font-size:10px; font-weight:500; padding:2px 6px; border-radius:4px; background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; }
+    .ch-flag-no { color:#cbd5e1; font-size:11px; }
+
+    .ch-pagination {
+        display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+        padding:10px 14px; background:#f8fafc; border-top:1px solid #e2e8f0; font-size:12px;
+    }
+    .ch-pagination .ch-pg-info { color:#64748b; }
+    .ch-pagination .ch-pg-btns { display:flex; gap:4px; align-items:center; }
+    .ch-pagination select { font-size:12px; padding:2px 8px; border-radius:6px; border:1px solid #cbd5e1; }
+
+    .ch-mag-badge { font-size:11px; font-weight:500; padding:2px 8px; border-radius:5px; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; white-space:nowrap; display:inline-block; max-width:180px; overflow:hidden; text-overflow:ellipsis; }
+    .ch-transcript-btn { font-size:10px; padding:2px 7px; border-radius:4px; border:1px solid #e2e8f0; background:#fff; color:#64748b; cursor:pointer; white-space:nowrap; }
+    .ch-transcript-btn:hover { background:#f1f5f9; }
+
+    .ch-modal-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,.45); z-index:1050; display:none; justify-content:center; align-items:flex-start; padding:60px 16px; }
+    .ch-modal { background:#fff; border-radius:12px; width:100%; max-width:720px; max-height:calc(100vh - 120px); display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.2); }
+    .ch-modal-hdr { padding:14px 20px; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; gap:10px; }
+    .ch-modal-hdr h6 { margin:0; font-weight:700; flex:1; }
+    .ch-modal-body { flex:1; overflow-y:auto; padding:16px 20px; }
+    .ch-modal-close { background:none; border:none; font-size:20px; color:#94a3b8; cursor:pointer; }
+    .ch-transcript-text { font-size:12.5px; line-height:1.7; white-space:pre-wrap; word-break:break-word; font-family:'Segoe UI',sans-serif; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="content client">
+            <div class="container-fluid py-4 ch-page">
+
+                <div class="row mb-3 align-items-center">
+                    <div class="col">
+                        <h4 class="fw-bold mb-0"><i class="fas fa-history text-info me-2"></i>Availability Call History & Dispositions</h4>
+                        <p class="text-muted mb-0 mt-1">Centralized view of all Plivo batch call outcomes across all MAGs</p>
+                    </div>
+                    <div class="col-auto d-flex gap-2">
+                        <a href="@Url.Action("Index", "InterviewerAvailability")" class="btn btn-sm btn-outline-primary"><i class="fas fa-arrow-left me-1"></i>Availability</a>
+                        <a href="@Url.Action("BatchCall", "InterviewerAvailability")" class="btn btn-sm btn-outline-secondary"><i class="fas fa-phone-volume me-1"></i>Batch Call</a>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="ch-summary-row mb-3" id="chSummary">
+                    <div class="ch-summary-card"><div class="val" id="chTotalCalls">—</div><div class="lbl">Total Calls</div></div>
+                    <div class="ch-summary-card"><div class="val text-success" id="chAvailable">—</div><div class="lbl">Available</div></div>
+                    <div class="ch-summary-card"><div class="val text-danger" id="chNotAvailable">—</div><div class="lbl">Not Available</div></div>
+                    <div class="ch-summary-card"><div class="val text-warning" id="chNoAnswer">—</div><div class="lbl">No Answer</div></div>
+                    <div class="ch-summary-card"><div class="val" id="chOther" style="color:#64748b;">—</div><div class="lbl">Other</div></div>
+                    <div class="ch-summary-card"><div class="val text-info" id="chBatches">—</div><div class="lbl">Batch Runs</div></div>
+                </div>
+
+                <!-- Filters -->
+                <div class="ch-filter-bar mb-3">
+                    <div class="ch-filter-group">
+                        <label>MAG</label>
+                        <select id="chFilterMag"><option value="">All MAGs</option></select>
+                    </div>
+                    <div class="ch-filter-group">
+                        <label>Disposition</label>
+                        <select id="chFilterIntent">
+                            <option value="">All</option>
+                            <option value="available">Available</option>
+                            <option value="not_available">Not Available</option>
+                            <option value="no_answer">No Answer</option>
+                            <option value="unsubscribe">Unsubscribe</option>
+                        </select>
+                    </div>
+                    <div class="ch-filter-group">
+                        <label>Call Status</label>
+                        <select id="chFilterStatus">
+                            <option value="">All</option>
+                            <option value="completed">Completed</option>
+                            <option value="triggered">Triggered</option>
+                            <option value="initiated">Initiated</option>
+                            <option value="no-answer">No Answer</option>
+                            <option value="busy">Busy</option>
+                            <option value="failed">Failed</option>
+                            <option value="trigger-failed">Trigger Failed</option>
+                        </select>
+                    </div>
+                    <div class="ch-filter-group">
+                        <label>From</label>
+                        <input type="date" id="chFilterFrom" />
+                    </div>
+                    <div class="ch-filter-group">
+                        <label>To</label>
+                        <input type="date" id="chFilterTo" />
+                    </div>
+                    <div class="ch-filter-actions">
+                        <button class="ch-btn ch-btn-primary" id="chApplyFilters"><i class="fas fa-filter"></i> Apply</button>
+                        <button class="ch-btn" id="chResetFilters"><i class="fas fa-times"></i> Reset</button>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="ch-tabs">
+                    <button class="ch-tab active" data-tab="dispositions">Call Dispositions</button>
+                    <button class="ch-tab" data-tab="batches">Batch History</button>
+                </div>
+
+                <!-- Dispositions Tab -->
+                <div class="ch-tab-panel active" id="chPanelDispositions">
+                    <div class="ch-tbl-wrap mt-0">
+                        <div class="ch-tbl-scroll" style="max-height:600px; overflow-y:auto;">
+                            <table class="table table-hover ch-tbl" id="chDispoTable">
+                                <thead>
+                                    <tr>
+                                        <th>#</th><th>MAG</th><th>Interviewer</th><th>Email</th><th>Phone</th>
+                                        <th>Exp</th><th>Call Status</th><th>Disposition</th><th>Assign Help</th>
+                                        <th>Email Rcvd</th><th>Callback</th><th>Duration</th><th>Called At</th>
+                                        <th>Called By</th><th>Notes</th><th>Transcript</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="chDispoBody">
+                                    <tr><td colspan="16" class="text-center text-muted py-4"><div class="spinner-border spinner-border-sm"></div> Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="ch-pagination" id="chDispoPagination"></div>
+                    </div>
+                </div>
+
+                <!-- Batches Tab -->
+                <div class="ch-tab-panel" id="chPanelBatches">
+                    <div class="ch-tbl-wrap mt-0">
+                        <div class="ch-tbl-scroll" style="max-height:600px; overflow-y:auto;">
+                            <table class="table table-hover ch-tbl" id="chBatchTable">
+                                <thead>
+                                    <tr>
+                                        <th>#</th><th>MAG</th><th>Initiated By</th><th>Started At</th>
+                                        <th>Attempted</th><th class="text-success">Succeeded</th>
+                                        <th class="text-danger">Failed</th><th class="text-warning">Skipped</th>
+                                        <th>Completed At</th><th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="chBatchBody">
+                                    <tr><td colspan="10" class="text-center text-muted py-4"><div class="spinner-border spinner-border-sm"></div> Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="ch-pagination" id="chBatchPagination"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transcript Modal -->
+<div class="ch-modal-overlay" id="chTranscriptOverlay">
+    <div class="ch-modal">
+        <div class="ch-modal-hdr">
+            <i class="fas fa-comments text-info"></i>
+            <h6 id="chTranscriptTitle">Call Transcript</h6>
+            <button class="ch-modal-close" id="chTranscriptClose">&times;</button>
+        </div>
+        <div class="ch-modal-body">
+            <div class="ch-transcript-text" id="chTranscriptContent"></div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+<script>
+    var chDispoPage = 1, chDispoSize = 50, chDispoTotal = 0;
+    var chBatchPage = 1, chBatchSize = 50, chBatchTotal = 0;
+
+    $(function () {
+        loadMagFilter();
+        loadDispositions(1);
+        loadBatches(1);
+        loadSummary();
+    });
+
+    function esc(s) { return $('<span>').text(s || '').html(); }
+
+    // Tabs
+    $(document).on('click', '.ch-tab', function () {
+        var tab = $(this).attr('data-tab');
+        $('.ch-tab').removeClass('active'); $(this).addClass('active');
+        $('.ch-tab-panel').removeClass('active');
+        $('#chPanel' + tab.charAt(0).toUpperCase() + tab.slice(1)).addClass('active');
+    });
+
+    // Filters
+    $('#chApplyFilters').on('click', function () { chDispoPage = 1; chBatchPage = 1; loadDispositions(1); loadBatches(1); loadSummary(); });
+    $('#chResetFilters').on('click', function () {
+        $('#chFilterMag, #chFilterIntent, #chFilterStatus').val('');
+        $('#chFilterFrom, #chFilterTo').val('');
+        chDispoPage = 1; chBatchPage = 1;
+        loadDispositions(1); loadBatches(1); loadSummary();
+    });
+
+    function getFilters() {
+        return {
+            magName: $('#chFilterMag').val() || null,
+            intent: $('#chFilterIntent').val() || null,
+            callStatus: $('#chFilterStatus').val() || null,
+            dateFrom: $('#chFilterFrom').val() || null,
+            dateTo: $('#chFilterTo').val() || null
+        };
+    }
+
+    function loadMagFilter() {
+        $.ajax({
+            url: '@Url.Action("GetDistinctCalledMagNames", "InterviewerAvailability")', type: 'GET',
+            success: function (res) {
+                if (!res.success) return;
+                var $sel = $('#chFilterMag');
+                $.each(res.mags, function (_, m) { $sel.append('<option value="' + esc(m) + '">' + esc(m) + '</option>'); });
+            }
+        });
+    }
+
+    function loadSummary() {
+        var f = getFilters();
+        $.ajax({
+            url: '@Url.Action("GetAllCallDispositions", "InterviewerAvailability")', type: 'GET',
+            data: $.extend({ page: 1, pageSize: 1 }, f),
+            success: function (res) {
+                if (!res.success) return;
+                $('#chTotalCalls').text(res.totalCount || 0);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("GetAllCallDispositions", "InterviewerAvailability")', type: 'GET',
+            data: $.extend({ page: 1, pageSize: 10000, intent: 'available' }, { magName: f.magName, dateFrom: f.dateFrom, dateTo: f.dateTo }),
+            success: function (res) { if (res.success) $('#chAvailable').text(res.totalCount || 0); }
+        });
+        $.ajax({
+            url: '@Url.Action("GetAllCallDispositions", "InterviewerAvailability")', type: 'GET',
+            data: $.extend({ page: 1, pageSize: 1, intent: 'not_available' }, { magName: f.magName, dateFrom: f.dateFrom, dateTo: f.dateTo }),
+            success: function (res) { if (res.success) $('#chNotAvailable').text(res.totalCount || 0); }
+        });
+        $.ajax({
+            url: '@Url.Action("GetAllCallDispositions", "InterviewerAvailability")', type: 'GET',
+            data: $.extend({ page: 1, pageSize: 1, intent: 'no_answer' }, { magName: f.magName, dateFrom: f.dateFrom, dateTo: f.dateTo }),
+            success: function (res) { if (res.success) $('#chNoAnswer').text(res.totalCount || 0); }
+        });
+        $.ajax({
+            url: '@Url.Action("GetAllCallDispositions", "InterviewerAvailability")', type: 'GET',
+            data: $.extend({ page: 1, pageSize: 1, intent: 'unsubscribe' }, { magName: f.magName, dateFrom: f.dateFrom, dateTo: f.dateTo }),
+            success: function (res) { if (res.success) $('#chOther').text(res.totalCount || 0); }
+        });
+        $.ajax({
+            url: '@Url.Action("GetAllBatchCallLogs", "InterviewerAvailability")', type: 'GET',
+            data: { page: 1, pageSize: 1, magName: f.magName },
+            success: function (res) { if (res.success) $('#chBatches').text(res.totalCount || 0); }
+        });
+    }
+
+    // Dispositions
+    function loadDispositions(page) {
+        page = page || chDispoPage;
+        chDispoPage = page;
+        var f = getFilters();
+        var $body = $('#chDispoBody');
+        $body.html('<tr><td colspan="16" class="text-center text-muted py-4"><div class="spinner-border spinner-border-sm"></div> Loading...</td></tr>');
+
+        $.ajax({
+            url: '@Url.Action("GetAllCallDispositions", "InterviewerAvailability")', type: 'GET',
+            data: $.extend({ page: page, pageSize: chDispoSize }, f),
+            success: function (res) {
+                if (!res.success) { $body.html('<tr><td colspan="16" class="text-center text-danger py-3">' + esc(res.error || 'Failed') + '</td></tr>'); return; }
+                chDispoTotal = res.totalCount || 0;
+                if (!res.items || !res.items.length) { $body.html('<tr><td colspan="16" class="text-center text-muted py-4"><i class="fas fa-phone-slash me-1"></i>No call records found.</td></tr>'); renderDispoPagination(); return; }
+                var html = '';
+                $.each(res.items, function (_, d) { html += buildDispoRow(d); });
+                $body.html(html);
+                renderDispoPagination();
+            },
+            error: function () { $body.html('<tr><td colspan="16" class="text-center text-danger py-3">Request failed.</td></tr>'); }
+        });
+    }
+
+    function buildDispoRow(d) {
+        return '<tr>' +
+            '<td>' + d.id + '</td>' +
+            '<td><span class="ch-mag-badge" title="' + esc(d.magName) + '">' + esc(d.magName || '—') + '</span></td>' +
+            '<td><strong>' + esc(d.interviewerName || '—') + '</strong>' + (d.currentRole ? '<br><span style="font-size:10px;color:#64748b;">' + esc(d.currentRole) + '</span>' : '') + '</td>' +
+            '<td style="font-size:11px;">' + esc(d.senderEmail || '—') + '</td>' +
+            '<td style="white-space:nowrap;">' + esc(d.phone || '—') + '</td>' +
+            '<td>' + (d.experience != null ? d.experience : '—') + '</td>' +
+            '<td>' + fmtCallStatus(d.plivoCallStatus) + '</td>' +
+            '<td>' + fmtIntent(d.plivoIntent) + '</td>' +
+            '<td class="text-center">' + fmtFlag(d.plivoAssignmentHelp) + '</td>' +
+            '<td class="text-center">' + fmtFlag(d.plivoEmailReceived) + '</td>' +
+            '<td class="text-center">' + fmtFlag(d.plivoCallbackRequested) + '</td>' +
+            '<td>' + (d.plivoCallDuration ? d.plivoCallDuration + 's' : '—') + '</td>' +
+            '<td style="white-space:nowrap;font-size:11px;">' + fmtDate(d.plivoCallAt) + '</td>' +
+            '<td style="font-size:11px;">' + esc(d.plivoCalledBy || '—') + '</td>' +
+            '<td>' + fmtNotes(d.plivoNotes, d.plivoCallSummary) + '</td>' +
+            '<td>' + (d.plivoConversationId ? '<button class="ch-transcript-btn" data-id="' + d.id + '" data-name="' + esc(d.interviewerName || '') + '"><i class="fas fa-file-alt"></i></button>' : '—') + '</td>' +
+            '</tr>';
+    }
+
+    function fmtCallStatus(s) {
+        if (!s) return '<span class="ch-cs-other"><span class="ch-status-dot"></span>—</span>';
+        var low = (s + '').toLowerCase().replace(/_/g, '-');
+        var cls, label;
+        if (low === 'completed' || low === 'answered') { cls = 'ch-cs-completed'; label = 'Completed'; }
+        else if (low === 'triggered' || low === 'initiated' || low === 'ringing' || low === 'in-progress') { cls = 'ch-cs-triggered'; label = 'In progress'; }
+        else if (low === 'no-answer' || low === 'no answer') { cls = 'ch-cs-noanswer'; label = 'No answer'; }
+        else if (low === 'failed' || low === 'trigger-failed' || low === 'busy' || low === 'canceled') { cls = 'ch-cs-failed'; label = s.charAt(0).toUpperCase() + s.slice(1); }
+        else { cls = 'ch-cs-other'; label = s; }
+        return '<span class="' + cls + '" style="font-size:11px;white-space:nowrap;"><span class="ch-status-dot"></span>' + esc(label) + '</span>';
+    }
+
+    function fmtIntent(intent) {
+        if (!intent) return '<span style="color:#cbd5e1;">—</span>';
+        var cls = '', label = intent;
+        if (intent === 'available') { cls = 'ch-intent-available'; label = 'Available'; }
+        else if (intent === 'not_available') { cls = 'ch-intent-not_available'; label = 'Not Available'; }
+        else if (intent === 'unsubscribe') { cls = 'ch-intent-unsubscribe'; label = 'Unsubscribe'; }
+        else if (intent === 'no_answer') { cls = 'ch-intent-no_answer'; label = 'No Answer'; }
+        return '<span class="ch-intent ' + cls + '">' + label + '</span>';
+    }
+
+    function fmtFlag(val) {
+        if (val === true) return '<span class="ch-flag-yes">Yes</span>';
+        return '<span class="ch-flag-no">—</span>';
+    }
+
+    function fmtDate(d) {
+        if (!d) return '—';
+        try { var dt = new Date(d); return dt.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' ' + dt.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }); }
+        catch (e) { return d; }
+    }
+
+    function fmtNotes(notes, summary) {
+        var val = notes || summary || '';
+        if (!val) return '—';
+        return '<span title="' + esc(val) + '" style="cursor:help;max-width:140px;display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;">' + esc(val) + '</span>';
+    }
+
+    function renderDispoPagination() {
+        var totalPages = Math.max(1, Math.ceil(chDispoTotal / chDispoSize));
+        var first = chDispoTotal > 0 ? (chDispoPage - 1) * chDispoSize + 1 : 0;
+        var last = Math.min(chDispoPage * chDispoSize, chDispoTotal);
+        var html = '<span class="ch-pg-info">Showing <strong>' + first + '–' + last + '</strong> of <strong>' + chDispoTotal + '</strong></span>' +
+            '<div class="d-flex align-items-center gap-3 flex-wrap">' +
+                '<label class="mb-0">Rows <select class="ch-dispo-pgsize">' +
+                    '<option value="50"' + (chDispoSize === 50 ? ' selected' : '') + '>50</option>' +
+                    '<option value="100"' + (chDispoSize === 100 ? ' selected' : '') + '>100</option>' +
+                    '<option value="200"' + (chDispoSize === 200 ? ' selected' : '') + '>200</option>' +
+                '</select></label>' +
+                '<div class="ch-pg-btns">' +
+                    '<button class="btn btn-sm btn-outline-secondary ch-dispo-pg" data-page="1"' + (chDispoPage <= 1 ? ' disabled' : '') + '><i class="fas fa-angle-double-left"></i></button>' +
+                    '<button class="btn btn-sm btn-outline-secondary ch-dispo-pg" data-page="' + (chDispoPage - 1) + '"' + (chDispoPage <= 1 ? ' disabled' : '') + '><i class="fas fa-angle-left"></i></button>' +
+                    '<span class="px-2 text-muted">Page ' + chDispoPage + ' / ' + totalPages + '</span>' +
+                    '<button class="btn btn-sm btn-outline-secondary ch-dispo-pg" data-page="' + (chDispoPage + 1) + '"' + (chDispoPage >= totalPages ? ' disabled' : '') + '><i class="fas fa-angle-right"></i></button>' +
+                    '<button class="btn btn-sm btn-outline-secondary ch-dispo-pg" data-page="' + totalPages + '"' + (chDispoPage >= totalPages ? ' disabled' : '') + '><i class="fas fa-angle-double-right"></i></button>' +
+                '</div>' +
+            '</div>';
+        $('#chDispoPagination').html(html);
+    }
+
+    $(document).on('click', '.ch-dispo-pg', function () { if (!$(this).prop('disabled')) loadDispositions(parseInt($(this).attr('data-page'))); });
+    $(document).on('change', '.ch-dispo-pgsize', function () { chDispoSize = parseInt($(this).val()) || 50; loadDispositions(1); });
+
+    // Batches
+    function loadBatches(page) {
+        page = page || chBatchPage;
+        chBatchPage = page;
+        var magName = $('#chFilterMag').val() || null;
+        var $body = $('#chBatchBody');
+        $body.html('<tr><td colspan="10" class="text-center text-muted py-4"><div class="spinner-border spinner-border-sm"></div> Loading...</td></tr>');
+
+        $.ajax({
+            url: '@Url.Action("GetAllBatchCallLogs", "InterviewerAvailability")', type: 'GET',
+            data: { page: page, pageSize: chBatchSize, magName: magName },
+            success: function (res) {
+                if (!res.success) { $body.html('<tr><td colspan="10" class="text-center text-danger py-3">' + esc(res.error || 'Failed') + '</td></tr>'); return; }
+                chBatchTotal = res.totalCount || 0;
+                if (!res.items || !res.items.length) { $body.html('<tr><td colspan="10" class="text-center text-muted py-4">No batch call history.</td></tr>'); renderBatchPagination(); return; }
+                var html = '';
+                $.each(res.items, function (_, h) {
+                    var sBadge = h.status === 'Completed' ? '<span class="badge bg-success">Completed</span>'
+                        : h.status === 'Stopped' ? '<span class="badge bg-warning text-dark">Stopped</span>'
+                        : h.status === 'Running' ? '<span class="badge bg-info">Running</span>'
+                        : '<span class="badge bg-secondary">' + esc(h.status) + '</span>';
+                    html += '<tr>' +
+                        '<td>' + h.id + '</td>' +
+                        '<td><span class="ch-mag-badge" title="' + esc(h.magName) + '">' + esc(h.magName || '—') + '</span></td>' +
+                        '<td>' + esc(h.initiatedBy) + '</td>' +
+                        '<td style="white-space:nowrap;">' + fmtDate(h.initiatedAt) + '</td>' +
+                        '<td class="text-center fw-bold">' + h.interviewersAttempted + '</td>' +
+                        '<td class="text-center text-success fw-bold">' + h.interviewersSucceeded + '</td>' +
+                        '<td class="text-center text-danger fw-bold">' + h.interviewersFailed + '</td>' +
+                        '<td class="text-center text-warning fw-bold">' + h.interviewersSkipped + '</td>' +
+                        '<td style="white-space:nowrap;">' + fmtDate(h.completedAt) + '</td>' +
+                        '<td>' + sBadge + '</td>' +
+                        '</tr>';
+                });
+                $body.html(html);
+                renderBatchPagination();
+            },
+            error: function () { $body.html('<tr><td colspan="10" class="text-center text-danger py-3">Request failed.</td></tr>'); }
+        });
+    }
+
+    function renderBatchPagination() {
+        var totalPages = Math.max(1, Math.ceil(chBatchTotal / chBatchSize));
+        var first = chBatchTotal > 0 ? (chBatchPage - 1) * chBatchSize + 1 : 0;
+        var last = Math.min(chBatchPage * chBatchSize, chBatchTotal);
+        var html = '<span class="ch-pg-info">Showing <strong>' + first + '–' + last + '</strong> of <strong>' + chBatchTotal + '</strong></span>' +
+            '<div class="ch-pg-btns">' +
+                '<button class="btn btn-sm btn-outline-secondary ch-batch-pg" data-page="' + (chBatchPage - 1) + '"' + (chBatchPage <= 1 ? ' disabled' : '') + '><i class="fas fa-angle-left"></i></button>' +
+                '<span class="px-2 text-muted">Page ' + chBatchPage + ' / ' + totalPages + '</span>' +
+                '<button class="btn btn-sm btn-outline-secondary ch-batch-pg" data-page="' + (chBatchPage + 1) + '"' + (chBatchPage >= totalPages ? ' disabled' : '') + '><i class="fas fa-angle-right"></i></button>' +
+            '</div>';
+        $('#chBatchPagination').html(html);
+    }
+
+    $(document).on('click', '.ch-batch-pg', function () { if (!$(this).prop('disabled')) loadBatches(parseInt($(this).attr('data-page'))); });
+
+    // Transcript Modal
+    $(document).on('click', '.ch-transcript-btn', function () {
+        var id = $(this).attr('data-id');
+        var name = $(this).attr('data-name');
+        $('#chTranscriptTitle').text('Call Transcript — #' + id + (name ? ' (' + name + ')' : ''));
+        $('#chTranscriptContent').html('<div class="text-center text-muted py-4"><div class="spinner-border spinner-border-sm"></div> Loading transcript...</div>');
+        $('#chTranscriptOverlay').css('display', 'flex');
+        $('body').css('overflow', 'hidden');
+        $.ajax({
+            url: '@Url.Action("GetPlivoCallDetails", "InterviewerAvailability")', type: 'GET',
+            data: { id: id },
+            success: function (res) {
+                if (res.success) {
+                    var t = res.plivoCallTranscript || res.plivoCallSummary || 'No transcript available.';
+                    var html = '';
+                    if (res.plivoCallSummary) html += '<div style="margin-bottom:12px;padding:10px 14px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;"><strong style="font-size:11px;text-transform:uppercase;color:#166534;">Summary</strong><div style="margin-top:4px;">' + esc(res.plivoCallSummary) + '</div></div>';
+                    if (res.plivoCallTranscript) html += '<div style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;"><strong style="font-size:11px;text-transform:uppercase;color:#64748b;">Full Transcript</strong><div style="margin-top:4px;white-space:pre-wrap;">' + esc(res.plivoCallTranscript) + '</div></div>';
+                    if (!html) html = '<div class="text-muted">No transcript or summary available for this call.</div>';
+                    $('#chTranscriptContent').html(html);
+                } else {
+                    $('#chTranscriptContent').html('<div class="text-danger">' + esc(res.error || 'Failed to load.') + '</div>');
+                }
+            },
+            error: function () { $('#chTranscriptContent').html('<div class="text-danger">Request failed.</div>'); }
+        });
+    });
+    $('#chTranscriptClose').on('click', function () { $('#chTranscriptOverlay').hide(); $('body').css('overflow', ''); });
+    $('#chTranscriptOverlay').on('click', function (e) { if (e.target === this) { $(this).hide(); $('body').css('overflow', ''); } });
+</script>
+}

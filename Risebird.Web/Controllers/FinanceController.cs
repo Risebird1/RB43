@@ -1399,31 +1399,31 @@ namespace Risebird.Web.Controllers
                     var model = await _meetingService.FetchFNPaymentHistory();
                     if (model != null)
                         model = model.OrderByDescending(x => x.Date).ToList();
-                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-                    foreach (var item in model)
-                    {
-                        if (!string.IsNullOrEmpty(item.AssessmentGroupId))
-                        {
-                            var AssessmentGroup = item.AssessmentGroupId.Split(",");
-                            string groupdetail = "";
-                            foreach (var group in AssessmentGroup)
-                            {
-                                if (group != "")
-                                {
-                                    int groupid = Convert.ToInt32(group);
-                                    if (string.IsNullOrEmpty(groupdetail))
-                                    {
-                                        groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                    }
-                                    else
-                                    {
-                                        groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                    }
-                                }
-                            }
-                            item.AssessmentGroupId = groupdetail;
-                        }
-                    }
+                    //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                    //foreach (var item in model)
+                    //{
+                    //    if (!string.IsNullOrEmpty(item.AssessmentGroupId))
+                    //    {
+                    //        var AssessmentGroup = item.AssessmentGroupId.Split(",");
+                    //        string groupdetail = "";
+                    //        foreach (var group in AssessmentGroup)
+                    //        {
+                    //            if (group != "")
+                    //            {
+                    //                int groupid = Convert.ToInt32(group);
+                    //                if (string.IsNullOrEmpty(groupdetail))
+                    //                {
+                    //                    groupdetail = AssessmentsGroups.Where(x => x.id == groupid)?.FirstOrDefault()?.ToString();
+                    //                }
+                    //                else
+                    //                {
+                    //                    groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid)?.FirstOrDefault()?.ToString();
+                    //                }
+                    //            }
+                    //        }
+                    //        item.AssessmentGroupId = groupdetail;
+                    //    }
+                    //}
                     if (HttpContext.Session.GetString("PaymentHistoryfilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PaymentHistoryfilters"));
@@ -1433,6 +1433,12 @@ namespace Risebird.Web.Controllers
                         }
                         filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
                         model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
+                    }
+                    else
+                    {
+                        var StartDate = DateTime.Now.AddDays(-30);
+                        var EndDate = DateTime.Now.AddDays(1);
+                        model = model.Where(t => t.Date >= StartDate && t.Date <= EndDate).ToList();
                     }
                     return View(model);
                 }
@@ -1521,28 +1527,28 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "Finance")
                     {
                         var model = await _meetingService.FetchFNPaymentHistory();
-                        var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-                        foreach (var item in model)
-                        {
-                            if (!string.IsNullOrEmpty(item.AssessmentGroupId))
-                            {
-                                var AssessmentGroup = item.AssessmentGroupId.Split(",");
-                                string groupdetail = "";
-                                foreach (var group in AssessmentGroup)
-                                {
-                                    int groupid = Convert.ToInt32(group);
-                                    if (string.IsNullOrEmpty(groupdetail))
-                                    {
-                                        groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                    }
-                                    else
-                                    {
-                                        groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                    }
-                                }
-                                item.AssessmentGroupId = groupdetail;
-                            }
-                        }
+                        //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                        //foreach (var item in model)
+                        //{
+                        //    if (!string.IsNullOrEmpty(item.AssessmentGroupId))
+                        //    {
+                        //        var AssessmentGroup = item.AssessmentGroupId.Split(",");
+                        //        string groupdetail = "";
+                        //        foreach (var group in AssessmentGroup)
+                        //        {
+                        //            int groupid = Convert.ToInt32(group);
+                        //            if (string.IsNullOrEmpty(groupdetail))
+                        //            {
+                        //                groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                        //            }
+                        //            else
+                        //            {
+                        //                groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                        //            }
+                        //        }
+                        //        item.AssessmentGroupId = groupdetail;
+                        //    }
+                        //}
                         if (HttpContext.Session.GetString("PaymentHistoryfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PaymentHistoryfilters"));
@@ -1553,8 +1559,13 @@ namespace Risebird.Web.Controllers
                             filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
                             model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
                         }
-
-                        int startColumn = 1; int endColumn = 15;
+                        else
+                        {
+                            var StartDate = DateTime.Now.AddDays(-30);
+                            var EndDate = DateTime.Now.AddDays(1);
+                            model = model.Where(t => t.Date >= StartDate && t.Date <= EndDate).ToList();
+                        }
+                        int startColumn = 1; int endColumn = 20;
                         for (int a = startColumn; a <= endColumn; a++)
                         {
                             Sheet.Column(a).Width = 15;
@@ -1564,8 +1575,13 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 3].Value = "Total Amount";
                         Sheet.Cells[1, 4].Value = "TDS deduction";
                         Sheet.Cells[1, 5].Value = "Amount";
-                        Sheet.Cells[1, 6].Value = "Payment Status";
+                        Sheet.Cells[1, 6].Value = "Status";
                         Sheet.Cells[1, 7].Value = "Payment Date";
+                        Sheet.Cells[1, 8].Value = "Cf Payment Id";
+                        Sheet.Cells[1, 9].Value = "Transfer Id";
+                        Sheet.Cells[1, 10].Value = "UTR";
+                        Sheet.Cells[1, 11].Value = "Cf Transfer Id";
+                        Sheet.Cells[1, 12].Value = "Payment Status";
                         int i = 2;
                         if (model.Count() > 0)
                         {
@@ -1586,6 +1602,11 @@ namespace Risebird.Web.Controllers
                                 }
                                 Sheet.Cells[i, 6].Value = item.Status;
                                 Sheet.Cells[i, 7].Value = item.Date.ToString();
+                                Sheet.Cells[i, 8].Value = item.CfPaymentId;
+                                Sheet.Cells[i, 9].Value = item.TransferId;
+                                Sheet.Cells[i, 10].Value = item.TransferUtr;
+                                Sheet.Cells[i, 11].Value = item.CfTransferId;
+                                Sheet.Cells[i, 12].Value = item.PayoutStatus;
                                 i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

@@ -981,6 +981,99 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ── Call History — centralized page ──────────────────────────────────────────
+
+        [HttpGet]
+        public IActionResult CallHistory()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return RedirectToAction("Login", "Login");
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllCallDispositions(
+            int page = 1, int pageSize = 50, string magName = null,
+            string intent = null, string callStatus = null,
+            string dateFrom = null, string dateTo = null)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                DateTime? from = null, to = null;
+                if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var df)) from = df;
+                if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var dt)) to = dt;
+
+                var (items, totalCount) = await _repository.GetAllCallDispositionsAsync(
+                    page, pageSize, magName, intent, callStatus, from, to);
+
+                return Json(new
+                {
+                    success = true, totalCount, page, pageSize,
+                    items = items.Select(d => new
+                    {
+                        d.Id, d.InterviewerProfileId, d.InterviewerName, d.SenderEmail,
+                        phone = d.ResolvedPhone ?? d.Phone,
+                        d.MagName, d.RecordStatus, d.Experience, d.CurrentRole,
+                        d.PlivoCallStatus, d.PlivoConversationId, d.PlivoCallAt,
+                        d.PlivoCallDuration, d.PlivoCallSummary, d.PlivoIntent,
+                        d.PlivoAssignmentHelp, d.PlivoEmailReceived, d.PlivoCallbackRequested,
+                        d.PlivoNotes, d.PlivoCalledBy
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllBatchCallLogs(int page = 1, int pageSize = 50, string magName = null)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                var (items, totalCount) = await _repository.GetAllBatchCallLogsAsync(page, pageSize, magName);
+                return Json(new
+                {
+                    success = true, totalCount, page, pageSize,
+                    items = items.Select(h => new
+                    {
+                        h.Id, h.MagName, h.InitiatedBy, h.InitiatedAt,
+                        h.InterviewersAttempted, h.InterviewersSucceeded,
+                        h.InterviewersFailed, h.InterviewersSkipped,
+                        h.CompletedAt, h.Status
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDistinctCalledMagNames()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+            try
+            {
+                var mags = await _repository.GetDistinctCalledMagNamesAsync();
+                return Json(new { success = true, mags });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
         // ── Batch Call — dedicated page ────────────────────────────────────────────
 
         [HttpGet]

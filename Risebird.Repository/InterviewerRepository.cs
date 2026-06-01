@@ -2209,6 +2209,31 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<RBInterviewerPayoutDetails> GetInterviewerBankDetailsByUserId(int userId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserId", userId);
+                    var result = await SqlMapper.QueryAsync<RBInterviewerPayoutDetails>(con, "usp_GetInterviewerBankDetailsByUserId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
         public async Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid)
         {
@@ -3542,7 +3567,7 @@ namespace Risebird.Repository
             catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                
+
                 // Extract user-friendly error message from SQL exception
                 string errorMessage = ExtractUserFriendlyErrorMessage(ex.Message);
                 return SaveOperationResult.FailureResult(errorMessage);
@@ -3588,13 +3613,13 @@ namespace Risebird.Repository
             {
                 var startIndex = sqlErrorMessage.IndexOf("Error in usp_SaveInterviewerPreOnboardingVerdictV2:") + "Error in usp_SaveInterviewerPreOnboardingVerdictV2:".Length;
                 var errorPart = sqlErrorMessage.Substring(startIndex).Trim();
-                
+
                 // Remove metadata after the pipe symbol
                 if (errorPart.Contains(" | "))
                 {
                     errorPart = errorPart.Substring(0, errorPart.IndexOf(" | ")).Trim();
                 }
-                
+
                 return string.IsNullOrEmpty(errorPart) ? "Failed to save verdict." : errorPart;
             }
 
@@ -3737,12 +3762,12 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
                     new Exception($"SQL Exception in AddTargetSkillChannelToInterviewerPreOnboarding for UserId: {userId}, TargetIrfId: {targetIrfId}. SQL Error: {ex.Message}, Number: {ex.Number}, State: {ex.State}", ex));
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
                     new Exception($"Exception in AddTargetSkillChannelToInterviewerPreOnboarding for UserId: {userId}, TargetIrfId: {targetIrfId}", ex));
             }
             return false;
