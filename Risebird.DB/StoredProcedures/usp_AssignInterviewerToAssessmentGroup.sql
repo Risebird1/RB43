@@ -46,16 +46,19 @@ BEGIN
     END
 
     -- 3. Map interviewer to all active IRFs belonging to this AssessmentGroupId
-    INSERT INTO TransInterviewer (IRFId, InterviewerId, UserId, IsActive, IsAvailable, PerSuccessRate, [Source], AddedAt)
+    INSERT INTO TransInterviewer (IRFId, InterviewerId, UserId, IsActive, IsAvailable, IsSMEVerified, ClientAction, PerSuccessRate, [Source], AddedAt, ActivatedAt)
     SELECT
         irf.id,
         @InterviewerProfileId,
         @UserId,
         CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,
         1,
+        CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,
+        CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE 'Shortlisted' END,
         ISNULL(irf.FlatRate, 0),
         'EmailAvailability',
-        GETDATE()
+        GETDATE(),
+        CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE GETDATE() END
     FROM IRF irf
     WHERE LTRIM(RTRIM(irf.AssessmentGroupId)) = CAST(@AssessmentGroupId AS VARCHAR)
       AND ISNULL(irf.IsPaused, 0) = 0

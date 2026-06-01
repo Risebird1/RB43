@@ -46,5 +46,10 @@ namespace Risebird.Entities.ViewModel
         public string RedMarkerReviewComment { get; set; }
         public int NegativeAIVerdictStatus { get; set; }
 
+        /// <summary>NULL = no cap configured (unlimited). 0 = explicit zero cap. &gt;0 = limit.</summary>
+        public int? InterviewCapacity { get; set; }
+
+        public DateTime? ModifiedAt { get; set; }
+
     }
 }

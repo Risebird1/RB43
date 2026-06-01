@@ -1952,11 +1952,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser)
+        public async Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser, bool preserveAvailability = false, bool? isAvailable = null)
         {
             try
             {
-                return await _interviewerRepository.UpdateIRFInterviewerActiveStatus(userId, status, irfId, loggedInUser);
+                return await _interviewerRepository.UpdateIRFInterviewerActiveStatus(userId, status, irfId, loggedInUser, preserveAvailability, isAvailable);
             }
             catch (Exception ex)
             {

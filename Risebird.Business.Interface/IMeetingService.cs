@@ -289,5 +289,7 @@ namespace Risebird.Business.Interface
         /// Fetches the current transfer status from Cashfree for the given transferId.
         /// </summary>
         Task<CashfreePayoutResult> GetCashfreePayoutStatus(string transferId);
+
+        CapCheckResult CheckInterviewerCapForAssignmentByMeeting(int meetingId, string interviewerEmail);
     }
 }
