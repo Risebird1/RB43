@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.Enum
@@ -212,17 +212,44 @@ namespace Risebird.Entities.Enum
 
     public enum JobLevels
     {
+        [Description("1–3 years")]
+        Years_1_3 = 1,
+        [Description("3–6 years")]
+        Years_3_6 = 2,
+        [Description("6–9 years")]
+        Years_6_9 = 3,
+        [Description("9–12 years")]
+        Years_9_12 = 4,
+        [Description("12–15 years")]
+        Years_12_15 = 5,
+        [Description("15+ years")]
+        Years_15_Plus = 6,
 
-        [Description("SE")]
+        // Legacy aliases (same numeric ids — descriptions above are canonical)
+        [Description("1–3 years")]
         SE = 1,
-        [Description("SSE")]
+        [Description("1–3 years")]
+        SE1 = 1,
+        [Description("3–6 years")]
         SSE = 2,
-        [Description("Lead")]
+        [Description("3–6 years")]
+        SE2 = 2,
+        [Description("6–9 years")]
         Lead = 3,
-        [Description("Manager")]
+        [Description("6–9 years")]
+        SE3 = 3,
+        [Description("9–12 years")]
         Manager = 4,
-        [Description("Architect")]
-        Architect = 5
+        [Description("9–12 years")]
+        SE4 = 4,
+        [Description("12–15 years")]
+        Architect = 5,
+        [Description("12–15 years")]
+        SE5 = 5,
+        [Description("15+ years")]
+        Staff = 6,
+        [Description("15+ years")]
+        Principal = 6
     }
 
     public enum QuestionsLevel

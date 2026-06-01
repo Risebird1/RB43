@@ -177,6 +177,12 @@
 
                                                     @foreach (var item in Model)
                                                     {
+                                                        var ivCapEnforced = DmIvCapHelper.IsCapEnforced(item.DmIvLockNew, item.InterviewCapacity);
+                                                        var ivEffectiveCap = DmIvCapHelper.GetDisplayCap(item.InterviewCapacity);
+                                                        var ivCapReached = DmIvCapHelper.IsCapReached(item.IvFutureAssignedCount, item.InterviewCapacity, item.DmIvLockNew);
+                                                        var ivCapTitle = ivCapReached
+                                                            ? $"Interview limit reached ({ivEffectiveCap}). You can't take more interviews on this channel right now."
+                                                            : "Assign Yourself";
                                                         <tr id=@item.id>
                                                             <td> @item.interviewDate </td>
                                                             <td>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</td>
@@ -240,9 +246,17 @@
 
 
                                                             <td class="text-right">
-                                                                @if (item.IsInterviewerActive)
+                                                                @if (item.IsInterviewerActive && !ivCapReached)
                                                                 {
-                                                                    <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("PublicAssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,emailid=ViewBag.emailid,uniqueid=ViewBag.Id})'" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button>
+                                                                    <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("PublicAssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,emailid=ViewBag.emailid,uniqueid=ViewBag.Id})'" title="@ivCapTitle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button>
+                                                                }
+                                                                else if (item.IsInterviewerActive && ivCapReached)
+                                                                {
+                                                                    <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn open-iv-cap-blocked" disabled="disabled" title="@ivCapTitle" aria-label="@ivCapTitle"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.45"><circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span></button>
+                                                                }
+                                                                @if (ivCapEnforced)
+                                                                {
+                                                                    <div class="open-iv-cap-pill @(ivCapReached ? "open-iv-cap-pill--full" : "")" style="margin-top:6px;">@item.IvFutureAssignedCount / @ivEffectiveCap</div>
                                                                 }
                                                             </td>
                                                         </tr>

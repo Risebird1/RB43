@@ -44,8 +44,11 @@ begin try
 
 			if not exists(select 1 from TransInterviewer where UserId = @userId and IRFId = @IRFId)
 			Begin
-				insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted)
-				values (@IRFId, @InterviewerProfileId, @userId, 1, CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END, @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1)
+				insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, IsSMEVerified, ClientAction, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted, ActivatedAt)
+				values (@IRFId, @InterviewerProfileId, @userId, 1, CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
+			 CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
+			 CASE WHEN @isLocked = 1 THEN NULL ELSE 'Shortlisted' END,
+			 @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1, CASE WHEN @isLocked = 1 THEN NULL ELSE GETDATE() END)
 			End
 
 			UPDATE InterviewerProfile
@@ -114,8 +117,11 @@ begin try
 
 				if not exists(select 1 from TransInterviewer where UserId = @userId2 and IRFId = @targetIRFId)
 				Begin
-					insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted)
-					values (@targetIRFId, @InterviewerProfileId2, @userId2, 1, CASE WHEN @isLocked2 = 1 THEN 0 ELSE 1 END, @rate2, @OpenAIScreeningResponse, @verdict, 'Internal MAG Link', @score, 1)
+					insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, IsSMEVerified, ClientAction, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted, ActivatedAt)
+					values (@targetIRFId, @InterviewerProfileId2, @userId2, 1, CASE WHEN @isLocked2 = 1 THEN 0 ELSE 1 END,
+				 CASE WHEN @isLocked2 = 1 THEN 0 ELSE 1 END,
+				 CASE WHEN @isLocked2 = 1 THEN NULL ELSE 'Shortlisted' END,
+				 @rate2, @OpenAIScreeningResponse, @verdict, 'Internal MAG Link', @score, 1, CASE WHEN @isLocked2 = 1 THEN NULL ELSE GETDATE() END)
 				End
 
 				delete from @tbl_targetIRFs where irfId = @targetIRFId

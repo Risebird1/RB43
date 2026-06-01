@@ -18,8 +18,11 @@ Begin
 	if not exists (select 1 from TransInterviewer where IRFId =@irfId and UserId = @userId)
 	Begin
 	 DECLARE @isLocked bit = ISNULL((SELECT DmIvLockNew FROM IRF WHERE id = @irfId), 0)
-	 Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, PerSuccessRate, ActivatedAt, ModifiedBy)
-	 values(@irfId,(select id from InterviewerProfile where UserId = @userId),@UserId,CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,1, (select FlatRate from irf where id = @irfId), CASE WHEN @isLocked = 1 THEN NULL ELSE @timeNow END, @AddedBy) 
+	 Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, IsSMEVerified, ClientAction, PerSuccessRate, ActivatedAt, ModifiedBy)
+	 values(@irfId,(select id from InterviewerProfile where UserId = @userId),@UserId,CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,1,
+	 CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
+	 CASE WHEN @isLocked = 1 THEN NULL ELSE 'Shortlisted' END,
+	 (select FlatRate from irf where id = @irfId), CASE WHEN @isLocked = 1 THEN NULL ELSE @timeNow END, @AddedBy) 
 	End
 End
 Go

@@ -885,6 +885,35 @@
 
 
 
+    function isFreeChannelPanel() {
+        return $('#dmV4IvPanel').attr('data-lock') !== '1';
+    }
+
+    function readRbVetFromRow($row) {
+        var raw = $row.attr('data-rb-vet');
+        if (raw === '1') return true;
+        if (raw === '0' && isFreeChannelPanel()
+            && $row.attr('data-is-active') === '1'
+            && ($row.attr('data-is-available') === '1' || $row.attr('data-is-available') == null)
+            && ($row.attr('data-client-action') || '').toLowerCase() !== 'rejected') {
+            return true;
+        }
+        return false;
+    }
+
+    function readClientVetFromRow($row) {
+        var raw = $row.attr('data-client-vet');
+        if (raw === '1') return true;
+        var action = ($row.attr('data-client-action') || '').toLowerCase();
+        if (action === 'rejected') return false;
+        if (raw === '0' && isFreeChannelPanel() && readRbVetFromRow($row)
+            && $row.attr('data-is-active') === '1'
+            && ($row.attr('data-is-available') === '1' || $row.attr('data-is-available') == null)) {
+            return true;
+        }
+        return false;
+    }
+
     function refreshIvBadges() {
         var $rows = $('.dm-v4-iv-row');
         var n = $rows.length;
@@ -892,9 +921,12 @@
         var client = 0;
         var panel = 0;
         $rows.each(function () {
-            if ($(this).attr('data-rb-vet') === '1') rb += 1;
-            if ($(this).attr('data-client-vet') === '1') client += 1;
-            if ($(this).attr('data-rb-vet') === '1' && $(this).attr('data-client-vet') === '1') panel += 1;
+            var $row = $(this);
+            var rbOn = readRbVetFromRow($row);
+            var clientOn = readClientVetFromRow($row);
+            if (rbOn) rb += 1;
+            if (clientOn) client += 1;
+            if (rbOn && clientOn) panel += 1;
         });
         $('#dmV4IvCountBadge').text(n + (n === 1 ? ' CANDIDATE' : ' CANDIDATES'));
         $('#dmV4RbVetBadge').text(rb + ' RB-VETTED');
@@ -902,21 +934,53 @@
         $('#dmV4OnPanelBadge').text(panel + ' ON PANEL');
     }
 
+    function ivStatusFromRow($row) {
+        var rbOn = readRbVetFromRow($row);
+        var clientOn = readClientVetFromRow($row);
+        var clientAction = ($row.attr('data-client-action') || '').toLowerCase();
+        var active = rbOn && clientOn;
+        if (active) return { label: 'Active', tone: 'active' };
+        if (!rbOn && clientAction !== 'rejected') return { label: 'Available', tone: 'available' };
+        return { label: 'Inactive', tone: 'inactive' };
+    }
+
+    function updateIvRowStatus($row) {
+        if ($('#dmV4IvPanel').attr('data-lock') !== '1') return;
+        var status = ivStatusFromRow($row);
+        $row.attr('data-is-active', status.tone === 'active' ? '1' : '0');
+        var $badge = $row.find('[data-role="iv-status"]');
+        if (!$badge.length) return;
+        $badge.removeClass('dm-v4-iv-status--active dm-v4-iv-status--available dm-v4-iv-status--inactive')
+            .addClass('dm-v4-iv-status--' + status.tone)
+            .text(status.label);
+    }
+
+    function normalizeVetRowAttrs($row) {
+        var rbOn = readRbVetFromRow($row);
+        var clientOn = readClientVetFromRow($row);
+        $row.attr('data-rb-vet', rbOn ? '1' : '0');
+        $row.attr('data-client-vet', clientOn ? '1' : '0');
+    }
+
     function syncVetButtons($row) {
-        var rbOn = $row.attr('data-rb-vet') === '1';
-        var clientOn = $row.attr('data-client-vet') === '1';
+        var rbOn = readRbVetFromRow($row);
+        var clientOn = readClientVetFromRow($row);
         $row.find('[data-vet="rb"] .dm-v4-vet-btn').removeClass('is-on');
         $row.find('[data-vet="rb"] .dm-v4-vet-btn[data-vet-value="' + (rbOn ? '1' : '0') + '"]').addClass('is-on');
         $row.find('[data-vet="client"] .dm-v4-vet-btn').removeClass('is-on');
         $row.find('[data-vet="client"] .dm-v4-vet-btn[data-vet-value="' + (clientOn ? '1' : '0') + '"]').addClass('is-on');
         var $clientBtns = $row.find('[data-vet="client"] .dm-v4-vet-btn');
+        var $clientToggle = $row.find('[data-vet="client"]');
         if (!rbOn) {
             $clientBtns.prop('disabled', true);
+            $clientToggle.attr('title', 'Needs RB Vet first.');
             $row.find('.dm-v4-iv-vet-sub--client').text('Blocked — needs RB Vet first');
         } else {
             $clientBtns.prop('disabled', false);
+            $clientToggle.attr('title', '');
             $row.find('.dm-v4-iv-vet-sub--client').text(clientOn ? 'Signed off by client' : 'Awaiting client sign-off');
         }
+        updateIvRowStatus($row);
     }
 
     function getRubricSkillNames() {
@@ -1072,6 +1136,7 @@
     }
 
     function openVerdictDrawer($row) {
+        window._dmV4VerdictDrawerRow = $row;
         var name = $row.find('.dm-v4-iv-code').first().text().replace(/\s+/g, ' ').replace(/›/g, '').trim();
         var tone = verdictToneFromRow($row);
         var screenUrl = $row.find('.dm-v4-iv-verdict-open').first().data('screen-url') || '#';
@@ -1080,29 +1145,12 @@
         if (!reason) reason = 'AI screening not run for this skill channel yet.';
 
         var scoreText = $row.find('.dm-v4-iv-score').first().text().trim();
-        if (!scoreText || scoreText === '—') {
-            scoreText = String($row.data('ai-score') || '0');
-        }
+        if (!scoreText || scoreText === '—') scoreText = String($row.data('ai-score') || '0');
         if (scoreText === '—') scoreText = '0';
         var screenScore = parseInt(scoreText, 10) || 0;
 
-        var codedCv = ($row.data('coded-cv') || '').toString();
-        var cvCode = ($row.data('cv-code') || '').toString();
-        var kycOk = $row.data('kyc-approved') === 1 || $row.data('kyc-approved') === '1';
-        var videoUrl = ($row.data('video-link') || '').toString();
-        var kycReview = ($row.data('kyc-review-url') || '').toString();
-        var clientVet = $row.data('client-vet') === 1 || $row.data('client-vet') === '1';
-        var assigned = parseInt($row.data('assigned'), 10) || 0;
-        var capacity = parseInt($row.data('capacity'), 10) || 0;
-        var totalIv = parseInt($row.data('total-interviews'), 10) || 0;
-        var primarySkill = ($row.data('primary-skill') || '').toString();
-
-        var skillLabel = primarySkill ? primarySkill.split(',')[0].trim() : '';
-        var drawerTitle = name || 'Interviewer';
-        if (skillLabel) drawerTitle += ' — ' + skillLabel;
-        $('#dmV4VerdictDrawerTitle').text(drawerTitle);
+        $('#dmV4VerdictDrawerTitle').text(name || 'Interviewer');
         $('#dmV4VerdictDrawerEyebrow').text('AI verdict · ' + (tone === 'pass' ? 'PASS' : tone === 'fail' ? 'BLOCK' : tone === 'warn' ? 'REVIEW' : 'PENDING'));
-        $('#dmV4VerdictDrawerCode').text(name || '—');
         $('.dm-v4-verdict-drawer-body').attr('class', 'dm-v4-drawer__body dm-v4-verdict-drawer-body dm-v4-verdict-drawer-body--' + tone);
 
         var $hero = $('#dmV4VerdictDrawerHero');
@@ -1113,40 +1161,8 @@
         var $badge = $row.find('.dm-v4-verdict').first().clone().removeAttr('id');
         $('#dmV4VerdictDrawerBadge').replaceWith($badge.attr('id', 'dmV4VerdictDrawerBadge'));
 
-        if (codedCv) {
-            $('#dmV4VerdictDrawerCv').html(
-                '<a href="' + codedCv + '" target="_blank" rel="noopener" class="dm-v4-vd-cv-link">' +
-                $('<span/>').text(cvCode || 'CV').html() + ' ↗</a>'
-            );
-            $('#dmV4VerdictDrawerCvBtn').attr('href', codedCv).show();
-        } else {
-            $('#dmV4VerdictDrawerCv').html('<span class="dm-v4-vd-cv-empty">No coded CV</span>');
-            $('#dmV4VerdictDrawerCvBtn').hide();
-        }
+        $('#dmV4VerdictDrawerOverall').text(screenScore > 0 ? screenScore : '—');
 
-        if (kycOk) {
-            $('#dmV4VerdictDrawerKycBadge').attr('class', 'dm-v4-badge dm-v4-badge--green dm-v4-badge--xs').text('VERIFIED');
-            $('#dmV4VerdictDrawerKycSub').text('Video KYC approved for this interviewer');
-        } else if (videoUrl) {
-            $('#dmV4VerdictDrawerKycBadge').attr('class', 'dm-v4-badge dm-v4-badge--amber dm-v4-badge--xs').text('PENDING');
-            $('#dmV4VerdictDrawerKycSub').text('Recording on file — awaiting approval');
-        } else {
-            $('#dmV4VerdictDrawerKycBadge').attr('class', 'dm-v4-badge dm-v4-badge--neutral dm-v4-badge--xs').text('MISSING');
-            $('#dmV4VerdictDrawerKycSub').text('No Video KYC file on record');
-        }
-
-        var rubricMatch = screenScore > 0 ? Math.min(100, Math.max(0, screenScore - 4)) : 0;
-        $('#dmV4VerdictDrawerStatsSub').text(
-            screenScore + '/100 AI screening · ' + rubricMatch + '% rubric match'
-        );
-        $('#dmV4VerdictDrawerStatsLink').attr('href', screenUrl);
-        $('#dmV4VerdictDrawerSnapshotFull').attr('href', screenUrl);
-        renderVerdictSnapshot($('#dmV4VerdictDrawerSnapshot'), primarySkill, screenScore, totalIv);
-
-        var overall = renderVerdictFactors($('#dmV4VerdictDrawerFactors'), tone, screenScore, clientVet);
-        $('#dmV4VerdictDrawerOverall').text(overall > 0 ? overall : (screenScore || '—'));
-
-        $('#dmV4VerdictDrawerFlagsTitle').text(verdictFlagsTitle(tone));
         var bullets = parseVerdictBullets(reason, tone);
         var flagsHtml = '';
         bullets.forEach(function (b) {
@@ -1157,30 +1173,10 @@
         });
         $('#dmV4VerdictDrawerFlags').html(flagsHtml);
 
-        $('#dmV4VerdictDrawerCapAssigned').text(assigned);
-        $('#dmV4VerdictDrawerCapTotal').text(capacity);
-        $('#dmV4VerdictDrawerCapStepperVal').text(capacity || 0);
-        if (capacity > 0) {
-            var left = Math.max(0, capacity - assigned);
-            $('#dmV4VerdictDrawerCapHint').text(
-                'Can take ' + left + ' more interview' + (left === 1 ? '' : 's') + ' on this engagement.'
-            );
-            var pct = Math.min(100, Math.round((assigned / capacity) * 100));
-            var fillClass = assigned >= capacity ? 'dm-v4-vd-cap-bar__fill--full' : pct >= 80 ? 'dm-v4-vd-cap-bar__fill--near' : 'dm-v4-vd-cap-bar__fill--ok';
-            $('#dmV4VerdictDrawerCapFill').attr('class', 'dm-v4-vd-cap-bar__fill ' + fillClass).css('width', pct + '%');
-            $('#dmV4VerdictDrawerCapBar').show();
-        } else {
-            $('#dmV4VerdictDrawerCapHint').text('No cap set yet — interviewer cannot be assigned.');
-            $('#dmV4VerdictDrawerCapFill').attr('class', 'dm-v4-vd-cap-bar__fill').css('width', '0%');
-            $('#dmV4VerdictDrawerCapBar').hide();
-        }
-
-        renderSkillCoverageChips($('#dmV4VerdictDrawerSkillChips'), getRubricSkillNames(), primarySkill, screenScore);
+        dmV4UpdateScreenedAtCaption($row);
+        dmV4SyncScreenButtonLabels($row);
 
         $('#dmV4VerdictDrawerFull').attr('href', screenUrl);
-
-        $('#dmV4VerdictDrawerKycBtn').data('video-url', videoUrl).data('review-url', kycReview);
-
         $('#dmV4VerdictOverlay, #dmV4VerdictDrawer').addClass('is-open').attr('aria-hidden', 'false');
     }
 
@@ -1241,6 +1237,147 @@
         return 'muted';
     }
 
+    function dmV4RowHasScreening($row) {
+        var hasFlag = $row.find('.dm-v4-iv-cv-btn--screen').attr('data-has-screening') === '1';
+        var verdict = ($row.data('ai-verdict') || '').toString().trim();
+        var score = parseInt($row.data('ai-score'), 10) || 0;
+        return hasFlag || score > 0 || !!verdict;
+    }
+
+    function dmV4FormatScreenedAt(iso) {
+        if (!iso) return '';
+        try {
+            var d = new Date(iso);
+            if (isNaN(d.getTime())) return '';
+            var mins = Math.round((Date.now() - d.getTime()) / 60000);
+            if (mins < 1) return 'just now';
+            if (mins < 60) return mins + 'm ago';
+            var hrs = Math.round(mins / 60);
+            if (hrs < 48) return hrs + 'h ago';
+            return d.toLocaleString();
+        } catch (e) { return ''; }
+    }
+
+    function dmV4SyncScreenButtonLabels($row) {
+        var has = dmV4RowHasScreening($row);
+        var label = has ? 'Regenerate' : 'Screen Resume';
+        var drawerLabel = has ? 'Regenerate' : 'Screen interviewer';
+        var icon = has ? 'refresh' : 'search';
+        $row.find('.dm-v4-iv-cv-btn--screen').each(function () {
+            var $b = $(this);
+            $b.attr('data-has-screening', has ? '1' : '0');
+            $b.html('<i class="fa fa-' + icon + '" aria-hidden="true"></i> ' + label);
+        });
+        var $drawerBtn = $('#dmV4VerdictDrawerScreenBtn');
+        if ($drawerBtn.length) {
+            $drawerBtn.find('.dm-v4-screen-btn-label').text(drawerLabel);
+            $drawerBtn.find('i').attr('class', 'fa fa-' + icon);
+        }
+    }
+
+    function dmV4UpdateScreenedAtCaption($row, isoOverride) {
+        var iso = isoOverride || ($row.data('screened-at') || '').toString();
+        var rel = dmV4FormatScreenedAt(iso);
+        var text = rel ? ('Last screened: ' + rel) : '';
+        var $cap = $row.find('.dm-v4-iv-cell--verdict .dm-v4-iv-screened-at');
+        if (text) {
+            if (!$cap.length) {
+                $cap = $('<div class="dm-v4-iv-screened-at dm-v4-muted"></div>');
+                $row.find('.dm-v4-iv-cell--verdict').append($cap);
+            }
+            $cap.text(text).show();
+        } else if ($cap.length) {
+            $cap.hide();
+        }
+        var $drawerCap = $('#dmV4VerdictDrawerScreenedAt');
+        if ($drawerCap.length) {
+            if (text) $drawerCap.text(text).show();
+            else $drawerCap.hide();
+        }
+    }
+
+    var dmV4ScreeningInFlight = false;
+
+    function dmV4SetScreeningBusy($row, busy) {
+        var $screenBtns = $row.find('.dm-v4-iv-cv-btn--screen');
+        if (busy) {
+            $screenBtns.each(function () {
+                var $b = $(this);
+                if (!$b.data('dm-v4-screen-orig-html')) {
+                    $b.data('dm-v4-screen-orig-html', $b.html());
+                }
+                $b.prop('disabled', true).html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Generating…');
+            });
+            var $drawerBtn = $('#dmV4VerdictDrawerScreenBtn');
+            if ($drawerBtn.length) {
+                if (!$drawerBtn.data('dm-v4-screen-orig-html')) {
+                    $drawerBtn.data('dm-v4-screen-orig-html', $drawerBtn.html());
+                }
+                $drawerBtn.prop('disabled', true).html(
+                    '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> <span class="dm-v4-screen-btn-label">Generating…</span>'
+                );
+            }
+            var $reason = $row.find('.dm-v4-iv-verdict-reason');
+            if ($reason.length && !$reason.data('dm-v4-reason-orig')) {
+                $reason.data('dm-v4-reason-orig', $reason.text());
+            }
+            if ($reason.length) {
+                $reason.text('Generating AI reasoning…');
+            }
+            if (window._dmV4VerdictDrawerRow && window._dmV4VerdictDrawerRow.is($row)) {
+                $('#dmV4VerdictDrawerReason').text('Generating AI reasoning…');
+                $('#dmV4VerdictDrawerEyebrow').text('AI verdict · GENERATING');
+            }
+            $row.addClass('dm-v4-iv-row--screening');
+        } else {
+            $screenBtns.each(function () {
+                var $b = $(this);
+                $b.prop('disabled', false);
+                $b.removeData('dm-v4-screen-orig-html');
+            });
+            var $drawerBtn = $('#dmV4VerdictDrawerScreenBtn');
+            if ($drawerBtn.length) {
+                $drawerBtn.prop('disabled', false);
+                $drawerBtn.removeData('dm-v4-screen-orig-html');
+            }
+            var $reason = $row.find('.dm-v4-iv-verdict-reason');
+            var origReason = $reason.data('dm-v4-reason-orig');
+            if (origReason && $reason.length) {
+                $reason.text(origReason);
+            }
+            $reason.removeData('dm-v4-reason-orig');
+            $row.removeClass('dm-v4-iv-row--screening');
+        }
+    }
+
+    function dmV4RunScreening($row) {
+        if (dmV4ScreeningInFlight || !$row || !$row.length) return;
+        var cfg = getDmIvCvConfig();
+        if (!cfg.screenUrl) return;
+        var isRedo = dmV4RowHasScreening($row);
+        dmV4ScreeningInFlight = true;
+        dmV4SetScreeningBusy($row, true);
+        $.post(cfg.screenUrl, {
+            jdTitle: $row.data('jd-title') || '',
+            irfId: parseInt($row.data('irf-id'), 10) || parseInt($('#id').val(), 10),
+            userId: parseInt($row.data('user-id'), 10),
+            irfName: $row.data('irf-name') || '',
+            isRedo: isRedo
+        }).done(function (res) {
+            if (res && res.ok) {
+                dmV4ApplyScreeningResult($row, res);
+            } else if (typeof swal !== 'undefined') {
+                swal.fire('Screening', (res && res.message) || 'Failed.', 'error');
+            }
+        }).fail(function () {
+            if (typeof swal !== 'undefined') swal.fire('Screening', 'Request failed.', 'error');
+        }).always(function () {
+            dmV4ScreeningInFlight = false;
+            dmV4SetScreeningBusy($row, false);
+            dmV4SyncScreenButtonLabels($row);
+        });
+    }
+
     function dmV4ApplyScreeningResult($row, res) {
         var tone = dmV4VerdictToneFromAi(res.aiVerdict);
         var label = dmV4VerdictLabelFromTone(tone);
@@ -1279,10 +1416,11 @@
             '</button>';
         $verdictCell.find('.dm-v4-iv-verdict-link').replaceWith(verdictHtml);
 
-        var $screenBtn = $row.find('.dm-v4-iv-cv-btn--screen');
-        if ($screenBtn.length) {
-            $screenBtn.attr('data-has-screening', '1').html('<i class="fa fa-refresh" aria-hidden="true"></i> Regenerate');
+        if (res.screenedAt) {
+            $row.attr('data-screened-at', res.screenedAt);
         }
+        dmV4UpdateScreenedAtCaption($row, res.screenedAt);
+        dmV4SyncScreenButtonLabels($row);
     }
 
     function dmV4RenderCvStack($row, state) {
@@ -1453,16 +1591,28 @@
         $('.dm-v4-iv-row').each(function () {
             var $row = $(this);
             var $wrap = $row.find('.dm-v4-iv-capacity');
-            syncCapacityCellUi(
-                $wrap,
-                parseInt($row.attr('data-capacity'), 10) || parseInt($wrap.attr('data-capacity'), 10) || 0,
-                parseInt($row.attr('data-assigned'), 10) || parseInt($wrap.attr('data-assigned'), 10) || 0
-            );
+            var assigned = parseInt($row.attr('data-assigned'), 10) || parseInt($wrap.attr('data-assigned'), 10) || 0;
+            syncCapacityCellUi($wrap, readRowCapacity($row), assigned, isRowCapConfigured($row));
         });
     }
 
     function isCapEnforced() {
         return $('#dmV4IvPanel').attr('data-cap-enforced') === '1';
+    }
+
+    function isRowCapConfigured($row) {
+        return $row.attr('data-cap-configured') === '1';
+    }
+
+    function readRowCapacity($row) {
+        if (!isRowCapConfigured($row)) return null;
+        var n = parseInt($row.attr('data-capacity'), 10);
+        return isNaN(n) ? 0 : n;
+    }
+
+    function shouldShowUnlimitedCap($row) {
+        if (!isCapEnforced()) return true;
+        return !isRowCapConfigured($row);
     }
 
     function capBarClass(assigned, capacity) {
@@ -1489,10 +1639,27 @@
 
     function moneyDisplayValue(value, kind) {
         var v = Math.max(0, parseInt(value, 10) || 0);
-        if (kind === 'rate') {
-            return v > 0 ? v.toLocaleString('en-IN') : '—';
+        if (kind === 'rate' || kind === 'surcharge') {
+            return v > 0 ? v.toLocaleString('en-IN') : '0';
         }
         return String(v);
+    }
+
+    function getSurchargeMax($row) {
+        return Math.max(0, parseInt($row.data('rate'), 10) || 0);
+    }
+
+    function validateSurchargeAmount(surcharge, maxRate) {
+        if (surcharge < 0) {
+            return 'Surcharge cannot be negative.';
+        }
+        if (maxRate <= 0 && surcharge > 0) {
+            return 'Set a per-interview rate before applying a surcharge.';
+        }
+        if (surcharge > maxRate) {
+            return 'Surcharge cannot exceed 100% of the interview cost (max ₹' + maxRate.toLocaleString('en-IN') + ').';
+        }
+        return null;
     }
 
     function buildMoneyPillHtml(value, kind, attrs) {
@@ -1500,12 +1667,12 @@
         var v = Math.max(0, parseInt(value, 10) || 0);
         var cls = 'dm-v4-money-pill v4-money-pill dm-v4-' + kind + '-pill';
         var display = moneyDisplayValue(v, kind);
-        var inner = kind === 'rate'
+        var inner = (kind === 'rate' || kind === 'surcharge')
             ? '<span class="dm-v4-money-unit">₹</span><span class="dm-v4-money-val">' + display + '</span>'
             : '<span class="dm-v4-money-val">' + display + '</span><span class="dm-v4-money-unit">%</span>';
         var title = kind === 'rate'
             ? 'Per-interview rate (INR)'
-            : 'Surcharge percentage applied on top of base rate';
+            : 'Surcharge amount in INR (max = base interview rate)';
         var data = ' data-value="' + v + '"';
         if (attrs.userId != null) data += ' data-user-id="' + attrs.userId + '"';
         if (attrs.irfId != null) data += ' data-irf-id="' + attrs.irfId + '"';
@@ -1530,7 +1697,10 @@
 
         var $input = $('<input type="number" class="dm-v4-inline-edit-input" min="0" />').val(orig);
         if (kind === 'surcharge') {
-            $input.attr('max', 100);
+            var maxSurcharge = getSurchargeMax($row);
+            if (maxSurcharge > 0) {
+                $input.attr('max', maxSurcharge);
+            }
         }
 
         $pill.replaceWith($input);
@@ -1542,7 +1712,17 @@
             finished = true;
             var n = doCommit ? Math.max(0, parseInt($input.val(), 10) || 0) : orig;
             if (kind === 'surcharge' && doCommit) {
-                n = Math.min(100, n);
+                var maxRate = getSurchargeMax($row);
+                var validationError = validateSurchargeAmount(n, maxRate);
+                if (validationError) {
+                    if (typeof swal !== 'undefined') {
+                        swal.fire('Invalid surcharge', validationError, 'error');
+                    } else {
+                        alert(validationError);
+                    }
+                    doCommit = false;
+                    n = orig;
+                }
             }
             var attrs = kind === 'surcharge' ? { userId: meta.userId, irfId: meta.irfId } : {};
             $input.replaceWith(buildMoneyPillHtml(n, kind, attrs));
@@ -1555,7 +1735,6 @@
                 saveRate($row, n);
             } else {
                 $row.find('input[name*="Surcharge"]').val(n);
-                updateSurchargeExtra($row);
                 saveSurcharge($row, n);
             }
         };
@@ -1580,14 +1759,10 @@
     }
 
     function updateSurchargeExtra($row) {
-        var rate = parseInt($row.data('rate'), 10) || 0;
-        var surcharge = parseInt($row.find('.dm-v4-surcharge-pill').data('value'), 10) || 0;
+        /* Surcharge is stored/displayed as INR; no derived percentage line. */
         var $cell = $row.find('.dm-v4-iv-cell--surcharge');
-        if (!$cell.length) $cell = $row.find('.dm-v4-surcharge-pill').closest('.dm-v4-iv-cell');
-        $cell.find('.dm-v4-surcharge-extra').remove();
-        if (surcharge > 0 && rate > 0) {
-            var extra = Math.round(rate * surcharge / 100);
-            $cell.append('<div class="dm-v4-surcharge-extra">+₹' + extra.toLocaleString() + '</div>');
+        if ($cell.length) {
+            $cell.find('.dm-v4-surcharge-extra').remove();
         }
     }
 
@@ -1618,7 +1793,7 @@
             $input.off('.dmV4CapEdit');
             var n = doCommit ? Math.max(0, Math.min(99, parseInt($input.val(), 10) || 0)) : orig;
             /* Reference V4CapacityCell: restore pill immediately, then persist */
-            renderCapacityCell($wrap, n, assigned);
+            renderCapacityCell($wrap, n, assigned, true);
             if (doCommit) {
                 saveCapacity($row, n);
             }
@@ -1645,48 +1820,74 @@
         });
     }
 
-    function syncCapacityCellUi($wrap, capacity, assigned) {
+    function syncCapacityCellUi($wrap, capacity, assigned, capConfigured) {
         var $row = $wrap.closest('.dm-v4-iv-row');
-        var enforced = isCapEnforced();
-        $wrap.attr('data-capacity', capacity).attr('data-assigned', assigned);
-        $row.attr('data-capacity', capacity).attr('data-assigned', assigned);
+        if (typeof capConfigured === 'undefined') {
+            capConfigured = capacity != null;
+        }
+        if (capConfigured) {
+            $wrap.attr('data-capacity', capacity).attr('data-cap-configured', '1');
+            $row.attr('data-capacity', capacity).attr('data-cap-configured', '1');
+        } else {
+            $wrap.attr('data-capacity', '').attr('data-cap-configured', '0');
+            $row.attr('data-capacity', '').attr('data-cap-configured', '0');
+        }
+        $wrap.attr('data-assigned', assigned);
+        $row.attr('data-assigned', assigned);
 
-        if (!$wrap.find('.dm-v4-cap-display').length && !$wrap.find('.dm-v4-cap-set-btn').length) {
-            renderCapacityCell($wrap, capacity, assigned);
+        if (!$wrap.find('.dm-v4-cap-display').length && !$wrap.find('.dm-v4-cap-set-btn').length && !$wrap.find('.dm-v4-cap-unlimited').length) {
+            renderCapacityCell($wrap, capacity, assigned, capConfigured);
             return;
         }
 
-        $wrap.find('.dm-v4-iv-cap-assigned').text(assigned);
-        $wrap.find('.dm-v4-cap-pill-val').text(capacity);
-        $wrap.find('.dm-v4-cap-pill').attr('data-cap', capacity);
-        var pct = capacity > 0 ? Math.min(100, Math.round((assigned / Math.max(1, capacity)) * 100)) : 0;
-        var bar = capBarClass(assigned, capacity);
-        var full = capacity > 0 && assigned >= capacity;
-        var near = !full && pct >= 80;
-        var $fill = $wrap.find('.dm-v4-cap-bar-fill');
-        if ($fill.length) {
-            $fill.css('width', pct + '%').attr('class', 'dm-v4-cap-bar-fill dm-v4-cap-bar-fill--' + bar);
-        }
-        $wrap.find('.dm-v4-cap-status').remove();
-        if (capacity > 0 && enforced && full) {
-            $wrap.append('<div class="dm-v4-cap-status dm-v4-cap-status--full">FULL · CAPPED</div>');
-        } else if (capacity > 0 && enforced && near) {
-            $wrap.append('<div class="dm-v4-cap-status dm-v4-cap-status--near">NEAR LIMIT</div>');
-        }
-        $row.toggleClass('dm-v4-iv-row--cap-full', full);
+        renderCapacityCell($wrap, capacity, assigned, capConfigured);
     }
 
-    function renderCapacityCell($wrap, capacity, assigned) {
+    function renderCapacityCell($wrap, capacity, assigned, capConfigured) {
         var $row = $wrap.closest('.dm-v4-iv-row');
         var canEdit = getIvCanEdit();
-        var enforced = isCapEnforced();
-        $wrap.attr('data-capacity', capacity).attr('data-assigned', assigned);
-        $row.attr('data-capacity', capacity).attr('data-assigned', assigned);
-        if (capacity === 0 && canEdit) {
+        if (typeof capConfigured === 'undefined') {
+            capConfigured = isRowCapConfigured($row);
+            if (!capConfigured && capacity != null && capacity !== '') {
+                capConfigured = true;
+            }
+        }
+        if (capConfigured) {
+            capacity = parseInt(capacity, 10);
+            if (isNaN(capacity)) capacity = 0;
+            $wrap.attr('data-capacity', capacity).attr('data-cap-configured', '1');
+            $row.attr('data-capacity', capacity).attr('data-cap-configured', '1');
+        } else {
+            $wrap.attr('data-capacity', '').attr('data-cap-configured', '0');
+            $row.attr('data-capacity', '').attr('data-cap-configured', '0');
+        }
+        $wrap.attr('data-assigned', assigned);
+        $row.attr('data-assigned', assigned);
+
+        if (shouldShowUnlimitedCap($row)) {
+            $wrap.html('<span class="dm-v4-cap-unlimited" title="No interview limit configured">Unlimited</span>');
+            $row.removeClass('dm-v4-iv-row--cap-full');
+            return;
+        }
+
+        if (capConfigured && capacity === 0) {
+            if (canEdit) {
+                $wrap.html('<button type="button" class="dm-v4-cap-set-btn" title="Interview limit is 0 — interviewer cannot be assigned">' +
+                    DM_V4_PLUS_ICON + 'Set limit</button>' +
+                    '<div class="dm-v4-cap-status dm-v4-cap-status--full">Cannot be assigned</div>');
+            } else {
+                $wrap.html('<span class="dm-v4-cap-unlimited dm-v4-cap-unlimited--blocked">0 · Cannot assign</span>');
+            }
+            $row.addClass('dm-v4-iv-row--cap-full');
+            return;
+        }
+
+        if (!capConfigured && canEdit) {
             $wrap.html('<button type="button" class="dm-v4-cap-set-btn" title="Set interview limit">' + DM_V4_PLUS_ICON + 'Set limit</button>');
             $row.removeClass('dm-v4-iv-row--cap-full');
             return;
         }
+
         var pct = capacity > 0 ? Math.min(100, Math.round((assigned / Math.max(1, capacity)) * 100)) : 0;
         var bar = capBarClass(assigned, capacity);
         var full = capacity > 0 && assigned >= capacity;
@@ -1698,13 +1899,13 @@
         } else {
             html += '<span class="dm-v4-mono dm-v4-cap-readonly">' + capacity + '</span>';
         }
-        html += '<span class="dm-v4-cap-iv-suffix">iv</span></div>';
+        html += '</div>';
         if (capacity > 0) {
             html += '<div class="dm-v4-cap-bar"><span class="dm-v4-cap-bar-fill dm-v4-cap-bar-fill--' + bar + '" style="width:' + pct + '%"></span></div>';
         }
-        if (enforced && full) {
+        if (isCapEnforced() && full) {
             html += '<div class="dm-v4-cap-status dm-v4-cap-status--full">FULL · CAPPED</div>';
-        } else if (enforced && near) {
+        } else if (isCapEnforced() && near) {
             html += '<div class="dm-v4-cap-status dm-v4-cap-status--near">NEAR LIMIT</div>';
         }
         $wrap.html(html);
@@ -1718,7 +1919,9 @@
         }, function (res) {
             if (res && res.success) {
                 var assigned = parseInt($row.data('assigned'), 10) || 0;
-                renderCapacityCell($row.find('.dm-v4-iv-capacity'), res.interviewCapacity, assigned);
+                var cap = res.interviewCapacity;
+                var configured = res.capConfigured !== false;
+                renderCapacityCell($row.find('.dm-v4-iv-capacity'), cap, assigned, configured);
             }
         });
     }
@@ -1735,6 +1938,10 @@
                     $pill.attr('data-value', res.perSuccessRate);
                     $pill.find('.dm-v4-money-val').text(moneyDisplayValue(res.perSuccessRate, 'rate'));
                 }
+                var $surchargePill = $row.find('.dm-v4-surcharge-pill');
+                if ($surchargePill.length) {
+                    $surchargePill.attr('title', 'Surcharge amount in INR (max ₹' + moneyDisplayValue(res.perSuccessRate, 'rate') + ')');
+                }
                 updateSurchargeExtra($row);
             }
         });
@@ -1749,15 +1956,23 @@
             surcharge: surcharge,
             irfId: irfId
         }, function (res) {
-            var ok = res === true || res === 'true' || (res && res.success);
-            if (!ok) return;
+            var ok = res && (res.success === true || res.success === 'true');
+            if (!ok) {
+                var msg = (res && res.message) ? res.message : 'Failed to save surcharge.';
+                if (typeof swal !== 'undefined') {
+                    swal.fire('Surcharge not saved', msg, 'error');
+                } else {
+                    alert(msg);
+                }
+                return;
+            }
+            var saved = res.surcharge != null ? res.surcharge : surcharge;
             $pill = $row.find('.dm-v4-surcharge-pill');
             if ($pill.length) {
-                $pill.attr('data-value', surcharge);
-                $pill.find('.dm-v4-money-val').text(moneyDisplayValue(surcharge, 'surcharge'));
+                $pill.attr('data-value', saved);
+                $pill.find('.dm-v4-money-val').text(moneyDisplayValue(saved, 'surcharge'));
             }
-            $row.find('input[name*="Surcharge"]').val(surcharge);
-            updateSurchargeExtra($row);
+            $row.find('input[name*="Surcharge"]').val(saved);
         });
     }
 
@@ -1863,6 +2078,7 @@
         initIvEditableFields();
         patchDmV4UploadResume();
         $('.dm-v4-iv-row').each(function () {
+            normalizeVetRowAttrs($(this));
             syncVetButtons($(this));
         });
 
@@ -1912,34 +2128,13 @@
 
         $(document).off('click.dmV4IvCvScreen', '.dm-v4-iv-cv-btn--screen').on('click.dmV4IvCvScreen', '.dm-v4-iv-cv-btn--screen', function (e) {
             e.preventDefault();
-            var $btn = $(this);
-            if ($btn.prop('disabled') || $btn.data('screening') === 1 || $btn.data('screening') === '1') return;
-            var $row = $btn.closest('.dm-v4-iv-row');
-            var cfg = getDmIvCvConfig();
-            var isRedo = $btn.attr('data-has-screening') === '1';
-            var origHtml = $btn.html();
-            $btn.data('screening', 1).prop('disabled', true).html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Screening…');
-            $.ajax({
-                type: 'POST',
-                url: cfg.screenUrl || '/AIScreener/ScreenInterviewerAjax',
-                data: {
-                    jdTitle: ($row.data('jd-title') || '').toString(),
-                    irfId: parseInt($row.data('irf-id'), 10),
-                    userId: parseInt($row.data('user-id'), 10),
-                    irfName: ($row.data('irf-name') || '').toString(),
-                    isRedo: isRedo
-                }
-            }).done(function (res) {
-                if (res && res.ok) {
-                    dmV4ApplyScreeningResult($row, res);
-                } else if (typeof swal !== 'undefined') {
-                    swal.fire((res && res.message) ? res.message : 'Screening failed.', '', 'error');
-                }
-            }).fail(function () {
-                if (typeof swal !== 'undefined') swal.fire('Screening failed.', '', 'error');
-            }).always(function () {
-                $btn.data('screening', 0).prop('disabled', false).html(origHtml);
-            });
+            dmV4RunScreening($(this).closest('.dm-v4-iv-row'));
+        });
+
+        $(document).off('click.dmV4DrawerScreen', '#dmV4VerdictDrawerScreenBtn').on('click.dmV4DrawerScreen', '#dmV4VerdictDrawerScreenBtn', function (e) {
+            e.preventDefault();
+            var $row = window._dmV4VerdictDrawerRow;
+            if ($row && $row.length) dmV4RunScreening($row);
         });
 
         $(document).off('click.dmV4VerdictOpen', '.dm-v4-iv-verdict-open').on('click.dmV4VerdictOpen', '.dm-v4-iv-verdict-open', function (e) {
@@ -1982,7 +2177,16 @@
                 }, function (res) {
                     if (res && res.success) {
                         $row.attr('data-rb-vet', isYes ? '1' : '0');
-                        if (!isYes) $row.attr('data-client-vet', '0');
+                        if (!isYes) {
+                            $row.attr('data-client-vet', '0');
+                            $row.attr('data-client-action', 'Rejected');
+                        } else {
+                            $row.attr('data-client-vet', '1');
+                            $row.attr('data-client-action', 'Shortlisted');
+                        }
+                        if (typeof res.active !== 'undefined') {
+                            $row.attr('data-is-active', res.active ? '1' : '0');
+                        }
                         syncVetButtons($row);
                         refreshIvBadges();
                     } else {
@@ -2000,6 +2204,10 @@
                 }, function (res) {
                     if (res && res.success) {
                         $row.attr('data-client-vet', isYes ? '1' : '0');
+                        $row.attr('data-client-action', isYes ? 'Shortlisted' : 'Rejected');
+                        if (typeof res.active !== 'undefined') {
+                            $row.attr('data-is-active', res.active ? '1' : '0');
+                        }
                         syncVetButtons($row);
                         refreshIvBadges();
                     } else {
@@ -2061,7 +2269,7 @@
                 if (res && res.success) {
                     $('.dm-v4-iv-row').each(function () {
                         var assigned = parseInt($(this).data('assigned'), 10) || 0;
-                        renderCapacityCell($(this).find('.dm-v4-iv-capacity'), res.defaultCap, assigned);
+                        renderCapacityCell($(this).find('.dm-v4-iv-capacity'), res.defaultCap, assigned, true);
                     });
                     closeBulkCapModal();
                 }

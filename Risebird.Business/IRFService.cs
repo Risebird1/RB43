@@ -3720,6 +3720,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        /// <summary>Resolve numeric IRF.id from either database id or string skill-channel code (IRF.IRFId).</summary>
+        public async Task<int> ResolveSkillChannelNumericIdAsync(string irfKey)
+        {
+            if (string.IsNullOrWhiteSpace(irfKey))
+                return 0;
+
+            if (int.TryParse(irfKey.Trim(), out var numericId) && numericId > 0)
+                return numericId;
+
+            var byName = await GetSkillChannelDetailsByName(irfKey.Trim());
+            return byName?.id ?? 0;
+        }
         public async Task<bool> UpdateTechSkills(IList<TransSkill> techskills)
         {
             try
