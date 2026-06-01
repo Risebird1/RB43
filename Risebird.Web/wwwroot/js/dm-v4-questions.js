@@ -387,7 +387,9 @@
             .done(function (res) {
                 if (res && res.success) {
                     loadQuestions();
-                    if (typeof swal !== 'undefined') swal.fire('Questions Generated', res.count + ' question(s) created from rubric.', 'success');
+                    var msg = res.count + ' question(s) created from rubric.';
+                    if (res.warning) msg += ' ' + res.warning;
+                    if (typeof swal !== 'undefined') swal.fire('Questions Generated', msg, res.warning ? 'warning' : 'success');
                 } else {
                     if (typeof swal !== 'undefined') swal.fire('Generation Failed', res.message || 'Could not generate questions.', 'error');
                     else alert(res.message || 'Could not generate questions.');

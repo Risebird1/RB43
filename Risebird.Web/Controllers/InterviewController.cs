@@ -2996,7 +2996,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement")
                     {
                         var result = await _meetingService.AssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
-                        return Json(result);
+                        return Json(FormatOpenAssignResult(id, emailid.ToLower(), result));
                     }
                 }
             }
@@ -3004,7 +3004,36 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return Json("Fail to Assign,Please try Again.");
+            return Json(new { code = "ERROR", message = "Fail to Assign,Please try Again." });
+        }
+
+        private object FormatOpenAssignResult(int meetingId, string interviewerEmail, string result)
+        {
+            if (string.IsNullOrEmpty(result))
+                return new { code = "ERROR", message = "Fail to Assign,Please try Again." };
+
+            if (result.StartsWith("CAP_REACHED|", StringComparison.OrdinalIgnoreCase))
+            {
+                var capCheck = _meetingService.CheckInterviewerCapForAssignmentByMeeting(meetingId, interviewerEmail);
+                var capMsg = result.Substring("CAP_REACHED|".Length);
+                return new
+                {
+                    code = "CAP_REACHED",
+                    cap = capCheck.Capacity,
+                    futureAssigned = capCheck.Assigned,
+                    message = capMsg
+                };
+            }
+
+            if (result.StartsWith("INACTIVE_IVY|", StringComparison.OrdinalIgnoreCase))
+            {
+                return new { code = "INACTIVE_IVY", message = result.Substring("INACTIVE_IVY|".Length) };
+            }
+
+            if (result.IndexOf("Successfully", StringComparison.OrdinalIgnoreCase) >= 0)
+                return new { code = "OK", message = result };
+
+            return new { code = "ERROR", message = result };
         }
 
         [Authorize]
@@ -5546,6 +5575,11 @@ namespace Risebird.Web.Controllers
             {
                 var capMsg = result.Substring("CAP_REACHED|".Length);
                 return Json(new { meetings = capMsg, codedname = (string)null, code = "CAP_REACHED" });
+            }
+            if (result.StartsWith("INACTIVE_IVY|"))
+            {
+                var inactiveMsg = result.Substring("INACTIVE_IVY|".Length);
+                return Json(new { meetings = inactiveMsg, codedname = (string)null, code = "INACTIVE_IVY" });
             }
             var codedname = (await _meetingService.FetchInterviewerCodedName(Emailid))?.NickName;
             return Json(new { meetings = result, codedname = codedname });
@@ -8736,14 +8770,12 @@ namespace Risebird.Web.Controllers
             if (sessionRequired)
             {
                 ViewBag.SessionRequired = true;
-                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
-                return View(new Risebird.Entities.Data.Meeting());
-            }
-            var jobLevelsList = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.JobLevelList = new SelectList(jobLevelsList, "ID", "Name");
+            var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
+            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+            return View(new Risebird.Entities.Data.Meeting());
+        }
+        var jobLevelsList = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
+        ViewBag.JobLevelList = new SelectList(jobLevelsList, "ID", "Name");
             var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
             if (result != null)
                 result.interviewer = emailid;
@@ -9930,6 +9962,11 @@ namespace Risebird.Web.Controllers
                 {
                     var capMsg = result.Substring("CAP_REACHED|".Length);
                     return Json(new { success = false, message = capMsg, code = "CAP_REACHED" });
+                }
+                if (result.StartsWith("INACTIVE_IVY|"))
+                {
+                    var inactiveMsg = result.Substring("INACTIVE_IVY|".Length);
+                    return Json(new { success = false, message = inactiveMsg, code = "INACTIVE_IVY" });
                 }
                 return Json(new { success = false, message = result });
             }

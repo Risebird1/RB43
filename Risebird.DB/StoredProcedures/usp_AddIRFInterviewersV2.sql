@@ -36,12 +36,19 @@ BEGIN
 		[CampaignId],
 		[OpenAIScreeningResponse],
 		[AIVerdict],
+		[IsSMEVerified],
+		[ClientAction],
+		[ActivatedAt],
 		[AddedAt])  
     
 		SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge,
 		CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE ibd.IsActive END,
 		ibd.IsAvailable, InterviewerProfile.id, ibd.[Source],
-		null, NULL as IsSurchargeApprove, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict, @timeNow
+		null, NULL as IsSurchargeApprove, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict,
+		CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,
+		CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE 'Shortlisted' END,
+		CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE @timeNow END,
+		@timeNow
 		FROM @InterviewerSurchargeBulkData ibd
 		JOIN InterviewerProfile on ibd.UserId = InterviewerProfile.UserId
 		JOIN IRF irf ON irf.id = ibd.IRFId

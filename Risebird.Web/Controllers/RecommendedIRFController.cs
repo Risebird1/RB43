@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
@@ -590,8 +590,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Interviewers = new SelectList(interviewers, "UserId", "NickName");
             ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
             ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
-            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                            select new { ID = (int)s, Name = s.GetDescription() };
+            var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
             ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
             var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                              select new { ID = (int)s, Name = s.GetDescription() };

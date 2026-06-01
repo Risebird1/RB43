@@ -4,6 +4,8 @@
 (function ($) {
     'use strict';
 
+    var RUBRIC_REGEN_ERROR = "Couldn't regenerate the rubric — please try again or set it manually.";
+
     function getIrfId() {
         var $root = $('#divIRFaudioRecording');
         var id = $root.data('irf-id') || $root.attr('data-irf-id');
@@ -25,8 +27,17 @@
 
     function setTranscriptUiState(state) {
         var $wrap = $('#dmV4VoiceTranscriptWrap');
-        $wrap.removeClass('is-transcribing is-saving is-empty');
+        $wrap.removeClass('is-transcribing is-saving is-regenerating is-empty');
         if (state) $wrap.addClass(state);
+    }
+
+    function clearRubricRegenErrors() {
+        $('#dmV4VoiceRubricError, #dmV4ScoreRubricRegenError').hide().text('');
+    }
+
+    function showRubricRegenError(message) {
+        var msg = message || RUBRIC_REGEN_ERROR;
+        $('#dmV4VoiceRubricError, #dmV4ScoreRubricRegenError').text(msg).show();
     }
 
     function applyTranscriptToHero(transcript, updatedOn) {
@@ -54,6 +65,27 @@
         $('#dmV4GenerateRubricFromVoiceBtn, #dmV4GenerateQuestionsFromVoiceBtn').prop('disabled', !hasText);
     }
 
+    function showRubricVoiceResult(rubricRes) {
+        var msg = (rubricRes && rubricRes.message) || 'Score rubric regenerated from voice brief.';
+        var added = rubricRes && rubricRes.addedFromVoice;
+        var reloadRequired = rubricRes && (rubricRes.reloadRequired || added > 0);
+        var icon = added > 0 ? 'success' : 'info';
+        var title = added > 0 ? 'Rubric updated' : 'Rubric unchanged';
+
+        function afterAlert() {
+            if (reloadRequired) {
+                window.location.reload();
+            }
+        }
+
+        if (typeof swal !== 'undefined') {
+            swal.fire(title, msg, icon).then(afterAlert);
+        } else {
+            alert(title + ': ' + msg);
+            afterAlert();
+        }
+    }
+
     function applyTranscriptToModal(transcript) {
         var $ta = $('#dmV4ModalTranscriptInput');
         var $wrap = $('#dmV4ModalTranscriptSection');
@@ -61,6 +93,47 @@
         var hasText = transcript && String(transcript).trim().length > 0;
         $ta.val(hasText ? transcript : '');
         $wrap.toggle(hasText || $('#playUploadedAudioTwo').not('.dm-v4-voice-modal__saved--empty').length > 0);
+    }
+
+    /**
+     * Calls /IRF/GenerateRubricFromVoice (reads saved transcript from DB by irfId).
+     * Returns a jQuery promise.
+     */
+    function callGenerateRubricFromVoice(irfId, $btn) {
+        clearRubricRegenErrors();
+        setTranscriptUiState('is-regenerating');
+
+        if ($btn && $btn.length) {
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Regenerating rubric…');
+        }
+
+        return $.ajax({
+            type: 'POST',
+            url: '/IRF/GenerateRubricFromVoice',
+            data: { irfId: irfId },
+            timeout: 300000
+        }).then(function (rubricRes) {
+            if (rubricRes && rubricRes.success) {
+                showRubricVoiceResult(rubricRes);
+                return rubricRes;
+            }
+            var msg = (rubricRes && rubricRes.message) || RUBRIC_REGEN_ERROR;
+            showRubricRegenError(msg);
+            console.error('[dm-v4-voice] GenerateRubricFromVoice returned failure:', { irfId: irfId, response: rubricRes });
+            return $.Deferred().reject(rubricRes || { message: msg }).promise();
+        }, function (xhr, textStatus, err) {
+            showRubricRegenError(RUBRIC_REGEN_ERROR);
+            console.error('[dm-v4-voice] GenerateRubricFromVoice request failed:', {
+                irfId: irfId,
+                textStatus: textStatus,
+                error: err,
+                status: xhr && xhr.status,
+                responseText: xhr && xhr.responseText
+            });
+            return $.Deferred().reject({ message: RUBRIC_REGEN_ERROR, xhr: xhr }).promise();
+        }).always(function () {
+            setTranscriptUiState($('#dmV4VoiceTranscriptInput').val().trim() ? '' : 'is-empty');
+        });
     }
 
     window.dmV4RefreshVoiceBrief = function (irfId) {
@@ -139,6 +212,8 @@
         }
 
         var origHtml = $btn && $btn.length ? $btn.html() : '';
+        clearRubricRegenErrors();
+
         if ($btn && $btn.length) {
             $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving…');
         }
@@ -147,21 +222,31 @@
         return $.ajax({
             type: 'POST',
             url: '/IRF/UpdateVoiceInstructionTranscript',
-            data: { irfId: irfId, transcript: transcript }
-        }).done(function (res) {
-            if (res && res.success) {
-                applyTranscriptToHero(res.transcript, res.transcriptUpdatedOn);
-                applyTranscriptToModal(res.transcript);
-                if (typeof swal !== 'undefined') swal.fire('Saved', 'Voice brief transcript saved.', 'success');
-            } else {
+            data: { irfId: irfId, transcript: transcript, regenerateRubric: true }
+        }).then(function (res) {
+            if (!res || !res.success) {
                 var msg = (res && res.message) ? res.message : 'Could not save transcript.';
                 if (typeof swal !== 'undefined') swal.fire('Save failed', msg, 'error');
+                return $.Deferred().reject(res || { message: msg }).promise();
             }
-        }).fail(function () {
+
+            applyTranscriptToHero(res.transcript, res.transcriptUpdatedOn);
+            applyTranscriptToModal(res.transcript);
+
+            if (res.regenerateRubric === false) {
+                if (typeof swal !== 'undefined') swal.fire('Saved', 'Voice brief transcript saved.', 'success');
+                return null;
+            }
+
+            return callGenerateRubricFromVoice(irfId, $btn);
+        }, function () {
             if (typeof swal !== 'undefined') swal.fire('Save failed', 'Server error while saving transcript.', 'error');
+            return $.Deferred().reject().promise();
         }).always(function () {
             setTranscriptUiState($('#dmV4VoiceTranscriptInput').val().trim() ? '' : 'is-empty');
-            if ($btn && $btn.length) $btn.prop('disabled', false).html(origHtml);
+            if ($btn && $btn.length) {
+                $btn.prop('disabled', false).html(origHtml);
+            }
         });
     };
 
@@ -188,22 +273,7 @@
                 var irfId = getIrfId();
                 if (!irfId || $btn.prop('disabled')) return;
                 var orig = $btn.html();
-                $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Generating rubric…');
-                $.ajax({
-                    type: 'POST',
-                    url: '/IRF/GenerateRubricFromVoice',
-                    data: { irfId: irfId },
-                    timeout: 300000
-                }).done(function (res) {
-                    if (res && res.success) {
-                        if (typeof swal !== 'undefined') swal.fire('Rubric updated', res.message || 'Skills generated from voice brief.', 'success');
-                        window.location.reload();
-                    } else {
-                        if (typeof swal !== 'undefined') swal.fire('Rubric generation', (res && res.message) || 'Failed.', 'error');
-                    }
-                }).fail(function () {
-                    if (typeof swal !== 'undefined') swal.fire('Error', 'Rubric generation request failed.', 'error');
-                }).always(function () {
+                callGenerateRubricFromVoice(irfId, $btn).always(function () {
                     $btn.prop('disabled', !$('#dmV4VoiceTranscriptInput').val().trim()).html(orig);
                 });
             });
@@ -233,8 +303,6 @@
                     $btn.prop('disabled', !$('#dmV4VoiceTranscriptInput').val().trim()).html(orig);
                 });
             });
-
-        patchVoiceUploadComplete();
     }
 
     $(initVoiceBriefPage);

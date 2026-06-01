@@ -592,7 +592,8 @@ namespace Risebird.Web.Controllers
                     cached = false,
                     aiVerdict,
                     aiScore,
-                    reasoning
+                    reasoning,
+                    screenedAt = DateTime.UtcNow.ToString("o")
                 });
             }
             catch (System.Exception ex)

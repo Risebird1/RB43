@@ -563,7 +563,7 @@ namespace Risebird.Business
                 if (!string.IsNullOrEmpty(meetingToUpdate.NewActiveInterviewer))
                 {
                     var capCheck = _meetingRespository.CheckInterviewerCapForAssignment(meetingToUpdate.irfIntId, meetingToUpdate.NewActiveInterviewer);
-                    if (!capCheck.Allowed)
+                    if (capCheck.IsInactive || (capCheck.IsCapEnforced && !capCheck.Allowed))
                         return false;
                     meetingToUpdate.interviewer = meetingToUpdate.NewActiveInterviewer;
                 }
@@ -857,11 +857,17 @@ namespace Risebird.Business
         //    //}
         //}
 
+        public CapCheckResult CheckInterviewerCapForAssignmentByMeeting(int meetingId, string interviewerEmail) =>
+            _meetingRespository.CheckInterviewerCapForAssignmentByMeeting(meetingId, interviewerEmail);
+
         public async Task<string> AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate)
         {
             try
             {
-                //var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var gateCheck = _meetingRespository.CheckInterviewerCapForAssignmentByMeeting(meetingid, interviewerMail);
+                if (gateCheck.IsInactive)
+                    return "INACTIVE_IVY|You are not active on this channel and cannot be assigned.";
+
                 var assignedMeeting = await _meetingRespository.GetAllAssignedInterviewsForTheWeek(interviewerMail);
                 var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
                 if (checkDateMeeting != null && checkDateMeeting.Count() > 0)
@@ -874,6 +880,10 @@ namespace Risebird.Business
                     return "Failed! You already have an interview scheduled within 30 minutes. Please contact Risebird HR.";
 
                 }
+
+                if (gateCheck.IsCapEnforced && !gateCheck.Allowed)
+                    return $"CAP_REACHED|Interview limit reached ({gateCheck.Capacity}). You have {gateCheck.Assigned} of {gateCheck.Capacity} interviews assigned on this channel.";
+
                 return await _meetingRespository.AssignYourself(meetingid, interviewerMail);
             }
             catch (Exception ex)
@@ -3009,7 +3019,10 @@ namespace Risebird.Business
                 var capCheck = _meetingRespository.CheckInterviewerCapForAssignmentByMeeting(Convert.ToInt32(id), Emailid);
                 if (!capCheck.Allowed)
                 {
-                    return $"CAP_REACHED|Interview limit reached ({capCheck.Capacity}). You have {capCheck.Assigned} of {capCheck.Capacity} interviews assigned on this channel.";
+                    if (capCheck.IsInactive)
+                        return "INACTIVE_IVY|This interviewer is not active on this channel and cannot be assigned.";
+                    if (capCheck.IsCapEnforced)
+                        return $"CAP_REACHED|Interview limit reached ({capCheck.Capacity}). You have {capCheck.Assigned} of {capCheck.Capacity} interviews assigned on this channel.";
                 }
                 return _meetingRespository.ReAssignMeeting(Convert.ToInt32(id), Emailid);
             }
@@ -3031,7 +3044,10 @@ namespace Risebird.Business
                 var capCheck = _meetingRespository.CheckInterviewerCapForAssignmentByMeeting(Convert.ToInt32(id), Emailid);
                 if (!capCheck.Allowed)
                 {
-                    return $"CAP_REACHED|Interview limit reached ({capCheck.Capacity}). You have {capCheck.Assigned} of {capCheck.Capacity} interviews assigned on this channel.";
+                    if (capCheck.IsInactive)
+                        return "INACTIVE_IVY|This interviewer is not active on this channel and cannot be assigned.";
+                    if (capCheck.IsCapEnforced)
+                        return $"CAP_REACHED|Interview limit reached ({capCheck.Capacity}). You have {capCheck.Assigned} of {capCheck.Capacity} interviews assigned on this channel.";
                 }
                 return _meetingRespository.ReassignMeetingByTeam(Convert.ToInt32(id), Emailid);
             }

@@ -564,6 +564,20 @@ namespace Risebird.Repository
             return null;
         }
 
+        private static bool? ReadNullableBoolCell(DataRow row, DataColumnCollection columns, string columnName)
+        {
+            if (!columns.Contains(columnName)) return null;
+            var val = row[columnName];
+            if (val == null || val == DBNull.Value) return null;
+            if (val is bool b) return b;
+            return Convert.ToBoolean(val);
+        }
+
+        private static bool ReadBoolCell(DataRow row, DataColumnCollection columns, string columnName, bool defaultValue = false)
+        {
+            return ReadNullableBoolCell(row, columns, columnName) ?? defaultValue;
+        }
+
         public async Task<IRFVm> GetSkillChannelDetailsForUpdate(int irfId)
         {
             try
@@ -581,8 +595,9 @@ namespace Risebird.Repository
                     if (dataset.Tables.Count > 0)
                     {
                         dt = dataset.Tables[0];
-                        if (dt.Rows != null)
+                        if (dt.Rows != null && dt.Rows.Count > 0)
                         {
+                            _resultVM.id = !string.IsNullOrEmpty(dt.Rows[0]["id"].ToString()) ? Convert.ToInt32(dt.Rows[0]["id"]) : irfId;
                             _resultVM.IRFId = !string.IsNullOrEmpty(dt.Rows[0]["IRFId"].ToString()) ? dt.Rows[0]["IRFId"].ToString() : null;
                             _resultVM.ClientName = !string.IsNullOrEmpty(dt.Rows[0]["ClientName"].ToString()) ? dt.Rows[0]["ClientName"].ToString() : null;
                             _resultVM.AssessmentGroupName = !string.IsNullOrEmpty(dt.Rows[0]["AssessmentGroupName"].ToString()) ? dt.Rows[0]["AssessmentGroupName"].ToString() : null;
@@ -655,6 +670,14 @@ namespace Risebird.Repository
                             _resultVM.DmDefaultInterviewCap = dt.Columns.Contains("DmDefaultInterviewCap") && !string.IsNullOrEmpty(dt.Rows[0]["DmDefaultInterviewCap"].ToString()) ? Convert.ToInt32(dt.Rows[0]["DmDefaultInterviewCap"]) : 20;
 
                         }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        return null;
                     }
                     if (dataset.Tables.Count > 1)
                     {
@@ -745,9 +768,10 @@ namespace Risebird.Repository
                                     InterviewerId = !string.IsNullOrEmpty(dt.Rows[i]["InterviewerId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewerId"]) : 0,
                                     UserId = !string.IsNullOrEmpty(dt.Rows[i]["UserId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["UserId"]) : 0,
                                     PerSuccessRate = !string.IsNullOrEmpty(dt.Rows[i]["PerSuccessRate"].ToString()) ? Convert.ToInt32(dt.Rows[i]["PerSuccessRate"]) : 0,
-                                    IsActive = !string.IsNullOrEmpty(dt.Rows[i]["IsActive"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsActive"]) : false,
-                                    IsAvailable = !string.IsNullOrEmpty(dt.Rows[i]["IsAvailable"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsAvailable"]) : false,
-                                    IsSMEVerified = !string.IsNullOrEmpty(dt.Rows[i]["IsSMEVerified"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsSMEVerified"]) : false,
+                                    IsActive = ReadBoolCell(dt.Rows[i], dt.Columns, "IsActive"),
+                                    IsAvailable = ReadBoolCell(dt.Rows[i], dt.Columns, "IsAvailable"),
+                                    IsSMEVerifiedStored = ReadNullableBoolCell(dt.Rows[i], dt.Columns, "IsSMEVerified"),
+                                    IsSMEVerified = ReadBoolCell(dt.Rows[i], dt.Columns, "IsSMEVerified"),
                                     Surcharge = !string.IsNullOrEmpty(dt.Rows[i]["Surcharge"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Surcharge"]) : 0,
                                     PrimarySkill = !string.IsNullOrEmpty(dt.Rows[i]["PrimarySkill"].ToString()) ? dt.Rows[i]["PrimarySkill"].ToString() : null,
                                     EmailId = !string.IsNullOrEmpty(dt.Rows[i]["EmailId"].ToString()) ? dt.Rows[i]["EmailId"].ToString() : null,
@@ -767,7 +791,10 @@ namespace Risebird.Repository
                                     TotalFuture = dt.Columns.Contains("TotalFuture") && !string.IsNullOrEmpty(dt.Rows[i]["TotalFuture"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalFuture"]) : 0,
                                     VideoLink = dt.Columns.Contains("VideoLink") && !string.IsNullOrEmpty(dt.Rows[i]["VideoLink"].ToString()) ? dt.Rows[i]["VideoLink"].ToString() : null,
                                     IsVideoApproved = dt.Columns.Contains("IsVideoApproved") && !string.IsNullOrEmpty(dt.Rows[i]["IsVideoApproved"].ToString()) && Convert.ToBoolean(dt.Rows[i]["IsVideoApproved"]),
-                                    InterviewCapacity = dt.Columns.Contains("InterviewCapacity") && !string.IsNullOrEmpty(dt.Rows[i]["InterviewCapacity"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewCapacity"]) : 0,
+                                    InterviewCapacity = dt.Columns.Contains("InterviewCapacity") && dt.Rows[i]["InterviewCapacity"] != DBNull.Value && !string.IsNullOrEmpty(dt.Rows[i]["InterviewCapacity"].ToString())
+                                        ? Convert.ToInt32(dt.Rows[i]["InterviewCapacity"]) : (int?)null,
+                                    ModifiedAt = dt.Columns.Contains("ModifiedAt") && !string.IsNullOrEmpty(dt.Rows[i]["ModifiedAt"].ToString())
+                                        ? Convert.ToDateTime(dt.Rows[i]["ModifiedAt"]) : (DateTime?)null,
 
                                 });
                             }
@@ -851,6 +878,10 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
             return null;
         }
 
@@ -903,9 +934,10 @@ namespace Risebird.Repository
                                     InterviewerId = !string.IsNullOrEmpty(dt.Rows[i]["InterviewerId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewerId"]) : 0,
                                     UserId = !string.IsNullOrEmpty(dt.Rows[i]["UserId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["UserId"]) : 0,
                                     PerSuccessRate = !string.IsNullOrEmpty(dt.Rows[i]["PerSuccessRate"].ToString()) ? Convert.ToInt32(dt.Rows[i]["PerSuccessRate"]) : 0,
-                                    IsActive = !string.IsNullOrEmpty(dt.Rows[i]["IsActive"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsActive"]) : false,
-                                    IsAvailable = !string.IsNullOrEmpty(dt.Rows[i]["IsAvailable"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsAvailable"]) : false,
-                                    IsSMEVerified = !string.IsNullOrEmpty(dt.Rows[i]["IsSMEVerified"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsSMEVerified"]) : false,
+                                    IsActive = ReadBoolCell(dt.Rows[i], dt.Columns, "IsActive"),
+                                    IsAvailable = ReadBoolCell(dt.Rows[i], dt.Columns, "IsAvailable"),
+                                    IsSMEVerifiedStored = ReadNullableBoolCell(dt.Rows[i], dt.Columns, "IsSMEVerified"),
+                                    IsSMEVerified = ReadBoolCell(dt.Rows[i], dt.Columns, "IsSMEVerified"),
                                     Surcharge = !string.IsNullOrEmpty(dt.Rows[i]["Surcharge"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Surcharge"]) : 0,
                                     PrimarySkill = !string.IsNullOrEmpty(dt.Rows[i]["PrimarySkill"].ToString()) ? dt.Rows[i]["PrimarySkill"].ToString() : null,
                                     EmailId = !string.IsNullOrEmpty(dt.Rows[i]["EmailId"].ToString()) ? dt.Rows[i]["EmailId"].ToString() : null,

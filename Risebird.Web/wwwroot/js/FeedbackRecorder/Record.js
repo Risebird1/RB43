@@ -1,4 +1,4 @@
-﻿
+
 $.getScript("https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js");
 //webkitURL is deprecated but nevertheless
 URL = window.URL || window.webkitURL;

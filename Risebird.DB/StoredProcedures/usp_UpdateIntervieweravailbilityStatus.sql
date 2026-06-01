@@ -27,8 +27,13 @@ Select @InterviewerId=id From InterviewerProfile where UserId=@UserId
 if not exists(select 1 from TransInterviewer where UserId = @UserId and IRFId = @IRFId)
 Begin
 DECLARE @isLocked bit = ISNULL((SELECT DmIvLockNew FROM IRF WHERE id = @IRFId), 0)
-Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, AddedAt) 
-values(@IRFId,@InterviewerId,@UserId,CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,1, getdate())
+Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, IsSMEVerified, ClientAction, AddedAt, ActivatedAt) 
+values(@IRFId,@InterviewerId,@UserId,
+CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END, 1,
+CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
+CASE WHEN @isLocked = 1 THEN NULL ELSE 'Shortlisted' END,
+getdate(),
+CASE WHEN @isLocked = 1 THEN NULL ELSE getdate() END)
 End
 
 end

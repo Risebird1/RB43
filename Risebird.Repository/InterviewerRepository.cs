@@ -4182,7 +4182,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser)
+        public async Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser, bool preserveAvailability = false, bool? isAvailable = null)
         {
             try
             {
@@ -4194,6 +4194,8 @@ namespace Risebird.Repository
                     parameters.Add("@timeNow", DateTime.Now);
                     parameters.Add("@irfId", irfId);
                     parameters.Add("@PerformedBy", loggedInUser);
+                    parameters.Add("@preserveAvailability", preserveAvailability);
+                    parameters.Add("@IsAvailable", isAvailable);
                     var results = await SqlMapper.QueryAsync(con, "usp_UpdateIRFInterviewerActiveStatus", parameters,
                            commandType: CommandType.StoredProcedure);
                     return true;
