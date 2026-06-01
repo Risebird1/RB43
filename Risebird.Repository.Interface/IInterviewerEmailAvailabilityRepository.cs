@@ -53,6 +53,14 @@ namespace Risebird.Repository.Interface
         Task<(List<IAInterviewerCallOutcome> Items, int TotalCount)> GetInterviewerCallOutcomesForMAGAsync(string magName, int page = 1, int pageSize = 25);
 
         Task<int> EnsureEARecordForProfileInterviewerAsync(int interviewerProfileId, string magName);
+
+        // Centralized call history page
+        Task<(List<IACallDisposition> Items, int TotalCount)> GetAllCallDispositionsAsync(
+            int page, int pageSize, string magName, string intent, string callStatus,
+            DateTime? dateFrom, DateTime? dateTo);
+        Task<(List<IABatchCallLogEntry> Items, int TotalCount)> GetAllBatchCallLogsAsync(
+            int page, int pageSize, string magName);
+        Task<List<string>> GetDistinctCalledMagNamesAsync();
     }
 
     public class IABatchCallMagSummary
@@ -121,5 +129,32 @@ namespace Risebird.Repository.Interface
         public DateTime? PlivoCallAt { get; set; }
         public string Status { get; set; }
         public string Source { get; set; }
+    }
+
+    public class IACallDisposition
+    {
+        public int TotalCount { get; set; }
+        public int Id { get; set; }
+        public int? InterviewerProfileId { get; set; }
+        public string InterviewerName { get; set; }
+        public string SenderEmail { get; set; }
+        public string Phone { get; set; }
+        public string MagName { get; set; }
+        public string RecordStatus { get; set; }
+        public string PlivoCallStatus { get; set; }
+        public string PlivoConversationId { get; set; }
+        public DateTime? PlivoCallAt { get; set; }
+        public int? PlivoCallDuration { get; set; }
+        public string PlivoCallTranscript { get; set; }
+        public string PlivoCallSummary { get; set; }
+        public string PlivoIntent { get; set; }
+        public bool? PlivoAssignmentHelp { get; set; }
+        public bool? PlivoEmailReceived { get; set; }
+        public bool? PlivoCallbackRequested { get; set; }
+        public string PlivoNotes { get; set; }
+        public string PlivoCalledBy { get; set; }
+        public decimal? Experience { get; set; }
+        public string CurrentRole { get; set; }
+        public string ResolvedPhone { get; set; }
     }
 }
