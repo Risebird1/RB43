@@ -1399,31 +1399,31 @@ namespace Risebird.Web.Controllers
                     var model = await _meetingService.FetchFNPaymentHistory();
                     if (model != null)
                         model = model.OrderByDescending(x => x.Date).ToList();
-                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-                    foreach (var item in model)
-                    {
-                        if (!string.IsNullOrEmpty(item.AssessmentGroupId))
-                        {
-                            var AssessmentGroup = item.AssessmentGroupId.Split(",");
-                            string groupdetail = "";
-                            foreach (var group in AssessmentGroup)
-                            {
-                                if (group != "")
-                                {
-                                    int groupid = Convert.ToInt32(group);
-                                    if (string.IsNullOrEmpty(groupdetail))
-                                    {
-                                        groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                    }
-                                    else
-                                    {
-                                        groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                    }
-                                }
-                            }
-                            item.AssessmentGroupId = groupdetail;
-                        }
-                    }
+                    //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                    //foreach (var item in model)
+                    //{
+                    //    if (!string.IsNullOrEmpty(item.AssessmentGroupId))
+                    //    {
+                    //        var AssessmentGroup = item.AssessmentGroupId.Split(",");
+                    //        string groupdetail = "";
+                    //        foreach (var group in AssessmentGroup)
+                    //        {
+                    //            if (group != "")
+                    //            {
+                    //                int groupid = Convert.ToInt32(group);
+                    //                if (string.IsNullOrEmpty(groupdetail))
+                    //                {
+                    //                    groupdetail = AssessmentsGroups.Where(x => x.id == groupid)?.FirstOrDefault()?.ToString();
+                    //                }
+                    //                else
+                    //                {
+                    //                    groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid)?.FirstOrDefault()?.ToString();
+                    //                }
+                    //            }
+                    //        }
+                    //        item.AssessmentGroupId = groupdetail;
+                    //    }
+                    //}
                     if (HttpContext.Session.GetString("PaymentHistoryfilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PaymentHistoryfilters"));
