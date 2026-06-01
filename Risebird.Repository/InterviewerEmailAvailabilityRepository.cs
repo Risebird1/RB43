@@ -456,5 +456,66 @@ namespace Risebird.Repository
                 commandType: CommandType.StoredProcedure, commandTimeout: 30);
             return id;
         }
+
+        public async Task<(List<IACallDisposition> Items, int TotalCount)> GetAllCallDispositionsAsync(
+            int page, int pageSize, string magName, string intent, string callStatus,
+            DateTime? dateFrom, DateTime? dateTo)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<IACallDisposition>(
+                "usp_GetAllIACallDispositions",
+                new
+                {
+                    Page = page, PageSize = pageSize,
+                    MagName = string.IsNullOrWhiteSpace(magName) ? (string)null : magName,
+                    Intent = string.IsNullOrWhiteSpace(intent) ? (string)null : intent,
+                    CallStatus = string.IsNullOrWhiteSpace(callStatus) ? (string)null : callStatus,
+                    DateFrom = dateFrom, DateTo = dateTo
+                },
+                commandType: CommandType.StoredProcedure, commandTimeout: 120);
+            var items = result.ToList();
+            int totalCount = items.FirstOrDefault()?.TotalCount ?? 0;
+            return (items, totalCount);
+        }
+
+        public async Task<(List<IABatchCallLogEntry> Items, int TotalCount)> GetAllBatchCallLogsAsync(
+            int page, int pageSize, string magName)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<IABatchCallLogFull>(
+                "usp_GetAllIABatchCallLogs",
+                new
+                {
+                    Page = page, PageSize = pageSize,
+                    MagName = string.IsNullOrWhiteSpace(magName) ? (string)null : magName
+                },
+                commandType: CommandType.StoredProcedure, commandTimeout: 60);
+            var items = result.ToList();
+            int totalCount = items.FirstOrDefault()?.TotalCount ?? 0;
+            var entries = items.Select(x => new IABatchCallLogEntry
+            {
+                Id = x.Id, MagName = x.MagName, InitiatedBy = x.InitiatedBy,
+                InitiatedAt = x.InitiatedAt, InterviewersAttempted = x.InterviewersAttempted,
+                InterviewersSucceeded = x.InterviewersSucceeded, InterviewersFailed = x.InterviewersFailed,
+                InterviewersSkipped = x.InterviewersSkipped, CompletedAt = x.CompletedAt, Status = x.Status
+            }).ToList();
+            return (entries, totalCount);
+        }
+
+        public async Task<List<string>> GetDistinctCalledMagNamesAsync()
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<string>(
+                @"SELECT DISTINCT MagName FROM InterviewerEmailAvailability
+                  WHERE ISNULL(PlivoCallStatus, '') <> '' AND MagName IS NOT NULL AND MagName <> ''
+                  ORDER BY MagName",
+                commandTimeout: 30);
+            return result.ToList();
+        }
+    }
+
+    internal class IABatchCallLogFull : IABatchCallLogEntry
+    {
+        public int TotalCount { get; set; }
     }
 }
