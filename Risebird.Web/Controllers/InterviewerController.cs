@@ -4448,17 +4448,12 @@ namespace Risebird.Web.Controllers
                 }
                 if (!string.IsNullOrEmpty(resumeLink) && userid != 0)
                 {
-                    //call method to redact resume and save the redacted resume
-                    //var redactedResumeLink = await RedactResume(resumeLink, userid);
-                    string redactedResumeLink = string.Empty;
+                    var redactedResumeLink = await RedactResume(resumeLink, userid);
                     if (!string.IsNullOrEmpty(redactedResumeLink))
                     {
                         return Json(redactedResumeLink);
                     }
-                    else
-                    {
-                        return Json("failed");
-                    }
+                    return Json("failed");
                 }
             }
             return PartialView(model);

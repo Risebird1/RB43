@@ -881,35 +881,32 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<string>(
-                        con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid }, commandType: Text);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@meetingId", meetingid);
+                    parameters.Add("@interviewerEmail", interviewerMail);
+                    var row = await con.QueryFirstOrDefaultAsync<dynamic>(
+                        "usp_AssignYourselfToOpenInterview",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
 
+                    if (row == null)
+                        return "Failed to assigned interview, Please contact Risebird HR.";
 
-                    //var query = "Select videoConfirmation from InterviewerProfile where videoConfirmation=1 and UserId=(select Id from userList where Emailid=@Emailid)";
-                    //var dynamicParameters = new DynamicParameters();
-                    //dynamicParameters.Add("@EmailId", interviewerMail);
-                    //var results = await con.QueryAsync<int>(query, dynamicParameters);
-
-                    var videoquery = "Select ISNULL(IRF.IsVideoRequired,0) from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@meetingid";
-                    var videodynamicParameters = new DynamicParameters();
-                    videodynamicParameters.Add("@meetingid", meetingid);
-                    var videoresults = await con.QueryAsync<bool>(videoquery, videodynamicParameters);
-                    if (videoresults.FirstOrDefault())
+                    var resultCode = (string)row.ResultCode;
+                    if (resultCode == "CAP_REACHED")
                     {
-                        return "Interview assigned Successfully|VIDEO_MANDATE";
+                        var assigned = (int)row.Assigned;
+                        var capacity = (int)row.Capacity;
+                        return $"CAP_REACHED|Interview limit reached ({capacity}). You have {assigned} of {capacity} interviews assigned on this channel.";
                     }
-                    else
-                    {
-                        return "Interview assigned Successfully.";
-                    }
-                    //if (results.FirstOrDefault() == 1)
-                    //{
-                    //return "We recommend to the interviewer to keep their video on throughout the interview. On keeping your Video On, you will be paid 10% of the Base Pay, which is close to 50 for Offshore & 100 for Onsite Interviews.Kindly use a Virtual Background, if keeping your Video ON. Rest assured your data is 100% private and you will never be mapped to your current company.";
-                    //}
-                    //else
-                    //{
-                    //    return "Interview assigned Successfully.";
-                    //}
+                    if (resultCode == "INACTIVE")
+                        return "INACTIVE_IVY|You are not active on this channel and cannot be assigned.";
+                    if (resultCode == "OK")
+                        return (string)row.Message;
+
+                    return !string.IsNullOrEmpty((string)row.Message)
+                        ? (string)row.Message
+                        : "Failed to assigned interview, Please contact Risebird HR.";
                 }
             }
             catch (SqlException ex)
@@ -4900,8 +4897,11 @@ namespace Risebird.Repository
                     {
                         Allowed = (int)row.Allowed == 1,
                         IsLocked = (int)row.IsLocked == 1,
-                        Assigned = (int)row.Assigned,
-                        Capacity = (int)row.Capacity
+                        IsInactive = row.IsInactive != null && (int)row.IsInactive == 1,
+                        IsCapEnforced = row.IsCapEnforced != null && (int)row.IsCapEnforced == 1,
+                        CapConfigured = row.CapConfigured != null && (int)row.CapConfigured == 1,
+                        Assigned = row.Assigned != null ? (int)row.Assigned : 0,
+                        Capacity = row.Capacity != null ? (int)row.Capacity : 0
                     };
                 }
             }
@@ -4926,8 +4926,11 @@ namespace Risebird.Repository
                     {
                         Allowed = (int)row.Allowed == 1,
                         IsLocked = (int)row.IsLocked == 1,
-                        Assigned = (int)row.Assigned,
-                        Capacity = (int)row.Capacity
+                        IsInactive = row.IsInactive != null && (int)row.IsInactive == 1,
+                        IsCapEnforced = row.IsCapEnforced != null && (int)row.IsCapEnforced == 1,
+                        CapConfigured = row.CapConfigured != null && (int)row.CapConfigured == 1,
+                        Assigned = row.Assigned != null ? (int)row.Assigned : 0,
+                        Capacity = row.Capacity != null ? (int)row.Capacity : 0
                     };
                 }
             }

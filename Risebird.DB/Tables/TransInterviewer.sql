@@ -214,7 +214,23 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'TransInterviewer'))
 BEGIN
     ALTER TABLE TransInterviewer
-    Add InterviewCapacity int NOT NULL CONSTRAINT DF_TransInterviewer_InterviewCapacity DEFAULT 0
+    Add InterviewCapacity int NULL
+END
+
+IF EXISTS(
+    SELECT 1
+    FROM sys.columns c
+    JOIN sys.types t ON c.user_type_id = t.user_type_id
+    WHERE c.object_id = OBJECT_ID(N'TransInterviewer')
+      AND c.name = N'InterviewCapacity'
+      AND c.is_nullable = 0)
+BEGIN
+    IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE parent_object_id = OBJECT_ID(N'TransInterviewer') AND name = N'DF_TransInterviewer_InterviewCapacity')
+        ALTER TABLE TransInterviewer DROP CONSTRAINT DF_TransInterviewer_InterviewCapacity;
+
+    UPDATE TransInterviewer SET InterviewCapacity = NULL WHERE InterviewCapacity = 0;
+
+    ALTER TABLE TransInterviewer ALTER COLUMN InterviewCapacity int NULL;
 END
 
 END

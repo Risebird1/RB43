@@ -35,28 +35,9 @@ Select * from TransSkillGeneral where IRFId = @irfId and @isGeneralSkillRequired
 --joinability details  
 Select * from TransJoinability where IRFId = @irfId and @isJoinabilitySelectabilityRequired = 1  
   
---interviewer details  
---Declare @Assessmentid int  
---set @Assessmentid=(select AssessmentGroupid From IRF where id=@irfId)  
---Declare @temptable Table(Userid int)  
---Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
-
-Declare @Assessmentid int  
-set @Assessmentid=(select AssessmentGroupid From IRF where id=@irfId)  
-Declare @temp as Table(
-AssessmentGroupId int
-)
-if exists(select top 1 id from MasterAssessmentGroup where AssessmentGroupId = @Assessmentid)
-begin
-Insert into @temp select AssessmentGroupId from SecondaryAssessmentGroups where MAGId = (select id from MasterAssessmentGroup where AssessmentGroupId = @Assessmentid)
-Insert into @temp values(@Assessmentid)
-end
-else
-Begin
-Insert into @temp values(@Assessmentid)
-End
-Declare @temptable Table(Userid int)  
-Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value in (select distinct AssessmentGroupId from @temp)  
+--interviewer details — all TransInterviewer rows on this channel (same scope as usp_GetSkillChannelInterviewersForEdit).
+--Do not filter by assessment-group membership; manually added panel members must appear on DM Approval.
+DECLARE @irfName varchar(50) = (SELECT IRFID FROM IRF WHERE id = @irfId)
 
 select distinct ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted,
 ip.VideoLink, isnull(ip.IsVideoApproved, 0) as IsVideoApproved,
@@ -72,11 +53,14 @@ GROUP BY Id, UserId, NickName, ResumeLink, CodedResumeLink,CompanyName, IsResume
 join  TransInterviewer ti on ti.UserId=c.UserId  
 join UserList ul on ul.id = ti.UserId  
 join InterviewerProfile ip on ip.UserId = c.UserId
-join @temptable tt on tt.userid=ti.Userid  
 left join AGCampaigns agc on agc.id = ti.CampaignId
-outer apply (select count(im.id) as TotalInterview from InterviewMeetings im where im.IRFId = @irfId and im.interviewer = ul.EmailId) sti
-outer apply (select count(im.id) as TotalFuture from InterviewMeetings im where im.IRFId = @irfId and im.interviewer = ul.EmailId and im.interviewDate > DATEADD(MINUTE, 330, GETDATE())) fti
-where IRFId=@irfId and ul.IsActive=1  
+outer apply (select count(im.id) as TotalInterview from InterviewMeetings im where im.IRFId = @irfName and im.interviewer = ul.EmailId) sti
+outer apply (select count(im.id) as TotalFuture from InterviewMeetings im
+    where im.IRFId = @irfName and im.interviewer = ul.EmailId and im.interviewer is not null
+      and im.interviewDate > DATEADD(MINUTE, 330, GETDATE())
+      and ISNULL(im.IsDeleted, 0) = 0 and ISNULL(im.isAutoCancelled, 0) = 0
+      and CAST(im.confirmationStatus as varchar(20)) not in ('2', 'Cancelled')) fti
+where ti.IRFId=@irfId and ul.IsActive=1  
   
 --selectability details  
 Select * from TransSelectability where IRFId = @irfId and @isJoinabilitySelectabilityRequired = 1  

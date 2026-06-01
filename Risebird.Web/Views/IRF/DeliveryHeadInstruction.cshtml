@@ -79,6 +79,29 @@
         return DmV4VerdictReason(iv?.AIVerdict);
     }
     bool DmV4ClientVetYes(TransInterviewer iv) => string.Equals(iv?.ClientAction, "Shortlisted", StringComparison.OrdinalIgnoreCase);
+    bool DmV4RbVetDisplayYes(TransInterviewer iv, bool channelLocked) => DmIvVetDisplayHelper.ResolveRbVetYes(channelLocked, iv);
+    bool DmV4ClientVetDisplayYes(TransInterviewer iv, bool channelLocked, bool rbVetDisplayOn) =>
+        DmIvVetDisplayHelper.ResolveClientVetYes(channelLocked, iv, rbVetDisplayOn);
+    string DmV4IvStatusTone(TransInterviewer iv)
+    {
+        if (iv == null) return "muted";
+        if (iv.IsActive) return "active";
+        if (DmIvActiveHelper.IsAwaitingRbVet(iv.IsSMEVerified, iv.ClientAction)) return "available";
+        return "inactive";
+    }
+    string DmV4IvStatusLabel(TransInterviewer iv)
+    {
+        var tone = DmV4IvStatusTone(iv);
+        if (tone == "active") return "Active";
+        if (tone == "available") return "Available";
+        return "Inactive";
+    }
+    bool DmV4CapConfigured(TransInterviewer iv) => iv?.InterviewCapacity != null;
+    int DmV4CapVal(TransInterviewer iv) => iv?.InterviewCapacity ?? 0;
+    bool DmV4CapShowUnlimited(bool limitedPolicy, TransInterviewer iv) =>
+        !limitedPolicy || iv?.InterviewCapacity == null;
+    bool DmV4CapExplicitZero(TransInterviewer iv) =>
+        iv?.InterviewCapacity != null && iv.InterviewCapacity.Value == 0;
     string DmV4LevelLabel(int? levelId)
     {
         if (levelId == null || levelId == 0) return "Proficient";
@@ -152,6 +175,14 @@
     .dm-v4-cap-set-btn{
         padding: 5px 6px;
         font-size: 10px;
+    }
+    .dm-v4-cap-unlimited{
+        font-size: 12px;
+        font-weight: 500;
+        color: #6b7280;
+    }
+    .dm-v4-cap-unlimited--blocked{
+        color: #b45309;
     }
     .fa-spinner{
         left:0px!important;
@@ -302,6 +333,7 @@
                                                                         <text>Edit and save to set the canonical brief for AI generation.</text>
                                                                     }
                                                                 </p>
+                                                                <p class="dm-v4-voice-rubric-error" id="dmV4VoiceRubricError" role="alert" hidden></p>
                                                                 <div class="dm-v4-voice-transcript__actions">
                                                                     <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4SaveTranscriptBtn">Save transcript</button>
                                                                     @if (dmV4HasVoice)
@@ -346,10 +378,11 @@
                                                     <p style="margin:6px 0 0;font-size:13px;color:#475569;line-height:1.5;">
                                                         Set weightages, mark elimination skills, edit time distribution. Concepts &amp; expectations live in <strong>Details</strong>.
                                                     </p>
+                                                    <p class="dm-v4-voice-rubric-error" id="dmV4ScoreRubricRegenError" role="alert" hidden></p>
                                                 </div>
                                                 <div class="dm-v4-section-toolbar__actions">
                                                     <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" onclick="AddRow(); if (window.dmV4RefreshRubric) window.dmV4RefreshRubric();" title="Add skill"><i class="fa fa-plus"></i> Add skill</button>
-                                                    <button type="submit" form="irfForm" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm"><i class="fa fa-check"></i> Save score rubric</button>
+                                                    <button type="submit" form="irfForm" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--save-rubric"><i class="fa fa-check"></i> Save score rubric</button>
                                                 </div>
                                             </div>
                                         <div class="card">
@@ -563,7 +596,7 @@
                                                                 <div class="dm-v4-rubric-footer">
                                                                     <span>Save the score rubric to persist weightages, elimination flags, and time limits.</span>
                                                                     <div class="tech-skill-button">
-                                                                        <input type="submit" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" value="Save score rubric" />
+                                                                        <input type="submit" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--save-rubric" value="Save score rubric" />
                                                                     </div>
                                                                 </div>
                                                     </div>
@@ -968,13 +1001,13 @@
                                             @{
                                                 var ivList = Model.InterviewerCollection ?? new List<TransInterviewer>();
                                                 int ivCount = ivList.Count;
-                                                int rbVetCount = ivList.Count(x => x.IsSMEVerified);
-                                                int clientVetCount = ivList.Count(x => DmV4ClientVetYes(x));
-                                                int onPanelCount = ivList.Count(x => x.IsSMEVerified && DmV4ClientVetYes(x));
+                                                bool dmIvLockNew = Model.DmIvLockNew;
+                                                int rbVetCount = ivList.Count(x => DmV4RbVetDisplayYes(x, dmIvLockNew));
+                                                int clientVetCount = ivList.Count(x => DmV4ClientVetDisplayYes(x, dmIvLockNew, DmV4RbVetDisplayYes(x, dmIvLockNew)));
+                                                int onPanelCount = ivList.Count(x => DmV4RbVetDisplayYes(x, dmIvLockNew) && DmV4ClientVetDisplayYes(x, dmIvLockNew, DmV4RbVetDisplayYes(x, dmIvLockNew)));
                                                 bool canEditIvOps = ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public";
                                                 bool canEditSurcharge = ViewBag.profileName == "Admin" || ViewBag.profileName == "SupportAdmin";
                                                 string screenJdTitle = Model.JDTiltle ?? "";
-                                                bool dmIvLockNew = Model.DmIvLockNew;
                                                 string dmAssignPolicy = string.IsNullOrEmpty(Model.DmAssignmentPolicy) ? "free" : Model.DmAssignmentPolicy;
                                                 int dmDefaultCap = Model.DmDefaultInterviewCap > 0 ? Model.DmDefaultInterviewCap : 20;
                                                 bool dmCapEnforced = string.Equals(dmAssignPolicy, "limited", StringComparison.OrdinalIgnoreCase);
@@ -1066,12 +1099,14 @@
                                         <div class="card">
                                             <div class="dm-v4-pinned-body" id="hidden_fields_eight">
                                                 @Html.HiddenFor(m => m.id)
-                                                <div class="dm-v4-iv-panel" id="dmV4IvPanel" data-cap-enforced="@(dmCapEnforced ? "1" : "0")" data-can-edit="@(canEditIvOps ? "1" : "0")" data-can-edit-surcharge="@(canEditSurcharge ? "1" : "0")">
+                                                <div class="dm-v4-iv-panel" id="dmV4IvPanel" data-lock="@(dmIvLockNew ? "1" : "0")" data-cap-enforced="@(dmCapEnforced ? "1" : "0")" data-can-edit="@(canEditIvOps ? "1" : "0")" data-can-edit-surcharge="@(canEditSurcharge ? "1" : "0")">
                                                     <div class="dm-v4-iv-grid dm-v4-iv-grid--head">
                                                         <span>Interviewer</span>
                                                         <span>Coded CV</span>
                                                         <span>AI verdict &amp; score</span>
-                                                       @*  <span>Interview limit</span> *@
+                                                        <span>Future</span>
+                                                        <span>Stats</span>
+                                                        <span>Interview limit</span>
                                                         <span>Per-iv rate</span>
                                                         <span>Surcharge</span>
                                                         <span>RB Vet</span>
@@ -1093,27 +1128,37 @@
                                                             var verdictReason = DmV4VerdictReasonSnippet(iv);
                                                             var ivScoreDisplay = (iv.AIScreeningScore > 0 || !string.IsNullOrWhiteSpace(aiReasonFull))
                                                                 ? iv.AIScreeningScore.ToString() : "—";
-                                                            var clientVetOn = DmV4ClientVetYes(iv);
+                                                            var rbVetDisplayOn = DmV4RbVetDisplayYes(iv, dmIvLockNew);
+                                                            var clientVetOn = DmV4ClientVetDisplayYes(iv, dmIvLockNew, rbVetDisplayOn);
+                                                            var ivStatusTone = DmV4IvStatusTone(iv);
+                                                            var ivStatusLabel = DmV4IvStatusLabel(iv);
                                                             var hasKycVideo = !string.IsNullOrWhiteSpace(iv.VideoLink);
                                                             var kycOk = iv.IsVideoApproved;
                                                             var kycTitle = kycOk ? "Video KYC · Verified" : (hasKycVideo ? "Video KYC · Pending approval — click to view" : "Video KYC · File missing");
                                                             var kycReviewUrl = Url.Action("InterviewerVideoKYC", "Dashboard", new { returnBack = 0, email = iv.EmailId });
                                                             var cvCode = !string.IsNullOrEmpty(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : null;
                                                             var screenUrl = Url.Action("ScreenInterviewer", "AIScreener", new { jdTitle = screenJdTitle, userId = iv.UserId, irfId = Model.id, irfName = Model.IRFId });
-                                                            var ivCap = iv.InterviewCapacity;
+                                                            var ivStatsUrl = Url.Action("InterviewerStatsDetails", "Interviewer", new { userId = iv.UserId, statType = "All", interviewerEmailId = iv.EmailId, irfId = Model.id, irfName = Model.IRFId });
+                                                            var ivCapConfigured = DmV4CapConfigured(iv);
+                                                            var ivCapVal = DmV4CapVal(iv);
+                                                            var ivCapShowUnlimited = DmV4CapShowUnlimited(dmCapEnforced, iv);
+                                                            var ivCapExplicitZero = DmV4CapExplicitZero(iv);
                                                             var ivAssigned = iv.TotalFuture;
-                                                            var ivCapPct = ivCap > 0 ? Math.Min(100, (int)Math.Round((double)ivAssigned / Math.Max(1, ivCap) * 100)) : 0;
-                                                            var ivCapBar = ivCap > 0 && ivAssigned >= ivCap ? "full" : (ivCapPct >= 80 ? "near" : "ok");
+                                                            var ivCapPct = ivCapConfigured && ivCapVal > 0 ? Math.Min(100, (int)Math.Round((double)ivAssigned / Math.Max(1, ivCapVal) * 100)) : 0;
+                                                            var ivCapBar = ivCapConfigured && ivCapVal > 0 && ivAssigned >= ivCapVal ? "full" : (ivCapPct >= 80 ? "near" : "ok");
                                                             <div class="dm-v4-iv-grid dm-v4-iv-row" data-row-index="@i"
                                                                  data-user-id="@iv.UserId" data-email="@iv.EmailId" data-irf-id="@iv.IRFId" data-trans-id="@iv.id"
-                                                                 data-rb-vet="@(iv.IsSMEVerified ? "1" : "0")" data-client-vet="@(clientVetOn ? "1" : "0")"
-                                                                 data-capacity="@ivCap" data-assigned="@ivAssigned" data-rate="@iv.PerSuccessRate"
+                                                                 data-rb-vet="@(rbVetDisplayOn ? "1" : "0")" data-client-vet="@(clientVetOn ? "1" : "0")"
+                                                                 data-is-active="@(iv.IsActive ? "1" : "0")" data-is-available="@(iv.IsAvailable ? "1" : "0")" data-client-action="@(iv.ClientAction ?? "")"
+                                                                 data-capacity="@(ivCapConfigured ? ivCapVal.ToString() : "")" data-cap-configured="@(ivCapConfigured ? "1" : "0")" data-assigned="@ivAssigned" data-rate="@iv.PerSuccessRate"
                                                                  data-video-link="@iv.VideoLink" data-interviewer-profile-id="@iv.InterviewerId"
                                                                  data-ai-verdict="@(iv.AIVerdict ?? "")" data-ai-score="@iv.AIScreeningScore"
                                                                  data-verdict-tone="@verdictTone" data-verdict-label="@verdictLabel"
                                                                  data-coded-cv="@(iv.CodedResumeLink ?? "")" data-cv-code="@(cvCode ?? "")"
                                                                  data-kyc-approved="@(kycOk ? "1" : "0")" data-kyc-review-url="@kycReviewUrl"
                                                                  data-primary-skill="@(iv.PrimarySkill ?? "")" data-total-interviews="@iv.TotalInterview"
+                                                                 data-screened-at="@(iv.ModifiedAt?.ToString("o") ?? "")"
+                                                                 data-stats-url="@ivStatsUrl"
                                                                  data-resume-link="@(iv.ResumeLink ?? "")" data-jd-title="@screenJdTitle" data-irf-name="@Model.IRFId">
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--name">
                                                                     <div class="dm-v4-iv-name-row">
@@ -1140,6 +1185,10 @@
                                                                     @if (canEditIvOps)
                                                                     {
                                                                         <div class="dm-v4-iv-email">@iv.EmailId</div>
+                                                                    }
+                                                                    @if (dmIvLockNew)
+                                                                    {
+                                                                        <span class="dm-v4-iv-status dm-v4-iv-status--@ivStatusTone" data-role="iv-status" title="Derived from RB Vet and Client Vet">@ivStatusLabel</span>
                                                                     }
                                                                     @if (!hasKycVideo && canEditIvOps)
                                                                     {
@@ -1199,7 +1248,7 @@
                                                                             <button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--screen"
                                                                                     data-user-id="@iv.UserId" data-irf-id="@Model.id" data-jd-title="@screenJdTitle" data-irf-name="@Model.IRFId"
                                                                                     data-has-screening="@(dmIvHasScreening ? "1" : "0")" title="Run AI resume screening for this interviewer">
-                                                                                <i class="fa fa-search" aria-hidden="true"></i> @(dmIvHasScreening ? "Regenerate" : "Screen Resume")
+                                                                                <i class="fa fa-@(dmIvHasScreening ? "refresh" : "search")" aria-hidden="true"></i> @(dmIvHasScreening ? "Regenerate" : "Screen Resume")
                                                                             </button>
                                                                         }
                                                                         @if (dmIvHasResume)
@@ -1227,10 +1276,33 @@
                                                                     {
                                                                         <div class="dm-v4-iv-ai-reason-full" hidden aria-hidden="true">@aiReasonFull</div>
                                                                     }
+                                                                    @if (dmIvHasScreening && iv.ModifiedAt.HasValue)
+                                                                    {
+                                                                        <div class="dm-v4-iv-screened-at dm-v4-muted">Last screened: @iv.ModifiedAt.Value.ToString("g")</div>
+                                                                    }
                                                                 </div>
-                                                                @* <div class="dm-v4-iv-cell dm-v4-iv-cell--capacity">
-                                                                    <div class="dm-v4-iv-capacity" data-capacity="@ivCap" data-assigned="@ivAssigned">
-                                                                        @if (ivCap == 0 && canEditIvOps)
+                                                                <div class="dm-v4-iv-cell dm-v4-iv-cell--future">
+                                                                    <span class="dm-v4-mono dm-v4-iv-future-count" title="Future assigned interviews on this channel">@ivAssigned</span>
+                                                                </div>
+                                                                <div class="dm-v4-iv-cell dm-v4-iv-cell--stats">
+                                                                    <a href="@ivStatsUrl" target="_blank" rel="noopener" class="dm-v4-iv-stats-link" title="Skill channel stats for this interviewer">Stats ↗</a>
+                                                                </div>
+                                                                <div class="dm-v4-iv-cell dm-v4-iv-cell--capacity">
+                                                                    <div class="dm-v4-iv-capacity" data-capacity="@(ivCapConfigured ? ivCapVal.ToString() : "")" data-cap-configured="@(ivCapConfigured ? "1" : "0")" data-assigned="@ivAssigned">
+                                                                        @if (ivCapShowUnlimited)
+                                                                        {
+                                                                            <span class="dm-v4-cap-unlimited" title="No interview limit configured">Unlimited</span>
+                                                                        }
+                                                                        else if (ivCapExplicitZero && canEditIvOps)
+                                                                        {
+                                                                            <button type="button" class="dm-v4-cap-set-btn" title="Interview limit is 0 — interviewer cannot be assigned">@Html.Raw(dmV4PlusIcon) Set limit</button>
+                                                                            <div class="dm-v4-cap-status dm-v4-cap-status--full">Cannot be assigned</div>
+                                                                        }
+                                                                        else if (ivCapExplicitZero)
+                                                                        {
+                                                                            <span class="dm-v4-cap-unlimited dm-v4-cap-unlimited--blocked">0 · Cannot assign</span>
+                                                                        }
+                                                                        else if (!ivCapConfigured && canEditIvOps)
                                                                         {
                                                                             <button type="button" class="dm-v4-cap-set-btn" title="Set interview limit">@Html.Raw(dmV4PlusIcon) Set limit</button>
                                                                         }
@@ -1241,21 +1313,20 @@
                                                                                 <span class="dm-v4-iv-cap-sep">/</span>
                                                                                 @if (canEditIvOps)
                                                                                 {
-                                                                                    <button type="button" class="dm-v4-cap-pill v4-cap-pill" data-cap="@ivCap" title="Click to set this interviewer's interview limit">
-                                                                                        <span class="dm-v4-cap-pill-val">@ivCap</span>
+                                                                                    <button type="button" class="dm-v4-cap-pill v4-cap-pill" data-cap="@ivCapVal" title="Click to set this interviewer's interview limit">
+                                                                                        <span class="dm-v4-cap-pill-val">@ivCapVal</span>
                                                                                         @Html.Raw(dmV4MoneyEditIcon)
                                                                                     </button>
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    <span class="dm-v4-mono dm-v4-cap-readonly">@ivCap</span>
+                                                                                    <span class="dm-v4-mono dm-v4-cap-readonly">@ivCapVal</span>
                                                                                 }
-                                                                                <span class="dm-v4-cap-iv-suffix">iv</span>
                                                                             </div>
-                                                                            @if (ivCap > 0)
+                                                                            @if (ivCapVal > 0)
                                                                             {
                                                                                 <div class="dm-v4-cap-bar"><span class="dm-v4-cap-bar-fill dm-v4-cap-bar-fill--@ivCapBar" style="width:@(ivCapPct)%"></span></div>
-                                                                                if (dmCapEnforced && ivAssigned >= ivCap)
+                                                                                if (dmCapEnforced && ivAssigned >= ivCapVal)
                                                                                 {
                                                                                     <div class="dm-v4-cap-status dm-v4-cap-status--full">FULL · CAPPED</div>
                                                                                 }
@@ -1266,7 +1337,7 @@
                                                                             }
                                                                         }
                                                                     </div>
-                                                                </div> *@
+                                                                </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--rate">
                                                                     @{
                                                                         var ivRateDisplay = iv.PerSuccessRate > 0 ? iv.PerSuccessRate.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("en-IN")) : "—";
@@ -1290,39 +1361,36 @@
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--surcharge">
                                                                     @if (canEditSurcharge)
                                                                     {
-                                                                        <button type="button" class="dm-v4-money-pill v4-money-pill dm-v4-surcharge-pill" data-value="@iv.Surcharge" data-user-id="@iv.UserId" data-irf-id="@Model.id" title="Surcharge percentage applied on top of base rate">
-                                                                            <span class="dm-v4-money-val">@iv.Surcharge</span><span class="dm-v4-money-unit">%</span>
+                                                                        var surchargeDisplay = iv.Surcharge > 0 ? iv.Surcharge.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("en-IN")) : "0";
+                                                                        <button type="button" class="dm-v4-money-pill v4-money-pill dm-v4-surcharge-pill" data-value="@iv.Surcharge" data-user-id="@iv.UserId" data-irf-id="@Model.id" title="Surcharge amount in INR (max ₹@iv.PerSuccessRate)">
+                                                                            <span class="dm-v4-money-unit">₹</span><span class="dm-v4-money-val">@surchargeDisplay</span>
                                                                             @Html.Raw(dmV4MoneyEditIcon)
                                                                         </button>
                                                                         @Html.HiddenFor(m => m.InterviewerCollection[i].Surcharge)
-                                                                        if (iv.Surcharge > 0 && iv.PerSuccessRate > 0)
-                                                                        {
-                                                                            <div class="dm-v4-surcharge-extra">+₹@(((int)Math.Round(iv.PerSuccessRate * iv.Surcharge / 100.0)).ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("en-IN")))</div>
-                                                                        }
                                                                     }
                                                                     else
                                                                     {
                                                                         <span class="dm-v4-money-pill dm-v4-money-pill--readonly">
-                                                                            <span class="dm-v4-money-val">@iv.Surcharge</span><span class="dm-v4-money-unit">%</span>
+                                                                            <span class="dm-v4-money-unit">₹</span><span class="dm-v4-money-val">@(iv.Surcharge > 0 ? iv.Surcharge.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("en-IN")) : "0")</span>
                                                                         </span>
                                                                         @Html.HiddenFor(m => m.InterviewerCollection[i].Surcharge)
                                                                     }
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell">
                                                                     <div class="dm-v4-vet-toggle" data-vet="rb">
-                                                                        <button type="button" class="dm-v4-vet-btn @(iv.IsSMEVerified ? "is-on" : "")" data-vet-value="1" @(canEditIvOps ? "" : "disabled")>Yes</button>
-                                                                        <button type="button" class="dm-v4-vet-btn @(!iv.IsSMEVerified ? "is-on" : "")" data-vet-value="0" @(canEditIvOps ? "" : "disabled")>No</button>
+                                                                        <button type="button" class="dm-v4-vet-btn @(rbVetDisplayOn ? "is-on" : "")" data-vet-value="1" @(canEditIvOps ? "" : "disabled")>Yes</button>
+                                                                        <button type="button" class="dm-v4-vet-btn @(!rbVetDisplayOn ? "is-on" : "")" data-vet-value="0" @(canEditIvOps ? "" : "disabled")>No</button>
                                                                     </div>
-                                                                    <div class="dm-v4-iv-vet-sub">@(iv.IsSMEVerified ? "Risebird verified" : "Awaiting RB review")</div>
-                                                                    <input type="hidden" class="dm-v4-rb-vet-hidden" value="@(iv.IsSMEVerified ? "true" : "false")" />
+                                                                    <div class="dm-v4-iv-vet-sub">@(rbVetDisplayOn ? "Risebird verified" : "Awaiting RB review")</div>
+                                                                    <input type="hidden" class="dm-v4-rb-vet-hidden" value="@(rbVetDisplayOn ? "true" : "false")" />
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell">
-                                                                    <div class="dm-v4-vet-toggle" data-vet="client">
-                                                                        <button type="button" class="dm-v4-vet-btn @(clientVetOn ? "is-on" : "")" data-vet-value="1" @(!iv.IsSMEVerified || !canEditIvOps ? "disabled" : "")>Yes</button>
-                                                                        <button type="button" class="dm-v4-vet-btn @(!clientVetOn ? "is-on" : "")" data-vet-value="0" @(!iv.IsSMEVerified || !canEditIvOps ? "disabled" : "")>No</button>
+                                                                    <div class="dm-v4-vet-toggle" data-vet="client" title="@(!rbVetDisplayOn ? "Needs RB Vet first." : "")">
+                                                                        <button type="button" class="dm-v4-vet-btn @(clientVetOn ? "is-on" : "")" data-vet-value="1" @(!rbVetDisplayOn || !canEditIvOps ? "disabled" : "")>Yes</button>
+                                                                        <button type="button" class="dm-v4-vet-btn @(!clientVetOn ? "is-on" : "")" data-vet-value="0" @(!rbVetDisplayOn || !canEditIvOps ? "disabled" : "")>No</button>
                                                                     </div>
                                                                     <div class="dm-v4-iv-vet-sub dm-v4-iv-vet-sub--client">
-                                                                        @(iv.IsSMEVerified
+                                                                        @(rbVetDisplayOn
                                                                             ? (clientVetOn ? "Signed off by client" : "Awaiting client sign-off")
                                                                             : "Blocked — needs RB Vet first")
                                                                     </div>
@@ -1641,84 +1709,20 @@
                 <span class="dm-v4-vd-hero__title" id="dmV4VerdictDrawerHeroTitle">—</span>
             </div>
             <p class="dm-v4-vd-hero__reason" id="dmV4VerdictDrawerReason"></p>
-        </div>
-        <div class="dm-v4-vd-grid-2 dm-v4-vd-identity">
-            <div class="dm-v4-vd-card dm-v4-vd-card--code">
-                <div class="dm-v4-vd-card__label">Code name</div>
-                <span class="dm-v4-badge dm-v4-badge--neutral dm-v4-vd-code-badge" id="dmV4VerdictDrawerCode">—</span>
-            </div>
-            <div class="dm-v4-vd-card dm-v4-vd-card--cv">
-                <div class="dm-v4-vd-card__label">Coded CV</div>
-                <div class="dm-v4-vd-cv-value" id="dmV4VerdictDrawerCv">—</div>
-            </div>
-        </div>
-        <div class="dm-v4-vd-grid-2 dm-v4-vd-quicklinks">
-            <button type="button" class="dm-v4-vd-link-card dm-v4-vd-link-card--kyc" id="dmV4VerdictDrawerKycBtn">
-                <span class="dm-v4-vd-link-card__icon dm-v4-vd-link-card__icon--kyc" aria-hidden="true">
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><rect x="2" y="4" width="9" height="8" rx="1.5"/><path d="M11 7l3-2v6l-3-2"/><circle cx="6.5" cy="8" r="1.4" fill="currentColor"/></svg>
-                </span>
-                <span class="dm-v4-vd-link-card__body">
-                    <span class="dm-v4-vd-link-card__title-row">
-                        <span class="dm-v4-vd-link-card__title">Video KYC</span>
-                        <span class="dm-v4-badge dm-v4-badge--green dm-v4-badge--xs" id="dmV4VerdictDrawerKycBadge">—</span>
-                    </span>
-                    <span class="dm-v4-vd-link-card__sub dm-v4-vd-link-card__sub--mono" id="dmV4VerdictDrawerKycSub">—</span>
-                </span>
-                <span class="dm-v4-vd-link-card__action">View <span class="dm-v4-vd-chevron" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="10" height="10"><path d="M6 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
-            </button>
-            <a class="dm-v4-vd-link-card dm-v4-vd-link-card--stats" id="dmV4VerdictDrawerStatsLink" href="#" target="_blank" rel="noopener">
-                <span class="dm-v4-vd-link-card__icon dm-v4-vd-link-card__icon--stats" aria-hidden="true">
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M2 13V4l4 5 3-3 5 5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="5" r="1.5"/></svg>
-                </span>
-                <span class="dm-v4-vd-link-card__body">
-                    <span class="dm-v4-vd-link-card__title">Skill channel stats</span>
-                    <span class="dm-v4-vd-link-card__sub dm-v4-vd-link-card__sub--plain" id="dmV4VerdictDrawerStatsSub">—</span>
-                </span>
-                <span class="dm-v4-vd-link-card__action">Open <span class="dm-v4-vd-chevron" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="10" height="10"><path d="M6 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
-            </a>
-        </div>
-        
-        <div class="dm-v4-vd-section">
-            <div class="dm-v4-vd-section__head">
-                <span class="dm-v4-vd-section__label">Overall match</span>
+            <div class="dm-v4-vd-overall-row">
                 <span class="dm-v4-vd-overall"><span id="dmV4VerdictDrawerOverall">—</span><span class="dm-v4-vd-overall__dim">/ 100</span></span>
             </div>
-            <div class="dm-v4-vd-factors" id="dmV4VerdictDrawerFactors"></div>
-        </div>
-        <div class="dm-v4-vd-section">
-            <div class="dm-v4-vd-section__label" id="dmV4VerdictDrawerFlagsTitle">Screening notes</div>
             <ul class="dm-v4-vd-flags" id="dmV4VerdictDrawerFlags"></ul>
+            <p class="dm-v4-iv-screened-at dm-v4-muted" id="dmV4VerdictDrawerScreenedAt" style="display:none;"></p>
         </div>
-        <div class="dm-v4-vd-block dm-v4-vd-block--cap">
-            <div class="dm-v4-vd-block__label">Interview limit for this engagement</div>
-            <div class="dm-v4-vd-cap-box">
-                <div class="dm-v4-vd-cap-box__row">
-                    <div class="dm-v4-vd-cap-box__left">
-                        <div class="dm-v4-vd-cap-box__nums-line">
-                            <span class="dm-v4-vd-cap-box__assigned" id="dmV4VerdictDrawerCapAssigned">0</span>
-                            <span class="dm-v4-vd-cap-box__slash">/ <span id="dmV4VerdictDrawerCapTotal">0</span></span>
-                            <span class="dm-v4-vd-cap-box__hint-inline">interviews used</span>
-                        </div>
-                        <div class="dm-v4-vd-cap-box__sub" id="dmV4VerdictDrawerCapHint">—</div>
-                    </div>
-                    <div class="dm-v4-vd-cap-stepper" aria-label="Interview cap (read-only preview)">
-                        <span class="dm-v4-vd-cap-stepper__label">Cap</span>
-                        <button type="button" class="dm-v4-vd-cap-stepper__btn" tabindex="-1" disabled aria-hidden="true">−</button>
-                        <span class="dm-v4-vd-cap-stepper__val" id="dmV4VerdictDrawerCapStepperVal">0</span>
-                        <button type="button" class="dm-v4-vd-cap-stepper__btn" tabindex="-1" disabled aria-hidden="true">+</button>
-                    </div>
-                </div>
-                <div class="dm-v4-vd-cap-bar" id="dmV4VerdictDrawerCapBar"><span class="dm-v4-vd-cap-bar__fill" id="dmV4VerdictDrawerCapFill"></span></div>
-            </div>
-        </div>
-        <div class="dm-v4-vd-block dm-v4-vd-block--coverage">
-            <div class="dm-v4-vd-block__label">Skill coverage vs rubric</div>
-            <div class="dm-v4-vd-skill-chips" id="dmV4VerdictDrawerSkillChips"></div>
+        <div class="dm-v4-vd-section dm-v4-vd-section--screen">
+            <button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--screen dm-v4-iv-cv-btn--screen-drawer" id="dmV4VerdictDrawerScreenBtn">
+                <i class="fa fa-search" aria-hidden="true"></i> <span class="dm-v4-screen-btn-label">Screen interviewer</span>
+            </button>
         </div>
         <div class="dm-v4-vd-foot">
             <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4VerdictDrawerClose">Close</button>
-            <a class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm dm-v4-vd-foot__cv" id="dmV4VerdictDrawerCvBtn" href="#" target="_blank" rel="noopener" style="display:none;">Open coded CV</a>
-            <a class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4VerdictDrawerFull" href="#" target="_blank" rel="noopener">Full AI report ↗</a>
+            <a class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4VerdictDrawerFull" href="#" target="_blank" rel="noopener">Full AI report ↗</a>
         </div>
     </div>
 </aside>
@@ -2436,6 +2440,17 @@
         if (window.dmV4VoiceRecorderTimerStop) window.dmV4VoiceRecorderTimerStop();
     }
 
+    function dmV4StopVoiceModalAudio() {
+        ['controlAudioId', 'dmV4VoiceAudio'].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            try {
+                el.pause();
+                el.currentTime = 0;
+            } catch (e) { }
+        });
+    }
+
     function OpenVoiceRecordingModal(irfid) {
         dmV4ResetVoiceRecorderUi();
         $('#divIRFaudioRecording').attr('data-irf-id', irfid);
@@ -2458,6 +2473,7 @@
     }
 
     function closeVoiceRecordingModal(irfid) {
+        dmV4StopVoiceModalAudio();
         document.getElementById("VoiceRecordingModal").style.display = "none";
         document.body.classList.remove('dm-v4-voice-modal-open');
         try { cancelRecording(); } catch (e) { }
@@ -2470,6 +2486,21 @@
     }
 
     (function () {
+        if (window.dmV4VoiceModalDismissHooksInstalled) return;
+        window.dmV4VoiceModalDismissHooksInstalled = true;
+        $(document).on('keydown.dmV4VoiceModal', function (e) {
+            if (e.key === 'Escape' && $('#VoiceRecordingModal').is(':visible')) {
+                var irfId = $('#divIRFaudioRecording').data('irf-id') || '@Model.id';
+                closeVoiceRecordingModal(irfId);
+            }
+        });
+        $('#VoiceRecordingModal').on('click.dmV4VoiceModal', function (e) {
+            if (e.target === this) {
+                var irfId = $('#divIRFaudioRecording').data('irf-id') || '@Model.id';
+                closeVoiceRecordingModal(irfId);
+            }
+        });
+
         if (window.dmV4VoiceRecorderHooksInstalled) return;
         window.dmV4VoiceRecorderHooksInstalled = true;
 
@@ -3238,7 +3269,7 @@ else
         white-space:normal;
     }
 </style>
-<script src="~/js/dm-v4-voice.js?v=20240527"></script>
+<script src="~/js/dm-v4-voice.js?v=20240529"></script>
 <script src="~/js/dm-v4-layout.js?v=20240527v"></script>
 <script src="~/js/dm-v4-questions.js?v=20240521i"></script>
 

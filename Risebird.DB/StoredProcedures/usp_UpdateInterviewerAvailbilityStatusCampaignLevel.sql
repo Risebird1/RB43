@@ -100,8 +100,15 @@ end
 	set @fltRate = 420
   end
 
-   Insert into TransInterviewer(IRFId,InterviewerId,UserId, IsActive, IsAvailable, PerSuccessRate, [Source], IsCampaignActivity, CampaignId)     
-   values(@IRFId,@InterviewerId,@UserId,0,1, @fltRate, @rsc, 1, @campaignId)   
+  DECLARE @isLocked bit = ISNULL((SELECT DmIvLockNew FROM IRF WHERE id = @irfId), 0)
+
+   Insert into TransInterviewer(IRFId,InterviewerId,UserId, IsActive, IsAvailable, IsSMEVerified, ClientAction, PerSuccessRate, [Source], IsCampaignActivity, CampaignId, ActivatedAt)     
+   values(@IRFId,@InterviewerId,@UserId,
+   CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END, 1,
+   CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
+   CASE WHEN @isLocked = 1 THEN NULL ELSE 'Shortlisted' END,
+   @fltRate, @rsc, 1, @campaignId,
+   CASE WHEN @isLocked = 1 THEN NULL ELSE @timeNow END)   
     
   End  
   Else  
