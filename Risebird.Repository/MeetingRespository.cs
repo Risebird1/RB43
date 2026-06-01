@@ -4517,7 +4517,11 @@ namespace Risebird.Repository
             try
             {
                 List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
-                var query = "Select ph.id,ul.EmailId as InterviewerEmailid, ul.FirstName,ph.PaymentDate as Date,ph.Status,ph.Amount as Points,ip.AssessmentGroupId,ph.TotalAmount from PaymentHistory ph join Userlist ul on ul.id=ph.Userid join InterviewerProfile ip on ip.Userid=ul.id ";
+                var query = @"Select ph.id, ul.EmailId as InterviewerEmailid, ul.FirstName, ph.PaymentDate as Date, ph.Status,
+                    ph.Amount as Points, ip.AssessmentGroupId, ph.TotalAmount, ph.TransferId, ph.CfTransferId, ph.TransferUtr, ph.PayoutStatus, ph.CfPaymentId
+                    from PaymentHistory ph
+                    join Userlist ul on ul.id = ph.Userid
+                    join InterviewerProfile ip on ip.Userid = ul.id";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<RBInterviewDetails>(query, null);

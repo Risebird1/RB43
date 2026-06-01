@@ -254,7 +254,7 @@ namespace Risebird.Business
                 transfer_id = transferId,
                 transfer_amount = amount,
                 transfer_mode = transferMode,
-                remarks = Truncate(remarks, 70),
+                transfer_remarks = Truncate(remarks, 70),
                 beneficiary_details = new
                 {
                     beneficiary_id = beneId
