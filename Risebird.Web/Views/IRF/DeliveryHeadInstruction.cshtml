@@ -388,7 +388,7 @@
                                         <div class="card">
                                             <div class="dm-v4-pinned-body" id="hidden_fields_two">
 
-                                                @using (Html.BeginForm("DeliveryHeadInstruction", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckConditions()" }))
+                                                @using (Html.BeginForm("DeliveryHeadInstruction", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return dmV4OnRubricFormSubmit()" }))
                                                 {
                                                     @Html.HiddenFor(m => m.SkillSetsevaluate)
                                                     <div class="dm-v4-rubric-panel">
@@ -2051,8 +2051,8 @@
 @await Html.PartialAsync("~/Views/Common/_CalibrationMeeting.cshtml")
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v=2024" defer></script>
 <script src="~/js/SkillChannelAddEdit.js?v=2024"></script>
-<script src="~/js/addeditskillchannelcommonmethods.js?v=2024"></script>
-<script src="~/js/FeedbackRecorder/Record.js?v=2024"></script>
+<script src="~/js/addeditskillchannelcommonmethods.js?v=20250602rubric"></script>
+<script src="~/js/FeedbackRecorder/Record.js?v=20250602"></script>
 <script src="~/js/common.js?v=2024"></script>
 
 @if (ViewBag.Message != null)
@@ -2176,12 +2176,16 @@
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#SkillTable tr").length - 1;
 
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        $tr.find("input,select,textarea").attr("name", function () {
+            if (!this.id) return this.getAttribute('name');
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/);
+            if (!parts) return this.getAttribute('name');
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3];
+        }).attr("id", function () {
+            if (!this.id) return this.id;
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/);
+            if (!parts) return this.id;
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3];
         });
         $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
             var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
@@ -2208,47 +2212,6 @@
     }
 
 
-    function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
-        if ($(element).parents('tbody').find('tr').length === 1) {
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-            //document.getElementById("btnUpload").disabled = false;
-            var closestRow = $(element).closest('tr');
-            var currentIndex = closestRow[0].sectionRowIndex;
-            var totalRows = $(element).parents('tbody').find('tr').length;
-            var maxIndex = totalRows - 1;
-            if (currentIndex == maxIndex) {
-                $(element).closest('tr').remove();
-            }
-            else {
-                $(element).closest('tr').remove();
-                var startIndex = currentIndex + 1;
-                var endIndex = maxIndex + 1;
-                for (i = startIndex; i < endIndex; i++) {
-                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                    //name="ClientCollection[3].ClientUserId"
-                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
-
-                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
-
-                    if (tdFour != '') {
-                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
-                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
-                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
-                    }
-                }
-            }
-        }
-    }
     function AddRowSkillTwoCollection() {
         var table = document.getElementById("SkillTable2");
         var rowCount = table.rows.length;
@@ -2438,6 +2401,7 @@
         if (stopBtn) stopBtn.disabled = true;
         if (cancelBtn) cancelBtn.disabled = true;
         if (window.dmV4VoiceRecorderTimerStop) window.dmV4VoiceRecorderTimerStop();
+        window.dmV4VoiceRecordingStartedAt = 0;
     }
 
     function dmV4StopVoiceModalAudio() {
@@ -2536,9 +2500,17 @@
             window.dmV4VoiceRecorderTimerStop();
         }
 
-        function onRecordingStart() {
+        function onRecordingPrepare() {
             showLivePanel();
+            startedAt = 0;
+            $('#dmV4RecorderTimer').text('0:00');
+            window.dmV4VoiceRecorderTimerStop();
+            dmV4SetRecordingStatus('Connecting microphone…', 'active');
+        }
+
+        function onRecordingActualStart() {
             startedAt = Date.now();
+            window.dmV4VoiceRecordingStartedAt = startedAt;
             $('#dmV4RecorderTimer').text('0:00');
             window.dmV4VoiceRecorderTimerStop();
             timerId = setInterval(function () {
@@ -2549,15 +2521,22 @@
 
         function onRecordingEnd() {
             window.dmV4VoiceRecorderTimerStop();
+            window.dmV4VoiceRecordingStartedAt = 0;
             $('#divIRFaudioRecording').removeClass('is-recording');
             $('#dmV4RecorderWaveform').removeClass('is-active');
         }
+
+        window.dmV4OnVoiceRecordingStarted = onRecordingActualStart;
+        window.dmV4OnVoiceRecordingStartFailed = function () {
+            dmV4SetRecordingStatus('Microphone access failed. Check permissions and try again.', null);
+            window.setTimeout(dmV4ResetVoiceRecorderUi, 2500);
+        };
 
         var origStart = window.startRecording;
         if (typeof origStart === 'function') {
             window.startRecording = function () {
                 origStart.apply(this, arguments);
-                onRecordingStart();
+                onRecordingPrepare();
             };
         }
 
@@ -3270,7 +3249,7 @@ else
     }
 </style>
 <script src="~/js/dm-v4-voice.js?v=20240529"></script>
-<script src="~/js/dm-v4-layout.js?v=20240527v"></script>
+<script src="~/js/dm-v4-layout.js?v=20250602vet"></script>
 <script src="~/js/dm-v4-questions.js?v=20240521i"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
