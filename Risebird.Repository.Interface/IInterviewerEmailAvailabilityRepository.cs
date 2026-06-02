@@ -54,6 +54,9 @@ namespace Risebird.Repository.Interface
 
         Task<int> EnsureEARecordForProfileInterviewerAsync(int interviewerProfileId, string magName);
 
+        // MAG lookup
+        Task<string> GetMAGNameByAssessmentGroupIdAsync(int assessmentGroupId);
+
         // Centralized call history page
         Task<(List<IACallDisposition> Items, int TotalCount)> GetAllCallDispositionsAsync(
             int page, int pageSize, string magName, string intent, string callStatus,
