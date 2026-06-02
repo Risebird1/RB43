@@ -19,7 +19,7 @@ BEGIN
 select distinct userlist.EmailId,userlist.uniqueid from [dbo].[TransInterviewer] tr    
 join [dbo].[IRF] irf on tr.IRFId = irf.id    
 join [dbo].[UserList] userlist on tr.UserId = userlist.id    
-where irf.id = @irfId and tr.IsActive=1 and tr.IsAvailable=1   
+where irf.id = @irfId and tr.IsActive=1 and tr.IsAvailable=1 and userlist.IsActive=1   
 END    
 --Else    
 -- BEGIN    

@@ -37,7 +37,10 @@ OUTPUT inserted.interviewer, inserted.candidateEmail, inserted.candidateName, in
 into @OutputTable
 WHERE IRFId = @IRFId and interviewDate >= @date  
   
-select * from @OutputTable
+select CASE WHEN ISNULL(ul.IsActive, 0) = 1 THEN ot.interviewer ELSE NULL END as interviewer,
+ot.candidateEmail, ot.candidateName, ot.ClientHrContact, ot.interviewDate, ot.imid, ot.IRFId
+from @OutputTable ot
+left join UserList ul on ul.EmailId = ot.interviewer
 End 
   
 

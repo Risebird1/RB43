@@ -36,7 +36,7 @@ namespace Risebird.AzureTimerFunctions
             try
             {
                 var phoneNumbers = new List<string>();
-                var query = "select UserList.MobileNumber from UserList inner join (select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1) a on a.interviewer=UserList.EmailId";
+                var query = "select UserList.MobileNumber from UserList inner join (select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1) a on a.interviewer=UserList.EmailId where UserList.IsActive=1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now);
                 dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(35));

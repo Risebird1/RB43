@@ -8,6 +8,7 @@ namespace Risebird.Repository.Interface
 {
     public interface IMeetingRespository
     {
+        Task<bool> IsUserActive(string emailId);
         Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings();
         Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate, string emailId = null);
         Task<IEnumerable<MeetingVM>> GetAllCancelInterview(DateTime startDate, DateTime endDate, string emailId = null);

@@ -1554,7 +1554,10 @@ namespace Risebird.Business
                     //get emails
                     foreach (var item in updatedMeetings ?? new List<MeetingVM>())
                     {
-                        await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
+                        if (!string.IsNullOrEmpty(item.interviewer))
+                        {
+                            await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
+                        }
                         await _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, null, item.interviewDate.ToString("MMMM dd, yyyy"), irfId);
                         //if (emailid != item.ClientHrContact)
                         //{
@@ -1563,7 +1566,10 @@ namespace Risebird.Business
                         //    await _notificationHelper.SendInterviewCancelledMailClient(item.interviewDate.ToString(), item.candidateName, ClientHrContact, irfId, item.imid);
 
                         //}
-                        await _notificationHelper.SendInterviewCancelledMail(item.risebirdHR, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
+                        if (!string.IsNullOrEmpty(item.risebirdHR))
+                        {
+                            await _notificationHelper.SendInterviewCancelledMail(item.risebirdHR, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
+                        }
                     }
 
                 }
