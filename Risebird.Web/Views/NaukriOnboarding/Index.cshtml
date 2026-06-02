@@ -400,6 +400,10 @@
                                                             "AwaitingRetry" or "CallFailed" => "background:#e2e3e5;color:#41464b;border:1px solid #6c757d;",
                                                             _ => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
                                                         };
+                                                        bool emailSentAwaitingResponse = r.AutomationStatus == "EmailSent"
+                                                            && r.InvitationEmailSent == true
+                                                            && string.IsNullOrEmpty(r.PlivoCallStatus)
+                                                            && string.IsNullOrEmpty(r.ProspectResponse);
                                                         string autoLabel = r.AutomationStatus switch {
                                                             "ParsingResume" => "Parsing",
                                                             "SelectingChannel" => "Selecting",
@@ -407,7 +411,7 @@
                                                             "CallFailed" => "Call Failed",
                                                             "AwaitingRetry" => "Retry Pending",
                                                             "SendingEmail" => "Emailing",
-                                                            "EmailSent" => "Email Sent",
+                                                            "EmailSent" => emailSentAwaitingResponse ? "Awaiting Reply" : "Email Sent",
                                                             "ManualRequired" => "Manual",
                                                             "Cold" => "Cold",
                                                             "Completed" => "Done",
@@ -661,15 +665,35 @@
                         </div>
                     </div>
 
-                    <!-- Recruitment Call (between Step 2 and Step 3) -->
+                    <!-- Step 3: Send Invitation Email -->
+                    <div class="mgm-action-card pending disabled" id="step3Card">
+                        <div class="d-flex align-items-start gap-3">
+                            <span class="mgm-step-number pending" id="step3Number">3</span>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                                    <div class="flex-grow-1" style="min-width:180px;">
+                                        <strong style="font-size:13px;">Send Invitation Email</strong>
+                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="step3Subtitle">Generates a MAG application link and sends the prospect an email with registration link and response options</div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                        <button type="button" class="btn btn-primary btn-sm mgm-action-btn" id="btnSendInvitation"><i class="fas fa-paper-plane me-1"></i>Send Email</button>
+                                        <button type="button" class="btn btn-outline-primary btn-sm mgm-action-btn" id="btnResendInvitation" style="display:none;"><i class="fas fa-redo me-1"></i>Resend</button>
+                                    </div>
+                                </div>
+                                <div class="mgm-result-block" id="step3Result" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recruitment Call (after email — only if no email response within 1 hour) -->
                     <div class="mgm-action-card pending disabled" id="plivoCallCard" style="border-color:#6f42c1;background:#faf8ff;">
                         <div class="d-flex align-items-start gap-3">
                             <span class="mgm-step-number" id="plivoCallIcon" style="background:#6f42c1;color:#fff;"><i class="fas fa-phone-alt" style="font-size:12px;"></i></span>
                             <div class="flex-grow-1">
                                 <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
                                     <div class="flex-grow-1" style="min-width:180px;">
-                                        <strong style="font-size:13px;">Recruitment Call (Plivo AI Agent)</strong>
-                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="plivoCallSubtitle">Call the prospect to gauge interest in freelance interviewing with Risebird</div>
+                                        <strong style="font-size:13px;">Follow-up Call (Plivo AI Agent)</strong>
+                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="plivoCallSubtitle">If the prospect hasn't responded to the email within 1 hour, a follow-up call is placed</div>
                                     </div>
                                     <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                         <button type="button" class="btn btn-sm mgm-action-btn text-white" id="btnInitiateCall" style="background:#6f42c1;border-color:#6f42c1;"><i class="fas fa-phone-alt me-1"></i>Call Prospect</button>
@@ -695,26 +719,6 @@
                                         <div id="plivoDetTranscript" style="font-size:11px;background:#f8f9fa;border-radius:4px;padding:8px;margin-top:4px;max-height:150px;overflow-y:auto;white-space:pre-wrap;"></div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Send Invitation Email -->
-                    <div class="mgm-action-card pending disabled" id="step3Card">
-                        <div class="d-flex align-items-start gap-3">
-                            <span class="mgm-step-number pending" id="step3Number">3</span>
-                            <div class="flex-grow-1">
-                                <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
-                                    <div class="flex-grow-1" style="min-width:180px;">
-                                        <strong style="font-size:13px;">Send Invitation Email</strong>
-                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="step3Subtitle">Generates a MAG application link and sends the prospect an email with registration link and response options</div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                        <button type="button" class="btn btn-primary btn-sm mgm-action-btn" id="btnSendInvitation"><i class="fas fa-paper-plane me-1"></i>Send Email</button>
-                                        <button type="button" class="btn btn-outline-primary btn-sm mgm-action-btn" id="btnResendInvitation" style="display:none;"><i class="fas fa-redo me-1"></i>Resend</button>
-                                    </div>
-                                </div>
-                                <div class="mgm-result-block" id="step3Result" style="display:none;"></div>
                             </div>
                         </div>
                     </div>
@@ -949,8 +953,13 @@
         };
         var label = labels[r.automationStatus] || r.automationStatus;
         var color = colors[r.automationStatus] || '#6c757d';
-        badge.html('<i class="fas fa-robot me-1"></i>' + label +
-            (r.plivoCallAttemptsTotal > 0 ? ' (' + r.plivoCallAttemptsTotal + '/5 calls)' : ''))
+        var extra = '';
+        if (r.automationStatus === 'EmailSent' && r.invitationEmailSentAt && !r.plivoCallStatus) {
+            extra = ' (awaiting response)';
+        } else if (r.plivoCallAttemptsTotal > 0) {
+            extra = ' (' + r.plivoCallAttemptsTotal + '/5 calls)';
+        }
+        badge.html('<i class="fas fa-robot me-1"></i>' + label + extra)
             .css({ background: color, color: '#fff', display: 'inline-block' }).show();
     }
 
@@ -977,7 +986,7 @@
         $('#btnViewCallDetails').hide();
         $('#plivoCallCard').css('border-color', '#6f42c1').css('background', '#faf8ff');
         $('#plivoCallIcon').css('background', '#6f42c1');
-        $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
+        $('#plivoCallSubtitle').html('If the prospect hasn\'t responded to the email within 1 hour, a follow-up call is placed');
         for (var s = 1; s <= 4; s++) $('#step'+s+'Subtitle').html(defaultSubtitles[s]);
         $('#btnParseResume').prop('disabled',false).html('<i class="fas fa-file-invoice me-1"></i>Parse Resume');
         $('#btnConfirmMag').prop('disabled',false).html('<i class="fas fa-check me-1"></i>Confirm MAG');
@@ -1112,6 +1121,7 @@
     function syncPipeline(r) {
         var step1Done = false, step2Done = false, step3Done = false;
         var step1Blocked = false;
+        var prospectResponded = r.selfRegistrationCompleted === true || r.onboardingCompleted === true || !!r.prospectResponse;
 
         initStep2Mag(r);
 
@@ -1145,7 +1155,7 @@
             }
         }
 
-        // Step 3: Send Invitation Email
+        // Step 3: Send Invitation Email (now before the call)
         if (r.invitationEmailSent === true) {
             var html3 = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Invitation email sent</span>';
             if (r.invitationEmailSentAt) html3 += ' on ' + r.invitationEmailSentAt;
@@ -1174,18 +1184,37 @@
         }
 
         // ── Explicit step enablement pass ──
+        // New flow: Parse → MAG → Email → [wait 1hr] → Call → Track Progress
         if (step1Blocked) {
             $('#step2Card, #step3Card, #step4Card, #plivoCallCard').addClass('disabled');
         } else {
             if (step1Done) { $('#step2Card').removeClass('disabled failed'); $('#step2Number').removeClass('failed'); }
-            if (step2Done) { $('#plivoCallCard').removeClass('disabled'); $('#step3Card').removeClass('disabled'); }
-            if (step3Done) { $('#step4Card').removeClass('disabled'); $('#step4Subtitle').html('Waiting for prospect to respond or self-register...'); }
+            if (step2Done) { $('#step3Card').removeClass('disabled'); }
+            if (step3Done) {
+                $('#step4Card').removeClass('disabled');
+                $('#step4Subtitle').html('Waiting for prospect to respond or self-register...');
+                // Enable call card only if prospect hasn't already responded to the email
+                if (!prospectResponded) {
+                    $('#plivoCallCard').removeClass('disabled');
+                }
+            }
+        }
+
+        // Show "call skipped" notice when prospect already responded via email
+        if (step3Done && prospectResponded) {
+            var skipReason = r.selfRegistrationCompleted === true ? 'Prospect self-registered — no call needed.'
+                : r.prospectResponse === 'NotInterested' ? 'Prospect declined via email — no call needed.'
+                : 'Prospect responded to email — no call needed.';
+            $('#plivoCallSubtitle').html('<span class="text-success" style="font-size:11px;"><i class="fas fa-check-circle me-1"></i>' + skipReason + '</span>');
+            $('#btnInitiateCall').hide();
+            $('#plivoCallCard').css('border-color', '#198754').css('background', '#f0fdf4');
+            $('#plivoCallIcon').css('background', '#198754');
         }
 
         // ── Manual onboarding section sync ──
         syncManualOnboarding(r, step1Done, step2Done);
 
-        // Sync Plivo button disabled state with card disabled state
+        // Sync Plivo button disabled state
         if ($('#plivoCallCard').hasClass('disabled')) {
             $('#btnInitiateCall').prop('disabled', true);
         } else if (r.parsedPhone) {
@@ -1194,7 +1223,7 @@
             if (pStatus === 'triggered' || pStatus === 'initiated') {
                 $('#btnInitiateCall').prop('disabled', true);
             } else if ((pStatus === 'completed' || pStatus === 'answered') && (pDisp === 'interested' || pDisp === 'unsubscribe')) {
-                // Call completed positively or unsubscribed — no retry
+                // Call completed — no retry
             } else {
                 $('#btnInitiateCall').prop('disabled', false);
             }
@@ -1222,8 +1251,8 @@
         if (message) result.html(message).show();
 
         if (step === 1 && state === 'completed') { $('#step2Card').removeClass('disabled'); }
-        if (step === 2 && state === 'completed') { $('#plivoCallCard').removeClass('disabled'); $('#step3Card').removeClass('disabled'); $('#btnInitiateCall').prop('disabled', false); }
-        if (step === 3 && state === 'completed') { $('#step4Card').removeClass('disabled'); }
+        if (step === 2 && state === 'completed') { $('#step3Card').removeClass('disabled'); }
+        if (step === 3 && state === 'completed') { $('#step4Card').removeClass('disabled'); $('#plivoCallCard').removeClass('disabled'); $('#btnInitiateCall').prop('disabled', false); }
     }
 
     /* ── Status change ──────────────────────────────────────── */
@@ -1335,6 +1364,7 @@
                     if (currentRecord) { currentRecord.invitationEmailSent = true; currentRecord.applicationLink = res.applicationLink; }
                     $('#btnSendInvitation').hide(); $('#btnResendInvitation').show();
                     $('#step4Card').removeClass('disabled');
+                    $('#plivoCallCard').removeClass('disabled'); $('#btnInitiateCall').prop('disabled', false);
                     $('#step4Subtitle').html('Waiting for prospect to respond or self-register...');
                 } else {
                     markStep(3, 'failed', res.error || 'Failed to send email.');
@@ -1835,7 +1865,7 @@
         detBtn.hide();
         card.css('border-color', '#6f42c1').css('background', '#faf8ff');
         $('#plivoCallIcon').css('background', '#6f42c1');
-        $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
+        $('#plivoCallSubtitle').html('If the prospect hasn\'t responded to the email within 1 hour, a follow-up call is placed');
 
         var cardDisabled = card.hasClass('disabled');
         btn.prop('disabled', cardDisabled);
@@ -1925,13 +1955,13 @@
                 } else {
                     $('#plivoCallResult').html('<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Failed.') + '</span>').show();
                     btn.prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Prospect');
-                    $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
+                    $('#plivoCallSubtitle').html('If the prospect hasn\'t responded to the email within 1 hour, a follow-up call is placed');
                 }
             },
             error: function () {
                 $('#plivoCallResult').html('<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Request failed.</span>').show();
                 btn.prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Prospect');
-                $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
+                $('#plivoCallSubtitle').html('If the prospect hasn\'t responded to the email within 1 hour, a follow-up call is placed');
             }
         });
     });
