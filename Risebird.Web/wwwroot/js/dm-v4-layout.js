@@ -294,13 +294,77 @@
 
         $('#SkillTable tbody tr.dm-v4-rubric-row').each(function (i) {
 
-            $(this).attr('data-row-index', i);
+            var $row = $(this);
 
-            $(this).find('.dm-v4-rubric-details-btn').attr('data-row-index', i);
+            $row.attr('data-row-index', i);
+
+            $row.find('.dm-v4-rubric-details-btn').attr('data-row-index', i);
+
+            $row.find('input, select, textarea').each(function () {
+
+                var name = this.getAttribute('name');
+
+                if (!name) return;
+
+                var match = /^SkillCollection\[\d+\]\.(.+)$/.exec(name);
+
+                if (!match) return;
+
+                var prop = match[1];
+
+                this.setAttribute('name', 'SkillCollection[' + i + '].' + prop);
+
+                if (this.type === 'hidden' && prop === 'isEliminationskill') {
+
+                    return;
+
+                }
+
+                this.setAttribute('id', 'SkillCollection_' + i + '__' + prop);
+
+            });
 
         });
 
     }
+
+
+
+    function dmV4PrepareRubricFormForSubmit() {
+
+        $('#SkillTable input.dm-v4-inline-edit-input:visible').each(function () {
+
+            $(this).trigger('blur');
+
+        });
+
+        if (typeof closeDrawer === 'function' && drawerRowIndex !== null) {
+
+            closeDrawer(true);
+
+        }
+
+        reindexRubricRows();
+
+    }
+
+
+
+    window.dmV4PrepareRubricFormForSubmit = dmV4PrepareRubricFormForSubmit;
+
+
+
+    window.dmV4OnRubricFormSubmit = function () {
+
+        if (typeof dmV4PrepareRubricFormForSubmit === 'function') {
+
+            dmV4PrepareRubricFormForSubmit();
+
+        }
+
+        return typeof CheckConditions === 'function' ? CheckConditions() : true;
+
+    };
 
 
 
@@ -891,9 +955,9 @@
 
     function readRbVetFromRow($row) {
         var raw = $row.attr('data-rb-vet');
+        if ($row.attr('data-is-active') !== '1') return false;
         if (raw === '1') return true;
         if (raw === '0' && isFreeChannelPanel()
-            && $row.attr('data-is-active') === '1'
             && ($row.attr('data-is-available') === '1' || $row.attr('data-is-available') == null)
             && ($row.attr('data-client-action') || '').toLowerCase() !== 'rejected') {
             return true;
@@ -902,12 +966,12 @@
     }
 
     function readClientVetFromRow($row) {
+        if ($row.attr('data-is-active') !== '1') return false;
         var raw = $row.attr('data-client-vet');
         if (raw === '1') return true;
         var action = ($row.attr('data-client-action') || '').toLowerCase();
         if (action === 'rejected') return false;
         if (raw === '0' && isFreeChannelPanel() && readRbVetFromRow($row)
-            && $row.attr('data-is-active') === '1'
             && ($row.attr('data-is-available') === '1' || $row.attr('data-is-available') == null)) {
             return true;
         }
