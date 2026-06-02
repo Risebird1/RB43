@@ -255,7 +255,7 @@ namespace Risebird.Services.Controllers
                     return BadRequest(parseError);
                 }
 
-                if (payload?.Data?.Transfer == null)
+                if (payload?.Data == null || string.IsNullOrEmpty(payload.Data.TransferId))
                 {
                     var missingData = new { success = false, message = "Payload is missing transfer data." };
                     await _meetingRepository.InsertPaymentLog(
@@ -272,7 +272,7 @@ namespace Risebird.Services.Controllers
                     return BadRequest(missingData);
                 }
 
-                var transfer = payload.Data.Transfer;
+                var transfer = payload.Data;
 
                 // ── 4. Update PaymentHistory.PayoutStatus + TransferUtr ─── //
                 var rowsUpdated = await _meetingRepository.UpdatePaymentHistoryTransferStatus(
@@ -519,23 +519,17 @@ namespace Risebird.Services.Controllers
 
         private static CashfreeTransactionStatus MapToTransactionStatus(CashfreeWebhookPayload payload)
         {
-            var t    = payload.Data.Transfer;
-            var bene = t.ResolvedBeneficiary;
+            var d = payload.Data;
             return new CashfreeTransactionStatus
             {
-                EventType       = payload.Type,
-                TransferId      = t.TransferId,
-                CfTransferId    = t.CfTransferId,
-                TransferStatus  = t.TransferStatus,
-                TransferAmount  = t.TransferAmount,
-                TransferUtr     = t.TransferUtr,
-                TransferMode    = t.TransferMode,
-                ServiceCharge   = t.TransferServiceCharge,
-                ServiceTax      = t.TransferServiceTax,
-                BeneficiaryId   = bene?.ResolvedId,
-                BeneficiaryName = bene?.ResolvedName,
-                EventTime       = payload.EventTime,
-                ReceivedAtUtc   = DateTime.UtcNow
+                EventType      = payload.Type,
+                TransferId     = d.TransferId,
+                CfTransferId   = d.CfTransferId,
+                TransferStatus = d.TransferStatus,
+                TransferAmount = d.TransferAmount,
+                TransferUtr    = d.TransferUtr,
+                EventTime      = payload.EventTime,
+                ReceivedAtUtc  = DateTime.UtcNow
             };
         }
 
