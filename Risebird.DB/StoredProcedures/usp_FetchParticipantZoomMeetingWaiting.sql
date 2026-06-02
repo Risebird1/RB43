@@ -117,7 +117,7 @@ DECLARE @MeetingNotificationCandidate TABLE(
 EmailType,zoomLink,CalendlyLink,HRCoordinatorEmailId,candidateName,interviewDate,ClientHrContact,ClientName,PrimarySkill,       
 irfId,LogoLink, candidateUniqueId, JDLink) as (                              
           
-Select distinct im.id, t1.Meetingid,im.candidateEmail,im.interviewer,ulr.EmailId as risebirdHR,'' as emergencyinterviewer,                             
+Select distinct im.id, t1.Meetingid,im.candidateEmail,CASE WHEN ISNULL(uli.IsActive, 0) = 1 THEN im.interviewer ELSE NULL END as interviewer,ulr.EmailId as risebirdHR,'' as emergencyinterviewer,                             
 (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END) as isInterviewerWaiting, 'reaminder' as EmailType,im.zoomLink,      
 IRF.CalendlyLink,im.HRCoordinatorEmailId,im.candidateName,im.interviewDate,im.ClientHrContact,            
 Cl.Name as ClientName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as PrimarySkill,        
@@ -138,7 +138,8 @@ Outer Apply(Select Max(PerformedOn) as PerformedOn From PageClickDetails pct whe
 --Outer Apply (Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_JOINED'                    
 --EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt                    
 --left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName        
-left join UserList ulc on ulc.EmailId = im.candidateEmail      
+left join UserList ulc on ulc.EmailId = im.candidateEmail
+left join UserList uli on uli.EmailId = im.interviewer      
 where ISNULL(IRF.IsAIInterview,0)=0 and im.Confirmationstatus=1 and ISNULL(Case When IRF.IsCandidateavailability is null and       
 IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1        
 and IsNull(im.IsMeetingNotificationSent,0)!=1 and      

@@ -18,13 +18,15 @@ Begin
 
 IF EXISTS (Select 1 from IRF where IRFId =@IRFId)
 	BEGIN
-		select interviewer from [dbo].[InterviewMeetings]      
-		where candidateEmail = @candidateEmail and interviewDate= @interviewDate and confirmationStatus =2 
+		select im.interviewer from [dbo].[InterviewMeetings] im
+		join [dbo].[UserList] ul on ul.EmailId = im.interviewer and ul.IsActive = 1
+		where im.candidateEmail = @candidateEmail and im.interviewDate= @interviewDate and im.confirmationStatus =2 
 	END
 ELSE
 	BEGIN
-		select interviewer from [dbo].[UnapprovedInterviewerMeetings]      
-		where candidateEmail = @candidateEmail and interviewDate= @interviewDate and confirmationStatus =2 
+		select uim.interviewer from [dbo].[UnapprovedInterviewerMeetings] uim
+		join [dbo].[UserList] ul on ul.EmailId = uim.interviewer and ul.IsActive = 1
+		where uim.candidateEmail = @candidateEmail and uim.interviewDate= @interviewDate and uim.confirmationStatus =2 
 	END
       
 End 

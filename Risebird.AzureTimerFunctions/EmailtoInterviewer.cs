@@ -39,7 +39,7 @@ namespace Risebird.AzureTimerFunctions
             try
             {
                 var mails = new List<Meeting>();
-                var query = "select distinct im.id, im.interviewer,ul.uniqueid, ul.MobileNumber from InterviewMeetings im join UserList ul on ul.Emailid=im.interviewer where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
+                var query = "select distinct im.id, im.interviewer,ul.uniqueid, ul.MobileNumber from InterviewMeetings im join UserList ul on ul.Emailid=im.interviewer where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1 and ul.IsActive=1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now);
                 dynamicParameters.Add("@timeH", DateTime.Now.Date.AddDays(1));

@@ -9113,12 +9113,25 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    await checkSkillSetandCombine(model);
-                    foreach (var item in model.SkillCollection)
+                    var existingSkills = (await _irfRepository.GetSkillsbyIRFid(model.id))?.ToList() ?? new List<TransSkill>();
+                    var skillsToSave = BuildDeliveryHeadRubricSkillsForSave(model, existingSkills);
+                    var formPostedRubric = Request?.Form?.Keys?.Any(k =>
+                        k != null && k.StartsWith("SkillCollection[", StringComparison.OrdinalIgnoreCase)) == true;
+                    if (formPostedRubric
+                        && !skillsToSave.Any(x => x.SkillSet == 1)
+                        && existingSkills.Any(x => x.SkillSet == 1))
+                    {
+                        ModelState.AddModelError(string.Empty, "Score rubric could not be saved. Please refresh the page and try again.");
+                        await checkSkillSetandSeperate(model);
+                        var jobLevelsErr = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
+                        ViewBag.JobLevelList = new SelectList(jobLevelsErr, "ID", "Name");
+                        return View(model);
+                    }
+                    foreach (var item in skillsToSave)
                     {
                         item.IRFId = model.id;
                     }
-                    var result = await _irfService.UpdateTechSkills(model.SkillCollection);
+                    var result = await _irfService.UpdateTechSkills(skillsToSave);
                     if (result)
                     {
                         return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.id });
@@ -10527,6 +10540,49 @@ namespace Risebird.Web.Controllers
                     irfDetails.SkillCollection.Add(item);
                 }
             }
+        }
+
+        /// <summary>
+        /// HM score-rubric save: replace SkillSet 1 (and 2 when posted) from the form, keep other skill sets from DB.
+        /// usp_TechSkillBulkInsert deletes all rows for the IRF — never pass only partial form data without merging.
+        /// </summary>
+        private static List<TransSkill> BuildDeliveryHeadRubricSkillsForSave(IRFVm model, List<TransSkill> existingAll)
+        {
+            var result = new List<TransSkill>();
+            var primary = (model.SkillCollection ?? new List<TransSkill>())
+                .Where(x => x != null && (!string.IsNullOrWhiteSpace(x.SkillName) || x.LevelId > 0))
+                .ToList();
+            foreach (var item in primary)
+            {
+                item.SkillSet = 1;
+                result.Add(item);
+            }
+
+            if (model.SkillSetsevaluate > 1)
+            {
+                var secondaryFromForm = (model.SkillTwoCollection ?? new List<TransSkill>())
+                    .Where(x => x != null && (!string.IsNullOrWhiteSpace(x.SkillName) || x.LevelId > 0))
+                    .ToList();
+                if (secondaryFromForm.Any())
+                {
+                    foreach (var item in secondaryFromForm)
+                    {
+                        item.SkillSet = 2;
+                        result.Add(item);
+                    }
+                }
+                else
+                {
+                    result.AddRange(existingAll.Where(x => x.SkillSet == 2));
+                }
+                result.AddRange(existingAll.Where(x => x.SkillSet != 1 && x.SkillSet != 2));
+            }
+            else
+            {
+                result.AddRange(existingAll.Where(x => x.SkillSet != 1));
+            }
+
+            return result;
         }
         public async Task checkSkillSetandSeperate(IRFVm irfDetails)
         {
