@@ -20,7 +20,10 @@ function startRecording() {
     document.getElementById("stopRecButton").disabled = false;
     document.getElementById("startRecButton").disabled = true;
     document.getElementById("cancelRecButton").disabled = false;
-    document.getElementById("recordingStatus").innerHTML = "Recording started...";
+    var useDmV4Hooks = typeof window.dmV4OnVoiceRecordingStarted === 'function';
+    if (!useDmV4Hooks) {
+        document.getElementById("recordingStatus").innerHTML = "Recording started...";
+    }
 
     var constraints = { audio: true, video: false };
 
@@ -53,11 +56,19 @@ function startRecording() {
         //start the recording process
         rec.record();
 
+        if (useDmV4Hooks) {
+            window.dmV4OnVoiceRecordingStarted();
+        }
+
         //console.log("Recording started");
 
     }).catch(function (err) {
-        //enable the record button if getUserMedia() fails
-
+        document.getElementById("stopRecButton").disabled = true;
+        document.getElementById("startRecButton").disabled = false;
+        document.getElementById("cancelRecButton").disabled = true;
+        if (typeof window.dmV4OnVoiceRecordingStartFailed === 'function') {
+            window.dmV4OnVoiceRecordingStartFailed(err);
+        }
     });
 }
 

@@ -9,33 +9,42 @@ namespace Risebird.Entities.ViewModel
     public static class DmIvVetDisplayHelper
     {
         /// <summary>
-        /// RB Vet Yes for display. Uses stored IsSMEVerified when set; on free channels,
-        /// active+available rows with NULL vet in DB are treated as Yes (legacy / implicit panel).
+        /// RB Vet Yes for display. Only active panel rows can show Yes.
+        /// Inactive / available-only rows stay No even if IsSMEVerified is still true in DB from an earlier state.
+        /// On auto-activate channels, active+available rows with NULL vet in DB are treated as Yes (legacy implicit panel).
         /// </summary>
         public static bool ResolveRbVetYes(bool channelLocked, TransInterviewer iv)
         {
             if (iv == null) return false;
-            if (iv.IsSMEVerifiedStored == true || iv.IsSMEVerified) return true;
             if (iv.IsSMEVerifiedStored == false) return false;
 
-            if (!channelLocked && iv.IsActive && iv.IsAvailable
-                && !string.Equals(iv.ClientAction, "Rejected", StringComparison.OrdinalIgnoreCase))
+            if (!iv.IsActive)
+                return false;
+
+            if (iv.IsSMEVerifiedStored == true || iv.IsSMEVerified) return true;
+
+            if (!channelLocked && iv.IsAvailable
+                && !string.Equals(iv.ClientAction, "Rejected", StringComparison.OrdinalIgnoreCase)
+                && iv.IsSMEVerifiedStored == null)
                 return true;
 
             return false;
         }
 
         /// <summary>
-        /// Client Vet Yes for display. Uses stored ClientAction when set; on free channels,
-        /// active+available rows with RB Vet Yes and no explicit rejection show Yes.
+        /// Client Vet Yes for display. Only active panel rows can show Yes.
         /// </summary>
         public static bool ResolveClientVetYes(bool channelLocked, TransInterviewer iv, bool rbVetYes)
         {
             if (iv == null) return false;
-            if (DmIvActiveHelper.IsClientVetYes(iv.ClientAction)) return true;
             if (string.Equals(iv.ClientAction, "Rejected", StringComparison.OrdinalIgnoreCase)) return false;
 
-            if (!channelLocked && rbVetYes && iv.IsActive && iv.IsAvailable) return true;
+            if (!iv.IsActive)
+                return false;
+
+            if (DmIvActiveHelper.IsClientVetYes(iv.ClientAction)) return true;
+
+            if (!channelLocked && rbVetYes && iv.IsAvailable) return true;
 
             return false;
         }
