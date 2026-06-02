@@ -11,6 +11,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Risebird.Services.Controllers
 {
@@ -41,17 +42,21 @@ namespace Risebird.Services.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMeetingRespository _meetingRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly INotificationHelper _notificationHelper;
 
         private const string CfSection = "Cashfree";
+        private const string TransferSuccessStatus = "TRANSFER_SUCCESS";
 
         public CashfreeWebhookController(
             IConfiguration configuration,
             IMeetingRespository meetingRepository,
-            IApplicationErrorLogger applicationErrorLogger)
+            IApplicationErrorLogger applicationErrorLogger,
+            INotificationHelper notificationHelper)
         {
             _configuration = configuration;
             _meetingRepository = meetingRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _notificationHelper = notificationHelper;
         }
 
         // ------------------------------------------------------------------ //
@@ -177,7 +182,7 @@ namespace Risebird.Services.Controllers
                 }
                 catch (JsonException ex)
                 {
-                    var parseError = new { success = false, message = "Malformed JSON payload." };
+                    var parseError = new { success = false, message = "Malformed JSON payload token." };
                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     await _meetingRepository.InsertPaymentLog(
                         endpoint:           endpoint,
@@ -250,7 +255,7 @@ namespace Risebird.Services.Controllers
                     return BadRequest(parseError);
                 }
 
-                if (payload?.Data?.Transfer == null)
+                if (payload?.Data == null || string.IsNullOrEmpty(payload.Data.TransferId))
                 {
                     var missingData = new { success = false, message = "Payload is missing transfer data." };
                     await _meetingRepository.InsertPaymentLog(
@@ -267,7 +272,7 @@ namespace Risebird.Services.Controllers
                     return BadRequest(missingData);
                 }
 
-                var transfer = payload.Data.Transfer;
+                var transfer = payload.Data;
 
                 // ── 4. Update PaymentHistory.PayoutStatus + TransferUtr ─── //
                 var rowsUpdated = await _meetingRepository.UpdatePaymentHistoryTransferStatus(
@@ -284,6 +289,13 @@ namespace Risebird.Services.Controllers
                             $"[CashfreeWebhook] No PaymentHistory row matched. " +
                             $"TransferId='{transfer.TransferId}' CfTransferId='{transfer.CfTransferId}' " +
                             $"Status='{transfer.TransferStatus}'"));
+                }
+
+                // ── 4a. Send payment confirmation email on TRANSFER_SUCCESS ── //
+                if (string.Equals(transfer.TransferStatus, TransferSuccessStatus, StringComparison.OrdinalIgnoreCase)
+                    && rowsUpdated > 0)
+                {
+                    await SendPaymentConfirmationEmailAsync(transfer.TransferId, transfer.CfTransferId, transfer.TransferUtr);
                 }
 
                 // ── 5. Build and return response model ─────────────────── //
@@ -441,28 +453,83 @@ namespace Risebird.Services.Controllers
         }
 
         // ------------------------------------------------------------------ //
+        //  Payment confirmation email                                         //
+        // ------------------------------------------------------------------ //
+
+        /// <summary>
+        /// Fetches the interviewer email and payment breakdown for the supplied
+        /// transfer identifiers and sends the same confirmation email that the
+        /// Finance team's "Confirm Payment" button triggers.
+        /// </summary>
+        private async Task SendPaymentConfirmationEmailAsync(string transferId, string cfTransferId, string transferUtr)
+        {
+            try
+            {
+                var details = await _meetingRepository.GetPaymentDetailsByTransferId(transferId, cfTransferId);
+                if (details == null || string.IsNullOrWhiteSpace(details.Email))
+                    return;
+
+                var breakdown = await _meetingRepository.GetPaymentHistoryDetailsView(details.PaymentHistoryId);
+
+                var sb = new StringBuilder();
+                sb.Append("<table cellspacing='0' width='100%'><thead><tr><th>Date</th><th>Payment for</th><th>Type</th><th>Status</th><th>Total Amount</th><th>Payable Amount</th></tr></thead><tbody>");
+
+                if (breakdown != null)
+                {
+                    foreach (var item in breakdown)
+                    {
+                        sb.Append("<tr>");
+                        sb.Append("<td>" + item.Date.ToString() + "</td>");
+                        sb.Append("<td>" + item.Comment + "</td>");
+                        sb.Append("<td>" + item.Type + "</td>");
+                        sb.Append("<td>" + (item.Status == "Advance" ? item.Status : "Paid") + "</td>");
+                        sb.Append("<td>" + item.Points + "</td>");
+                        sb.Append("<td>" + (item.Status != "Advance"
+                            ? Math.Round(item.Points - item.Points * .1).ToString()
+                            : item.Points.ToString()) + "</td>");
+                        sb.Append("</tr>");
+                    }
+                }
+
+                sb.Append("</tbody></table>");
+
+                if (!string.IsNullOrWhiteSpace(transferUtr))
+                {
+                    sb.Append("<p style='margin-top:10px;'><strong>UTR Number: </strong>" + transferUtr + "</p>");
+                }
+
+                var mail = new Mail
+                {
+                    TO      = details.Email,
+                    CC      = "finance@risebird.io",
+                    Subject = "RiseBird: Finance Team has done payment"
+                };
+
+                await _notificationHelper.RBFNPaymentConfirmationNotification(mail, details.Amount.ToString(), sb);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        // ------------------------------------------------------------------ //
         //  Mapping                                                            //
         // ------------------------------------------------------------------ //
 
         private static CashfreeTransactionStatus MapToTransactionStatus(CashfreeWebhookPayload payload)
         {
-            var t    = payload.Data.Transfer;
-            var bene = t.ResolvedBeneficiary;
+            var d = payload.Data;
             return new CashfreeTransactionStatus
             {
-                EventType       = payload.Type,
-                TransferId      = t.TransferId,
-                CfTransferId    = t.CfTransferId,
-                TransferStatus  = t.TransferStatus,
-                TransferAmount  = t.TransferAmount,
-                TransferUtr     = t.TransferUtr,
-                TransferMode    = t.TransferMode,
-                ServiceCharge   = t.TransferServiceCharge,
-                ServiceTax      = t.TransferServiceTax,
-                BeneficiaryId   = bene?.ResolvedId,
-                BeneficiaryName = bene?.ResolvedName,
-                EventTime       = payload.EventTime,
-                ReceivedAtUtc   = DateTime.UtcNow
+                EventType      = payload.Type,
+                TransferId     = d.TransferId,
+                CfTransferId   = d.CfTransferId,
+                TransferStatus = d.TransferStatus,
+                TransferAmount = d.TransferAmount,
+                TransferUtr    = d.TransferUtr,
+                EventTime      = payload.EventTime,
+                ReceivedAtUtc  = DateTime.UtcNow
             };
         }
 

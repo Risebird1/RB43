@@ -37,15 +37,27 @@ namespace Risebird.Entities.ViewModel
         public string EventTime { get; set; }
     }
 
+    /// <summary>
+    /// Flat data block inside a Cashfree payout webhook.
+    /// Actual Cashfree payload shape:
+    /// <code>
+    /// {
+    ///   "type": "TRANSFER_SUCCESS",
+    ///   "data": {
+    ///     "transfer_id":     "YOUR_TRANSFER_ID",
+    ///     "cf_transfer_id":  "CASHFREE_TRANSFER_ID",
+    ///     "transfer_amount": 1000,
+    ///     "transfer_utr":    "123456789",
+    ///     "status":          "SUCCESS",
+    ///     "status_code":     "COMPLETED",
+    ///     "fundsource_id":   "CASHFREE_1"
+    ///   }
+    /// }
+    /// </code>
+    /// </summary>
     public class CashfreeWebhookData
     {
-        [JsonProperty("transfer")]
-        public CashfreeWebhookTransfer Transfer { get; set; }
-    }
-
-    public class CashfreeWebhookTransfer
-    {
-        /// <summary>Your internal transfer_id used when the payout was created.</summary>
+        /// <summary>Your internal transfer_id sent when the payout was created.</summary>
         [JsonProperty("transfer_id")]
         public string TransferId { get; set; }
 
@@ -53,66 +65,25 @@ namespace Risebird.Entities.ViewModel
         [JsonProperty("cf_transfer_id")]
         public string CfTransferId { get; set; }
 
-        /// <summary>Terminal status: SUCCESS | FAILED | REVERSED</summary>
-        [JsonProperty("transfer_status")]
-        public string TransferStatus { get; set; }
-
+        /// <summary>Transfer amount in INR.</summary>
         [JsonProperty("transfer_amount")]
         public decimal TransferAmount { get; set; }
 
-        /// <summary>Bank UTR — populated only after a successful settlement.</summary>
+        /// <summary>Bank UTR number — populated after a successful settlement.</summary>
         [JsonProperty("transfer_utr")]
         public string TransferUtr { get; set; }
 
-        /// <summary>e.g. neft | imps | rtgs | upi | banktransfer</summary>
-        [JsonProperty("transfer_mode")]
-        public string TransferMode { get; set; }
+        /// <summary>Terminal status: SUCCESS | FAILED | REVERSED</summary>
+        [JsonProperty("status")]
+        public string TransferStatus { get; set; }
 
-        [JsonProperty("transfer_service_charge")]
-        public decimal TransferServiceCharge { get; set; }
+        /// <summary>Cashfree status code, e.g. "COMPLETED".</summary>
+        [JsonProperty("status_code")]
+        public string StatusCode { get; set; }
 
-        [JsonProperty("transfer_service_tax")]
-        public decimal TransferServiceTax { get; set; }
-
-        /// <summary>Cashfree sends beneficiary info as "bene_details" in Payouts V2.</summary>
-        [JsonProperty("bene_details")]
-        public CashfreeWebhookBeneficiary BeneDetails { get; set; }
-
-        /// <summary>Legacy alias — some older payloads use "beneficiary_details".</summary>
-        [JsonProperty("beneficiary_details")]
-        public CashfreeWebhookBeneficiary BeneficiaryDetails { get; set; }
-
-        /// <summary>Returns whichever beneficiary block is populated.</summary>
-        [JsonIgnore]
-        public CashfreeWebhookBeneficiary ResolvedBeneficiary =>
-            BeneDetails ?? BeneficiaryDetails;
-    }
-
-    public class CashfreeWebhookBeneficiary
-    {
-        /// <summary>Cashfree Payouts V2 field name: bene_id</summary>
-        [JsonProperty("bene_id")]
-        public string BeneId { get; set; }
-
-        /// <summary>Cashfree Payouts V2 field name: bene_name</summary>
-        [JsonProperty("bene_name")]
-        public string BeneName { get; set; }
-
-        /// <summary>Legacy field name: beneficiary_id</summary>
-        [JsonProperty("beneficiary_id")]
-        public string BeneficiaryId { get; set; }
-
-        /// <summary>Legacy field name: beneficiary_name</summary>
-        [JsonProperty("beneficiary_name")]
-        public string BeneficiaryName { get; set; }
-
-        /// <summary>Returns the populated beneficiary id regardless of field name variant.</summary>
-        [JsonIgnore]
-        public string ResolvedId => BeneId ?? BeneficiaryId;
-
-        /// <summary>Returns the populated beneficiary name regardless of field name variant.</summary>
-        [JsonIgnore]
-        public string ResolvedName => BeneName ?? BeneficiaryName;
+        /// <summary>Cashfree fund-source identifier, e.g. "CASHFREE_1".</summary>
+        [JsonProperty("fundsource_id")]
+        public string FundSourceId { get; set; }
     }
 
     // ══════════════════════════════════════════════════════════════════════════
