@@ -91,7 +91,7 @@ namespace Risebird.AzureTimerFunctions
                             var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, dashboardLink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId,item.uniqueid);
 
                         }
-                        else
+                        else if (!string.IsNullOrEmpty(item.interviewer))
                         {
                             Mail _mail = new Mail
                             {

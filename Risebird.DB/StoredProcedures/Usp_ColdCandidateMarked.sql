@@ -40,7 +40,7 @@ declare @IRFId varchar(50)
 declare @CandidateEmail varchar(150)
 select @IRFId=IRFId,@CandidateEmail= candidateEmail from InterviewMeetings where id=@InterviewId 
 update InterviewMeetings set confirmationStatus=2,Cancellationsource=@ColdMarkedBY,CancellationReason='Cold Candidate' where IRFID=@IRFId and candidateEmail=@CandidateEmail and Interviewdate>@Currentdate
-select interviewer,interviewDate,candidateName from InterviewMeetings where IRFID=@IRFId and candidateEmail=@CandidateEmail and Interviewdate>@Currentdate
+select CASE WHEN ISNULL(ul.IsActive, 0) = 1 THEN im.interviewer ELSE NULL END as interviewer,im.interviewDate,im.candidateName from InterviewMeetings im left join UserList ul on ul.EmailId = im.interviewer where im.IRFID=@IRFId and im.candidateEmail=@CandidateEmail and im.Interviewdate>@Currentdate
 End
 --Add Cold Marked for webhook
  if(ISNULL(@oldIscandidateCold,0)!=1)

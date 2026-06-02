@@ -34,6 +34,25 @@ namespace Risebird.Repository
             _notificationHelper = notificationHelper;
         }
 
+        public async Task<bool> IsUserActive(string emailId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(emailId)) return false;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryFirstOrDefaultAsync<bool?>(
+                        "SELECT IsActive FROM UserList WHERE EmailId = @EmailId",
+                        new { EmailId = emailId });
+                    return result == true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings()
         {
             try
