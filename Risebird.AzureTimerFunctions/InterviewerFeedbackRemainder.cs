@@ -37,7 +37,7 @@ namespace Risebird.AzureTimerFunctions
             {
                 var Emails = new List<CandidateDetailsForWhatsApp>();
                 var str = _connection;
-                var query = "Select im.id,im.interviewer as ClientName,im.interviewDate,im.candidateEmail, RTRIM(IsNull(ul.FirstName,'')+' '+IsNull(ul.LastName,'')) as CandidateName, irf.id as IRFId From InterviewComments ic join InterviewMeetings im on im.id=ic.InterviewId left join Userlist ul on ul.EmailId=im.candidateEmail join IRF on irf.irfId = im.IRFId where ic.MeetingStatus=2 and im.confirmationStatus=1 and interviewDate<=@timeH and interviewDate>=@timeL";
+                var query = "Select im.id,im.interviewer as ClientName,im.interviewDate,im.candidateEmail, RTRIM(IsNull(ul.FirstName,'')+' '+IsNull(ul.LastName,'')) as CandidateName, irf.id as IRFId From InterviewComments ic join InterviewMeetings im on im.id=ic.InterviewId left join Userlist ul on ul.EmailId=im.candidateEmail join IRF on irf.irfId = im.IRFId join UserList uli on uli.EmailId=im.interviewer and uli.IsActive=1 where ic.MeetingStatus=2 and im.confirmationStatus=1 and interviewDate<=@timeH and interviewDate>=@timeL";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now.AddMinutes(-125));
                 dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(-115));

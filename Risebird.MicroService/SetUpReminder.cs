@@ -47,7 +47,7 @@ namespace Risebird.MicroService
                 //var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
                 // var twilioSMSNumber = "+12055768041";
                 var receiverDetails = new List<ReceiverDetails>();
-                var query = "select im.id, im.candidateEmail, im.interviewer as InterviewerEmailId, ca.Phone as CandidatePhone, ul.MobileNumber as InterviewerPhone, im.interviewDate, irf.JDTiltle from InterviewMeetings im join UserList ulc on im.candidateEmail = ulc.EmailId join irf on irf.IRFId= im.IRFId join CandidatesMaster cm on ulc.id = cm.UserId join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id join UserList ul on ul.EmailId = im.interviewer where im.confirmationStatus=1 and im.interviewDate>@timeNow";
+                var query = "select im.id, im.candidateEmail, im.interviewer as InterviewerEmailId, ca.Phone as CandidatePhone, ul.MobileNumber as InterviewerPhone, im.interviewDate, irf.JDTiltle from InterviewMeetings im join UserList ulc on im.candidateEmail = ulc.EmailId join irf on irf.IRFId= im.IRFId join CandidatesMaster cm on ulc.id = cm.UserId join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id join UserList ul on ul.EmailId = im.interviewer and ul.IsActive=1 where im.confirmationStatus=1 and im.interviewDate>@timeNow";
                 var parameters = new DynamicParameters();
                 parameters.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))

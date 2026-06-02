@@ -75,44 +75,67 @@ function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour,
             var endIndex = maxIndex + 1;
             for (i = startIndex; i < endIndex; i++) {
                 var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                //name="ClientCollection[3].ClientUserId"
-                elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                if (elem1) {
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                }
                 var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                if (elem2) {
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                }
 
                 var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+                if (elem3) {
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+                }
 
                 if (tdFour != '') {
                     var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
-                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
-                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+                    if (elem4) {
+                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+                    }
                 }
 
                 if (tdFive != null && tdFive != '') {
                     var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
-                    elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
-                    elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
+                    if (elem5) {
+                        elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
+                        elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
+                    }
                 }
                 if (tdSix != null && tdSix != '') {
                     var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
-                    elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
-                    elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
+                    if (elem6) {
+                        elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
+                        elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
+                    }
                 }
                 if (tdSeven != null && tdSeven != '') {
                     var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
-                    elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
-                    elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
+                    if (elem7) {
+                        elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
+                        elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
+                    }
                 }
                 if (tdEight != null && tdEight != '') {
                     var elem8 = document.getElementById(collectionName + "_" + i + "__" + tdEight);
-                    elem8.id = collectionName + "_" + (i - 1) + "__" + tdEight;
-                    elem8.name = collectionName + "[" + (i - 1) + "]." + tdEight;
+                    if (elem8) {
+                        elem8.id = collectionName + "_" + (i - 1) + "__" + tdEight;
+                        elem8.name = collectionName + "[" + (i - 1) + "]." + tdEight;
+                    }
                 }
 
+            }
+
+            if (collectionName === 'SkillCollection') {
+                if (typeof window.dmV4PrepareRubricFormForSubmit === 'function') {
+                    window.dmV4PrepareRubricFormForSubmit();
+                } else if (typeof window.dmV4RefreshRubric === 'function') {
+                    window.dmV4RefreshRubric();
+                }
             }
 
         }
