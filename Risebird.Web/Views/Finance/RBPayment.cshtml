@@ -8,6 +8,144 @@
 
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+<style>
+    .rb-pay-ticker {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        height: 34px;
+        padding: 0 10px 0 0;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #f7b3b385;
+        border: 1px solid #ffdcdc;
+        border-left: 3px solid #dc2626;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        font-size: 14px;
+        line-height: 1;
+        color: #4b5563;
+    }
+
+    .rb-pay-ticker__badge {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        height: 34px;
+        padding: 0 10px;
+        background: #fef2f2;
+        color: #b91c1c;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        border-right: 1px solid #fecaca;
+    }
+
+    .rb-pay-ticker__pulse {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #dc2626;
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5);
+        animation: rbPayPulse 2s ease infinite;
+        flex-shrink: 0;
+    }
+
+    .rb-pay-ticker__track {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+    }
+
+    .rb-pay-ticker__scroll {
+        display: flex;
+        width: max-content;
+        animation: rbPayScroll 26s linear infinite;
+    }
+
+    .rb-pay-ticker:hover .rb-pay-ticker__scroll {
+        animation-play-state: paused;
+    }
+
+    .rb-pay-ticker__line {
+        flex-shrink: 0;
+        padding: 0 5px;
+        white-space: nowrap;
+        font-weight: 500;
+    }
+
+    .rb-pay-ticker__line strong {
+        color: #991b1b;
+        font-weight: 700;
+    }
+
+    .rb-pay-ticker__sep {
+        margin: 0 6px;
+        color: #d1d5db;
+        font-weight: 400;
+    }
+
+    .rb-pay-ticker__link {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 4px 10px;
+        margin-right: 2px;
+        border-radius: 4px;
+        background: #dc2626;
+        color: #fff !important;
+        font-size: 11px;
+        font-weight: 600;
+        text-decoration: none !important;
+        white-space: nowrap;
+        transition: background 0.15s ease;
+    }
+
+    .rb-pay-ticker__link:hover,
+    .rb-pay-ticker__link:focus {
+        background: #b91c1c;
+        color: #fff !important;
+        outline: none;
+    }
+
+    @@keyframes rbPayScroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+
+    @@keyframes rbPayPulse {
+        0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.45); }
+        70% { box-shadow: 0 0 0 5px rgba(220, 38, 38, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+    }
+
+    @@media (max-width: 768px) {
+        .rb-pay-ticker__badge span:not(.rb-pay-ticker__pulse) {
+            display: none;
+        }
+
+        .rb-pay-ticker__badge {
+            padding: 0 8px;
+        }
+
+        .rb-pay-ticker__line {
+            font-size: 11px;
+            padding: 0 14px;
+        }
+
+        .rb-pay-ticker__link {
+            padding: 4px 8px;
+            font-size: 10px;
+        }
+    }
+</style>
 <div class="main-panel" id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
@@ -54,6 +192,23 @@
         </div>
     </div>
 
+    <div class="col-md-12 nopad" style="margin:0 0 10px 0;padding:0 15px;">
+        <div class="rb-pay-ticker" role="alert" aria-live="polite">
+            <div class="rb-pay-ticker__badge">
+                <span class="rb-pay-ticker__pulse" aria-hidden="true"></span>
+                <span>Action required</span>
+            </div>
+            <div class="rb-pay-ticker__track">
+                <div class="rb-pay-ticker__scroll">
+                    <span class="rb-pay-ticker__line">
+                        Verify bank account in <strong>My Profile</strong><span class="rb-pay-ticker__sep">·</span>Payments via <strong>Cashfree Wallet</strong> to self-verified account only<span class="rb-pay-ticker__sep">·</span><strong>Verify now to avoid delays</strong>
+                    </span>
+                    
+                </div>
+            </div>
+            <a class="rb-pay-ticker__link" href="@Url.Action("MyProfile", "Interviewer")" target="_blank" rel="noopener noreferrer">Verify</a>
+        </div>
+    </div>
 
     <div class="content client candidate">
         <div class="row bl-bg">
