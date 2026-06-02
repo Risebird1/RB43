@@ -17,10 +17,11 @@ namespace Risebird.AzureTimerFunctions
     /// Automated prospect onboarding pipeline — runs every 5 minutes.
     /// Processes up to 2 eligible prospects per invocation, advancing each through:
     ///   1. Parse Resume (extract email/phone, duplicate check)
-    ///   2. Select MAG & latest active skill channel
-    ///   3. Trigger Plivo CX recruitment call (async — result via webhook)
-    ///   4. Send invitation email (once call completes with interested disposition)
+    ///   2. Select MAG & generate application link
+    ///   3. Send invitation email (with registration link and response options)
+    ///   4. Trigger Plivo CX recruitment call — only if no email response within 1 hour
     ///
+    /// If the prospect responds to the email (positively or negatively), no call is needed.
     /// Call retry policy: max 2 per day, max 5 total.
     /// After 5 failed attempts the prospect is marked Cold.
     /// </summary>
@@ -112,12 +113,13 @@ namespace Risebird.AzureTimerFunctions
             }
         }
 
+        private static readonly TimeSpan EmailToCallGracePeriod = TimeSpan.FromHours(1);
+
         private async Task ProcessProspectAsync(Entities.ViewModel.NaukriProspectiveInterviewerVM p)
         {
-            _log.LogInformation($"[OnboardAuto] #{p.Id} '{p.CandidateName}' — resume={p.ResumeParseCompleted}, irf={p.SelectedIRFId}, call={p.PlivoCallStatus}, email={p.InvitationEmailSent}");
+            _log.LogInformation($"[OnboardAuto] #{p.Id} '{p.CandidateName}' — resume={p.ResumeParseCompleted}, email={p.InvitationEmailSent}, call={p.PlivoCallStatus}, response={p.ProspectResponse}");
 
             // ── Step 1: Parse Resume ──────────────────────────────────────────────
-            // If Relay agent already extracted email/phone, this step is skipped.
             if (p.ResumeParseCompleted != true)
             {
                 if (!string.IsNullOrWhiteSpace(p.ParsedEmail) || !string.IsNullOrWhiteSpace(p.ParsedPhone))
@@ -156,7 +158,7 @@ namespace Risebird.AzureTimerFunctions
             }
             else
             {
-                _log.LogInformation($"[OnboardAuto] #{p.Id} — resume already parsed (Relay pre-parsed or prior run), skipping Step 1.");
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — resume already parsed, skipping Step 1.");
             }
 
             if (p.IsExistingInterviewer == true)
@@ -168,7 +170,7 @@ namespace Risebird.AzureTimerFunctions
                 return;
             }
 
-            // ── Step 2: Resolve MAG & generate application link ────────────────────
+            // ── Step 2: Resolve MAG & generate application link ───────────────────
             if (string.IsNullOrWhiteSpace(p.ApplicationLink))
             {
                 await _repository.UpdateAutomationStatusAsync(p.Id, "ResolvingMAG");
@@ -185,93 +187,6 @@ namespace Risebird.AzureTimerFunctions
                 if (refreshed == null) return;
                 p.ApplicationLink = refreshed.ApplicationLink;
                 p.ResolvedAssessmentGroupId = refreshed.ResolvedAssessmentGroupId;
-            }
-
-            // ── Step 3: Recruitment Call ───────────────────────────────────────────
-
-            // Guard: no phone means we can't call — mark for manual handling
-            if (string.IsNullOrWhiteSpace(p.ParsedPhone))
-            {
-                _log.LogInformation($"[OnboardAuto] #{p.Id} — no phone number parsed. Needs manual intervention.");
-                await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
-                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                    "Automation: no phone number found in resume — operator must add manually.", "AutomationJob");
-                return;
-            }
-
-            // If call completed — check disposition
-            if (string.Equals(p.PlivoCallStatus, "completed", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(p.PlivoCallStatus, "answered", StringComparison.OrdinalIgnoreCase))
-            {
-                if (string.Equals(p.PlivoProspectDisposition, "interested", StringComparison.OrdinalIgnoreCase))
-                {
-                    // Fall through to Step 4 — send email
-                }
-                else
-                {
-                    var disp = p.PlivoProspectDisposition ?? "unknown";
-                    _log.LogInformation($"[OnboardAuto] #{p.Id} — call completed with disposition '{disp}'.");
-
-                    bool isUnsubscribe = string.Equals(disp, "unsubscribe", StringComparison.OrdinalIgnoreCase)
-                                      || string.Equals(disp, "not_interested", StringComparison.OrdinalIgnoreCase);
-                    string status = isUnsubscribe ? "Cold" : "ManualRequired";
-                    await _repository.UpdateAutomationStatusAsync(p.Id, status);
-                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        $"Automation: call completed — disposition: {disp}. Marked {status}.", "AutomationJob");
-                    return;
-                }
-            }
-            else if (p.InvitationEmailSent != true)
-            {
-                // Call not yet completed — check if we should (re)trigger
-                bool callInProgress = string.Equals(p.PlivoCallStatus, "initiated", StringComparison.OrdinalIgnoreCase)
-                                   || string.Equals(p.PlivoCallStatus, "triggered", StringComparison.OrdinalIgnoreCase);
-                if (callInProgress)
-                {
-                    _log.LogInformation($"[OnboardAuto] #{p.Id} — call in progress ({p.PlivoCallStatus}). Waiting.");
-                    return;
-                }
-
-                int totalAttempts = p.PlivoCallAttemptsTotal;
-                int todayAttempts = p.PlivoCallAttemptsToday;
-
-                if (totalAttempts >= MaxCallsTotal)
-                {
-                    _log.LogInformation($"[OnboardAuto] #{p.Id} — max total attempts ({MaxCallsTotal}) reached. Marking cold.");
-                    await _repository.UpdateAutomationStatusAsync(p.Id, "Cold");
-                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        $"Automation: {totalAttempts} call attempt(s) exhausted with no completed call. Marked Cold.", "AutomationJob");
-                    return;
-                }
-
-                if (todayAttempts >= MaxCallsPerDay)
-                {
-                    _log.LogInformation($"[OnboardAuto] #{p.Id} — daily limit ({MaxCallsPerDay}) reached. Will retry tomorrow.");
-                    await _repository.UpdateAutomationStatusAsync(p.Id, "AwaitingRetry");
-                    return;
-                }
-
-                // Check call window before triggering
-                if (!IsWithinCallWindow())
-                {
-                    _log.LogInformation($"[OnboardAuto] #{p.Id} — outside 9 AM–9 PM IST. Deferring call.");
-                    return;
-                }
-
-                var callOk = await TriggerCallAsync(p);
-                if (callOk)
-                {
-                    await _repository.UpdateAutomationStatusAsync(p.Id, "CallTriggered", incrementCallAttempt: true);
-                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        $"Automation: call #{totalAttempts + 1} triggered to {p.ParsedPhone}.", "AutomationJob");
-                }
-                else
-                {
-                    await _repository.UpdateAutomationStatusAsync(p.Id, "CallFailed", incrementCallAttempt: true);
-                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        "Automation: call trigger failed.", "AutomationJob");
-                }
-                return;
             }
 
             // ── Step 3: Send Invitation Email ─────────────────────────────────────
@@ -301,7 +216,7 @@ namespace Risebird.AzureTimerFunctions
                 {
                     await _repository.UpdateAutomationStatusAsync(p.Id, "EmailSent");
                     await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        $"Automation: invitation email sent to {p.ParsedEmail}.", "AutomationJob");
+                        $"Automation: invitation email sent to {p.ParsedEmail}. Call will be deferred for {EmailToCallGracePeriod.TotalMinutes:0} min to allow prospect to respond.", "AutomationJob");
                 }
                 else
                 {
@@ -309,7 +224,127 @@ namespace Risebird.AzureTimerFunctions
                     await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
                         "Automation: email send failed — manual intervention needed.", "AutomationJob");
                 }
+                return;
             }
+
+            // ── Step 4: Recruitment Call (only after email grace period) ───────────
+            // If the prospect already responded to the email, the call is unnecessary.
+            if (HasProspectRespondedToEmail(p))
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — prospect responded to email (response={p.ProspectResponse}, selfReg={p.SelfRegistrationCompleted}). Skipping call.");
+                return;
+            }
+
+            // Enforce grace period: wait at least 1 hour after email was sent
+            if (p.InvitationEmailSentAt.HasValue)
+            {
+                var elapsed = DateTime.UtcNow - p.InvitationEmailSentAt.Value;
+                if (elapsed < EmailToCallGracePeriod)
+                {
+                    var remaining = EmailToCallGracePeriod - elapsed;
+                    _log.LogInformation($"[OnboardAuto] #{p.Id} — email sent {elapsed.TotalMinutes:0} min ago. Waiting {remaining.TotalMinutes:0} more min before calling.");
+                    return;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(p.ParsedPhone))
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — no phone number parsed. Needs manual intervention.");
+                await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
+                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                    "Automation: no phone number found in resume — operator must add manually.", "AutomationJob");
+                return;
+            }
+
+            // If call completed — check disposition
+            if (string.Equals(p.PlivoCallStatus, "completed", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(p.PlivoCallStatus, "answered", StringComparison.OrdinalIgnoreCase))
+            {
+                var disp = p.PlivoProspectDisposition ?? "unknown";
+                if (string.Equals(disp, "interested", StringComparison.OrdinalIgnoreCase))
+                {
+                    _log.LogInformation($"[OnboardAuto] #{p.Id} — call completed with 'interested' disposition. Pipeline complete.");
+                    await _repository.UpdateAutomationStatusAsync(p.Id, "Completed");
+                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                        "Automation: call completed — prospect is interested. Email already sent; pipeline complete.", "AutomationJob");
+                }
+                else
+                {
+                    _log.LogInformation($"[OnboardAuto] #{p.Id} — call completed with disposition '{disp}'.");
+
+                    bool isNegative = string.Equals(disp, "unsubscribe", StringComparison.OrdinalIgnoreCase)
+                                   || string.Equals(disp, "not_interested", StringComparison.OrdinalIgnoreCase);
+                    string status = isNegative ? "Cold" : "ManualRequired";
+                    await _repository.UpdateAutomationStatusAsync(p.Id, status);
+                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                        $"Automation: call completed — disposition: {disp}. Marked {status}.", "AutomationJob");
+                }
+                return;
+            }
+
+            // Call not yet completed — check if we should (re)trigger
+            bool callInProgress = string.Equals(p.PlivoCallStatus, "initiated", StringComparison.OrdinalIgnoreCase)
+                               || string.Equals(p.PlivoCallStatus, "triggered", StringComparison.OrdinalIgnoreCase);
+            if (callInProgress)
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — call in progress ({p.PlivoCallStatus}). Waiting.");
+                return;
+            }
+
+            int totalAttempts = p.PlivoCallAttemptsTotal;
+            int todayAttempts = p.PlivoCallAttemptsToday;
+
+            if (totalAttempts >= MaxCallsTotal)
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — max total attempts ({MaxCallsTotal}) reached. Marking cold.");
+                await _repository.UpdateAutomationStatusAsync(p.Id, "Cold");
+                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                    $"Automation: {totalAttempts} call attempt(s) exhausted with no completed call. Marked Cold.", "AutomationJob");
+                return;
+            }
+
+            if (todayAttempts >= MaxCallsPerDay)
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — daily limit ({MaxCallsPerDay}) reached. Will retry tomorrow.");
+                await _repository.UpdateAutomationStatusAsync(p.Id, "AwaitingRetry");
+                return;
+            }
+
+            if (!IsWithinCallWindow())
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — outside 9 AM–9 PM IST. Deferring call.");
+                return;
+            }
+
+            var callOk = await TriggerCallAsync(p);
+            if (callOk)
+            {
+                await _repository.UpdateAutomationStatusAsync(p.Id, "CallTriggered", incrementCallAttempt: true);
+                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                    $"Automation: call #{totalAttempts + 1} triggered to {p.ParsedPhone} (no email response after {EmailToCallGracePeriod.TotalMinutes:0} min).", "AutomationJob");
+            }
+            else
+            {
+                await _repository.UpdateAutomationStatusAsync(p.Id, "CallFailed", incrementCallAttempt: true);
+                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                    "Automation: call trigger failed.", "AutomationJob");
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the prospect has taken any action in response to the invitation
+        /// email — self-registration, clicking a response link, or completing onboarding.
+        /// When true, the Plivo call is unnecessary.
+        /// </summary>
+        private static bool HasProspectRespondedToEmail(Entities.ViewModel.NaukriProspectiveInterviewerVM p)
+        {
+            if (p.SelfRegistrationCompleted == true)
+                return true;
+
+            if (string.IsNullOrWhiteSpace(p.ProspectResponse))
+                return false;
+
+            return true;
         }
 
         // ── Pipeline step implementations ─────────────────────────────────────────

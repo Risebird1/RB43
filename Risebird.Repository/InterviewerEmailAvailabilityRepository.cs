@@ -457,6 +457,15 @@ namespace Risebird.Repository
             return id;
         }
 
+        public async Task<string> GetMAGNameByAssessmentGroupIdAsync(int assessmentGroupId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            return await con.QueryFirstOrDefaultAsync<string>(
+                @"SELECT TOP 1 MAGName FROM MasterAssessmentGroup
+                  WHERE AssessmentGroupId = @AgId AND ISNULL(IsDeleted, 0) = 0",
+                new { AgId = assessmentGroupId }, commandTimeout: 15);
+        }
+
         public async Task<(List<IACallDisposition> Items, int TotalCount)> GetAllCallDispositionsAsync(
             int page, int pageSize, string magName, string intent, string callStatus,
             DateTime? dateFrom, DateTime? dateTo)

@@ -1298,12 +1298,11 @@ namespace Risebird.Web.Controllers
 
         /// <summary>
         /// Runs the resume-fitment + assign-to-AG + close pipeline for an EA record
-        /// whose Plivo call disposition was favorable ("available").
-        /// Designed to be fire-and-forget from the webhook so it doesn't block the Plivo response.
+        /// whose disposition is favorable (e.g. Plivo "available" or Relay positive intent).
+        /// Designed to be fire-and-forget so it doesn't block the calling webhook response.
         /// </summary>
-        private async Task TryAutoCloseAsync(int eaId)
+        private async Task TryAutoCloseAsync(int eaId, string actor = "PlivoCX AutoClose")
         {
-            const string actor = "PlivoCX AutoClose";
 
             try
             {
@@ -1554,6 +1553,32 @@ namespace Risebird.Web.Controllers
             return null;
         }
 
+        /// <summary>
+        /// Determines whether the Relay-extracted availability signals indicate a favorable
+        /// (auto-closeable) disposition — i.e. the interviewer is available/interested and
+        /// has not expressed concerns or disinterest.
+        /// </summary>
+        private static bool IsFavorableAvailabilityIntent(
+            string availabilityIntent, string mailBodyIntent, string concernsOrNotInterested)
+        {
+            var concern = (concernsOrNotInterested ?? "").Trim().ToLower();
+            if (!string.IsNullOrEmpty(concern)
+                && concern != "none" && concern != "no" && concern != "n/a" && concern != "na" && concern != "nil")
+                return false;
+
+            var positiveKeywords = new[] { "available", "yes", "interested", "confirmed", "willing", "agree", "positive" };
+
+            var intent = (availabilityIntent ?? "").Trim().ToLower();
+            if (positiveKeywords.Any(k => intent.Contains(k)))
+                return true;
+
+            var bodyIntent = (mailBodyIntent ?? "").Trim().ToLower();
+            if (positiveKeywords.Any(k => bodyIntent.Contains(k)))
+                return true;
+
+            return false;
+        }
+
         private static string NormalizePhone(string phone)
         {
             if (string.IsNullOrWhiteSpace(phone)) return phone;
@@ -1643,6 +1668,17 @@ namespace Risebird.Web.Controllers
 
                 if (newId > 0)
                     await _repository.InsertHistoryAsync(newId, "RecordCreated", null, "Open", "Relay.app");
+
+                // Auto-close if the Relay-extracted availability intent is favorable
+                if (newId > 0 && IsFavorableAvailabilityIntent(
+                        payload.AvailabilityIntent, payload.MailBodyIntent, payload.ConcernsOrNotInterested))
+                {
+                    _ = Task.Run(async () =>
+                    {
+                        try { await TryAutoCloseAsync(newId, "Relay AutoClose"); }
+                        catch { }
+                    });
+                }
 
                 return Ok(new
                 {
