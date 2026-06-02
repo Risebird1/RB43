@@ -372,7 +372,10 @@ namespace Risebird.Business
                     }
                     else if (!string.IsNullOrEmpty(meeting.interviewer))
                     {
-                        await _notificationHelper.SendInterviewerMailOnAssinment(meeting.interviewer, meeting.interviewDate.ToString());
+                        if (await _meetingRespository.IsUserActive(meeting.interviewer))
+                        {
+                            await _notificationHelper.SendInterviewerMailOnAssinment(meeting.interviewer, meeting.interviewDate.ToString());
+                        }
                         return true;
                     }
                 }

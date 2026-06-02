@@ -23,7 +23,7 @@ namespace Risebird.Functions
                 var msg = "Dear Interviewer! Greetings from RiseBird. This is a gentle reminder for your upcoming video based interview meeting scheduled today. Kindly be available on time.";
                 var mails = new List<Meeting>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
-                var query = "select InterviewMeetings.id, InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
+                var query = "select InterviewMeetings.id, InterviewMeetings.interviewer from InterviewMeetings join UserList ul on ul.EmailId=InterviewMeetings.interviewer and ul.IsActive=1 where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now);
                 dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(35));
