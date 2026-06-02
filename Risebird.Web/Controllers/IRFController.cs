@@ -9004,6 +9004,35 @@ namespace Risebird.Web.Controllers
         #region Delivery Head Instruction
 
         [HttpGet]
+        public async Task<JsonResult> GetDmInterviewerPanelMetrics(int irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { ok = false });
+                }
+
+                var model = await _irfService.GetEditIRF(irfId, 0, false);
+                var interviewers = model?.InterviewerCollection?
+                    .Select(iv => new
+                    {
+                        userId = iv.UserId,
+                        email = iv.EmailId ?? "",
+                        futureAssignedCount = iv.TotalFuture
+                    })
+                    .ToList();
+
+                return Json(new { ok = true, interviewers });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false });
+            }
+        }
+
+        [HttpGet]
         public async Task<JsonResult> GetDmInterviewerCvState(int irfId, int userId)
         {
             try
@@ -9031,7 +9060,8 @@ namespace Risebird.Web.Controllers
                     isResumeRedactAttempted = iv.IsResumeRedactAttempted,
                     aiVerdict = iv.AIVerdict ?? "",
                     aiScore = iv.AIScreeningScore,
-                    aiReasonFull = iv.OpenAIScreeningResponse ?? ""
+                    aiReasonFull = iv.OpenAIScreeningResponse ?? "",
+                    futureAssignedCount = iv.TotalFuture
                 });
             }
             catch (Exception ex)
