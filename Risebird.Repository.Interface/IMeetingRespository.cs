@@ -358,6 +358,13 @@ namespace Risebird.Repository.Interface
         Task<int> UpdatePaymentHistoryTransferStatus(string transferId, string cfTransferId, string payoutStatus, string transferUtr = null);
 
         /// <summary>
+        /// Fetches the <see cref="PaymentHistoryEmailDetails"/> (PaymentHistoryId, Email, Amount)
+        /// for the PaymentHistory row matched by <paramref name="transferId"/> or <paramref name="cfTransferId"/>.
+        /// Used by the webhook to obtain the interviewer email for sending a confirmation mail.
+        /// </summary>
+        Task<PaymentHistoryEmailDetails> GetPaymentDetailsByTransferId(string transferId, string cfTransferId);
+
+        /// <summary>
         /// Updates <c>GatewayPaymentStatus</c> on a PaymentHistory row matched by
         /// <paramref name="cfPaymentId"/> from a Cashfree Payment Gateway webhook
         /// (e.g. PAYMENT_SUCCESS_WEBHOOK, PAYMENT_FAILED_WEBHOOK).

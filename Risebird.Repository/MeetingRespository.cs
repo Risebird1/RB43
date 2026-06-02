@@ -4426,6 +4426,36 @@ namespace Risebird.Repository
         }
 
         /// <summary>
+        /// Fetches the PaymentHistoryId, interviewer EmailId, and Amount for a
+        /// PaymentHistory row matched by TransferId and/or CfTransferId.
+        /// Used by the webhook controller to send a confirmation email on TRANSFER_SUCCESS.
+        /// </summary>
+        public async Task<PaymentHistoryEmailDetails> GetPaymentDetailsByTransferId(
+            string transferId,
+            string cfTransferId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@TransferId",   transferId   ?? string.Empty);
+                parameters.Add("@CfTransferId", cfTransferId ?? string.Empty);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QuerySingleOrDefaultAsync<PaymentHistoryEmailDetails>(
+                        "usp_GetPaymentDetailsByTransferId",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Updates PaymentHistory.GatewayPaymentStatus matched by CfPaymentId.
         /// Delegates to stored procedure <c>usp_UpdatePaymentHistoryGatewayStatus</c>.
         /// Returns the number of rows updated (0 means no matching record found).
