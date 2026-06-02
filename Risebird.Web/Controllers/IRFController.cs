@@ -15,6 +15,7 @@ using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.OpenAIModels;
+using Risebird.Entities.Data.PlivoCXModels;
 using Risebird.Entities.Data.VapiModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -78,6 +79,8 @@ namespace Risebird.Web.Controllers
         private readonly IActivityTrackerService _activityTrackerService;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IOpenAISpeechToTextService _speechToTextService;
+        private readonly IPlivoCXService _plivoCXService;
+        private readonly IInterviewerEmailAvailabilityRepository _eaRepository;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
@@ -85,7 +88,9 @@ namespace Risebird.Web.Controllers
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
             HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper,
             ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper, IActivityTrackerService activityTrackerService, IAssistantServiceHelper assistantServiceHelper,
-            IOpenAISpeechToTextService speechToTextService)
+            IOpenAISpeechToTextService speechToTextService,
+            IPlivoCXService plivoCXService,
+            IInterviewerEmailAvailabilityRepository eaRepository)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -117,6 +122,8 @@ namespace Risebird.Web.Controllers
             _activityTrackerService = activityTrackerService;
             _assistantServiceHelper = assistantServiceHelper;
             _speechToTextService = speechToTextService;
+            _plivoCXService = plivoCXService;
+            _eaRepository = eaRepository;
         }
 
         [Authorize]
@@ -1078,18 +1085,103 @@ namespace Risebird.Web.Controllers
 
         private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName, string jdTitle)
         {
+            if (string.IsNullOrWhiteSpace(assessmentGroupId) || !int.TryParse(assessmentGroupId, out int agId) || agId <= 0)
+                return;
 
-            return;
+            _ = System.Threading.Tasks.Task.Run(async () =>
+            {
+                try
+                {
+                    string magName = await _eaRepository.GetMAGNameByAssessmentGroupIdAsync(agId);
+                    if (string.IsNullOrWhiteSpace(magName))
+                        return;
 
-            //var dto = new AvailabilityCheckDTO { id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName, JDTitle = jdTitle };
-            //var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
-            ////var path = $"http://localhost:7071/api/CheckIRFAvailability";
-            //var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
-            ////functionKey = string.Empty;
-            //await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
+                    var interviewers = await _eaRepository.GetCallableInterviewersForMAGAsync(magName, onlyUncalled: true);
+                    if (interviewers == null || !interviewers.Any())
+                        return;
 
-            //await MakeIVRCallForAvailability(dto);
+                    string callerId = _configuration["PlivoCX:AvailabilityCallerId"]
+                                   ?? _configuration["PlivoCX:OnboardingCallerId"]
+                                   ?? _configuration["Plivo:FromNumber"]
+                                   ?? "+918031136547";
 
+                    int batchLogId = 0;
+                    string initiatedBy = "IRF AutoCall";
+                    try
+                    {
+                        batchLogId = await _eaRepository.InsertBatchCallLogAsync(magName, initiatedBy, interviewers.Count);
+                    }
+                    catch { }
+
+                    int succeeded = 0, failed = 0;
+
+                    foreach (var interviewer in interviewers)
+                    {
+                        try
+                        {
+                            int eaId = interviewer.Id;
+
+                            if (interviewer.Source == "Profile" && interviewer.InterviewerProfileId.HasValue)
+                            {
+                                eaId = await _eaRepository.EnsureEARecordForProfileInterviewerAsync(
+                                    interviewer.InterviewerProfileId.Value, magName);
+                                if (eaId <= 0) { failed++; continue; }
+                            }
+
+                            string phone = interviewer.Phone?.Trim() ?? "";
+                            if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
+                            else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
+
+                            await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
+                                DateTime.UtcNow, null, null, null, null, null, null, null, null, initiatedBy);
+
+                            var triggerRequest = new PlivoCXAvailabilityTriggerRequest
+                            {
+                                CallerId        = callerId,
+                                PhoneNumber     = phone,
+                                InterviewerName = interviewer.InterviewerName ?? "there",
+                                InterviewerEmail = interviewer.SenderEmail,
+                                MagName         = magName,
+                                LogId           = eaId.ToString(),
+                                TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                            };
+
+                            var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
+
+                            if (!string.IsNullOrEmpty(response?.Error))
+                            {
+                                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
+                                    null, null, null, response.Error, null, null, null, null, null, null);
+                                failed++;
+                            }
+                            else
+                            {
+                                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "triggered", response?.ConversationId,
+                                    null, null, null, null, null, null, null, null, null, null);
+                                await _eaRepository.InsertHistoryAsync(eaId, "IRFAutoCall", "—",
+                                    $"Availability call triggered for IRF '{irfName}'. ConvId: {response?.ConversationId ?? "N/A"}", initiatedBy);
+                                succeeded++;
+                            }
+
+                            await System.Threading.Tasks.Task.Delay(1200);
+                        }
+                        catch
+                        {
+                            failed++;
+                        }
+                    }
+
+                    if (batchLogId > 0)
+                    {
+                        try { await _eaRepository.CompleteBatchCallLogAsync(batchLogId, succeeded, failed, 0, "Completed"); }
+                        catch { }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    try { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); } catch { }
+                }
+            });
         }
         private async Task MakeIVRCallForAvailability(AvailabilityCheckDTO dto)
         {
