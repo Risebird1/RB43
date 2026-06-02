@@ -456,6 +456,11 @@ namespace Risebird.Entities.ViewModel
         public string AITranscriptVerdict { get; set; }
         public string AIVerdict { get; set; }
         public int InterviewerBillingCycle { get; set; }
+        public string TransferId { get; set; }
+        public string CfTransferId { get; set; }
+        public string TransferUtr { get; set; }
+        public string PayoutStatus { get; set; }
+        public string CfPaymentId { get; set; }
     }
     public class SchedulingLinkVM
     {

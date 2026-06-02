@@ -117,7 +117,7 @@ namespace Risebird.Business.Interface
         Task<InterviewerDirectApplicationVM> InsertApplicantsRenewed(InterviewerDirectApplicationVM obj);
         Task<IEnumerable<FLNInterviewerAcknowledgementStatusVM>> GetFLNAcknowledgementStatus(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
         Task<bool> UpdateInterviewerResume(int userId, string resumeLink, string loggedInUser);
-        Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser);
+        Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser, bool preserveAvailability = false, bool? isAvailable = null);
         Task<bool> UpdateInterviewerAvailabilityStatus(int userId, bool availabilityStatus, int irfId, string loggedInUser);
         Task<bool> UpdateInterviewerAcknowledgementStatus(string loggedInUser,string value);
         Task<bool> AddInternalInterviewerToIRFPostPositiveVerdict(InterviewerDirectApplicationVM model);

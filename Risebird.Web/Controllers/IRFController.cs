@@ -1037,8 +1037,7 @@ namespace Risebird.Web.Controllers
             var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                              select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
-            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                            select new { ID = (int)s, Name = s.GetDescription() };
+            var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
             ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
 
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
@@ -2454,8 +2453,7 @@ namespace Risebird.Web.Controllers
 
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
-            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                            select new { ID = (int)s, Name = s.GetDescription() };
+            var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
             ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
             var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                              select new { ID = (int)s, Name = s.GetDescription() };
@@ -4889,8 +4887,7 @@ namespace Risebird.Web.Controllers
             {
                 model._skilldetails.SeniorityLevelArray = model._skilldetails.SeniorityLevel.Split(',');
             }
-            var seniorityLevelTypes = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                      select new { ID = (int)s, Name = s.GetDescription() };
+            var seniorityLevelTypes = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
             var selectListforSeniorityLevel = new List<SelectListItem>();
             foreach (var item in seniorityLevelTypes)
             {
@@ -7368,7 +7365,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult UpdateVoiceInstructionTranscript(int irfId, string transcript)
+        public async Task<JsonResult> UpdateVoiceInstructionTranscript(int irfId, string transcript, bool regenerateRubric = true)
         {
             try
             {
@@ -7388,7 +7385,8 @@ namespace Risebird.Web.Controllers
                 {
                     success = true,
                     transcript = brief?.Transcript,
-                    transcriptUpdatedOn = brief?.TranscriptUpdatedOn
+                    transcriptUpdatedOn = brief?.TranscriptUpdatedOn,
+                    regenerateRubric
                 });
             }
             catch (Exception ex)
@@ -7423,24 +7421,34 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(rawJson))
                     return Json(new { success = false, message = "Rubric generation returned empty content." });
 
+                rawJson = rawJson.Replace("```json", "", StringComparison.OrdinalIgnoreCase)
+                    .Replace("```", "")
+                    .Trim();
+                var jsonStart = rawJson.IndexOf('{');
+                var jsonEnd = rawJson.LastIndexOf('}');
+                if (jsonStart >= 0 && jsonEnd > jsonStart)
+                    rawJson = rawJson.Substring(jsonStart, jsonEnd + 1 - jsonStart);
+
                 var model = JsonConvert.DeserializeObject<RubricSchema>(rawJson);
                 var techSkills = new List<TransSkill>();
                 if (model?.Rubric != null)
                 {
                     foreach (var skill in model.Rubric)
                     {
+                        if (string.IsNullOrWhiteSpace(skill?.Skill)) continue;
                         var techSkill = new TransSkill();
                         var levelDesc = skill.ProficiencyLevel;
                         if (Enum.TryParse(typeof(LevelTechEnum), levelDesc, true, out var parsedLevel))
                             techSkill.LevelId = (int)parsedLevel;
-                        techSkill.SkillName = skill.Skill;
-                        techSkill.Weightage = skill.Weight;
+                        techSkill.SkillName = skill.Skill.Trim();
+                        techSkill.Weightage = skill.Weight > 0 ? skill.Weight : 10;
                         if (skill.CoreConcepts != null)
                             techSkill.Concepts = string.Join(",", skill.CoreConcepts);
                         techSkill.Natureofquestion = skill.KeyExpectations;
-                        techSkill.Timelimit = Convert.ToInt16(skill.EvaluationTime);
+                        techSkill.Timelimit = skill.EvaluationTime > 0 ? Convert.ToInt16(skill.EvaluationTime) : (short)10;
                         techSkill.isEliminationskill = skill.Mandatory != null && skill.Mandatory.Equals("yes", StringComparison.OrdinalIgnoreCase);
                         techSkill.IRFId = irfId;
+                        techSkill.SkillSet = 1; // DM Approval table only shows SkillSet == 1 (see checkSkillSetandSeperate)
                         techSkills.Add(techSkill);
                     }
                 }
@@ -7457,6 +7465,8 @@ namespace Risebird.Web.Controllers
                     {
                         if (existing == null || string.IsNullOrWhiteSpace(existing.SkillName)) continue;
                         existing.IRFId = irfId;
+                        if (existing.SkillSet == 0)
+                            existing.SkillSet = 1;
                         mergedSkills.Add(existing);
                     }
                 }
@@ -7481,7 +7491,14 @@ namespace Risebird.Web.Controllers
                 var message = addedFromVoice > 0
                     ? $"{addedFromVoice} new skill(s) added from voice brief. Existing rubric skills were kept."
                     : "No new skills were added (names already exist on the rubric). Existing rubric was not changed.";
-                return Json(new { success = true, skillCount = mergedSkills.Count, addedFromVoice, message });
+                return Json(new
+                {
+                    success = true,
+                    skillCount = mergedSkills.Count,
+                    addedFromVoice,
+                    message,
+                    reloadRequired = addedFromVoice > 0
+                });
             }
             catch (Exception ex)
             {
@@ -9026,13 +9043,14 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> DeliveryHeadInstruction(int irfid, string Type = null)//Type = "ublc" stands for public here
+        public async Task<IActionResult> DeliveryHeadInstruction(string irfid, string Type = null)//Type = "ublc" stands for public here
         {
+            var resolvedIrfId = await _irfService.ResolveSkillChannelNumericIdAsync(irfid);
             ViewBag.PageType = "";
             if (!string.IsNullOrEmpty(Type) && Type == "ublc" /*&& HttpContext.Session.GetString("email") == null*/)
             {
                 ViewBag.PageType = "Public";
-                return View(new IRFVm { id = irfid });
+                return View(new IRFVm { id = resolvedIrfId });
             }
             else if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
@@ -9051,32 +9069,32 @@ namespace Risebird.Web.Controllers
                 //ViewBag.LevelTech = new SelectList(techlevels, "ID", "Name");
                 //var Skillset = await _irfRepository.GetSkills();
                 //ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
-                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                select new { ID = (int)s, Name = s.GetDescription() };
+                var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
-                var result = await _clientService.VerifyClientAuthenticity(irfid, emailid);
+                if (resolvedIrfId <= 0)
+                {
+                    ViewBag.Message = "Skill Channel not found.";
+                    return View(new IRFVm { id = 0 });
+                }
+                var result = await _clientService.VerifyClientAuthenticity(resolvedIrfId, emailid);
                 if (!result && profileName == "Public")
                 {
                     ViewBag.Message = "Do not have access for this skill Channel instruction";
                     return View(model);
                 }
-                model = await _irfService.GetEditIRF(irfid, 0, false);
+                model = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
                 if (model == null)
                 {
                     ViewBag.Message = "Skill Channel not found.";
-                    return View(new IRFVm { id = irfid });
+                    return View(new IRFVm { id = resolvedIrfId });
                 }
 
-                model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfid);
-                model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
-                var voiceBrief = _irfService.FetchVoiceInstructionBrief(irfid);
+                model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
+                model.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
+                var voiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
                 model.VoiceInstructionTranscript = voiceBrief?.Transcript;
                 model.VoiceInstructionTranscriptUpdatedOn = voiceBrief?.TranscriptUpdatedOn;
-                model.CandidateVideo = _irfService.GetVideoConsentForm(irfid).Result;
-                if (!model.DmIvLockNew && model.InterviewerCollection != null)
-                {
-                    model.InterviewerCollection = model.InterviewerCollection.Where(x => x.IsActive).ToList();
-                }
+                model.CandidateVideo = _irfService.GetVideoConsentForm(resolvedIrfId).Result;
                 await checkSkillSetandSeperate(model);
                 return View(model);
             }
@@ -9110,8 +9128,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.LevelTech = new SelectList(level, "id", "Name");
                     var Skillset = await _irfRepository.GetSkills();
                     ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
-                    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
+                    var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
                     ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
                     return View(model);
                 }
@@ -9351,10 +9368,8 @@ namespace Risebird.Web.Controllers
                 if (irfVm == null || irfVm.SkillCollection == null || !irfVm.SkillCollection.Any())
                     return Json(new { success = false, message = "No rubric skills found for this channel." });
 
-                var rubricLines = irfVm.SkillCollection.Select(s =>
-                    $"Skill: {s.SkillName}, Level: {s.LevelName ?? "N/A"}, Weightage: {s.Weightage}%, Concepts: {s.Concepts ?? "N/A"}, Expectations: {s.Natureofquestion ?? "N/A"}, Time: {s.Timelimit} min, Elimination: {(s.isEliminationskill ? "Yes" : "No")}"
-                );
-                var rubricInput = $"Role: {irfVm.IRFId}\nInterview Type: Technical\n\nRubric:\n" + string.Join("\n", rubricLines);
+                var rubricPrompt = DmIvQuestionRubricHelper.BuildRubricPromptSection(irfVm.SkillCollection);
+                var rubricInput = $"Role: {irfVm.IRFId}\nInterview Type: Technical\n\n{rubricPrompt}";
 
                 if (useVoiceTranscript)
                 {
@@ -9365,6 +9380,8 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
+                var validSkillNames = DmIvQuestionRubricHelper.BuildValidSkillNameSet(irfVm.SkillCollection);
+
                 var assistantId = _configuration["OpenAI:RubricQuestionAssistantId"];
                 if (string.IsNullOrEmpty(assistantId))
                     return Json(new { success = false, message = "Rubric question assistant not configured." });
@@ -9373,159 +9390,13 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrEmpty(apiKey))
                     return Json(new { success = false, message = "OpenAI API key not configured." });
 
-                string threadId, runId, raw;
-                using (var http = new HttpClient())
+                var generationResult = await RunRubricQuestionGenerationAsync(assistantId, apiKey, rubricInput, irfId, emailid, validSkillNames);
+                if (generationResult.RetryAttempted)
                 {
-                    http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
-                    http.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
-                    http.Timeout = TimeSpan.FromSeconds(120);
-
-                    var threadResp = await http.PostAsync("https://api.openai.com/v1/threads",
-                        new StringContent("{}", System.Text.Encoding.UTF8, "application/json"));
-                    var threadJson = Newtonsoft.Json.Linq.JObject.Parse(await threadResp.Content.ReadAsStringAsync());
-                    threadId = threadJson["id"]?.ToString();
-                    if (string.IsNullOrEmpty(threadId))
-                        return Json(new { success = false, message = "Failed to create OpenAI thread." });
-
-                    var msgPayload = Newtonsoft.Json.JsonConvert.SerializeObject(new { role = "user", content = rubricInput });
-                    var msgResp = await http.PostAsync($"https://api.openai.com/v1/threads/{threadId}/messages",
-                        new StringContent(msgPayload, System.Text.Encoding.UTF8, "application/json"));
-                    if (!msgResp.IsSuccessStatusCode)
-                        return Json(new { success = false, message = "Failed to send message to OpenAI." });
-
-                    var runPayload = Newtonsoft.Json.JsonConvert.SerializeObject(new { assistant_id = assistantId });
-                    var runResp = await http.PostAsync($"https://api.openai.com/v1/threads/{threadId}/runs",
-                        new StringContent(runPayload, System.Text.Encoding.UTF8, "application/json"));
-                    var runJson = Newtonsoft.Json.Linq.JObject.Parse(await runResp.Content.ReadAsStringAsync());
-                    runId = runJson["id"]?.ToString();
-                    var runStatus = runJson["status"]?.ToString();
-                    if (string.IsNullOrEmpty(runId))
-                        return Json(new { success = false, message = "Failed to start AI run. " + (runJson["last_error"]?["message"]?.ToString() ?? "") });
-
-                    var pollStart = DateTime.UtcNow;
-                    while (runStatus == "queued" || runStatus == "in_progress")
-                    {
-                        if ((DateTime.UtcNow - pollStart).TotalSeconds > 90)
-                            return Json(new { success = false, message = "AI generation timed out after 90 seconds. The rubric may be too large. Please try again." });
-
-                        await System.Threading.Tasks.Task.Delay(3000);
-                        var statusResp = await http.GetAsync($"https://api.openai.com/v1/threads/{threadId}/runs/{runId}");
-                        var statusJson = Newtonsoft.Json.Linq.JObject.Parse(await statusResp.Content.ReadAsStringAsync());
-                        runStatus = statusJson["status"]?.ToString() ?? "unknown";
-                    }
-
-                    if (runStatus != "completed")
-                        return Json(new { success = false, message = "AI run ended with status: " + runStatus });
-
-                    var msgsResp = await http.GetAsync($"https://api.openai.com/v1/threads/{threadId}/messages");
-                    var msgsJson = Newtonsoft.Json.Linq.JObject.Parse(await msgsResp.Content.ReadAsStringAsync());
-                    var dataArr = msgsJson["data"] as Newtonsoft.Json.Linq.JArray;
-                    raw = null;
-                    if (dataArr != null)
-                    {
-                        foreach (var msg in dataArr)
-                        {
-                            if (msg["role"]?.ToString() == "assistant")
-                            {
-                                var contentArr = msg["content"] as Newtonsoft.Json.Linq.JArray;
-                                if (contentArr != null)
-                                {
-                                    foreach (var block in contentArr)
-                                    {
-                                        if (block["type"]?.ToString() == "text")
-                                        {
-                                            raw = block["text"]?["value"]?.ToString();
-                                            if (!string.IsNullOrWhiteSpace(raw)) break;
-                                        }
-                                    }
-                                }
-                                if (!string.IsNullOrWhiteSpace(raw)) break;
-                            }
-                        }
-                    }
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                        new Exception($"GenerateQuestionsFromRubric: retried after >50% skill mismatches for IRF {irfId}."));
                 }
-
-                if (string.IsNullOrWhiteSpace(raw))
-                    return Json(new { success = false, message = "AI returned an empty response." });
-
-                var cleaned = raw.Trim();
-                if (cleaned.StartsWith("```json", StringComparison.OrdinalIgnoreCase))
-                    cleaned = cleaned.Substring(7).TrimStart();
-                else if (cleaned.StartsWith("```"))
-                    cleaned = cleaned.Substring(3).TrimStart();
-                if (cleaned.EndsWith("```"))
-                    cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
-
-                var jsonStart = cleaned.IndexOf('{');
-                var jsonEnd = cleaned.LastIndexOf('}');
-                if (jsonStart >= 0 && jsonEnd > jsonStart)
-                    cleaned = cleaned.Substring(jsonStart, jsonEnd - jsonStart + 1);
-
-                Newtonsoft.Json.Linq.JObject jsonObj;
-                try { jsonObj = Newtonsoft.Json.Linq.JObject.Parse(cleaned); }
-                catch (Newtonsoft.Json.JsonException parseEx)
-                {
-                    var preview = cleaned.Length > 300 ? cleaned.Substring(0, 300) + "..." : cleaned;
-                    return Json(new { success = false, message = "AI returned a non-JSON response: " + preview, parseError = parseEx.Message });
-                }
-
-                var bank = (jsonObj["question_answer_score_bank"]
-                    ?? jsonObj["questions"]
-                    ?? jsonObj["question_bank"]
-                    ?? jsonObj["sample_questions"]) as Newtonsoft.Json.Linq.JArray;
-
-                if (bank == null)
-                {
-                    var firstArr = jsonObj.Properties()
-                        .FirstOrDefault(p => p.Value is Newtonsoft.Json.Linq.JArray arr && arr.Count > 0 && arr[0] is Newtonsoft.Json.Linq.JObject);
-                    bank = firstArr?.Value as Newtonsoft.Json.Linq.JArray;
-                }
-
-                if (bank == null || !bank.Any())
-                    return Json(new { success = false, message = "AI did not return any questions in the expected format." });
-
-                var rubricSkillNames = irfVm.SkillCollection
-                    .Select(s => s.SkillName?.Trim())
-                    .Where(s => !string.IsNullOrEmpty(s))
-                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-
-                var saved = new List<object>();
-                var mismatches = new List<string>();
-
-                foreach (var q in bank)
-                {
-                    var skill = q["skill_or_competency"]?.ToString()?.Trim();
-                    if (string.IsNullOrEmpty(skill))
-                        skill = q["rubric_parameter"]?.ToString()?.Trim();
-                    if (string.IsNullOrEmpty(skill))
-                        skill = q["rubric_sub_parameter"]?.ToString()?.Trim();
-
-                    var matchedSkill = rubricSkillNames.FirstOrDefault(r => string.Equals(r, skill, StringComparison.OrdinalIgnoreCase));
-                    if (matchedSkill == null)
-                        matchedSkill = rubricSkillNames.FirstOrDefault(r =>
-                            r.IndexOf(skill ?? "", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            (skill ?? "").IndexOf(r, StringComparison.OrdinalIgnoreCase) >= 0);
-                    if (matchedSkill == null)
-                    {
-                        mismatches.Add(skill ?? "(empty)");
-                        matchedSkill = skill ?? "Ungrouped";
-                    }
-
-                    var question = (q["interviewer_question"] ?? q["question"] ?? q["question_text"])?.ToString() ?? "";
-                    var strongAnswer = q["expected_candidate_answer"]?["strong_answer"]?.ToString()
-                        ?? q["expected_answer"]?.ToString()
-                        ?? q["strong_answer"]?.ToString()
-                        ?? q["answer"]?.ToString() ?? "";
-                    var payload = q.ToString(Newtonsoft.Json.Formatting.None);
-
-                    var newId = await _irfService.AddAIGeneratedSampleQuestion(irfId, matchedSkill, question, strongAnswer, payload, emailid);
-                    if (newId > 0)
-                        saved.Add(new { id = newId, skillName = matchedSkill, comment = question, expectedAnswer = strongAnswer, isGeneratedByAi = true });
-                }
-
-                // Skill mismatches are logged but not blocking
-
-                return Json(new { success = true, questions = saved, count = saved.Count });
+                return Json(generationResult.Response);
             }
             catch (Exception ex)
             {
@@ -11954,19 +11825,26 @@ namespace Risebird.Web.Controllers
 
                 if (ok)
                 {
-                    if (isVerified)
-                    {
-                        await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfId, interviewerEmail, "Shortlisted");
-                        await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, true, irfId, emailid);
-                    }
-                    else
-                    {
-                        await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfId, interviewerEmail, "Rejected");
-                        await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, false, irfId, emailid);
-                    }
+                    var clientAction = isVerified ? "Shortlisted" : "Rejected";
+                    await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfId, interviewerEmail, clientAction);
+
+                    var (isActive, isAvailable) = DmIvRecordHelper.ComputeFlagsFromVet(isVerified, clientAction);
+                    await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, isActive, irfId, emailid, isAvailable: isAvailable);
                 }
 
-                return Json(new { success = ok, active = isVerified, transId = transInterviewerId, irfId, userId, email = interviewerEmail });
+                var rbClientAction = isVerified ? "Shortlisted" : "Rejected";
+                var rbFlags = DmIvRecordHelper.ComputeFlagsFromVet(isVerified, rbClientAction);
+                return Json(new
+                {
+                    success = ok,
+                    active = ok && rbFlags.isActive,
+                    available = ok && rbFlags.isAvailable,
+                    clientVet = ok && isVerified,
+                    transId = transInterviewerId,
+                    irfId,
+                    userId,
+                    email = interviewerEmail
+                });
             }
             catch (Exception ex)
             {
@@ -11990,20 +11868,28 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Forbidden" });
                 }
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var panel = await _irfRepository.GetTransInterviewer(irfId);
+                var ti = panel?.FirstOrDefault(x => x.UserId == userId);
+                if (ti == null)
+                {
+                    return Json(new { success = false, message = "Interviewer not found on this channel." });
+                }
+                if (isApproved && !ti.IsSMEVerified)
+                {
+                    return Json(new { success = false, message = "Client Vet requires RB Vet first." });
+                }
+
                 var action = isApproved ? "Shortlisted" : "Rejected";
                 var ok = await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfId, interviewerEmail, action);
 
                 if (ok)
                 {
-                    // active = (rbVet === yes) && (clientVet !== no)
-                    // Client Vet buttons are disabled when RB Vet = No (UI guard),
-                    // so isApproved=true implies RB Vet is already Yes → activate.
-                    // isApproved=false → deactivate (SP already sets IsActive=0; also clear availability).
-                    bool newActive = isApproved;
-                    await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, newActive, irfId, emailid);
+                    var (isActive, isAvailable) = DmIvRecordHelper.ComputeFlagsFromVet(ti.IsSMEVerified, action);
+                    await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, isActive, irfId, emailid, isAvailable: isAvailable);
                 }
 
-                return Json(new { success = ok, clientAction = action, active = isApproved });
+                var flags = DmIvRecordHelper.ComputeFlagsFromVet(ti.IsSMEVerified, action);
+                return Json(new { success = ok, clientAction = action, active = ok && flags.isActive, available = ok && flags.isAvailable });
             }
             catch (Exception ex)
             {
@@ -12104,7 +11990,7 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 var cap = Math.Max(0, Math.Min(99, interviewCapacity));
                 var ok = await _irfService.UpdateTransInterviewerCapacity(transInterviewerId, cap, emailid);
-                return Json(new { success = ok, interviewCapacity = cap });
+                return Json(new { success = ok, interviewCapacity = cap, capConfigured = true });
             }
             catch (Exception ex)
             {
@@ -12178,9 +12064,20 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SupportAdmin")
                     {
+                        var panel = await _irfRepository.GetTransInterviewer(irfId);
+                        var ti = panel?.FirstOrDefault(x => x.UserId == userId);
+                        if (ti == null)
+                        {
+                            return Json(new { success = false, message = "Interviewer not found on this channel." });
+                        }
+
+                        if (!DmIvSurchargeHelper.TryValidate(surcharge, ti.PerSuccessRate, out var validationError))
+                        {
+                            return Json(new { success = false, message = validationError });
+                        }
 
                         var result = await _irfService.UpdateInterviewerSurcharge(userId, surcharge, irfId, emailid);
-                        return Json(result);
+                        return Json(new { success = result, surcharge });
                     }
                     else
                     {
@@ -12196,7 +12093,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(false);
+                return Json(new { success = false, message = "Failed to save surcharge." });
 
             }
         }
@@ -12420,6 +12317,224 @@ namespace Risebird.Web.Controllers
             {
                 return Json("Fail to Update Biiling Cycle, Try again to update the billing cycle.");
             }
+        }
+
+        private sealed class RubricQuestionGenerationResult
+        {
+            public object Response { get; set; }
+            public bool RetryAttempted { get; set; }
+        }
+
+        private async Task<RubricQuestionGenerationResult> RunRubricQuestionGenerationAsync(
+            string assistantId, string apiKey, string rubricInput, int irfId, string emailid,
+            HashSet<string> validSkillNames, bool isRetry = false)
+        {
+            var raw = await FetchAssistantTextResponseAsync(assistantId, apiKey, rubricInput);
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                return new RubricQuestionGenerationResult
+                {
+                    Response = new { success = false, message = "AI returned an empty response." }
+                };
+            }
+
+            var parseResult = await ParseAndSaveRubricQuestionsAsync(raw, irfId, emailid, validSkillNames);
+            if (!parseResult.Parsed)
+            {
+                return new RubricQuestionGenerationResult { Response = parseResult.ErrorResponse };
+            }
+
+            var total = parseResult.TotalCount;
+            var rejected = parseResult.Mismatches.Count;
+            if (!isRetry && total > 0 && rejected > total / 2)
+            {
+                var retryInput = rubricInput + "\n\nREMINDER: Every question's skill_or_competency MUST be copied exactly from the Score Rubric skill list above.";
+                var retry = await RunRubricQuestionGenerationAsync(assistantId, apiKey, retryInput, irfId, emailid, validSkillNames, isRetry: true);
+                retry.RetryAttempted = true;
+                return retry;
+            }
+
+            foreach (var mismatch in parseResult.Mismatches)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                    new Exception($"GenerateQuestionsFromRubric IRF {irfId}: rejected skill '{mismatch.Returned}' (valid: {string.Join(", ", validSkillNames)})."));
+            }
+
+            object response;
+            if (parseResult.Saved.Count == 0)
+            {
+                response = new
+                {
+                    success = false,
+                    message = "All generated questions were rejected because skill names did not match the rubric.",
+                    rejectedSkills = parseResult.Mismatches.Select(m => m.Returned).Distinct().ToList(),
+                    validSkills = validSkillNames.ToList()
+                };
+            }
+            else
+            {
+                response = new
+                {
+                    success = true,
+                    questions = parseResult.Saved,
+                    count = parseResult.Saved.Count,
+                    rejectedCount = rejected,
+                    warning = rejected > 0
+                        ? $"{rejected} question(s) were rejected due to skill-name mismatches."
+                        : null
+                };
+            }
+
+            return new RubricQuestionGenerationResult { Response = response, RetryAttempted = isRetry };
+        }
+
+        private async Task<string> FetchAssistantTextResponseAsync(string assistantId, string apiKey, string rubricInput)
+        {
+            using (var http = new HttpClient())
+            {
+                http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+                http.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
+                http.Timeout = TimeSpan.FromSeconds(120);
+
+                var threadResp = await http.PostAsync("https://api.openai.com/v1/threads",
+                    new StringContent("{}", System.Text.Encoding.UTF8, "application/json"));
+                var threadJson = Newtonsoft.Json.Linq.JObject.Parse(await threadResp.Content.ReadAsStringAsync());
+                var threadId = threadJson["id"]?.ToString();
+                if (string.IsNullOrEmpty(threadId)) return null;
+
+                var msgPayload = Newtonsoft.Json.JsonConvert.SerializeObject(new { role = "user", content = rubricInput });
+                var msgResp = await http.PostAsync($"https://api.openai.com/v1/threads/{threadId}/messages",
+                    new StringContent(msgPayload, System.Text.Encoding.UTF8, "application/json"));
+                if (!msgResp.IsSuccessStatusCode) return null;
+
+                var runPayload = Newtonsoft.Json.JsonConvert.SerializeObject(new { assistant_id = assistantId });
+                var runResp = await http.PostAsync($"https://api.openai.com/v1/threads/{threadId}/runs",
+                    new StringContent(runPayload, System.Text.Encoding.UTF8, "application/json"));
+                var runJson = Newtonsoft.Json.Linq.JObject.Parse(await runResp.Content.ReadAsStringAsync());
+                var runId = runJson["id"]?.ToString();
+                var runStatus = runJson["status"]?.ToString();
+                if (string.IsNullOrEmpty(runId)) return null;
+
+                var pollStart = DateTime.UtcNow;
+                while (runStatus == "queued" || runStatus == "in_progress")
+                {
+                    if ((DateTime.UtcNow - pollStart).TotalSeconds > 90) return null;
+                    await System.Threading.Tasks.Task.Delay(3000);
+                    var statusResp = await http.GetAsync($"https://api.openai.com/v1/threads/{threadId}/runs/{runId}");
+                    var statusJson = Newtonsoft.Json.Linq.JObject.Parse(await statusResp.Content.ReadAsStringAsync());
+                    runStatus = statusJson["status"]?.ToString() ?? "unknown";
+                }
+
+                if (runStatus != "completed") return null;
+
+                var msgsResp = await http.GetAsync($"https://api.openai.com/v1/threads/{threadId}/messages");
+                var msgsJson = Newtonsoft.Json.Linq.JObject.Parse(await msgsResp.Content.ReadAsStringAsync());
+                var dataArr = msgsJson["data"] as Newtonsoft.Json.Linq.JArray;
+                if (dataArr == null) return null;
+
+                foreach (var msg in dataArr)
+                {
+                    if (msg["role"]?.ToString() != "assistant") continue;
+                    var contentArr = msg["content"] as Newtonsoft.Json.Linq.JArray;
+                    if (contentArr == null) continue;
+                    foreach (var block in contentArr)
+                    {
+                        if (block["type"]?.ToString() == "text")
+                        {
+                            var raw = block["text"]?["value"]?.ToString();
+                            if (!string.IsNullOrWhiteSpace(raw)) return raw;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        private sealed class RubricQuestionParseResult
+        {
+            public bool Parsed { get; set; }
+            public object ErrorResponse { get; set; }
+            public List<object> Saved { get; set; } = new List<object>();
+            public List<(string Returned, string Question)> Mismatches { get; set; } = new List<(string, string)>();
+            public int TotalCount { get; set; }
+        }
+
+        private async Task<RubricQuestionParseResult> ParseAndSaveRubricQuestionsAsync(
+            string raw, int irfId, string emailid, HashSet<string> validSkillNames)
+        {
+            var result = new RubricQuestionParseResult();
+            var cleaned = raw.Trim();
+            if (cleaned.StartsWith("```json", StringComparison.OrdinalIgnoreCase))
+                cleaned = cleaned.Substring(7).TrimStart();
+            else if (cleaned.StartsWith("```"))
+                cleaned = cleaned.Substring(3).TrimStart();
+            if (cleaned.EndsWith("```"))
+                cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
+
+            var jsonStart = cleaned.IndexOf('{');
+            var jsonEnd = cleaned.LastIndexOf('}');
+            if (jsonStart >= 0 && jsonEnd > jsonStart)
+                cleaned = cleaned.Substring(jsonStart, jsonEnd + 1 - jsonStart);
+
+            Newtonsoft.Json.Linq.JObject jsonObj;
+            try { jsonObj = Newtonsoft.Json.Linq.JObject.Parse(cleaned); }
+            catch (Newtonsoft.Json.JsonException parseEx)
+            {
+                var preview = cleaned.Length > 300 ? cleaned.Substring(0, 300) + "..." : cleaned;
+                result.Parsed = false;
+                result.ErrorResponse = new { success = false, message = "AI returned a non-JSON response: " + preview, parseError = parseEx.Message };
+                return result;
+            }
+
+            var bank = (jsonObj["question_answer_score_bank"]
+                ?? jsonObj["questions"]
+                ?? jsonObj["question_bank"]
+                ?? jsonObj["sample_questions"]) as Newtonsoft.Json.Linq.JArray;
+
+            if (bank == null)
+            {
+                var firstArr = jsonObj.Properties()
+                    .FirstOrDefault(p => p.Value is Newtonsoft.Json.Linq.JArray arr && arr.Count > 0 && arr[0] is Newtonsoft.Json.Linq.JObject);
+                bank = firstArr?.Value as Newtonsoft.Json.Linq.JArray;
+            }
+
+            if (bank == null || !bank.Any())
+            {
+                result.Parsed = false;
+                result.ErrorResponse = new { success = false, message = "AI did not return any questions in the expected format." };
+                return result;
+            }
+
+            result.Parsed = true;
+            result.TotalCount = bank.Count;
+
+            foreach (var q in bank)
+            {
+                var skill = q["skill_or_competency"]?.ToString()?.Trim();
+                if (string.IsNullOrEmpty(skill))
+                    skill = q["rubric_parameter"]?.ToString()?.Trim();
+
+                if (!DmIvQuestionRubricHelper.TryMatchSkill(skill, validSkillNames, out var matchedSkill))
+                {
+                    result.Mismatches.Add((skill ?? "(empty)", (q["interviewer_question"] ?? q["question"])?.ToString() ?? ""));
+                    continue;
+                }
+
+                var question = (q["interviewer_question"] ?? q["question"] ?? q["question_text"])?.ToString() ?? "";
+                if (string.IsNullOrWhiteSpace(question)) continue;
+
+                var strongAnswer = q["expected_candidate_answer"]?["strong_answer"]?.ToString()
+                    ?? q["expected_answer"]?.ToString()
+                    ?? q["strong_answer"]?.ToString()
+                    ?? q["answer"]?.ToString() ?? "";
+                var payload = q.ToString(Newtonsoft.Json.Formatting.None);
+
+                var newId = await _irfService.AddAIGeneratedSampleQuestion(irfId, matchedSkill, question, strongAnswer, payload, emailid);
+                if (newId > 0)
+                    result.Saved.Add(new { id = newId, skillName = matchedSkill, comment = question, expectedAnswer = strongAnswer, isGeneratedByAi = true });
+            }
+
+            return result;
         }
     }
 }
