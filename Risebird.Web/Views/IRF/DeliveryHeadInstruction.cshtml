@@ -96,10 +96,12 @@
         if (tone == "available") return "Available";
         return "Inactive";
     }
-    bool DmV4CapConfigured(TransInterviewer iv) => iv?.InterviewCapacity != null;
-    int DmV4CapVal(TransInterviewer iv) => iv?.InterviewCapacity ?? 0;
-    bool DmV4CapShowUnlimited(bool limitedPolicy, TransInterviewer iv) =>
-        !limitedPolicy || iv?.InterviewCapacity == null;
+    bool DmV4CapConfigured(TransInterviewer iv, bool limitedPolicy, bool lockOn) =>
+        iv?.InterviewCapacity != null || (limitedPolicy && lockOn);
+    int DmV4CapVal(TransInterviewer iv, int channelDefaultCap, bool lockOn, bool limitedPolicy) =>
+        DmIvCapHelper.GetEffectiveCap(lockOn && limitedPolicy, iv?.InterviewCapacity, channelDefaultCap);
+    bool DmV4CapShowUnlimited(bool limitedPolicy, TransInterviewer iv, bool lockOn) =>
+        DmIvCapHelper.ShowUnlimited(limitedPolicy, iv?.InterviewCapacity, lockOn);
     bool DmV4CapExplicitZero(TransInterviewer iv) =>
         iv?.InterviewCapacity != null && iv.InterviewCapacity.Value == 0;
     string DmV4LevelLabel(int? levelId)
@@ -140,7 +142,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20250602bulkcap3" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20250602capdefault" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -1144,9 +1146,10 @@
                                                             var cvCode = !string.IsNullOrEmpty(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : null;
                                                             var screenUrl = Url.Action("ScreenInterviewer", "AIScreener", new { jdTitle = screenJdTitle, userId = iv.UserId, irfId = Model.id, irfName = Model.IRFId });
                                                             var ivStatsUrl = Url.Action("InterviewerStatsDetails", "Interviewer", new { userId = iv.UserId, statType = "All", interviewerEmailId = iv.EmailId, irfId = Model.id, irfName = Model.IRFId });
-                                                            var ivCapConfigured = DmV4CapConfigured(iv);
-                                                            var ivCapVal = DmV4CapVal(iv);
-                                                            var ivCapShowUnlimited = DmV4CapShowUnlimited(dmCapEnforced, iv);
+                                                            var ivCapConfigured = DmV4CapConfigured(iv, dmCapEnforced, dmIvLockNew);
+                                                            var ivCapVal = DmV4CapVal(iv, dmDefaultCap, dmIvLockNew, dmCapEnforced);
+                                                            var ivCapShowUnlimited = DmV4CapShowUnlimited(dmCapEnforced, iv, dmIvLockNew);
+                                                            var ivCapUsesDefault = dmCapEnforced && dmIvLockNew && iv.InterviewCapacity == null;
                                                             var ivCapExplicitZero = DmV4CapExplicitZero(iv);
                                                             var ivFutureAssignedCount = iv.TotalFuture;
                                                             var ivAssigned = ivFutureAssignedCount;
@@ -1156,7 +1159,7 @@
                                                                  data-user-id="@iv.UserId" data-email="@iv.EmailId" data-irf-id="@iv.IRFId" data-trans-id="@iv.id"
                                                                  data-rb-vet="@(rbVetDisplayOn ? "1" : "0")" data-client-vet="@(clientVetOn ? "1" : "0")"
                                                                  data-is-active="@(iv.IsActive ? "1" : "0")" data-is-available="@(iv.IsAvailable ? "1" : "0")" data-client-action="@(iv.ClientAction ?? "")"
-                                                                 data-capacity="@(ivCapConfigured ? ivCapVal.ToString() : "")" data-cap-configured="@(ivCapConfigured ? "1" : "0")" data-assigned="@ivAssigned" data-future-assigned="@ivFutureAssignedCount" data-rate="@iv.PerSuccessRate"
+                                                                 data-capacity="@(ivCapConfigured ? ivCapVal.ToString() : "")" data-cap-configured="@(ivCapConfigured ? "1" : "0")" data-cap-from-default="@(ivCapUsesDefault ? "1" : "0")" data-assigned="@ivAssigned" data-future-assigned="@ivFutureAssignedCount" data-rate="@iv.PerSuccessRate"
                                                                  data-video-link="@iv.VideoLink" data-interviewer-profile-id="@iv.InterviewerId"
                                                                  data-ai-verdict="@(iv.AIVerdict ?? "")" data-ai-score="@iv.AIScreeningScore"
                                                                  data-verdict-tone="@verdictTone" data-verdict-label="@verdictLabel"
@@ -3245,7 +3248,7 @@ else
     }
 </style>
 <script src="~/js/dm-v4-voice.js?v=20240529"></script>
-<script src="~/js/dm-v4-layout.js?v=20250602bulkcap3"></script>
+<script src="~/js/dm-v4-layout.js?v=20250602capdefault"></script>
 <script src="~/js/dm-v4-questions.js?v=20240521i"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
