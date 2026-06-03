@@ -96,10 +96,12 @@
         if (tone == "available") return "Available";
         return "Inactive";
     }
-    bool DmV4CapConfigured(TransInterviewer iv) => iv?.InterviewCapacity != null;
-    int DmV4CapVal(TransInterviewer iv) => iv?.InterviewCapacity ?? 0;
-    bool DmV4CapShowUnlimited(bool limitedPolicy, TransInterviewer iv) =>
-        !limitedPolicy || iv?.InterviewCapacity == null;
+    bool DmV4CapConfigured(TransInterviewer iv, bool limitedPolicy, bool lockOn) =>
+        iv?.InterviewCapacity != null || (limitedPolicy && lockOn);
+    int DmV4CapVal(TransInterviewer iv, int channelDefaultCap, bool lockOn, bool limitedPolicy) =>
+        DmIvCapHelper.GetEffectiveCap(lockOn && limitedPolicy, iv?.InterviewCapacity, channelDefaultCap);
+    bool DmV4CapShowUnlimited(bool limitedPolicy, TransInterviewer iv, bool lockOn) =>
+        DmIvCapHelper.ShowUnlimited(limitedPolicy, iv?.InterviewCapacity, lockOn);
     bool DmV4CapExplicitZero(TransInterviewer iv) =>
         iv?.InterviewCapacity != null && iv.InterviewCapacity.Value == 0;
     string DmV4LevelLabel(int? levelId)
@@ -140,7 +142,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20240527v6" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20250602capdefault" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -1125,6 +1127,10 @@
                                                             var verdictTone = DmV4VerdictTone(iv.AIVerdict);
                                                             var verdictLabel = DmV4VerdictLabel(iv.AIVerdict, verdictTone);
                                                             var aiReasonFull = DmV4AiReasoningFull(iv);
+                                                            var dmIvHasResume = !string.IsNullOrEmpty(iv.ResumeLink);
+                                                            var dmIvHasCodedCv = !string.IsNullOrEmpty(iv.CodedResumeLink);
+                                                            var dmIvCanScreen = dmIvHasResume || dmIvHasCodedCv;
+                                                            var dmIvHasScreening = iv.AIScreeningScore > 0 || !string.IsNullOrWhiteSpace(iv.AIVerdict) || !string.IsNullOrWhiteSpace(aiReasonFull);
                                                             var verdictReason = DmV4VerdictReasonSnippet(iv);
                                                             var ivScoreDisplay = (iv.AIScreeningScore > 0 || !string.IsNullOrWhiteSpace(aiReasonFull))
                                                                 ? iv.AIScreeningScore.ToString() : "—";
@@ -1133,24 +1139,27 @@
                                                             var ivStatusTone = DmV4IvStatusTone(iv);
                                                             var ivStatusLabel = DmV4IvStatusLabel(iv);
                                                             var hasKycVideo = !string.IsNullOrWhiteSpace(iv.VideoLink);
+                                                            var showKycVideoPlayer = hasKycVideo;
                                                             var kycOk = iv.IsVideoApproved;
                                                             var kycTitle = kycOk ? "Video KYC · Verified" : (hasKycVideo ? "Video KYC · Pending approval — click to view" : "Video KYC · File missing");
                                                             var kycReviewUrl = Url.Action("InterviewerVideoKYC", "Dashboard", new { returnBack = 0, email = iv.EmailId });
                                                             var cvCode = !string.IsNullOrEmpty(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : null;
                                                             var screenUrl = Url.Action("ScreenInterviewer", "AIScreener", new { jdTitle = screenJdTitle, userId = iv.UserId, irfId = Model.id, irfName = Model.IRFId });
                                                             var ivStatsUrl = Url.Action("InterviewerStatsDetails", "Interviewer", new { userId = iv.UserId, statType = "All", interviewerEmailId = iv.EmailId, irfId = Model.id, irfName = Model.IRFId });
-                                                            var ivCapConfigured = DmV4CapConfigured(iv);
-                                                            var ivCapVal = DmV4CapVal(iv);
-                                                            var ivCapShowUnlimited = DmV4CapShowUnlimited(dmCapEnforced, iv);
+                                                            var ivCapConfigured = DmV4CapConfigured(iv, dmCapEnforced, dmIvLockNew);
+                                                            var ivCapVal = DmV4CapVal(iv, dmDefaultCap, dmIvLockNew, dmCapEnforced);
+                                                            var ivCapShowUnlimited = DmV4CapShowUnlimited(dmCapEnforced, iv, dmIvLockNew);
+                                                            var ivCapUsesDefault = dmCapEnforced && dmIvLockNew && iv.InterviewCapacity == null;
                                                             var ivCapExplicitZero = DmV4CapExplicitZero(iv);
-                                                            var ivAssigned = iv.TotalFuture;
+                                                            var ivFutureAssignedCount = iv.TotalFuture;
+                                                            var ivAssigned = ivFutureAssignedCount;
                                                             var ivCapPct = ivCapConfigured && ivCapVal > 0 ? Math.Min(100, (int)Math.Round((double)ivAssigned / Math.Max(1, ivCapVal) * 100)) : 0;
                                                             var ivCapBar = ivCapConfigured && ivCapVal > 0 && ivAssigned >= ivCapVal ? "full" : (ivCapPct >= 80 ? "near" : "ok");
                                                             <div class="dm-v4-iv-grid dm-v4-iv-row" data-row-index="@i"
                                                                  data-user-id="@iv.UserId" data-email="@iv.EmailId" data-irf-id="@iv.IRFId" data-trans-id="@iv.id"
                                                                  data-rb-vet="@(rbVetDisplayOn ? "1" : "0")" data-client-vet="@(clientVetOn ? "1" : "0")"
                                                                  data-is-active="@(iv.IsActive ? "1" : "0")" data-is-available="@(iv.IsAvailable ? "1" : "0")" data-client-action="@(iv.ClientAction ?? "")"
-                                                                 data-capacity="@(ivCapConfigured ? ivCapVal.ToString() : "")" data-cap-configured="@(ivCapConfigured ? "1" : "0")" data-assigned="@ivAssigned" data-rate="@iv.PerSuccessRate"
+                                                                 data-capacity="@(ivCapConfigured ? ivCapVal.ToString() : "")" data-cap-configured="@(ivCapConfigured ? "1" : "0")" data-cap-from-default="@(ivCapUsesDefault ? "1" : "0")" data-assigned="@ivAssigned" data-future-assigned="@ivFutureAssignedCount" data-rate="@iv.PerSuccessRate"
                                                                  data-video-link="@iv.VideoLink" data-interviewer-profile-id="@iv.InterviewerId"
                                                                  data-ai-verdict="@(iv.AIVerdict ?? "")" data-ai-score="@iv.AIScreeningScore"
                                                                  data-verdict-tone="@verdictTone" data-verdict-label="@verdictLabel"
@@ -1165,7 +1174,7 @@
                                                                         <button type="button" class="dm-v4-iv-code dm-v4-iv-verdict-open" data-screen-url="@screenUrl" title="View AI screening">
                                                                             @(iv.NickName ?? "—") <i class="fa fa-chevron-right"></i>
                                                                         </button>
-                                                                        @if (hasKycVideo)
+                                                                        @if (showKycVideoPlayer)
                                                                         {
                                                                             <button type="button" class="dm-v4-iv-kyc dm-v4-iv-kyc--btn @(kycOk ? "dm-v4-iv-kyc--ok" : "dm-v4-iv-kyc--warn")" data-video-url="@iv.VideoLink" title="@kycTitle" aria-label="@kycTitle">
                                                                                 @Html.Raw(dmV4KycCameraSvg)
@@ -1209,23 +1218,17 @@
                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].id)
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--cv">
-                                                                    @{
-                                                                        var dmIvHasResume = !string.IsNullOrEmpty(iv.ResumeLink);
-                                                                        var dmIvHasCodedCv = !string.IsNullOrEmpty(iv.CodedResumeLink);
-                                                                        var dmIvCanScreen = dmIvHasResume || dmIvHasCodedCv;
-                                                                        var dmIvHasScreening = iv.AIScreeningScore > 0 || !string.IsNullOrWhiteSpace(iv.AIVerdict) || !string.IsNullOrWhiteSpace(aiReasonFull);
-                                                                    }
                                                                     <div class="dm-v4-iv-cv-stack" data-resume-link="@(iv.ResumeLink ?? "")" data-coded-cv="@(iv.CodedResumeLink ?? "")">
-                                                                       @*  @if (dmIvHasCodedCv)
+                                                                        @if (dmIvHasCodedCv)
                                                                         {
                                                                             <a href="@iv.CodedResumeLink" id="@("InterviewerCollection_" + i + "__ResumeLink")" target="_blank" rel="noopener" class="dm-v4-iv-cv-link">@(cvCode) ↗</a>
                                                                         }
                                                                         else if (canEditIvOps && dmIvHasResume && !iv.IsResumeRedactAttempted)
                                                                         {
-                                                                            <button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--convert"
+                                                                            <button style="font-size:8.5px" type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--convert"
                                                                                     data-user-id="@iv.UserId" data-irf-id="@Model.id" data-email="@iv.EmailId"
                                                                                     data-resume-link="@iv.ResumeLink" title="Resume on file — convert to coded CV">
-                                                                    Convert to Coded CV
+                                                                                <i class="fa fa-magic" aria-hidden="true"></i> Convert to Coded CV
                                                                             </button>
                                                                         }
                                                                         else if (!canEditIvOps && !dmIvHasCodedCv)
@@ -1235,7 +1238,7 @@
                                                                         else if (iv.IsResumeRedactAttempted && !dmIvHasCodedCv)
                                                                         {
                                                                             <span class="dm-v4-muted">—</span>
-                                                                        } *@
+                                                                        }
                                                                         @if (canEditIvOps && !dmIvHasResume)
                                                                         {
                                                                             <button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--upload"
@@ -1243,35 +1246,31 @@
                                                                                 <i class="fa fa-upload" aria-hidden="true"></i> Upload Resume
                                                                             </button>
                                                                         }
-                                                                        @if (canEditIvOps && dmIvCanScreen)
-                                                                        {
-                                                                            <button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--screen"
-                                                                                    data-user-id="@iv.UserId" data-irf-id="@Model.id" data-jd-title="@screenJdTitle" data-irf-name="@Model.IRFId"
-                                                                                    data-has-screening="@(dmIvHasScreening ? "1" : "0")" title="Run AI resume screening for this interviewer">
-                                                                                <i class="fa fa-@(dmIvHasScreening ? "refresh" : "search")" aria-hidden="true"></i> @(dmIvHasScreening ? "Regenerate" : "Screen Resume")
-                                                                            </button>
-                                                                        }
-                                                                        @if (dmIvHasResume)
-                                                                        {
-                                                                                <span onclick="GetInterviewerResumeSummary('@iv.ResumeLink')" title="Interviewer Resume Summary" style="cursor:pointer;color:#5e94cc;padding:2px 4px;background: #eee;font-weight:600;font-size:10.5px;font-family:'Montserrat','Helvetica Neue',Arial,sans-serif !important;">
-                                                                                    Resume Summary
-                                                                            </span>
-                                                                        }
                                                                     </div>
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--verdict">
-                                                                    <button type="button" class="dm-v4-iv-verdict-link dm-v4-iv-verdict-open" data-screen-url="@screenUrl" title="View AI reasoning + screening score">
-                                                                        <span class="dm-v4-iv-verdict-main">
-                                                                            <span class="dm-v4-iv-verdict-top">
-                                                                                <span class="dm-v4-verdict dm-v4-verdict--@verdictTone"><span class="dm-v4-verdict__icon" aria-hidden="true">@Html.Raw(DmV4VerdictIconSvg(verdictTone))</span>@verdictLabel</span>
-                                                                                <span class="dm-v4-iv-score-wrap">
-                                                                                    <span class="dm-v4-iv-score dm-v4-iv-score--@verdictTone">@ivScoreDisplay</span><span class="dm-v4-iv-score-dim">/100</span>
+                                                                    <div class="dm-v4-iv-verdict-stack">
+                                                                        <button type="button" class="dm-v4-iv-verdict-link dm-v4-iv-verdict-open" data-screen-url="@screenUrl" title="View AI reasoning + screening score">
+                                                                            <span class="dm-v4-iv-verdict-main">
+                                                                                <span class="dm-v4-iv-verdict-top">
+                                                                                    <span class="dm-v4-verdict dm-v4-verdict--@verdictTone"><span class="dm-v4-verdict__icon" aria-hidden="true">@Html.Raw(DmV4VerdictIconSvg(verdictTone))</span>@verdictLabel</span>
+                                                                                    <span class="dm-v4-iv-score-wrap">
+                                                                                        <span class="dm-v4-iv-score dm-v4-iv-score--@verdictTone">@ivScoreDisplay</span><span class="dm-v4-iv-score-dim">/100</span>
+                                                                                    </span>
                                                                                 </span>
+                                                                                <span class="dm-v4-iv-verdict-reason">@verdictReason</span>
                                                                             </span>
-                                                                            <span class="dm-v4-iv-verdict-reason">@verdictReason</span>
-                                                                        </span>
-                                                                        <span class="dm-v4-iv-why">Why <i class="fa fa-chevron-right" aria-hidden="true"></i></span>
-                                                                    </button>
+                                                                            <span class="dm-v4-iv-why">Why <i class="fa fa-chevron-right" aria-hidden="true"></i></span>
+                                                                        </button>
+                                                                        @if (canEditIvOps && dmIvCanScreen)
+                                                                        {
+                                                                            <button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-screen-btn"
+                                                                                    data-has-screening="@(dmIvHasScreening ? "1" : "0")" title="Run AI resume screening for this interviewer">
+                                                                                <i class="fa fa-@(dmIvHasScreening ? "refresh" : "search")" aria-hidden="true"></i>
+                                                                                <span class="dm-v4-screen-btn-label">@(dmIvHasScreening ? "Regenerate" : "Screen Resume")</span>
+                                                                            </button>
+                                                                        }
+                                                                    </div>
                                                                     @if (!string.IsNullOrWhiteSpace(aiReasonFull))
                                                                     {
                                                                         <div class="dm-v4-iv-ai-reason-full" hidden aria-hidden="true">@aiReasonFull</div>
@@ -1282,7 +1281,7 @@
                                                                     }
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--future">
-                                                                    <span class="dm-v4-mono dm-v4-iv-future-count" title="Future assigned interviews on this channel">@ivAssigned</span>
+                                                                    <span class="dm-v4-mono dm-v4-iv-future-count" title="Future skill channel interviews assigned to this interviewer">@ivFutureAssignedCount.ToString(System.Globalization.CultureInfo.InvariantCulture)</span>
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--stats">
                                                                     <a href="@ivStatsUrl" target="_blank" rel="noopener" class="dm-v4-iv-stats-link" title="Skill channel stats for this interviewer">Stats ↗</a>
@@ -1648,16 +1647,16 @@
     </div>
 </aside>
 
-@* V4 AI verdict drawer *@
-<div id="dmV4BulkCapOverlay" class="dm-v4-bulk-cap-overlay" aria-hidden="true"></div>
-<div id="dmV4BulkCapModal" class="dm-v4-bulk-cap-modal" aria-hidden="true" role="dialog" aria-labelledby="dmV4BulkCapTitle">
+@* Bulk apply default interview cap *@
+<div id="dmV4BulkCapModal" class="dm-v4-bulk-cap-modal dm-v4-overlay-root" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="dmV4BulkCapTitle">
     <div class="dm-v4-bulk-cap-modal__card" role="document">
         <div class="dm-v4-bulk-cap-modal__eyebrow">Bulk apply</div>
         <h3 class="dm-v4-bulk-cap-modal__title" id="dmV4BulkCapTitle">Set every interviewer’s cap?</h3>
         <p class="dm-v4-bulk-cap-modal__text" id="dmV4BulkCapText">This will overwrite each row’s interview limit on this panel.</p>
+        <p class="dm-v4-bulk-cap-modal__error" id="dmV4BulkCapError" role="alert" hidden></p>
         <div class="dm-v4-bulk-cap-modal__actions">
             <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4BulkCapCancel">Cancel</button>
-            <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4BulkCapConfirm">Apply to all</button>
+            <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4BulkCapConfirm">Confirm</button>
         </div>
     </div>
 </div>
@@ -1687,6 +1686,7 @@
 <script type="application/json" id="dmV4IvCvConfig">@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new {
     screenUrl = Url.Action("ScreenInterviewerAjax", "AIScreener"),
     cvStateUrl = Url.Action("GetDmInterviewerCvState", "IRF"),
+    panelMetricsUrl = Url.Action("GetDmInterviewerPanelMetrics", "IRF"),
     convertUrl = Url.Content("~/Interviewer/InterviewerResumeupdate"),
     uploadPartialUrl = Url.Action("UploadInterviewerResume", "IRF")
 }))</script>
@@ -1716,13 +1716,12 @@
             <p class="dm-v4-iv-screened-at dm-v4-muted" id="dmV4VerdictDrawerScreenedAt" style="display:none;"></p>
         </div>
         <div class="dm-v4-vd-section dm-v4-vd-section--screen">
-            <button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--screen dm-v4-iv-cv-btn--screen-drawer" id="dmV4VerdictDrawerScreenBtn">
-                <i class="fa fa-search" aria-hidden="true"></i> <span class="dm-v4-screen-btn-label">Screen interviewer</span>
+            <button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-screen-btn dm-v4-iv-screen-btn--drawer" id="dmV4VerdictDrawerScreenBtn" hidden>
+                <i class="fa fa-search" aria-hidden="true"></i> <span class="dm-v4-screen-btn-label">Screen Resume</span>
             </button>
         </div>
         <div class="dm-v4-vd-foot">
             <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4VerdictDrawerClose">Close</button>
-            <a class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4VerdictDrawerFull" href="#" target="_blank" rel="noopener">Full AI report ↗</a>
         </div>
     </div>
 </aside>
@@ -3250,7 +3249,7 @@ else
     }
 </style>
 <script src="~/js/dm-v4-voice.js?v=20240529"></script>
-<script src="~/js/dm-v4-layout.js?v=20250602vet"></script>
+<script src="~/js/dm-v4-layout.js?v=20250602capdefault"></script>
 <script src="~/js/dm-v4-questions.js?v=20240521i"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>

@@ -9004,6 +9004,35 @@ namespace Risebird.Web.Controllers
         #region Delivery Head Instruction
 
         [HttpGet]
+        public async Task<JsonResult> GetDmInterviewerPanelMetrics(int irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { ok = false });
+                }
+
+                var model = await _irfService.GetEditIRF(irfId, 0, false);
+                var interviewers = model?.InterviewerCollection?
+                    .Select(iv => new
+                    {
+                        userId = iv.UserId,
+                        email = iv.EmailId ?? "",
+                        futureAssignedCount = iv.TotalFuture
+                    })
+                    .ToList();
+
+                return Json(new { ok = true, interviewers });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false });
+            }
+        }
+
+        [HttpGet]
         public async Task<JsonResult> GetDmInterviewerCvState(int irfId, int userId)
         {
             try
@@ -9031,7 +9060,8 @@ namespace Risebird.Web.Controllers
                     isResumeRedactAttempted = iv.IsResumeRedactAttempted,
                     aiVerdict = iv.AIVerdict ?? "",
                     aiScore = iv.AIScreeningScore,
-                    aiReasonFull = iv.OpenAIScreeningResponse ?? ""
+                    aiReasonFull = iv.OpenAIScreeningResponse ?? "",
+                    futureAssignedCount = iv.TotalFuture
                 });
             }
             catch (Exception ex)
@@ -12097,13 +12127,21 @@ namespace Risebird.Web.Controllers
                 }
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 var cap = Math.Max(1, Math.Min(99, defaultCap));
+                if (irfId <= 0)
+                {
+                    return Json(new { success = false, message = "Invalid skill channel id." });
+                }
                 var ok = await _irfService.ApplyDefaultInterviewCapToIrf(irfId, cap, emailid);
-                return Json(new { success = ok, defaultCap = cap });
+                if (!ok)
+                {
+                    return Json(new { success = false, message = "Could not update interviewer caps. Check that TransInterviewer.InterviewCapacity exists on this database." });
+                }
+                return Json(new { success = true, defaultCap = cap });
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false });
+                return Json(new { success = false, message = "Server error while applying cap." });
             }
         }
 
