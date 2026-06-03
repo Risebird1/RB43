@@ -2170,19 +2170,40 @@
         });
     }
 
+    function clearBulkCapError() {
+        var $err = $('#dmV4BulkCapError');
+        if (!$err.length) return;
+        $err.attr('hidden', 'hidden').text('');
+    }
+
+    function showBulkCapError(message) {
+        var $err = $('#dmV4BulkCapError');
+        if (!$err.length) return;
+        $err.text(message || 'Could not apply cap. Please try again.').removeAttr('hidden');
+    }
+
     function openBulkCapModal() {
         var cap = getDefaultCap();
         var n = $('.dm-v4-iv-row').length;
+        var $modal = $('#dmV4BulkCapModal');
+        if (!$modal.length) return;
+        if (!$modal.parent().is('body')) {
+            $modal.appendTo('body');
+        }
+        clearBulkCapError();
         $('#dmV4BulkCapTitle').text('Set every interviewer’s cap to ' + cap + '?');
         $('#dmV4BulkCapText').text(
             'This overrides individual interview limits across all ' + n + ' interviewer' + (n === 1 ? '' : 's') +
             '. Per-interviewer edits made afterwards will still stick.'
         );
-        $('#dmV4BulkCapOverlay, #dmV4BulkCapModal').addClass('is-open').attr('aria-hidden', 'false');
+        $('#dmV4BulkCapConfirm').prop('disabled', false).text('Confirm');
+        $modal.addClass('is-open').attr('aria-hidden', 'false');
+        document.body.classList.add('dm-v4-bulk-cap-open');
     }
 
     function closeBulkCapModal() {
-        $('#dmV4BulkCapOverlay, #dmV4BulkCapModal').removeClass('is-open').attr('aria-hidden', 'true');
+        $('#dmV4BulkCapModal').removeClass('is-open').attr('aria-hidden', 'true');
+        document.body.classList.remove('dm-v4-bulk-cap-open');
     }
 
     /** Upgrade legacy rate/surcharge/cap fields to reference V4MoneyPill / V4CapacityCell markup. */
@@ -2451,27 +2472,52 @@
             e.preventDefault();
             openBulkCapModal();
         });
-        $('#dmV4BulkCapCancel, #dmV4BulkCapOverlay').off('click.dmV4Bulk').on('click.dmV4Bulk', closeBulkCapModal);
+        $('#dmV4BulkCapCancel').off('click.dmV4Bulk').on('click.dmV4Bulk', closeBulkCapModal);
         $('#dmV4BulkCapModal').off('click.dmV4Bulk').on('click.dmV4Bulk', function (e) {
             if (e.target === this) closeBulkCapModal();
         });
         $('#dmV4BulkCapModal .dm-v4-bulk-cap-modal__card').off('click.dmV4BulkStop').on('click.dmV4BulkStop', function (e) {
             e.stopPropagation();
         });
+        $(document).off('keydown.dmV4Bulk').on('keydown.dmV4Bulk', function (e) {
+            if (e.key === 'Escape' && $('#dmV4BulkCapModal').hasClass('is-open')) {
+                closeBulkCapModal();
+            }
+        });
         $('#dmV4BulkCapConfirm').off('click.dmV4Bulk').on('click.dmV4Bulk', function () {
+            var $btn = $(this);
+            if ($btn.prop('disabled')) return;
             var $bar = getPolicyBar();
             var cap = getDefaultCap();
+            var irfId = parseInt($bar.data('irf-id'), 10) || parseInt($('#id').val(), 10);
+            if (!irfId) {
+                showBulkCapError('Missing skill channel id. Refresh the page and try again.');
+                return;
+            }
+            var orig = $btn.text();
+            clearBulkCapError();
+            $btn.prop('disabled', true).text('Saving…');
             $.post('/IRF/ApplyDefaultInterviewCap', {
-                irfId: parseInt($bar.data('irf-id'), 10),
+                irfId: irfId,
                 defaultCap: cap
-            }, function (res) {
+            }).done(function (res) {
                 if (res && res.success) {
                     $('.dm-v4-iv-row').each(function () {
                         var assigned = parseInt($(this).data('assigned'), 10) || 0;
                         renderCapacityCell($(this).find('.dm-v4-iv-capacity'), res.defaultCap, assigned, true);
                     });
                     closeBulkCapModal();
+                } else {
+                    showBulkCapError((res && res.message) || 'Could not apply cap. Please try again.');
                 }
+            }).fail(function (xhr) {
+                var msg = 'Request failed. Please try again.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+                showBulkCapError(msg);
+            }).always(function () {
+                $btn.prop('disabled', false).text(orig);
             });
         });
 

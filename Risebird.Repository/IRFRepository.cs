@@ -10034,6 +10034,12 @@ namespace Risebird.Repository
 
         public async Task<bool> ApplyDefaultInterviewCapToIrf(int irfId, int defaultCap, string loggedInUser)
         {
+            const string fallbackSql = @"
+                UPDATE TransInterviewer
+                SET InterviewCapacity = @defaultCap,
+                    ModifiedAt = GETDATE(),
+                    ModifiedBy = @performedBy
+                WHERE IRFId = @irfId";
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -10042,11 +10048,18 @@ namespace Risebird.Repository
                     parameters.Add("@irfId", irfId);
                     parameters.Add("@defaultCap", defaultCap);
                     parameters.Add("@performedBy", loggedInUser);
-                    await SqlMapper.ExecuteAsync(con, "usp_ApplyDefaultInterviewCapToIrf", parameters, commandType: CommandType.StoredProcedure);
+                    try
+                    {
+                        await SqlMapper.ExecuteAsync(con, "usp_ApplyDefaultInterviewCapToIrf", parameters, commandType: CommandType.StoredProcedure);
+                    }
+                    catch (SqlException)
+                    {
+                        await SqlMapper.ExecuteAsync(con, fallbackSql, parameters);
+                    }
                     return true;
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;

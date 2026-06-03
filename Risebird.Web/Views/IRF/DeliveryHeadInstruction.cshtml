@@ -140,7 +140,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20250602screen" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20250602bulkcap3" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -1644,16 +1644,16 @@
     </div>
 </aside>
 
-@* V4 AI verdict drawer *@
-<div id="dmV4BulkCapOverlay" class="dm-v4-bulk-cap-overlay" aria-hidden="true"></div>
-<div id="dmV4BulkCapModal" class="dm-v4-bulk-cap-modal" aria-hidden="true" role="dialog" aria-labelledby="dmV4BulkCapTitle">
+@* Bulk apply default interview cap *@
+<div id="dmV4BulkCapModal" class="dm-v4-bulk-cap-modal dm-v4-overlay-root" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="dmV4BulkCapTitle">
     <div class="dm-v4-bulk-cap-modal__card" role="document">
         <div class="dm-v4-bulk-cap-modal__eyebrow">Bulk apply</div>
         <h3 class="dm-v4-bulk-cap-modal__title" id="dmV4BulkCapTitle">Set every interviewer’s cap?</h3>
         <p class="dm-v4-bulk-cap-modal__text" id="dmV4BulkCapText">This will overwrite each row’s interview limit on this panel.</p>
+        <p class="dm-v4-bulk-cap-modal__error" id="dmV4BulkCapError" role="alert" hidden></p>
         <div class="dm-v4-bulk-cap-modal__actions">
             <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4BulkCapCancel">Cancel</button>
-            <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4BulkCapConfirm">Apply to all</button>
+            <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4BulkCapConfirm">Confirm</button>
         </div>
     </div>
 </div>
@@ -3245,7 +3245,7 @@ else
     }
 </style>
 <script src="~/js/dm-v4-voice.js?v=20240529"></script>
-<script src="~/js/dm-v4-layout.js?v=20250602drawer"></script>
+<script src="~/js/dm-v4-layout.js?v=20250602bulkcap3"></script>
 <script src="~/js/dm-v4-questions.js?v=20240521i"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>

@@ -19,7 +19,8 @@
     max-width: 100%;
 }
 
-.dm-v4-page {
+.dm-v4-page,
+.dm-v4-overlay-root {
     --dm-bg: #fafbfc;
     --dm-surface: #ffffff;
     --dm-raised: #f6f7f9;
@@ -2316,29 +2317,16 @@
     cursor: not-allowed;
 }
 
-/* Reference bulk-apply confirmation (V4InterviewersSection) */
-.dm-v4-bulk-cap-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 90;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    background: rgba(15, 23, 42, 0.4);
-}
-
-.dm-v4-bulk-cap-overlay.is-open {
-    display: flex;
-}
-
+/* Bulk-apply confirmation — portal modal (outside .dm-v4-page) */
 .dm-v4-bulk-cap-modal {
     position: fixed;
     inset: 0;
-    z-index: 91;
+    z-index: 10050;
     display: none;
     align-items: center;
     justify-content: center;
-    pointer-events: none;
+    padding: 24px;
+    background: rgba(15, 23, 42, 0.45);
 }
 
 .dm-v4-bulk-cap-modal.is-open {
@@ -2346,10 +2334,9 @@
 }
 
 .dm-v4-bulk-cap-modal__card {
-    pointer-events: auto;
     width: 420px;
     max-width: calc(100vw - 32px);
-    padding: 22px 24px;
+    padding: 22px 24px 20px;
     background: #fff;
     border-radius: 14px;
     box-shadow: 0 30px 80px -20px rgba(15, 23, 42, 0.35);
@@ -2373,16 +2360,57 @@
 }
 
 .dm-v4-bulk-cap-modal__text {
-    margin: 10px 0 18px;
+    margin: 10px 0 0;
     font-size: 13px;
     color: var(--dm-text-mid);
     line-height: 1.55;
+}
+
+.dm-v4-bulk-cap-modal__error {
+    margin: 12px 0 0;
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+}
+
+.dm-v4-bulk-cap-modal__error[hidden] {
+    display: none !important;
 }
 
 .dm-v4-bulk-cap-modal__actions {
     display: flex;
     gap: 8px;
     justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--dm-border);
+}
+
+.dm-v4-bulk-cap-modal__actions .dm-v4-btn {
+    min-width: 88px;
+    justify-content: center;
+}
+
+.dm-v4-bulk-cap-modal__actions .dm-v4-btn--ghost {
+    background: #fff;
+    border-color: #d2d6dd;
+    color: #0f172a;
+}
+
+.dm-v4-bulk-cap-modal__actions .dm-v4-btn--primary {
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #fff;
+}
+
+/* SweetAlert2 must sit above DM portal modals (bulk cap uses z-index 10050) */
+.swal2-container {
+    z-index: 10060 !important;
 }
 
 @media (max-width: 900px) {
