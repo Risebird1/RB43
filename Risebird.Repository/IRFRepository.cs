@@ -787,8 +787,8 @@ namespace Risebird.Repository
                                     AIVerdict = !string.IsNullOrEmpty(dt.Rows[i]["AIVerdict"].ToString()) ? dt.Rows[i]["AIVerdict"].ToString() : null,
                                     AIScreeningScore = dt.Columns.Contains("AIScreeningScore") && !string.IsNullOrEmpty(dt.Rows[i]["AIScreeningScore"].ToString()) ? Convert.ToInt32(dt.Rows[i]["AIScreeningScore"]) : 0,
                                     OpenAIScreeningResponse = dt.Columns.Contains("OpenAIScreeningResponse") && !string.IsNullOrEmpty(dt.Rows[i]["OpenAIScreeningResponse"].ToString()) ? dt.Rows[i]["OpenAIScreeningResponse"].ToString() : null,
-                                    TotalInterview = dt.Columns.Contains("TotalInterview") && !string.IsNullOrEmpty(dt.Rows[i]["TotalInterview"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalInterview"]) : 0,
-                                    TotalFuture = dt.Columns.Contains("TotalFuture") && !string.IsNullOrEmpty(dt.Rows[i]["TotalFuture"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalFuture"]) : 0,
+                                    TotalInterview = dt.Columns.Contains("TotalInterview") && dt.Rows[i]["TotalInterview"] != DBNull.Value && !string.IsNullOrEmpty(dt.Rows[i]["TotalInterview"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalInterview"]) : 0,
+                                    TotalFuture = dt.Columns.Contains("TotalFuture") && dt.Rows[i]["TotalFuture"] != DBNull.Value ? Convert.ToInt32(dt.Rows[i]["TotalFuture"]) : 0,
                                     VideoLink = dt.Columns.Contains("VideoLink") && !string.IsNullOrEmpty(dt.Rows[i]["VideoLink"].ToString()) ? dt.Rows[i]["VideoLink"].ToString() : null,
                                     IsVideoApproved = dt.Columns.Contains("IsVideoApproved") && !string.IsNullOrEmpty(dt.Rows[i]["IsVideoApproved"].ToString()) && Convert.ToBoolean(dt.Rows[i]["IsVideoApproved"]),
                                     InterviewCapacity = dt.Columns.Contains("InterviewCapacity") && dt.Rows[i]["InterviewCapacity"] != DBNull.Value && !string.IsNullOrEmpty(dt.Rows[i]["InterviewCapacity"].ToString())
@@ -10034,6 +10034,12 @@ namespace Risebird.Repository
 
         public async Task<bool> ApplyDefaultInterviewCapToIrf(int irfId, int defaultCap, string loggedInUser)
         {
+            const string fallbackSql = @"
+                UPDATE TransInterviewer
+                SET InterviewCapacity = @defaultCap,
+                    ModifiedAt = GETDATE(),
+                    ModifiedBy = @performedBy
+                WHERE IRFId = @irfId";
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -10042,11 +10048,18 @@ namespace Risebird.Repository
                     parameters.Add("@irfId", irfId);
                     parameters.Add("@defaultCap", defaultCap);
                     parameters.Add("@performedBy", loggedInUser);
-                    await SqlMapper.ExecuteAsync(con, "usp_ApplyDefaultInterviewCapToIrf", parameters, commandType: CommandType.StoredProcedure);
+                    try
+                    {
+                        await SqlMapper.ExecuteAsync(con, "usp_ApplyDefaultInterviewCapToIrf", parameters, commandType: CommandType.StoredProcedure);
+                    }
+                    catch (SqlException)
+                    {
+                        await SqlMapper.ExecuteAsync(con, fallbackSql, parameters);
+                    }
                     return true;
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;

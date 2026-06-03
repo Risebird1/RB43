@@ -1203,7 +1203,6 @@
         window._dmV4VerdictDrawerRow = $row;
         var name = $row.find('.dm-v4-iv-code').first().text().replace(/\s+/g, ' ').replace(/›/g, '').trim();
         var tone = verdictToneFromRow($row);
-        var screenUrl = $row.find('.dm-v4-iv-verdict-open').first().data('screen-url') || '#';
         var $full = $row.find('.dm-v4-iv-ai-reason-full');
         var reason = $full.length ? $full.text().trim() : $row.find('.dm-v4-iv-verdict-reason').text().trim();
         if (!reason) reason = 'AI screening not run for this skill channel yet.';
@@ -1238,9 +1237,8 @@
         $('#dmV4VerdictDrawerFlags').html(flagsHtml);
 
         dmV4UpdateScreenedAtCaption($row);
-        dmV4SyncScreenButtonLabels($row);
+        dmV4SyncDrawerScreenBtnVisibility($row);
 
-        $('#dmV4VerdictDrawerFull').attr('href', screenUrl);
         $('#dmV4VerdictOverlay, #dmV4VerdictDrawer').addClass('is-open').attr('aria-hidden', 'false');
     }
 
@@ -1261,6 +1259,71 @@
         } catch (e) {
             return {};
         }
+    }
+
+    function formatIvFutureAssignedCount(count) {
+        var n = parseInt(count, 10);
+        if (isNaN(n) || n < 0) n = 0;
+        return String(n);
+    }
+
+    function setIvFutureAssignedDisplay($row, count) {
+        if (!$row || !$row.length) return;
+        var text = formatIvFutureAssignedCount(count);
+        $row.attr('data-future-assigned', text);
+        $row.attr('data-assigned', text);
+        $row.find('.dm-v4-iv-future-count').text(text);
+        var $capAssigned = $row.find('.dm-v4-iv-cap-assigned');
+        if ($capAssigned.length) {
+            $capAssigned.text(text);
+        }
+        var $wrap = $row.find('.dm-v4-iv-capacity').first();
+        if ($wrap.length) {
+            $wrap.attr('data-assigned', text);
+        }
+    }
+
+    function syncDmV4IvFutureAssignedFromRow($row) {
+        if (!$row || !$row.length) return;
+        var count = parseInt($row.attr('data-future-assigned'), 10);
+        if (isNaN(count)) {
+            count = parseInt($row.attr('data-assigned'), 10);
+        }
+        if (isNaN(count)) count = 0;
+        setIvFutureAssignedDisplay($row, count);
+    }
+
+    function syncDmV4IvFutureAssignedAll() {
+        $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
+            syncDmV4IvFutureAssignedFromRow($(this));
+        });
+    }
+
+    function refreshDmV4IvPanelMetrics() {
+        var cfg = getDmIvCvConfig();
+        var irfId = parseInt($('#id').val(), 10) || parseInt($('#dmV4IvPanel').closest('form').find('[name="id"]').val(), 10);
+        if (!cfg.panelMetricsUrl || !irfId) {
+            syncDmV4IvFutureAssignedAll();
+            return $.Deferred().resolve().promise();
+        }
+        return $.getJSON(cfg.panelMetricsUrl, { irfId: irfId }).done(function (res) {
+            if (!res || !res.ok || !res.interviewers) {
+                syncDmV4IvFutureAssignedAll();
+                return;
+            }
+            res.interviewers.forEach(function (iv) {
+                var userId = parseInt(iv.userId, 10);
+                if (isNaN(userId)) return;
+                var $row = $('#dmV4IvPanel .dm-v4-iv-row').filter(function () {
+                    return parseInt($(this).data('user-id'), 10) === userId;
+                }).first();
+                if ($row.length) {
+                    setIvFutureAssignedDisplay($row, iv.futureAssignedCount);
+                }
+            });
+        }).fail(function () {
+            syncDmV4IvFutureAssignedAll();
+        });
     }
 
     function dmV4VerdictToneFromAi(aiVerdict) {
@@ -1301,8 +1364,31 @@
         return 'muted';
     }
 
+    function dmV4GetRowScreenBtn($row) {
+        return $row.find('.dm-v4-iv-cell--verdict .dm-v4-iv-screen-btn');
+    }
+
+    function dmV4GetDrawerScreenBtn() {
+        return $('#dmV4VerdictDrawerScreenBtn');
+    }
+
+    function dmV4GetLinkedScreenBtns($row) {
+        var $btns = dmV4GetRowScreenBtn($row);
+        if (window._dmV4VerdictDrawerRow && window._dmV4VerdictDrawerRow.is($row)) {
+            $btns = $btns.add(dmV4GetDrawerScreenBtn());
+        }
+        return $btns;
+    }
+
+    function dmV4SetScreenBtnHtml($btn, icon, label) {
+        $btn.attr('data-has-screening', label === 'Regenerate' ? '1' : '0');
+        $btn.html('<i class="fa fa-' + icon + '" aria-hidden="true"></i> <span class="dm-v4-screen-btn-label">' +
+            $('<span/>').text(label).html() + '</span>');
+    }
+
     function dmV4RowHasScreening($row) {
-        var hasFlag = $row.find('.dm-v4-iv-cv-btn--screen').attr('data-has-screening') === '1';
+        var $rowBtn = dmV4GetRowScreenBtn($row);
+        var hasFlag = $rowBtn.length && $rowBtn.attr('data-has-screening') === '1';
         var verdict = ($row.data('ai-verdict') || '').toString().trim();
         var score = parseInt($row.data('ai-score'), 10) || 0;
         return hasFlag || score > 0 || !!verdict;
@@ -1325,17 +1411,26 @@
     function dmV4SyncScreenButtonLabels($row) {
         var has = dmV4RowHasScreening($row);
         var label = has ? 'Regenerate' : 'Screen Resume';
-        var drawerLabel = has ? 'Regenerate' : 'Screen interviewer';
         var icon = has ? 'refresh' : 'search';
-        $row.find('.dm-v4-iv-cv-btn--screen').each(function () {
-            var $b = $(this);
-            $b.attr('data-has-screening', has ? '1' : '0');
-            $b.html('<i class="fa fa-' + icon + '" aria-hidden="true"></i> ' + label);
+        dmV4GetRowScreenBtn($row).each(function () {
+            dmV4SetScreenBtnHtml($(this), icon, label);
         });
-        var $drawerBtn = $('#dmV4VerdictDrawerScreenBtn');
-        if ($drawerBtn.length) {
-            $drawerBtn.find('.dm-v4-screen-btn-label').text(drawerLabel);
-            $drawerBtn.find('i').attr('class', 'fa fa-' + icon);
+        if (window._dmV4VerdictDrawerRow && window._dmV4VerdictDrawerRow.is($row)) {
+            var $drawerBtn = dmV4GetDrawerScreenBtn();
+            if ($drawerBtn.length && dmV4GetRowScreenBtn($row).length) {
+                dmV4SetScreenBtnHtml($drawerBtn, icon, label);
+            }
+        }
+    }
+
+    function dmV4SyncDrawerScreenBtnVisibility($row) {
+        var $drawerBtn = dmV4GetDrawerScreenBtn();
+        if (!$drawerBtn.length) return;
+        if (dmV4GetRowScreenBtn($row).length) {
+            $drawerBtn.prop('hidden', false).show();
+            dmV4SyncScreenButtonLabels($row);
+        } else {
+            $drawerBtn.prop('hidden', true).hide();
         }
     }
 
@@ -1363,24 +1458,17 @@
     var dmV4ScreeningInFlight = false;
 
     function dmV4SetScreeningBusy($row, busy) {
-        var $screenBtns = $row.find('.dm-v4-iv-cv-btn--screen');
+        var $screenBtns = dmV4GetLinkedScreenBtns($row);
         if (busy) {
             $screenBtns.each(function () {
                 var $b = $(this);
                 if (!$b.data('dm-v4-screen-orig-html')) {
                     $b.data('dm-v4-screen-orig-html', $b.html());
                 }
-                $b.prop('disabled', true).html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Generating…');
-            });
-            var $drawerBtn = $('#dmV4VerdictDrawerScreenBtn');
-            if ($drawerBtn.length) {
-                if (!$drawerBtn.data('dm-v4-screen-orig-html')) {
-                    $drawerBtn.data('dm-v4-screen-orig-html', $drawerBtn.html());
-                }
-                $drawerBtn.prop('disabled', true).html(
-                    '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> <span class="dm-v4-screen-btn-label">Generating…</span>'
+                $b.prop('disabled', true).html(
+                    '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> <span class="dm-v4-screen-btn-label">Screening…</span>'
                 );
-            }
+            });
             var $reason = $row.find('.dm-v4-iv-verdict-reason');
             if ($reason.length && !$reason.data('dm-v4-reason-orig')) {
                 $reason.data('dm-v4-reason-orig', $reason.text());
@@ -1399,11 +1487,6 @@
                 $b.prop('disabled', false);
                 $b.removeData('dm-v4-screen-orig-html');
             });
-            var $drawerBtn = $('#dmV4VerdictDrawerScreenBtn');
-            if ($drawerBtn.length) {
-                $drawerBtn.prop('disabled', false);
-                $drawerBtn.removeData('dm-v4-screen-orig-html');
-            }
             var $reason = $row.find('.dm-v4-iv-verdict-reason');
             var origReason = $reason.data('dm-v4-reason-orig');
             if (origReason && $reason.length) {
@@ -1485,6 +1568,17 @@
         }
         dmV4UpdateScreenedAtCaption($row, res.screenedAt);
         dmV4SyncScreenButtonLabels($row);
+        if (window._dmV4VerdictDrawerRow && window._dmV4VerdictDrawerRow.is($row)) {
+            dmV4SyncDrawerScreenBtnVisibility($row);
+            $('#dmV4VerdictDrawerEyebrow').text('AI verdict · ' + (tone === 'pass' ? 'PASS' : tone === 'fail' ? 'BLOCK' : tone === 'warn' ? 'REVIEW' : 'PENDING'));
+            $('#dmV4VerdictDrawerHeroTitle').text(verdictHeroTitle(tone));
+            $('#dmV4VerdictDrawerReason').text(reasonFull || reasonSnippet);
+            $('#dmV4VerdictDrawerOverall').text(score > 0 ? score : '—');
+            var $hero = $('#dmV4VerdictDrawerHero');
+            $hero.attr('class', 'dm-v4-vd-hero dm-v4-vd-hero--' + tone);
+            var $badge = $row.find('.dm-v4-verdict').first().clone().removeAttr('id');
+            $('#dmV4VerdictDrawerBadge').replaceWith($badge.attr('id', 'dmV4VerdictDrawerBadge'));
+        }
     }
 
     function dmV4RenderCvStack($row, state) {
@@ -1522,13 +1616,40 @@
             html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--upload" title="Upload interviewer resume (PDF)">' +
                 '<i class="fa fa-upload" aria-hidden="true"></i> Upload Resume</button>';
         }
-        if (canEdit && canScreen) {
-            html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--screen" data-has-screening="' +
-                (hasScreening ? '1' : '0') + '" title="Run AI resume screening for this interviewer">' +
-                '<i class="fa fa-' + (hasScreening ? 'refresh' : 'search') + '" aria-hidden="true"></i> ' +
-                (hasScreening ? 'Regenerate' : 'Screen Resume') + '</button>';
-        }
         $stack.html(html);
+        dmV4EnsureVerdictScreenButton($row, {
+            canScreen: canScreen,
+            hasScreening: hasScreening
+        });
+    }
+
+    function dmV4EnsureVerdictScreenButton($row, opts) {
+        opts = opts || {};
+        var canEdit = getIvCanEdit();
+        var canScreen = opts.canScreen;
+        if (canScreen === undefined) {
+            var resumeLink = ($row.data('resume-link') || '').toString();
+            var codedCv = ($row.data('coded-cv') || '').toString();
+            canScreen = !!(resumeLink || codedCv);
+        }
+        var hasScreening = opts.hasScreening;
+        if (hasScreening === undefined) {
+            hasScreening = dmV4RowHasScreening($row);
+        }
+        var $stack = $row.find('.dm-v4-iv-verdict-stack');
+        if (!$stack.length) return;
+        var $btn = dmV4GetRowScreenBtn($row);
+        if (canEdit && canScreen) {
+            if (!$btn.length) {
+                $btn = $('<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-screen-btn" title="Run AI resume screening for this interviewer"></button>');
+                $stack.append($btn);
+            }
+            dmV4SetScreenBtnHtml($btn, hasScreening ? 'refresh' : 'search', hasScreening ? 'Regenerate' : 'Screen Resume');
+            $btn.show();
+        } else if ($btn.length) {
+            $btn.remove();
+        }
+        dmV4SyncDrawerScreenBtnVisibility($row);
     }
 
     function dmV4RefreshIvCvState($row) {
@@ -1539,6 +1660,15 @@
         return $.getJSON(cfg.cvStateUrl, { irfId: irfId, userId: userId }).done(function (state) {
             if (state && state.ok) {
                 dmV4RenderCvStack($row, state);
+                if (state.futureAssignedCount !== undefined && state.futureAssignedCount !== null) {
+                    setIvFutureAssignedDisplay($row, state.futureAssignedCount);
+                }
+                var hasScreening = (parseInt(state.aiScore, 10) || 0) > 0 ||
+                    !!(state.aiVerdict) || !!(state.aiReasonFull);
+                dmV4EnsureVerdictScreenButton($row, {
+                    canScreen: !!(state.resumeLink || state.codedCvLink),
+                    hasScreening: hasScreening
+                });
                 if (state.aiVerdict || state.aiScore || state.aiReasonFull) {
                     dmV4ApplyScreeningResult($row, {
                         aiVerdict: state.aiVerdict,
@@ -1656,7 +1786,13 @@
             var $row = $(this);
             var $wrap = $row.find('.dm-v4-iv-capacity');
             var assigned = parseInt($row.attr('data-assigned'), 10) || parseInt($wrap.attr('data-assigned'), 10) || 0;
-            syncCapacityCellUi($wrap, readRowCapacity($row), assigned, isRowCapConfigured($row));
+            var cap = readRowCapacity($row);
+            var configured = !shouldShowUnlimitedCap($row);
+            if (configured && cap != null) {
+                $row.attr('data-capacity', cap).attr('data-cap-configured', '1');
+                $wrap.attr('data-capacity', cap).attr('data-cap-configured', '1');
+            }
+            syncCapacityCellUi($wrap, cap, assigned, configured);
         });
     }
 
@@ -1664,19 +1800,37 @@
         return $('#dmV4IvPanel').attr('data-cap-enforced') === '1';
     }
 
+    function isChannelLocked() {
+        return $('#dmV4IvPanel').attr('data-lock') === '1';
+    }
+
+    function getChannelDefaultCap() {
+        var $bar = getPolicyBar();
+        var n = parseInt($bar.data('default-cap'), 10);
+        if (isNaN(n) || n < 1) n = 20;
+        return n;
+    }
+
     function isRowCapConfigured($row) {
         return $row.attr('data-cap-configured') === '1';
     }
 
     function readRowCapacity($row) {
-        if (!isRowCapConfigured($row)) return null;
-        var n = parseInt($row.attr('data-capacity'), 10);
-        return isNaN(n) ? 0 : n;
+        if (isRowCapConfigured($row)) {
+            var n = parseInt($row.attr('data-capacity'), 10);
+            return isNaN(n) ? 0 : n;
+        }
+        if (isCapEnforced() && isChannelLocked()) {
+            return getChannelDefaultCap();
+        }
+        return null;
     }
 
     function shouldShowUnlimitedCap($row) {
         if (!isCapEnforced()) return true;
-        return !isRowCapConfigured($row);
+        if (isRowCapConfigured($row)) return false;
+        if (isChannelLocked()) return false;
+        return true;
     }
 
     function capBarClass(assigned, capacity) {
@@ -2040,19 +2194,40 @@
         });
     }
 
+    function clearBulkCapError() {
+        var $err = $('#dmV4BulkCapError');
+        if (!$err.length) return;
+        $err.attr('hidden', 'hidden').text('');
+    }
+
+    function showBulkCapError(message) {
+        var $err = $('#dmV4BulkCapError');
+        if (!$err.length) return;
+        $err.text(message || 'Could not apply cap. Please try again.').removeAttr('hidden');
+    }
+
     function openBulkCapModal() {
         var cap = getDefaultCap();
         var n = $('.dm-v4-iv-row').length;
+        var $modal = $('#dmV4BulkCapModal');
+        if (!$modal.length) return;
+        if (!$modal.parent().is('body')) {
+            $modal.appendTo('body');
+        }
+        clearBulkCapError();
         $('#dmV4BulkCapTitle').text('Set every interviewer’s cap to ' + cap + '?');
         $('#dmV4BulkCapText').text(
             'This overrides individual interview limits across all ' + n + ' interviewer' + (n === 1 ? '' : 's') +
             '. Per-interviewer edits made afterwards will still stick.'
         );
-        $('#dmV4BulkCapOverlay, #dmV4BulkCapModal').addClass('is-open').attr('aria-hidden', 'false');
+        $('#dmV4BulkCapConfirm').prop('disabled', false).text('Confirm');
+        $modal.addClass('is-open').attr('aria-hidden', 'false');
+        document.body.classList.add('dm-v4-bulk-cap-open');
     }
 
     function closeBulkCapModal() {
-        $('#dmV4BulkCapOverlay, #dmV4BulkCapModal').removeClass('is-open').attr('aria-hidden', 'true');
+        $('#dmV4BulkCapModal').removeClass('is-open').attr('aria-hidden', 'true');
+        document.body.classList.remove('dm-v4-bulk-cap-open');
     }
 
     /** Upgrade legacy rate/surcharge/cap fields to reference V4MoneyPill / V4CapacityCell markup. */
@@ -2141,9 +2316,13 @@
         updatePolicySubtext();
         initIvEditableFields();
         patchDmV4UploadResume();
+        syncDmV4IvFutureAssignedAll();
+        refreshDmV4IvPanelMetrics();
         $('.dm-v4-iv-row').each(function () {
-            normalizeVetRowAttrs($(this));
-            syncVetButtons($(this));
+            var $row = $(this);
+            normalizeVetRowAttrs($row);
+            syncVetButtons($row);
+            dmV4SyncScreenButtonLabels($row);
         });
 
         $(document).off('click.dmV4IvCvUpload', '.dm-v4-iv-cv-btn--upload').on('click.dmV4IvCvUpload', '.dm-v4-iv-cv-btn--upload', function (e) {
@@ -2190,15 +2369,16 @@
             });
         });
 
-        $(document).off('click.dmV4IvCvScreen', '.dm-v4-iv-cv-btn--screen').on('click.dmV4IvCvScreen', '.dm-v4-iv-cv-btn--screen', function (e) {
+        $(document).off('click.dmV4IvScreen', '.dm-v4-iv-screen-btn').on('click.dmV4IvScreen', '.dm-v4-iv-screen-btn', function (e) {
             e.preventDefault();
-            dmV4RunScreening($(this).closest('.dm-v4-iv-row'));
-        });
-
-        $(document).off('click.dmV4DrawerScreen', '#dmV4VerdictDrawerScreenBtn').on('click.dmV4DrawerScreen', '#dmV4VerdictDrawerScreenBtn', function (e) {
-            e.preventDefault();
+            e.stopPropagation();
             var $row = window._dmV4VerdictDrawerRow;
-            if ($row && $row.length) dmV4RunScreening($row);
+            if ($(this).is('#dmV4VerdictDrawerScreenBtn')) {
+                if ($row && $row.length) dmV4RunScreening($row);
+                return;
+            }
+            $row = $(this).closest('.dm-v4-iv-row');
+            if ($row.length) dmV4RunScreening($row);
         });
 
         $(document).off('click.dmV4VerdictOpen', '.dm-v4-iv-verdict-open').on('click.dmV4VerdictOpen', '.dm-v4-iv-verdict-open', function (e) {
@@ -2316,27 +2496,52 @@
             e.preventDefault();
             openBulkCapModal();
         });
-        $('#dmV4BulkCapCancel, #dmV4BulkCapOverlay').off('click.dmV4Bulk').on('click.dmV4Bulk', closeBulkCapModal);
+        $('#dmV4BulkCapCancel').off('click.dmV4Bulk').on('click.dmV4Bulk', closeBulkCapModal);
         $('#dmV4BulkCapModal').off('click.dmV4Bulk').on('click.dmV4Bulk', function (e) {
             if (e.target === this) closeBulkCapModal();
         });
         $('#dmV4BulkCapModal .dm-v4-bulk-cap-modal__card').off('click.dmV4BulkStop').on('click.dmV4BulkStop', function (e) {
             e.stopPropagation();
         });
+        $(document).off('keydown.dmV4Bulk').on('keydown.dmV4Bulk', function (e) {
+            if (e.key === 'Escape' && $('#dmV4BulkCapModal').hasClass('is-open')) {
+                closeBulkCapModal();
+            }
+        });
         $('#dmV4BulkCapConfirm').off('click.dmV4Bulk').on('click.dmV4Bulk', function () {
+            var $btn = $(this);
+            if ($btn.prop('disabled')) return;
             var $bar = getPolicyBar();
             var cap = getDefaultCap();
+            var irfId = parseInt($bar.data('irf-id'), 10) || parseInt($('#id').val(), 10);
+            if (!irfId) {
+                showBulkCapError('Missing skill channel id. Refresh the page and try again.');
+                return;
+            }
+            var orig = $btn.text();
+            clearBulkCapError();
+            $btn.prop('disabled', true).text('Saving…');
             $.post('/IRF/ApplyDefaultInterviewCap', {
-                irfId: parseInt($bar.data('irf-id'), 10),
+                irfId: irfId,
                 defaultCap: cap
-            }, function (res) {
+            }).done(function (res) {
                 if (res && res.success) {
                     $('.dm-v4-iv-row').each(function () {
                         var assigned = parseInt($(this).data('assigned'), 10) || 0;
                         renderCapacityCell($(this).find('.dm-v4-iv-capacity'), res.defaultCap, assigned, true);
                     });
                     closeBulkCapModal();
+                } else {
+                    showBulkCapError((res && res.message) || 'Could not apply cap. Please try again.');
                 }
+            }).fail(function (xhr) {
+                var msg = 'Request failed. Please try again.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+                showBulkCapError(msg);
+            }).always(function () {
+                $btn.prop('disabled', false).text(orig);
             });
         });
 
@@ -2371,11 +2576,15 @@
             startMoneyPillEdit($(this));
         });
 
-        $(document).off('click.dmV4KycPlay', '.dm-v4-iv-kyc--btn[data-video-url]').on('click.dmV4KycPlay', '.dm-v4-iv-kyc--btn[data-video-url]', function (e) {
+        $(document).off('click.dmV4KycPlay', '.dm-v4-iv-kyc--btn').on('click.dmV4KycPlay', '.dm-v4-iv-kyc--btn', function (e) {
             e.preventDefault();
             e.stopPropagation();
-            var url = $(this).attr('data-video-url') || $(this).data('videoUrl');
-            openDmV4VideoKyc(url);
+            var $btn = $(this);
+            var $row = $btn.closest('.dm-v4-iv-row');
+            var url = ($btn.attr('data-video-url') || $btn.data('videoUrl') || $row.attr('data-video-link') || $row.data('videoLink') || '').toString().trim();
+            if (url) {
+                openDmV4VideoKyc(url);
+            }
         });
 
         $(document).off('click.dmV4KycRequest', '.dm-v4-iv-kyc-request').on('click.dmV4KycRequest', '.dm-v4-iv-kyc-request', function (e) {
