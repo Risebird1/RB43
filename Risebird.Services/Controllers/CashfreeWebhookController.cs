@@ -79,10 +79,10 @@ namespace Risebird.Services.Controllers
         public async Task<IActionResult> TransactionStatus()
         {
             const string endpoint = "POST /api/CashfreeWebhook/TransactionStatus";
-            string rawBody   = string.Empty;
+            string rawBody = string.Empty;
             string timestamp = string.Empty;
             string receivedSig = string.Empty;
-            string callerIp  = HttpContext.Connection.RemoteIpAddress?.ToString();
+            string callerIp = HttpContext.Connection.RemoteIpAddress?.ToString();
 
             try
             {
@@ -104,18 +104,45 @@ namespace Risebird.Services.Controllers
                 {
                     var emptyBodyResponse = new { success = false, message = "Request body is empty." };
                     await _meetingRepository.InsertPaymentLog(
-                        endpoint:    endpoint,
+                        endpoint: endpoint,
                         requestBody: "(empty)",
                         responseBody: JsonConvert.SerializeObject(emptyBodyResponse),
                         httpStatusCode: 400,
-                        logLevel:    "Warning",
+                        logLevel: "Warning",
                         errorMessage: "Request body is empty.",
-                        callerIp:    callerIp);
+                        callerIp: callerIp);
                     return BadRequest(emptyBodyResponse);
                 }
-
+                try
+                {
+                    var message = JsonConvert.DeserializeObject<CashfreeWebhookPayload>(rawBody);
+                    await _meetingRepository.InsertPaymentLog(
+                           endpoint: endpoint,
+                           requestBody: rawBody,
+                           responseBody: JsonConvert.SerializeObject(message),
+                           httpStatusCode: 400,
+                           logLevel: "Error",
+                           signatureTimestamp: timestamp,
+                           signatureReceived: receivedSig,
+                           errorMessage: $"Expected JSON object.",
+                           callerIp: callerIp);
+                }
+                catch (Exception ex)
+                {
+                    var typeError = new { success = false, message = $"Expected when raw to object." };
+                    await _meetingRepository.InsertPaymentLog(
+                          endpoint: endpoint,
+                          requestBody: rawBody,
+                          responseBody: JsonConvert.SerializeObject(typeError),
+                          httpStatusCode: 400,
+                          logLevel: "Error",
+                          signatureTimestamp: timestamp,
+                          signatureReceived: receivedSig,
+                          errorMessage: $"Expected JSON object.",
+                          callerIp: callerIp);
+                }
                 // ── 2. Verify HMAC-SHA256 signature ───────────────────── //
-                timestamp   = Request.Headers["x-webhook-timestamp"].ToString();
+                timestamp = Request.Headers["x-webhook-timestamp"].ToString();
                 receivedSig = Request.Headers["x-webhook-signature"].ToString();
 
                 //if (!VerifySignature(timestamp, rawBody, receivedSig))
@@ -168,15 +195,15 @@ namespace Risebird.Services.Controllers
                                 $"[CashfreeWebhook] Unexpected JSON root type '{token.Type}'. " +
                                 $"Raw (first 200): {rawBody.Substring(0, Math.Min(200, rawBody.Length))}"));
                         await _meetingRepository.InsertPaymentLog(
-                            endpoint:           endpoint,
-                            requestBody:        rawBody,
-                            responseBody:       JsonConvert.SerializeObject(typeError),
-                            httpStatusCode:     400,
-                            logLevel:           "Error",
+                            endpoint: endpoint,
+                            requestBody: rawBody,
+                            responseBody: JsonConvert.SerializeObject(typeError),
+                            httpStatusCode: 400,
+                            logLevel: "Error",
                             signatureTimestamp: timestamp,
-                            signatureReceived:  receivedSig,
-                            errorMessage:       $"Expected JSON object, received {token.Type}.",
-                            callerIp:           callerIp);
+                            signatureReceived: receivedSig,
+                            errorMessage: $"Expected JSON object, received {token.Type}.",
+                            callerIp: callerIp);
                         return BadRequest(typeError);
                     }
                 }
@@ -185,15 +212,15 @@ namespace Risebird.Services.Controllers
                     var parseError = new { success = false, message = "Malformed JSON payload token." };
                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     await _meetingRepository.InsertPaymentLog(
-                        endpoint:           endpoint,
-                        requestBody:        rawBody,
-                        responseBody:       JsonConvert.SerializeObject(parseError),
-                        httpStatusCode:     400,
-                        logLevel:           "Error",
+                        endpoint: endpoint,
+                        requestBody: rawBody,
+                        responseBody: JsonConvert.SerializeObject(parseError),
+                        httpStatusCode: 400,
+                        logLevel: "Error",
                         signatureTimestamp: timestamp,
-                        signatureReceived:  receivedSig,
-                        errorMessage:       $"Malformed JSON: {ex.Message}",
-                        callerIp:           callerIp);
+                        signatureReceived: receivedSig,
+                        errorMessage: $"Malformed JSON: {ex.Message}",
+                        callerIp: callerIp);
                     return BadRequest(parseError);
                 }
 
@@ -203,21 +230,21 @@ namespace Risebird.Services.Controllers
                     var alert = rootObj.ToObject<CashfreeBalanceAlertPayload>();
                     var alertResponse = new
                     {
-                        success   = true,
-                        message   = $"Non-transfer event '{alert?.Event}' acknowledged.",
+                        success = true,
+                        message = $"Non-transfer event '{alert?.Event}' acknowledged.",
                         eventType = alert?.Event
                     };
 
                     await _meetingRepository.InsertPaymentLog(
-                        endpoint:           endpoint,
-                        requestBody:        rawBody,
-                        responseBody:       JsonConvert.SerializeObject(alertResponse),
-                        httpStatusCode:     200,
-                        logLevel:           "Info",
-                        eventType:          alert?.Event,
+                        endpoint: endpoint,
+                        requestBody: rawBody,
+                        responseBody: JsonConvert.SerializeObject(alertResponse),
+                        httpStatusCode: 200,
+                        logLevel: "Info",
+                        eventType: alert?.Event,
                         signatureTimestamp: timestamp,
-                        signatureReceived:  receivedSig,
-                        callerIp:           callerIp);
+                        signatureReceived: receivedSig,
+                        callerIp: callerIp);
 
                     return Ok(alertResponse);
                 }
@@ -243,15 +270,15 @@ namespace Risebird.Services.Controllers
                     var parseError = new { success = false, message = "Malformed JSON payload." };
                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     await _meetingRepository.InsertPaymentLog(
-                        endpoint:           endpoint,
-                        requestBody:        rawBody,
-                        responseBody:       JsonConvert.SerializeObject(parseError),
-                        httpStatusCode:     400,
-                        logLevel:           "Error",
+                        endpoint: endpoint,
+                        requestBody: rawBody,
+                        responseBody: JsonConvert.SerializeObject(parseError),
+                        httpStatusCode: 400,
+                        logLevel: "Error",
                         signatureTimestamp: timestamp,
-                        signatureReceived:  receivedSig,
-                        errorMessage:       $"Malformed JSON: {ex.Message}",
-                        callerIp:           callerIp);
+                        signatureReceived: receivedSig,
+                        errorMessage: $"Malformed JSON: {ex.Message}",
+                        callerIp: callerIp);
                     return BadRequest(parseError);
                 }
 
@@ -259,16 +286,16 @@ namespace Risebird.Services.Controllers
                 {
                     var missingData = new { success = false, message = "Payload is missing transfer data." };
                     await _meetingRepository.InsertPaymentLog(
-                        endpoint:           endpoint,
-                        requestBody:        rawBody,
-                        responseBody:       JsonConvert.SerializeObject(missingData),
-                        httpStatusCode:     400,
-                        logLevel:           "Warning",
-                        eventType:          payload?.Type,
+                        endpoint: endpoint,
+                        requestBody: rawBody,
+                        responseBody: JsonConvert.SerializeObject(missingData),
+                        httpStatusCode: 400,
+                        logLevel: "Warning",
+                        eventType: payload?.Type,
                         signatureTimestamp: timestamp,
-                        signatureReceived:  receivedSig,
-                        errorMessage:       "Payload missing transfer data.",
-                        callerIp:           callerIp);
+                        signatureReceived: receivedSig,
+                        errorMessage: "Payload missing transfer data.",
+                        callerIp: callerIp);
                     return BadRequest(missingData);
                 }
 
@@ -276,10 +303,10 @@ namespace Risebird.Services.Controllers
 
                 // ── 4. Update PaymentHistory.PayoutStatus + TransferUtr ─── //
                 var rowsUpdated = await _meetingRepository.UpdatePaymentHistoryTransferStatus(
-                    transferId:   transfer.TransferId,
+                    transferId: transfer.TransferId,
                     cfTransferId: transfer.CfTransferId,
                     payoutStatus: transfer.TransferStatus,
-                    transferUtr:  transfer.TransferUtr);
+                    transferUtr: transfer.TransferUtr);
 
                 if (rowsUpdated == 0)
                 {
@@ -304,30 +331,30 @@ namespace Risebird.Services.Controllers
                 var response = new CashfreeWebhookResponse
                 {
                     SignatureValid = true,
-                    EventType      = payload.Type,
-                    Transaction    = transaction,
-                    RowsUpdated    = rowsUpdated
+                    EventType = payload.Type,
+                    Transaction = transaction,
+                    RowsUpdated = rowsUpdated
                 };
                 response.Transactions.Add(transaction);
 
                 // ── 6. Persist success log ─────────────────────────────── //
                 await _meetingRepository.InsertPaymentLog(
-                    endpoint:           endpoint,
-                    requestBody:        rawBody,
-                    responseBody:       JsonConvert.SerializeObject(response),
-                    httpStatusCode:     200,
-                    logLevel:           rowsUpdated == 0 ? "Warning" : "Info",
-                    eventType:          payload.Type,
-                    transferId:         transfer.TransferId,
-                    cfTransferId:       transfer.CfTransferId,
-                    transferStatus:     transfer.TransferStatus,
+                    endpoint: endpoint,
+                    requestBody: rawBody,
+                    responseBody: JsonConvert.SerializeObject(response),
+                    httpStatusCode: 200,
+                    logLevel: rowsUpdated == 0 ? "Warning" : "Info",
+                    eventType: payload.Type,
+                    transferId: transfer.TransferId,
+                    cfTransferId: transfer.CfTransferId,
+                    transferStatus: transfer.TransferStatus,
                     signatureTimestamp: timestamp,
-                    signatureReceived:  receivedSig,
-                    rowsUpdated:        rowsUpdated,
-                    errorMessage:       rowsUpdated == 0
+                    signatureReceived: receivedSig,
+                    rowsUpdated: rowsUpdated,
+                    errorMessage: rowsUpdated == 0
                                             ? "No PaymentHistory row matched the TransferId/CfTransferId."
                                             : null,
-                    callerIp:           callerIp);
+                    callerIp: callerIp);
 
                 return Ok(response);
             }
@@ -337,15 +364,15 @@ namespace Risebird.Services.Controllers
 
                 var serverError = new { success = false, message = "An unexpected error occurred." };
                 await _meetingRepository.InsertPaymentLog(
-                    endpoint:           endpoint,
-                    requestBody:        rawBody,
-                    responseBody:       JsonConvert.SerializeObject(serverError),
-                    httpStatusCode:     500,
-                    logLevel:           "Exception",
+                    endpoint: endpoint,
+                    requestBody: rawBody,
+                    responseBody: JsonConvert.SerializeObject(serverError),
+                    httpStatusCode: 500,
+                    logLevel: "Exception",
                     signatureTimestamp: timestamp,
-                    signatureReceived:  receivedSig,
-                    errorMessage:       ex.ToString(),
-                    callerIp:           callerIp);
+                    signatureReceived: receivedSig,
+                    errorMessage: ex.ToString(),
+                    callerIp: callerIp);
 
                 return StatusCode(StatusCodes.Status500InternalServerError, serverError);
             }
@@ -361,11 +388,11 @@ namespace Risebird.Services.Controllers
         /// </summary>
         private async Task<IActionResult> HandlePaymentGatewayWebhook(
             JObject rootObj,
-            string  rawBody,
-            string  timestamp,
-            string  receivedSig,
-            string  callerIp,
-            string  endpoint)
+            string rawBody,
+            string timestamp,
+            string receivedSig,
+            string callerIp,
+            string endpoint)
         {
             CashfreePaymentWebhookPayload pgPayload;
             try
@@ -377,15 +404,15 @@ namespace Risebird.Services.Controllers
                 var parseError = new { success = false, message = "Malformed payment webhook JSON." };
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 await _meetingRepository.InsertPaymentLog(
-                    endpoint:           endpoint,
-                    requestBody:        rawBody,
-                    responseBody:       JsonConvert.SerializeObject(parseError),
-                    httpStatusCode:     400,
-                    logLevel:           "Error",
+                    endpoint: endpoint,
+                    requestBody: rawBody,
+                    responseBody: JsonConvert.SerializeObject(parseError),
+                    httpStatusCode: 400,
+                    logLevel: "Error",
                     signatureTimestamp: timestamp,
-                    signatureReceived:  receivedSig,
-                    errorMessage:       $"Malformed JSON: {ex.Message}",
-                    callerIp:           callerIp);
+                    signatureReceived: receivedSig,
+                    errorMessage: $"Malformed JSON: {ex.Message}",
+                    callerIp: callerIp);
                 return BadRequest(parseError);
             }
 
@@ -393,25 +420,25 @@ namespace Risebird.Services.Controllers
             {
                 var missingData = new { success = false, message = "Payment webhook is missing order or payment data." };
                 await _meetingRepository.InsertPaymentLog(
-                    endpoint:           endpoint,
-                    requestBody:        rawBody,
-                    responseBody:       JsonConvert.SerializeObject(missingData),
-                    httpStatusCode:     400,
-                    logLevel:           "Warning",
-                    eventType:          pgPayload?.Type,
+                    endpoint: endpoint,
+                    requestBody: rawBody,
+                    responseBody: JsonConvert.SerializeObject(missingData),
+                    httpStatusCode: 400,
+                    logLevel: "Warning",
+                    eventType: pgPayload?.Type,
                     signatureTimestamp: timestamp,
-                    signatureReceived:  receivedSig,
-                    errorMessage:       "Payment webhook missing order or payment data.",
-                    callerIp:           callerIp);
+                    signatureReceived: receivedSig,
+                    errorMessage: "Payment webhook missing order or payment data.",
+                    callerIp: callerIp);
                 return BadRequest(missingData);
             }
 
-            var order   = pgPayload.Data.Order;
+            var order = pgPayload.Data.Order;
             var payment = pgPayload.Data.Payment;
 
             // Update PaymentHistory matched by CfPaymentId.
             var rowsUpdated = await _meetingRepository.UpdatePaymentHistoryGatewayStatus(
-                cfPaymentId:          payment.CfPaymentId,
+                cfPaymentId: payment.CfPaymentId,
                 gatewayPaymentStatus: payment.PaymentStatus);
 
             if (rowsUpdated == 0)
@@ -428,26 +455,26 @@ namespace Risebird.Services.Controllers
             var response = new CashfreeWebhookResponse
             {
                 SignatureValid = true,
-                EventType      = pgPayload.Type,
-                Payment        = paymentStatus,
-                RowsUpdated    = rowsUpdated
+                EventType = pgPayload.Type,
+                Payment = paymentStatus,
+                RowsUpdated = rowsUpdated
             };
 
             await _meetingRepository.InsertPaymentLog(
-                endpoint:           endpoint,
-                requestBody:        rawBody,
-                responseBody:       JsonConvert.SerializeObject(response),
-                httpStatusCode:     200,
-                logLevel:           rowsUpdated == 0 ? "Warning" : "Info",
-                eventType:          pgPayload.Type,
-                transferStatus:     payment.PaymentStatus,
+                endpoint: endpoint,
+                requestBody: rawBody,
+                responseBody: JsonConvert.SerializeObject(response),
+                httpStatusCode: 200,
+                logLevel: rowsUpdated == 0 ? "Warning" : "Info",
+                eventType: pgPayload.Type,
+                transferStatus: payment.PaymentStatus,
                 signatureTimestamp: timestamp,
-                signatureReceived:  receivedSig,
-                rowsUpdated:        rowsUpdated,
-                    errorMessage:       rowsUpdated == 0
+                signatureReceived: receivedSig,
+                rowsUpdated: rowsUpdated,
+                    errorMessage: rowsUpdated == 0
                                         ? $"No PaymentHistory row matched CfPaymentId='{payment.CfPaymentId}'."
                                         : null,
-                callerIp:           callerIp);
+                callerIp: callerIp);
 
             return Ok(response);
         }
@@ -500,8 +527,8 @@ namespace Risebird.Services.Controllers
 
                 var mail = new Mail
                 {
-                    TO      = details.Email,
-                    CC      = "finance@risebird.io",
+                    TO = details.Email,
+                    CC = "finance@risebird.io",
                     Subject = "RiseBird: Finance Team has done payment"
                 };
 
@@ -522,42 +549,42 @@ namespace Risebird.Services.Controllers
             var d = payload.Data;
             return new CashfreeTransactionStatus
             {
-                EventType      = payload.Type,
-                TransferId     = d.TransferId,
-                CfTransferId   = d.CfTransferId,
+                EventType = payload.Type,
+                TransferId = d.TransferId,
+                CfTransferId = d.CfTransferId,
                 TransferStatus = d.TransferStatus,
                 TransferAmount = d.TransferAmount,
-                TransferUtr    = d.TransferUtr,
-                EventTime      = payload.EventTime,
-                ReceivedAtUtc  = DateTime.UtcNow
+                TransferUtr = d.TransferUtr,
+                EventTime = payload.EventTime,
+                ReceivedAtUtc = DateTime.UtcNow
             };
         }
 
         private static CashfreePaymentStatus MapToPaymentStatus(CashfreePaymentWebhookPayload payload)
         {
-            var order    = payload.Data.Order;
-            var payment  = payload.Data.Payment;
+            var order = payload.Data.Order;
+            var payment = payload.Data.Payment;
             var customer = payload.Data.CustomerDetails;
             return new CashfreePaymentStatus
             {
-                EventType       = payload.Type,
-                OrderId         = order.OrderId,
-                OrderAmount     = order.OrderAmount,
-                OrderCurrency   = order.OrderCurrency,
-                CfPaymentId     = payment.CfPaymentId,
-                PaymentStatus   = payment.PaymentStatus,
-                PaymentAmount   = payment.PaymentAmount,
+                EventType = payload.Type,
+                OrderId = order.OrderId,
+                OrderAmount = order.OrderAmount,
+                OrderCurrency = order.OrderCurrency,
+                CfPaymentId = payment.CfPaymentId,
+                PaymentStatus = payment.PaymentStatus,
+                PaymentAmount = payment.PaymentAmount,
                 PaymentCurrency = payment.PaymentCurrency,
-                PaymentMessage  = payment.PaymentMessage,
-                PaymentTime     = payment.PaymentTime,
-                BankReference   = payment.BankReference,
-                AuthId          = payment.AuthId,
-                CustomerId      = customer?.CustomerId,
-                CustomerName    = customer?.CustomerName,
-                CustomerEmail   = customer?.CustomerEmail,
-                CustomerPhone   = customer?.CustomerPhone,
-                EventTime       = payload.EventTime,
-                ReceivedAtUtc   = DateTime.UtcNow
+                PaymentMessage = payment.PaymentMessage,
+                PaymentTime = payment.PaymentTime,
+                BankReference = payment.BankReference,
+                AuthId = payment.AuthId,
+                CustomerId = customer?.CustomerId,
+                CustomerName = customer?.CustomerName,
+                CustomerEmail = customer?.CustomerEmail,
+                CustomerPhone = customer?.CustomerPhone,
+                EventTime = payload.EventTime,
+                ReceivedAtUtc = DateTime.UtcNow
             };
         }
 
