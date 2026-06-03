@@ -4928,8 +4928,9 @@ namespace Risebird.Repository
                     };
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex).GetAwaiter().GetResult();
                 return CapCheckResult.AllowedResult;
             }
         }
@@ -4957,8 +4958,9 @@ namespace Risebird.Repository
                     };
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex).GetAwaiter().GetResult();
                 return CapCheckResult.AllowedResult;
             }
         }

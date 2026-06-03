@@ -1786,7 +1786,13 @@
             var $row = $(this);
             var $wrap = $row.find('.dm-v4-iv-capacity');
             var assigned = parseInt($row.attr('data-assigned'), 10) || parseInt($wrap.attr('data-assigned'), 10) || 0;
-            syncCapacityCellUi($wrap, readRowCapacity($row), assigned, isRowCapConfigured($row));
+            var cap = readRowCapacity($row);
+            var configured = !shouldShowUnlimitedCap($row);
+            if (configured && cap != null) {
+                $row.attr('data-capacity', cap).attr('data-cap-configured', '1');
+                $wrap.attr('data-capacity', cap).attr('data-cap-configured', '1');
+            }
+            syncCapacityCellUi($wrap, cap, assigned, configured);
         });
     }
 
@@ -1794,19 +1800,37 @@
         return $('#dmV4IvPanel').attr('data-cap-enforced') === '1';
     }
 
+    function isChannelLocked() {
+        return $('#dmV4IvPanel').attr('data-lock') === '1';
+    }
+
+    function getChannelDefaultCap() {
+        var $bar = getPolicyBar();
+        var n = parseInt($bar.data('default-cap'), 10);
+        if (isNaN(n) || n < 1) n = 20;
+        return n;
+    }
+
     function isRowCapConfigured($row) {
         return $row.attr('data-cap-configured') === '1';
     }
 
     function readRowCapacity($row) {
-        if (!isRowCapConfigured($row)) return null;
-        var n = parseInt($row.attr('data-capacity'), 10);
-        return isNaN(n) ? 0 : n;
+        if (isRowCapConfigured($row)) {
+            var n = parseInt($row.attr('data-capacity'), 10);
+            return isNaN(n) ? 0 : n;
+        }
+        if (isCapEnforced() && isChannelLocked()) {
+            return getChannelDefaultCap();
+        }
+        return null;
     }
 
     function shouldShowUnlimitedCap($row) {
         if (!isCapEnforced()) return true;
-        return !isRowCapConfigured($row);
+        if (isRowCapConfigured($row)) return false;
+        if (isChannelLocked()) return false;
+        return true;
     }
 
     function capBarClass(assigned, capacity) {
