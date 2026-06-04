@@ -12,6 +12,8 @@
     string selFitment = ViewBag.ResumeFitment as string ?? string.Empty;
     string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
+    string selSource = ViewBag.Source as string ?? string.Empty;
+    string selAutoClosed = ViewBag.AutoClosed as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
     bool canDelete = profileName == "Admin" || profileName == "SupportAdmin";
     bool canDrop = canDelete || profileName == "HR" || profileName == "SeniorHR"
@@ -19,7 +21,8 @@
 
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selEmail)
                    || !string.IsNullOrEmpty(selFitment) || !string.IsNullOrEmpty(selDateFrom)
-                   || !string.IsNullOrEmpty(selDateTo);
+                   || !string.IsNullOrEmpty(selDateTo) || !string.IsNullOrEmpty(selSource)
+                   || !string.IsNullOrEmpty(selAutoClosed);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
     int last = Math.Min(page * pageSize, totalCount);
@@ -236,20 +239,32 @@
                     <input type="hidden" name="pageSize" value="@pageSize" />
                     <div class="card border-0 shadow-sm mb-3">
                         <div class="card-body py-2 px-3">
-                            <div class="d-flex align-items-center gap-2" style="flex-wrap:nowrap;width:100%;">
-                                <select name="status" class="form-select ia-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()">
+                            <div class="d-flex align-items-center gap-2" style="flex-wrap:wrap;width:100%;">
+                                <select name="status" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All statuses</option>
                                     @if (selStatus == "Open") { <option value="Open" selected>Open</option> } else { <option value="Open">Open</option> }
                                     @if (selStatus == "InProgress") { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option> }
                                     @if (selStatus == "Verified") { <option value="Verified" selected>Verified</option> } else { <option value="Verified">Verified</option> }
                                     @if (selStatus == "Closed") { <option value="Closed" selected>Closed</option> } else { <option value="Closed">Closed</option> }
                                 </select>
-                                <select name="resumeFitment" class="form-select ia-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()">
+                                <select name="resumeFitment" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All fitment</option>
                                     @if (selFitment == "Strong Fit") { <option value="Strong Fit" selected>Strong Fit</option> } else { <option value="Strong Fit">Strong Fit</option> }
                                     @if (selFitment == "Moderate Fit") { <option value="Moderate Fit" selected>Moderate Fit</option> } else { <option value="Moderate Fit">Moderate Fit</option> }
                                     @if (selFitment == "Weak Fit") { <option value="Weak Fit" selected>Weak Fit</option> } else { <option value="Weak Fit">Weak Fit</option> }
                                     @if (selFitment == "N/A") { <option value="N/A" selected>N/A</option> } else { <option value="N/A">N/A</option> }
+                                </select>
+                                <select name="source" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">All sources</option>
+                                    @if (selSource == "Relay") { <option value="Relay" selected>Relay</option> } else { <option value="Relay">Relay</option> }
+                                    @if (selSource == "PlivoCX") { <option value="PlivoCX" selected>PlivoCX</option> } else { <option value="PlivoCX">PlivoCX</option> }
+                                    @if (selSource == "IRFAutoCall") { <option value="IRFAutoCall" selected>IRF Auto-Call</option> } else { <option value="IRFAutoCall">IRF Auto-Call</option> }
+                                    @if (selSource == "BatchCall") { <option value="BatchCall" selected>Batch Call</option> } else { <option value="BatchCall">Batch Call</option> }
+                                </select>
+                                <select name="autoClosed" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">Auto-closed?</option>
+                                    @if (selAutoClosed == "yes") { <option value="yes" selected>Yes</option> } else { <option value="yes">Yes</option> }
+                                    @if (selAutoClosed == "no") { <option value="no" selected>No</option> } else { <option value="no">No</option> }
                                 </select>
                                 <input type="text" name="senderEmail" class="form-control ia-filter-control" placeholder="Sender email..." style="flex:1 1 0;min-width:130px;" value="@selEmail" />
                                 <input type="date" name="dateFrom" class="form-control ia-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
@@ -282,7 +297,7 @@
                                             <th class="col-employed">Employed</th><th class="col-company">Company</th>
                                             <th class="col-fitment">Fitment</th>
                                             <th class="col-slots">Slots</th><th class="col-timeframe">Time Frame</th>
-                                            <th class="col-intent-summary">Intent</th><th class="col-status">Status</th><th class="col-actions">Actions</th>
+                                            <th class="col-intent-summary">Intent</th><th class="col-source" style="min-width:75px;">Source</th><th class="col-status">Status</th><th class="col-actions">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -326,6 +341,30 @@
                                                 <td class="col-intent-summary">
                                                     @if (!string.IsNullOrWhiteSpace(r.MailBodyIntent)) { <span class="intent-badge bg-light border" style="font-size:10px;">@r.MailBodyIntent</span> }
                                                     @if (!string.IsNullOrWhiteSpace(r.AvailabilityIntent)) { <div class="mail-preview-text mt-1" style="-webkit-line-clamp:2;">@r.AvailabilityIntent</div> }
+                                                </td>
+                                                <td class="col-source" style="font-size:11px;">
+                                                    @{
+                                                        string srcVal = r.Source ?? "";
+                                                        string srcBadge = srcVal switch {
+                                                            "Relay" => "background:#e0f2fe;color:#0369a1;",
+                                                            "PlivoCX" => "background:#fef3c7;color:#92400e;",
+                                                            "IRFAutoCall" => "background:#ede9fe;color:#5b21b6;",
+                                                            "BatchCall" => "background:#d1fae5;color:#065f46;",
+                                                            _ => "background:#f3f4f6;color:#6b7280;"
+                                                        };
+                                                        string srcLabel = srcVal switch {
+                                                            "Relay" => "Relay",
+                                                            "PlivoCX" => "Plivo CX",
+                                                            "IRFAutoCall" => "IRF Auto",
+                                                            "BatchCall" => "Batch Call",
+                                                            _ => string.IsNullOrEmpty(srcVal) ? "—" : srcVal
+                                                        };
+                                                    }
+                                                    <span style="@srcBadge font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;white-space:nowrap;">@srcLabel</span>
+                                                    @if (r.IsAutoClosed == true)
+                                                    {
+                                                        <br /><span style="font-size:9px;color:#059669;font-weight:600;" title="Auto-closed by @(r.AutoClosedBy ?? "System")@(r.AutoClosedAt.HasValue ? " at " + r.AutoClosedAt.Value.ToString("dd MMM yy, HH:mm") : "")"><i class="fas fa-bolt"></i> Auto-closed</span>
+                                                    }
                                                 </td>
                                                 <td class="col-status">
                                                     <span class="intent-badge @statusCss" style="word-break:normal;">@(r.Status ?? "Open")</span>
@@ -438,6 +477,8 @@
                 <div class="d-flex align-items-center gap-2 flex-wrap mgm-status-badge-wrap">
                     <strong class="text-muted" style="font-size:12.5px;">Status</strong>
                     <span class="badge" id="mgmStatusBadge">Open</span>
+                    <span class="badge" id="mgmSourceBadge" style="font-size:10px;display:none;"></span>
+                    <span class="badge bg-success" id="mgmAutoClosedBadge" style="font-size:10px;display:none;"><i class="fas fa-bolt me-1"></i>Auto-closed</span>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-wrap mgm-status-btns" id="mgmStatusActions">
                     <span class="text-muted" style="font-size:12px;">Change to</span>
@@ -669,6 +710,19 @@
         $('#mgmMailIntent').text(r.mailBodyIntent || '—'); $('#mgmAvailIntent').text(r.availabilityIntent || '—');
         $('#mgmConcerns').text(r.concernsOrNotInterested || 'None'); $('#mgmMailBody').text(r.mailContent || '');
         updateStatusBadge(r.status || 'Open');
+
+        var srcBadge = $('#mgmSourceBadge');
+        if (r.source) {
+            var srcMap = { 'Relay': { bg: '#e0f2fe', fg: '#0369a1', label: 'Relay' }, 'PlivoCX': { bg: '#fef3c7', fg: '#92400e', label: 'Plivo CX' }, 'IRFAutoCall': { bg: '#ede9fe', fg: '#5b21b6', label: 'IRF Auto-Call' }, 'BatchCall': { bg: '#d1fae5', fg: '#065f46', label: 'Batch Call' } };
+            var si = srcMap[r.source] || { bg: '#f3f4f6', fg: '#6b7280', label: r.source };
+            srcBadge.css({ background: si.bg, color: si.fg }).text(si.label).show();
+        } else { srcBadge.hide(); }
+
+        if (r.isAutoClosed === true) {
+            var acTitle = 'Auto-closed by ' + (r.autoClosedBy || 'System');
+            if (r.autoClosedAt) acTitle += ' at ' + r.autoClosedAt;
+            $('#mgmAutoClosedBadge').attr('title', acTitle).show();
+        } else { $('#mgmAutoClosedBadge').hide(); }
 
         if (r.isEmployed === true) { $('#mgmEmployed').html('<span class="employed-yes"><i class="fas fa-check-circle me-1"></i>Yes</span>'); }
         else if (r.isEmployed === false) { $('#mgmEmployed').html('<span class="employed-no"><i class="fas fa-times-circle me-1"></i>No</span>'); }

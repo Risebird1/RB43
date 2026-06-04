@@ -34,5 +34,10 @@ namespace Risebird.Entities.Data
         public string   ProcessedBy                 { get; set; }
         public DateTime CreatedAt                   { get; set; }
         public DateTime? UpdatedAt                  { get; set; }
+
+        public string   Source                      { get; set; }
+        public bool?    IsAutoClosed                { get; set; }
+        public string   AutoClosedBy                { get; set; }
+        public DateTime? AutoClosedAt               { get; set; }
     }
 }

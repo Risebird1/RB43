@@ -77,6 +77,8 @@ namespace Risebird.Web.Controllers
             string resumeFitment = null,
             string dateFrom      = null,
             string dateTo        = null,
+            string source        = null,
+            string autoClosed    = null,
             int    page          = 1,
             int    pageSize      = 25)
         {
@@ -90,8 +92,12 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo)   && DateTime.TryParse(dateTo,   out var pTo))   dtTo   = pTo;
 
+                bool? isAutoClosed = null;
+                if (autoClosed == "yes") isAutoClosed = true;
+                else if (autoClosed == "no") isAutoClosed = false;
+
                 var records = await _repository.GetEmailAvailabilityAsync(
-                    status, senderEmail, resumeFitment, dtFrom, dtTo, page, pageSize);
+                    status, senderEmail, resumeFitment, dtFrom, dtTo, page, pageSize, source, isAutoClosed);
 
                 var first      = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -110,6 +116,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.ResumeFitment = resumeFitment  ?? string.Empty;
                 ViewBag.DateFrom      = dateFrom      ?? string.Empty;
                 ViewBag.DateTo        = dateTo        ?? string.Empty;
+                ViewBag.Source        = source        ?? string.Empty;
+                ViewBag.AutoClosed    = autoClosed    ?? string.Empty;
                 ViewBag.ProfileName   = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
 
                 return View(records);
@@ -121,6 +129,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.OpenCount = 0; ViewBag.InProgressCount = 0; ViewBag.VerifiedCount = 0; ViewBag.ClosedCount = 0;
                 ViewBag.Status = status; ViewBag.SenderEmail = senderEmail; ViewBag.ResumeFitment = resumeFitment;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
+                ViewBag.Source = source; ViewBag.AutoClosed = autoClosed;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
                 return View(new List<InterviewerEmailAvailabilityVM>());
             }
@@ -198,7 +207,12 @@ namespace Risebird.Web.Controllers
                         record.PlivoEmailReceived,
                         record.PlivoCallbackRequested,
                         record.PlivoNotes,
-                        record.PlivoCalledBy
+                        record.PlivoCalledBy,
+                        record.Source,
+                        record.IsAutoClosed,
+                        record.AutoClosedBy,
+                        autoClosedAt = record.AutoClosedAt?.ToString("dd MMM yyyy, HH:mm"),
+                        record.UserMobileNumber
                     }
                 });
             }
@@ -1162,7 +1176,7 @@ namespace Risebird.Web.Controllers
 
                 if (source == "Profile" && !string.IsNullOrEmpty(magName))
                 {
-                    eaId = await _repository.EnsureEARecordForProfileInterviewerAsync(id, magName);
+                    eaId = await _repository.EnsureEARecordForProfileInterviewerAsync(id, magName, "PlivoCX");
                     if (eaId <= 0)
                         return Json(new { success = false, error = "Could not create availability record for this interviewer." });
                 }
@@ -1538,8 +1552,9 @@ namespace Risebird.Web.Controllers
                         $"Skipping AG assignment for #{eaId}: {reason}", callLogId: eaId);
                 }
 
-                // Step 3: Close the record
+                // Step 3: Close the record and mark as auto-closed
                 await _repository.UpdateEmailAvailabilityStatusAsync(eaId, "Closed", actor);
+                await _repository.MarkAutoClosedAsync(eaId, actor);
                 await _repository.InsertHistoryAsync(eaId, "StatusChange", record.Status ?? "Open", "Closed", actor);
                 await SaveIaCp("ia_autoclose_done", $"Auto-close completed for #{eaId}", callLogId: eaId);
             }
@@ -1704,7 +1719,8 @@ namespace Risebird.Web.Controllers
                     ConcernsOrNotInterested = payload.ConcernsOrNotInterested?.Trim(),
                     ResumeFitment           = payload.ResumeFitment?.Trim(),
                     ResumeLink              = payload.ResumeLink?.Trim(),
-                    HasAttachment           = payload.HasAttachment
+                    HasAttachment           = payload.HasAttachment,
+                    Source                  = "Relay"
                 };
 
                 var newId = await _repository.InsertEmailAvailabilityAsync(record);

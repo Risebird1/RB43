@@ -50,6 +50,7 @@ namespace Risebird.Repository
                 parameters.Add("@ResumeFitment", record.ResumeFitment);
                 parameters.Add("@ResumeLink", record.ResumeLink);
                 parameters.Add("@HasAttachment", record.HasAttachment);
+                parameters.Add("@Source", record.Source);
                 parameters.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 await con.ExecuteAsync("usp_InsertInterviewerEmailAvailability", parameters,
@@ -66,7 +67,8 @@ namespace Risebird.Repository
 
         public async Task<List<InterviewerEmailAvailabilityVM>> GetEmailAvailabilityAsync(
             string status, string senderEmail, string resumeFitment,
-            DateTime? dateFrom, DateTime? dateTo, int page, int pageSize)
+            DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
+            string source = null, bool? isAutoClosed = null)
         {
             try
             {
@@ -75,6 +77,8 @@ namespace Risebird.Repository
                 parameters.Add("@Status", string.IsNullOrWhiteSpace(status) ? null : status);
                 parameters.Add("@SenderEmail", string.IsNullOrWhiteSpace(senderEmail) ? null : senderEmail);
                 parameters.Add("@ResumeFitment", string.IsNullOrWhiteSpace(resumeFitment) ? null : resumeFitment);
+                parameters.Add("@Source", string.IsNullOrWhiteSpace(source) ? null : source);
+                parameters.Add("@IsAutoClosed", isAutoClosed);
                 parameters.Add("@DateFrom", dateFrom);
                 parameters.Add("@DateTo", dateTo);
                 parameters.Add("@Page", page);
@@ -447,14 +451,25 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<int> EnsureEARecordForProfileInterviewerAsync(int interviewerProfileId, string magName)
+        public async Task<int> EnsureEARecordForProfileInterviewerAsync(int interviewerProfileId, string magName, string source = null)
         {
             using var con = new SqlConnection(_connectionString);
             var id = await con.QueryFirstOrDefaultAsync<int>(
                 "usp_EnsureEARecordForProfileInterviewer",
-                new { InterviewerProfileId = interviewerProfileId, MagName = magName },
+                new { InterviewerProfileId = interviewerProfileId, MagName = magName, Source = source },
                 commandType: CommandType.StoredProcedure, commandTimeout: 30);
             return id;
+        }
+
+        public async Task<bool> MarkAutoClosedAsync(int id, string autoClosedBy)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var rows = await con.ExecuteAsync(
+                @"UPDATE InterviewerEmailAvailability
+                  SET IsAutoClosed = 1, AutoClosedBy = @AutoClosedBy, AutoClosedAt = GETUTCDATE(), UpdatedAt = GETUTCDATE()
+                  WHERE Id = @Id",
+                new { Id = id, AutoClosedBy = autoClosedBy }, commandTimeout: 15);
+            return rows > 0;
         }
 
         public async Task<string> GetMAGNameByAssessmentGroupIdAsync(int assessmentGroupId)
