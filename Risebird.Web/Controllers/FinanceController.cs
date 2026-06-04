@@ -1602,7 +1602,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 Sheet.Cells[i, 6].Value = item.Status;
                                 Sheet.Cells[i, 7].Value = item.Date.ToString();
-                                Sheet.Cells[i, 8].Value = item.CfPaymentId;
+                                Sheet.Cells[i, 8].Value = item.TransactionDate?.ToString("yyyy-MM-dd HH:mm:ss");
                                 Sheet.Cells[i, 9].Value = item.TransferId;
                                 Sheet.Cells[i, 10].Value = item.TransferUtr;
                                 Sheet.Cells[i, 11].Value = item.CfTransferId;
