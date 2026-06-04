@@ -8,6 +8,8 @@ CREATE PROCEDURE [dbo].[usp_GetInterviewerEmailAvailability]
     @ResumeFitment  VARCHAR(50)  = NULL,
     @DateFrom       DATETIME     = NULL,
     @DateTo         DATETIME     = NULL,
+    @Source         VARCHAR(50)  = NULL,
+    @IsAutoClosed   BIT          = NULL,
     @Page           INT          = 1,
     @PageSize       INT          = 25
 AS
@@ -29,6 +31,7 @@ BEGIN
             ea.EmploymentVerified, ea.ResumeAIAnalysisCompleted, ea.ResumeAIAnalysisResult,
             ea.AssessmentGroupId, ea.AssessmentGroupAssignedAt,
             ea.ProcessedBy, ea.CreatedAt, ea.UpdatedAt,
+            ea.Source, ea.IsAutoClosed, ea.AutoClosedBy, ea.AutoClosedAt,
             ip.NickName           AS InterviewerNickName,
             ip.CurrentRole,
             ip.Experience,
@@ -50,6 +53,8 @@ BEGIN
             (@Status IS NULL OR ea.Status = @Status)
             AND (@SenderEmail IS NULL OR ea.SenderEmail LIKE '%' + @SenderEmail + '%')
             AND (@ResumeFitment IS NULL OR ea.ResumeFitment = @ResumeFitment)
+            AND (@Source IS NULL OR ea.Source = @Source)
+            AND (@IsAutoClosed IS NULL OR ISNULL(ea.IsAutoClosed, 0) = @IsAutoClosed)
             AND (@DateFrom IS NULL OR ea.ReceivedAt >= @DateFrom)
             AND (@DateTo IS NULL OR ea.ReceivedAt < DATEADD(DAY, 1, @DateTo))
     )

@@ -1124,7 +1124,7 @@ namespace Risebird.Web.Controllers
                             if (interviewer.Source == "Profile" && interviewer.InterviewerProfileId.HasValue)
                             {
                                 eaId = await _eaRepository.EnsureEARecordForProfileInterviewerAsync(
-                                    interviewer.InterviewerProfileId.Value, magName);
+                                    interviewer.InterviewerProfileId.Value, magName, "IRFAutoCall");
                                 if (eaId <= 0) { failed++; continue; }
                             }
 
