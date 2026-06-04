@@ -1,6 +1,7 @@
 CREATE OR ALTER PROCEDURE [dbo].[usp_EnsureEARecordForProfileInterviewer]
     @InterviewerProfileId INT,
-    @MagName              NVARCHAR(200)
+    @MagName              NVARCHAR(200),
+    @Source               VARCHAR(50)    = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -31,9 +32,9 @@ BEGIN
     WHERE ip.Id = @InterviewerProfileId;
 
     INSERT INTO InterviewerEmailAvailability
-        (SenderEmail, UserId, InterviewerProfileId, InterviewerName, Phone, MagName, Status, CreatedAt)
+        (SenderEmail, UserId, InterviewerProfileId, InterviewerName, Phone, MagName, Status, Source, CreatedAt)
     VALUES
-        (@Email, @UserId, @InterviewerProfileId, @Name, @Phone, @MagName, 'Open', GETUTCDATE());
+        (@Email, @UserId, @InterviewerProfileId, @Name, @Phone, @MagName, 'Open', @Source, GETUTCDATE());
 
     SELECT SCOPE_IDENTITY() AS Id;
 END

@@ -19,6 +19,7 @@ BEGIN
         ea.EmploymentVerified, ea.ResumeAIAnalysisCompleted, ea.ResumeAIAnalysisResult,
         ea.AssessmentGroupId, ea.AssessmentGroupAssignedAt,
         ea.ProcessedBy, ea.CreatedAt, ea.UpdatedAt,
+        ea.Source, ea.IsAutoClosed, ea.AutoClosedBy, ea.AutoClosedAt,
         ea.PlivoCallStatus, ea.PlivoConversationId, ea.PlivoCallAt, ea.PlivoCallDuration,
         ea.PlivoCallTranscript, ea.PlivoCallSummary, ea.PlivoIntent,
         ea.PlivoAssignmentHelp, ea.PlivoEmailReceived, ea.PlivoCallbackRequested,

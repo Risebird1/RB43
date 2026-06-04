@@ -1238,18 +1238,118 @@
 
         dmV4UpdateScreenedAtCaption($row);
         dmV4SyncDrawerScreenBtnVisibility($row);
+        dmV4SyncVerdictDrawerKyc($row);
 
         $('#dmV4VerdictOverlay, #dmV4VerdictDrawer').addClass('is-open').attr('aria-hidden', 'false');
     }
 
     function closeVerdictDrawer() {
         $('#dmV4VerdictOverlay, #dmV4VerdictDrawer').removeClass('is-open').attr('aria-hidden', 'true');
+        $('#dmV4VerdictDrawerKycSection').prop('hidden', true).hide();
     }
 
     var vdVerdictIconPass = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" width="11" height="11"><path d="M3.5 8.5l3 3L13 5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     var vdVerdictIconWarn = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="11" height="11"><path d="M8 2l6.5 11.5h-13L8 2z" stroke-linejoin="round"/><path d="M8 6.5v3M8 11.5v.5" stroke-linecap="round"/></svg>';
     var vdVerdictIconFail = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" width="11" height="11"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg>';
     var vdVerdictIconMuted = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" width="11" height="11"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5v.5" stroke-linecap="round"/></svg>';
+
+    function dmV4ResumeSummaryErrorMessage(xhr, data) {
+        if (data && data.message) return String(data.message);
+        if (xhr && xhr.responseJSON && xhr.responseJSON.message) return String(xhr.responseJSON.message);
+        if (xhr && xhr.status === 0) return 'Network error — check your connection and retry.';
+        if (xhr && xhr.status >= 500) return 'Server error (' + xhr.status + ') — please retry.';
+        if (xhr && (xhr.status === 401 || xhr.status === 403)) return 'Not authorized to generate resume summary.';
+        if (xhr && xhr.statusText) return xhr.statusText;
+        return 'Could not generate resume summary.';
+    }
+
+    function dmV4ShowResumeSummaryError(context, xhr, data) {
+        var msg = dmV4ResumeSummaryErrorMessage(xhr, data);
+        console.error('[dm-v4] Resume summary failed:', context, { message: msg, xhr: xhr, data: data });
+        if (typeof swal !== 'undefined') {
+            swal.fire({
+                title: 'Resume summary failed',
+                type: 'error',
+                text: msg
+            });
+        }
+        if (typeof closeResumeSummaryDrawer === 'function') closeResumeSummaryDrawer();
+        return msg;
+    }
+
+    function dmV4IsSummaryCodedCvLink(link) {
+        if (!link) return false;
+        var path = String(link).split('?')[0].toLowerCase();
+        return path.indexOf('resumesummary_') >= 0 || path.endsWith('.json');
+    }
+
+    function dmV4SetResumeSummaryDrawerTitle(label) {
+        var title = (label && String(label).trim()) ? String(label).trim() + ' — Resume Summary' : 'Resume Summary';
+        $('#dmV4ResumeSummaryTitle').text(title);
+    }
+
+    function dmV4ShowResumeSummaryLoading(message) {
+        if (typeof openResumeSummaryDrawer === 'function') openResumeSummaryDrawer();
+        $('#id_candidateResumeSummaryBody').html(
+            '<div class="dm-v4-summary-loading">' +
+            '<div class="dm-v4-summary-loading__spinner" aria-hidden="true"></div>' +
+            '<p class="dm-v4-summary-loading__text">' + (message || 'Loading resume summary…') + '</p>' +
+            '<p class="dm-v4-summary-loading__hint">AI-powered summary</p></div>');
+    }
+
+    function dmV4OpenInterviewerResumeSummary(codedCvLink, resumeLink, cvLabel) {
+        var cfg = getDmIvCvConfig();
+        dmV4SetResumeSummaryDrawerTitle(cvLabel);
+        if (dmV4IsSummaryCodedCvLink(codedCvLink)) {
+            dmV4ShowResumeSummaryLoading('Loading saved resume summary…');
+            $.ajax({
+                url: cfg.viewCodedSummaryUrl || '/IRF/GetInterviewerCodedCvSummary',
+                type: 'POST',
+                data: { codedCvLink: codedCvLink },
+                success: function (result) {
+                    if (result != null && String(result).trim()) {
+                        $('#id_candidateResumeSummaryBody').html(result);
+                    } else {
+                        $('#id_candidateResumeSummaryBody').html(
+                            '<p class="text-danger" style="padding:20px;">Could not load resume summary from coded CV.</p>');
+                    }
+                },
+                error: function (xhr) {
+                    console.error('[dm-v4] coded CV summary load failed', xhr);
+                    $('#id_candidateResumeSummaryBody').html(
+                        '<p class="text-danger" style="padding:20px;">Failed to load resume summary. Please try again.</p>');
+                }
+            });
+            return;
+        }
+        if (resumeLink) {
+            dmV4ShowResumeSummaryLoading('Generating resume summary from resume…');
+            $.ajax({
+                url: cfg.viewResumeSummaryUrl || '/IRF/GetInterviewerResumeSummary',
+                type: 'POST',
+                data: { resumeLink: resumeLink },
+                success: function (result) {
+                    if (result != null && String(result).trim()) {
+                        $('#id_candidateResumeSummaryBody').html(result);
+                    } else {
+                        $('#id_candidateResumeSummaryBody').html(
+                            '<p class="text-danger" style="padding:20px;">Could not generate resume summary.</p>');
+                    }
+                },
+                error: function (xhr) {
+                    console.error('[dm-v4] resume summary load failed', xhr);
+                    $('#id_candidateResumeSummaryBody').html(
+                        '<p class="text-danger" style="padding:20px;">Failed to load resume summary. Please try again.</p>');
+                }
+            });
+            return;
+        }
+        if (codedCvLink) {
+            window.open(codedCvLink, '_blank', 'noopener');
+        }
+    }
+
+    window.dmV4OpenInterviewerResumeSummary = dmV4OpenInterviewerResumeSummary;
 
     function getDmIvCvConfig() {
         var el = document.getElementById('dmV4IvCvConfig');
@@ -1299,16 +1399,92 @@
         });
     }
 
+    function dmV4FormatAbsoluteTimestamp(iso) {
+        if (!iso) return '';
+        var d = new Date(iso);
+        if (isNaN(d.getTime())) return '';
+        return d.toLocaleString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function dmV4FormatRelativeTime(iso) {
+        if (!iso) return null;
+        var d = new Date(iso);
+        if (isNaN(d.getTime())) return null;
+        var sec = Math.floor((Date.now() - d.getTime()) / 1000);
+        if (sec < 0) return 'just now';
+        if (sec < 60) return 'just now';
+        if (sec < 3600) {
+            var mins = Math.floor(sec / 60);
+            return mins <= 1 ? '1 min ago' : mins + ' min ago';
+        }
+        if (sec < 86400) {
+            var hours = Math.floor(sec / 3600);
+            return hours < 6 ? 'a few hours ago' : hours + 'h ago';
+        }
+        if (sec < 604800) return Math.floor(sec / 86400) + 'd ago';
+        if (sec < 2592000) return Math.floor(sec / 604800) + 'w ago';
+        if (sec < 31536000) return Math.floor(sec / 2592000) + 'mo ago';
+        return Math.floor(sec / 31536000) + 'y ago';
+    }
+
+    function dmV4ApplyIvActivityMeta($row, opts) {
+        if (!$row || !$row.length) return;
+        opts = opts || {};
+        var loginIso = opts.lastLoginAt != null ? String(opts.lastLoginAt) : String($row.data('last-login-at') || '');
+        var interviewIso = opts.lastInterviewConductedAt != null
+            ? String(opts.lastInterviewConductedAt) : String($row.data('last-interview-at') || '');
+        if (opts.lastLoginAt != null) $row.attr('data-last-login-at', loginIso);
+        if (opts.lastInterviewConductedAt != null) $row.attr('data-last-interview-at', interviewIso);
+
+        var $meta = $row.find('.dm-v4-iv-meta').first();
+        if (!$meta.length) return;
+
+        var $loginLine = $meta.find('[data-meta="login"]');
+        var $interviewLine = $meta.find('[data-meta="interview"]');
+
+        if (loginIso) {
+            var relLogin = dmV4FormatRelativeTime(loginIso);
+            $loginLine.text('Last login: ' + (relLogin || '—'));
+            $loginLine.attr('title', dmV4FormatAbsoluteTimestamp(loginIso));
+        } else {
+            $loginLine.text('Last login: Never logged in');
+            $loginLine.removeAttr('title');
+        }
+
+        if (interviewIso) {
+            var relIv = dmV4FormatRelativeTime(interviewIso);
+            $interviewLine.text('Last interview: ' + (relIv || '—'));
+            $interviewLine.attr('title', dmV4FormatAbsoluteTimestamp(interviewIso));
+        } else {
+            $interviewLine.text('Last interview: No interviews yet');
+            $interviewLine.removeAttr('title');
+        }
+    }
+
+    function dmV4InitIvActivityMetaAll() {
+        $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
+            dmV4ApplyIvActivityMeta($(this));
+        });
+    }
+
     function refreshDmV4IvPanelMetrics() {
         var cfg = getDmIvCvConfig();
         var irfId = parseInt($('#id').val(), 10) || parseInt($('#dmV4IvPanel').closest('form').find('[name="id"]').val(), 10);
         if (!cfg.panelMetricsUrl || !irfId) {
             syncDmV4IvFutureAssignedAll();
+            dmV4InitIvActivityMetaAll();
             return $.Deferred().resolve().promise();
         }
         return $.getJSON(cfg.panelMetricsUrl, { irfId: irfId }).done(function (res) {
             if (!res || !res.ok || !res.interviewers) {
                 syncDmV4IvFutureAssignedAll();
+                dmV4InitIvActivityMetaAll();
                 return;
             }
             res.interviewers.forEach(function (iv) {
@@ -1319,10 +1495,15 @@
                 }).first();
                 if ($row.length) {
                     setIvFutureAssignedDisplay($row, iv.futureAssignedCount);
+                    dmV4ApplyIvActivityMeta($row, {
+                        lastLoginAt: iv.lastLoginAt || '',
+                        lastInterviewConductedAt: iv.lastInterviewConductedAt || ''
+                    });
                 }
             });
         }).fail(function () {
             syncDmV4IvFutureAssignedAll();
+            dmV4InitIvActivityMetaAll();
         });
     }
 
@@ -1601,12 +1782,16 @@
 
         var html = '';
         if (hasCoded) {
-            html += '<a href="' + codedCvLink + '" target="_blank" rel="noopener" class="dm-v4-iv-cv-link">' +
-                $('<span/>').text(cvCode).html() + ' ↗</a>';
-        } else if (canEdit && hasResume && !redactAttempted) {
-            html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--convert" data-resume-link="' +
-                $('<span/>').text(resumeLink).html() + '" title="Resume on file — convert to coded CV">' +
-                '<i class="fa fa-magic" aria-hidden="true"></i> Convert to Coded CV</button>';
+            html += '<button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view" data-coded-cv="' +
+                $('<span/>').text(codedCvLink).html() + '" data-resume-link="' + $('<span/>').text(resumeLink).html() +
+                '" data-cv-label="' + $('<span/>').text(cvCode).html() + '" title="View AI resume summary">' +
+                $('<span/>').text(cvCode).html() + ' ↗</button>';
+        } else if (canEdit && hasResume && !hasCoded) {
+            html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--summary" data-resume-link="' +
+                $('<span/>').text(resumeLink).html() + '" title="Generate AI resume summary and save as coded CV">' +
+                '<span class="dm-v4-iv-cv-btn__icon" aria-hidden="true"><i class="fa fa-magic"></i></span>' +
+                '<span class="dm-v4-iv-cv-btn__text"><span class="dm-v4-iv-cv-btn__title">Generate</span>' +
+                '<span class="dm-v4-iv-cv-btn__sub">Resume Summary</span></span></button>';
         } else if (!canEdit && !hasCoded) {
             html += '<span class="dm-v4-muted">No coded CV</span>';
         } else if (redactAttempted && !hasCoded) {
@@ -1725,6 +1910,25 @@
         return $('#dmV4IvPolicyBar');
     }
 
+    /** jQuery .data() coerces data-lock="1" to number 1 — never use === '1' alone. */
+    function isPolicyLockOn($bar) {
+        $bar = $bar && $bar.length ? $bar : getPolicyBar();
+        if (!$bar.length) return false;
+        var attrVal = $bar.attr('data-lock');
+        if (attrVal === '1') return true;
+        if (attrVal === '0') return false;
+        var dataVal = $bar.data('lock');
+        return dataVal === 1 || dataVal === '1' || dataVal === true;
+    }
+
+    function setPolicyLockOn($bar, lockOn) {
+        $bar = $bar && $bar.length ? $bar : getPolicyBar();
+        if (!$bar.length) return;
+        var val = lockOn ? '1' : '0';
+        $bar.attr('data-lock', val).data('lock', val);
+        $('#dmV4IvPanel').attr('data-lock', val);
+    }
+
     function getIvCanEdit() {
         var $panel = $('#dmV4IvPanel');
         if ($panel.data('can-edit') === 1 || $panel.data('can-edit') === '1') return true;
@@ -1747,7 +1951,7 @@
         if (!$bar.length || ($bar.data('can-edit') !== '1' && $bar.data('can-edit') !== 1)) return;
         $.post('/IRF/SaveDmIvPolicy', {
             irfId: parseInt($bar.data('irf-id'), 10),
-            dmIvLockNew: $bar.data('lock') === '1',
+            dmIvLockNew: isPolicyLockOn($bar),
             dmAssignmentPolicy: $bar.data('policy') || 'free',
             dmDefaultInterviewCap: getDefaultCap()
         }).fail(function () {
@@ -1758,7 +1962,7 @@
     function syncPolicyBarControls() {
         var $bar = getPolicyBar();
         if (!$bar.length) return;
-        var lock = $bar.data('lock') === '1';
+        var lock = isPolicyLockOn($bar);
         var policy = $bar.data('policy') === 'limited' ? 'limited' : 'free';
         var cap = parseInt($bar.data('default-cap'), 10);
         if (isNaN(cap) || cap < 1) cap = getDefaultCap();
@@ -1772,7 +1976,7 @@
     function updatePolicySubtext() {
         var $bar = getPolicyBar();
         if (!$bar.length) return;
-        var lock = $bar.data('lock') === '1';
+        var lock = isPolicyLockOn($bar);
         var limited = $bar.data('policy') === 'limited';
         $('#dmV4IvLockSub').text(lock
             ? 'New interviewers join as RB Vet pending. Client Vet auto-cascades to pending until Risebird clears them.'
@@ -1786,13 +1990,7 @@
             var $row = $(this);
             var $wrap = $row.find('.dm-v4-iv-capacity');
             var assigned = parseInt($row.attr('data-assigned'), 10) || parseInt($wrap.attr('data-assigned'), 10) || 0;
-            var cap = readRowCapacity($row);
-            var configured = !shouldShowUnlimitedCap($row);
-            if (configured && cap != null) {
-                $row.attr('data-capacity', cap).attr('data-cap-configured', '1');
-                $wrap.attr('data-capacity', cap).attr('data-cap-configured', '1');
-            }
-            syncCapacityCellUi($wrap, cap, assigned, configured);
+            syncCapacityCellUi($wrap, readRowDisplayCapacity($row), assigned, isRowCapExplicit($row));
         });
     }
 
@@ -1811,15 +2009,24 @@
         return n;
     }
 
-    function isRowCapConfigured($row) {
+    /** True when TransInterviewer.InterviewCapacity is persisted (explicit override). */
+    function isRowCapExplicit($row) {
         return $row.attr('data-cap-configured') === '1';
     }
 
-    function readRowCapacity($row) {
-        if (isRowCapConfigured($row)) {
-            var n = parseInt($row.attr('data-capacity'), 10);
-            return isNaN(n) ? 0 : n;
+    function rowUsesChannelDefault($row) {
+        if (isRowCapExplicit($row)) return false;
+        return $row.attr('data-cap-from-default') === '1' ||
+            (isCapEnforced() && isChannelLocked());
+    }
+
+    function readRowDisplayCapacity($row) {
+        if (isRowCapExplicit($row)) {
+            var explicit = parseInt($row.attr('data-capacity'), 10);
+            return isNaN(explicit) ? 0 : explicit;
         }
+        var effective = parseInt($row.attr('data-cap-effective'), 10);
+        if (!isNaN(effective)) return effective;
         if (isCapEnforced() && isChannelLocked()) {
             return getChannelDefaultCap();
         }
@@ -1828,7 +2035,7 @@
 
     function shouldShowUnlimitedCap($row) {
         if (!isCapEnforced()) return true;
-        if (isRowCapConfigured($row)) return false;
+        if (isRowCapExplicit($row)) return false;
         if (isChannelLocked()) return false;
         return true;
     }
@@ -1850,9 +2057,12 @@
         '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="10" height="10">' +
         '<path d="M8 3.5v9M3.5 8h9" stroke-linecap="round"/></svg></span>';
 
-    function buildCapPillHtml(capacity) {
+    function buildCapPillHtml(capacity, usesDefault) {
+        var defaultHint = usesDefault
+            ? '<span class="dm-v4-cap-pill-default">(default)</span>'
+            : '';
         return '<button type="button" class="dm-v4-cap-pill v4-cap-pill" data-cap="' + capacity + '" title="Click to set this interviewer\'s interview limit">' +
-            '<span class="dm-v4-cap-pill-val">' + capacity + '</span>' + DM_V4_EDIT_ICON + '</button>';
+            '<span class="dm-v4-cap-pill-val">' + capacity + '</span>' + defaultHint + DM_V4_EDIT_ICON + '</button>';
     }
 
     function moneyDisplayValue(value, kind) {
@@ -1996,24 +2206,28 @@
         if (isNaN(assigned)) assigned = parseInt($row.attr('data-assigned'), 10) || 0;
         var orig = origVal;
         if (orig == null || isNaN(orig)) {
-            orig = parseInt($wrap.attr('data-capacity'), 10);
-            if (isNaN(orig)) orig = parseInt($row.attr('data-capacity'), 10) || 0;
+            orig = readRowDisplayCapacity($row);
+            if (orig == null || isNaN(orig)) orig = 0;
         }
 
         var $pill = $wrap.find('.dm-v4-cap-pill');
         var $setBtn = $wrap.find('.dm-v4-cap-set-btn');
         var $input = $('<input type="number" class="dm-v4-inline-edit-input dm-v4-inline-edit-input--cap dm-v4-mono" min="0" max="99" />').val(orig);
         var finished = false;
+        var prevExplicit = isRowCapExplicit($row);
+        var prevDisplay = readRowDisplayCapacity($row);
+        var prevUsesDefault = rowUsesChannelDefault($row);
 
         var finish = function (doCommit) {
             if (finished) return;
             finished = true;
             $input.off('.dmV4CapEdit');
             var n = doCommit ? Math.max(0, Math.min(99, parseInt($input.val(), 10) || 0)) : orig;
-            /* Reference V4CapacityCell: restore pill immediately, then persist */
-            renderCapacityCell($wrap, n, assigned, true);
             if (doCommit) {
-                saveCapacity($row, n);
+                renderCapacityCell($wrap, n, assigned, true, false);
+                saveCapacity($row, n, prevDisplay, prevExplicit, prevUsesDefault);
+            } else {
+                renderCapacityCell($wrap, prevDisplay, assigned, prevExplicit, prevUsesDefault);
             }
         };
 
@@ -2038,46 +2252,70 @@
         });
     }
 
-    function syncCapacityCellUi($wrap, capacity, assigned, capConfigured) {
+    function syncCapacityCellUi($wrap, displayCapacity, assigned, capExplicit) {
         var $row = $wrap.closest('.dm-v4-iv-row');
-        if (typeof capConfigured === 'undefined') {
-            capConfigured = capacity != null;
+        if (typeof capExplicit === 'undefined') {
+            capExplicit = isRowCapExplicit($row);
         }
-        if (capConfigured) {
-            $wrap.attr('data-capacity', capacity).attr('data-cap-configured', '1');
-            $row.attr('data-capacity', capacity).attr('data-cap-configured', '1');
+        if (capExplicit) {
+            displayCapacity = parseInt(displayCapacity, 10);
+            if (isNaN(displayCapacity)) displayCapacity = 0;
+            $wrap.attr('data-capacity', displayCapacity).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+            $row.attr('data-capacity', displayCapacity).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+            $wrap.attr('data-cap-effective', displayCapacity);
+            $row.attr('data-cap-effective', displayCapacity);
         } else {
             $wrap.attr('data-capacity', '').attr('data-cap-configured', '0');
             $row.attr('data-capacity', '').attr('data-cap-configured', '0');
+            if (displayCapacity != null && !isNaN(displayCapacity)) {
+                $wrap.attr('data-cap-effective', displayCapacity);
+                $row.attr('data-cap-effective', displayCapacity);
+                $row.attr('data-cap-from-default', rowUsesChannelDefault($row) ? '1' : '0');
+                $wrap.attr('data-cap-from-default', $row.attr('data-cap-from-default'));
+            }
         }
         $wrap.attr('data-assigned', assigned);
         $row.attr('data-assigned', assigned);
 
         if (!$wrap.find('.dm-v4-cap-display').length && !$wrap.find('.dm-v4-cap-set-btn').length && !$wrap.find('.dm-v4-cap-unlimited').length) {
-            renderCapacityCell($wrap, capacity, assigned, capConfigured);
+            renderCapacityCell($wrap, displayCapacity, assigned, capExplicit);
             return;
         }
 
-        renderCapacityCell($wrap, capacity, assigned, capConfigured);
+        renderCapacityCell($wrap, displayCapacity, assigned, capExplicit);
     }
 
-    function renderCapacityCell($wrap, capacity, assigned, capConfigured) {
+    function renderCapacityCell($wrap, displayCapacity, assigned, capExplicit, usesDefaultOverride) {
         var $row = $wrap.closest('.dm-v4-iv-row');
         var canEdit = getIvCanEdit();
-        if (typeof capConfigured === 'undefined') {
-            capConfigured = isRowCapConfigured($row);
-            if (!capConfigured && capacity != null && capacity !== '') {
-                capConfigured = true;
-            }
+        if (typeof capExplicit === 'undefined') {
+            capExplicit = isRowCapExplicit($row);
         }
-        if (capConfigured) {
-            capacity = parseInt(capacity, 10);
-            if (isNaN(capacity)) capacity = 0;
-            $wrap.attr('data-capacity', capacity).attr('data-cap-configured', '1');
-            $row.attr('data-capacity', capacity).attr('data-cap-configured', '1');
+        if (displayCapacity == null || displayCapacity === '') {
+            displayCapacity = readRowDisplayCapacity($row);
+        }
+        displayCapacity = displayCapacity == null ? 0 : parseInt(displayCapacity, 10);
+        if (isNaN(displayCapacity)) displayCapacity = 0;
+
+        var usesDefault = typeof usesDefaultOverride === 'boolean'
+            ? usesDefaultOverride
+            : rowUsesChannelDefault($row);
+
+        if (capExplicit) {
+            $wrap.attr('data-capacity', displayCapacity).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+            $row.attr('data-capacity', displayCapacity).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+            $wrap.attr('data-cap-effective', displayCapacity);
+            $row.attr('data-cap-effective', displayCapacity);
+            usesDefault = false;
         } else {
             $wrap.attr('data-capacity', '').attr('data-cap-configured', '0');
             $row.attr('data-capacity', '').attr('data-cap-configured', '0');
+            if (displayCapacity > 0 || (isCapEnforced() && isChannelLocked())) {
+                $wrap.attr('data-cap-effective', displayCapacity);
+                $row.attr('data-cap-effective', displayCapacity);
+            }
+            $row.attr('data-cap-from-default', usesDefault ? '1' : '0');
+            $wrap.attr('data-cap-from-default', usesDefault ? '1' : '0');
         }
         $wrap.attr('data-assigned', assigned);
         $row.attr('data-assigned', assigned);
@@ -2088,7 +2326,7 @@
             return;
         }
 
-        if (capConfigured && capacity === 0) {
+        if (capExplicit && displayCapacity === 0) {
             if (canEdit) {
                 $wrap.html('<button type="button" class="dm-v4-cap-set-btn" title="Interview limit is 0 — interviewer cannot be assigned">' +
                     DM_V4_PLUS_ICON + 'Set limit</button>' +
@@ -2100,25 +2338,26 @@
             return;
         }
 
-        if (!capConfigured && canEdit) {
+        if (!capExplicit && !isChannelLocked() && isCapEnforced() && canEdit) {
             $wrap.html('<button type="button" class="dm-v4-cap-set-btn" title="Set interview limit">' + DM_V4_PLUS_ICON + 'Set limit</button>');
             $row.removeClass('dm-v4-iv-row--cap-full');
             return;
         }
 
-        var pct = capacity > 0 ? Math.min(100, Math.round((assigned / Math.max(1, capacity)) * 100)) : 0;
-        var bar = capBarClass(assigned, capacity);
-        var full = capacity > 0 && assigned >= capacity;
+        var pct = displayCapacity > 0 ? Math.min(100, Math.round((assigned / Math.max(1, displayCapacity)) * 100)) : 0;
+        var bar = capBarClass(assigned, displayCapacity);
+        var full = displayCapacity > 0 && assigned >= displayCapacity;
         var near = !full && pct >= 80;
         var html = '<div class="dm-v4-cap-display">';
         html += '<span class="dm-v4-mono dm-v4-iv-cap-assigned">' + assigned + '</span><span class="dm-v4-iv-cap-sep">/</span>';
         if (canEdit) {
-            html += buildCapPillHtml(capacity);
+            html += buildCapPillHtml(displayCapacity, usesDefault);
         } else {
-            html += '<span class="dm-v4-mono dm-v4-cap-readonly">' + capacity + '</span>';
+            html += '<span class="dm-v4-mono dm-v4-cap-readonly">' + displayCapacity +
+                (usesDefault ? ' <span class="dm-v4-cap-pill-default">(default)</span>' : '') + '</span>';
         }
         html += '</div>';
-        if (capacity > 0) {
+        if (displayCapacity > 0) {
             html += '<div class="dm-v4-cap-bar"><span class="dm-v4-cap-bar-fill dm-v4-cap-bar-fill--' + bar + '" style="width:' + pct + '%"></span></div>';
         }
         if (isCapEnforced() && full) {
@@ -2130,16 +2369,44 @@
         $row.toggleClass('dm-v4-iv-row--cap-full', full);
     }
 
-    function saveCapacity($row, capacity) {
+    function saveCapacity($row, capacity, revertDisplay, revertExplicit, revertUsesDefault) {
+        var transId = parseInt($row.data('trans-id'), 10);
+        if (!transId) return;
+        var $wrap = $row.find('.dm-v4-iv-capacity');
+        var assigned = parseInt($row.data('assigned'), 10) || 0;
+
+        function revertCapUi() {
+            if (revertExplicit) {
+                $row.attr('data-capacity', revertDisplay).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+            } else {
+                $row.attr('data-capacity', '').attr('data-cap-configured', '0');
+                $row.attr('data-cap-from-default', revertUsesDefault ? '1' : '0');
+            }
+            if (revertDisplay != null) {
+                $row.attr('data-cap-effective', revertDisplay);
+            }
+            renderCapacityCell($wrap, revertDisplay, assigned, revertExplicit, revertUsesDefault);
+        }
+
         $.post('/IRF/UpdateInterviewerCapacity', {
-            transInterviewerId: parseInt($row.data('trans-id'), 10),
+            transInterviewerId: transId,
             interviewCapacity: capacity
         }, function (res) {
             if (res && res.success) {
-                var assigned = parseInt($row.data('assigned'), 10) || 0;
                 var cap = res.interviewCapacity;
-                var configured = res.capConfigured !== false;
-                renderCapacityCell($row.find('.dm-v4-iv-capacity'), cap, assigned, configured);
+                $row.attr('data-capacity', cap).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+                $row.attr('data-cap-effective', cap);
+                renderCapacityCell($wrap, cap, assigned, true, false);
+            } else {
+                revertCapUi();
+                if (typeof swal !== 'undefined') {
+                    swal.fire('Could not save interview limit', (res && res.message) || '', 'error');
+                }
+            }
+        }).fail(function () {
+            revertCapUi();
+            if (typeof swal !== 'undefined') {
+                swal.fire('Could not save interview limit', 'Request failed.', 'error');
             }
         });
     }
@@ -2260,11 +2527,57 @@
             var $capInput = $row.find('.dm-v4-cap-input');
             if ($capInput.length) {
                 var $wrap = $capInput.closest('.dm-v4-iv-capacity');
-                var cap = parseInt($capInput.val(), 10) || parseInt($wrap.data('capacity'), 10) || 0;
+                var cap = parseInt($capInput.val(), 10) || readRowDisplayCapacity($row) || 0;
                 var assigned = parseInt($wrap.data('assigned'), 10) || 0;
-                renderCapacityCell($wrap, cap, assigned);
+                renderCapacityCell($wrap, cap, assigned, true, false);
             }
         });
+    }
+
+    function dmV4GetRowVideoKycUrl($row) {
+        if (!$row || !$row.length) return '';
+        return ($row.attr('data-video-link') || $row.data('videoLink') || '').toString().trim();
+    }
+
+    /** Ensure playable KYC control whenever a video URL exists (not gated on approval). */
+    function dmV4EnsureKycPlayButton($row) {
+        if (!$row || !$row.length) return;
+        var url = dmV4GetRowVideoKycUrl($row);
+        if (!url) return;
+        var $nameRow = $row.find('.dm-v4-iv-name-row').first();
+        if (!$nameRow.length) return;
+        var $btn = $nameRow.find('.dm-v4-iv-kyc--btn').first();
+        if ($btn.length) {
+            $btn.attr('data-video-url', url);
+            return;
+        }
+        var $static = $nameRow.find('.dm-v4-iv-kyc').not('.dm-v4-iv-kyc--btn').first();
+        if (!$static.length) return;
+        var approved = $row.attr('data-kyc-approved') === '1';
+        var title = $static.attr('title') || (approved ? 'Video KYC · Verified' : 'Video KYC · Pending approval — click to view');
+        var $newBtn = $('<button type="button" class="dm-v4-iv-kyc dm-v4-iv-kyc--btn"></button>');
+        $newBtn.addClass(approved ? 'dm-v4-iv-kyc--ok' : 'dm-v4-iv-kyc--warn');
+        $newBtn.attr({ 'data-video-url': url, title: title, 'aria-label': title });
+        $newBtn.html($static.html());
+        $static.replaceWith($newBtn);
+    }
+
+    function dmV4SyncVerdictDrawerKyc($row) {
+        var $section = $('#dmV4VerdictDrawerKycSection');
+        var $btn = $('#dmV4VerdictDrawerKycBtn');
+        if (!$section.length || !$btn.length) return;
+        var url = dmV4GetRowVideoKycUrl($row);
+        if (!url) {
+            $section.prop('hidden', true).hide();
+            $btn.removeAttr('data-video-url');
+            return;
+        }
+        var approved = $row && $row.attr('data-kyc-approved') === '1';
+        $btn.attr('data-video-url', url);
+        $('#dmV4VerdictDrawerKycSub').text(approved
+            ? 'Verified · click to play'
+            : 'Pending approval · click to play');
+        $section.prop('hidden', false).show();
     }
 
     function openDmV4VideoKyc(url) {
@@ -2302,27 +2615,60 @@
         $('.dm-v4-iv-row').each(function () {
             var $row = $(this);
             var $wrap = $row.find('.dm-v4-iv-capacity');
-            var cap = parseInt($row.attr('data-capacity'), 10);
-            if (isNaN(cap)) cap = parseInt($wrap.attr('data-capacity'), 10) || 0;
             var assigned = parseInt($row.attr('data-assigned'), 10);
             if (isNaN(assigned)) assigned = parseInt($wrap.attr('data-assigned'), 10) || 0;
-            syncCapacityCellUi($wrap, cap, assigned);
+            syncCapacityCellUi($wrap, readRowDisplayCapacity($row), assigned, isRowCapExplicit($row));
             updateSurchargeExtra($row);
         });
     }
 
     function initInterviewersV4() {
+        setPolicyLockOn(getPolicyBar(), isPolicyLockOn(getPolicyBar()));
         refreshIvBadges();
         updatePolicySubtext();
         initIvEditableFields();
         patchDmV4UploadResume();
         syncDmV4IvFutureAssignedAll();
+        dmV4InitIvActivityMetaAll();
         refreshDmV4IvPanelMetrics();
         $('.dm-v4-iv-row').each(function () {
             var $row = $(this);
             normalizeVetRowAttrs($row);
             syncVetButtons($row);
             dmV4SyncScreenButtonLabels($row);
+            dmV4EnsureKycPlayButton($row);
+        });
+
+        $(document).off('click.dmV4IvInsightsGlobal', '.dm-v4-iv-insights-btn--global').on('click.dmV4IvInsightsGlobal', '.dm-v4-iv-insights-btn--global', function (e) {
+            e.preventDefault();
+            var $row = $(this).closest('.dm-v4-iv-row');
+            var email = ($(this).data('email') || $row.data('email') || '').toString();
+            if (!email) return;
+            if (typeof InsightsDetails === 'function') {
+                InsightsDetails(email);
+            }
+        });
+
+        $(document).off('click.dmV4IvChannelInsights', '.dm-v4-iv-channel-insights-btn').on('click.dmV4IvChannelInsights', '.dm-v4-iv-channel-insights-btn', function (e) {
+            e.preventDefault();
+            var $row = $(this).closest('.dm-v4-iv-row');
+            var email = ($(this).data('email') || $row.data('email') || '').toString();
+            var irfName = ($(this).data('irf-id-name') || $row.data('irf-name') || '').toString();
+            if (!email) return;
+            if (typeof InsightsIRFDetails === 'function') {
+                InsightsIRFDetails(email, irfName);
+            } else if (typeof InsightsDetails === 'function') {
+                InsightsDetails(email, irfName);
+            }
+        });
+
+        $(document).off('click.dmV4IvCvView', '.dm-v4-iv-cv-link--view').on('click.dmV4IvCvView', '.dm-v4-iv-cv-link--view', function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            var codedCv = ($btn.data('coded-cv') || $btn.closest('.dm-v4-iv-cv-stack').data('coded-cv') || $btn.closest('.dm-v4-iv-row').data('coded-cv') || '').toString();
+            var resumeLink = ($btn.data('resume-link') || $btn.closest('.dm-v4-iv-row').data('resume-link') || '').toString();
+            var cvLabel = ($btn.data('cv-label') || $btn.text().replace(/\s*↗\s*$/, '').trim() || 'CV').toString();
+            dmV4OpenInterviewerResumeSummary(codedCv, resumeLink, cvLabel);
         });
 
         $(document).off('click.dmV4IvCvUpload', '.dm-v4-iv-cv-btn--upload').on('click.dmV4IvCvUpload', '.dm-v4-iv-cv-btn--upload', function (e) {
@@ -2336,7 +2682,7 @@
             }
         });
 
-        $(document).off('click.dmV4IvCvConvert', '.dm-v4-iv-cv-btn--convert').on('click.dmV4IvCvConvert', '.dm-v4-iv-cv-btn--convert', function (e) {
+        $(document).off('click.dmV4IvCvSummary', '.dm-v4-iv-cv-btn--summary').on('click.dmV4IvCvSummary', '.dm-v4-iv-cv-btn--summary', function (e) {
             e.preventDefault();
             var $btn = $(this);
             if ($btn.prop('disabled')) return;
@@ -2344,24 +2690,37 @@
             var cfg = getDmIvCvConfig();
             var resumeLink = ($btn.data('resume-link') || $row.data('resume-link') || '').toString();
             if (!resumeLink) return;
+            var userId = parseInt($row.data('user-id'), 10);
             var orig = $btn.html();
-            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Converting…');
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Generating…');
+            var ivName = $row.find('.dm-v4-iv-code').first().clone().children().remove().end().text().trim();
+            dmV4SetResumeSummaryDrawerTitle(ivName);
+            dmV4ShowResumeSummaryLoading('Generating resume summary…');
             $.ajax({
-                url: cfg.convertUrl || '/Interviewer/InterviewerResumeupdate',
-                data: {
-                    userid: parseInt($row.data('user-id'), 10),
-                    irfid: parseInt($row.data('irf-id'), 10),
-                    resumeLink: resumeLink
-                },
-                success: function (data) {
-                    if (data && data !== '' && data !== 'failed') {
-                        if (typeof swal !== 'undefined') {
-                            swal.fire({ title: 'Coded CV ready', type: 'success', text: 'Resume converted for this interviewer.' });
+                url: cfg.generateSummaryUrl || '/IRF/GenerateInterviewerResumeSummaryAndSave',
+                type: 'POST',
+                data: { userId: userId, resumeLink: resumeLink },
+                success: function (data, _textStatus, xhr) {
+                    if (data && data.success) {
+                        if (data.summaryHtml) {
+                            $('#id_candidateResumeSummaryBody').html(data.summaryHtml);
+                        } else if (typeof GetInterviewerResumeSummary === 'function') {
+                            GetInterviewerResumeSummary(resumeLink);
                         }
                         dmV4RefreshIvCvState($row);
-                    } else if (typeof swal !== 'undefined') {
-                        swal.fire({ title: 'Conversion failed', type: 'error', text: 'Could not convert resume to coded CV.' });
+                        if (typeof swal !== 'undefined') {
+                            swal.fire({
+                                title: 'Resume summary saved',
+                                type: 'success',
+                                text: 'Coded CV updated for this interviewer.'
+                            });
+                        }
+                    } else {
+                        dmV4ShowResumeSummaryError('generate-summary-response', xhr, data);
                     }
+                },
+                error: function (xhr, _textStatus, _errorThrown) {
+                    dmV4ShowResumeSummaryError('generate-summary-request', xhr, xhr && xhr.responseJSON);
                 },
                 complete: function () {
                     $btn.prop('disabled', false).html(orig);
@@ -2396,12 +2755,12 @@
 
         $('#dmV4VerdictDrawerKycBtn').off('click.dmV4VerdictKyc').on('click.dmV4VerdictKyc', function (e) {
             e.preventDefault();
-            var videoUrl = $(this).data('video-url');
-            var reviewUrl = $(this).data('review-url');
-            if (videoUrl && typeof openDmV4VideoKyc === 'function') {
+            var videoUrl = ($(this).attr('data-video-url') || $(this).data('videoUrl') || '').toString().trim();
+            if (!videoUrl && window._dmV4VerdictDrawerRow && window._dmV4VerdictDrawerRow.length) {
+                videoUrl = dmV4GetRowVideoKycUrl(window._dmV4VerdictDrawerRow);
+            }
+            if (videoUrl) {
                 openDmV4VideoKyc(videoUrl);
-            } else if (reviewUrl) {
-                window.open(reviewUrl, '_blank', 'noopener');
             }
         });
 
@@ -2475,7 +2834,7 @@
             $seg.find('.dm-v4-segment-btn').removeClass('is-on');
             $btn.addClass('is-on');
             if ($seg.data('segment') === 'lock') {
-                $bar.data('lock', $btn.data('value') === 'on' ? '1' : '0');
+                setPolicyLockOn($bar, $btn.data('value') === 'on');
             } else if ($seg.data('segment') === 'assign') {
                 $bar.data('policy', $btn.data('value'));
             }
@@ -2527,8 +2886,11 @@
             }).done(function (res) {
                 if (res && res.success) {
                     $('.dm-v4-iv-row').each(function () {
-                        var assigned = parseInt($(this).data('assigned'), 10) || 0;
-                        renderCapacityCell($(this).find('.dm-v4-iv-capacity'), res.defaultCap, assigned, true);
+                        var $row = $(this);
+                        var assigned = parseInt($row.data('assigned'), 10) || 0;
+                        $row.attr('data-capacity', res.defaultCap).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+                        $row.attr('data-cap-effective', res.defaultCap);
+                        renderCapacityCell($row.find('.dm-v4-iv-capacity'), res.defaultCap, assigned, true, false);
                     });
                     closeBulkCapModal();
                 } else {
@@ -2581,7 +2943,7 @@
             e.stopPropagation();
             var $btn = $(this);
             var $row = $btn.closest('.dm-v4-iv-row');
-            var url = ($btn.attr('data-video-url') || $btn.data('videoUrl') || $row.attr('data-video-link') || $row.data('videoLink') || '').toString().trim();
+            var url = ($btn.attr('data-video-url') || $btn.data('videoUrl') || dmV4GetRowVideoKycUrl($row));
             if (url) {
                 openDmV4VideoKyc(url);
             }
