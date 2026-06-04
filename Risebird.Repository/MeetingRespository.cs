@@ -4417,7 +4417,8 @@ namespace Risebird.Repository
             string transferId,
             string cfTransferId,
             string payoutStatus,
-            string transferUtr = null)
+            string transferUtr = null,
+            string eventTime   = null)
         {
             try
             {
@@ -4426,6 +4427,9 @@ namespace Risebird.Repository
                 parameters.Add("@CfTransferId", cfTransferId ?? string.Empty);
                 parameters.Add("@PayoutStatus", payoutStatus);
                 parameters.Add("@TransferUtr",  transferUtr);
+                parameters.Add("@EventTime",    string.IsNullOrWhiteSpace(eventTime)
+                                                    ? (DateTime?)null
+                                                    : (DateTime.TryParse(eventTime, out var dt) ? dt : (DateTime?)null));
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -4471,38 +4475,6 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
-            }
-        }
-
-        /// <summary>
-        /// Updates PaymentHistory.GatewayPaymentStatus matched by CfPaymentId.
-        /// Delegates to stored procedure <c>usp_UpdatePaymentHistoryGatewayStatus</c>.
-        /// Returns the number of rows updated (0 means no matching record found).
-        /// </summary>
-        public async Task<int> UpdatePaymentHistoryGatewayStatus(
-            string cfPaymentId,
-            string gatewayPaymentStatus)
-        {
-            try
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("@CfPaymentId",          cfPaymentId ?? string.Empty);
-                parameters.Add("@GatewayPaymentStatus", gatewayPaymentStatus);
-
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var result = await con.QuerySingleOrDefaultAsync<int>(
-                        "usp_UpdatePaymentHistoryGatewayStatus",
-                        parameters,
-                        commandType: CommandType.StoredProcedure);
-
-                    return result;
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return 0;
             }
         }
 
@@ -4564,7 +4536,7 @@ namespace Risebird.Repository
             {
                 List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
                 var query = @"Select ph.id, ul.EmailId as InterviewerEmailid, ul.FirstName, ph.PaymentDate as Date, ph.Status,
-                    ph.Amount as Points, ip.AssessmentGroupId, ph.TotalAmount, ph.TransferId, ph.CfTransferId, ph.TransferUtr, ph.PayoutStatus, ph.CfPaymentId
+                    ph.Amount as Points, ip.AssessmentGroupId, ph.TotalAmount, ph.TransferId, ph.CfTransferId, ph.TransferUtr, ph.PayoutStatus, ph.TransactionDate
                     from PaymentHistory ph
                     join Userlist ul on ul.id = ph.Userid
                     join InterviewerProfile ip on ip.Userid = ul.id";
