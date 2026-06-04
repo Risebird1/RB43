@@ -113,33 +113,6 @@ namespace Risebird.Services.Controllers
                         callerIp: callerIp);
                     return BadRequest(emptyBodyResponse);
                 }
-                try
-                {
-                    var message = JsonConvert.DeserializeObject<CashfreeWebhookPayload>(rawBody);
-                    await _meetingRepository.InsertPaymentLog(
-                           endpoint: endpoint,
-                           requestBody: rawBody,
-                           responseBody: JsonConvert.SerializeObject(message),
-                           httpStatusCode: 200,
-                           logLevel: "Info",
-                           signatureTimestamp: timestamp,
-                           signatureReceived: receivedSig,
-                           callerIp: callerIp);
-                }
-                catch (Exception ex)
-                {
-                    var typeError = new { success = false, message = $"Failed to deserialize raw payload." };
-                    await _meetingRepository.InsertPaymentLog(
-                          endpoint: endpoint,
-                          requestBody: rawBody,
-                          responseBody: JsonConvert.SerializeObject(typeError),
-                          httpStatusCode: 400,
-                          logLevel: "Error",
-                          signatureTimestamp: timestamp,
-                          signatureReceived: receivedSig,
-                          errorMessage: ex.Message,
-                          callerIp: callerIp);
-                }
                 // ── 2. Verify HMAC-SHA256 signature ───────────────────── //
                 timestamp = Request.Headers["x-webhook-timestamp"].ToString();
                 receivedSig = Request.Headers["x-webhook-signature"].ToString();
