@@ -578,6 +578,16 @@ namespace Risebird.Repository
             return ReadNullableBoolCell(row, columns, columnName) ?? defaultValue;
         }
 
+        private static DateTime? ReadNullableDateTimeCell(DataRow row, DataColumnCollection columns, string columnName)
+        {
+            if (!columns.Contains(columnName)) return null;
+            var val = row[columnName];
+            if (val == null || val == DBNull.Value) return null;
+            var dt = Convert.ToDateTime(val);
+            if (dt.Year < 1900) return null;
+            return dt;
+        }
+
         public async Task<IRFVm> GetSkillChannelDetailsForUpdate(int irfId)
         {
             try
@@ -780,6 +790,8 @@ namespace Risebird.Repository
                                     CodedResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["CodedResumeLink"].ToString()) ? dt.Rows[i]["CodedResumeLink"].ToString() : null,
                                     Source = !string.IsNullOrEmpty(dt.Rows[i]["Source"].ToString()) ? dt.Rows[i]["Source"].ToString() : null,
                                     CompanyName = !string.IsNullOrEmpty(dt.Rows[i]["CompanyName"].ToString()) ? dt.Rows[i]["CompanyName"].ToString() : null,
+                                    EmploymentComment = dt.Columns.Contains("EmploymentComment") && !string.IsNullOrEmpty(dt.Rows[i]["EmploymentComment"].ToString())
+                                        ? dt.Rows[i]["EmploymentComment"].ToString() : null,
                                     ClientAction = !string.IsNullOrEmpty(dt.Rows[i]["ClientAction"].ToString()) ? dt.Rows[i]["ClientAction"].ToString() : null,
                                     IsResumeRedactAttempted = !string.IsNullOrEmpty(dt.Rows[i]["IsResumeRedactAttempted"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsResumeRedactAttempted"]) : false,
                                     IsCampaignActivity = !string.IsNullOrEmpty(dt.Rows[i]["IsCampaignActivity"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsCampaignActivity"]) : false,
@@ -795,6 +807,8 @@ namespace Risebird.Repository
                                         ? Convert.ToInt32(dt.Rows[i]["InterviewCapacity"]) : (int?)null,
                                     ModifiedAt = dt.Columns.Contains("ModifiedAt") && !string.IsNullOrEmpty(dt.Rows[i]["ModifiedAt"].ToString())
                                         ? Convert.ToDateTime(dt.Rows[i]["ModifiedAt"]) : (DateTime?)null,
+                                    LastLoginAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "LastLogin"),
+                                    LastInterviewConductedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "LastInterviewConductedAt"),
 
                                 });
                             }

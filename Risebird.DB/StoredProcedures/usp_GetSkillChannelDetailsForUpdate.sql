@@ -40,9 +40,11 @@ Select * from TransJoinability where IRFId = @irfId and @isJoinabilitySelectabil
 DECLARE @irfName varchar(50) = (SELECT IRFID FROM IRF WHERE id = @irfId)
 
 select distinct ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted,
-ip.VideoLink, isnull(ip.IsVideoApproved, 0) as IsVideoApproved,
+ip.VideoLink, isnull(ip.IsVideoApproved, 0) as IsVideoApproved, ip.EmploymentComment,
 isnull(sti.TotalInterview, 0) as TotalInterview,
-isnull(fti.TotalFuture, 0) as TotalFuture
+isnull(fti.TotalFuture, 0) as TotalFuture,
+ul.LastLogin as LastLogin,
+lic.LastInterviewConductedAt as LastInterviewConductedAt
 from  (SELECT  UserId, NickName, ResumeLink, CodedResumeLink,CompanyName, IsResumeRedactAttempted, PrimarySkill =   
 STUFF((SELECT ', ' + SkillName  
 FROM (select ipr.*,sk.[Name] as SkillName from InterviewerProfile ipr left join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id = tis.SkillId) b   
@@ -60,6 +62,14 @@ outer apply (select count(im.id) as TotalFuture from InterviewMeetings im
       and im.interviewDate > DATEADD(MINUTE, 330, GETDATE())
       and ISNULL(im.IsDeleted, 0) = 0 and ISNULL(im.isAutoCancelled, 0) = 0
       and CAST(im.confirmationStatus as varchar(20)) not in ('2', 'Cancelled')) fti
+outer apply (
+    select max(im.interviewDate) as LastInterviewConductedAt
+    from InterviewMeetings im
+    inner join InterviewComments ic on im.id = ic.InterviewId
+    where im.interviewer = ul.EmailId
+      and im.confirmationStatus = 1
+      and ic.MeetingStatus in (4, 6, 7, 8)
+) lic
 where ti.IRFId=@irfId and ul.IsActive=1  
   
 --selectability details  

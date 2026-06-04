@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -9019,7 +9024,13 @@ namespace Risebird.Web.Controllers
                     {
                         userId = iv.UserId,
                         email = iv.EmailId ?? "",
-                        futureAssignedCount = iv.TotalFuture
+                        companyName = !string.IsNullOrWhiteSpace(iv.CompanyName)
+                            ? iv.CompanyName.Trim()
+                            : (!string.IsNullOrWhiteSpace(iv.EmploymentComment) ? iv.EmploymentComment.Trim() : null),
+                        futureAssignedCount = iv.TotalFuture,
+                        lastLoginAt = iv.LastLoginAt.HasValue ? iv.LastLoginAt.Value.ToString("o") : (string)null,
+                        lastInterviewConductedAt = iv.LastInterviewConductedAt.HasValue
+                            ? iv.LastInterviewConductedAt.Value.ToString("o") : (string)null
                     })
                     .ToList();
 
@@ -12005,6 +12016,146 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>Loads saved AI resume summary JSON from interviewer CodedResumeLink (blob).</summary>
+        [HttpPost]
+        public async Task<IActionResult> GetInterviewerCodedCvSummary(string codedCvLink)
+        {
+            const string viewPath = "~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml";
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return View(viewPath, (ResumeSummaryVM)null);
+
+                if (string.IsNullOrWhiteSpace(codedCvLink))
+                    return View(viewPath, (ResumeSummaryVM)null);
+
+                using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(60) };
+                var json = await client.GetStringAsync(codedCvLink);
+                if (string.IsNullOrWhiteSpace(json))
+                    return View(viewPath, (ResumeSummaryVM)null);
+
+                var summary = JsonConvert.DeserializeObject<ResumeSummaryVM>(json);
+                return View(viewPath, summary);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View(viewPath, (ResumeSummaryVM)null);
+            }
+        }
+
+        /// <summary>
+        /// AI resume summary for DM Approval: generates summary, persists JSON to InterviewerProfile.CodedResumeLink.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> GenerateInterviewerResumeSummaryAndSave(int userId, string resumeLink)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                    return Json(new { success = false, message = "Unauthorized" });
+
+                if (profileName != "Admin" && profileName != "SupportAdmin" && profileName != "InterviewerManagement"
+                    && profileName != "SeniorInterviewerManagement" && profileName != "SeniorHR")
+                    return Json(new { success = false, message = "Not authorized." });
+
+                if (userId <= 0 || string.IsNullOrWhiteSpace(resumeLink))
+                    return Json(new { success = false, message = "Resume is required." });
+
+                var summary = await _candidateService.ResumeSummaryFromLink(resumeLink);
+                if (summary == null)
+                    return Json(new { success = false, message = "OpenAI did not return a valid resume summary. The resume may be unreadable, empty, or in an unsupported format." });
+
+                var uploadedLink = await UploadInterviewerResumeSummaryAsCodedCvAsync(summary);
+                if (string.IsNullOrEmpty(uploadedLink))
+                    return Json(new { success = false, message = "Could not upload coded CV to storage." });
+
+                var saveModel = new InterviewerProfileVM
+                {
+                    UserId = userId,
+                    CodedResumeLink = uploadedLink,
+                    IsResumeRedactAttempted = true,
+                    IsResumeRedactFailed = false
+                };
+                var saved = await _interviewerService.SaveInterviewerCodedResume(saveModel);
+                if (!saved)
+                    return Json(new { success = false, message = "Could not save coded CV to interviewer profile." });
+
+                var summaryHtml = await RenderResumeSummaryPartialToStringAsync(summary);
+                return Json(new { success = true, codedCvLink = uploadedLink, summaryHtml });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = DmResumeSummaryFailureMessage(ex) });
+            }
+        }
+
+        private static string DmResumeSummaryFailureMessage(Exception ex)
+        {
+            if (ex == null) return "Failed to generate resume summary.";
+            if (ex is TaskCanceledException || ex is OperationCanceledException)
+                return "OpenAI API timeout — please retry.";
+            if (ex.InnerException is TaskCanceledException || ex.InnerException is OperationCanceledException)
+                return "OpenAI API timeout — please retry.";
+            var msg = ex.Message?.Trim();
+            if (!string.IsNullOrEmpty(msg) && msg.Length <= 240)
+                return msg;
+            return "Failed to generate resume summary.";
+        }
+
+        private async Task<string> UploadInterviewerResumeSummaryAsCodedCvAsync(ResumeSummaryVM summary)
+        {
+            var jsonPayload = JsonConvert.SerializeObject(summary, Newtonsoft.Json.Formatting.Indented);
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(jsonPayload));
+            var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var fileName = "ResumeSummary_" + unixTime + "_" + Guid.NewGuid().ToString("N").Substring(0, 10);
+            var uploadedLink = await _azureStorageHelper.InsertBlobCloudCompare(
+                fileName, "resumes", null, stream, contentType: "application/json");
+            if (string.IsNullOrEmpty(uploadedLink))
+                return null;
+
+            var sas = _sasUrlHelper.CreateSasUrl("resumes");
+            if (!string.IsNullOrEmpty(sas))
+                uploadedLink = uploadedLink + "?" + sas;
+
+            return uploadedLink;
+        }
+
+        private async Task<string> RenderResumeSummaryPartialToStringAsync(ResumeSummaryVM summary)
+        {
+            const string viewPath = "~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml";
+            var viewEngine = HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
+            var tempDataProvider = HttpContext.RequestServices.GetService(typeof(ITempDataProvider)) as ITempDataProvider;
+            if (viewEngine == null || tempDataProvider == null)
+                return null;
+
+            var actionContext = new ActionContext(HttpContext, RouteData, ControllerContext.ActionDescriptor);
+            using var sw = new StringWriter();
+            var viewResult = viewEngine.FindView(actionContext, viewPath, isMainPage: false);
+            if (viewResult.View == null)
+                return null;
+
+            var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+            {
+                Model = summary
+            };
+            var viewContext = new ViewContext(
+                actionContext,
+                viewResult.View,
+                viewDictionary,
+                new TempDataDictionary(HttpContext, tempDataProvider),
+                sw,
+                new HtmlHelperOptions());
+
+            await viewResult.View.RenderAsync(viewContext);
+            return sw.ToString();
+        }
+
         [HttpPost]
         public async Task<JsonResult> RequestVideoKYC(string interviewerEmail, string interviewerName)
         {
@@ -12076,7 +12227,14 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 var cap = Math.Max(0, Math.Min(99, interviewCapacity));
                 var ok = await _irfService.UpdateTransInterviewerCapacity(transInterviewerId, cap, emailid);
-                return Json(new { success = ok, interviewCapacity = cap, capConfigured = true });
+                return Json(new
+                {
+                    success = ok,
+                    interviewCapacity = cap,
+                    capConfigured = true,
+                    capFromDefault = false,
+                    message = ok ? null : "Could not update interview limit."
+                });
             }
             catch (Exception ex)
             {
