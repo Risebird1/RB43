@@ -1577,7 +1577,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 5].Value = "Amount";
                         Sheet.Cells[1, 6].Value = "Status";
                         Sheet.Cells[1, 7].Value = "Payment Date";
-                        Sheet.Cells[1, 8].Value = "Cf Payment Id";
+                        Sheet.Cells[1, 8].Value = "Transaction Date";
                         Sheet.Cells[1, 9].Value = "Transfer Id";
                         Sheet.Cells[1, 10].Value = "UTR";
                         Sheet.Cells[1, 11].Value = "Cf Transfer Id";
