@@ -352,11 +352,12 @@ namespace Risebird.Repository.Interface
         /// Either parameter alone is enough for the match; both are used when available.
         /// </summary>
         /// <param name="transferId">Your internal transfer_id sent when the payout was created.</param>
-        /// <param name="cfTransferId">Cashfree's own numeric cf_transfer_id.</param>
-        /// <param name="payoutStatus">Terminal status from the webhook: SUCCESS | FAILED | REVERSED.</param>
+        /// <param name="cfTransferId">Cashfree's numeric referenceId for this transfer.</param>
+        /// <param name="payoutStatus">Terminal event from the webhook: TRANSFER_SUCCESS | TRANSFER_FAILED | TRANSFER_REJECTED.</param>
         /// <param name="transferUtr">Bank UTR number — saved when present in the webhook.</param>
+        /// <param name="eventTime">Webhook eventTime — stored as <c>TransactionDate</c> on the PaymentHistory row.</param>
         /// <returns>Number of rows updated (0 if no matching row was found).</returns>
-        Task<int> UpdatePaymentHistoryTransferStatus(string transferId, string cfTransferId, string payoutStatus, string transferUtr = null);
+        Task<int> UpdatePaymentHistoryTransferStatus(string transferId, string cfTransferId, string payoutStatus, string transferUtr = null, string eventTime = null);
 
         /// <summary>
         /// Fetches the <see cref="PaymentHistoryEmailDetails"/> (PaymentHistoryId, Email, Amount)
@@ -364,16 +365,6 @@ namespace Risebird.Repository.Interface
         /// Used by the webhook to obtain the interviewer email for sending a confirmation mail.
         /// </summary>
         Task<PaymentHistoryEmailDetails> GetPaymentDetailsByTransferId(string transferId, string cfTransferId);
-
-        /// <summary>
-        /// Updates <c>GatewayPaymentStatus</c> on a PaymentHistory row matched by
-        /// <paramref name="cfPaymentId"/> from a Cashfree Payment Gateway webhook
-        /// (e.g. PAYMENT_SUCCESS_WEBHOOK, PAYMENT_FAILED_WEBHOOK).
-        /// </summary>
-        /// <param name="cfPaymentId">Cashfree's cf_payment_id from the webhook — matches PaymentHistory.CfPaymentId.</param>
-        /// <param name="gatewayPaymentStatus">Payment status: SUCCESS | FAILED | PENDING | USER_DROPPED.</param>
-        /// <returns>Number of rows updated (0 if no matching row was found).</returns>
-        Task<int> UpdatePaymentHistoryGatewayStatus(string cfPaymentId, string gatewayPaymentStatus);
 
         /// <summary>
         /// Inserts a single row into <c>PaymentLogs</c> capturing the full context of one

@@ -1577,7 +1577,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 5].Value = "Amount";
                         Sheet.Cells[1, 6].Value = "Status";
                         Sheet.Cells[1, 7].Value = "Payment Date";
-                        Sheet.Cells[1, 8].Value = "Cf Payment Id";
+                        Sheet.Cells[1, 8].Value = "Transaction Date";
                         Sheet.Cells[1, 9].Value = "Transfer Id";
                         Sheet.Cells[1, 10].Value = "UTR";
                         Sheet.Cells[1, 11].Value = "Cf Transfer Id";
@@ -1602,7 +1602,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 Sheet.Cells[i, 6].Value = item.Status;
                                 Sheet.Cells[i, 7].Value = item.Date.ToString();
-                                Sheet.Cells[i, 8].Value = item.CfPaymentId;
+                                Sheet.Cells[i, 8].Value = item.TransactionDate?.ToString("yyyy-MM-dd HH:mm:ss");
                                 Sheet.Cells[i, 9].Value = item.TransferId;
                                 Sheet.Cells[i, 10].Value = item.TransferUtr;
                                 Sheet.Cells[i, 11].Value = item.CfTransferId;
