@@ -495,6 +495,21 @@ namespace Risebird.Web.Controllers
                 if (record.ResumeAIAnalysisCompleted != true)
                     return Json(new { success = false, error = "Resume analysis must be completed first." });
 
+                bool verdictOk = false;
+                if (!string.IsNullOrWhiteSpace(record.ResumeAIAnalysisResult))
+                {
+                    try
+                    {
+                        var parsed = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(record.ResumeAIAnalysisResult);
+                        verdictOk = parsed != null
+                            && !string.IsNullOrEmpty(parsed.verdict)
+                            && parsed.verdict.IndexOf("yes", StringComparison.OrdinalIgnoreCase) >= 0;
+                    }
+                    catch { }
+                }
+                if (!verdictOk)
+                    return Json(new { success = false, error = "Resume fitment analysis verdict is not positive. Cannot assign to assessment group." });
+
                 if (!record.InterviewerProfileId.HasValue)
                     return Json(new { success = false, error = "Interviewer profile not found in system." });
 
@@ -1397,6 +1412,34 @@ namespace Risebird.Web.Controllers
 
                 // Reload record after potential resume analysis update
                 record = await _repository.GetEmailAvailabilityByIdAsync(eaId);
+
+                // Gate: Only proceed to AG assignment if resume fitment verdict is positive
+                bool verdictPositive = false;
+                if (record.ResumeAIAnalysisCompleted == true && !string.IsNullOrWhiteSpace(record.ResumeAIAnalysisResult))
+                {
+                    try
+                    {
+                        var parsed = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(record.ResumeAIAnalysisResult);
+                        verdictPositive = parsed != null
+                            && !string.IsNullOrEmpty(parsed.verdict)
+                            && parsed.verdict.IndexOf("yes", StringComparison.OrdinalIgnoreCase) >= 0;
+                    }
+                    catch { }
+                }
+
+                if (!verdictPositive)
+                {
+                    string verdictReason = record.ResumeAIAnalysisCompleted != true
+                        ? "Resume analysis not completed (no resume or unreadable)"
+                        : "Resume fitment verdict is not positive";
+                    await SaveIaCp("ia_autoclose_verdict_block",
+                        $"Skipping AG assignment for #{eaId}: {verdictReason}", callLogId: eaId);
+
+                    await _repository.UpdateEmailAvailabilityStatusAsync(eaId, "InProgress", actor);
+                    await _repository.InsertHistoryAsync(eaId, "AutoCloseBlocked", record.Status ?? "Open",
+                        $"InProgress — {verdictReason}", actor);
+                    return;
+                }
 
                 // Step 2: Assign to Assessment Group (if not already assigned)
                 if (record.InterviewerProfileId.HasValue
