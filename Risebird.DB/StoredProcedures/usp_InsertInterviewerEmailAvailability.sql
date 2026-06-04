@@ -21,6 +21,7 @@ CREATE PROCEDURE [dbo].[usp_InsertInterviewerEmailAvailability]
     @ResumeFitment          VARCHAR(50)     = NULL,
     @ResumeLink             NVARCHAR(2000)  = NULL,
     @HasAttachment          BIT             = 0,
+    @Source                 VARCHAR(50)     = NULL,
     @NewId                  INT             OUTPUT
 AS
 BEGIN
@@ -53,14 +54,14 @@ BEGIN
         (SenderEmail, UserId, InterviewerProfileId, Subject, MailContent, ReceivedAt,
          JobTitle, InterviewerName, Phone, MagName, IRFReference, HasLoginCredentials,
          SlotsPerDay, TimeFrame, AvailabilityIntent, MailBodyIntent,
-         ConcernsOrNotInterested, ResumeFitment, ResumeLink, HasAttachment, Status, CreatedAt)
+         ConcernsOrNotInterested, ResumeFitment, ResumeLink, HasAttachment, Status, Source, CreatedAt)
     VALUES
         (@SenderEmail, @UserId, @InterviewerProfileId, @Subject, @MailContent,
          ISNULL(@ReceivedAt, GETUTCDATE()),
          @JobTitle, @InterviewerName, @Phone, @MagName, @IRFReference, @HasLoginCredentials,
          @SlotsPerDay, @TimeFrame, @AvailabilityIntent, @MailBodyIntent,
          @ConcernsOrNotInterested, @ResumeFitment, @ResumeLink, @HasAttachment,
-         'Open', GETUTCDATE())
+         'Open', @Source, GETUTCDATE())
 
     SET @NewId = SCOPE_IDENTITY()
 END

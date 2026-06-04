@@ -17,7 +17,8 @@ namespace Risebird.Repository.Interface
 
         Task<List<InterviewerEmailAvailabilityVM>> GetEmailAvailabilityAsync(
             string status, string senderEmail, string resumeFitment,
-            DateTime? dateFrom, DateTime? dateTo, int page, int pageSize);
+            DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
+            string source = null, bool? isAutoClosed = null);
 
         Task<InterviewerEmailAvailabilityVM> GetEmailAvailabilityByIdAsync(int id);
 
@@ -52,7 +53,8 @@ namespace Risebird.Repository.Interface
         Task<List<IABatchCallLogEntry>> GetBatchCallHistoryAsync(string magName);
         Task<(List<IAInterviewerCallOutcome> Items, int TotalCount)> GetInterviewerCallOutcomesForMAGAsync(string magName, int page = 1, int pageSize = 25);
 
-        Task<int> EnsureEARecordForProfileInterviewerAsync(int interviewerProfileId, string magName);
+        Task<int> EnsureEARecordForProfileInterviewerAsync(int interviewerProfileId, string magName, string source = null);
+        Task<bool> MarkAutoClosedAsync(int id, string autoClosedBy);
 
         // MAG lookup
         Task<string> GetMAGNameByAssessmentGroupIdAsync(int assessmentGroupId);

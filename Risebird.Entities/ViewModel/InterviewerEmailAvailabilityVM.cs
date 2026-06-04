@@ -36,6 +36,11 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedAt                   { get; set; }
         public DateTime? UpdatedAt                  { get; set; }
 
+        public string   Source                      { get; set; }
+        public bool?    IsAutoClosed                { get; set; }
+        public string   AutoClosedBy                { get; set; }
+        public DateTime? AutoClosedAt               { get; set; }
+
         // Joined from InterviewerProfile
         public string   InterviewerNickName         { get; set; }
         public string   CurrentRole                 { get; set; }
