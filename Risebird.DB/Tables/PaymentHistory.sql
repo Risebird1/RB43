@@ -13,6 +13,8 @@ CREATE TABLE [dbo].[PaymentHistory](
     [TransferId][varchar](50) NULL,
     [CfTransferId][varchar](100) NULL,
     [PayoutStatus][NVARCHAR](50) NULL,
+    [TransferUtr][NVARCHAR](100) NULL,
+    [TransactionDate][datetime] NULL,
  CONSTRAINT [PK_PaymentHistory] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -81,21 +83,11 @@ END
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
-    WHERE Name = N'CfPaymentId'
+    WHERE Name = N'TransactionDate'
       AND Object_ID = Object_ID(N'PaymentHistory'))
 BEGIN
     ALTER TABLE PaymentHistory
-    ADD CfPaymentId VARCHAR(100) NULL
-END
-
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name = N'GatewayPaymentStatus'
-      AND Object_ID = Object_ID(N'PaymentHistory'))
-BEGIN
-    ALTER TABLE PaymentHistory
-    ADD GatewayPaymentStatus NVARCHAR(50) NULL
+    ADD TransactionDate DATETIME NULL
 END
 END
 GO

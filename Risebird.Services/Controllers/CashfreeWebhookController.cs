@@ -326,7 +326,8 @@ namespace Risebird.Services.Controllers
                         transferId:   payload.TransferId,
                         cfTransferId: cfTransferId,
                         payoutStatus: payload.Event,
-                        transferUtr:  payload.Utr);
+                        transferUtr:  payload.Utr,
+                        eventTime:    payload.EventTime);
 
                     if (rowsUpdated == 0)
                     {
@@ -451,48 +452,33 @@ namespace Risebird.Services.Controllers
                 return BadRequest(missingData);
             }
 
-            var order = pgPayload.Data.Order;
+            var order   = pgPayload.Data.Order;
             var payment = pgPayload.Data.Payment;
 
-            // Update PaymentHistory matched by CfPaymentId.
-            var rowsUpdated = await _meetingRepository.UpdatePaymentHistoryGatewayStatus(
-                cfPaymentId: payment.CfPaymentId,
-                gatewayPaymentStatus: payment.PaymentStatus);
-
-            if (rowsUpdated == 0)
-            {
-                await _applicationErrorLogger.LogMessage(
-                    LogLevelInfo.Warning,
-                    new Exception(
-                        $"[CashfreeWebhook] No PaymentHistory row matched CfPaymentId='{payment.CfPaymentId}' " +
-                        $"Status='{payment.PaymentStatus}'"));
-            }
-
+            // GatewayPaymentStatus and CfPaymentId columns have been removed from
+            // PaymentHistory — no DB update is performed for payment gateway events.
             var paymentStatus = MapToPaymentStatus(pgPayload);
 
             var response = new CashfreeWebhookResponse
             {
                 SignatureValid = true,
-                EventType = pgPayload.Type,
-                Payment = paymentStatus,
-                RowsUpdated = rowsUpdated
+                EventType      = pgPayload.Type,
+                Payment        = paymentStatus,
+                RowsUpdated    = 0
             };
 
             await _meetingRepository.InsertPaymentLog(
-                endpoint: endpoint,
-                requestBody: rawBody,
-                responseBody: JsonConvert.SerializeObject(response),
-                httpStatusCode: 200,
-                logLevel: rowsUpdated == 0 ? "Warning" : "Info",
-                eventType: pgPayload.Type,
-                transferStatus: payment.PaymentStatus,
+                endpoint:           endpoint,
+                requestBody:        rawBody,
+                responseBody:       JsonConvert.SerializeObject(response),
+                httpStatusCode:     200,
+                logLevel:           "Info",
+                eventType:          pgPayload.Type,
+                transferStatus:     payment.PaymentStatus,
                 signatureTimestamp: timestamp,
-                signatureReceived: receivedSig,
-                rowsUpdated: rowsUpdated,
-                    errorMessage: rowsUpdated == 0
-                                        ? $"No PaymentHistory row matched CfPaymentId='{payment.CfPaymentId}'."
-                                        : null,
-                callerIp: callerIp);
+                signatureReceived:  receivedSig,
+                rowsUpdated:        0,
+                callerIp:           callerIp);
 
             return Ok(response);
         }

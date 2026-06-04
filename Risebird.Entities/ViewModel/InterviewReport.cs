@@ -460,7 +460,7 @@ namespace Risebird.Entities.ViewModel
         public string CfTransferId { get; set; }
         public string TransferUtr { get; set; }
         public string PayoutStatus { get; set; }
-        public string CfPaymentId { get; set; }
+        public DateTime? TransactionDate { get; set; }
     }
     public class SchedulingLinkVM
     {
