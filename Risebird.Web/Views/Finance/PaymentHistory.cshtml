@@ -166,6 +166,7 @@
                                                 <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
+                                                            <th style="display:none;"></th>
                                                             <th>Interviewer</th>
                                                             <th>Email-Id</th>
                                                             <th>Total Amount</th>
@@ -184,6 +185,7 @@
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
+                                                            <th style="display:none;"></th>
                                                             <th>Interviewer</th>
                                                             <th>Email-Id</th>
                                                             <th>Total Amount</th>
@@ -208,6 +210,7 @@
                                                         @foreach (var item in Model)
                                                         {
                                                             <tr>
+                                                                <td style="display:none;"></td>
                                                                 <td>@item.FirstName</td>
                                                                 <td>@item.InterviewerEmailid<input type="hidden" id="hidcomment_@item.id" value="@item.InterviewerEmailid" /></td>
                                                                 <td>@item.TotalAmount</td>
