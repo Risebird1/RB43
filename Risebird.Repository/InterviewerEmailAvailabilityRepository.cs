@@ -389,13 +389,14 @@ namespace Risebird.Repository
             return result.ToList();
         }
 
-        public async Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalInterviewers)
+        public async Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalInterviewers, int? campaignId = null)
         {
             using var con = new SqlConnection(_connectionString);
             var p = new DynamicParameters();
             p.Add("@MagName", magName);
             p.Add("@InitiatedBy", initiatedBy);
             p.Add("@TotalInterviewers", totalInterviewers);
+            p.Add("@CampaignId", campaignId);
             p.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
             await con.ExecuteAsync("usp_InsertIABatchCallLog", p,
                 commandType: CommandType.StoredProcedure, commandTimeout: 30);
@@ -535,6 +536,34 @@ namespace Risebird.Repository
                   ORDER BY MagName",
                 commandTimeout: 30);
             return result.ToList();
+        }
+
+        public async Task<List<CampaignBatchCallEligible>> GetCampaignsEligibleForBatchCallAsync()
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<CampaignBatchCallEligible>(
+                "usp_GetCampaignsEligibleForBatchCall",
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            return result.ToList();
+        }
+
+        public async Task<List<CampaignUnrespondedInterviewer>> GetCampaignUnrespondedInterviewersAsync(int campaignId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<CampaignUnrespondedInterviewer>(
+                "usp_GetCampaignUnrespondedInterviewersForBatchCall",
+                new { CampaignId = campaignId },
+                commandType: CommandType.StoredProcedure, commandTimeout: 60);
+            return result.ToList();
+        }
+
+        public async Task MarkCampaignBatchCallTriggeredAsync(int campaignId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            await con.ExecuteAsync(
+                "usp_MarkCampaignBatchCallTriggered",
+                new { CampaignId = campaignId },
+                commandType: CommandType.StoredProcedure, commandTimeout: 15);
         }
     }
 
