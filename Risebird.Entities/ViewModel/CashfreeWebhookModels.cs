@@ -113,9 +113,6 @@ namespace Risebird.Entities.ViewModel
 
     public class CashfreePaymentDetails
     {
-        [JsonProperty("cf_payment_id")]
-        public string CfPaymentId { get; set; }
-
         /// <summary>SUCCESS | FAILED | PENDING | USER_DROPPED</summary>
         [JsonProperty("payment_status")]
         public string PaymentStatus { get; set; }
@@ -212,9 +209,6 @@ namespace Risebird.Entities.ViewModel
         public string OrderId { get; set; }
         public decimal OrderAmount { get; set; }
         public string OrderCurrency { get; set; }
-
-        /// <summary>Cashfree's own numeric payment reference.</summary>
-        public string CfPaymentId { get; set; }
 
         /// <summary>Terminal payment status: SUCCESS | FAILED | PENDING | USER_DROPPED</summary>
         public string PaymentStatus { get; set; }

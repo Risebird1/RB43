@@ -115,6 +115,15 @@
         if (!string.IsNullOrWhiteSpace(iv?.EmploymentComment)) return iv.EmploymentComment.Trim();
         return null;
     }
+    /// <summary>Same roles as /IRF/UploadInterviewerResume and /IRF/EditIRFInterviewers.</summary>
+    bool DmV4CanUploadIvResume(string profileName)
+    {
+        var p = (profileName ?? "").Trim().Trim('"');
+        return p == "Admin" || p == "SupportAdmin" || p == "InterviewerManagement"
+            || p == "SeniorInterviewerManagement" || p == "SeniorHR";
+    }
+    bool DmV4IvHasResume(TransInterviewer iv) => !string.IsNullOrWhiteSpace(iv?.ResumeLink);
+    bool DmV4IvHasCodedCv(TransInterviewer iv) => !string.IsNullOrWhiteSpace(iv?.CodedResumeLink);
     string DmV4LevelLabel(int? levelId)
     {
         if (levelId == null || levelId == 0) return "Proficient";
@@ -153,7 +162,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20250604ivcompany" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20250604ivinsightcol" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -1029,7 +1038,9 @@
                                                 int rbVetCount = ivList.Count(x => DmV4RbVetDisplayYes(x, dmIvLockNew));
                                                 int clientVetCount = ivList.Count(x => DmV4ClientVetDisplayYes(x, dmIvLockNew, DmV4RbVetDisplayYes(x, dmIvLockNew)));
                                                 int onPanelCount = ivList.Count(x => DmV4RbVetDisplayYes(x, dmIvLockNew) && DmV4ClientVetDisplayYes(x, dmIvLockNew, DmV4RbVetDisplayYes(x, dmIvLockNew)));
-                                                bool canEditIvOps = ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public";
+                                                var dmProfileName = (ViewBag.profileName as string ?? "").Trim().Trim('"');
+                                                bool canEditIvOps = dmProfileName != "Client" && dmProfileName != "Interviewer" && dmProfileName != "Public";
+                                                bool canUploadIvResume = DmV4CanUploadIvResume(dmProfileName);
                                                 bool canEditSurcharge = ViewBag.profileName == "Admin" || ViewBag.profileName == "SupportAdmin";
                                                 string screenJdTitle = Model.JDTiltle ?? "";
                                                 string dmAssignPolicy = string.IsNullOrEmpty(Model.DmAssignmentPolicy) ? "free" : Model.DmAssignmentPolicy;
@@ -1123,13 +1134,14 @@
                                         <div class="card">
                                             <div class="dm-v4-pinned-body" id="hidden_fields_eight">
                                                 @Html.HiddenFor(m => m.id)
-                                                <div class="dm-v4-iv-panel" id="dmV4IvPanel" data-lock="@(dmIvLockNew ? "1" : "0")" data-cap-enforced="@(dmCapEnforced ? "1" : "0")" data-can-edit="@(canEditIvOps ? "1" : "0")" data-can-edit-surcharge="@(canEditSurcharge ? "1" : "0")">
+                                                <div class="dm-v4-iv-panel" id="dmV4IvPanel" data-lock="@(dmIvLockNew ? "1" : "0")" data-cap-enforced="@(dmCapEnforced ? "1" : "0")" data-can-edit="@(canEditIvOps ? "1" : "0")" data-can-upload-resume="@(canUploadIvResume ? "1" : "0")" data-can-edit-surcharge="@(canEditSurcharge ? "1" : "0")">
                                                     <div class="dm-v4-iv-grid dm-v4-iv-grid--head">
                                                         <span>Interviewer</span>
                                                         @* <span>Company</span> *@
                                                         <span>Coded CV</span>
                                                         <span>AI verdict &amp; score</span>
                                                         <span>Future</span>
+                                                        <span>Insight(all channel)</span>
                                                         <span>Channel Insights</span>
                                                         <span>Interview limit</span>
                                                         <span>Per-iv rate</span>
@@ -1150,8 +1162,8 @@
                                                             var verdictTone = DmV4VerdictTone(iv.AIVerdict);
                                                             var verdictLabel = DmV4VerdictLabel(iv.AIVerdict, verdictTone);
                                                             var aiReasonFull = DmV4AiReasoningFull(iv);
-                                                            var dmIvHasResume = !string.IsNullOrEmpty(iv.ResumeLink);
-                                                            var dmIvHasCodedCv = !string.IsNullOrEmpty(iv.CodedResumeLink);
+                                                            var dmIvHasResume = DmV4IvHasResume(iv);
+                                                            var dmIvHasCodedCv = DmV4IvHasCodedCv(iv);
                                                             var dmIvCanScreen = dmIvHasResume || dmIvHasCodedCv;
                                                             var dmIvHasScreening = iv.AIScreeningScore > 0 || !string.IsNullOrWhiteSpace(iv.AIVerdict) || !string.IsNullOrWhiteSpace(aiReasonFull);
                                                             var verdictReason = DmV4VerdictReasonSnippet(iv);
@@ -1269,7 +1281,14 @@
                                                                 </div> *@
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--cv">
                                                                     <div class="dm-v4-iv-cv-stack" data-resume-link="@(iv.ResumeLink ?? "")" data-coded-cv="@(iv.CodedResumeLink ?? "")">
-                                                                        @if (dmIvHasCodedCv)
+                                                                        @if (canUploadIvResume && !dmIvHasResume)
+                                                                        {
+                                                                            <button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--upload"
+                                                                                    data-user-id="@iv.UserId" data-email="@iv.EmailId" title="Upload interviewer resume (PDF)">
+                                                                                <i class="fa fa-upload" aria-hidden="true"></i> Upload Resume
+                                                                            </button>
+                                                                        }
+                                                                        else if (dmIvHasCodedCv)
                                                                         {
                                                                             <button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view"
                                                                                     data-coded-cv="@iv.CodedResumeLink" data-resume-link="@(iv.ResumeLink ?? "")"
@@ -1287,20 +1306,13 @@
                                                                                 </span>
                                                                             </button>
                                                                         }
-                                                                        else if (!canEditIvOps && !dmIvHasCodedCv)
-                                                                        {
-                                                                            <span class="dm-v4-muted">No coded CV</span>
-                                                                        }
                                                                         else if (iv.IsResumeRedactAttempted && !dmIvHasCodedCv)
                                                                         {
                                                                             <span class="dm-v4-muted">—</span>
                                                                         }
-                                                                        @if (canEditIvOps && !dmIvHasResume)
+                                                                        else if (!dmIvHasCodedCv)
                                                                         {
-                                                                            <button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--upload"
-                                                                                    data-user-id="@iv.UserId" data-email="@iv.EmailId" title="Upload interviewer resume (PDF)">
-                                                                                <i class="fa fa-upload" aria-hidden="true"></i> Upload Resume
-                                                                            </button>
+                                                                            <span class="dm-v4-muted">No coded CV</span>
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -1337,13 +1349,13 @@
                                                                     }
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--future">
-                                                                    <div class="dm-v4-iv-future-stack">
-                                                                        <span class="dm-v4-mono dm-v4-iv-future-count" title="Future skill channel interviews assigned to this interviewer">@ivFutureAssignedCount.ToString(System.Globalization.CultureInfo.InvariantCulture)</span>
-                                                                        <button type="button" class="dm-v4-iv-insights-btn dm-v4-iv-insights-btn--global"
-                                                                                data-email="@iv.EmailId" title="Insights (all channels)" aria-label="Insights (all channels)">
-                                                                            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
-                                                                        </button>
-                                                                    </div>
+                                                                    <span class="dm-v4-mono dm-v4-iv-future-count" title="Future skill channel interviews assigned to this interviewer">@ivFutureAssignedCount.ToString(System.Globalization.CultureInfo.InvariantCulture)</span>
+                                                                </div>
+                                                                <div class="dm-v4-iv-cell dm-v4-iv-cell--insight-all">
+                                                                    <button type="button" class="dm-v4-iv-insights-btn dm-v4-iv-insights-btn--global"
+                                                                            data-email="@iv.EmailId" title="Insights (all channels)" aria-label="Insights (all channels)">
+                                                                        <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                                                    </button>
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--stats">
                                                                     <button type="button" class="dm-v4-iv-stats-link dm-v4-iv-channel-insights-btn"
@@ -3269,7 +3281,7 @@ else
 </style>
 <script src="~/js/dm-v4-voice.js?v=20240529"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-layout.js?v=20250604ivcapoverride"></script>
+<script src="~/js/dm-v4-layout.js?v=20250604cvupload2"></script>
 <script src="~/js/dm-v4-questions.js?v=20240521i"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
@@ -3307,6 +3319,9 @@ else
         $(document).on('keydown', function (e) { if (e.key === 'Escape' && $drawer.hasClass('is-open')) closeResumeSummaryDrawer(); });
         window.openResumeSummaryDrawer = openResumeSummaryDrawer;
         window.closeResumeSummaryDrawer = closeResumeSummaryDrawer;
+        if (typeof patchDmV4ResumeSummaryDrawerClose === 'function') {
+            patchDmV4ResumeSummaryDrawerClose();
+        }
     })();
 </script>
 

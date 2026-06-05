@@ -1576,12 +1576,13 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 4].Value = "TDS deduction";
                         Sheet.Cells[1, 5].Value = "Amount";
                         Sheet.Cells[1, 6].Value = "Status";
-                        Sheet.Cells[1, 7].Value = "Payment Date";
-                        Sheet.Cells[1, 8].Value = "Transaction Date";
-                        Sheet.Cells[1, 9].Value = "Transfer Id";
-                        Sheet.Cells[1, 10].Value = "UTR";
-                        Sheet.Cells[1, 11].Value = "Cf Transfer Id";
-                        Sheet.Cells[1, 12].Value = "Payment Status";
+                        Sheet.Cells[1, 7].Value = "Comment";
+                        Sheet.Cells[1, 8].Value = "Payment Date";
+                        Sheet.Cells[1, 9].Value = "Transaction Date";
+                        Sheet.Cells[1, 10].Value = "Transfer Id";
+                        Sheet.Cells[1, 11].Value = "UTR";
+                        Sheet.Cells[1, 12].Value = "Cf Transfer Id";
+                        Sheet.Cells[1, 13].Value = "Payment Status";
                         int i = 2;
                         if (model.Count() > 0)
                         {
@@ -1601,12 +1602,13 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 4].Value = item.TotalAmount - item.Points;
                                 }
                                 Sheet.Cells[i, 6].Value = item.Status;
-                                Sheet.Cells[i, 7].Value = item.Date.ToString();
-                                Sheet.Cells[i, 8].Value = item.TransactionDate?.ToString("yyyy-MM-dd HH:mm:ss");
-                                Sheet.Cells[i, 9].Value = item.TransferId;
-                                Sheet.Cells[i, 10].Value = item.TransferUtr;
-                                Sheet.Cells[i, 11].Value = item.CfTransferId;
-                                Sheet.Cells[i, 12].Value = item.PayoutStatus;
+                                Sheet.Cells[i, 7].Value = item.Comment;
+                                Sheet.Cells[i, 8].Value = item.Date.ToString();
+                                Sheet.Cells[i, 9].Value = item.TransactionDate?.ToString("yyyy-MM-dd HH:mm:ss");
+                                Sheet.Cells[i, 10].Value = item.TransferId;
+                                Sheet.Cells[i, 11].Value = item.TransferUtr;
+                                Sheet.Cells[i, 12].Value = item.CfTransferId;
+                                Sheet.Cells[i, 13].Value = item.PayoutStatus;
                                 i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
