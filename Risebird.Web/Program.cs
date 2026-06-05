@@ -17,6 +17,8 @@ using Risebird.Entities;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Extensions;
+using Risebird.Web.Middleware;
+using Risebird.Web.Services;
 using Risebird.Web.Services.Proctoring;
 using System;
 using System.IO.Compression;
@@ -98,6 +100,7 @@ builder.Services.AddControllers(options =>
 builder.Services.AddDataProtection();
 builder.Services.AddSingleton<IProctoringTokenService, ProctoringTokenService>();
 builder.Services.AddScoped<IProctoringSessionEligibilityService, ProctoringSessionEligibilityService>();
+builder.Services.AddScoped<IRisebirdSessionBootstrapService, RisebirdSessionBootstrapService>();
 
 
 
@@ -504,6 +507,7 @@ app.UseSession();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<SessionHydrationMiddleware>();
 app.UseCors(options => options.AllowAnyOrigin());
 app.UseResponseCompression();
 

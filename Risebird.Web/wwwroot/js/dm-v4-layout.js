@@ -1762,16 +1762,65 @@
         }
     }
 
-    function dmV4RenderCvStack($row, state) {
+    function dmV4RowCvCode($row) {
+        if (!$row || !$row.length) return 'CV';
+        var code = ($row.attr('data-cv-code') || '').toString().trim();
+        if (code) return code;
+        var nick = $row.find('.dm-v4-iv-code').first().clone().children().remove().end().text().trim();
+        if (nick && nick !== '—') return nick;
+        return 'CV';
+    }
+
+    function dmV4ResolveRowIrfId($row) {
+        var n = parseInt($row.attr('data-irf-id'), 10);
+        if (!isNaN(n) && n > 0) return n;
+        n = parseInt($('#id').val(), 10);
+        if (!isNaN(n) && n > 0) return n;
+        var $bar = getPolicyBar();
+        n = parseInt($bar.attr('data-irf-id'), 10);
+        if (!isNaN(n) && n > 0) return n;
+        n = parseInt($bar.data('irf-id'), 10);
+        return isNaN(n) ? 0 : n;
+    }
+
+    /** Apply coded CV from generate-save response (or refetch) without page reload. */
+    function dmV4ApplyCvSaveResult($row, payload) {
+        if (!$row || !$row.length || !payload) return;
+        var codedCvLink = (payload.codedCvLink || '').toString().trim();
+        if (!codedCvLink) return;
+        var resumeLink = (payload.resumeLink || $row.attr('data-resume-link') || '').toString();
+        var cvCode = (payload.cvCode || dmV4RowCvCode($row)).toString();
+        var $stack = $row.find('.dm-v4-iv-cv-stack');
+        dmV4RenderCvStack($row, {
+            resumeLink: resumeLink,
+            codedCvLink: codedCvLink,
+            cvCode: cvCode,
+            isResumeRedactAttempted: true,
+            aiVerdict: ($row.attr('data-ai-verdict') || '').toString(),
+            aiScore: parseInt($row.attr('data-ai-score'), 10) || 0,
+            aiReasonFull: ($row.find('.dm-v4-iv-ai-reason-full').text() || '').trim()
+        });
+        $row.attr('data-coded-cv', codedCvLink);
+        $row.attr('data-cv-code', cvCode);
+        $row.attr('data-resume-link', resumeLink);
+        if ($stack.length) {
+            $stack.attr('data-coded-cv', codedCvLink);
+            $stack.attr('data-resume-link', resumeLink);
+        }
+    }
+
+    function dmV4RenderCvStack($row, state, opts) {
+        opts = opts || {};
         var canEdit = getIvCanEdit();
+        var canUpload = getIvCanUploadResume();
         var $stack = $row.find('.dm-v4-iv-cv-stack');
         if (!$stack.length) return;
 
-        var resumeLink = (state.resumeLink || '').toString();
-        var codedCvLink = (state.codedCvLink || '').toString();
+        var resumeLink = (state.resumeLink || '').toString().trim();
+        var codedCvLink = (state.codedCvLink || '').toString().trim();
         var cvCode = (state.cvCode || 'CV').toString();
         var redactAttempted = !!state.isResumeRedactAttempted;
-        var hasResume = !!resumeLink;
+        var hasResume = dmV4HasResumeLink(resumeLink);
         var hasCoded = !!codedCvLink;
         var canScreen = hasResume || hasCoded;
         var hasScreening = (parseInt(state.aiScore, 10) || 0) > 0 ||
@@ -1779,9 +1828,15 @@
 
         $row.attr('data-resume-link', resumeLink);
         $row.attr('data-coded-cv', codedCvLink);
+        $row.attr('data-cv-code', cvCode);
+        $stack.attr('data-resume-link', resumeLink);
+        $stack.attr('data-coded-cv', codedCvLink);
 
         var html = '';
-        if (hasCoded) {
+        if (canUpload && !hasResume) {
+            html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--upload" title="Upload interviewer resume (PDF)">' +
+                '<i class="fa fa-upload" aria-hidden="true"></i> Upload Resume</button>';
+        } else if (hasCoded) {
             html += '<button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view" data-coded-cv="' +
                 $('<span/>').text(codedCvLink).html() + '" data-resume-link="' + $('<span/>').text(resumeLink).html() +
                 '" data-cv-label="' + $('<span/>').text(cvCode).html() + '" title="View AI resume summary">' +
@@ -1792,20 +1847,18 @@
                 '<span class="dm-v4-iv-cv-btn__icon" aria-hidden="true"><i class="fa fa-magic"></i></span>' +
                 '<span class="dm-v4-iv-cv-btn__text"><span class="dm-v4-iv-cv-btn__title">Generate</span>' +
                 '<span class="dm-v4-iv-cv-btn__sub">Resume Summary</span></span></button>';
-        } else if (!canEdit && !hasCoded) {
-            html += '<span class="dm-v4-muted">No coded CV</span>';
         } else if (redactAttempted && !hasCoded) {
             html += '<span class="dm-v4-muted">—</span>';
-        }
-        if (canEdit && !hasResume) {
-            html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--upload" title="Upload interviewer resume (PDF)">' +
-                '<i class="fa fa-upload" aria-hidden="true"></i> Upload Resume</button>';
+        } else if (!hasCoded) {
+            html += '<span class="dm-v4-muted">No coded CV</span>';
         }
         $stack.html(html);
-        dmV4EnsureVerdictScreenButton($row, {
-            canScreen: canScreen,
-            hasScreening: hasScreening
-        });
+        if (!opts.skipVerdictSync) {
+            dmV4EnsureVerdictScreenButton($row, {
+                canScreen: canScreen,
+                hasScreening: hasScreening
+            });
+        }
     }
 
     function dmV4EnsureVerdictScreenButton($row, opts) {
@@ -1837,37 +1890,53 @@
         dmV4SyncDrawerScreenBtnVisibility($row);
     }
 
-    function dmV4RefreshIvCvState($row) {
+    function dmV4RefreshIvCvState($row, opts) {
+        opts = opts || {};
         var cfg = getDmIvCvConfig();
         if (!cfg.cvStateUrl) return $.Deferred().reject().promise();
-        var irfId = parseInt($row.data('irf-id'), 10);
-        var userId = parseInt($row.data('user-id'), 10);
+        var irfId = dmV4ResolveRowIrfId($row);
+        var userId = parseInt($row.attr('data-user-id'), 10);
+        if (!irfId || !userId) return $.Deferred().reject().promise();
         return $.getJSON(cfg.cvStateUrl, { irfId: irfId, userId: userId }).done(function (state) {
             if (state && state.ok) {
-                dmV4RenderCvStack($row, state);
-                if (state.futureAssignedCount !== undefined && state.futureAssignedCount !== null) {
-                    setIvFutureAssignedDisplay($row, state.futureAssignedCount);
+                var rowCoded = ($row.attr('data-coded-cv') || '').toString().trim();
+                if (!state.codedCvLink && rowCoded) {
+                    state.codedCvLink = rowCoded;
+                    state.cvCode = ($row.attr('data-cv-code') || dmV4RowCvCode($row)).toString();
+                    state.isResumeRedactAttempted = true;
                 }
-                var hasScreening = (parseInt(state.aiScore, 10) || 0) > 0 ||
-                    !!(state.aiVerdict) || !!(state.aiReasonFull);
-                dmV4EnsureVerdictScreenButton($row, {
-                    canScreen: !!(state.resumeLink || state.codedCvLink),
-                    hasScreening: hasScreening
-                });
-                if (state.aiVerdict || state.aiScore || state.aiReasonFull) {
-                    dmV4ApplyScreeningResult($row, {
-                        aiVerdict: state.aiVerdict,
-                        aiScore: state.aiScore,
-                        reasoning: state.aiReasonFull
+                dmV4RenderCvStack($row, state, opts.cvOnly ? { skipVerdictSync: true } : undefined);
+                if (!opts.cvOnly) {
+                    if (state.futureAssignedCount !== undefined && state.futureAssignedCount !== null) {
+                        setIvFutureAssignedDisplay($row, state.futureAssignedCount);
+                    }
+                    var hasScreening = (parseInt(state.aiScore, 10) || 0) > 0 ||
+                        !!(state.aiVerdict) || !!(state.aiReasonFull);
+                    dmV4EnsureVerdictScreenButton($row, {
+                        canScreen: !!(state.resumeLink || state.codedCvLink),
+                        hasScreening: hasScreening
                     });
+                    if (state.aiVerdict || state.aiScore || state.aiReasonFull) {
+                        dmV4ApplyScreeningResult($row, {
+                            aiVerdict: state.aiVerdict,
+                            aiScore: state.aiScore,
+                            reasoning: state.aiReasonFull
+                        });
+                    }
                 }
             }
         });
     }
 
+    function dmV4ResetUploadResumeModal() {
+        var filesInput = document.getElementsByName('ResumeFiles')[0];
+        if (filesInput) filesInput.value = '';
+        var $names = $('#filesList > #files-names');
+        if ($names.length) $names.empty();
+    }
+
     function patchDmV4UploadResume() {
         if (window._dmV4UploadResumePatched || typeof window.uploadResume !== 'function') return;
-        var originalUpload = window.uploadResume;
         window.uploadResume = function () {
             var pendingRow = window.dmV4PendingUploadRow;
             var formData = new FormData();
@@ -1881,6 +1950,8 @@
             }
             formData.append('UserId', typeof interviewerUserId !== 'undefined' ? interviewerUserId : '');
             formData.append('InterviewerEmailId', typeof interviewerEmailId !== 'undefined' ? interviewerEmailId : '');
+            var $btn = $('#btnUpload');
+            $btn.prop('disabled', true);
             $.ajax({
                 type: 'POST',
                 url: '/IRF/UploadInterviewerResume',
@@ -1889,10 +1960,16 @@
                 enctype: 'multipart/form-data',
                 processData: false,
                 success: function (result) {
-                    if (typeof swal !== 'undefined') swal.fire(result);
+                    var msg = (result || '').toString();
+                    var failed = /failed|unauthorized|please select|valid file/i.test(msg);
+                    if (typeof swal !== 'undefined') {
+                        swal.fire(msg, '', failed ? 'error' : 'success');
+                    }
+                    if (failed) return;
+                    dmV4ResetUploadResumeModal();
                     if (typeof closeUploadResumeModal === 'function') closeUploadResumeModal();
                     if (pendingRow && pendingRow.length) {
-                        dmV4RefreshIvCvState(pendingRow);
+                        dmV4RefreshIvCvState(pendingRow, { cvOnly: true });
                         window.dmV4PendingUploadRow = null;
                     } else {
                         location.reload(true);
@@ -1900,11 +1977,30 @@
                 },
                 error: function () {
                     if (typeof swal !== 'undefined') swal.fire('Upload failed.', '', 'error');
+                },
+                complete: function () {
+                    $btn.prop('disabled', false);
                 }
             });
         };
         window._dmV4UploadResumePatched = true;
     }
+
+    function patchDmV4ResumeSummaryDrawerClose() {
+        if (window._dmV4ResumeSummaryClosePatched) return;
+        var original = window.closeResumeSummaryDrawer;
+        if (typeof original !== 'function') return;
+        window.closeResumeSummaryDrawer = function () {
+            var sess = window.dmV4ResumeSummarySession;
+            if (sess && sess.$row && sess.$row.length && sess.pendingPayload) {
+                dmV4ApplyCvSaveResult(sess.$row, sess.pendingPayload);
+            }
+            window.dmV4ResumeSummarySession = { $row: null, pendingPayload: null };
+            return original.apply(this, arguments);
+        };
+        window._dmV4ResumeSummaryClosePatched = true;
+    }
+    window.patchDmV4ResumeSummaryDrawerClose = patchDmV4ResumeSummaryDrawerClose;
 
     function getPolicyBar() {
         return $('#dmV4IvPolicyBar');
@@ -1934,6 +2030,22 @@
         if ($panel.data('can-edit') === 1 || $panel.data('can-edit') === '1') return true;
         var $bar = getPolicyBar();
         return $bar.length && ($bar.data('can-edit') === 1 || $bar.data('can-edit') === '1');
+    }
+
+    /** Same roles as /IRF/UploadInterviewerResume and EditIRFInterviewers. */
+    function getIvCanUploadResume() {
+        var $panel = $('#dmV4IvPanel');
+        if ($panel.length) {
+            var panelVal = $panel.attr('data-can-upload-resume');
+            if (panelVal === '1') return true;
+            if (panelVal === '0') return false;
+            if ($panel.data('can-upload-resume') === 1 || $panel.data('can-upload-resume') === '1') return true;
+        }
+        return false;
+    }
+
+    function dmV4HasResumeLink(link) {
+        return !!(link && String(link).trim());
     }
 
     function getIvCanEditSurcharge() {
@@ -2628,6 +2740,7 @@
         updatePolicySubtext();
         initIvEditableFields();
         patchDmV4UploadResume();
+        patchDmV4ResumeSummaryDrawerClose();
         syncDmV4IvFutureAssignedAll();
         dmV4InitIvActivityMetaAll();
         refreshDmV4IvPanelMetrics();
@@ -2694,6 +2807,7 @@
             var orig = $btn.html();
             $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Generating…');
             var ivName = $row.find('.dm-v4-iv-code').first().clone().children().remove().end().text().trim();
+            window.dmV4ResumeSummarySession = { $row: $row, pendingPayload: null };
             dmV4SetResumeSummaryDrawerTitle(ivName);
             dmV4ShowResumeSummaryLoading('Generating resume summary…');
             $.ajax({
@@ -2707,19 +2821,26 @@
                         } else if (typeof GetInterviewerResumeSummary === 'function') {
                             GetInterviewerResumeSummary(resumeLink);
                         }
-                        dmV4RefreshIvCvState($row);
-                        if (typeof swal !== 'undefined') {
-                            swal.fire({
-                                title: 'Resume summary saved',
-                                type: 'success',
-                                text: 'Coded CV updated for this interviewer.'
-                            });
+                        var cvPayload = {
+                            codedCvLink: (data.codedCvLink || '').toString(),
+                            resumeLink: resumeLink,
+                            cvCode: (data.cvCode || dmV4RowCvCode($row)).toString()
+                        };
+                        if (cvPayload.codedCvLink) {
+                            dmV4ApplyCvSaveResult($row, cvPayload);
+                            window.dmV4ResumeSummarySession = {
+                                $row: $row,
+                                pendingPayload: cvPayload
+                            };
                         }
+                        dmV4RefreshIvCvState($row);
                     } else {
+                        window.dmV4ResumeSummarySession = { $row: null, pendingPayload: null };
                         dmV4ShowResumeSummaryError('generate-summary-response', xhr, data);
                     }
                 },
                 error: function (xhr, _textStatus, _errorThrown) {
+                    window.dmV4ResumeSummarySession = { $row: null, pendingPayload: null };
                     dmV4ShowResumeSummaryError('generate-summary-request', xhr, xhr && xhr.responseJSON);
                 },
                 complete: function () {

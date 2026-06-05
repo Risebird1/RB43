@@ -9139,9 +9139,14 @@ namespace Risebird.Web.Controllers
                 await checkSkillSetandSeperate(model);
                 return View(model);
             }
+            else if (User.Identity?.IsAuthenticated == true)
+            {
+                // Auth cookie valid but session not restored — do not SignOut (that flashes login).
+                return RedirectToAction("Index", "Home");
+            }
             else
             {
-                return RedirectToAction("SignOut", "Session");
+                return RedirectToAction("SignIn", "Session");
             }
 
         }
@@ -12086,7 +12091,20 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Could not save coded CV to interviewer profile." });
 
                 var summaryHtml = await RenderResumeSummaryPartialToStringAsync(summary);
-                return Json(new { success = true, codedCvLink = uploadedLink, summaryHtml });
+                var cvCode = _interviewerService.GetNickNames(userId)?.FirstOrDefault();
+                if (string.IsNullOrWhiteSpace(cvCode))
+                    cvCode = "CV";
+                else
+                    cvCode = cvCode.Trim();
+
+                return Json(new
+                {
+                    success = true,
+                    codedCvLink = uploadedLink,
+                    cvCode,
+                    savedAt = DateTime.UtcNow.ToString("o"),
+                    summaryHtml
+                });
             }
             catch (Exception ex)
             {
