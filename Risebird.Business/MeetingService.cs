@@ -3343,6 +3343,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<RBPaymentInfoVM> GetRBPaymentInfoByInterviewPointId(int interviewPointId, string emailId)
+        {
+            try
+            {
+                return await _meetingRespository.GetRBPaymentInfoByInterviewPointId(interviewPointId, emailId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public async Task<List<RBInterviewDetails>> FNFetchToalAmountPaid(DateTime st, DateTime se)
         {
             try

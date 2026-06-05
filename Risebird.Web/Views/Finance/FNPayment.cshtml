@@ -11,6 +11,25 @@
     select * {
         background-color: #42a5f5 !important;
     }
+
+    .fn-cashfree-btn .mdc-fab__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px !important;
+        height: 30px !important;
+        line-height: 1 !important;
+        font-size: 0 !important;
+    }
+
+    .fn-cashfree-btn svg {
+        width: 17px !important;
+        height: 17px !important;
+        max-width: 17px !important;
+        min-width: 17px !important;
+        position: static !important;
+        flex-shrink: 0;
+    }
 </style>
 <link href="~/Autocomplete/jquery-ui.min.css?v=2024" rel="stylesheet" />
 <link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
@@ -133,6 +152,9 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Name</th>
+                                                            <th>Status</th>
+                                                            <th>Blocked</th>
+                                                            <th>Mobile</th>
                                                             <th>Amount</th>
                                                             <th>Account Verified</th>
                                                             <th>Action</th>
@@ -142,6 +164,9 @@
                                                         <tr>
 
                                                             <th>Name</th>
+                                                            <th>Status</th>
+                                                            <th>Blocked</th>
+                                                            <th>Mobile</th>
                                                             <th>Amount</th>
                                                             <th>Account Verified</th>
                                                             <th>Action</th>
@@ -150,13 +175,34 @@
                                                     <tbody id="tblbodyPayment">
                                                         @if (Model.Count == 0)
                                                         {
-                                                            <tr><td colspan="4" style="text-align:center">No Result found</td></tr>
+                                                            <tr><td colspan="7" style="text-align:center">No Result found</td></tr>
                                                         }
                                                         @foreach (var item in Model)
                                                         {
 
                                                             <tr>
                                                                 <td>@item.Comment<input type="hidden" id="hidcomment_@item.id" value="@item.Comment" /></td>
+                                                                <td>
+                                                                    @if (item.IsActive)
+                                                                    {
+                                                                        <span class="text-success" title="Active interviewer">Active</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="text-danger" title="Inactive interviewer">Inactive</span>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    @if (item.IsBlocked)
+                                                                    {
+                                                                        <span class="text-danger" title="Interviewer is blocked">Blocked</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="text-success" title="Interviewer is not blocked">Unblocked</span>
+                                                                    }
+                                                                </td>
+                                                                <td>@(string.IsNullOrWhiteSpace(item.MobileNumber) ? "?" : item.MobileNumber)</td>
                                                                 <td>@item.Points<input type="hidden" id="hidpoint_@item.id" value="@item.Points" /></td>
                                                                 <td>
                                                                     @if (item.IsBankVerified)
@@ -196,10 +242,11 @@
                                                                                 </svg>
                                                                             </span>
                                                                         </button>
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Confirm cashfree">
+                                                                        <button class="mdc-fab app-fab--absolute fn-cashfree-btn" aria-label="Confirm cashfree">
                                                                             <span title="Confirm cashfree" onclick="confirmpaymentCashfree(@item.id)" class="mdc-fab__icon material-icons">
-                                                                                <svg style=" top: 3px; position: relative; left: 3px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 24 24">
-                                                                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-credit-card-2-front-fill" viewBox="0 0 16 16">
+                                                                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
+                                                                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1H0z" />
                                                                                 </svg>
                                                                             </span>
                                                                         </button>
@@ -446,12 +493,39 @@
             }
         });
     }
+    function fnPaymentBoolValue(row, camelKey, pascalKey) {
+        var value = row[camelKey];
+        if (value === undefined || value === null) {
+            value = row[pascalKey];
+        }
+        return value === true || value === 'true' || value === 1 || value === '1';
+    }
+    function fnPaymentActiveLabel(row) {
+        return fnPaymentBoolValue(row, 'isActive', 'IsActive')
+            ? '<span class="text-success" title="Active interviewer">Active</span>'
+            : '<span class="text-danger" title="Inactive interviewer">Inactive</span>';
+    }
+    function fnPaymentBlockedLabel(row) {
+        return fnPaymentBoolValue(row, 'isBlocked', 'IsBlocked')
+            ? '<span class="text-danger" title="Interviewer is blocked">Blocked</span>'
+            : '<span class="text-success" title="Interviewer is not blocked">Unblocked</span>';
+    }
+    function fnPaymentMobileValue(row) {
+        var mobile = row.mobileNumber;
+        if (mobile === undefined || mobile === null) {
+            mobile = row.MobileNumber;
+        }
+        if (mobile === undefined || mobile === null || mobile === '') {
+            return '?';
+        }
+        return mobile.toString().trim();
+    }
     function bindtableData(data) {
 
         var html = '';
         if (data.length == 0) {
             html += '  <tr>';
-            html += ' <td colspan="4" class="text-center">No data available in table</td>';
+            html += ' <td colspan="7" class="text-center">No data available in table</td>';
             html += ' </tr>';
         }
 
@@ -463,6 +537,9 @@
                 : '<span class="text-danger" title="Bank account not verified">No</span>';
             html += '  <tr>';
             html += '  <td>' + data[i].comment + '</td>';
+            html += '  <td>' + fnPaymentActiveLabel(data[i]) + '</td>';
+            html += '  <td>' + fnPaymentBlockedLabel(data[i]) + '</td>';
+            html += '  <td>' + fnPaymentMobileValue(data[i]) + '</td>';
             html += ' <td>' + pointdetails + '</td> ';
             html += '  <td>' + verifiedLabel + '</td>';
             html += '  <td>';
@@ -494,10 +571,11 @@
                 html += '  </svg>';
                 html += ' </span>';
                 html += ' </button>';
-                html += ' <button class="mdc-fab app-fab--absolute" aria-label="Confirm cashfree">';
+                html += ' <button class="mdc-fab app-fab--absolute fn-cashfree-btn" aria-label="Confirm cashfree">';
                 html += ' <span title="Confirm cashfree" onclick="confirmpaymentCashfree(' + data[i].id + ')" class="mdc-fab__icon material-icons">';
-                html += '   <svg style=" top: 3px; position: relative; left: 3px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 24 24">';
-                html += '  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />';
+                html += '   <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-credit-card-2-front-fill" viewBox="0 0 16 16">';
+                html += '  <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />';
+                html += '  <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1H0z" />';
                 html += '  </svg>';
                 html += ' </span>';
                 html += ' </button>';
@@ -543,12 +621,12 @@
                 }
             } else if (i == nextset) {
                 if (Generateinvoiceflag == 2) {
-                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>?</a></li>';
                     html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(' + next + ')" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
                 }
                 else {
-                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>?</a></li>';
                     html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=' + next + '&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
                 }
@@ -557,11 +635,11 @@
             }
             if (pagecount <= 10 && i == pagecount && i != 1) {
                 if (Generateinvoiceflag == 2) {
-                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>?</a></li>';
                     html += '<li class="PagedList-skipToNext"><a onclick="FinacneChangePage(' + next + ')" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a onclick="FinacneChangePage(' + pagecount + ')">&gt;&gt;</a></li>';
                 } else {
-                    html += '<li class="disabled PagedList-ellipses"><a>ù</a></li>';
+                    html += '<li class="disabled PagedList-ellipses"><a>?</a></li>';
                     html += '<li class="PagedList-skipToNext"><a href="/Finance/FNPayment?Page=' + next + '&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/Finance/FNPayment?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
                 }
@@ -1035,7 +1113,7 @@
     function bindtableDataChangeMonth() {
         var html = '';
         html += '  <tr>';
-        html += ' <td colspan="4" class="text-center">No data available in table</td>';
+        html += ' <td colspan="7" class="text-center">No data available in table</td>';
         html += ' </tr>';
         $("#tblbodyPayment").empty().html(html);
     }

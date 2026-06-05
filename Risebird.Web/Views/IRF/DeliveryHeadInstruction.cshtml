@@ -162,7 +162,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20250604ivinsightcol" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20250604ivvetfit" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -1455,7 +1455,7 @@
                                                                         @Html.HiddenFor(m => m.InterviewerCollection[i].Surcharge)
                                                                     }
                                                                 </div>
-                                                                <div class="dm-v4-iv-cell">
+                                                                <div class="dm-v4-iv-cell dm-v4-iv-cell--vet dm-v4-iv-cell--rb-vet">
                                                                     <div class="dm-v4-vet-toggle" data-vet="rb">
                                                                         <button type="button" class="dm-v4-vet-btn @(rbVetDisplayOn ? "is-on" : "")" data-vet-value="1" @(canEditIvOps ? "" : "disabled")>Yes</button>
                                                                         <button type="button" class="dm-v4-vet-btn @(!rbVetDisplayOn ? "is-on" : "")" data-vet-value="0" @(canEditIvOps ? "" : "disabled")>No</button>
@@ -1463,7 +1463,7 @@
                                                                     <div class="dm-v4-iv-vet-sub">@(rbVetDisplayOn ? "Risebird verified" : "Awaiting RB review")</div>
                                                                     <input type="hidden" class="dm-v4-rb-vet-hidden" value="@(rbVetDisplayOn ? "true" : "false")" />
                                                                 </div>
-                                                                <div class="dm-v4-iv-cell">
+                                                                <div class="dm-v4-iv-cell dm-v4-iv-cell--vet dm-v4-iv-cell--client-vet">
                                                                     <div class="dm-v4-vet-toggle" data-vet="client" title="@(!rbVetDisplayOn ? "Needs RB Vet first." : "")">
                                                                         <button type="button" class="dm-v4-vet-btn @(clientVetOn ? "is-on" : "")" data-vet-value="1" @(!rbVetDisplayOn || !canEditIvOps ? "disabled" : "")>Yes</button>
                                                                         <button type="button" class="dm-v4-vet-btn @(!clientVetOn ? "is-on" : "")" data-vet-value="0" @(!rbVetDisplayOn || !canEditIvOps ? "disabled" : "")>No</button>

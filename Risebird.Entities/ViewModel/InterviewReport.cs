@@ -418,6 +418,9 @@ namespace Risebird.Entities.ViewModel
         public int IRFinid { get; set; }
         public string Comment { get; set; }
         public bool IsBankVerified { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsBlocked { get; set; }
+        public string MobileNumber { get; set; }
         public string Status { get; set; }
         public DateTime Date { get; set; }
         public string PreferredLocation { get; set; }
@@ -461,6 +464,16 @@ namespace Risebird.Entities.ViewModel
         public string TransferUtr { get; set; }
         public string PayoutStatus { get; set; }
         public DateTime? TransactionDate { get; set; }
+        public int PaymentHistoryId { get; set; }
+        /// <summary>Finance comment from PaymentHistory (not the interview/candidate Comment).</summary>
+        public string PaymentComment { get; set; }
+    }
+    public class RBPaymentInfoVM
+    {
+        public string TransferUtr { get; set; }
+        public DateTime? PaymentDate { get; set; }
+        public string PaymentComment { get; set; }
+        public string PayoutStatus { get; set; }
     }
     public class SchedulingLinkVM
     {
