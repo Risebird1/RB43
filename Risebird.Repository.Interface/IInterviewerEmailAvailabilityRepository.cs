@@ -48,7 +48,7 @@ namespace Risebird.Repository.Interface
         // Batch call
         Task<(List<IABatchCallMagSummary> Items, int TotalCount)> GetMAGsWithCallableInterviewerCountsAsync(int page = 1, int pageSize = 20, string search = null);
         Task<List<IACallableInterviewer>> GetCallableInterviewersForMAGAsync(string magName, bool onlyUncalled = true);
-        Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalInterviewers);
+        Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalInterviewers, int? campaignId = null);
         Task CompleteBatchCallLogAsync(int id, int succeeded, int failed, int skipped, string status);
         Task<List<IABatchCallLogEntry>> GetBatchCallHistoryAsync(string magName);
         Task<(List<IAInterviewerCallOutcome> Items, int TotalCount)> GetInterviewerCallOutcomesForMAGAsync(string magName, int page = 1, int pageSize = 25);
@@ -66,6 +66,11 @@ namespace Risebird.Repository.Interface
         Task<(List<IABatchCallLogEntry> Items, int TotalCount)> GetAllBatchCallLogsAsync(
             int page, int pageSize, string magName);
         Task<List<string>> GetDistinctCalledMagNamesAsync();
+
+        // Campaign batch call (delayed Plivo calls for AG campaigns)
+        Task<List<CampaignBatchCallEligible>> GetCampaignsEligibleForBatchCallAsync();
+        Task<List<CampaignUnrespondedInterviewer>> GetCampaignUnrespondedInterviewersAsync(int campaignId);
+        Task MarkCampaignBatchCallTriggeredAsync(int campaignId);
     }
 
     public class IABatchCallMagSummary
@@ -161,5 +166,23 @@ namespace Risebird.Repository.Interface
         public decimal? Experience { get; set; }
         public string CurrentRole { get; set; }
         public string ResolvedPhone { get; set; }
+    }
+
+    public class CampaignBatchCallEligible
+    {
+        public int CampaignId { get; set; }
+        public string CampaignName { get; set; }
+        public int AssessmentGroupId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string MagName { get; set; }
+    }
+
+    public class CampaignUnrespondedInterviewer
+    {
+        public int InterviewerProfileId { get; set; }
+        public string InterviewerName { get; set; }
+        public string SenderEmail { get; set; }
+        public string Phone { get; set; }
+        public int UserId { get; set; }
     }
 }

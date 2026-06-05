@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.AGCampaignModel>
+@model IEnumerable<Risebird.Entities.ViewModel.AGCampaignModel>
 @using Risebird.Entities
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
@@ -71,6 +71,7 @@
                                                     <th>Primary Assessment Group</th>
                                                     <th>Created By</th>
                                                     <th>Created At</th>
+                                                    <th>Batch Call Status</th>
                                                     <th>Actions</th>
                                                     
 
@@ -82,6 +83,7 @@
                                                     <th>Primary Assessment Group</th>
                                                     <th>Created By</th>
                                                     <th>Created At</th>
+                                                    <th>Batch Call Status</th>
                                                     <th>Actions</th>
 
                                                 </tr>
@@ -96,6 +98,38 @@
                                                         <td> @item.CreatedBy </td>
                                                         <td> @item.CreatedAt </td>
                                                         <td>
+                                                            @if (item.BatchCallLogId.HasValue)
+                                                            {
+                                                                <span class="badge" style="background-color: @(item.BatchCallStatus == "Completed" ? "#28a745" : "#ffc107"); color: @(item.BatchCallStatus == "Completed" ? "#fff" : "#333"); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                                                    @item.BatchCallStatus
+                                                                </span>
+                                                                <br />
+                                                                <small style="color: #666;">
+                                                                    <i class="fa fa-check-circle" style="color:#28a745;"></i> @item.BatchCallSucceeded
+                                                                    &nbsp;
+                                                                    <i class="fa fa-times-circle" style="color:#dc3545;"></i> @item.BatchCallFailed
+                                                                    &nbsp;
+                                                                    <i class="fa fa-minus-circle" style="color:#999;"></i> @item.BatchCallSkipped
+                                                                    &nbsp; / @item.BatchCallAttempted total
+                                                                </small>
+                                                                @if (item.BatchCallCompletedAt.HasValue)
+                                                                {
+                                                                    <br />
+                                                                    <small style="color: #888;">@item.BatchCallCompletedAt.Value.ToString("dd MMM yyyy, HH:mm")</small>
+                                                                }
+                                                            }
+                                                            else if (item.BatchCallTriggeredAt.HasValue)
+                                                            {
+                                                                <span class="badge" style="background-color: #17a2b8; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                                                    In Progress
+                                                                </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <small style="color:#999;">Scheduled (1hr after creation)</small>
+                                                            }
+                                                        </td>
+                                                        <td>
                                                             <a style="text-decoration:none;" target="_blank" href="@Url.Action("CampaignDetails", "IRF" , new { campaignId = item.id})" title="Campaign Details">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Campaign Details" style="position:relative;top:3px;">
                                                                     <span title="Campaign Details" class="mdc-fab__icon material-icons">
@@ -103,13 +137,6 @@
                                                                     </span>
                                                                 </button>
                                                             </a>
-                                                         @*    <a style="text-decoration:none;" target="_blank" href="@Url.Action("RecipientActivityDetails", "Mail" , new { recipientType = "Interviewer", campaignName = item.CampaignName})" title="Campaign Mail Activity">
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Campaign Mail Activity" style="position:relative;top:3px;">
-                                                                    <span title="Campaign Mail Activity" class="mdc-fab__icon material-icons">
-                                                                        <i style="font-size:14px;" class='fa fa-envelope' style='color: white'></i>
-                                                                    </span>
-                                                                </button>
-                                                            </a> *@
                                                             <a style="text-decoration:none;" target="_blank" href="@Url.Action("GetOpenClickCampaignMailDetails", "Dashboard" , new {campaignId = item.id})" title="Campaign Mail Activity">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Campaign Mail Activity" style="position:relative;top:3px;">
                                                                     <span title="Campaign Mail Activity" class="mdc-fab__icon material-icons">
