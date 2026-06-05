@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Risebird.Entities.Data;
 using System;
 using System.Collections.Generic;
@@ -37,5 +37,16 @@ namespace Risebird.Entities.ViewModel
         public IEnumerable<SecondaryAssessmentGroups> SecondaryAGListForMAG { get; set; }//used in edit MAG form, to show the list of secondary ags already added to a mag
 
         public bool IsAlreadySecondary { get; set; }
+
+        // Batch call details (populated by usp_GetCampaignList)
+        public DateTime? BatchCallTriggeredAt   { get; set; }
+        public int?      BatchCallLogId         { get; set; }
+        public DateTime? BatchCallInitiatedAt   { get; set; }
+        public int?      BatchCallAttempted     { get; set; }
+        public int?      BatchCallSucceeded     { get; set; }
+        public int?      BatchCallFailed        { get; set; }
+        public int?      BatchCallSkipped       { get; set; }
+        public DateTime? BatchCallCompletedAt   { get; set; }
+        public string    BatchCallStatus        { get; set; }
     }
 }
