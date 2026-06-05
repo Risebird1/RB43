@@ -11,8 +11,9 @@ GO
 
 -- ============================================================
 -- Procedure : usp_UpdatePaymentHistoryTransferStatus
--- Purpose   : Updates PayoutStatus, TransferUtr (and back-fills
---             CfTransferId) on a PaymentHistory row identified by
+-- Purpose   : Updates PayoutStatus, TransferUtr, TransactionDate
+--             (and back-fills CfTransferId when provided)
+--             on a PaymentHistory row identified by
 --             TransferId and/or CfTransferId received from a
 --             Cashfree Payout webhook event.
 --
@@ -21,34 +22,36 @@ GO
 --     • TransferId   = @TransferId   (when @TransferId is supplied)
 --     • CfTransferId = @CfTransferId (when @CfTransferId is supplied)
 --
--- CfTransferId / TransferUtr back-fill:
---   Both fields are kept if already populated and the webhook
---   does not supply a new value.
---
 -- Returns   : @@ROWCOUNT — number of rows updated (0 = no match).
 -- ============================================================
 CREATE PROCEDURE usp_UpdatePaymentHistoryTransferStatus
     @TransferId   NVARCHAR(50)  = NULL,
     @CfTransferId NVARCHAR(100) = NULL,
     @PayoutStatus NVARCHAR(50),
-    @TransferUtr  VARCHAR(100)  = NULL
+    @TransferUtr  VARCHAR(100)  = NULL,
+    @EventTime    DATETIME      = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
     UPDATE PaymentHistory
     SET
-        PayoutStatus  = @PayoutStatus,
-        CfTransferId  = CASE
-                            WHEN @CfTransferId IS NOT NULL AND @CfTransferId <> ''
-                            THEN @CfTransferId
-                            ELSE CfTransferId
-                        END,
-        TransferUtr   = CASE
-                            WHEN @TransferUtr IS NOT NULL AND @TransferUtr <> ''
-                            THEN @TransferUtr
-                            ELSE TransferUtr
-                        END
+        PayoutStatus     = @PayoutStatus,
+        CfTransferId     = CASE
+                               WHEN @CfTransferId IS NOT NULL AND @CfTransferId <> ''
+                               THEN @CfTransferId
+                               ELSE CfTransferId
+                           END,
+        TransferUtr      = CASE
+                               WHEN @TransferUtr IS NOT NULL AND @TransferUtr <> ''
+                               THEN @TransferUtr
+                               ELSE TransferUtr
+                           END,
+        TransactionDate  = CASE
+                               WHEN @EventTime IS NOT NULL
+                               THEN @EventTime
+                               ELSE TransactionDate
+                           END
     WHERE
         (
             (TransferId   = @TransferId   AND @TransferId   IS NOT NULL AND @TransferId   <> '')

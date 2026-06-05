@@ -22,6 +22,8 @@ namespace Risebird.Entities.ViewModel
         public int Surcharge { get; set; }
         public string Source { get; set; }
         public string CompanyName { get; set; }
+        /// <summary>InterviewerProfile employment note; Insights uses when CompanyName is empty.</summary>
+        public string EmploymentComment { get; set; }
         public string ClientAction { get; set; }
         public bool IsResumeRedactAttempted { get; set; }
         public bool IsCampaignActivity { get; set; }

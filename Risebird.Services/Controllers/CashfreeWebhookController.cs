@@ -113,34 +113,6 @@ namespace Risebird.Services.Controllers
                         callerIp: callerIp);
                     return BadRequest(emptyBodyResponse);
                 }
-                try
-                {
-                    var message = JsonConvert.DeserializeObject<CashfreeWebhookPayload>(rawBody);
-                    await _meetingRepository.InsertPaymentLog(
-                           endpoint: endpoint,
-                           requestBody: rawBody,
-                           responseBody: JsonConvert.SerializeObject(message),
-                           httpStatusCode: 400,
-                           logLevel: "Error",
-                           signatureTimestamp: timestamp,
-                           signatureReceived: receivedSig,
-                           errorMessage: $"Expected JSON object.",
-                           callerIp: callerIp);
-                }
-                catch (Exception ex)
-                {
-                    var typeError = new { success = false, message = $"Expected when raw to object." };
-                    await _meetingRepository.InsertPaymentLog(
-                          endpoint: endpoint,
-                          requestBody: rawBody,
-                          responseBody: JsonConvert.SerializeObject(typeError),
-                          httpStatusCode: 400,
-                          logLevel: "Error",
-                          signatureTimestamp: timestamp,
-                          signatureReceived: receivedSig,
-                          errorMessage: $"Expected JSON object.",
-                          callerIp: callerIp);
-                }
                 // ── 2. Verify HMAC-SHA256 signature ───────────────────── //
                 timestamp = Request.Headers["x-webhook-timestamp"].ToString();
                 receivedSig = Request.Headers["x-webhook-signature"].ToString();
@@ -224,42 +196,50 @@ namespace Risebird.Services.Controllers
                     return BadRequest(parseError);
                 }
 
-                // ── 3a. Non-transfer alert (e.g. LOW_BALANCE_ALERT) ───────── //
-                if (rootObj.ContainsKey("event") && !rootObj.ContainsKey("type"))
-                {
-                    var alert = rootObj.ToObject<CashfreeBalanceAlertPayload>();
-                    var alertResponse = new
-                    {
-                        success = true,
-                        message = $"Non-transfer event '{alert?.Event}' acknowledged.",
-                        eventType = alert?.Event
-                    };
-
-                    await _meetingRepository.InsertPaymentLog(
-                        endpoint: endpoint,
-                        requestBody: rawBody,
-                        responseBody: JsonConvert.SerializeObject(alertResponse),
-                        httpStatusCode: 200,
-                        logLevel: "Info",
-                        eventType: alert?.Event,
-                        signatureTimestamp: timestamp,
-                        signatureReceived: receivedSig,
-                        callerIp: callerIp);
-
-                    return Ok(alertResponse);
-                }
-
-                // Peek at "type" to route to the correct handler.
-                var eventType = rootObj["type"]?.ToString() ?? string.Empty;
+                // ── 3a. Route by the "event" field value ──────────────────── //
+                //
+                //  Both payout events (TRANSFER_SUCCESS / TRANSFER_FAILED / TRANSFER_REVERSED)
+                //  and account alerts (LOW_BALANCE_ALERT) use the root "event" key.
+                //  Route by value, not just key presence.
+                //
+                //  Payment Gateway events use "type" (PAYMENT_SUCCESS_WEBHOOK etc.) — handled below.
+                var eventName = rootObj["event"]?.ToString() ?? string.Empty;
+                var pgEventType = rootObj["type"]?.ToString() ?? string.Empty;
 
                 // ── 3b. Payment Gateway event (PAYMENT_SUCCESS_WEBHOOK etc.) ─ //
-                if (eventType.StartsWith("PAYMENT_", StringComparison.OrdinalIgnoreCase))
+                if (pgEventType.StartsWith("PAYMENT_", StringComparison.OrdinalIgnoreCase))
                 {
                     return await HandlePaymentGatewayWebhook(
                         rootObj, rawBody, timestamp, receivedSig, callerIp, endpoint);
                 }
 
-                // ── 3c. Transfer / Payout event ───────────────────────────── //
+                // ── 3c. Account-level alert (LOW_BALANCE_ALERT etc.) ─────── //
+                if (!string.IsNullOrEmpty(eventName)
+                    && !eventName.StartsWith("TRANSFER_", StringComparison.OrdinalIgnoreCase))
+                {
+                    var alert = rootObj.ToObject<CashfreeBalanceAlertPayload>();
+                    var alertResponse = new
+                    {
+                        success   = true,
+                        message   = $"Account event '{alert?.Event}' acknowledged.",
+                        eventType = alert?.Event
+                    };
+
+                    await _meetingRepository.InsertPaymentLog(
+                        endpoint:           endpoint,
+                        requestBody:        rawBody,
+                        responseBody:       JsonConvert.SerializeObject(alertResponse),
+                        httpStatusCode:     200,
+                        logLevel:           "Info",
+                        eventType:          alert?.Event,
+                        signatureTimestamp: timestamp,
+                        signatureReceived:  receivedSig,
+                        callerIp:           callerIp);
+
+                    return Ok(alertResponse);
+                }
+
+                // ── 3d. Transfer / Payout event ───────────────────────────── //
                 CashfreeWebhookPayload payload;
                 try
                 {
@@ -267,62 +247,77 @@ namespace Risebird.Services.Controllers
                 }
                 catch (JsonException ex)
                 {
-                    var parseError = new { success = false, message = "Malformed JSON payload." };
+                    var parseError = new { success = false, message = "Malformed payout webhook JSON." };
                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     await _meetingRepository.InsertPaymentLog(
-                        endpoint: endpoint,
-                        requestBody: rawBody,
-                        responseBody: JsonConvert.SerializeObject(parseError),
-                        httpStatusCode: 400,
-                        logLevel: "Error",
+                        endpoint:           endpoint,
+                        requestBody:        rawBody,
+                        responseBody:       JsonConvert.SerializeObject(parseError),
+                        httpStatusCode:     400,
+                        logLevel:           "Error",
                         signatureTimestamp: timestamp,
-                        signatureReceived: receivedSig,
-                        errorMessage: $"Malformed JSON: {ex.Message}",
-                        callerIp: callerIp);
+                        signatureReceived:  receivedSig,
+                        errorMessage:       $"Malformed JSON: {ex.Message}",
+                        callerIp:           callerIp);
                     return BadRequest(parseError);
                 }
 
-                if (payload?.Data == null || string.IsNullOrEmpty(payload.Data.TransferId))
+                if (payload == null || string.IsNullOrEmpty(payload.TransferId))
                 {
-                    var missingData = new { success = false, message = "Payload is missing transfer data." };
+                    var missingData = new { success = false, message = "Payload is missing transferId." };
                     await _meetingRepository.InsertPaymentLog(
-                        endpoint: endpoint,
-                        requestBody: rawBody,
-                        responseBody: JsonConvert.SerializeObject(missingData),
-                        httpStatusCode: 400,
-                        logLevel: "Warning",
-                        eventType: payload?.Type,
+                        endpoint:           endpoint,
+                        requestBody:        rawBody,
+                        responseBody:       JsonConvert.SerializeObject(missingData),
+                        httpStatusCode:     400,
+                        logLevel:           "Warning",
+                        eventType:          payload?.Event,
                         signatureTimestamp: timestamp,
-                        signatureReceived: receivedSig,
-                        errorMessage: "Payload missing transfer data.",
-                        callerIp: callerIp);
+                        signatureReceived:  receivedSig,
+                        errorMessage:       "Payload missing transferId.",
+                        callerIp:           callerIp);
                     return BadRequest(missingData);
                 }
 
-                var transfer = payload.Data;
+                // ── 4. Update PaymentHistory only for terminal/failure events ── //
+                //
+                //  TRANSFER_SUCCESS  → update status + UTR, send confirmation email
+                //  TRANSFER_FAILED   → update status
+                //  TRANSFER_REJECTED → update status
+                //  TRANSFER_ACKNOWLEDGED and any other event → log only, no DB write
+                var cfTransferId = payload.ReferenceId?.ToString();
+                var isTerminalEvent =
+                    string.Equals(payload.Event, "TRANSFER_SUCCESS",  StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(payload.Event, "TRANSFER_FAILED",   StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(payload.Event, "TRANSFER_REJECTED",  StringComparison.OrdinalIgnoreCase);
 
-                // ── 4. Update PaymentHistory.PayoutStatus + TransferUtr ─── //
-                var rowsUpdated = await _meetingRepository.UpdatePaymentHistoryTransferStatus(
-                    transferId: transfer.TransferId,
-                    cfTransferId: transfer.CfTransferId,
-                    payoutStatus: transfer.TransferStatus,
-                    transferUtr: transfer.TransferUtr);
+                var rowsUpdated = 0;
 
-                if (rowsUpdated == 0)
+                if (isTerminalEvent)
                 {
-                    await _applicationErrorLogger.LogMessage(
-                        LogLevelInfo.Warning,
-                        new Exception(
-                            $"[CashfreeWebhook] No PaymentHistory row matched. " +
-                            $"TransferId='{transfer.TransferId}' CfTransferId='{transfer.CfTransferId}' " +
-                            $"Status='{transfer.TransferStatus}'"));
+                    rowsUpdated = await _meetingRepository.UpdatePaymentHistoryTransferStatus(
+                        transferId:   payload.TransferId,
+                        cfTransferId: cfTransferId,
+                        payoutStatus: payload.Event,
+                        transferUtr:  payload.Utr,
+                        eventTime:    payload.EventTime);
+
+                    if (rowsUpdated == 0)
+                    {
+                        await _applicationErrorLogger.LogMessage(
+                            LogLevelInfo.Warning,
+                            new Exception(
+                                $"[CashfreeWebhook] No PaymentHistory row matched. " +
+                                $"TransferId='{payload.TransferId}' ReferenceId='{payload.ReferenceId}' " +
+                                $"Event='{payload.Event}'"));
+                    }
                 }
 
                 // ── 4a. Send payment confirmation email on TRANSFER_SUCCESS ── //
-                if (string.Equals(transfer.TransferStatus, TransferSuccessStatus, StringComparison.OrdinalIgnoreCase)
+                if (string.Equals(payload.Event, TransferSuccessStatus, StringComparison.OrdinalIgnoreCase)
                     && rowsUpdated > 0)
                 {
-                    await SendPaymentConfirmationEmailAsync(transfer.TransferId, transfer.CfTransferId, transfer.TransferUtr);
+                    await SendPaymentConfirmationEmailAsync(payload.TransferId, cfTransferId, payload.Utr);
                 }
 
                 // ── 5. Build and return response model ─────────────────── //
@@ -331,30 +326,27 @@ namespace Risebird.Services.Controllers
                 var response = new CashfreeWebhookResponse
                 {
                     SignatureValid = true,
-                    EventType = payload.Type,
-                    Transaction = transaction,
-                    RowsUpdated = rowsUpdated
+                    EventType      = payload.Event,
+                    Transaction    = transaction,
+                    RowsUpdated    = rowsUpdated
                 };
                 response.Transactions.Add(transaction);
 
                 // ── 6. Persist success log ─────────────────────────────── //
                 await _meetingRepository.InsertPaymentLog(
-                    endpoint: endpoint,
-                    requestBody: rawBody,
-                    responseBody: JsonConvert.SerializeObject(response),
-                    httpStatusCode: 200,
-                    logLevel: rowsUpdated == 0 ? "Warning" : "Info",
-                    eventType: payload.Type,
-                    transferId: transfer.TransferId,
-                    cfTransferId: transfer.CfTransferId,
-                    transferStatus: transfer.TransferStatus,
+                    endpoint:           endpoint,
+                    requestBody:        rawBody,
+                    responseBody:       JsonConvert.SerializeObject(response),
+                    httpStatusCode:     200,
+                    logLevel:           "Info",
+                    eventType:          payload.Event,
+                    transferId:         payload.TransferId,
+                    cfTransferId:       cfTransferId,
+                    transferStatus:     payload.Event,
                     signatureTimestamp: timestamp,
-                    signatureReceived: receivedSig,
-                    rowsUpdated: rowsUpdated,
-                    errorMessage: rowsUpdated == 0
-                                            ? "No PaymentHistory row matched the TransferId/CfTransferId."
-                                            : null,
-                    callerIp: callerIp);
+                    signatureReceived:  receivedSig,
+                    rowsUpdated:        rowsUpdated,
+                    callerIp:           callerIp);
 
                 return Ok(response);
             }
@@ -433,48 +425,33 @@ namespace Risebird.Services.Controllers
                 return BadRequest(missingData);
             }
 
-            var order = pgPayload.Data.Order;
+            var order   = pgPayload.Data.Order;
             var payment = pgPayload.Data.Payment;
 
-            // Update PaymentHistory matched by CfPaymentId.
-            var rowsUpdated = await _meetingRepository.UpdatePaymentHistoryGatewayStatus(
-                cfPaymentId: payment.CfPaymentId,
-                gatewayPaymentStatus: payment.PaymentStatus);
-
-            if (rowsUpdated == 0)
-            {
-                await _applicationErrorLogger.LogMessage(
-                    LogLevelInfo.Warning,
-                    new Exception(
-                        $"[CashfreeWebhook] No PaymentHistory row matched CfPaymentId='{payment.CfPaymentId}' " +
-                        $"Status='{payment.PaymentStatus}'"));
-            }
-
+            // GatewayPaymentStatus and CfPaymentId columns have been removed from
+            // PaymentHistory — no DB update is performed for payment gateway events.
             var paymentStatus = MapToPaymentStatus(pgPayload);
 
             var response = new CashfreeWebhookResponse
             {
                 SignatureValid = true,
-                EventType = pgPayload.Type,
-                Payment = paymentStatus,
-                RowsUpdated = rowsUpdated
+                EventType      = pgPayload.Type,
+                Payment        = paymentStatus,
+                RowsUpdated    = 0
             };
 
             await _meetingRepository.InsertPaymentLog(
-                endpoint: endpoint,
-                requestBody: rawBody,
-                responseBody: JsonConvert.SerializeObject(response),
-                httpStatusCode: 200,
-                logLevel: rowsUpdated == 0 ? "Warning" : "Info",
-                eventType: pgPayload.Type,
-                transferStatus: payment.PaymentStatus,
+                endpoint:           endpoint,
+                requestBody:        rawBody,
+                responseBody:       JsonConvert.SerializeObject(response),
+                httpStatusCode:     200,
+                logLevel:           "Info",
+                eventType:          pgPayload.Type,
+                transferStatus:     payment.PaymentStatus,
                 signatureTimestamp: timestamp,
-                signatureReceived: receivedSig,
-                rowsUpdated: rowsUpdated,
-                    errorMessage: rowsUpdated == 0
-                                        ? $"No PaymentHistory row matched CfPaymentId='{payment.CfPaymentId}'."
-                                        : null,
-                callerIp: callerIp);
+                signatureReceived:  receivedSig,
+                rowsUpdated:        0,
+                callerIp:           callerIp);
 
             return Ok(response);
         }
@@ -546,17 +523,16 @@ namespace Risebird.Services.Controllers
 
         private static CashfreeTransactionStatus MapToTransactionStatus(CashfreeWebhookPayload payload)
         {
-            var d = payload.Data;
             return new CashfreeTransactionStatus
             {
-                EventType = payload.Type,
-                TransferId = d.TransferId,
-                CfTransferId = d.CfTransferId,
-                TransferStatus = d.TransferStatus,
-                TransferAmount = d.TransferAmount,
-                TransferUtr = d.TransferUtr,
-                EventTime = payload.EventTime,
-                ReceivedAtUtc = DateTime.UtcNow
+                EventType      = payload.Event,
+                TransferStatus = payload.Event,
+                TransferId     = payload.TransferId,
+                ReferenceId    = payload.ReferenceId,
+                Utr            = payload.Utr,
+                Acknowledged   = payload.Acknowledged,
+                EventTime      = payload.EventTime,
+                ReceivedAtUtc  = DateTime.UtcNow
             };
         }
 

@@ -20,70 +20,53 @@ namespace Risebird.Entities.ViewModel
 
     // ══════════════════════════════════════════════════════════════════════════
     //  Payout webhook models  (TRANSFER_SUCCESS | TRANSFER_FAILED | …)
+    //
+    //  Actual Cashfree payout payload (flat root-level JSON):
+    //  {
+    //    "event":        "TRANSFER_SUCCESS",
+    //    "transferId":   "RB_362305_20260604173341",
+    //    "referenceId":  2328466950,
+    //    "acknowledged": 0,
+    //    "eventTime":    "2026-06-04 17:48:43",
+    //    "utr":          "IDFBH26155274945",
+    //    "signature":    "ICxEG81j2sBd..."
+    //  }
     // ══════════════════════════════════════════════════════════════════════════
 
-    /// <summary>Root object POSTed by Cashfree for every payout webhook event.</summary>
+    /// <summary>
+    /// Root object POSTed by Cashfree for every payout transfer webhook event
+    /// (TRANSFER_SUCCESS | TRANSFER_FAILED | TRANSFER_REVERSED).
+    /// All fields are at the root level — there is no nested "data" wrapper.
+    /// </summary>
     public class CashfreeWebhookPayload
     {
-        /// <summary>TRANSFER_SUCCESS | TRANSFER_FAILED | TRANSFER_REVERSED</summary>
-        [JsonProperty("type")]
-        public string Type { get; set; }
+        /// <summary>Event type: TRANSFER_SUCCESS | TRANSFER_FAILED | TRANSFER_REVERSED</summary>
+        [JsonProperty("event")]
+        public string Event { get; set; }
 
-        [JsonProperty("data")]
-        public CashfreeWebhookData Data { get; set; }
-
-        /// <summary>ISO-8601 timestamp sent by Cashfree, e.g. "2024-01-15T10:30:00Z"</summary>
-        [JsonProperty("event_time")]
-        public string EventTime { get; set; }
-    }
-
-    /// <summary>
-    /// Flat data block inside a Cashfree payout webhook.
-    /// Actual Cashfree payload shape:
-    /// <code>
-    /// {
-    ///   "type": "TRANSFER_SUCCESS",
-    ///   "data": {
-    ///     "transfer_id":     "YOUR_TRANSFER_ID",
-    ///     "cf_transfer_id":  "CASHFREE_TRANSFER_ID",
-    ///     "transfer_amount": 1000,
-    ///     "transfer_utr":    "123456789",
-    ///     "status":          "SUCCESS",
-    ///     "status_code":     "COMPLETED",
-    ///     "fundsource_id":   "CASHFREE_1"
-    ///   }
-    /// }
-    /// </code>
-    /// </summary>
-    public class CashfreeWebhookData
-    {
-        /// <summary>Your internal transfer_id sent when the payout was created.</summary>
-        [JsonProperty("transfer_id")]
+        /// <summary>Your internal transfer ID set when the payout was created (e.g. "RB_362305_20260604173341").</summary>
+        [JsonProperty("transferId")]
         public string TransferId { get; set; }
 
-        /// <summary>Cashfree's own numeric reference for this transfer.</summary>
-        [JsonProperty("cf_transfer_id")]
-        public string CfTransferId { get; set; }
+        /// <summary>Cashfree's own numeric reference ID for this transfer.</summary>
+        [JsonProperty("referenceId")]
+        public long? ReferenceId { get; set; }
 
-        /// <summary>Transfer amount in INR.</summary>
-        [JsonProperty("transfer_amount")]
-        public decimal TransferAmount { get; set; }
+        /// <summary>0 = not yet acknowledged by beneficiary bank; 1 = acknowledged.</summary>
+        [JsonProperty("acknowledged")]
+        public int Acknowledged { get; set; }
 
-        /// <summary>Bank UTR number — populated after a successful settlement.</summary>
-        [JsonProperty("transfer_utr")]
-        public string TransferUtr { get; set; }
+        /// <summary>Event timestamp as sent by Cashfree, e.g. "2026-06-04 17:48:43".</summary>
+        [JsonProperty("eventTime")]
+        public string EventTime { get; set; }
 
-        /// <summary>Terminal status: SUCCESS | FAILED | REVERSED</summary>
-        [JsonProperty("status")]
-        public string TransferStatus { get; set; }
+        /// <summary>Bank UTR number — populated on TRANSFER_SUCCESS.</summary>
+        [JsonProperty("utr")]
+        public string Utr { get; set; }
 
-        /// <summary>Cashfree status code, e.g. "COMPLETED".</summary>
-        [JsonProperty("status_code")]
-        public string StatusCode { get; set; }
-
-        /// <summary>Cashfree fund-source identifier, e.g. "CASHFREE_1".</summary>
-        [JsonProperty("fundsource_id")]
-        public string FundSourceId { get; set; }
+        /// <summary>Cashfree-computed HMAC signature for this payload (sent in body).</summary>
+        [JsonProperty("signature")]
+        public string Signature { get; set; }
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -183,8 +166,8 @@ namespace Risebird.Entities.ViewModel
     // ══════════════════════════════════════════════════════════════════════════
 
     /// <summary>
-    /// Flat, normalised view of a single Cashfree payout transaction event.
-    /// All fields map 1-to-1 with the Cashfree webhook payload.
+    /// Normalised view of a single Cashfree payout webhook event,
+    /// returned by POST /api/CashfreeWebhook/TransactionStatus.
     /// </summary>
     public class CashfreeTransactionStatus
     {
@@ -194,32 +177,19 @@ namespace Risebird.Entities.ViewModel
         /// <summary>Your internal transferId sent when the payout was created.</summary>
         public string TransferId { get; set; }
 
-        /// <summary>Cashfree's own numeric reference.</summary>
-        public string CfTransferId { get; set; }
+        /// <summary>Cashfree's numeric referenceId for this transfer.</summary>
+        public long? ReferenceId { get; set; }
 
-        /// <summary>Terminal status string: SUCCESS | FAILED | REVERSED</summary>
+        /// <summary>Terminal event type string, mirrors EventType.</summary>
         public string TransferStatus { get; set; }
 
-        /// <summary>Transfer amount in INR.</summary>
-        public decimal TransferAmount { get; set; }
+        /// <summary>Bank UTR number — populated on TRANSFER_SUCCESS.</summary>
+        public string Utr { get; set; }
 
-        /// <summary>Bank UTR — null until the transfer settles.</summary>
-        public string TransferUtr { get; set; }
+        /// <summary>0 = not acknowledged; 1 = acknowledged by beneficiary bank.</summary>
+        public int Acknowledged { get; set; }
 
-        /// <summary>Transfer rail: neft | imps | rtgs | upi | banktransfer</summary>
-        public string TransferMode { get; set; }
-
-        /// <summary>Gateway service charge in INR.</summary>
-        public decimal ServiceCharge { get; set; }
-
-        /// <summary>GST/tax on the service charge in INR.</summary>
-        public decimal ServiceTax { get; set; }
-
-        public string BeneficiaryId { get; set; }
-
-        public string BeneficiaryName { get; set; }
-
-        /// <summary>ISO-8601 event timestamp as sent by Cashfree.</summary>
+        /// <summary>Event timestamp as sent by Cashfree.</summary>
         public string EventTime { get; set; }
 
         /// <summary>UTC time this webhook was received by our server.</summary>
@@ -227,7 +197,7 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>True when the transfer reached the SUCCESS terminal state.</summary>
         public bool IsSuccess =>
-            string.Equals(TransferStatus, "SUCCESS", StringComparison.OrdinalIgnoreCase);
+            string.Equals(EventType, "TRANSFER_SUCCESS", StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
