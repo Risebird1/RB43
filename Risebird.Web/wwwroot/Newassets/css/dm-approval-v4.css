@@ -2525,7 +2525,7 @@ button.dm-v4-iv-cv-link {
 
 .dm-v4-iv-grid {
     display: grid;
-    grid-template-columns: 210px 160px 130px minmax(160px, 1fr) 88px 100px 130px 110px 100px 120px 120px 40px;
+    grid-template-columns: 210px 160px 130px 56px 96px 88px 100px 130px 110px 100px 120px 40px;
     align-items: start;
     border-bottom: 1px solid var(--dm-border);
 }
@@ -3969,7 +3969,7 @@ button.dm-v4-money-pill {
         overflow-x: auto;
     }
     .dm-v4-iv-grid {
-        min-width: 1480px;
+        min-width: 1340px;
     }
 }
 
@@ -4913,10 +4913,24 @@ button.dm-v4-money-pill {
     font-weight: 600 !important;
 }
 
-.dm-v4-iv-future-stack {
-    display: inline-flex;
+.dm-v4-iv-cell--future {
+    align-self: center;
+}
+
+.dm-v4-iv-cell--insight-all {
+    display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    align-self: center;
+    padding-right: 0 !important;
+}
+
+.dm-v4-iv-grid--head > span:nth-child(5) {
+    text-align: center;
+    padding-left: 4px;
+    padding-right: 4px;
+    line-height: 1.2;
+    white-space: normal;
 }
 
 .dm-v4-iv-insights-btn {
