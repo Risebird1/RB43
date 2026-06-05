@@ -14,16 +14,29 @@ GO
 
 
 CREATE PROCEDURE [dbo].[usp_GetCampaignList]
-
-
 AS
-Begin
-
-select agc.*, ag.AssessmentGroup as AssessmentGroupName from AGCampaigns agc
-join AssessmentGroup ag on ag.id = agc.AssessmentGroupId
-order by agc.CreatedAt desc
-
-End
+BEGIN
+    SELECT
+        agc.*,
+        ag.AssessmentGroup AS AssessmentGroupName,
+        bcl.Id              AS BatchCallLogId,
+        bcl.InitiatedAt     AS BatchCallInitiatedAt,
+        bcl.InterviewersAttempted  AS BatchCallAttempted,
+        bcl.InterviewersSucceeded  AS BatchCallSucceeded,
+        bcl.InterviewersFailed     AS BatchCallFailed,
+        bcl.InterviewersSkipped    AS BatchCallSkipped,
+        bcl.CompletedAt     AS BatchCallCompletedAt,
+        bcl.Status          AS BatchCallStatus
+    FROM AGCampaigns agc
+    INNER JOIN AssessmentGroup ag ON ag.id = agc.AssessmentGroupId
+    OUTER APPLY (
+        SELECT TOP 1 *
+        FROM IABatchCallLog l
+        WHERE l.CampaignId = agc.id
+        ORDER BY l.Id DESC
+    ) bcl
+    ORDER BY agc.CreatedAt DESC
+END
 
 
 
