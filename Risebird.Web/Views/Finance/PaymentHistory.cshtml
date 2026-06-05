@@ -166,16 +166,18 @@
                                                 <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
+                                                            <th style="display:none;"></th>
                                                             <th>Interviewer</th>
                                                             <th>Email-Id</th>
                                                             <th>Total Amount</th>
                                                             <th>Paid Amount</th>
                                                             <th>TDS deduction</th>
                                                             <th>Status</th>
+                                                            <th>Comment</th>
                                                             <th>Payment Date</th>
-                                                            <th>Cf Payment Id</th>
                                                             <th>Transfer Id</th>
                                                             <th>UTR</th>
+                                                            <th>Transaction Date</th>
                                                             <th>Cf Transfer Id</th>
                                                             <th>Payment Status</th>
                                                             <th>Action</th>
@@ -183,16 +185,18 @@
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
+                                                            <th style="display:none;"></th>
                                                             <th>Interviewer</th>
                                                             <th>Email-Id</th>
                                                             <th>Total Amount</th>
                                                             <th>Paid Amount</th>
                                                             <th>TDS deduction</th>
                                                             <th>Status</th>
+                                                            <th>Comment</th>
                                                             <th>Payment Date</th>
-                                                            <th>Cf Payment Id</th>
                                                             <th>Transfer Id</th>
                                                             <th>UTR</th>
+                                                            <th>Transaction Date</th>
                                                             <th>Cf Transfer Id</th>
                                                             <th>Payment Status</th>
                                                             <th>Action</th>
@@ -201,11 +205,12 @@
                                                     <tbody id="tblbodyPayment">
                                                         @if (Model.Count() == 0)
                                                         {
-                                                            <tr><td colspan="13" style="text-align:center">No Result found</td></tr>
+                                                            <tr><td colspan="14" style="text-align:center">No Result found</td></tr>
                                                         }
                                                         @foreach (var item in Model)
                                                         {
                                                             <tr>
+                                                                <td style="display:none;"></td>
                                                                 <td>@item.FirstName</td>
                                                                 <td>@item.InterviewerEmailid<input type="hidden" id="hidcomment_@item.id" value="@item.InterviewerEmailid" /></td>
                                                                 <td>@item.TotalAmount</td>
@@ -219,10 +224,11 @@
                                                                     <td>@(item.TotalAmount - item.Points)</td>
                                                                 }
                                                                 <td>@item.Status</td>
+                                                                <td>@item.Comment</td>
                                                                 <td>@item.Date</td>
-                                                                <td>@item.CfPaymentId</td>
                                                                 <td>@item.TransferId</td>
                                                                 <td>@item.TransferUtr</td>
+                                                                <td>@(item.TransactionDate.HasValue ? item.TransactionDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : "")</td>
                                                                 <td>@item.CfTransferId</td>
                                                                 <td>@item.PayoutStatus</td>
                                                                 <td>
