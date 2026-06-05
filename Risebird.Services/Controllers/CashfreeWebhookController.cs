@@ -428,7 +428,6 @@ namespace Risebird.Services.Controllers
             var order = pgPayload.Data.Order;
             var payment = pgPayload.Data.Payment;
 
-            // GatewayPaymentStatus and CfPaymentId columns have been removed from
             // PaymentHistory — no DB update is performed for payment gateway events.
             var paymentStatus = MapToPaymentStatus(pgPayload);
 
@@ -552,7 +551,6 @@ namespace Risebird.Services.Controllers
                 OrderId = order.OrderId,
                 OrderAmount = order.OrderAmount,
                 OrderCurrency = order.OrderCurrency,
-                CfPaymentId = payment.CfPaymentId,
                 PaymentStatus = payment.PaymentStatus,
                 PaymentAmount = payment.PaymentAmount,
                 PaymentCurrency = payment.PaymentCurrency,
