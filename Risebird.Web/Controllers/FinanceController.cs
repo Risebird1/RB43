@@ -2201,51 +2201,6 @@ namespace Risebird.Web.Controllers
             return Json(new { result = model/*, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds */});
         }
 
-        [HttpPost]
-        public async Task<JsonResult> GetRBPaymentInfo(int interviewPointId)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
-                {
-                    return Json(new { success = false, message = "Session expired. Please sign in again." });
-                }
-
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                if (profileName != "Interviewer")
-                {
-                    return Json(new { success = false, message = "Unauthorized." });
-                }
-
-                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                var model = await _meetingService.GetRBPaymentInfoByInterviewPointId(interviewPointId, emailid);
-                if (model == null)
-                {
-                    return Json(new { success = false, message = "Payment details are not available for this record." });
-                }
-
-                var hasAnyDetail = !string.IsNullOrWhiteSpace(model.TransferUtr)
-                    || model.PaymentDate.HasValue
-                    || !string.IsNullOrWhiteSpace(model.PaymentComment);
-
-                return Json(new
-                {
-                    success = true,
-                    hasAnyDetail = hasAnyDetail,
-                    transferUtr = model.TransferUtr,
-                    paymentDate = model.PaymentDate.HasValue ? model.PaymentDate.Value.ToString("dd MMM yyyy") : string.Empty,
-                    paymentComment = model.PaymentComment,
-                    payoutStatus = model.PayoutStatus,
-                    message = hasAnyDetail ? string.Empty : "Payment was marked paid but bank transfer details are not recorded yet."
-                });
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false, message = "Unable to load payment details." });
-            }
-        }
-
         [HttpGet]
         public async Task<IActionResult> CustomerDetails()
         {

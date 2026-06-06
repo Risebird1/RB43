@@ -203,7 +203,6 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateUploadedVideoLinkForInstaInterview(int interviewId, string videoLink);
         IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid);
         Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid);
-        Task<RBPaymentInfoVM> GetRBPaymentInfoByInterviewPointId(int interviewPointId, string emailId);
         Task<List<RBInterviewDetails>> FNFetchToalAmountPaid(DateTime st, DateTime se);
         Task<List<RBInterviewDetails>> FNFetchToalAmountStatus(DateTime st, DateTime se);
         Task<Meeting> GetMeetingDetails(int meetingId);

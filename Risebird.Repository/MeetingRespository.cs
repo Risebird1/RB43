@@ -5614,26 +5614,6 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<RBPaymentInfoVM> GetRBPaymentInfoByInterviewPointId(int interviewPointId, string emailId)
-        {
-            try
-            {
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@InterviewPointId", interviewPointId);
-                dynamicParameters.Add("@Emailid", emailId);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var result = await SqlMapper.QueryAsync<RBPaymentInfoVM>(con, "usp_FetchRBPaymentInfoByInterviewPointId", dynamicParameters,
-                      commandType: CommandType.StoredProcedure);
-                    return result.FirstOrDefault();
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
         public async Task<List<RBInterviewDetails>> FNFetchToalAmountPaid(DateTime st, DateTime se)
         {
             try
