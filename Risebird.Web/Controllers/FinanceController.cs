@@ -2200,6 +2200,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(new { result = model/*, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds */});
         }
+
         [HttpGet]
         public async Task<IActionResult> CustomerDetails()
         {
