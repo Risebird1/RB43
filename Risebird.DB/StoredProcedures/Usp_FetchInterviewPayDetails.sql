@@ -65,7 +65,3 @@ Date,MeetingStatus,InterviewStatus,PreferredLocation,VideoLink,VideoDuration,Rat
 From CTE            
 END   
   GO
-    
-
-
-
