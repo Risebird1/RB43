@@ -53,6 +53,7 @@
                                                                 <th>Billing Owner</th>
                                                             }
                                                             <th>Total Interviews</th>
+                                                            <th>Invoice Generated</th>
                                                             @if (ViewBag.BillingType != 3)
                                                             {
                                                                 <th>Current Status</th>
@@ -71,6 +72,7 @@
                                                                 <th>Billing Owner</th>
                                                             }
                                                             <th>Total Interviews</th>
+                                                            <th>Invoice Generated</th>
                                                             @if (ViewBag.BillingType != 3)
                                                             {
                                                                 <th>Current Status</th>
@@ -97,6 +99,25 @@
                                                                 }
 
                                                                 <td>@item.TotalCount<input type="hidden" id="hidinterviewcount_@item.id" value="@item.TotalCount" /></td>
+                                                                <td>
+                                                                    @if (ViewBag.BillingType == 1)
+                                                                    {
+                                                                        if (item.GeneratedInvoiceAmount > 0)
+                                                                        {
+                                                                            <span style="font-weight:600;color:#2e7d32;">
+                                                                                &#8377; @item.GeneratedInvoiceAmount.ToString("N2")
+                                                                            </span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span style="color:#999;">&#8212;</span>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span style="color:#bbb;">NA</span>
+                                                                    }
+                                                                </td>
                                                                 @if (ViewBag.BillingType != 3)
                                                                 {
                                                                     <td>@item.CurrentStatusDesc</td>
