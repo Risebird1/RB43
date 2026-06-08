@@ -9882,6 +9882,104 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TriggerCampaignBatchCall(int campaignId)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var campaigns = await _eaRepository.GetCampaignsEligibleForBatchCallAsync();
+                var campaign = campaigns?.FirstOrDefault(c => c.CampaignId == campaignId);
+                if (campaign == null)
+                    return Json(new { success = false, error = "Campaign not found or already triggered." });
+
+                await _eaRepository.MarkCampaignBatchCallTriggeredAsync(campaignId);
+
+                var interviewers = await _eaRepository.GetCampaignUnrespondedInterviewersAsync(campaignId);
+                if (interviewers == null || !interviewers.Any())
+                    return Json(new { success = true, succeeded = 0, failed = 0, skipped = 0, message = "No unresponded interviewers to call." });
+
+                string callerId = _configuration["PlivoCX:AvailabilityCallerId"]
+                               ?? _configuration["PlivoCX:OnboardingCallerId"]
+                               ?? _configuration["Plivo:FromNumber"]
+                               ?? "+918031136547";
+
+                string source = $"Campaign - {campaign.CampaignName}";
+                string initiatedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "Manual";
+
+                int batchLogId = 0;
+                try { batchLogId = await _eaRepository.InsertBatchCallLogAsync(campaign.MagName, initiatedBy, interviewers.Count, campaignId); }
+                catch { }
+
+                int succeeded = 0, failed = 0, skipped = 0;
+
+                foreach (var interviewer in interviewers)
+                {
+                    try
+                    {
+                        string phone = interviewer.Phone?.Trim() ?? "";
+                        if (string.IsNullOrWhiteSpace(phone) || phone.Length < 10) { skipped++; continue; }
+                        if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
+                        else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
+
+                        int eaId = await _eaRepository.EnsureEARecordForProfileInterviewerAsync(
+                            interviewer.InterviewerProfileId, campaign.MagName, source);
+                        if (eaId <= 0) { failed++; continue; }
+
+                        await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
+                            DateTime.UtcNow, null, null, null, null, null, null, null, null, initiatedBy);
+
+                        var triggerRequest = new PlivoCXAvailabilityTriggerRequest
+                        {
+                            CallerId         = callerId,
+                            PhoneNumber      = phone,
+                            InterviewerName  = interviewer.InterviewerName ?? "there",
+                            InterviewerEmail = interviewer.SenderEmail,
+                            MagName          = campaign.MagName,
+                            LogId            = eaId.ToString(),
+                            TodayDate        = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                        };
+
+                        var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
+
+                        if (!string.IsNullOrEmpty(response?.Error))
+                        {
+                            await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
+                                null, null, null, response.Error, null, null, null, null, null, null);
+                            failed++;
+                        }
+                        else
+                        {
+                            await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "triggered", response?.ConversationId,
+                                null, null, null, null, null, null, null, null, null, null);
+                            await _eaRepository.InsertHistoryAsync(eaId, "CampaignBatchCall", "—",
+                                $"Availability call triggered for campaign '{campaign.CampaignName}'. ConvId: {response?.ConversationId ?? "N/A"}", initiatedBy);
+                            succeeded++;
+                        }
+
+                        await System.Threading.Tasks.Task.Delay(1200);
+                    }
+                    catch { failed++; }
+                }
+
+                if (batchLogId > 0)
+                {
+                    try { await _eaRepository.CompleteBatchCallLogAsync(batchLogId, succeeded, failed, skipped, "Completed"); }
+                    catch { }
+                }
+
+                return Json(new { success = true, succeeded, failed, skipped });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> CampaignDetails(int campaignId)
         {

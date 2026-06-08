@@ -144,6 +144,25 @@
                                                                     </span>
                                                                 </button>
                                                             </a>
+                                                            @{
+                                                                bool alreadyTriggered = item.BatchCallTriggeredAt.HasValue;
+                                                                bool hourElapsed = item.CreatedAt.HasValue && DateTime.Now.Subtract(item.CreatedAt.Value).TotalHours >= 1;
+                                                                bool canTrigger = !alreadyTriggered && hourElapsed;
+                                                                string btnTitle = alreadyTriggered ? "Batch call already triggered"
+                                                                    : !hourElapsed ? "Available 1 hour after campaign creation"
+                                                                    : "Call unresponded interviewers for availability";
+                                                            }
+                                                            <button class="mdc-fab app-fab--absolute btn-trigger-batch-call"
+                                                                    aria-label="Trigger Availability Calls"
+                                                                    style="position:relative;top:3px;@(canTrigger ? "background:#17a2b8 !important;border-color:#17a2b8 !important;" : "opacity:0.45;cursor:not-allowed;")"
+                                                                    title="@btnTitle"
+                                                                    data-campaign-id="@item.id"
+                                                                    data-campaign-name="@item.CampaignName"
+                                                                    @(canTrigger ? "" : "disabled")>
+                                                                <span class="mdc-fab__icon material-icons">
+                                                                    <i style="font-size:14px;" class="fa fa-phone"></i>
+                                                                </span>
+                                                            </button>
                                                         </td>
 
                                                     </tr>
@@ -331,4 +350,59 @@
 
 </script>
 
+<script>
+    $(document).on('click', '.btn-trigger-batch-call:not([disabled])', function () {
+        var btn = $(this);
+        var campaignId = btn.data('campaign-id');
+        var campaignName = btn.data('campaign-name');
+
+        swal.fire({
+            title: 'Trigger Availability Calls?',
+            html: 'This will place Plivo calls to all unresponded interviewers in campaign <strong>' + campaignName + '</strong>.<br><br>Do you want to proceed?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#17a2b8',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, call them',
+            cancelButtonText: 'Cancel'
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
+
+            btn.prop('disabled', true).css('opacity', '0.45');
+            btn.find('i').removeClass('fa-phone').addClass('fa-spinner fa-spin');
+
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            if (!token) {
+                token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            }
+
+            $.ajax({
+                url: '@Url.Action("TriggerCampaignBatchCall", "IRF")',
+                type: 'POST',
+                data: { __RequestVerificationToken: token, campaignId: campaignId },
+                timeout: 300000,
+                success: function (res) {
+                    btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-phone');
+                    if (res.success) {
+                        swal.fire({
+                            title: 'Calls Triggered!',
+                            html: '<b>Succeeded:</b> ' + res.succeeded + '<br><b>Failed:</b> ' + res.failed + '<br><b>Skipped:</b> ' + res.skipped,
+                            icon: 'success',
+                            confirmButtonColor: '#17a2b8'
+                        }).then(function () { location.reload(); });
+                    } else {
+                        swal.fire('Error', res.error || 'Failed to trigger batch calls.', 'error');
+                        btn.prop('disabled', false).css('opacity', '1');
+                    }
+                },
+                error: function () {
+                    btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-phone');
+                    swal.fire('Error', 'Request failed. Please try again.', 'error');
+                    btn.prop('disabled', false).css('opacity', '1');
+                }
+            });
+        });
+    });
+</script>
+@Html.AntiForgeryToken()
 @* <script src="~/js/filtervalidation.js"></script> *@
