@@ -22,7 +22,7 @@ Select @IRFName=IRFID from IRF where id=@irfId
 
 if(@action is not null and @action='Rejected')
 begin
-Update TransInterviewer Set ClientAction='Rejected',isActive=0 Where Userid=@interviewerUserId and IRFId=@irfId  
+Update TransInterviewer Set ClientAction='Rejected', IsActive=0, IsAvailable=0 Where Userid=@interviewerUserId and IRFId=@irfId  
 update InterviewMeetings set Interviewer=null  where interviewdate>@timeNow and IRFId=@IRFName and Interviewer=@Interviewer
 end
 else
