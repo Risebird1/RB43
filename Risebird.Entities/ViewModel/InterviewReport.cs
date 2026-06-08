@@ -522,6 +522,10 @@ namespace Risebird.Entities.ViewModel
         public DateTime? invoiceSubmission { get; set; }
         public int TDSAmount { get; set; }
         public bool GSTApplicable { get; set; }
+        public decimal GeneratedInvoiceAmount { get; set; }
+        public int GeneratedInvoiceCount { get; set; }
+        public int TotalBillingOwnerCount { get; set; }
+        public string InvoiceRatio { get; set; }
     }
 
     public class InvoiceListVM
