@@ -55,6 +55,8 @@ BEGIN
         LEFT JOIN InterviewerProfile ip ON ea.InterviewerProfileId = ip.Id
         WHERE ea.MagName = @MagName
           AND ea.Status IN ('Open', 'InProgress', 'Verified')
+          AND (ul.Id IS NULL OR ul.IsActive = 1)
+          AND (ip.Id IS NULL OR (ISNULL(ip.IsDeleted, 0) = 0 AND ISNULL(ip.Isavailable, 0) <> 4))
     ),
 
     EAProfileIds AS (
@@ -91,6 +93,7 @@ BEGIN
         WHERE agi.AssessmentGroupId = @AgId
           AND ISNULL(ip.IsDeleted, 0) = 0
           AND ISNULL(ip.Isavailable, 0) <> 4
+          AND ul.IsActive = 1
           AND NOT EXISTS (SELECT 1 FROM EAProfileIds ep WHERE ep.InterviewerProfileId = ip.Id)
     )
 

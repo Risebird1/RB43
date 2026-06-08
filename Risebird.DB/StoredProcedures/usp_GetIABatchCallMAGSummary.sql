@@ -6,7 +6,6 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Materialized MAG base (filtered early)
     ;WITH AllMAGs AS (
         SELECT mag.MAGName AS MagName,
                mag.AssessmentGroupId AS AgId,
@@ -19,7 +18,7 @@ BEGIN
                OR ag.AssessmentGroup LIKE '%' + @Search + '%')
     ),
 
-    -- Pre-aggregate EA counts per MagName
+    -- EA counts — only active users with active profiles
     EACounts AS (
         SELECT
             ea.MagName,
@@ -32,11 +31,14 @@ BEGIN
         FROM InterviewerEmailAvailability ea
         INNER JOIN AllMAGs m ON m.MagName = ea.MagName
         LEFT JOIN UserList ul ON ea.UserId = ul.Id
+        LEFT JOIN InterviewerProfile ip ON ea.InterviewerProfileId = ip.Id
         WHERE ea.Status IN ('Open', 'InProgress', 'Verified')
+          AND (ul.Id IS NULL OR ul.IsActive = 1)
+          AND (ip.Id IS NULL OR (ISNULL(ip.IsDeleted, 0) = 0 AND ISNULL(ip.Isavailable, 0) <> 4))
         GROUP BY ea.MagName
     ),
 
-    -- Pre-aggregate Profile counts per MAG (only counting, no dedup detail needed)
+    -- Profile counts — only active users with active profiles
     ProfileCounts AS (
         SELECT
             m.MagName,
@@ -48,6 +50,7 @@ BEGIN
         INNER JOIN UserList ul ON ul.Id = ip.UserId
         WHERE ISNULL(ip.IsDeleted, 0) = 0
           AND ISNULL(ip.Isavailable, 0) <> 4
+          AND ul.IsActive = 1
           AND NOT EXISTS (
               SELECT 1 FROM InterviewerEmailAvailability ea2
               WHERE ea2.InterviewerProfileId = ip.Id
