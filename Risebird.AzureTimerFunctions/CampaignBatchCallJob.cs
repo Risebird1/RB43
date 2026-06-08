@@ -47,9 +47,7 @@ namespace Risebird.AzureTimerFunctions
         [Function("CampaignBatchCallJob")]
         public async Task Run([TimerTrigger("0 */10 * * * *")] TimerInfo myTimer)
         {
-            // Disabled — campaign batch availability calls paused to cut Plivo costs.
-            // Remove this early return to re-enable.
-            _log.LogInformation("[CampaignBatchCall] Job is currently DISABLED. Skipping.");
+            _log.LogInformation("[CampaignBatchCall] Job is currently DISABLED to control Plivo costs. Skipping.");
             return;
 
             _log.LogInformation($"[CampaignBatchCall] Triggered at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
