@@ -2485,12 +2485,16 @@ namespace Risebird.Web.Controllers
                         {
                             item.PaymentStatus = "Pending";
                         }
+                            var denominator = item.BillingType == 1
+                            ? (item.TotalBillingOwnerCount > 0 ? item.TotalBillingOwnerCount : 1)
+                            : 1;
+                        item.InvoiceRatio = $"{item.GeneratedInvoiceCount}/{denominator}";
                     }
                     ViewBag.TotalRevenue = totalamount;
                     if (model != null)
                     {
                         ViewBag.PendingPOAmount = model.Sum(x => x.POPendingAmount);
-                        ViewBag.InvoiceAmount = model.Sum(x => x.InvoiceAmount);
+                        ViewBag.InvoiceAmount = model.Sum(x => x.GeneratedInvoiceAmount);
                     }
                     else
                     {
