@@ -260,8 +260,9 @@
 </div>
 
 <script>
-    var invoiceData      = null;
-    var BILLING_TYPE_OWNER = 1;
+    var invoiceData         = null;
+    var BILLING_TYPE_OWNER  = 1;
+    var preFillBillingOwnerId = @(ViewBag.PreFillBillingOwnerId ?? 0);
 
     $(document).ready(function () {
         $('#ddlClient').change(onClientOrPeriodChange);
@@ -272,6 +273,11 @@
             var sub = parseFloat($('#hidSubtotal').val()) || 0;
             recalcTotals(sub, parseInt($(this).val()));
         });
+
+        var initClientId = parseInt('@(ViewBag.PreFillClientId ?? 0)') || 0;
+        if (initClientId > 0) {
+            $('#ddlClient').val(initClientId).trigger('change');
+        }
     });
 
     // ── Step 1: client / month / year changed ─────────────────────────────────
@@ -406,6 +412,19 @@
             $('#hidBillingOwnerId').val(0);
             $('#ddlBillingOwner').show();
             $('#txtBillingOwner').hide();
+
+            // Auto-select billing owner if pre-filled from FNRevenueByClient
+            if (preFillBillingOwnerId > 0) {
+                $('#ddlBillingOwner option').each(function () {
+                    if (parseInt($(this).data('id')) === preFillBillingOwnerId) {
+                        $('#ddlBillingOwner').val($(this).val());
+                        $('#hidBillingOwnerId').val(preFillBillingOwnerId);
+                        onBillingOwnerChange(preFillBillingOwnerId);
+                        preFillBillingOwnerId = 0;
+                        return false;
+                    }
+                });
+            }
 
         } else if (data.billingType === 2 || data.billingType === 3) {
             // Not Applicable — disabled
