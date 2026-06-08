@@ -12060,41 +12060,54 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") == null)
                 {
-                    return Json(new { success = false, message = "Unauthorized" });
+                    return Json(new { success = false, message = "Unauthorized", error = "You don't have permission to vet this interviewer." });
                 }
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
                 if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
                 {
-                    return Json(new { success = false, message = "Forbidden" });
+                    return Json(new { success = false, message = "You don't have permission to vet this interviewer.", error = "You don't have permission to vet this interviewer." });
                 }
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                var panel = await _irfRepository.GetTransInterviewer(irfId);
-                var ti = panel?.FirstOrDefault(x => x.UserId == userId);
+                // Same scope as DM Approval grid (usp_GetSkillChannelDetailsForUpdate) — not assessment-group filtered.
+                var channelIv = await _irfRepository.GetSkillChannelInterviewersForEdit(irfId);
+                var ti = channelIv?.InterviewerCollection?.FirstOrDefault(x => x.UserId == userId);
                 if (ti == null)
                 {
-                    return Json(new { success = false, message = "Interviewer not found on this channel." });
+                    return Json(new { success = false, message = "Interviewer not found on this channel.", error = "Interviewer not found on this channel." });
                 }
-                if (isApproved && !ti.IsSMEVerified)
+                var rbVetYes = ti.IsSMEVerified || ti.IsSMEVerifiedStored == true;
+                if (isApproved && !rbVetYes)
                 {
-                    return Json(new { success = false, message = "Client Vet requires RB Vet first." });
+                    return Json(new { success = false, message = "Client Vet requires RB Vet first.", error = "Client Vet requires RB Vet first." });
                 }
 
                 var action = isApproved ? "Shortlisted" : "Rejected";
-                var ok = await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfId, interviewerEmail, action);
-
-                if (ok)
+                var emailForUpdate = !string.IsNullOrWhiteSpace(ti.EmailId) ? ti.EmailId.Trim() : interviewerEmail?.Trim();
+                if (string.IsNullOrWhiteSpace(emailForUpdate))
                 {
-                    var (isActive, isAvailable) = DmIvRecordHelper.ComputeFlagsFromVet(ti.IsSMEVerified, action);
-                    await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, isActive, irfId, emailid, isAvailable: isAvailable);
+                    return Json(new { success = false, message = "Interviewer email is missing.", error = "Interviewer email is missing." });
                 }
 
-                var flags = DmIvRecordHelper.ComputeFlagsFromVet(ti.IsSMEVerified, action);
-                return Json(new { success = ok, clientAction = action, active = ok && flags.isActive, available = ok && flags.isAvailable });
+                var ok = await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfId, emailForUpdate, action);
+                if (!ok)
+                {
+                    return Json(new { success = false, message = "Could not update client vet status. Please try again.", error = "Could not update client vet status. Please try again." });
+                }
+
+                var (isActive, isAvailable) = DmIvRecordHelper.ComputeFlagsFromVet(rbVetYes, action);
+                var activeOk = await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, isActive, irfId, emailid, isAvailable: isAvailable);
+                if (!activeOk)
+                {
+                    return Json(new { success = false, message = "Client vet saved but active status could not be updated. Please refresh and try again.", error = "Client vet saved but active status could not be updated. Please refresh and try again." });
+                }
+
+                var flags = DmIvRecordHelper.ComputeFlagsFromVet(rbVetYes, action);
+                return Json(new { success = true, clientAction = action, active = flags.isActive, available = flags.isAvailable });
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false });
+                return Json(new { success = false, message = ex.Message, error = ex.Message });
             }
         }
 
