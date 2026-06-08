@@ -1798,7 +1798,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GenerateInvoice()
+        public async Task<IActionResult> GenerateInvoice(int? clientId = null, int? month = null, int? year = null, int? billingOwnerId = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1810,8 +1810,10 @@ namespace Risebird.Web.Controllers
                         .OrderBy(x => x.Name)
                         .ToList();
                     ViewBag.ClientList = new SelectList(clients, "id", "Name");
-                    ViewBag.CurrentMonth = DateTime.Now.Month;
-                    ViewBag.CurrentYear  = DateTime.Now.Year;
+                    ViewBag.CurrentMonth = month ?? DateTime.Now.Month;
+                    ViewBag.CurrentYear  = year ?? DateTime.Now.Year;
+                    ViewBag.PreFillClientId = clientId ?? 0;
+                    ViewBag.PreFillBillingOwnerId = billingOwnerId ?? 0;
                     return View(new GenerateInvoiceVM());
                 }
                 return RedirectToAction("SignOut", "Session");
@@ -2622,6 +2624,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.BillingType = billingType;
                     ViewBag.Year = year;
                     ViewBag.Month = month;
+                    ViewBag.ClientId = id;
                     var Statuses = from Revenueenum s in Enum.GetValues(typeof(Revenueenum))
                                    select new { ID = (int)s, Name = s.GetDescription() };
                     ViewBag.CurrentStatus = new SelectList(Statuses, "ID", "Name");

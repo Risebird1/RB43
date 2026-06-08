@@ -122,6 +122,14 @@
                                                                                     </svg>
                                                                                 </span>
                                                                             </button>
+                                                                            @if (ViewBag.BillingType == 1)
+                                                                            {
+                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Generate Invoice" onclick="GenerateInvoiceForBillingOwner(@item.BillingOwnerid)" style="background-color:#3949ab;">
+                                                                                    <span title="Generate Invoice" class="mdc-fab__icon material-icons">
+                                                                                        <i class="fas fa-file-invoice" style="font-size:14px;color:white;"></i>
+                                                                                    </span>
+                                                                                </button>
+                                                                            }
                                                                         }
                                                                     </td>
                                                                 }
@@ -327,6 +335,12 @@
     };
 </script>
 <script>
+    function GenerateInvoiceForBillingOwner(billingOwnerId) {
+        var month = $("#currentmonth").val();
+        var year = $("#currentyear").val();
+        var clientId = '@ViewBag.ClientId';
+        window.open('/Finance/GenerateInvoice?clientId=' + clientId + '&billingOwnerId=' + billingOwnerId + '&month=' + month + '&year=' + year, '_blank');
+    }
     function DetailedView(clientid, billingtype, detailid) {
         var month = $("#currentmonth").val();
         var year = $("#currentyear").val();
