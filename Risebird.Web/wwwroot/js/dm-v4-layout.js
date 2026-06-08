@@ -996,6 +996,68 @@
         $('#dmV4RbVetBadge').text(rb + ' RB-VETTED');
         $('#dmV4ClientVetBadge').text(client + ' CLIENT-APPROVED');
         $('#dmV4OnPanelBadge').text(panel + ' ON PANEL');
+        refreshIvTabCounts();
+        applyIvTabFilter();
+    }
+
+    function readRowDbActive($row) {
+        return ($row.attr('data-is-active') || '0') === '1';
+    }
+
+    function getIvTab() {
+        var tab = ($('#dmV4IvPanel').attr('data-iv-tab') || 'active').toString();
+        return tab === 'inactive' ? 'inactive' : 'active';
+    }
+
+    function setIvTab(tab) {
+        tab = tab === 'inactive' ? 'inactive' : 'active';
+        $('#dmV4IvPanel').attr('data-iv-tab', tab);
+        $('#dmV4IvTabs .dm-v4-iv-tab').each(function () {
+            var on = ($(this).attr('data-tab') || '') === tab;
+            $(this).toggleClass('is-on', on).attr('aria-selected', on ? 'true' : 'false');
+        });
+        applyIvTabFilter();
+    }
+
+    function refreshIvTabCounts() {
+        var active = 0;
+        var inactive = 0;
+        $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
+            if (readRowDbActive($(this))) active += 1;
+            else inactive += 1;
+        });
+        $('#dmV4IvTabActiveCount').text(active);
+        $('#dmV4IvTabInactiveCount').text(inactive);
+    }
+
+    function applyIvTabFilter() {
+        var $panel = $('#dmV4IvPanel');
+        if (!$panel.length || !$('#dmV4IvTabs').length) return;
+        var tab = getIvTab();
+        var visible = 0;
+        $panel.find('.dm-v4-iv-row').each(function () {
+            var $row = $(this);
+            var isActive = readRowDbActive($row);
+            var show = tab === 'active' ? isActive : !isActive;
+            $row.toggleClass('dm-v4-iv-row--tab-hidden', !show);
+            if (show) visible += 1;
+        });
+        var $empty = $('#dmV4IvTabEmpty');
+        if (!$empty.length) return;
+        if (visible === 0) {
+            $empty.text(tab === 'active' ? 'No active interviewers.' : 'No inactive interviewers.').prop('hidden', false);
+        } else {
+            $empty.prop('hidden', true);
+        }
+    }
+
+    function initIvTabs() {
+        if (!$('#dmV4IvTabs').length) return;
+        $(document).off('click.dmV4IvTab', '#dmV4IvTabs .dm-v4-iv-tab').on('click.dmV4IvTab', '#dmV4IvTabs .dm-v4-iv-tab', function () {
+            var tab = ($(this).attr('data-tab') || 'active').toString();
+            if (tab === getIvTab()) return;
+            setIvTab(tab);
+        });
     }
 
     function ivStatusFromRow($row) {
@@ -1026,6 +1088,32 @@
         $row.attr('data-client-vet', clientOn ? '1' : '0');
     }
 
+    function dmV4VetErrorText(res, fallback) {
+        if (!res) return fallback || 'Unknown error.';
+        var err = (res.error || '').toString().trim();
+        var msg = (res.message || '').toString().trim();
+        if (err && (!msg || msg === 'Forbidden' || msg === 'Unauthorized')) return err;
+        return msg || err || fallback || 'Unknown error.';
+    }
+
+    function applyVetCascadeRowAttrs($row, opts) {
+        if (typeof opts.clientVet !== 'undefined') {
+            $row.attr('data-client-vet', opts.clientVet ? '1' : '0');
+        }
+        if (typeof opts.clientAction !== 'undefined') {
+            $row.attr('data-client-action', opts.clientAction);
+        }
+        if (typeof opts.rbVet !== 'undefined') {
+            $row.attr('data-rb-vet', opts.rbVet ? '1' : '0');
+        }
+        if (typeof opts.active !== 'undefined') {
+            $row.attr('data-is-active', opts.active ? '1' : '0');
+        }
+        if (typeof opts.available !== 'undefined') {
+            $row.attr('data-is-available', opts.available ? '1' : '0');
+        }
+    }
+
     function syncVetButtons($row) {
         var rbOn = readRbVetFromRow($row);
         var clientOn = readClientVetFromRow($row);
@@ -1039,6 +1127,10 @@
             $clientBtns.prop('disabled', true);
             $clientToggle.attr('title', 'Needs RB Vet first.');
             $row.find('.dm-v4-iv-vet-sub--client').text('Blocked — needs RB Vet first');
+        } else if (!getIvCanEdit()) {
+            $clientBtns.prop('disabled', true);
+            $clientToggle.attr('title', 'You do not have permission to change Client Vet.');
+            $row.find('.dm-v4-iv-vet-sub--client').text(clientOn ? 'Signed off by client' : 'Awaiting client sign-off');
         } else {
             $clientBtns.prop('disabled', false);
             $clientToggle.attr('title', '');
@@ -2736,6 +2828,7 @@
 
     function initInterviewersV4() {
         setPolicyLockOn(getPolicyBar(), isPolicyLockOn(getPolicyBar()));
+        initIvTabs();
         refreshIvBadges();
         updatePolicySubtext();
         initIvEditableFields();
@@ -2888,6 +2981,10 @@
         $(document).off('click.dmV4Vet', '.dm-v4-vet-btn:not(:disabled)').on('click.dmV4Vet', '.dm-v4-vet-btn:not(:disabled)', function () {
             var $btn = $(this);
             if ($btn.hasClass('is-on')) return;
+            if (!getIvCanEdit()) {
+                if (typeof swal !== 'undefined') swal.fire('Cannot update Client Vet', 'You don\'t have permission to vet this interviewer.', 'error');
+                return;
+            }
             var $row = $btn.closest('.dm-v4-iv-row');
             var isYes = $btn.attr('data-vet-value') === '1';
             var vetType = $btn.closest('.dm-v4-vet-toggle').data('vet');
@@ -2900,45 +2997,44 @@
                     interviewerEmail: $row.data('email')
                 }, function (res) {
                     if (res && res.success) {
-                        $row.attr('data-rb-vet', isYes ? '1' : '0');
-                        if (!isYes) {
-                            $row.attr('data-client-vet', '0');
-                            $row.attr('data-client-action', 'Rejected');
-                        } else {
-                            $row.attr('data-client-vet', '1');
-                            $row.attr('data-client-action', 'Shortlisted');
-                        }
-                        if (typeof res.active !== 'undefined') {
-                            $row.attr('data-is-active', res.active ? '1' : '0');
-                        }
+                        applyVetCascadeRowAttrs($row, {
+                            rbVet: isYes,
+                            clientVet: isYes,
+                            clientAction: isYes ? 'Shortlisted' : 'Rejected',
+                            active: typeof res.active !== 'undefined' ? !!res.active : undefined,
+                            available: typeof res.available !== 'undefined' ? !!res.available : undefined
+                        });
                         syncVetButtons($row);
                         refreshIvBadges();
                     } else {
-                        if (typeof swal !== 'undefined') swal.fire('RB Vet update failed.', (res && res.error) || '', 'error');
+                        if (typeof swal !== 'undefined') swal.fire('RB Vet update failed', dmV4VetErrorText(res, 'Could not update RB Vet.'), 'error');
                     }
-                }).fail(function () {
-                    if (typeof swal !== 'undefined') swal.fire('RB Vet update failed.', 'Network or server error.', 'error');
+                }).fail(function (xhr) {
+                    var res = xhr && xhr.responseJSON;
+                    if (typeof swal !== 'undefined') swal.fire('RB Vet update failed', dmV4VetErrorText(res, 'Network or server error.'), 'error');
                 });
             } else if (vetType === 'client') {
                 $.post('/IRF/UpdateInterviewerClientVet', {
                     irfId: parseInt($row.data('irf-id'), 10),
-                    interviewerEmail: $row.data('email'),
+                    interviewerEmail: ($row.attr('data-email') || $row.data('email') || '').toString(),
                     isApproved: isYes,
                     userId: parseInt($row.data('user-id'), 10)
                 }, function (res) {
                     if (res && res.success) {
-                        $row.attr('data-client-vet', isYes ? '1' : '0');
-                        $row.attr('data-client-action', isYes ? 'Shortlisted' : 'Rejected');
-                        if (typeof res.active !== 'undefined') {
-                            $row.attr('data-is-active', res.active ? '1' : '0');
-                        }
+                        applyVetCascadeRowAttrs($row, {
+                            clientVet: isYes,
+                            clientAction: isYes ? 'Shortlisted' : 'Rejected',
+                            active: typeof res.active !== 'undefined' ? !!res.active : undefined,
+                            available: typeof res.available !== 'undefined' ? !!res.available : undefined
+                        });
                         syncVetButtons($row);
                         refreshIvBadges();
                     } else {
-                        if (typeof swal !== 'undefined') swal.fire('Client Vet update failed.', (res && res.error) || '', 'error');
+                        if (typeof swal !== 'undefined') swal.fire('Cannot update Client Vet', dmV4VetErrorText(res, 'Could not update Client Vet.'), 'error');
                     }
-                }).fail(function () {
-                    if (typeof swal !== 'undefined') swal.fire('Client Vet update failed.', 'Network or server error.', 'error');
+                }).fail(function (xhr) {
+                    var res = xhr && xhr.responseJSON;
+                    if (typeof swal !== 'undefined') swal.fire('Cannot update Client Vet', dmV4VetErrorText(res, 'Network or server error.'), 'error');
                 });
             }
         });
