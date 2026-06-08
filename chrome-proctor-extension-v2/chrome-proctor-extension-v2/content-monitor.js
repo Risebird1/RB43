@@ -6,7 +6,7 @@
 
   let proctoringStartForwarded = false;
 
-  let autoPipelineStarted = false;
+  let autoPipelineInFlight = false;
   let extensionReadyAnnounced = false;
   let setupRetryTimerId = null;
   const SETUP_RETRY_MS = 5000;
@@ -18,7 +18,34 @@
   let pipelineInFlight = false;
   let screenShareConfirmed = false;
 
+  const SCREEN_CHUNK_TIMESLICE_MS = 5000;
+  const MIN_PROMPT_INTERVAL_MS =
+    typeof MIN_SCREEN_SHARE_PROMPT_INTERVAL_MS === 'number' ? MIN_SCREEN_SHARE_PROMPT_INTERVAL_MS : 8000;
 
+  const proctoringFlow = {
+    isSessionJoined: false,
+    isSessionStarted: false,
+    isPromptingScreenShare: false,
+    isScreenShareActive: false,
+    isProctoringActive: false,
+    hasValidMonitorShare: false,
+    lastPromptAt: 0,
+    promptRetryCount: 0,
+    shareStopped: false,
+  };
+
+  let isPromptingScreenShare = false;
+  let isScreenShareActive = false;
+  let hasValidMonitorShare = false;
+  let screenShareStream = null;
+  let screenVideoTrack = null;
+  let screenMediaRecorder = null;
+  let chunkSeq = 0;
+  let screenSharePromptedThisSession = false;
+  let screenSharePromptSessionKey = '';
+  let initProctoringInFlight = false;
+  let autoSharePromptDone = false;
+  let autoSharePickerInvoked = false;
 
   function safeRuntimeSendMessage(payload) {
 
@@ -62,6 +89,388 @@
 
   }
 
+  function recordViolation(violationType, message, metadata) {
+    safeRuntimeSendMessage({
+      type: 'PROCTORING_VIOLATION',
+      payload: {
+        violationType,
+        message,
+        metadata: Object.assign({ pageHostname: window.location.hostname }, metadata || {}),
+        occurredAt: new Date().toISOString(),
+      },
+    });
+  }
+
+  function getScreenShareSessionKey() {
+    const payload = readBootstrapPayload();
+    const id = payload?.interviewId;
+    return id !== undefined && id !== null && String(id) !== '' ? String(id) : 'default';
+  }
+
+  function hasPromptedScreenShareThisSession() {
+    return screenSharePromptedThisSession && screenSharePromptSessionKey === getScreenShareSessionKey();
+  }
+
+  function markScreenSharePromptedThisSession() {
+    screenSharePromptedThisSession = true;
+    screenSharePromptSessionKey = getScreenShareSessionKey();
+  }
+
+  function resetScreenSharePromptForNewSession() {
+    screenSharePromptedThisSession = false;
+    screenSharePromptSessionKey = '';
+  }
+
+  function syncFlowFlags() {
+    proctoringFlow.isPromptingScreenShare = isPromptingScreenShare;
+    proctoringFlow.isScreenShareActive = isScreenShareActive;
+    proctoringFlow.hasValidMonitorShare = hasValidMonitorShare;
+    proctoringFlow.isProctoringActive = Boolean(sessionActive && hasValidMonitorShare && isScreenShareActive);
+    void safeRuntimeSendMessage({ type: 'UPDATE_PROCTORING_FLOW_STATE', flow: proctoringFlow });
+  }
+
+  /** No custom overlay — only the native Chrome "Share your entire screen" picker is used. */
+  const SCREEN_SHARE_OVERLAY_ID = 'risebird-proctor-screen-share-overlay';
+
+  function removeScreenShareOverlay() {
+    document.getElementById(SCREEN_SHARE_OVERLAY_ID)?.remove();
+    document.querySelectorAll(`#${SCREEN_SHARE_OVERLAY_ID}`).forEach((el) => el.remove());
+  }
+
+  function hideScreenShareOverlay() {
+    removeScreenShareOverlay();
+  }
+
+  function watchScreenShareOverlayRemoval() {
+    removeScreenShareOverlay();
+    const observer = new MutationObserver(() => removeScreenShareOverlay());
+    const root = document.documentElement || document.body;
+    if (root) observer.observe(root, { childList: true, subtree: true });
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', removeScreenShareOverlay, { once: true });
+    }
+  }
+
+  function canRequestScreenShare(forceManual) {
+    if (isPromptingScreenShare) return false;
+    if (isScreenShareStillLive() || hasValidMonitorShare) return false;
+    if (!forceManual) {
+      if (autoSharePromptDone || hasPromptedScreenShareThisSession()) return false;
+      const elapsed = Date.now() - (proctoringFlow.lastPromptAt || 0);
+      if (proctoringFlow.lastPromptAt && elapsed < MIN_PROMPT_INTERVAL_MS) return false;
+    }
+    return proctoringFlow.isSessionJoined || joinCompleted;
+  }
+
+  function validateMonitorScreenShare(videoTrack) {
+    const settings = videoTrack.getSettings ? videoTrack.getSettings() : {};
+    const surface = settings.displaySurface;
+    if (surface === 'browser' || surface === 'window' || surface === 'tab') {
+      return { ok: false, displaySurface: surface };
+    }
+    if (surface === 'monitor') return { ok: true, displaySurface: 'monitor' };
+    if (videoTrack.readyState === 'live') {
+      return { ok: true, displaySurface: surface || 'monitor_assumed' };
+    }
+    return { ok: false, displaySurface: surface || 'unknown' };
+  }
+
+  async function isOffscreenCaptureLive() {
+    const st = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
+    return Boolean(st?.pipelineReady || st?.hasLiveStream || st?.contentScreenShareActive);
+  }
+
+  function isScreenShareStillLive() {
+    return Boolean(
+      (isScreenShareActive && screenVideoTrack && screenVideoTrack.readyState === 'live') ||
+        (proctoringStartForwarded && hasValidMonitorShare)
+    );
+  }
+
+  async function persistShareFlags(established) {
+    const key = getScreenShareSessionKey();
+    await chrome.storage.local.set({
+      proctoringShareEstablishedKey: established ? key : '',
+      proctoringAutoSharePromptKey: key,
+    });
+    if (established) {
+      autoSharePromptDone = true;
+      hasValidMonitorShare = true;
+      isScreenShareActive = true;
+    }
+    markScreenSharePromptedThisSession();
+  }
+
+  async function loadPersistedShareFlags() {
+    const key = getScreenShareSessionKey();
+    if (!key || key === 'default') return;
+    const data = await chrome.storage.local.get([
+      'proctoringShareEstablishedKey',
+      'proctoringSessionJoined',
+    ]);
+    if (data.proctoringShareEstablishedKey === key) {
+      autoSharePromptDone = true;
+      autoSharePickerInvoked = true;
+      hasValidMonitorShare = true;
+      isScreenShareActive = true;
+      screenSharePromptedThisSession = true;
+      screenSharePromptSessionKey = key;
+    } else if (data.proctoringAutoSharePromptKey === key) {
+      autoSharePromptDone = true;
+      autoSharePickerInvoked = true;
+      screenSharePromptedThisSession = true;
+      screenSharePromptSessionKey = key;
+    }
+    if (data.proctoringSessionJoined === true) {
+      joinCompleted = true;
+      proctoringFlow.isSessionJoined = true;
+    }
+  }
+
+  /** Skip auto picker only when entire-screen capture is actually live for this interview. */
+  async function shouldSkipAutoSharePicker() {
+    const key = getScreenShareSessionKey();
+    const captureLive = await isOffscreenCaptureLive();
+    if (!captureLive) return false;
+    if (proctoringStartForwarded && hasValidMonitorShare) return true;
+    const data = await chrome.storage.local.get(['proctoringShareEstablishedKey']);
+    return data.proctoringShareEstablishedKey === key;
+  }
+
+  function hasAutoSharePickerBeenInvoked() {
+    return Boolean(
+      autoSharePickerInvoked || autoSharePromptDone || hasPromptedScreenShareThisSession()
+    );
+  }
+
+  async function markAutoSharePickerInvoked() {
+    autoSharePickerInvoked = true;
+    autoSharePromptDone = true;
+    markScreenSharePromptedThisSession();
+    await persistShareFlags(false);
+  }
+
+  async function clearPersistedShareFlags() {
+    await chrome.storage.local.remove(['proctoringShareEstablishedKey', 'proctoringAutoSharePromptKey']);
+    resetScreenSharePromptForNewSession();
+    autoSharePromptDone = false;
+    autoSharePickerInvoked = false;
+  }
+
+  function stopScreenShareTracks() {
+    if (screenVideoTrack) {
+      try {
+        screenVideoTrack.onended = null;
+      } catch (_) {
+        /* ignore */
+      }
+    }
+    if (screenShareStream) {
+      screenShareStream.getTracks().forEach((t) => {
+        try {
+          t.stop();
+        } catch (_) {
+          /* ignore */
+        }
+      });
+    }
+    screenShareStream = null;
+    screenVideoTrack = null;
+  }
+
+  function stopScreenRecorder() {
+    if (!screenMediaRecorder) return;
+    try {
+      if (screenMediaRecorder.state !== 'inactive') screenMediaRecorder.stop();
+    } catch (_) {
+      /* ignore */
+    }
+    screenMediaRecorder = null;
+  }
+
+  function cleanupScreenShareState(options = {}) {
+    stopScreenRecorder();
+    stopScreenShareTracks();
+    isScreenShareActive = false;
+    hasValidMonitorShare = false;
+    isPromptingScreenShare = false;
+    screenShareConfirmed = false;
+    chunkSeq = 0;
+    if (!options.keepOverlay) hideScreenShareOverlay();
+    if (options.resetPromptFlags) resetScreenSharePromptForNewSession();
+    proctoringFlow.shareStopped = options.shareStopped === true;
+    proctoringFlow.isProctoringActive = false;
+    syncFlowFlags();
+  }
+
+  function blobToDataUrl(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error || new Error('blob_read_failed'));
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  async function uploadScreenChunk(blob, mimeType) {
+    if (!blob || blob.size < 4096) return;
+    chunkSeq += 1;
+    const seq = chunkSeq;
+    const capturedAt = Date.now();
+    let data;
+    try {
+      data = await blobToDataUrl(blob);
+    } catch (e) {
+      recordViolation('screen_chunk_upload_failed', 'Screen chunk upload failed', {
+        eventCategory: 'screen_chunk',
+        error: e?.message || String(e),
+        chunkSeq: seq,
+        capturedAt,
+      });
+      return;
+    }
+    if (!data || !String(data).startsWith('data:')) return;
+    await safeRuntimeSendMessage({
+      type: 'UPLOAD_SCREEN_CHUNK',
+      payload: {
+        chunkSeq: seq,
+        mimeType: mimeType || blob.type || 'video/webm',
+        capturedAt,
+        data,
+        captureSource: 'content_display_media',
+      },
+    });
+  }
+
+  function startScreenRecorder(stream) {
+    if (screenMediaRecorder && screenMediaRecorder.state !== 'inactive') return;
+    const preferred = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
+    let mimeType = '';
+    for (const c of preferred) {
+      if (MediaRecorder.isTypeSupported(c)) {
+        mimeType = c;
+        break;
+      }
+    }
+    const options = mimeType ? { mimeType } : {};
+    screenMediaRecorder = new MediaRecorder(stream, options);
+    screenMediaRecorder.ondataavailable = (event) => {
+      if (event.data && event.data.size > 0) {
+        void uploadScreenChunk(event.data, screenMediaRecorder.mimeType || event.data.type);
+      }
+    };
+    screenMediaRecorder.onerror = () => {
+      recordViolation('screen_chunk_upload_failed', 'Screen recorder error', {
+        eventCategory: 'screen_chunk',
+      });
+    };
+    screenMediaRecorder.start(SCREEN_CHUNK_TIMESLICE_MS);
+  }
+
+  function onScreenTrackEnded() {
+    if (!isScreenShareActive && !screenShareConfirmed) return;
+    if (screenVideoTrack && screenVideoTrack.readyState === 'live') return;
+    cleanupScreenShareState({ shareStopped: true });
+    proctoringStartForwarded = false;
+    recordViolation('screen_share_stopped', 'Screen sharing stopped', { eventCategory: 'screen_share' });
+    void safeRuntimeSendMessage({ type: 'CONTENT_SCREEN_SHARE_STOPPED', flow: proctoringFlow });
+    window.postMessage(
+      { source: 'risebird-proctor-extension', type: 'RB_SCREEN_SHARE_LOST' },
+      window.location.origin
+    );
+  }
+
+  async function promptMonitorScreenShare(forceManual) {
+    if (!canRequestScreenShare(forceManual)) {
+      return { ok: false, skipped: true, doNotRetryPicker: true };
+    }
+
+    if (forceManual) {
+      cleanupScreenShareState({ resetPromptFlags: true });
+    }
+
+    if (!navigator.mediaDevices?.getDisplayMedia) {
+      return { ok: false, error: 'Screen capture is not available in this browser.', doNotRetryPicker: true };
+    }
+
+    isPromptingScreenShare = true;
+    proctoringFlow.lastPromptAt = Date.now();
+    proctoringFlow.isPromptingScreenShare = true;
+    syncFlowFlags();
+
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { displaySurface: 'monitor' },
+        audio: false,
+      });
+      const videoTrack = stream.getVideoTracks()[0];
+      if (!videoTrack) {
+        stream.getTracks().forEach((t) => t.stop());
+        return { ok: false, error: 'No video track from screen share.', doNotRetryPicker: true };
+      }
+
+      const validation = validateMonitorScreenShare(videoTrack);
+      if (!validation.ok) {
+        stream.getTracks().forEach((t) => t.stop());
+        recordViolation('invalid_screen_share', 'Invalid screen share type — entire monitor required', {
+          eventCategory: 'screen_share',
+          displaySurface: validation.displaySurface || 'unknown',
+        });
+        return { ok: false, invalidShare: true, doNotRetryPicker: true };
+      }
+
+      if (!forceManual) {
+        autoSharePromptDone = true;
+        markScreenSharePromptedThisSession();
+      }
+
+      screenShareStream = stream;
+      screenVideoTrack = videoTrack;
+      isScreenShareActive = true;
+      hasValidMonitorShare = true;
+      screenShareConfirmed = true;
+      proctoringFlow.shareStopped = false;
+      chunkSeq = 0;
+      videoTrack.onended = onScreenTrackEnded;
+
+      startScreenRecorder(stream);
+
+      let swRes = await safeRuntimeSendMessage({ type: 'CONTENT_SCREEN_SHARE_STARTED' });
+      if (!swRes?.ok) {
+        await sleep(500);
+        swRes = await safeRuntimeSendMessage({ type: 'CONTENT_SCREEN_SHARE_STARTED' });
+      }
+      if (!swRes?.ok) {
+        console.warn('[Risebird Proctoring] session arm failed; screen share kept:', swRes?.error);
+      }
+
+      hideScreenShareOverlay();
+      sessionActive = true;
+      proctoringStartForwarded = true;
+      proctoringFlow.isProctoringActive = true;
+      setupRetryCount = 0;
+      syncFlowFlags();
+      postStarted();
+      return { ok: true };
+    } catch (err) {
+      const cancelled = err?.name === 'NotAllowedError' || /cancel/i.test(String(err?.message || ''));
+      if (!forceManual) {
+        autoSharePromptDone = true;
+        markScreenSharePromptedThisSession();
+      }
+      return {
+        ok: false,
+        error: err?.message || String(err),
+        pickerCancelled: cancelled,
+        doNotRetryPicker: true,
+      };
+    } finally {
+      isPromptingScreenShare = false;
+      proctoringFlow.isPromptingScreenShare = false;
+      syncFlowFlags();
+    }
+  }
+
 
 
   function postStarted() {
@@ -84,7 +493,11 @@
     const msg = error != null && String(error).trim() ? String(error).trim() : 'unknown';
     if (/cancel/i.test(msg) || options?.pickerCancelled) return;
     if (typeof console !== 'undefined' && console.warn) {
-      console.warn('[Risebird Proctoring] setup will retry:', msg);
+      if (options?.silent) {
+        console.warn('[Risebird Proctoring]', msg);
+      } else {
+        console.warn('[Risebird Proctoring] setup will retry:', msg);
+      }
     }
   }
 
@@ -98,12 +511,27 @@
     );
   }
 
-  async function joinHandshakeWithRetry(payload) {
+  function isFatalSetupError(error) {
+    return (
+      isFatalJoinError(error) ||
+      String(error || '')
+        .toLowerCase()
+        .includes('not allowed for proctoring')
+    );
+  }
+
+  async function initProctoringSessionWithRetry(payload) {
     let lastError = null;
     for (let i = 0; i < JOIN_HANDSHAKE_MAX_ATTEMPTS; i++) {
-      const joinRes = await safeRuntimeSendMessage({ type: 'JOIN_DASHBOARD_HANDSHAKE', payload });
-      if (joinRes?.ok) return joinRes;
-      lastError = joinRes?.error || 'join_failed';
+      const initRes = await safeRuntimeSendMessage({ type: 'INIT_PROCTORING_SESSION', payload });
+      if (initRes?.ok) {
+        proctoringFlow.isSessionJoined = true;
+        proctoringFlow.isSessionStarted = Boolean(initRes.sessionStarted || initRes.proctoringReady);
+        syncFlowFlags();
+        return initRes;
+      }
+      if (initRes?.inProgress) return initRes;
+      lastError = initRes?.error || 'init_failed';
       if (isFatalJoinError(lastError)) break;
       await sleep(Math.min(3500, 300 + i * 280));
     }
@@ -116,15 +544,17 @@
 
     (async () => {
 
+      if (message?.type === 'REQUEST_MANUAL_SCREEN_SHARE') {
+        await requestEntireScreenShareOnce(true);
+        sendResponse({ ok: true });
+        return;
+      }
+
       if (message?.type === 'NOTIFY_PROCTORING_STARTED') {
 
-        sessionActive = true;
-
-        proctoringStartForwarded = true;
+        await finalizeProctoringStarted();
 
         await chrome.storage.local.set({ sessionActive: true });
-
-        postStarted();
 
         sendResponse({ ok: true });
 
@@ -135,13 +565,25 @@
 
 
       if (message?.type === 'NOTIFY_SCREEN_SHARE_LOST') {
+        if (await isOffscreenCaptureLive()) {
+          hideScreenShareOverlay();
+          sendResponse({ ok: true, ignored: true });
+          return;
+        }
+        cleanupScreenShareState({ shareStopped: true });
         proctoringStartForwarded = false;
-        screenShareConfirmed = false;
-        window.postMessage(
-          { source: 'risebird-proctor-extension', type: 'RB_SCREEN_SHARE_LOST' },
-          window.location.origin
-        );
-        void scheduleShareLostRepickOnce();
+        await clearPersistedShareFlags();
+        await safeRuntimeSendMessage({ type: 'CLEAR_STALE_SCREEN_PICKER_STATE', force: true });
+        sendResponse({ ok: true });
+        return;
+      }
+
+      if (message?.type === 'CONTENT_SCREEN_SHARE_CLEANUP') {
+        cleanupScreenShareState({ resetPromptFlags: true });
+        await clearPersistedShareFlags();
+        sessionActive = false;
+        proctoringStartForwarded = false;
+        await chrome.storage.local.set({ sessionActive: false });
         sendResponse({ ok: true });
         return;
       }
@@ -158,6 +600,8 @@
 
         proctoringStartForwarded = true;
 
+        hideScreenShareOverlay();
+
         await chrome.storage.local.set({ sessionActive: true });
 
         sendResponse({ ok: true });
@@ -170,6 +614,7 @@
 
       if (message?.type === 'STOP_CONTENT_MONITORING') {
 
+        cleanupScreenShareState({ resetPromptFlags: true });
         sessionActive = false;
 
         proctoringStartForwarded = false;
@@ -358,21 +803,43 @@
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  async function queryLiveCapture() {
-    const q = await safeRuntimeSendMessage({ type: 'QUERY_OFFSCREEN_CAPTURE' });
-    return Boolean(q?.hasLiveStream);
+  async function finalizeProctoringStarted() {
+    hideScreenShareOverlay();
+    sessionActive = true;
+    proctoringStartForwarded = true;
+    screenShareConfirmed = true;
+    isScreenShareActive = true;
+    hasValidMonitorShare = true;
+    joinCompleted = true;
+    proctoringFlow.isSessionJoined = true;
+    proctoringFlow.isSessionStarted = true;
+    proctoringFlow.isProctoringActive = true;
+    proctoringFlow.shareStopped = false;
+    autoSharePromptDone = true;
+    autoSharePickerInvoked = true;
+    await persistShareFlags(true);
+    proctoringPrepareDone = true;
+    syncFlowFlags();
+    postStarted();
+    window.postMessage(
+      { source: 'risebird-proctor-extension', type: 'RB_PROCTORING_PREPARE_READY' },
+      window.location.origin
+    );
+    return { ok: true };
   }
 
   async function markStartedIfLive() {
-    if (proctoringStartForwarded) return true;
-    if (!(await queryLiveCapture())) return false;
-    screenShareConfirmed = true;
-    proctoringStartForwarded = true;
-    postStarted();
-    return true;
+    const st = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
+    if (!st?.joined) return false;
+    joinCompleted = true;
+    proctoringFlow.isSessionJoined = true;
+    proctoringFlow.isSessionStarted = Boolean(st.sessionActive);
+    if (st.pipelineReady || st.contentScreenShareActive || (st.hasLiveStream && st.sessionActive)) {
+      return true;
+    }
+    return false;
   }
 
-  let screenPickerAttemptedKey = false;
   let proctoringPrepareDone = false;
   let interruptResumeInFlight = false;
   let interruptResumeDone = false;
@@ -389,89 +856,148 @@
     return prep;
   }
 
-  /** Phase 2 — show entire-screen picker once prepare is done. */
-  async function requestEntireScreenShareOnce(forceNewPicker) {
-    if (forceNewPicker) {
-      screenPickerAttemptedKey = false;
+  /**
+   * Offscreen capture (BEGIN_SCREEN_SHARE) persists across form.submit() page reloads.
+   * Content getDisplayMedia does not — use service worker picker once per interview.
+   */
+  async function requestEntireScreenShareOnce(forceManual) {
+    if (await markStartedIfLive()) {
+      setupRetryCount = 0;
+      const resumeRes = await safeRuntimeSendMessage({
+        type: 'BEGIN_SCREEN_SHARE',
+        forceNewPicker: false,
+        promptFirst: false,
+        payload: readBootstrapPayload(),
+      });
+      if (resumeRes?.ok) return await finalizeProctoringStarted();
+    }
+
+    if (!forceManual && (await shouldSkipAutoSharePicker())) {
+      const resumeRes = await safeRuntimeSendMessage({
+        type: 'BEGIN_SCREEN_SHARE',
+        forceNewPicker: false,
+        promptFirst: false,
+        payload: readBootstrapPayload(),
+      });
+      if (resumeRes?.ok) return await finalizeProctoringStarted();
+      return { ok: false, doNotRetryPicker: true, alreadyPrompted: true };
+    }
+
+    if (!forceManual && hasAutoSharePickerBeenInvoked()) {
+      await resumeBackendWithoutPicker();
+      return { ok: false, doNotRetryPicker: true, alreadyPrompted: true };
+    }
+
+    if (isPromptingScreenShare) {
+      return { ok: false, inProgress: true, doNotRetryPicker: true };
+    }
+
+    if (forceManual) {
+      await clearPersistedShareFlags();
+      await safeRuntimeSendMessage({ type: 'CLEAR_STALE_SCREEN_PICKER_STATE', force: true });
       screenShareConfirmed = false;
       proctoringStartForwarded = false;
+      isScreenShareActive = false;
+      hasValidMonitorShare = false;
     }
 
-    if (await markStartedIfLive()) {
-      setupRetryCount = 0;
-      return { ok: true };
-    }
-
-    if (!forceNewPicker && screenPickerAttemptedKey) {
-      await sleep(600);
-      if (await markStartedIfLive()) {
+    isPromptingScreenShare = true;
+    proctoringFlow.isPromptingScreenShare = true;
+    proctoringFlow.lastPromptAt = Date.now();
+    syncFlowFlags();
+    try {
+      const bootstrapPayload = readBootstrapPayload();
+      let shareRes = null;
+      for (let attempt = 0; attempt < 4; attempt++) {
+        shareRes = await safeRuntimeSendMessage({
+          type: 'BEGIN_SCREEN_SHARE',
+          forceNewPicker: forceManual === true,
+          promptFirst: !forceManual,
+          payload: bootstrapPayload,
+        });
+        if (
+          shareRes?.pickerInvoked ||
+          shareRes?.pickerCancelled ||
+          shareRes?.pickerAlreadyAttempted ||
+          shareRes?.ok
+        ) {
+          break;
+        }
+        if (!shareRes?.retry || attempt >= 3) break;
+        await sleep(250 + attempt * 350);
+      }
+      if (shareRes?.ok) {
         setupRetryCount = 0;
-        return { ok: true };
+        joinCompleted = true;
+        proctoringFlow.isSessionJoined = true;
+        proctoringFlow.isSessionStarted = true;
+        window.postMessage(
+          { source: 'risebird-proctor-extension', type: 'RB_PROCTORING_JOIN_OK' },
+          window.location.origin
+        );
+        return await finalizeProctoringStarted();
       }
-      return { ok: false, doNotRetryPicker: true };
-    }
-
-    const shareRes = await safeRuntimeSendMessage({
-      type: 'BEGIN_SCREEN_SHARE',
-      forceNewPicker: forceNewPicker === true,
-    });
-
-    if (!forceNewPicker && shareRes) {
-      const e = String(shareRes.error || '').toLowerCase();
       if (
-        shareRes.ok ||
-        shareRes.pickerCancelled ||
-        shareRes.doNotRetryPicker ||
-        e.includes('screen') ||
-        e.includes('cancel') ||
-        e.includes('not granted') ||
-        e.includes('capture')
+        !forceManual &&
+        (shareRes?.pickerInvoked || shareRes?.pickerCancelled || shareRes?.pickerAlreadyAttempted)
       ) {
-        screenPickerAttemptedKey = true;
+        await markAutoSharePickerInvoked();
       }
+      if (isFatalSetupError(shareRes?.error)) {
+        shareRes = Object.assign({}, shareRes, { doNotRetryPicker: true });
+      }
+      postStartFailed(shareRes?.error, {
+        pickerCancelled: Boolean(shareRes?.pickerCancelled),
+        silent: Boolean(shareRes?.doNotRetryPicker),
+      });
+      return shareRes || { ok: false };
+    } finally {
+      isPromptingScreenShare = false;
+      proctoringFlow.isPromptingScreenShare = false;
+      syncFlowFlags();
     }
+  }
 
-    if (shareRes?.ok) {
-      screenShareConfirmed = true;
-      proctoringStartForwarded = true;
-      postStarted();
-      setupRetryCount = 0;
-      return { ok: true };
+  async function resumeBackendWithoutPicker() {
+    const payload = readBootstrapPayload();
+    if (!payload?.sessionToken) return;
+    if (!(await isOffscreenCaptureLive())) {
+      if (!joinCompleted) {
+        const initRes = await initProctoringSessionWithRetry(payload);
+        if (initRes?.ok) joinCompleted = true;
+      }
+      return;
     }
-
-    if (await markStartedIfLive()) {
-      setupRetryCount = 0;
-      return { ok: true };
-    }
-
-    postStartFailed(shareRes?.error, {
-      pickerCancelled: Boolean(shareRes?.pickerCancelled),
-      silent: Boolean(shareRes?.doNotRetryPicker && !shareRes?.error),
+    const resumeRes = await safeRuntimeSendMessage({
+      type: 'BEGIN_SCREEN_SHARE',
+      forceNewPicker: false,
+      promptFirst: false,
+      payload,
     });
-    return shareRes || { ok: false };
+    if (resumeRes?.ok) await finalizeProctoringStarted();
   }
 
   function scheduleSetupRetry() {
-    if (setupRetryTimerId != null || proctoringStartForwarded) return;
+    if (setupRetryTimerId != null) return;
     if (setupRetryCount >= SETUP_RETRY_MAX) return;
     setupRetryCount += 1;
     setupRetryTimerId = window.setTimeout(() => {
       setupRetryTimerId = null;
-      void runSetupRecovery();
+      void (async () => {
+        if (proctoringStartForwarded && (await isOffscreenCaptureLive())) return;
+        if (hasAutoSharePickerBeenInvoked() || (await shouldSkipAutoSharePicker())) {
+          await resumeBackendWithoutPicker();
+          return;
+        }
+        if (!joinCompleted) void tryStartAutoPipeline();
+        else void runSetupRecovery();
+      })();
     }, SETUP_RETRY_MS);
   }
 
-  let shareLostRepickTimerId = null;
-  const SHARE_LOST_REPICK_DELAY_MS = 5000;
-
   async function runCaptureRecovery(st) {
     if (!st?.sessionActive || !st?.joined) return false;
-    if (st.pipelineReady) {
-      await markStartedIfLive();
-      return true;
-    }
-    if (st.hasLiveStream) {
-      await safeRuntimeSendMessage({ type: 'REQUEST_CAPTURE_RECOVERY' });
+    if (st.contentScreenShareActive || isScreenShareStillLive()) {
       await markStartedIfLive();
       return true;
     }
@@ -495,7 +1021,7 @@
       if (!payload?.sessionToken) return false;
       await persistJoinPayload(payload);
       if (!joinCompleted) {
-        const joinRes = await joinHandshakeWithRetry(payload);
+        const joinRes = await initProctoringSessionWithRetry(payload);
         if (!joinRes?.ok) {
           scheduleSetupRetry();
           return false;
@@ -518,7 +1044,7 @@
           return false;
         }
       }
-      screenPickerAttemptedKey = false;
+      resetScreenSharePromptForNewSession();
       screenShareConfirmed = false;
       proctoringStartForwarded = false;
       const shareRes = await requestEntireScreenShareOnce(true);
@@ -532,129 +1058,64 @@
     }
   }
 
-  async function scheduleShareLostRepickOnce() {
-    if (shareLostRepickTimerId != null) return;
-    shareLostRepickTimerId = window.setTimeout(() => {
-      shareLostRepickTimerId = null;
-      void (async () => {
-        const st = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
-        if (!st?.sessionActive || !st?.joined) return;
-        if (st.hasLiveStream || st.pipelineReady) return;
-        await safeRuntimeSendMessage({ type: 'RESET_SCREEN_PICKER_FOR_SESSION' });
-        screenPickerAttemptedKey = false;
-        await requestEntireScreenShareOnce(true);
-      })();
-    }, SHARE_LOST_REPICK_DELAY_MS);
-  }
-
   async function runSetupRecovery() {
-    if (pipelineInFlight) return;
-    if (bootstrapRequestsInterruptResume()) {
-      const stResume = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
-      if (stResume?.joined && !stResume?.hasLiveStream && !stResume?.pipelineReady) {
-        await runResumeCaptureAfterInterrupt();
-        return;
-      }
-    }
-    if (await markStartedIfLive()) return;
-    const st = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
-    if (!st?.joined) {
-      if (!joinCompleted) void tryStartAutoPipeline();
+    if (pipelineInFlight || initProctoringInFlight) return;
+    if (isPromptingScreenShare) return;
+    if (await markStartedIfLive()) {
+      const resumeRes = await safeRuntimeSendMessage({ type: 'BEGIN_SCREEN_SHARE', forceNewPicker: false });
+      if (resumeRes?.ok) await finalizeProctoringStarted();
       return;
     }
-    if (st.pipelineReady || (st.hasLiveStream && (st.screenshotUploads > 0 || st.screenChunkUploads > 0))) {
-      await markStartedIfLive();
-      return;
+    if (!joinCompleted) {
+      void tryStartAutoPipeline();
     }
-    if (st.setupInProgress) return;
-    if (st.captureStale) {
-      await runCaptureRecovery(st);
-      return;
-    }
-    if (!st.proctoringReady && !proctoringPrepareDone) {
-      const prep = await runProctoringPreparePhase();
-      if (!prep?.ok) {
-        scheduleSetupRetry();
-        return;
-      }
-    }
-    if ((st.pickerAttempted || screenPickerAttemptedKey) && !st.hasLiveStream && !st.pipelineReady) {
-      if (bootstrapRequestsInterruptResume()) {
-        await runResumeCaptureAfterInterrupt();
-      }
-      return;
-    }
-    await requestEntireScreenShareOnce(false);
-    if (!proctoringStartForwarded) scheduleSetupRetry();
   }
 
 
 
-  /** Join once, then entire-screen picker only if capture is not already live. */
+  /** Native share picker first on landing; join/start/capture run after the candidate shares. */
 
   async function runJoinAndScreenShareFromBootstrap() {
-    if (pipelineInFlight) return;
-    pipelineInFlight = true;
+    if (autoPipelineInFlight) return;
+    autoPipelineInFlight = true;
     try {
       announceExtensionReady();
-
+      await loadPersistedShareFlags();
       const payload = readBootstrapPayload();
-
       if (!payload?.sessionToken) {
         console.warn('[Risebird Proctoring] missing session token on page');
         scheduleSetupRetry();
         return;
       }
-
       await persistJoinPayload(payload);
+      removeScreenShareOverlay();
 
-      if (!joinCompleted) {
-        const joinRes = await joinHandshakeWithRetry(payload);
-        if (!joinRes?.ok) {
-          console.warn('[Risebird Proctoring] join handshake:', joinRes?.error || 'failed');
-          scheduleSetupRetry();
-          return;
-        }
-        joinCompleted = true;
-        window.postMessage(
-          { source: 'risebird-proctor-extension', type: 'RB_PROCTORING_JOIN_OK' },
-          window.location.origin
-        );
-        if (joinRes.proctoringReady || joinRes.sessionStarted) {
-          proctoringPrepareDone = true;
-          window.postMessage(
-            { source: 'risebird-proctor-extension', type: 'RB_PROCTORING_PREPARE_READY' },
-            window.location.origin
-          );
-        } else if (joinRes.sessionStarted !== true) {
-          await safeRuntimeSendMessage({ type: 'ENSURE_SESSION_STARTED' });
-        }
-      }
-
-      if (await markStartedIfLive()) return;
-
-      if (!proctoringPrepareDone) {
-        const prep = await runProctoringPreparePhase();
-        if (!prep?.ok) {
-          scheduleSetupRetry();
+      if (await markStartedIfLive()) {
+        const resumeRes = await safeRuntimeSendMessage({
+          type: 'BEGIN_SCREEN_SHARE',
+          forceNewPicker: false,
+        });
+        if (resumeRes?.ok) {
+          joinCompleted = true;
+          await finalizeProctoringStarted();
           return;
         }
       }
 
-      if (bootstrapRequestsInterruptResume()) {
-        const stAfterJoin = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
-        if (!stAfterJoin?.hasLiveStream && !stAfterJoin?.pipelineReady) {
-          await runResumeCaptureAfterInterrupt();
-          return;
-        }
-      }
-
-      await requestEntireScreenShareOnce(false);
-      if (!proctoringStartForwarded) {
+      const shareRes = await requestEntireScreenShareOnce(false);
+      if (
+        !shareRes?.ok &&
+        !shareRes?.inProgress &&
+        !shareRes?.pickerCancelled &&
+        !shareRes?.pickerAlreadyAttempted &&
+        !shareRes?.doNotRetryPicker
+      ) {
         scheduleSetupRetry();
+      } else if (shareRes?.ok) {
+        setupRetryCount = 0;
       }
     } finally {
-      pipelineInFlight = false;
+      autoPipelineInFlight = false;
     }
   }
 
@@ -724,38 +1185,37 @@
   async function tryStartAutoPipeline() {
     const el = document.getElementById('risebird-proctoring-bootstrap');
     if (!el || !el.textContent || !el.textContent.trim()) return;
-    if (proctoringStartForwarded) return;
-    if (autoPipelineStarted) {
-      void runSetupRecovery();
+    if (autoPipelineInFlight) return;
+    if (proctoringStartForwarded || hasAutoSharePickerBeenInvoked()) {
+      if (await shouldSkipAutoSharePicker()) {
+        await resumeBackendWithoutPicker();
+      }
       return;
     }
-    autoPipelineStarted = true;
+    if (await shouldSkipAutoSharePicker()) {
+      await resumeBackendWithoutPicker();
+      return;
+    }
     void runJoinAndScreenShareFromBootstrap();
   }
 
-  let proctoringReadyKickoffDone = false;
-
   async function emitProctoringReady() {
     announceExtensionReady();
+    if (proctoringStartForwarded || hasAutoSharePickerBeenInvoked()) return;
+    if (await shouldSkipAutoSharePicker()) return;
     const hasBootstrap = await waitForBootstrapElement(60000);
     if (!hasBootstrap) {
       console.warn('[Risebird Proctoring] bootstrap not found yet');
       return;
     }
-    if (proctoringReadyKickoffDone) {
-      if (!proctoringStartForwarded) void runSetupRecovery();
-      return;
-    }
-    proctoringReadyKickoffDone = true;
     await tryStartAutoPipeline();
   }
 
   function scheduleProctoringReadyPing() {
     const run = () => void emitProctoringReady();
     run();
-    [0, 50, 150, 400].forEach((ms) => setTimeout(run, ms));
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', run);
+      document.addEventListener('DOMContentLoaded', run, { once: true });
     }
   }
 
@@ -780,32 +1240,19 @@
 
   scheduleProctoringReadyPing();
   watchBootstrapForEarlyPipeline();
-
-  window.setInterval(() => {
-    if (proctoringStartForwarded || pipelineInFlight || setupRetryTimerId != null) return;
-    void runSetupRecovery();
-  }, SETUP_RETRY_MS);
+  watchScreenShareOverlayRemoval();
 
   window.addEventListener('online', () => {
-    void runSetupRecovery();
-    void safeRuntimeSendMessage({ type: 'ENSURE_SESSION_STARTED' });
+    if (!joinCompleted) void tryStartAutoPipeline();
+    else void safeRuntimeSendMessage({ type: 'ENSURE_SESSION_STARTED' });
   });
 
   chrome.runtime.onMessage.addListener((message) => {
-      if (message?.type === 'NOTIFY_NETWORK_ONLINE') {
-      void runSetupRecovery();
+    if (message?.type === 'NOTIFY_NETWORK_ONLINE' && !joinCompleted) {
+      void tryStartAutoPipeline();
     }
-    if (message?.type === 'NOTIFY_CAPTURE_RECOVERY') {
-      void (async () => {
-        const st = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
-        await runCaptureRecovery(st);
-      })();
-    }
-  });
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-      void runSetupRecovery();
+    if (message?.type === 'NOTIFY_CAPTURE_RECOVERY' && isScreenShareStillLive()) {
+      hideScreenShareOverlay();
     }
   });
 
@@ -816,7 +1263,9 @@
 
 
     if (event.data?.type === 'RB_PROCTORING_HELLO') {
-      void emitProctoringReady();
+      if (!hasAutoSharePickerBeenInvoked() && !proctoringStartForwarded) {
+        void emitProctoringReady();
+      }
       return;
     }
 
@@ -844,10 +1293,7 @@
     }
 
     if (event.data?.type === 'RB_START_PROCTORING') {
-      void (async () => {
-        await runProctoringPreparePhase();
-        await requestEntireScreenShareOnce(event.data.forceNewPicker === true);
-      })();
+      void requestEntireScreenShareOnce(true);
     }
 
   });
@@ -858,7 +1304,7 @@
 
     if (sessionActive && document.visibilityState !== 'visible') {
 
-      send('violation', `Page hidden or backgrounded | page: ${window.location.hostname}`, {
+      recordViolation('page_hidden', `Page hidden or backgrounded | page: ${window.location.hostname}`, {
 
         eventCategory: 'page_visibility',
 
@@ -874,7 +1320,7 @@
 
     if (sessionActive && !document.fullscreenElement) {
 
-      send('violation', `Fullscreen exited | page: ${window.location.hostname}`, { eventCategory: 'fullscreen' });
+      recordViolation('fullscreen_exit', `Fullscreen exited | page: ${window.location.hostname}`, { eventCategory: 'fullscreen' });
 
     }
 
@@ -886,7 +1332,7 @@
 
     if (sessionActive) {
 
-      send('violation', `Window blur — focus left this page | page: ${window.location.hostname}`, {
+      recordViolation('window_blur', `Window blur — focus left this page | page: ${window.location.hostname}`, {
 
         eventCategory: 'window_blur',
 
@@ -904,7 +1350,7 @@
 
     if (clipboardBlocking) event.preventDefault();
 
-    send('violation', `Copy | page: ${window.location.hostname} | blocked: ${clipboardBlocking}`, {
+    recordViolation('copy', `Copy | page: ${window.location.hostname} | blocked: ${clipboardBlocking}`, {
 
       eventCategory: 'clipboard',
 
@@ -922,7 +1368,7 @@
 
     if (clipboardBlocking) event.preventDefault();
 
-    send('violation', `Cut | page: ${window.location.hostname} | blocked: ${clipboardBlocking}`, {
+    recordViolation('cut', `Cut | page: ${window.location.hostname} | blocked: ${clipboardBlocking}`, {
 
       eventCategory: 'clipboard',
 
@@ -940,7 +1386,7 @@
 
     if (clipboardBlocking) event.preventDefault();
 
-    send('violation', `Paste | page: ${window.location.hostname} | blocked: ${clipboardBlocking}`, {
+    recordViolation('paste', `Paste | page: ${window.location.hostname} | blocked: ${clipboardBlocking}`, {
 
       eventCategory: 'clipboard',
 
@@ -958,9 +1404,11 @@
 
     event.preventDefault();
 
-    send('violation', `Context menu | page: ${window.location.hostname}`, { eventCategory: 'contextmenu' });
+    recordViolation('contextmenu', `Context menu | page: ${window.location.hostname}`, { eventCategory: 'contextmenu' });
 
   });
+
+  /* Do not stop offscreen capture on beforeunload — form.submit() reloads the page between questions. */
 
 })();
 

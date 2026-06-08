@@ -43,7 +43,7 @@ function sendMessage(payload) {
       if (response == null) {
         return reject(new Error('Extension did not respond. Reload the extension or this popup.'));
       }
-      if (!response.ok) return reject(new Error(response.error ?? 'Unknown error'));
+      if (response.ok === false) return reject(new Error(response.error ?? 'Unknown error'));
       resolve(response);
     });
   });
@@ -127,18 +127,37 @@ async function applySavedJoinFields() {
   }
 }
 
+const FLOW_PHASE_LABELS = {
+  not_joined: 'Not joined',
+  joining_session: 'Joining session',
+  waiting_for_screen_share: 'Waiting for screen share',
+  screen_sharing_active: 'Running',
+  proctoring_active: 'Running',
+  screen_share_stopped: 'Screen share stopped',
+  session_ended: 'Session ended',
+};
+
+function formatFlowPhase(state) {
+  const phase = state.flowPhase || 'not_joined';
+  return FLOW_PHASE_LABELS[phase] || phase;
+}
+
 async function refreshState() {
   if (refreshInFlight) return;
   refreshInFlight = true;
   try {
     const savedJoin = await applySavedJoinFields();
-    const { state } = await sendMessage({ type: 'GET_STATE' });
+    let state;
+    try {
+      ({ state } = await sendMessage({ type: 'GET_STATE' }));
+    } catch (e) {
+      statusEl.textContent = 'Not joined';
+      throw e;
+    }
     const needWebAccess =
       state.joined === true && state.hasWebMonitoringAccess !== true;
 
-    let status =
-      state.sessionActive ? 'Running' : state.joined ? 'Joined' : 'Idle';
-    statusEl.textContent = status;
+    statusEl.textContent = formatFlowPhase(state);
     violationsEl.textContent = String(state.violations ?? 0);
 
     const screenshotCount = state.screenshotUploads || 0;
@@ -171,10 +190,11 @@ async function refreshState() {
       }
     }
     document.getElementById('clipboardBlocking').checked = Boolean(state.settings.clipboardBlocking);
-    const actionsSection = document.getElementById('sessionActionsSection');
-    if (actionsSection) {
-      // Popup is status-only now; hide manual action controls always.
-      actionsSection.hidden = true;
+    const startBtn = document.getElementById('startSession');
+    if (startBtn) {
+      const active = state.flowPhase === 'proctoring_active' || state.contentScreenShareActive;
+      startBtn.textContent = active ? 'Restart screen share' : 'Start Session';
+      startBtn.disabled = state.flowPhase === 'joining_session';
     }
     renderEvents(state.events);
   } catch (e) {
@@ -219,8 +239,14 @@ document.getElementById('startSession').addEventListener('click', async () => {
         'Allow access to all websites when Chrome prompts — required for tab monitoring and screenshots during the exam.'
       );
     }
-    await sendMessage({ type: 'START_SESSION' });
-    showMessage('Exam monitoring started.');
+    const res = await sendMessage({ type: 'START_SESSION' });
+    if (res.alreadyActive) {
+      showMessage('Screen sharing is already active.');
+    } else if (res.manualShareRequested) {
+      showMessage('Screen share requested on the interview tab.');
+    } else {
+      showMessage('Session started.');
+    }
     await refreshState();
   } catch (error) {
     showMessage(error.message, true);
@@ -275,7 +301,9 @@ chrome.storage.onChanged.addListener((changes, area) => {
     !changes.proctoringLastJoin &&
     !changes.proctoringEvents &&
     !changes.sessionActive &&
-    !changes.proctoringDiagnostics
+    !changes.proctoringDiagnostics &&
+    !changes.proctoringFlowPhase &&
+    !changes.proctoringContentFlow
   ) {
     return;
   }

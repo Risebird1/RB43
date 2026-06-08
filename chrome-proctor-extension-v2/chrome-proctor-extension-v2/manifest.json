@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Risebird Proctoring Assistant",
   "description": "Risebird Proctoring for AI Interview: join; entire-screen capture; screenshots; video chunks; violations. Risebird API.",
-  "version": "1.9.14",
+  "version": "1.9.25",
   "minimum_chrome_version": "121",
   "permissions": [
     "activeTab",
@@ -54,7 +54,7 @@
         "http://localhost:44329/AIInterview/*",
         "https://localhost:44329/AIInterview/*"
       ],
-      "js": ["content-monitor.js"],
+      "js": ["proctoring-flow-state.js", "content-monitor.js"],
       "run_at": "document_start"
     }
   ],

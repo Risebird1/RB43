@@ -3,6 +3,19 @@
 @if (ViewBag.ProctoringToken != null && ViewBag.ProctoringInterviewId != null)
 
 {
+    <script type="text/javascript">
+        (function () {
+            var id = 'risebird-proctor-screen-share-overlay';
+            function removeOverlay() {
+                var el = document.getElementById(id);
+                if (el) el.remove();
+            }
+            removeOverlay();
+            if (document.documentElement) {
+                new MutationObserver(removeOverlay).observe(document.documentElement, { childList: true, subtree: true });
+            }
+        })();
+    </script>
 
     <script type="application/json" id="risebird-proctoring-bootstrap">
 

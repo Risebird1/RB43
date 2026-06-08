@@ -2,7 +2,19 @@
  * Risebird Proctoring — MV3 service worker.
  * Coordinates session state, DNR rules, backend posts, heartbeat, and screenshots.
  */
-importScripts('capture-schedule.js');
+importScripts('capture-schedule.js', 'proctoring-flow-state.js');
+
+/** Backend API paths (appended to /api/proctoring/session). All requests use Bearer sessionToken. */
+const PROCTORING_API_BASE = '/api/proctoring/session';
+const PROCTORING_API = {
+  join: '/join',
+  start: '/start',
+  event: '/event',
+  screenshot: '/screenshot',
+  screenChunk: '/screen-chunk',
+  heartbeat: '/heartbeat',
+  stop: '/stop',
+};
 
 const DYNAMIC_RULE_ID_START = 10000;
 const HEARTBEAT_MS = 30000;
@@ -72,7 +84,14 @@ const state = {
   },
   /** Recent distinct hostnames from tab switches (newest last), for blur metadata. */
   recentTabHosts: [],
+  /** Content-script monitor share (getDisplayMedia) — distinct from offscreen desktopCapture. */
+  contentScreenShareActive: false,
+  flowPhase: PROCTORING_FLOW_PHASE.NOT_JOINED,
+  joinInFlight: false,
+  initProctoringCompletedKey: '',
 };
+
+let initProctoringSessionInFlight = false;
 
 let tabActivatedListener = null;
 let windowFocusListener = null;
@@ -81,6 +100,7 @@ let completeTestSetupStartedAt = 0;
 const SETUP_LOCK_STALE_MS = 90000;
 /** Set when the picker was shown for this session — prevents repeated share dialogs. */
 let screenPickerAttemptedKey = null;
+let screenPickerInFlight = false;
 /** Join + /start + offscreen warm complete; screen picker runs in phase 2. */
 let proctoringPrepareKey = null;
 
@@ -178,7 +198,7 @@ async function recordWorkerEvent(level, reason, metadata) {
   pushEvent(entry);
   try {
     await apiPost(
-      '/event',
+      PROCTORING_API.event,
       {
         interviewId: state.interviewId,
         level,
@@ -392,9 +412,9 @@ function isRetryableApiError(err) {
 }
 
 function apiPostMaxAttempts(path) {
-  if (path === '/join' || path === '/start') return 8;
-  if (path === '/screen-chunk') return 6;
-  if (path === '/screenshot') return 5;
+  if (path === PROCTORING_API.join || path === PROCTORING_API.start) return 8;
+  if (path === PROCTORING_API.screenChunk) return 6;
+  if (path === PROCTORING_API.screenshot) return 5;
   return 3;
 }
 
@@ -407,7 +427,7 @@ async function apiPostOnce(path, body, useBearer) {
   if (useBearer && state.sessionToken) {
     headers.Authorization = 'Bearer ' + state.sessionToken;
   }
-  const url = base + '/api/proctoring/session' + path;
+  const url = base + PROCTORING_API_BASE + path;
   let res;
   try {
     res = await fetch(url, {
@@ -598,7 +618,7 @@ async function postScreenshotToApi(payload) {
     captureSource: payload.captureSource || 'display_media',
     captureContext,
   };
-  await apiPost('/screenshot', body, true);
+  await apiPost(PROCTORING_API.screenshot, body, true);
   state.screenshotUploads += 1;
   state.lastScreenshotAt = Date.now();
   await syncDiagnosticsToStorage();
@@ -607,7 +627,7 @@ async function postScreenshotToApi(payload) {
 async function postScreenChunkToApi(payload) {
   const captureContext = await buildCaptureContextForChunk(payload.captureContext);
   await apiPost(
-    '/screen-chunk',
+    PROCTORING_API.screenChunk,
     {
       interviewId: state.interviewId,
       chunkSeq: payload.chunkSeq,
@@ -626,6 +646,7 @@ async function postScreenChunkToApi(payload) {
 
 async function tryUploadMediaImmediate(kind, payload) {
   let lastErr = null;
+  let lastStatus = null;
   const maxAttempts =
     kind === 'screen_chunk' ? IMMEDIATE_UPLOAD_RETRIES_CHUNK : IMMEDIATE_UPLOAD_RETRIES;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -635,13 +656,18 @@ async function tryUploadMediaImmediate(kind, payload) {
       return { ok: true };
     } catch (e) {
       lastErr = e;
+      if (e?.status != null) lastStatus = e.status;
       if (attempt < maxAttempts) {
         const backoff = kind === 'screen_chunk' ? 800 * attempt : 400 * attempt;
         await new Promise((r) => setTimeout(r, backoff));
       }
     }
   }
-  return { ok: false, error: lastErr?.message || String(lastErr) };
+  return {
+    ok: false,
+    error: lastErr?.message || String(lastErr),
+    status: lastStatus,
+  };
 }
 
 async function enqueueFailedMediaUpload(kind, payload, lastError) {
@@ -739,10 +765,13 @@ async function uploadScreenshotPayload(payload) {
   const now = Date.now();
   if (now - (state.lastScreenshotFailureAt || 0) >= SCREEN_CHUNK_FAILURE_COOLDOWN_MS) {
     state.lastScreenshotFailureAt = now;
-    await recordWorkerEvent('violation', 'Screenshot upload failed (queued for retry)', {
+    await recordWorkerEvent('violation', 'Screenshot upload failed', {
       eventCategory: 'screenshot',
       event: 'screenshot_upload_failed',
+      violationType: 'screenshot_upload_failed',
       error: result.error,
+      statusCode: result.status != null ? result.status : undefined,
+      capturedAt: payload.capturedAt,
     });
   }
   return { ok: false, retry: true, error: result.error };
@@ -771,11 +800,14 @@ async function uploadScreenChunkPayload(payload) {
   const now = Date.now();
   if (now - state.lastScreenChunkFailureAt >= SCREEN_CHUNK_FAILURE_COOLDOWN_MS) {
     state.lastScreenChunkFailureAt = now;
-    await recordWorkerEvent('violation', 'Screen chunk upload failed (queued for retry)', {
+    await recordWorkerEvent('violation', 'Screen chunk upload failed', {
       eventCategory: 'screen_chunk',
       event: 'screen_chunk_upload_failed',
-      error: result.error,
+      violationType: 'screen_chunk_upload_failed',
+      error: typeof result.error === 'string' ? result.error : result.error?.message || String(result.error),
+      statusCode: result.status != null ? result.status : undefined,
       chunkSeq: payload.chunkSeq,
+      capturedAt: payload.capturedAt,
     });
   }
   return { ok: false, retry: true, error: result.error };
@@ -790,6 +822,166 @@ function sanitizeMs(value, fallback, min, max) {
 function getSessionKey() {
   if (!state.interviewId) return '';
   return `interview:${state.interviewId}`;
+}
+
+function computeFlowPhase(contentFlow) {
+  if (state.sessionEnding) return PROCTORING_FLOW_PHASE.SESSION_ENDED;
+  if (state.joinInFlight) return PROCTORING_FLOW_PHASE.JOINING_SESSION;
+  if (!state.joined) return PROCTORING_FLOW_PHASE.NOT_JOINED;
+  if (!state.sessionActive) return PROCTORING_FLOW_PHASE.WAITING_FOR_SCREEN_SHARE;
+  if (contentFlow?.shareStopped && !state.contentScreenShareActive) {
+    return PROCTORING_FLOW_PHASE.SCREEN_SHARE_STOPPED;
+  }
+  if (state.contentScreenShareActive && state.sessionActive) {
+    if (contentFlow?.isProctoringActive === false) return PROCTORING_FLOW_PHASE.SCREEN_SHARING_ACTIVE;
+    return PROCTORING_FLOW_PHASE.PROCTORING_ACTIVE;
+  }
+  if (contentFlow?.isPromptingScreenShare) return PROCTORING_FLOW_PHASE.WAITING_FOR_SCREEN_SHARE;
+  return PROCTORING_FLOW_PHASE.WAITING_FOR_SCREEN_SHARE;
+}
+
+async function syncFlowPhaseToStorage(contentFlow) {
+  state.flowPhase = computeFlowPhase(contentFlow);
+  try {
+    await chrome.storage.local.set({
+      proctoringFlowPhase: state.flowPhase,
+      proctoringContentFlow: contentFlow || {},
+    });
+  } catch (e) {
+    console.warn('syncFlowPhaseToStorage', e);
+  }
+}
+
+async function applyJoinPayloadFromHandshake(p, sender) {
+  const interviewId = parseInterviewId(p.interviewId);
+  if (!interviewId) throw new Error('Invalid Interview ID.');
+  if (!p.sessionToken || !String(p.sessionToken).trim()) throw new Error('Missing session token.');
+  state.sessionToken = p.sessionToken;
+  state.interviewId = interviewId;
+  state.name = p.name || '';
+  state.email = p.email || '';
+  state.policy.restrictedDomains = p.restrictedDomains || [];
+  state.policy.allowedExamHosts = p.allowedExamHosts || [];
+  state.policy.clipboardBlocking = p.clipboardBlocking !== false;
+  state.screenshotIntervalMs = sanitizeMs(p.screenshotIntervalMs, SCREENSHOT_MS, 10000, 300000);
+  state.screenChunkIntervalMs = sanitizeMs(p.screenChunkIntervalMs, SCREEN_CHUNK_MS, 10000, 120000);
+  setSessionExpiry(p.sessionExpiresAtMs || p.meetingEndIso || p.meetingEndMs);
+  state.settings.clipboardBlocking = state.policy.clipboardBlocking;
+  state.apiOrigin = (p.apiOrigin || '').replace(/\/$/, '');
+  await resolveApiOrigin(sender?.tab);
+  if (!state.apiOrigin) throw new Error('Could not resolve API origin.');
+  await persistSessionToStorage();
+  try {
+    await syncDynamicRules(state.policy.restrictedDomains);
+  } catch (dnrErr) {
+    console.warn('applyJoinPayload DNR', dnrErr);
+  }
+  return interviewId;
+}
+
+async function completeBackendJoinAfterShare() {
+  if (state.joined) return { ok: true };
+  let joinApiError = null;
+  for (let attempt = 0; attempt < 8; attempt++) {
+    try {
+      await apiPost(
+        PROCTORING_API.join,
+        {
+          interviewId: state.interviewId,
+          sessionToken: state.sessionToken,
+          name: state.name,
+          email: state.email,
+        },
+        false
+      );
+      joinApiError = null;
+      break;
+    } catch (err) {
+      joinApiError = err;
+      if (!isRetryableApiError(err) || attempt >= 7) break;
+      await new Promise((r) => setTimeout(r, Math.min(4000, 350 + attempt * 300)));
+    }
+  }
+  if (joinApiError) {
+    return { ok: false, error: joinApiError?.message || String(joinApiError) };
+  }
+  state.joined = true;
+  if (!state.sessionActive) await resetSessionDiagnostics();
+  await persistSessionToStorage();
+  startTabAndWindowFocusMonitoring();
+  return { ok: true };
+}
+
+async function initProctoringSessionInternal(p, sender) {
+  if (initProctoringSessionInFlight) {
+    return { ok: false, inProgress: true, error: 'Proctoring initialization already in progress.' };
+  }
+  const incomingId = parseInterviewId(p?.interviewId);
+  const incomingKey = incomingId ? `interview:${incomingId}` : '';
+  if (state.joined && state.sessionToken && incomingKey && state.initProctoringCompletedKey === incomingKey) {
+    const startRes = state.sessionActive ? { ok: true } : await ensureProctoringSessionStartedWithRetry();
+    rememberProctoringTab(sender.tab?.id, sender.tab?.windowId);
+    return {
+      ok: true,
+      alreadyInitialized: true,
+      joined: true,
+      sessionStarted: startRes.ok === true,
+      proctoringReady: startRes.ok === true,
+    };
+  }
+  initProctoringSessionInFlight = true;
+  state.joinInFlight = true;
+  await syncFlowPhaseToStorage({ isPromptingScreenShare: false });
+  try {
+    await applyJoinPayloadFromHandshake(p, sender);
+    void ensureOffscreenDocument().catch((e) => console.warn('offscreen prewarm', e));
+    let joinApiError = null;
+    for (let attempt = 0; attempt < 8; attempt++) {
+      try {
+        await apiPost(
+          PROCTORING_API.join,
+          {
+            interviewId: state.interviewId,
+            sessionToken: state.sessionToken,
+            name: state.name,
+            email: state.email,
+          },
+          false
+        );
+        joinApiError = null;
+        break;
+      } catch (err) {
+        joinApiError = err;
+        if (!isRetryableApiError(err) || attempt >= 7) break;
+        await new Promise((r) => setTimeout(r, Math.min(4000, 350 + attempt * 300)));
+      }
+    }
+    if (joinApiError) {
+      return { ok: false, error: joinApiError?.message || String(joinApiError) };
+    }
+    state.joined = true;
+    if (!state.sessionActive) await resetSessionDiagnostics();
+    await persistSessionToStorage();
+    startTabAndWindowFocusMonitoring();
+    const startRes = await ensureProctoringSessionStartedWithRetry();
+    if (startRes.ok) {
+      proctoringPrepareKey = getSessionKey();
+      state.initProctoringCompletedKey = proctoringPrepareKey;
+      await chrome.storage.local.set({ proctoringPrepareKey });
+    }
+    rememberProctoringTab(sender.tab?.id, sender.tab?.windowId);
+    await syncFlowPhaseToStorage({ isPromptingScreenShare: false });
+    return {
+      ok: true,
+      joined: true,
+      sessionStarted: startRes.ok === true,
+      proctoringReady: startRes.ok === true,
+      startError: startRes.ok ? null : startRes.error,
+    };
+  } finally {
+    state.joinInFlight = false;
+    initProctoringSessionInFlight = false;
+  }
 }
 
 async function resetSessionDiagnostics() {
@@ -838,9 +1030,20 @@ async function syncDynamicRules(domains) {
   }
 }
 
+function isTrustedProctoringExamHost(hostname) {
+  if (!hostname) return false;
+  const host = String(hostname).toLowerCase();
+  if (host === 'localhost' || host === '127.0.0.1' || host === '[::1]' || host.endsWith('.localhost')) {
+    return true;
+  }
+  if (host === 'portal.risebird.io' || host.endsWith('.risebird.io')) return true;
+  return false;
+}
+
 function validateHost(tabUrl) {
   try {
     const host = new URL(tabUrl).hostname;
+    if (isTrustedProctoringExamHost(host)) return true;
     const allowed = state.policy.allowedExamHosts || [];
     return allowed.some((h) => h && h.toLowerCase() === host.toLowerCase());
   } catch {
@@ -855,6 +1058,13 @@ function stopHeartbeat() {
   }
 }
 
+function getHeartbeatStatus() {
+  if (!state.joined) return 'stopped';
+  if (!state.sessionActive) return 'stopped';
+  if (!state.contentScreenShareActive) return 'screen_share_missing';
+  return 'active';
+}
+
 function startHeartbeat() {
   stopHeartbeat();
   state.heartbeatTimer = setInterval(() => {
@@ -863,13 +1073,13 @@ function startHeartbeat() {
     if (!state.apiOrigin) return;
     void processUploadQueue();
     apiPost(
-      '/heartbeat',
+      PROCTORING_API.heartbeat,
       {
         interviewId: state.interviewId,
+        status: getHeartbeatStatus(),
+        violationCount: state.violations,
+        timestamp: new Date().toISOString(),
         utcTicks: Date.now(),
-        timestamp: Date.now(),
-        status: state.sessionActive ? 'active' : state.joined ? 'joined' : 'idle',
-        violations: state.violations,
       },
       true
     ).catch((e) =>
@@ -885,7 +1095,14 @@ function stopScreenshotTimer() {
   }
 }
 
-/** Fallback when display-media capture in the content script is unavailable. */
+const MIN_SCREENSHOT_BASE64_LEN = 1200;
+
+function isLikelyBlankScreenshotBase64(base64) {
+  if (!base64 || base64.length < MIN_SCREENSHOT_BASE64_LEN) return true;
+  return false;
+}
+
+/** Capture interview tab via chrome.tabs.captureVisibleTab while content-script share is active. */
 async function captureAndPostScreenshotFallback() {
   if (!state.apiOrigin || !state.sessionActive) return;
   try {
@@ -895,13 +1112,26 @@ async function captureAndPostScreenshotFallback() {
         : (await chrome.windows.getLastFocused())?.id;
     if (windowId == null) return;
     const dataUrl = await chrome.tabs.captureVisibleTab(windowId, { format: 'jpeg', quality: 60 });
+    if (!dataUrl || !dataUrl.startsWith('data:image')) return;
     const base64 = dataUrl.split(',')[1];
-    if (!base64) return;
+    if (isLikelyBlankScreenshotBase64(base64)) return;
+    let tabId = state.proctoringTabId;
+    let tabUrl = '';
+    if (tabId != null) {
+      try {
+        const tab = await chrome.tabs.get(tabId);
+        tabUrl = (tab.url || tab.pendingUrl || '').slice(0, 500);
+      } catch (_) {
+        /* ignore */
+      }
+    }
     await uploadScreenshotPayload({
       imageBase64: base64,
-      capturedAt: Date.now(),
+      capturedAt: new Date().toISOString(),
       captureSource: 'tabs_capture_visible_tab',
-      captureContext: { fallbackCapture: true },
+      captureContext: { tabId, url: tabUrl },
+      tabId,
+      url: tabUrl,
     });
   } catch (e) {
     console.warn('proctoring screenshot fallback', e);
@@ -910,7 +1140,7 @@ async function captureAndPostScreenshotFallback() {
 
 function startScreenshotFallbackTimer() {
   stopScreenshotTimer();
-  const intervalMs = Math.max(state.screenshotIntervalMs || SCREENSHOT_MS, 90000);
+  const intervalMs = Math.max(state.screenshotIntervalMs || SCREENSHOT_MS, 10000);
   state.screenshotTimer = setInterval(() => captureAndPostScreenshotFallback(), intervalMs);
 }
 
@@ -1084,7 +1314,7 @@ async function ensureProctoringSessionStarted() {
     return { ok: false, error: 'Join session first (reload dashboard or use extension popup).' };
   }
   try {
-    await apiPost('/start', { interviewId: state.interviewId }, true);
+    await apiPost(PROCTORING_API.start, { interviewId: state.interviewId }, true);
   } catch (err) {
     return { ok: false, error: err?.message || 'Server could not start the exam session.' };
   }
@@ -1103,6 +1333,7 @@ async function ensureProctoringSessionStarted() {
 
 function isCaptureStaleState(hasLiveStream, pipelineReady) {
   if (!state.sessionActive || !state.joined) return false;
+  if (state.contentScreenShareActive) return false;
   if (hasLiveStream && pipelineReady) return false;
   const since = state.sessionActiveSince || 0;
   if (!since || Date.now() - since < CAPTURE_STALE_MS) return false;
@@ -1124,6 +1355,14 @@ async function resetScreenPickerForSession() {
 async function softInterruptProctoringInternal() {
   stopScreenshotTimer();
   stopOffscreenMediaKeepAlive();
+  if (state.proctoringTabId != null) {
+    try {
+      await chrome.tabs.sendMessage(state.proctoringTabId, { type: 'CONTENT_SCREEN_SHARE_CLEANUP' });
+    } catch (_) {
+      /* tab may be closed */
+    }
+  }
+  state.contentScreenShareActive = false;
   try {
     await messageOffscreen({ type: 'OFFSCREEN_STOP_CAPTURE' });
   } catch (_) {
@@ -1158,6 +1397,7 @@ async function resumeCaptureAfterInterruptInternal(tabId, tabUrl, senderWindowId
 }
 
 async function nudgeCaptureRecoveryOnInterviewTab(source) {
+  if (state.contentScreenShareActive) return;
   if (!state.proctoringTabId) return;
   const now = Date.now();
   if (now - (state.lastCaptureRecoveryAt || 0) < CAPTURE_REPICK_COOLDOWN_MS) return;
@@ -1173,6 +1413,7 @@ async function nudgeCaptureRecoveryOnInterviewTab(source) {
 }
 
 async function runWorkerCaptureRecoveryIfStale(_source) {
+  if (state.contentScreenShareActive) return;
   const hasLiveStream = await offscreenCaptureActive();
   const pipelineReady = await offscreenPipelineReady();
   if (hasLiveStream && !pipelineReady) {
@@ -1195,6 +1436,44 @@ async function ensureProctoringSessionStartedWithRetry(maxAttempts = 10) {
   };
 }
 
+/** Content-script getDisplayMedia monitor share is active — arm session without offscreen picker. */
+async function activateContentScreenShare(tabId, senderWindowId) {
+  const sessionRes = await ensureProctoringSessionStartedWithRetry();
+  if (!sessionRes.ok) return sessionRes;
+  state.contentScreenShareActive = true;
+  rememberProctoringTab(tabId, senderWindowId);
+  startTabAndWindowFocusMonitoring();
+  stopHeartbeat();
+  startHeartbeat();
+  stopScreenshotTimer();
+  startScreenshotFallbackTimer();
+  scheduleUploadQueueAlarm();
+  void processUploadQueue();
+  try {
+    await chrome.tabs.sendMessage(tabId, {
+      type: 'START_CONTENT_MONITORING',
+      settings: getContentMonitoringSettings(),
+    });
+  } catch (_) {
+    /* content script may already be monitoring */
+  }
+  try {
+    await chrome.tabs.sendMessage(tabId, { type: 'NOTIFY_PROCTORING_STARTED' });
+  } catch (_) {
+    /* non-fatal — share is already active in the page */
+  }
+  await syncFlowPhaseToStorage({
+    isSessionJoined: true,
+    isSessionStarted: true,
+    isScreenShareActive: true,
+    hasValidMonitorShare: true,
+    isProctoringActive: true,
+    shareStopped: false,
+  });
+  setTimeout(() => void openProctoringPopupWindow(), 400);
+  return { ok: true, contentScreenShare: true };
+}
+
 async function activateExistingScreenShare(tabId, senderWindowId) {
   const sessionRes = await ensureProctoringSessionStartedWithRetry();
   if (!sessionRes.ok) return sessionRes;
@@ -1212,8 +1491,18 @@ async function activateExistingScreenShare(tabId, senderWindowId) {
   } catch (_) {
     /* ignore */
   }
+  state.contentScreenShareActive = true;
   scheduleOffscreenMediaKeepAlive();
   void processUploadQueue();
+  setTimeout(() => void openProctoringPopupWindow(), 400);
+  await syncFlowPhaseToStorage({
+    isSessionJoined: true,
+    isSessionStarted: true,
+    isScreenShareActive: true,
+    hasValidMonitorShare: true,
+    isProctoringActive: true,
+    shareStopped: false,
+  });
   return { ok: true, reusedExistingScreenShare: true };
 }
 
@@ -1249,9 +1538,11 @@ async function prepareProctoringBackend(tabId, tabUrl, senderWindowId) {
   return { ok: true, proctoringReady: true };
 }
 
-/** Phase 2: entire-screen picker + capture (after prepare). */
+/** Phase 2: entire-screen picker + capture. promptFirst opens the native picker before API join/prepare. */
 async function beginEntireScreenShare(tabId, tabUrl, senderWindowId, options = {}) {
   const forceNewPicker = options.forceNewPicker === true;
+  const promptFirst = options.promptFirst === true;
+  const bootstrapPayload = options.payload || null;
   clearStaleSetupLock();
   const sessionKey = getSessionKey();
 
@@ -1260,6 +1551,9 @@ async function beginEntireScreenShare(tabId, tabUrl, senderWindowId, options = {
   }
 
   if (completeTestSetupInFlight) {
+    if (promptFirst && !(await offscreenCaptureActive())) {
+      clearStaleSetupLock();
+    }
     if (!forceNewPicker) {
       for (let wait = 0; wait < 30; wait++) {
         await new Promise((r) => setTimeout(r, 400));
@@ -1269,28 +1563,54 @@ async function beginEntireScreenShare(tabId, tabUrl, senderWindowId, options = {
         if (!completeTestSetupInFlight) break;
       }
     }
-    return { ok: false, error: 'Proctoring setup is already in progress.', doNotRetryPicker: true };
+    if (completeTestSetupInFlight && promptFirst && !(await offscreenCaptureActive())) {
+      clearStaleSetupLock();
+    }
+    if (completeTestSetupInFlight) {
+      return { ok: false, error: 'Proctoring setup is already in progress.', doNotRetryPicker: true, retry: true };
+    }
   }
 
   if (!isAllowedProctoringPageUrl(tabUrl)) {
     return { ok: false, error: 'Proctoring runs only on the AI Interview page.' };
   }
+
+  if (bootstrapPayload) {
+    try {
+      await applyJoinPayloadFromHandshake(bootstrapPayload, {
+        tab: { id: tabId, url: tabUrl, windowId: senderWindowId },
+      });
+    } catch (err) {
+      return { ok: false, error: err?.message || String(err), doNotRetryPicker: true };
+    }
+  }
+
   if (!validateHost(tabUrl)) {
     return {
       ok: false,
       error: 'This page host is not allowed for proctoring. Open the interview from the Risebird portal.',
+      doNotRetryPicker: true,
     };
   }
-  if (!state.joined || !state.sessionToken) {
+
+  if (!state.sessionToken) {
     return { ok: false, error: 'Join session first (reload the interview page).' };
   }
   if (await maybeEndSessionIfExpired('before_start_proctoring')) {
     return { ok: false, error: 'Session already expired. Please restart from AI Interview.' };
   }
 
-  if (!forceNewPicker && proctoringPrepareKey !== sessionKey) {
-    const prep = await prepareProctoringBackend(tabId, tabUrl, senderWindowId);
-    if (!prep.ok) return prep;
+  if (promptFirst) {
+    await syncFlowPhaseToStorage({ isPromptingScreenShare: true });
+    void ensureOffscreenDocument().catch((e) => console.warn('offscreen prewarm before picker', e));
+  } else {
+    if (!state.joined) {
+      return { ok: false, error: 'Join session first (reload the interview page).' };
+    }
+    if (!forceNewPicker && proctoringPrepareKey !== sessionKey) {
+      const prep = await prepareProctoringBackend(tabId, tabUrl, senderWindowId);
+      if (!prep.ok) return prep;
+    }
   }
 
   if (!forceNewPicker && screenPickerAttemptedKey === sessionKey) {
@@ -1299,14 +1619,20 @@ async function beginEntireScreenShare(tabId, tabUrl, senderWindowId, options = {
     }
     return {
       ok: false,
-      error: 'Entire screen share is not active. Re-share entire screen from the extension popup if needed.',
+      error: 'Entire screen share is not active. Use Start Session in the extension popup to share again.',
       doNotRetryPicker: true,
+      pickerAlreadyAttempted: true,
       screenShareLost: true,
     };
   }
 
+  if (screenPickerInFlight && !forceNewPicker) {
+    return { ok: false, inProgress: true, doNotRetryPicker: true, retry: true };
+  }
+
   completeTestSetupInFlight = true;
   completeTestSetupStartedAt = Date.now();
+  screenPickerInFlight = true;
   try {
     rememberProctoringTab(tabId, senderWindowId);
 
@@ -1317,11 +1643,13 @@ async function beginEntireScreenShare(tabId, tabUrl, senderWindowId, options = {
       return { ok: false, error: 'Could not access the interview tab.' };
     }
 
+    await syncFlowPhaseToStorage({ isPromptingScreenShare: true });
+
     try {
       await ensureOffscreenDocument();
       await resolveOffscreenDocumentId();
     } catch (warmErr) {
-      return { ok: false, error: warmErr?.message || 'Could not prepare screen capture.' };
+      return { ok: false, error: warmErr?.message || 'Could not prepare screen capture.', retry: true };
     }
 
     screenPickerAttemptedKey = sessionKey;
@@ -1333,22 +1661,49 @@ async function beginEntireScreenShare(tabId, tabUrl, senderWindowId, options = {
     } catch (pickErr) {
       const pickMsg = pickErr?.message || 'Entire screen share was not granted.';
       const cancelled = /cancel/i.test(pickMsg);
+      await syncFlowPhaseToStorage({ isPromptingScreenShare: false });
       return {
         ok: false,
         error: pickMsg,
         pickerCancelled: cancelled,
-        doNotRetryPicker: cancelled,
+        pickerInvoked: true,
+        doNotRetryPicker: true,
       };
     }
 
+    await syncFlowPhaseToStorage({ isPromptingScreenShare: false });
+
+    /* Attach desktop stream immediately — streamId expires if join/start APIs run first. */
     const offRes = await messageOffscreen({
       type: 'OFFSCREEN_START_CAPTURE',
       streamId,
       settings: getContentMonitoringSettings(),
     });
     if (!offRes?.ok) {
-      return { ok: false, error: offRes?.error || 'Screen capture could not start.' };
+      return {
+        ok: false,
+        error: offRes?.error || 'Screen capture could not start.',
+        doNotRetryPicker: true,
+        pickerInvoked: true,
+      };
     }
+
+    if (!state.joined) {
+      const joinRes = await completeBackendJoinAfterShare();
+      if (!joinRes.ok) {
+        await messageOffscreen({ type: 'OFFSCREEN_STOP_CAPTURE' });
+        return Object.assign({}, joinRes, { pickerInvoked: true, doNotRetryPicker: true });
+      }
+    }
+
+    const sessionRes = await ensureProctoringSessionStartedWithRetry();
+    if (!sessionRes.ok) {
+      await messageOffscreen({ type: 'OFFSCREEN_STOP_CAPTURE' });
+      return Object.assign({}, sessionRes, { pickerInvoked: true, doNotRetryPicker: true });
+    }
+    proctoringPrepareKey = sessionKey;
+    state.initProctoringCompletedKey = sessionKey;
+    await chrome.storage.local.set({ proctoringPrepareKey });
 
     await messageOffscreen({ type: 'OFFSCREEN_CAPTURE_SCREENSHOT_NOW' });
 
@@ -1370,10 +1725,23 @@ async function beginEntireScreenShare(tabId, tabUrl, senderWindowId, options = {
       };
     }
 
+    state.contentScreenShareActive = true;
     scheduleOffscreenMediaKeepAlive();
-    void openProctoringPopupWindow();
-    return { ok: true };
+    scheduleUploadQueueAlarm();
+    void processUploadQueue();
+    await syncFlowPhaseToStorage({
+      isSessionJoined: true,
+      isSessionStarted: true,
+      isScreenShareActive: true,
+      hasValidMonitorShare: true,
+      isProctoringActive: true,
+      isPromptingScreenShare: false,
+      shareStopped: false,
+    });
+    setTimeout(() => void openProctoringPopupWindow(), 500);
+    return { ok: true, pickerInvoked: true };
   } finally {
+    screenPickerInFlight = false;
     completeTestSetupInFlight = false;
     completeTestSetupStartedAt = 0;
   }
@@ -1386,6 +1754,17 @@ async function endExamInternal() {
   stopOffscreenMediaKeepAlive();
   stopSessionExpiryTimer();
   clearUploadQueueAlarm();
+  if (state.proctoringTabId != null) {
+    try {
+      await chrome.tabs.sendMessage(state.proctoringTabId, { type: 'CONTENT_SCREEN_SHARE_CLEANUP' });
+    } catch (_) {
+      /* tab may be closed */
+    }
+  }
+  state.contentScreenShareActive = false;
+  state.initProctoringCompletedKey = '';
+  await syncFlowPhaseToStorage({ shareStopped: false, isProctoringActive: false });
+  state.flowPhase = PROCTORING_FLOW_PHASE.SESSION_ENDED;
   try {
     await messageOffscreen({ type: 'OFFSCREEN_STOP_CAPTURE' });
   } catch (_) {
@@ -1397,6 +1776,8 @@ async function endExamInternal() {
     'proctoringScreenPickerAttemptedKey',
     'proctoringPrepareKey',
     'proctoringInterruptResumePendingKey',
+    'proctoringShareEstablishedKey',
+    'proctoringAutoSharePromptKey',
   ]);
   await closeOffscreenDocument();
   for (let i = 0; i < 5; i++) {
@@ -1417,7 +1798,7 @@ async function endExamInternal() {
   }
   await chrome.storage.local.set({ sessionActive: false, proctoringSessionJoined: false });
   try {
-    await apiPost('/stop', { interviewId: state.interviewId }, true);
+    await apiPost(PROCTORING_API.stop, { interviewId: state.interviewId }, true);
   } catch (_) {
     /* backend optional */
   }
@@ -1506,17 +1887,28 @@ async function resolveApiOrigin(senderTab) {
   }
 }
 
-/** Open extension popup when AI Interview page completes join (toolbar popup or fallback window). */
+/** Open extension popup when screen share + proctoring are active (toolbar popup or fallback window). */
 async function openProctoringPopupWindow() {
   const sessionKey = getSessionKey();
   if (!sessionKey) return;
+  const popupUrl = chrome.runtime.getURL('popup.html');
+  const extOrigin = chrome.runtime.getURL('');
   try {
-    const data = await chrome.storage.local.get(['proctoringAutoPopupShownFor']);
-    if (data.proctoringAutoPopupShownFor === sessionKey || state.autoPopupShownForSessionKey === sessionKey) {
+    const wins = await chrome.windows.getAll({ populate: true });
+    const existing = wins.find(
+      (w) =>
+        w.type === 'popup' &&
+        Array.isArray(w.tabs) &&
+        w.tabs.some((t) => t.url && t.url.startsWith(extOrigin) && t.url.includes('popup.html'))
+    );
+    if (existing?.id != null) {
+      await chrome.windows.update(existing.id, { focused: true, drawAttention: true });
+      state.autoPopupShownForSessionKey = sessionKey;
+      await chrome.storage.local.set({ proctoringAutoPopupShownFor: sessionKey });
       return;
     }
-  } catch (_) {
-    /* ignore storage read errors */
+  } catch (e) {
+    console.warn('Risebird proctoring: find existing popup', e);
   }
   try {
     if (typeof chrome.action?.openPopup === 'function') {
@@ -1529,17 +1921,8 @@ async function openProctoringPopupWindow() {
     console.warn('Risebird proctoring: chrome.action.openPopup', e);
   }
   try {
-    const extOrigin = chrome.runtime.getURL('');
-    const wins = await chrome.windows.getAll({ populate: true });
-    const hasProctorPopup = wins.some(
-      (w) =>
-        w.type === 'popup' &&
-        Array.isArray(w.tabs) &&
-        w.tabs.some((t) => t.url && t.url.startsWith(extOrigin) && t.url.includes('popup.html'))
-    );
-    if (hasProctorPopup) return;
     await chrome.windows.create({
-      url: chrome.runtime.getURL('popup.html'),
+      url: popupUrl,
       type: 'popup',
       width: 440,
       height: 720,
@@ -1558,7 +1941,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return false;
   }
   (async () => {
-    if (message?.type === 'JOIN_DASHBOARD_HANDSHAKE') {
+    if (message?.type === 'INIT_PROCTORING_SESSION' || message?.type === 'JOIN_DASHBOARD_HANDSHAKE') {
       const p = message.payload || {};
       const handshakeTabUrl = sender.tab?.url || '';
       if (!isAllowedProctoringPageUrl(handshakeTabUrl)) {
@@ -1568,88 +1951,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return;
       }
-      const interviewId = parseInterviewId(p.interviewId);
-      if (!interviewId) {
-        sendResponse({ ok: false, error: 'Invalid Interview ID from dashboard.' });
-        return;
-      }
-      if (!p.sessionToken || !String(p.sessionToken).trim()) {
-        sendResponse({ ok: false, error: 'Missing session token from dashboard.' });
-        return;
-      }
-      /* Do not call chrome.permissions.request here — it requires a user gesture and
-         will fail from the service worker, blocking join before the popup opens. */
-      state.sessionToken = p.sessionToken || null;
-      state.interviewId = interviewId;
-      state.name = p.name || '';
-      state.email = p.email || '';
-      state.policy.restrictedDomains = p.restrictedDomains || [];
-      state.policy.allowedExamHosts = p.allowedExamHosts || [];
-      state.policy.clipboardBlocking = p.clipboardBlocking !== false;
-      state.screenshotIntervalMs = sanitizeMs(p.screenshotIntervalMs, SCREENSHOT_MS, 10000, 300000);
-      state.screenChunkIntervalMs = sanitizeMs(p.screenChunkIntervalMs, SCREEN_CHUNK_MS, 10000, 120000);
-      setSessionExpiry(p.sessionExpiresAtMs || p.meetingEndIso || p.meetingEndMs);
-      state.settings.clipboardBlocking = state.policy.clipboardBlocking;
-      state.apiOrigin = (p.apiOrigin || '').replace(/\/$/, '');
-      await resolveApiOrigin(sender.tab);
-      if (!state.apiOrigin) {
-        sendResponse({ ok: false, error: 'Could not resolve API origin.' });
-        return;
-      }
-      await persistSessionToStorage();
-      const offscreenWarm = ensureOffscreenDocument().catch((e) =>
-        console.warn('offscreen prewarm on join', e)
-      );
       try {
-        await syncDynamicRules(state.policy.restrictedDomains);
-      } catch (dnrErr) {
-        console.warn('JOIN_DASHBOARD_HANDSHAKE DNR', dnrErr);
+        sendResponse(await initProctoringSessionInternal(p, sender));
+      } catch (err) {
+        sendResponse({ ok: false, error: err?.message || String(err) });
       }
-      let joinApiError = null;
-      for (let attempt = 0; attempt < 8; attempt++) {
-        try {
-          await apiPost(
-            '/join',
-            {
-              interviewId: state.interviewId,
-              sessionToken: state.sessionToken,
-              name: state.name,
-              email: state.email,
-            },
-            false
-          );
-          joinApiError = null;
-          break;
-        } catch (err) {
-          joinApiError = err;
-          if (!isRetryableApiError(err) || attempt >= 7) break;
-          await new Promise((r) => setTimeout(r, Math.min(4000, 350 + attempt * 300)));
-        }
-      }
-      if (joinApiError) {
-        console.warn('JOIN_DASHBOARD_HANDSHAKE api', joinApiError);
-        sendResponse({ ok: false, error: joinApiError?.message || String(joinApiError) });
-        return;
-      }
-      state.joined = true;
-      if (!state.sessionActive) {
-        await resetSessionDiagnostics();
-      }
-      await persistSessionToStorage();
-      startTabAndWindowFocusMonitoring();
-      await offscreenWarm;
-      const startRes = await ensureProctoringSessionStartedWithRetry();
-      if (startRes.ok) {
-        proctoringPrepareKey = getSessionKey();
-        await chrome.storage.local.set({ proctoringPrepareKey });
-      }
-      sendResponse({
-        ok: true,
-        sessionStarted: startRes.ok === true,
-        sessionStartedOk: startRes.ok === true,
-        proctoringReady: startRes.ok === true,
-        startError: startRes.ok ? null : startRes.error,
-      });
+      return;
+    }
+
+    if (message?.type === 'UPDATE_PROCTORING_FLOW_STATE') {
+      await syncFlowPhaseToStorage(message.flow || {});
+      sendResponse({ ok: true, flowPhase: state.flowPhase });
       return;
     }
 
@@ -1689,7 +2001,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       await persistSessionToStorage();
       try {
         await apiPost(
-          '/join',
+          PROCTORING_API.join,
           {
             interviewId: state.interviewId,
             sessionToken: state.sessionToken,
@@ -1741,6 +2053,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return;
     }
 
+    if (message?.type === 'CLEAR_STALE_SCREEN_PICKER_STATE') {
+      if (message.force === true && !(await offscreenCaptureActive())) {
+        screenPickerAttemptedKey = null;
+        screenPickerInFlight = false;
+        await chrome.storage.local.remove('proctoringScreenPickerAttemptedKey');
+        clearStaleSetupLock();
+      }
+      sendResponse({ ok: true });
+      return;
+    }
+
     if (message?.type === 'BEGIN_SCREEN_SHARE') {
       const tabId = sender.tab?.id;
       const tabUrl = sender.tab?.url || '';
@@ -1753,12 +2076,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse(
           await beginEntireScreenShare(tabId, tabUrl, sender.tab?.windowId, {
             forceNewPicker: message.forceNewPicker === true,
+            promptFirst: message.promptFirst === true,
+            payload: message.payload || null,
           })
         );
       } catch (err) {
         sendResponse({
           ok: false,
           error: 'Could not reach this page. Refresh the interview tab and ensure the extension is enabled.',
+          retry: true,
         });
       }
       return;
@@ -1778,10 +2104,58 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         setupInProgress: completeTestSetupInFlight,
         pickerAttempted: screenPickerAttemptedKey === sessionKey,
         captureStale: isCaptureStaleState(hasLiveStream, pipelineReady),
+        contentScreenShareActive: state.contentScreenShareActive === true,
         screenshotUploads: state.screenshotUploads || 0,
         screenChunkUploads: state.screenChunkUploads || 0,
         sessionActiveSince: state.sessionActiveSince || 0,
       });
+      return;
+    }
+
+    if (message?.type === 'CONTENT_SCREEN_SHARE_STARTED') {
+      const tabId = sender.tab?.id;
+      const tabUrl = sender.tab?.url || '';
+      if (!tabId) {
+        sendResponse({ ok: false, error: 'No tab context.' });
+        return;
+      }
+      if (!isAllowedProctoringPageUrl(tabUrl)) {
+        sendResponse({ ok: false, error: 'Proctoring runs only on the AI Interview page.' });
+        return;
+      }
+      await resolveApiOrigin(sender.tab);
+      try {
+        sendResponse(await activateContentScreenShare(tabId, sender.tab?.windowId));
+      } catch (err) {
+        sendResponse({ ok: false, error: err?.message || String(err) });
+      }
+      return;
+    }
+
+    if (message?.type === 'CONTENT_SCREEN_SHARE_STOPPED') {
+      state.contentScreenShareActive = false;
+      await syncFlowPhaseToStorage(
+        Object.assign({}, message.flow || {}, {
+          isScreenShareActive: false,
+          hasValidMonitorShare: false,
+          isProctoringActive: false,
+          shareStopped: true,
+        })
+      );
+      sendResponse({ ok: true });
+      return;
+    }
+
+    if (message?.type === 'PROCTORING_VIOLATION') {
+      const p = message.payload || {};
+      const violationType = p.violationType || 'unknown';
+      const msg = p.message || violationType;
+      const meta = Object.assign({}, p.metadata || {}, {
+        violationType,
+        occurredAt: p.occurredAt || new Date().toISOString(),
+      });
+      await recordWorkerEvent('violation', msg, meta);
+      sendResponse({ ok: true });
       return;
     }
 
@@ -1865,10 +2239,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message?.type === 'START_SESSION') {
-      /* Popup already requests optional hosts on button click before this message. */
-      await resolveApiOrigin(sender.tab);
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-      const tab = tabs[0];
+      let tab = tabs[0];
+      if (state.proctoringTabId != null) {
+        try {
+          tab = await chrome.tabs.get(state.proctoringTabId);
+        } catch (_) {
+          /* use active tab */
+        }
+      }
       if (!tab?.id) {
         sendResponse({ ok: false, error: 'No active tab.' });
         return;
@@ -1884,21 +2263,46 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return;
       }
+      await resolveApiOrigin(tab);
+      const saved = await chrome.storage.local.get(['proctoringLastJoin']);
+      const j = saved.proctoringLastJoin;
+      if (!state.joined && j?.sessionToken) {
+        try {
+          const initRes = await initProctoringSessionInternal(j, { tab });
+          if (!initRes.ok) {
+            sendResponse(initRes);
+            return;
+          }
+        } catch (err) {
+          sendResponse({ ok: false, error: err?.message || String(err) });
+          return;
+        }
+      }
       if (!state.joined || !state.sessionToken) {
-        sendResponse({ ok: false, error: 'Join session first.' });
+        sendResponse({ ok: false, error: 'Join session first (open AI Interview page).' });
+        return;
+      }
+      const prep = await prepareProctoringBackend(tab.id, tab.url || '', tab.windowId);
+      if (!prep.ok) {
+        sendResponse(prep);
+        return;
+      }
+      if (state.contentScreenShareActive) {
+        sendResponse({
+          ok: true,
+          alreadyActive: true,
+          message: 'Screen sharing is already active.',
+        });
         return;
       }
       try {
-        const prep = await prepareProctoringBackend(tab.id, tab.url || '', tab.windowId);
-        if (!prep.ok) {
-          sendResponse(prep);
-          return;
-        }
-        sendResponse(
-          await beginEntireScreenShare(tab.id, tab.url || '', tab.windowId, { forceNewPicker: true })
-        );
+        await chrome.tabs.sendMessage(tab.id, { type: 'REQUEST_MANUAL_SCREEN_SHARE' });
+        sendResponse({ ok: true, manualShareRequested: true });
       } catch (err) {
-        sendResponse({ ok: false, error: err?.message || String(err) });
+        sendResponse({
+          ok: false,
+          error: 'Could not reach the interview tab. Refresh the page and try again.',
+        });
       }
       return;
     }
@@ -1917,11 +2321,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     if (message?.type === 'GET_STATE') {
       await loadEventsFromStorageIfEmpty();
+      const stored = await chrome.storage.local.get(['proctoringContentFlow', 'proctoringFlowPhase']);
+      const contentFlow = stored.proctoringContentFlow || {};
+      const flowPhase = stored.proctoringFlowPhase || computeFlowPhase(contentFlow);
       sendResponse({
         ok: true,
         state: {
           joined: state.joined,
           sessionActive: state.sessionActive,
+          sessionStarted: state.sessionActive,
+          contentScreenShareActive: state.contentScreenShareActive,
+          flowPhase,
+          flow: contentFlow,
           violations: state.violations,
           settings: { clipboardBlocking: state.settings.clipboardBlocking },
           events: state.events,
@@ -1954,7 +2365,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     if (message?.type === 'CONTENT_EVENT') {
       const meta = message.metadata || {};
-      if (meta.event === 'screen_share_ended' && state.proctoringTabId != null) {
+      if (
+        meta.event === 'screen_share_ended' &&
+        !state.contentScreenShareActive &&
+        state.proctoringTabId != null
+      ) {
         try {
           await chrome.tabs.sendMessage(state.proctoringTabId, { type: 'NOTIFY_SCREEN_SHARE_LOST' });
         } catch (_) {
