@@ -10,7 +10,7 @@ BEGIN
     FROM MasterAssessmentGroup mag
     WHERE mag.MAGName = @MagName AND ISNULL(mag.IsDeleted, 0) = 0;
 
-    -- EA interviewers (priority)
+    -- EA interviewers (priority) — exclude inactive/deleted/dropped
     ;WITH EAList AS (
         SELECT ea.Id,
                ea.InterviewerProfileId,
@@ -28,6 +28,8 @@ BEGIN
           AND ea.Status IN ('Open', 'InProgress', 'Verified')
           AND LEN(ISNULL(COALESCE(ul.MobileNumber, ea.Phone), '')) >= 10
           AND (@OnlyUncalled = 0 OR ISNULL(ea.PlivoCallStatus, '') = '')
+          AND (ul.Id IS NULL OR ul.IsActive = 1)
+          AND (ip.Id IS NULL OR (ISNULL(ip.IsDeleted, 0) = 0 AND ISNULL(ip.Isavailable, 0) <> 4))
     ),
 
     -- Distinct EA profile IDs for this MAG to exclude from Profile list
@@ -40,7 +42,7 @@ BEGIN
         GROUP BY ea.InterviewerProfileId
     ),
 
-    -- Profile interviewers not in EA
+    -- Profile interviewers not in EA — exclude inactive/deleted/dropped
     ProfileList AS (
         SELECT ip.Id,
                ip.Id AS InterviewerProfileId,
@@ -57,6 +59,7 @@ BEGIN
         WHERE agi.AssessmentGroupId = @AgId
           AND ISNULL(ip.IsDeleted, 0) = 0
           AND ISNULL(ip.Isavailable, 0) <> 4
+          AND ul.IsActive = 1
           AND LEN(ISNULL(ul.MobileNumber, '')) >= 10
           AND NOT EXISTS (SELECT 1 FROM EAProfileIds ep WHERE ep.InterviewerProfileId = ip.Id)
     )

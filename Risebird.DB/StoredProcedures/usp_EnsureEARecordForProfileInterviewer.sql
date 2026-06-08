@@ -6,6 +6,21 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Block if interviewer profile or user account is inactive/deleted/dropped
+    IF NOT EXISTS (
+        SELECT 1
+        FROM InterviewerProfile ip
+        INNER JOIN UserList ul ON ul.Id = ip.UserId
+        WHERE ip.Id = @InterviewerProfileId
+          AND ISNULL(ip.IsDeleted, 0) = 0
+          AND ISNULL(ip.Isavailable, 0) <> 4
+          AND ul.IsActive = 1
+    )
+    BEGIN
+        SELECT 0 AS Id;
+        RETURN;
+    END
+
     DECLARE @ExistingId INT;
 
     SELECT TOP 1 @ExistingId = ea.Id
