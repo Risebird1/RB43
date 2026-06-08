@@ -162,7 +162,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20250604ivvetfit" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20250608ivtabs" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -1034,6 +1034,8 @@
                                             @{
                                                 var ivList = Model.InterviewerCollection ?? new List<TransInterviewer>();
                                                 int ivCount = ivList.Count;
+                                                int ivActiveCount = ivList.Count(x => x.IsActive);
+                                                int ivInactiveCount = ivCount - ivActiveCount;
                                                 bool dmIvLockNew = Model.DmIvLockNew;
                                                 int rbVetCount = ivList.Count(x => DmV4RbVetDisplayYes(x, dmIvLockNew));
                                                 int clientVetCount = ivList.Count(x => DmV4ClientVetDisplayYes(x, dmIvLockNew, DmV4RbVetDisplayYes(x, dmIvLockNew)));
@@ -1134,7 +1136,20 @@
                                         <div class="card">
                                             <div class="dm-v4-pinned-body" id="hidden_fields_eight">
                                                 @Html.HiddenFor(m => m.id)
-                                                <div class="dm-v4-iv-panel" id="dmV4IvPanel" data-lock="@(dmIvLockNew ? "1" : "0")" data-cap-enforced="@(dmCapEnforced ? "1" : "0")" data-can-edit="@(canEditIvOps ? "1" : "0")" data-can-upload-resume="@(canUploadIvResume ? "1" : "0")" data-can-edit-surcharge="@(canEditSurcharge ? "1" : "0")">
+                                                <div class="dm-v4-iv-panel" id="dmV4IvPanel" data-lock="@(dmIvLockNew ? "1" : "0")" data-cap-enforced="@(dmCapEnforced ? "1" : "0")" data-can-edit="@(canEditIvOps ? "1" : "0")" data-can-upload-resume="@(canUploadIvResume ? "1" : "0")" data-can-edit-surcharge="@(canEditSurcharge ? "1" : "0")" data-iv-tab="active">
+                                                    @if (ivCount > 0)
+                                                    {
+                                                        <div class="dm-v4-iv-tabs" id="dmV4IvTabs" role="tablist" aria-label="Interviewer status">
+                                                            <button type="button" class="dm-v4-iv-tab is-on" data-tab="active" role="tab" aria-selected="true" aria-controls="dmV4IvPanel">
+                                                                Active
+                                                                <span class="dm-v4-iv-tab-count" id="dmV4IvTabActiveCount">@ivActiveCount</span>
+                                                            </button>
+                                                            <button type="button" class="dm-v4-iv-tab" data-tab="inactive" role="tab" aria-selected="false" aria-controls="dmV4IvPanel">
+                                                                Inactive
+                                                                <span class="dm-v4-iv-tab-count" id="dmV4IvTabInactiveCount">@ivInactiveCount</span>
+                                                            </button>
+                                                        </div>
+                                                    }
                                                     <div class="dm-v4-iv-grid dm-v4-iv-grid--head">
                                                         <span>Interviewer</span>
                                                         @* <span>Company</span> *@
@@ -1156,6 +1171,7 @@
                                                     }
                                                     else
                                                     {
+                                                        <div class="dm-v4-iv-empty dm-v4-iv-empty--tab" id="dmV4IvTabEmpty" hidden>No interviewers in this tab.</div>
                                                         for (int i = 0; i < ivList.Count; i++)
                                                         {
                                                             var iv = ivList[i];
@@ -3281,7 +3297,7 @@ else
 </style>
 <script src="~/js/dm-v4-voice.js?v=20240529"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-layout.js?v=20250604cvupload2"></script>
+<script src="~/js/dm-v4-layout.js?v=20250608ivtabs"></script>
 <script src="~/js/dm-v4-questions.js?v=20240521i"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
