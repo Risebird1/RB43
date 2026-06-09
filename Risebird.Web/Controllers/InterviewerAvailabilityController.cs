@@ -1176,7 +1176,7 @@ namespace Risebird.Web.Controllers
 
                 if (source == "Profile" && !string.IsNullOrEmpty(magName))
                 {
-                    eaId = await _repository.EnsureEARecordForProfileInterviewerAsync(id, magName, "PlivoCX");
+                    eaId = await _repository.EnsureEARecordForProfileInterviewerAsync(id, magName, "BatchCall");
                     if (eaId <= 0)
                         return Json(new { success = false, error = "Could not create availability record for this interviewer." });
                 }
