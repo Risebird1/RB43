@@ -1046,35 +1046,19 @@
                 '</div>';
             document.body.appendChild(overlay);
 
-            // Show inline progress banner inside the modal
             var divResult = document.getElementById('divBatchResult');
-            divResult.innerHTML =
-                '<div id="batchProgressBox" style="background:#f0f7ff;border:1px solid #b3d4fb;border-radius:6px;padding:14px 16px;">' +
-                    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">' +
-                        '<img src="/Newassets/img/lazyload.gif" style="height:28px;width:28px;flex-shrink:0;" />' +
-                        '<span style="font-size:14px;font-weight:600;color:#1565c0;">Processing Batch Payout&hellip;</span>' +
-                    '</div>' +
-                    '<div style="font-size:13px;color:#555;margin-bottom:8px;">Payments are being sent to Cashfree one by one. <strong>Do not close or refresh this page.</strong></div>' +
-                    '<div style="background:#dce9fb;border-radius:4px;height:8px;overflow:hidden;margin-bottom:8px;">' +
-                        '<div id="batchProgressBar" style="height:100%;width:0%;background:#1976d2;transition:width 0.4s ease;"></div>' +
-                    '</div>' +
-                    '<div id="batchProgressLabel" style="font-size:12px;color:#1976d2;">Initiating payouts for <strong>' + ids.length + '</strong> interviewer(s)&hellip;</div>' +
-                '</div>';
-            divResult.style.display = 'block';
+            divResult.innerHTML = '';
+            divResult.style.display = 'none';
 
-            // Animate both bars to ~80% while waiting; 100% set on completion
+            // Animate overlay bar to ~80% while waiting; 100% set on completion
             var fakeProgress = 0;
             var fakeTimer = setInterval(function () {
                 if (fakeProgress < 80) {
                     fakeProgress += Math.random() * 8;
                     if (fakeProgress > 80) fakeProgress = 80;
                     var pct = fakeProgress.toFixed(1) + '%';
-                    var bar = document.getElementById('batchProgressBar');
-                    if (bar) bar.style.width = pct;
                     var oBar = document.getElementById('batchOverlayBar');
                     if (oBar) oBar.style.width = pct;
-                    var lbl = document.getElementById('batchProgressLabel');
-                    if (lbl) lbl.textContent = 'Processing\u2026 please wait, this may take a few seconds per interviewer.';
                     var oLbl = document.getElementById('batchOverlayLabel');
                     if (oLbl) oLbl.textContent = 'Processing\u2026 please wait, this may take a few seconds per interviewer.';
                 }
@@ -1092,8 +1076,6 @@
                 dataType: 'json',
                 success: function (data) {
                     clearInterval(fakeTimer);
-                    var bar = document.getElementById('batchProgressBar');
-                    if (bar) bar.style.width = '100%';
                     var oBar = document.getElementById('batchOverlayBar');
                     if (oBar) oBar.style.width = '100%';
 
