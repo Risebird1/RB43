@@ -993,10 +993,16 @@
     }
 
     function updateBatchCount() {
-        var selected = document.querySelectorAll('.chkBatchInterviewer:checked').length;
-        document.getElementById('spnBatchSelected').textContent = selected + ' interviewer(s) selected';
+        var checked = document.querySelectorAll('.chkBatchInterviewer:checked');
         var allBoxes = document.querySelectorAll('.chkBatchInterviewer');
-        document.getElementById('chkSelectAllBatch').checked = allBoxes.length > 0 && selected === allBoxes.length;
+        var totalAmt = 0;
+        for (var i = 0; i < checked.length; i++) {
+            totalAmt += parseInt(checked[i].getAttribute('data-amount') || 0);
+        }
+        var txt = checked.length + ' interviewer(s) selected';
+        if (checked.length > 0) txt += ' &nbsp;|&nbsp; Total Amount: <strong>' + totalAmt + '</strong>';
+        document.getElementById('spnBatchSelected').innerHTML = txt;
+        document.getElementById('chkSelectAllBatch').checked = allBoxes.length > 0 && checked.length === allBoxes.length;
     }
 
     function confirmBatchPayout() {
@@ -1006,18 +1012,21 @@
             return;
         }
         var ids = [];
+        var totalAmt = 0;
         for (var i = 0; i < selected.length; i++) {
             ids.push(selected[i].getAttribute('data-id'));
+            totalAmt += parseInt(selected[i].getAttribute('data-amount') || 0);
         }
         Swal.fire({
             title: 'Batch Payout',
-            text: 'Proceed with Cashfree payout for ' + ids.length + ' interviewer(s)?',
+            text: 'Proceed with Cashfree payout for ' + ids.length + ' interviewer(s) ? Total Amount: ' + totalAmt + '?',
             showDenyButton: true,
             showCancelButton: false,
             confirmButtonText: 'Yes, Proceed',
             denyButtonText: 'Cancel'
         }).then(function (result) {
-            if (!result.isConfirmed) return;
+            
+            if (!result.value) return;
 
             document.getElementById('btnProceedBatch').disabled = true;
             document.getElementById('divBatchResult').style.display = 'none';
@@ -1032,7 +1041,6 @@
                     st: St_date || '',
                     se: Se_date || ''
                 },
-                dataType: 'json',
                 success: function (data) {
                     $(".loader").hide();
                     var resultHtml = '<table class="table table-bordered table-sm" style="font-size:12px;margin:0;">';
