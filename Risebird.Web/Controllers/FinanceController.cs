@@ -740,6 +740,94 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
+        /// Returns all interviewers from the current session-cached FNPayment list
+        /// that have a pending payable amount AND a verified bank account.
+        /// Used to populate the Batch Payout modal with the full (unpaginated) dataset.
+        /// </summary>
+        [HttpGet]
+        public JsonResult GetAllBatchPayoutCandidates()
+        {
+            try
+            {
+                var sessionData = HttpContext.Session.GetString("financemodel");
+                if (string.IsNullOrEmpty(sessionData))
+                    return Json(new { success = false, message = "Session expired. Please reload the page.", data = new List<object>() });
+
+                var allItems = JsonConvert.DeserializeObject<List<Risebird.Entities.ViewModel.RBInterviewDetails>>(sessionData);
+                var candidates = allItems
+                    .Where(x => x.Points > 0 && x.IsBankVerified)
+                    .Select(x => new { x.id, email = x.Comment, amount = x.Points, x.IsBankVerified })
+                    .ToList();
+
+                return Json(new { success = true, data = candidates });
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { success = false, message = "Failed to load candidates.", data = new List<object>() });
+            }
+        }
+
+        /// <summary>
+        /// Processes Cashfree bank payouts for multiple interviewers in a single request.
+        /// Accepts a comma-separated list of interviewer IDs; each is paid using the same
+        /// index/date-range context that was active on the FNPayment page.
+        /// Returns JSON: { results: [{ id, email, success, message }] }
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> BatchConfirmPaymentViaCashfree(string ids, int index, DateTime? st, DateTime? se)
+        {
+            var results = new List<object>();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(ids))
+                    return Json(new { results, error = "No interviewer IDs provided." });
+
+                var idList = ids.Split(',')
+                                .Select(x => x.Trim())
+                                .Where(x => !string.IsNullOrEmpty(x))
+                                .Select(int.Parse)
+                                .ToList();
+
+                var sessionData = HttpContext.Session.GetString("financemodel");
+                List<Risebird.Entities.ViewModel.RBInterviewDetails> allItems = null;
+                if (!string.IsNullOrEmpty(sessionData))
+                    allItems = JsonConvert.DeserializeObject<List<Risebird.Entities.ViewModel.RBInterviewDetails>>(sessionData);
+
+                var stVal = st ?? DateTime.MinValue;
+                var seVal = se ?? DateTime.MinValue;
+
+                foreach (var id in idList)
+                {
+                    var item = allItems?.FirstOrDefault(x => x.id == id);
+                    if (item == null)
+                    {
+                        results.Add(new { id, email = "", success = false, message = "Interviewer not found in session." });
+                        continue;
+                    }
+                    try
+                    {
+                        var (success, message) = await _meetingService.ConfirmPaymentViaCashfree(
+                            id, index, item.Comment, item.Points.ToString(), stVal, seVal);
+                        results.Add(new { id, email = item.Comment, success, message });
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        results.Add(new { id, email = item.Comment, success = false, message = "Unexpected error during payout." });
+                    }
+                }
+
+                return Json(new { results });
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { results, error = "An unexpected error occurred." });
+            }
+        }
+
+        /// <summary>
         /// Refreshes the Cashfree transfer status for a previously initiated payout.
         /// Returns structured JSON: { success, payoutId, status, amount, utr, updated } on success.
         /// </summary>
