@@ -1029,8 +1029,56 @@
             if (!result.value) return;
 
             document.getElementById('btnProceedBatch').disabled = true;
-            document.getElementById('divBatchResult').style.display = 'none';
-            $(".loader").show();
+
+            // Full-screen blocking overlay
+            var overlay = document.createElement('div');
+            overlay.id = 'batchOverlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+            overlay.innerHTML =
+                '<div style="background:#fff;border-radius:10px;padding:36px 40px;min-width:320px;max-width:460px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.25);">' +
+                    '<img src="/Newassets/img/lazyload.gif" style="height:48px;width:48px;margin-bottom:16px;" />' +
+                    '<div style="font-size:17px;font-weight:700;color:#1565c0;margin-bottom:8px;">Processing Batch Payout&hellip;</div>' +
+                    '<div style="font-size:13px;color:#555;margin-bottom:16px;">Sending payments to Cashfree one by one.<br><strong>Do not close or refresh this page.</strong></div>' +
+                    '<div style="background:#dce9fb;border-radius:6px;height:10px;overflow:hidden;margin-bottom:10px;">' +
+                        '<div id="batchOverlayBar" style="height:100%;width:0%;background:#1976d2;transition:width 0.5s ease;"></div>' +
+                    '</div>' +
+                    '<div id="batchOverlayLabel" style="font-size:12px;color:#1976d2;">Initiating payouts for <strong>' + ids.length + '</strong> interviewer(s)&hellip;</div>' +
+                '</div>';
+            document.body.appendChild(overlay);
+
+            // Show inline progress banner inside the modal
+            var divResult = document.getElementById('divBatchResult');
+            divResult.innerHTML =
+                '<div id="batchProgressBox" style="background:#f0f7ff;border:1px solid #b3d4fb;border-radius:6px;padding:14px 16px;">' +
+                    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">' +
+                        '<img src="/Newassets/img/lazyload.gif" style="height:28px;width:28px;flex-shrink:0;" />' +
+                        '<span style="font-size:14px;font-weight:600;color:#1565c0;">Processing Batch Payout&hellip;</span>' +
+                    '</div>' +
+                    '<div style="font-size:13px;color:#555;margin-bottom:8px;">Payments are being sent to Cashfree one by one. <strong>Do not close or refresh this page.</strong></div>' +
+                    '<div style="background:#dce9fb;border-radius:4px;height:8px;overflow:hidden;margin-bottom:8px;">' +
+                        '<div id="batchProgressBar" style="height:100%;width:0%;background:#1976d2;transition:width 0.4s ease;"></div>' +
+                    '</div>' +
+                    '<div id="batchProgressLabel" style="font-size:12px;color:#1976d2;">Initiating payouts for <strong>' + ids.length + '</strong> interviewer(s)&hellip;</div>' +
+                '</div>';
+            divResult.style.display = 'block';
+
+            // Animate both bars to ~80% while waiting; 100% set on completion
+            var fakeProgress = 0;
+            var fakeTimer = setInterval(function () {
+                if (fakeProgress < 80) {
+                    fakeProgress += Math.random() * 8;
+                    if (fakeProgress > 80) fakeProgress = 80;
+                    var pct = fakeProgress.toFixed(1) + '%';
+                    var bar = document.getElementById('batchProgressBar');
+                    if (bar) bar.style.width = pct;
+                    var oBar = document.getElementById('batchOverlayBar');
+                    if (oBar) oBar.style.width = pct;
+                    var lbl = document.getElementById('batchProgressLabel');
+                    if (lbl) lbl.textContent = 'Processing\u2026 please wait, this may take a few seconds per interviewer.';
+                    var oLbl = document.getElementById('batchOverlayLabel');
+                    if (oLbl) oLbl.textContent = 'Processing\u2026 please wait, this may take a few seconds per interviewer.';
+                }
+            }, 700);
 
             $.ajax({
                 url: "/Finance/BatchConfirmPaymentViaCashfree",
@@ -1041,41 +1089,57 @@
                     st: St_date || '',
                     se: Se_date || ''
                 },
+                dataType: 'json',
                 success: function (data) {
-                    $(".loader").hide();
-                    var resultHtml = '<table class="table table-bordered table-sm" style="font-size:12px;margin:0;">';
-                    resultHtml += '<thead><tr><th>Email</th><th>Amount</th><th>Result</th></tr></thead><tbody>';
-                    var successCount = 0, failCount = 0;
-                    if (data.results && data.results.length > 0) {
-                        for (var j = 0; j < data.results.length; j++) {
-                            var r = data.results[j];
-                            // read amount from the checkbox's data-amount attribute
-                            var pts = '';
-                            var chkBox = document.querySelector('.chkBatchInterviewer[data-id="' + r.id + '"]');
-                            if (chkBox) pts = chkBox.getAttribute('data-amount') || '';
-                            var rowClass = r.success ? 'table-success' : 'table-danger';
-                            resultHtml += '<tr class="' + rowClass + '">';
-                            resultHtml += '<td>' + (r.email || '') + '</td>';
-                            resultHtml += '<td>' + pts + '</td>';
-                            resultHtml += '<td>' + (r.message || (r.success ? 'Success' : 'Failed')) + '</td>';
-                            resultHtml += '</tr>';
-                            if (r.success) successCount++; else failCount++;
+                    clearInterval(fakeTimer);
+                    var bar = document.getElementById('batchProgressBar');
+                    if (bar) bar.style.width = '100%';
+                    var oBar = document.getElementById('batchOverlayBar');
+                    if (oBar) oBar.style.width = '100%';
+
+                    setTimeout(function () {
+                        var ov = document.getElementById('batchOverlay');
+                        if (ov) ov.parentNode.removeChild(ov);
+                        var resultHtml = '<table class="table table-bordered table-sm" style="font-size:12px;margin:0;">';
+                        resultHtml += '<thead><tr><th>Email</th><th>Amount</th><th>Result</th></tr></thead><tbody>';
+                        var successCount = 0, failCount = 0;
+                        if (data.results && data.results.length > 0) {
+                            for (var j = 0; j < data.results.length; j++) {
+                                var r = data.results[j];
+                                var pts = '';
+                                var chkBox = document.querySelector('.chkBatchInterviewer[data-id="' + r.id + '"]');
+                                if (chkBox) pts = chkBox.getAttribute('data-amount') || '';
+                                var rowClass = r.success ? 'table-success' : 'table-danger';
+                                resultHtml += '<tr class="' + rowClass + '">';
+                                resultHtml += '<td>' + (r.email || '') + '</td>';
+                                resultHtml += '<td>' + pts + '</td>';
+                                resultHtml += '<td>' + (r.message || (r.success ? 'Success' : 'Failed')) + '</td>';
+                                resultHtml += '</tr>';
+                                if (r.success) successCount++; else failCount++;
+                            }
                         }
-                    }
-                    resultHtml += '</tbody></table>';
-                    var summary = '<div style="margin-bottom:6px;font-weight:bold;font-size:13px;">'
-                        + '<span class="text-success">&#10003; ' + successCount + ' succeeded</span>'
-                        + (failCount > 0 ? ' &nbsp; <span class="text-danger">&#10007; ' + failCount + ' failed</span>' : '')
-                        + '</div>';
-                    var divResult = document.getElementById('divBatchResult');
-                    divResult.innerHTML = summary + resultHtml;
-                    divResult.style.display = 'block';
-                    document.getElementById('btnProceedBatch').disabled = false;
-                    FinacneChangePage(_Currentpage);
+                        resultHtml += '</tbody></table>';
+
+                        var summaryBg    = failCount === 0 ? '#e8f5e9' : '#fff3e0';
+                        var summaryColor = failCount === 0 ? '#1b5e20' : '#e65100';
+                        var summaryIcon  = failCount === 0 ? '&#10003;' : '&#9888;';
+                        var summaryText  = successCount + ' payout(s) initiated successfully'
+                            + (failCount > 0 ? ' &nbsp;|&nbsp; ' + failCount + ' failed' : '');
+                        var summary = '<div style="background:' + summaryBg + ';border-radius:6px;padding:10px 14px;margin-bottom:8px;font-size:13px;font-weight:600;color:' + summaryColor + ';">'
+                            + summaryIcon + ' ' + summaryText + '</div>';
+
+                        divResult.innerHTML = summary + resultHtml;
+                        document.getElementById('btnProceedBatch').disabled = false;
+                        FinacneChangePage(_Currentpage);
+                    }, 400);
                 },
                 error: function () {
-                    $(".loader").hide();
-                    Swal.fire('Batch payout request failed. Please try again.');
+                    clearInterval(fakeTimer);
+                    var ov = document.getElementById('batchOverlay');
+                    if (ov) ov.parentNode.removeChild(ov);
+                    divResult.innerHTML =
+                        '<div style="background:#fce4ec;border-radius:6px;padding:12px 14px;color:#b71c1c;font-size:13px;font-weight:600;">' +
+                        '&#10007; Batch payout request failed. Please try again.</div>';
                     document.getElementById('btnProceedBatch').disabled = false;
                 }
             });
