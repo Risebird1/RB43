@@ -16,7 +16,11 @@ Create Procedure [dbo].[usp_ApprovedBlacklistCompany]
 as
 begin
 update BlackListedCompany set IsApprovedBlacklistCompany=1,ModifyDate=@ModifyDate,ModifyBy=@modifyBy where CompanyName=@CompanyName
-Update UserList set IsActive=0 where id in(Select UserId from InterviewerProfile where CompanyName=@CompanyName)
+Update UserList set IsActive=0,
+    InactivationType = 'Blacklist',
+    InactivatedBy = @ModifyBy,
+    InactivatedAt = @ModifyDate
+where id in(Select UserId from InterviewerProfile where CompanyName=@CompanyName)
 Update InterviewMeetings set Interviewer=null where Interviewer in(Select EmailId from UserList where id in(Select UserId from InterviewerProfile where CompanyName=@CompanyName))
 and interviewDate>@ModifyDate
 Update TransInterviewer set IsActive=0,IsAvailable=0 where UserId in(Select UserId from InterviewerProfile where CompanyName=@CompanyName)

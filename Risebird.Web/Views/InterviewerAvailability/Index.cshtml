@@ -14,6 +14,7 @@
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string selSource = ViewBag.Source as string ?? string.Empty;
     string selAutoClosed = ViewBag.AutoClosed as string ?? string.Empty;
+    string selActiveStatus = ViewBag.ActiveStatus as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
     bool canDelete = profileName == "Admin" || profileName == "SupportAdmin";
     bool canDrop = canDelete || profileName == "HR" || profileName == "SeniorHR"
@@ -22,7 +23,7 @@
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selEmail)
                    || !string.IsNullOrEmpty(selFitment) || !string.IsNullOrEmpty(selDateFrom)
                    || !string.IsNullOrEmpty(selDateTo) || !string.IsNullOrEmpty(selSource)
-                   || !string.IsNullOrEmpty(selAutoClosed);
+                   || !string.IsNullOrEmpty(selAutoClosed) || !string.IsNullOrEmpty(selActiveStatus);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
     int last = Math.Min(page * pageSize, totalCount);
@@ -35,6 +36,9 @@
         if (!string.IsNullOrEmpty(selFitment)) q += $"&resumeFitment={Uri.EscapeDataString(selFitment)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
+        if (!string.IsNullOrEmpty(selSource)) q += $"&source={Uri.EscapeDataString(selSource)}";
+        if (!string.IsNullOrEmpty(selAutoClosed)) q += $"&autoClosed={Uri.EscapeDataString(selAutoClosed)}";
+        if (!string.IsNullOrEmpty(selActiveStatus)) q += $"&activeStatus={Uri.EscapeDataString(selActiveStatus)}";
         return Url.Action("Index", "InterviewerAvailability") + q;
     }
 }
@@ -260,6 +264,11 @@
                                     @if (selAutoClosed == "yes") { <option value="yes" selected>Yes</option> } else { <option value="yes">Yes</option> }
                                     @if (selAutoClosed == "no") { <option value="no" selected>No</option> } else { <option value="no">No</option> }
                                 </select>
+                                <select name="activeStatus" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">All interviewers</option>
+                                    @if (selActiveStatus == "active") { <option value="active" selected>Active</option> } else { <option value="active">Active</option> }
+                                    @if (selActiveStatus == "inactive") { <option value="inactive" selected>Inactive</option> } else { <option value="inactive">Inactive</option> }
+                                </select>
                                 <input type="text" name="senderEmail" class="form-control ia-filter-control" placeholder="Sender email..." style="flex:1 1 0;min-width:130px;" value="@selEmail" />
                                 <input type="date" name="dateFrom" class="form-control ia-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
                                 <span class="text-muted flex-shrink-0" style="font-size:11px;">–</span>
@@ -289,7 +298,7 @@
                                             <th class="col-num">#</th><th class="col-date">Received</th><th class="col-email">Email</th>
                                             <th class="col-name">Name</th><th class="col-phone">Phone</th><th class="col-job">Job Title</th>
                                             <th class="col-employed">Employed</th><th class="col-company">Company</th>
-                                            <th class="col-intent-summary">Intent</th><th class="col-source" style="min-width:75px;">Source</th><th class="col-status">Status</th><th class="col-actions">Actions</th>
+                                            <th class="col-intent-summary">Intent</th><th class="col-source" style="min-width:75px;">Source</th><th style="width:70px;white-space:nowrap;">Active</th><th class="col-status">Status</th><th class="col-actions">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -353,6 +362,16 @@
                                                         <br /><span style="font-size:9px;color:#059669;font-weight:600;" title="Auto-closed by @(r.AutoClosedBy ?? "System")@(r.AutoClosedAt.HasValue ? " at " + r.AutoClosedAt.Value.ToString("dd MMM yy, HH:mm") : "")"><i class="fas fa-bolt"></i> Auto-closed</span>
                                                     }
                                                 </td>
+                                                <td style="font-size:11px;text-align:center;">
+                                                    @if (r.IsInterviewerActive)
+                                                    {
+                                                        <span style="color:#059669;font-weight:600;" title="Interviewer is active"><i class="fas fa-check-circle"></i> Yes</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span style="color:#dc2626;font-weight:600;" title="Inactive — @(r.InactivationType ?? "Unknown")"><i class="fas fa-times-circle"></i> No</span>
+                                                    }
+                                                </td>
                                                 <td class="col-status">
                                                     <span class="intent-badge @statusCss" style="word-break:normal;">@(r.Status ?? "Open")</span>
                                                     @if (r.ResumeAIAnalysisCompleted == true)
@@ -396,6 +415,29 @@
                                                                     aria-label="Drop profile">
                                                                 <i class="fas fa-user-slash"></i>
                                                             </button>
+                                                        }
+                                                        @if (r.UserId.HasValue && canDrop)
+                                                        {
+                                                            @if (r.IsInterviewerActive)
+                                                            {
+                                                                <button type="button" title="Inactivate interviewer"
+                                                                        class="btn btn-sm btn-inactivate-interviewer"
+                                                                        style="background:#dc3545;color:#fff;border:none;padding:2px 6px;"
+                                                                        data-record-id="@r.Id"
+                                                                        data-interviewer-name="@(r.InterviewerName ?? r.InterviewerNickName ?? r.SenderEmail)">
+                                                                    <i class="fas fa-user-times" style="font-size:11px;"></i>
+                                                                </button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" title="Reactivate interviewer"
+                                                                        class="btn btn-sm btn-reactivate-interviewer"
+                                                                        style="background:#28a745;color:#fff;border:none;padding:2px 6px;"
+                                                                        data-record-id="@r.Id"
+                                                                        data-interviewer-name="@(r.InterviewerName ?? r.InterviewerNickName ?? r.SenderEmail)">
+                                                                    <i class="fas fa-user-check" style="font-size:11px;"></i>
+                                                                </button>
+                                                            }
                                                         }
                                                         @if (canDelete)
                                                         {
@@ -659,6 +701,57 @@
                 } else { alert(res.error || 'Could not drop profile.'); btn.prop('disabled', false).html('<i class="fas fa-user-slash"></i>'); }
             },
             error: function () { alert('Drop profile request failed.'); btn.prop('disabled', false).html('<i class="fas fa-user-slash"></i>'); }
+        });
+    });
+
+    $(document).on('click', '.btn-inactivate-interviewer', function () {
+        var id = $(this).data('record-id');
+        var name = $(this).data('interviewer-name');
+        Swal.fire({
+            title: 'Inactivate Interviewer',
+            html: 'Are you sure you want to inactivate <strong>' + name + '</strong>?<br/><br/><textarea id="ia-inactivate-comment" class="form-control" rows="2" placeholder="Reason for inactivation..."></textarea>',
+            icon: 'warning', showCancelButton: true,
+            confirmButtonColor: '#dc3545', cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, inactivate', cancelButtonText: 'Cancel',
+            preConfirm: function () {
+                var c = document.getElementById('ia-inactivate-comment').value;
+                if (!c || !c.trim()) { Swal.showValidationMessage('Please enter a reason'); return false; }
+                return c;
+            }
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
+            $.ajax({
+                url: '@Url.Action("InactivateInterviewerFromEA", "InterviewerAvailability")', type: 'POST',
+                data: { __RequestVerificationToken: verificationToken, eaId: id, comment: result.value },
+                success: function (res) {
+                    if (res.success) { Swal.fire('Done', 'Interviewer inactivated.', 'success').then(function () { location.reload(); }); }
+                    else { Swal.fire('Error', res.error || 'Failed.', 'error'); }
+                },
+                error: function () { Swal.fire('Error', 'Request failed.', 'error'); }
+            });
+        });
+    });
+
+    $(document).on('click', '.btn-reactivate-interviewer', function () {
+        var id = $(this).data('record-id');
+        var name = $(this).data('interviewer-name');
+        Swal.fire({
+            title: 'Reactivate Interviewer',
+            text: 'Are you sure you want to reactivate ' + name + '?',
+            icon: 'question', showCancelButton: true,
+            confirmButtonColor: '#28a745', cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, reactivate', cancelButtonText: 'Cancel'
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
+            $.ajax({
+                url: '@Url.Action("ReactivateInterviewerFromEA", "InterviewerAvailability")', type: 'POST',
+                data: { __RequestVerificationToken: verificationToken, eaId: id },
+                success: function (res) {
+                    if (res.success) { Swal.fire('Done', 'Interviewer reactivated.', 'success').then(function () { location.reload(); }); }
+                    else { Swal.fire('Error', res.error || 'Failed.', 'error'); }
+                },
+                error: function () { Swal.fire('Error', 'Request failed.', 'error'); }
+            });
         });
     });
 
