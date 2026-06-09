@@ -623,6 +623,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
         public int BillingType { get; set; }
+        public int BillingModel { get; set; }
         public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
     }
 
