@@ -16,7 +16,8 @@ begin
 Select ul.EmailId as interviewer,ul.MobileNumber,ip.NickName,ip.ResumeLink,ip.CompanyName,ul.id as UserId,     
 tc.TotalCompletedMeetings,sti.TotalInterview,Fti.TotalFuture,ip.IsEmployed,ip.CompanyName,ip.EmploymentComment,  
 Ftis.TotalAssignedFuture as SkillChannelFutureAssignedInterview,tsv.TranscriptVerdit,tsc.TotalSelectMeetings,trc.TotalRejectMeetings,tdf.TotalDeficitMeetings,  
-Case when ip.VideoLink is not null then 'yes' else 'No' end VideoKYC,ip.VideoLink,ip.Isavailable,ip.AvailabilityResponseDate,ip.RedMarkerStatus,Rcd.RedMarkerReviewComment,ul.IsActive  
+Case when ip.VideoLink is not null then 'yes' else 'No' end VideoKYC,ip.VideoLink,ip.Isavailable,ip.AvailabilityResponseDate,ip.RedMarkerStatus,Rcd.RedMarkerReviewComment,ul.IsActive,
+ul.InactivationType,ul.InactivatedBy,ul.InactivatedAt  
 From UserList ul join InterviewerProfile ip on ip.UserId=ul.id  
 outer Apply (Select Count(im.id) as TotalCompletedMeetings from InterviewMeetings im join InterviewComments ic on ic.Interviewid=im.id where im.Interviewer=ul.EmailId and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)) tc      
 outer Apply (Select Count(id) as TotalFuture from InterviewMeetings where interviewer=ul.EmailId and interviewDate>DATEADD(MINUTE,330,Getdate())) Fti      

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -68,6 +68,9 @@ namespace Risebird.Entities.ViewModel
         public int RedMarkerStatus { get; set; }
         public string RedMarkerReviewComment { get; set; }
         public bool Isactive { get; set; }
+        public string InactivationType { get; set; }
+        public string InactivatedBy { get; set; }
+        public DateTime? InactivatedAt { get; set; }
     }
     public class RedMarkerDetailsVM
     {
