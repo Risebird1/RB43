@@ -23,9 +23,12 @@ BEGIN
         FROM UserList     
         WHERE id = @InterviewerId    
     
-        -- Update UserList to set IsActive = 0    
+        -- Update UserList to set IsActive = 0 with inactivation tracking
         UPDATE UserList     
-        SET IsActive = 0    
+        SET IsActive = 0,
+            InactivationType = CASE WHEN @blockinterviewer = 1 THEN 'ManualBlock' ELSE 'ManualRemove' END,
+            InactivatedBy = @ModifiedBy,
+            InactivatedAt = @modifiedOn
         WHERE id = @InterviewerId    
     
         -- Update InterviewerProfile flags    

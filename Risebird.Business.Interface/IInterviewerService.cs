@@ -133,6 +133,7 @@ namespace Risebird.Business.Interface
         /// <param name="comment">Reason for inactivating the interviewer</param>
         /// <returns>True if successful, false otherwise</returns>
         Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer);
+        Task<bool> ReactivateInterviewer(int userId, string reactivatedBy);
         Task<bool> SaveApplicantErrorMessage(int id, string errorMessage);
         Task<bool> SaveExternalApplicantResume(int id, string resumeLink = null);
     }

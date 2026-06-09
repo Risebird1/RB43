@@ -79,6 +79,7 @@ namespace Risebird.Web.Controllers
             string dateTo        = null,
             string source        = null,
             string autoClosed    = null,
+            string activeStatus  = null,
             int    page          = 1,
             int    pageSize      = 25)
         {
@@ -96,8 +97,12 @@ namespace Risebird.Web.Controllers
                 if (autoClosed == "yes") isAutoClosed = true;
                 else if (autoClosed == "no") isAutoClosed = false;
 
+                bool? isInterviewerActive = null;
+                if (activeStatus == "active") isInterviewerActive = true;
+                else if (activeStatus == "inactive") isInterviewerActive = false;
+
                 var records = await _repository.GetEmailAvailabilityAsync(
-                    status, senderEmail, resumeFitment, dtFrom, dtTo, page, pageSize, source, isAutoClosed);
+                    status, senderEmail, resumeFitment, dtFrom, dtTo, page, pageSize, source, isAutoClosed, isInterviewerActive);
 
                 var first      = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -118,6 +123,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.DateTo        = dateTo        ?? string.Empty;
                 ViewBag.Source        = source        ?? string.Empty;
                 ViewBag.AutoClosed    = autoClosed    ?? string.Empty;
+                ViewBag.ActiveStatus  = activeStatus  ?? string.Empty;
                 ViewBag.ProfileName   = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
 
                 return View(records);
@@ -129,7 +135,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.OpenCount = 0; ViewBag.InProgressCount = 0; ViewBag.VerifiedCount = 0; ViewBag.ClosedCount = 0;
                 ViewBag.Status = status; ViewBag.SenderEmail = senderEmail; ViewBag.ResumeFitment = resumeFitment;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
-                ViewBag.Source = source; ViewBag.AutoClosed = autoClosed;
+                ViewBag.Source = source; ViewBag.AutoClosed = autoClosed; ViewBag.ActiveStatus = activeStatus;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
                 return View(new List<InterviewerEmailAvailabilityVM>());
             }
@@ -212,7 +218,9 @@ namespace Risebird.Web.Controllers
                         record.IsAutoClosed,
                         record.AutoClosedBy,
                         autoClosedAt = record.AutoClosedAt?.ToString("dd MMM yyyy, HH:mm"),
-                        record.UserMobileNumber
+                        record.UserMobileNumber,
+                        record.IsInterviewerActive,
+                        record.InactivationType
                     }
                 });
             }
@@ -262,6 +270,83 @@ namespace Risebird.Web.Controllers
 
             var ok = await _repository.DeleteEmailAvailabilityAsync(id);
             return Json(new { success = ok, error = ok ? null : "Could not delete record." });
+        }
+
+        // ── Inactivate Interviewer (from Availability page) ────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InactivateInterviewerFromEA(int eaId, string comment)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
+            var allowed = new[] { "Admin", "SupportAdmin", "SeniorHR", "SeniorInterviewerManagement", "InterviewerManagement", "HR" };
+            if (!Array.Exists(allowed, p => p == profileName))
+                return Json(new { success = false, error = "Not authorised." });
+
+            try
+            {
+                var record = await _repository.GetEmailAvailabilityByIdAsync(eaId);
+                if (record == null || !record.UserId.HasValue)
+                    return Json(new { success = false, error = "Record not found or no linked user." });
+
+                var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "") ?? "";
+                var result = await _interviewerService.InactivateInterviewer(
+                    record.UserId.Value, emailId, string.IsNullOrWhiteSpace(comment) ? "Inactivated from Availability page" : comment, false);
+
+                if (result)
+                {
+                    await _repository.InsertHistoryAsync(eaId, "InterviewerInactivated", "—",
+                        $"Interviewer inactivated. Reason: {comment ?? "N/A"}", emailId);
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false, error = "Failed to inactivate." });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Reactivate Interviewer (from Availability page) ───────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReactivateInterviewerFromEA(int eaId)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
+            var allowed = new[] { "Admin", "SupportAdmin", "SeniorHR", "SeniorInterviewerManagement" };
+            if (!Array.Exists(allowed, p => p == profileName))
+                return Json(new { success = false, error = "Not authorised." });
+
+            try
+            {
+                var record = await _repository.GetEmailAvailabilityByIdAsync(eaId);
+                if (record == null || !record.UserId.HasValue)
+                    return Json(new { success = false, error = "Record not found or no linked user." });
+
+                var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "") ?? "";
+                var result = await _interviewerService.ReactivateInterviewer(record.UserId.Value, emailId);
+
+                if (result)
+                {
+                    await _repository.InsertHistoryAsync(eaId, "InterviewerReactivated", "—",
+                        "Interviewer reactivated from Availability page", emailId);
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false, error = "Failed to reactivate." });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
         }
 
         // ── Drop Interviewer Profile (AJAX) ─────────────────────────────────────────

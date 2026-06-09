@@ -22,7 +22,11 @@ ip.IsApproved=isnull(@IsApproved,ip.IsApproved),
 ip.IsDeleted=isnull(@IsBlocked,ip.IsDeleted)
 from InterviewerProfile ip join UserList ul on ip.Userid=ul.id  
 where ul.EmailId=@Emailid  
-Update UserList set IsActive=IsNull(@IsActive,IsActive) where EmailId=@Emailid  
+Update UserList set IsActive=IsNull(@IsActive,IsActive),
+    InactivationType = CASE WHEN @IsActive = 0 THEN 'ManualFlag' ELSE InactivationType END,
+    InactivatedBy = CASE WHEN @IsActive = 0 THEN 'Admin' ELSE InactivatedBy END,
+    InactivatedAt = CASE WHEN @IsActive = 0 THEN GETDATE() ELSE InactivatedAt END
+where EmailId=@Emailid  
 if(@IsActive=0)  
 begin  
 Update InterviewMeetings set Interviewer=null where Interviewer in(Select Emailid from UserList where  EmailId=@Emailid)  

@@ -8,10 +8,11 @@ CREATE PROCEDURE [dbo].[usp_GetInterviewerEmailAvailability]
     @ResumeFitment  VARCHAR(50)  = NULL,
     @DateFrom       DATETIME     = NULL,
     @DateTo         DATETIME     = NULL,
-    @Source         VARCHAR(50)  = NULL,
-    @IsAutoClosed   BIT          = NULL,
-    @Page           INT          = 1,
-    @PageSize       INT          = 25
+    @Source              VARCHAR(50)  = NULL,
+    @IsAutoClosed        BIT          = NULL,
+    @IsInterviewerActive BIT          = NULL,
+    @Page                INT          = 1,
+    @PageSize            INT          = 25
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -40,6 +41,8 @@ BEGIN
             ip.CompanyName,
             ip.ResumeLink         AS ProfileResumeLink,
             ul.MobileNumber       AS UserMobileNumber,
+            ISNULL(ul.IsActive, 1) AS IsInterviewerActive,
+            ul.InactivationType,
             COUNT(*) OVER()       AS TotalCount,
             SUM(CASE WHEN ea.Status = 'Open'       THEN 1 ELSE 0 END) OVER() AS OpenCount,
             SUM(CASE WHEN ea.Status = 'InProgress'  THEN 1 ELSE 0 END) OVER() AS InProgressCount,
@@ -57,6 +60,7 @@ BEGIN
             AND (@IsAutoClosed IS NULL OR ISNULL(ea.IsAutoClosed, 0) = @IsAutoClosed)
             AND (@DateFrom IS NULL OR ea.ReceivedAt >= @DateFrom)
             AND (@DateTo IS NULL OR ea.ReceivedAt < DATEADD(DAY, 1, @DateTo))
+            AND (@IsInterviewerActive IS NULL OR ISNULL(ul.IsActive, 1) = @IsInterviewerActive)
     )
     SELECT
         bd.*,
