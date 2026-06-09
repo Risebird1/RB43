@@ -37,7 +37,8 @@ BEGIN
         gi.CreatedBy,
         gi.CreatedOn,
         gi.ModifiedOn,
-        ISNULL(c.BillingType, 0)                              AS BillingType
+        ISNULL(c.BillingType, 0)                              AS BillingType,
+        ISNULL(c.BillingModel, 0)                             AS BillingModel
     FROM GeneratedInvoices gi
     LEFT JOIN Client   c  ON c.id  = gi.ClientId
     LEFT JOIN UserList ul ON ul.id = gi.BillingOwnerId

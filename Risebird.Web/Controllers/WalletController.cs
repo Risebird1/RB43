@@ -640,6 +640,25 @@ namespace Risebird.Web.Controllers
             });
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> UpdatePOStatus(int poId, int clientId, int status)
+        {
+            if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
+
+            // Only allow setting to Complete (4) or Paid (5)
+            if (status != 4 && status != 5)
+                return Json(new { success = false, message = "Invalid status. Allowed values: 4 (Complete), 5 (Paid)." });
+
+            var result = await _walletService.UpdatePOStatus(poId, clientId, status);
+            var label = status == 4 ? "Complete" : "Paid";
+            return Json(new
+            {
+                success = result,
+                message = result ? $"Invoice marked as {label}." : "Failed to update invoice status."
+            });
+        }
+
         private bool IsFinanceOrAdmin()
         {
             if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
