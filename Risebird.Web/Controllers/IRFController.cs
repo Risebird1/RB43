@@ -1090,103 +1090,102 @@ namespace Risebird.Web.Controllers
 
         private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName, string jdTitle)
         {
-            // Plivo auto-calls on IRF creation disabled to control costs
-            return;
+            _ = System.Threading.Tasks.Task.Run(async () =>
+            {
+                try
+                {
+                    if (!int.TryParse(assessmentGroupId, out int agId))
+                        return;
+                    string magName = await _eaRepository.GetMAGNameByAssessmentGroupIdAsync(agId);
+                    if (string.IsNullOrWhiteSpace(magName))
+                        return;
 
-            //_ = System.Threading.Tasks.Task.Run(async () =>
-            //{
-            //    try
-            //    {
-            //        string magName = await _eaRepository.GetMAGNameByAssessmentGroupIdAsync(agId);
-            //        if (string.IsNullOrWhiteSpace(magName))
-            //            return;
+                    var interviewers = await _eaRepository.GetCallableInterviewersForMAGAsync(magName, onlyUncalled: true);
+                    if (interviewers == null || !interviewers.Any())
+                        return;
 
-            //        var interviewers = await _eaRepository.GetCallableInterviewersForMAGAsync(magName, onlyUncalled: true);
-            //        if (interviewers == null || !interviewers.Any())
-            //            return;
+                    string callerId = _configuration["PlivoCX:AvailabilityCallerId"]
+                                   ?? _configuration["PlivoCX:OnboardingCallerId"]
+                                   ?? _configuration["Plivo:FromNumber"]
+                                   ?? "+918031136547";
 
-            //        string callerId = _configuration["PlivoCX:AvailabilityCallerId"]
-            //                       ?? _configuration["PlivoCX:OnboardingCallerId"]
-            //                       ?? _configuration["Plivo:FromNumber"]
-            //                       ?? "+918031136547";
+                    int batchLogId = 0;
+                    string initiatedBy = "IRF AutoCall";
+                    try
+                    {
+                        batchLogId = await _eaRepository.InsertBatchCallLogAsync(magName, initiatedBy, interviewers.Count);
+                    }
+                    catch { }
 
-            //        int batchLogId = 0;
-            //        string initiatedBy = "IRF AutoCall";
-            //        try
-            //        {
-            //            batchLogId = await _eaRepository.InsertBatchCallLogAsync(magName, initiatedBy, interviewers.Count);
-            //        }
-            //        catch { }
+                    int succeeded = 0, failed = 0;
 
-            //        int succeeded = 0, failed = 0;
+                    foreach (var interviewer in interviewers)
+                    {
+                        try
+                        {
+                            int eaId = interviewer.Id;
 
-            //        foreach (var interviewer in interviewers)
-            //        {
-            //            try
-            //            {
-            //                int eaId = interviewer.Id;
+                            if (interviewer.Source == "Profile" && interviewer.InterviewerProfileId.HasValue)
+                            {
+                                eaId = await _eaRepository.EnsureEARecordForProfileInterviewerAsync(
+                                    interviewer.InterviewerProfileId.Value, magName, "IRFAutoCall");
+                                if (eaId <= 0) { failed++; continue; }
+                            }
 
-            //                if (interviewer.Source == "Profile" && interviewer.InterviewerProfileId.HasValue)
-            //                {
-            //                    eaId = await _eaRepository.EnsureEARecordForProfileInterviewerAsync(
-            //                        interviewer.InterviewerProfileId.Value, magName, "IRFAutoCall");
-            //                    if (eaId <= 0) { failed++; continue; }
-            //                }
+                            string phone = interviewer.Phone?.Trim() ?? "";
+                            if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
+                            else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
 
-            //                string phone = interviewer.Phone?.Trim() ?? "";
-            //                if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
-            //                else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
+                            await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
+                                DateTime.UtcNow, null, null, null, null, null, null, null, null, initiatedBy);
 
-            //                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
-            //                    DateTime.UtcNow, null, null, null, null, null, null, null, null, initiatedBy);
+                            var triggerRequest = new PlivoCXAvailabilityTriggerRequest
+                            {
+                                CallerId        = callerId,
+                                PhoneNumber     = phone,
+                                InterviewerName = interviewer.InterviewerName ?? "there",
+                                InterviewerEmail = interviewer.SenderEmail,
+                                MagName         = magName,
+                                LogId           = eaId.ToString(),
+                                TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                            };
 
-            //                var triggerRequest = new PlivoCXAvailabilityTriggerRequest
-            //                {
-            //                    CallerId        = callerId,
-            //                    PhoneNumber     = phone,
-            //                    InterviewerName = interviewer.InterviewerName ?? "there",
-            //                    InterviewerEmail = interviewer.SenderEmail,
-            //                    MagName         = magName,
-            //                    LogId           = eaId.ToString(),
-            //                    TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
-            //                };
+                            var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
 
-            //                var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
+                            if (!string.IsNullOrEmpty(response?.Error))
+                            {
+                                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
+                                    null, null, null, response.Error, null, null, null, null, null, null);
+                                failed++;
+                            }
+                            else
+                            {
+                                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "triggered", response?.ConversationId,
+                                    null, null, null, null, null, null, null, null, null, null);
+                                await _eaRepository.InsertHistoryAsync(eaId, "IRFAutoCall", "—",
+                                    $"Availability call triggered for IRF '{irfName}'. ConvId: {response?.ConversationId ?? "N/A"}", initiatedBy);
+                                succeeded++;
+                            }
 
-            //                if (!string.IsNullOrEmpty(response?.Error))
-            //                {
-            //                    await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
-            //                        null, null, null, response.Error, null, null, null, null, null, null);
-            //                    failed++;
-            //                }
-            //                else
-            //                {
-            //                    await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "triggered", response?.ConversationId,
-            //                        null, null, null, null, null, null, null, null, null, null);
-            //                    await _eaRepository.InsertHistoryAsync(eaId, "IRFAutoCall", "—",
-            //                        $"Availability call triggered for IRF '{irfName}'. ConvId: {response?.ConversationId ?? "N/A"}", initiatedBy);
-            //                    succeeded++;
-            //                }
+                            await System.Threading.Tasks.Task.Delay(1200);
+                        }
+                        catch
+                        {
+                            failed++;
+                        }
+                    }
 
-            //                await System.Threading.Tasks.Task.Delay(1200);
-            //            }
-            //            catch
-            //            {
-            //                failed++;
-            //            }
-            //        }
-
-            //        if (batchLogId > 0)
-            //        {
-            //            try { await _eaRepository.CompleteBatchCallLogAsync(batchLogId, succeeded, failed, 0, "Completed"); }
-            //            catch { }
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        try { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); } catch { }
-            //    }
-            //});
+                    if (batchLogId > 0)
+                    {
+                        try { await _eaRepository.CompleteBatchCallLogAsync(batchLogId, succeeded, failed, 0, "Completed"); }
+                        catch { }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    try { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); } catch { }
+                }
+            });
         }
         private async Task MakeIVRCallForAvailability(AvailabilityCheckDTO dto)
         {
@@ -9907,7 +9906,7 @@ namespace Risebird.Web.Controllers
                                ?? _configuration["Plivo:FromNumber"]
                                ?? "+918031136547";
 
-                string source = $"Campaign - {campaign.CampaignName}";
+                string source = "Campaign";
                 string initiatedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "Manual";
 
                 int batchLogId = 0;

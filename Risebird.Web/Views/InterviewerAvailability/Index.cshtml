@@ -63,11 +63,6 @@
     .status-inprogress { background:#cfe2ff; color:#0a3278; border:1px solid #0d6efd; }
     .status-verified { background:#d1e7dd; color:#0a3622; border:1px solid #198754; }
 
-    .fitment-strong { background:#d1e7dd; color:#0f5132; }
-    .fitment-moderate { background:#fff3cd; color:#664d03; }
-    .fitment-weak { background:#f8d7da; color:#842029; }
-    .fitment-na { background:#e9ecef; color:#6c757d; }
-
     .intent-badge { display:inline-block; font-size:10.5px; padding:0.22em 0.5em; border-radius:3px; font-weight:500; white-space:normal; line-height:1.3; max-width:100%; word-break:break-word; }
     .mail-preview-text { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; color:#555; font-size:11.5px; line-height:1.35; word-break:break-word; }
 
@@ -85,9 +80,8 @@
     #main-panel .content.client .container-fluid { min-width:0; }
 
     .col-num { width:34px; } .col-date { width:108px; white-space:nowrap; } .col-email { width:170px; max-width:200px; }
-    .col-name { max-width:140px; } .col-job { min-width:100px; max-width:160px; } .col-fitment { width:90px; }
+    .col-name { max-width:140px; } .col-job { min-width:100px; max-width:160px; }
     .col-phone { width:110px; white-space:nowrap; }
-    .col-timeframe { min-width:100px; max-width:180px; } .col-slots { width:50px; text-align:center; }
     .col-intent-summary { min-width:120px; max-width:220px; } .col-status { width:100px; white-space:nowrap; }
     .col-actions { width:100px; white-space:nowrap; }
     .col-employed { width:80px; white-space:nowrap; }
@@ -257,9 +251,9 @@
                                 <select name="source" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All sources</option>
                                     @if (selSource == "Relay") { <option value="Relay" selected>Relay</option> } else { <option value="Relay">Relay</option> }
-                                    @if (selSource == "PlivoCX") { <option value="PlivoCX" selected>PlivoCX</option> } else { <option value="PlivoCX">PlivoCX</option> }
-                                    @if (selSource == "IRFAutoCall") { <option value="IRFAutoCall" selected>IRF Auto-Call</option> } else { <option value="IRFAutoCall">IRF Auto-Call</option> }
                                     @if (selSource == "BatchCall") { <option value="BatchCall" selected>Batch Call</option> } else { <option value="BatchCall">Batch Call</option> }
+                                    @if (selSource == "IRFAutoCall") { <option value="IRFAutoCall" selected>IRF Auto-Call</option> } else { <option value="IRFAutoCall">IRF Auto-Call</option> }
+                                    @if (selSource == "Campaign") { <option value="Campaign" selected>Campaign</option> } else { <option value="Campaign">Campaign</option> }
                                 </select>
                                 <select name="autoClosed" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">Auto-closed?</option>
@@ -295,8 +289,6 @@
                                             <th class="col-num">#</th><th class="col-date">Received</th><th class="col-email">Email</th>
                                             <th class="col-name">Name</th><th class="col-phone">Phone</th><th class="col-job">Job Title</th>
                                             <th class="col-employed">Employed</th><th class="col-company">Company</th>
-                                            <th class="col-fitment">Fitment</th>
-                                            <th class="col-slots">Slots</th><th class="col-timeframe">Time Frame</th>
                                             <th class="col-intent-summary">Intent</th><th class="col-source" style="min-width:75px;">Source</th><th class="col-status">Status</th><th class="col-actions">Actions</th>
                                         </tr>
                                     </thead>
@@ -305,7 +297,6 @@
                                         {
                                             string rStatus = r.Status?.ToLower() ?? "open";
                                             string statusCss = rStatus switch { "open" => "status-open", "inprogress" => "status-inprogress", "verified" => "status-verified", "closed" => "status-closed", _ => "bg-light border" };
-                                            string fitCss = (r.ResumeFitment ?? "").ToLower() switch { "strong fit" => "fitment-strong", "moderate fit" => "fitment-moderate", "weak fit" => "fitment-weak", _ => "fitment-na" };
 
                                             <tr id="row-@r.Id">
                                                 <td class="col-num text-muted" style="font-size:12px">@r.Id</td>
@@ -335,9 +326,6 @@
                                                     { <span class="text-muted">—</span> }
                                                 </td>
                                                 <td class="col-company" style="font-size:12px;" title="@(r.CompanyName ?? "")">@(r.CompanyName ?? "—")</td>
-                                                <td class="col-fitment"><span style="white-space:nowrap;" class="intent-badge @fitCss">@(r.ResumeFitment ?? "N/A")</span></td>
-                                                <td class="col-slots text-center" style="font-size:12px;">@(r.SlotsPerDay ?? "—")</td>
-                                                <td class="col-timeframe" style="font-size:11px;">@(r.TimeFrame ?? "—")</td>
                                                 <td class="col-intent-summary">
                                                     @if (!string.IsNullOrWhiteSpace(r.MailBodyIntent)) { <span class="intent-badge bg-light border" style="font-size:10px;">@r.MailBodyIntent</span> }
                                                     @if (!string.IsNullOrWhiteSpace(r.AvailabilityIntent)) { <div class="mail-preview-text mt-1" style="-webkit-line-clamp:2;">@r.AvailabilityIntent</div> }
@@ -345,18 +333,17 @@
                                                 <td class="col-source" style="font-size:11px;">
                                                     @{
                                                         string srcVal = r.Source ?? "";
-                                                        string srcBadge = srcVal switch {
+                                                        bool isCampaign = srcVal.StartsWith("Campaign", StringComparison.OrdinalIgnoreCase);
+                                                        string srcBadge = isCampaign ? "background:#fef3c7;color:#92400e;" : srcVal switch {
                                                             "Relay" => "background:#e0f2fe;color:#0369a1;",
-                                                            "PlivoCX" => "background:#fef3c7;color:#92400e;",
-                                                            "IRFAutoCall" => "background:#ede9fe;color:#5b21b6;",
                                                             "BatchCall" => "background:#d1fae5;color:#065f46;",
+                                                            "IRFAutoCall" => "background:#ede9fe;color:#5b21b6;",
                                                             _ => "background:#f3f4f6;color:#6b7280;"
                                                         };
-                                                        string srcLabel = srcVal switch {
+                                                        string srcLabel = isCampaign ? "Campaign" : srcVal switch {
                                                             "Relay" => "Relay",
-                                                            "PlivoCX" => "Plivo CX",
-                                                            "IRFAutoCall" => "IRF Auto",
                                                             "BatchCall" => "Batch Call",
+                                                            "IRFAutoCall" => "IRF Auto-Call",
                                                             _ => string.IsNullOrEmpty(srcVal) ? "—" : srcVal
                                                         };
                                                     }
@@ -516,8 +503,7 @@
                                         </div>
                                     </span>
                                 </span><br/>
-                                <span><strong>Slots/Day:</strong> <span id="mgmSlots"></span></span><br/>
-                                <span><strong>Time Frame:</strong> <span id="mgmTimeFrame"></span></span>
+                                
                             </div>
                         </div>
                     </div>
@@ -706,15 +692,15 @@
         $('#mgmPhone').text(phoneDisplay); $('#mgmIrf').text(r.irfReference || '—'); $('#mgmCredentials').text(r.hasLoginCredentials || '—');
         $('#mgmName').text(r.interviewerName || r.interviewerNickName || '—'); $('#mgmJobTitle').text(r.jobTitle || '—');
         $('#mgmMag').text((r.magName || '—') + (r.assessmentGroupName ? ' \u2192 ' + r.assessmentGroupName : ''));
-        $('#mgmSlots').text(r.slotsPerDay || '—'); $('#mgmTimeFrame').text(r.timeFrame || '—');
+        
         $('#mgmMailIntent').text(r.mailBodyIntent || '—'); $('#mgmAvailIntent').text(r.availabilityIntent || '—');
         $('#mgmConcerns').text(r.concernsOrNotInterested || 'None'); $('#mgmMailBody').text(r.mailContent || '');
         updateStatusBadge(r.status || 'Open');
 
         var srcBadge = $('#mgmSourceBadge');
         if (r.source) {
-            var srcMap = { 'Relay': { bg: '#e0f2fe', fg: '#0369a1', label: 'Relay' }, 'PlivoCX': { bg: '#fef3c7', fg: '#92400e', label: 'Plivo CX' }, 'IRFAutoCall': { bg: '#ede9fe', fg: '#5b21b6', label: 'IRF Auto-Call' }, 'BatchCall': { bg: '#d1fae5', fg: '#065f46', label: 'Batch Call' } };
-            var si = srcMap[r.source] || { bg: '#f3f4f6', fg: '#6b7280', label: r.source };
+            var srcMap = { 'Relay': { bg: '#e0f2fe', fg: '#0369a1', label: 'Relay' }, 'BatchCall': { bg: '#d1fae5', fg: '#065f46', label: 'Batch Call' }, 'IRFAutoCall': { bg: '#ede9fe', fg: '#5b21b6', label: 'IRF Auto-Call' }, 'Campaign': { bg: '#fef3c7', fg: '#92400e', label: 'Campaign' } };
+            var si = srcMap[r.source] || (r.source && r.source.indexOf('Campaign') === 0 ? { bg: '#fef3c7', fg: '#92400e', label: 'Campaign' } : { bg: '#f3f4f6', fg: '#6b7280', label: r.source });
             srcBadge.css({ background: si.bg, color: si.fg }).text(si.label).show();
         } else { srcBadge.hide(); }
 
