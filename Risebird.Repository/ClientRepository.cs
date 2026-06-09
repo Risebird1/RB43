@@ -225,6 +225,7 @@ namespace Risebird.Repository
             parameters.Add("@IsCandidateavailability", entity.IsCandidateavailability);
             parameters.Add("@IsMeetingNotificationSend", entity.IsMeetingNotificationSend);
             parameters.Add("@PerInterviewRate", entity.PerInterviewRate);
+            parameters.Add("@AIPerInterviewRate", entity.AIPerInterviewRate);
             parameters.Add("@BillingType", entity.BillingType);
             parameters.Add("@InterviewDuration", entity.InterviewDuration);
             parameters.Add("@IsMeetingAutoCancelled", entity.IsMeetingAutoCancelled);

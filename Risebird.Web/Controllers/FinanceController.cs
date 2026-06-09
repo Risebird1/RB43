@@ -34,8 +34,9 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IClientService _clientService;
         private readonly ICashfreePayoutService _cashfreePayoutService;
+        private readonly IWalletService _walletService;
 
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService, ICashfreePayoutService cashfreePayoutService)
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService, ICashfreePayoutService cashfreePayoutService, IWalletService walletService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -48,6 +49,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _clientService = clientService;
             _cashfreePayoutService = cashfreePayoutService;
+            _walletService = walletService;
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
@@ -734,6 +736,94 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return Json(new { success = false, message = "An unexpected error occurred. Please try again." });
+            }
+        }
+
+        /// <summary>
+        /// Returns all interviewers from the current session-cached FNPayment list
+        /// that have a pending payable amount AND a verified bank account.
+        /// Used to populate the Batch Payout modal with the full (unpaginated) dataset.
+        /// </summary>
+        [HttpGet]
+        public JsonResult GetAllBatchPayoutCandidates()
+        {
+            try
+            {
+                var sessionData = HttpContext.Session.GetString("financemodel");
+                if (string.IsNullOrEmpty(sessionData))
+                    return Json(new { success = false, message = "Session expired. Please reload the page.", data = new List<object>() });
+
+                var allItems = JsonConvert.DeserializeObject<List<Risebird.Entities.ViewModel.RBInterviewDetails>>(sessionData);
+                var candidates = allItems
+                    .Where(x => x.Points > 0 && x.IsBankVerified)
+                    .Select(x => new { x.id, email = x.Comment, amount = x.Points, x.IsBankVerified })
+                    .ToList();
+
+                return Json(new { success = true, data = candidates });
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { success = false, message = "Failed to load candidates.", data = new List<object>() });
+            }
+        }
+
+        /// <summary>
+        /// Processes Cashfree bank payouts for multiple interviewers in a single request.
+        /// Accepts a comma-separated list of interviewer IDs; each is paid using the same
+        /// index/date-range context that was active on the FNPayment page.
+        /// Returns JSON: { results: [{ id, email, success, message }] }
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> BatchConfirmPaymentViaCashfree(string ids, int index, DateTime? st, DateTime? se)
+        {
+            var results = new List<object>();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(ids))
+                    return Json(new { results, error = "No interviewer IDs provided." });
+
+                var idList = ids.Split(',')
+                                .Select(x => x.Trim())
+                                .Where(x => !string.IsNullOrEmpty(x))
+                                .Select(int.Parse)
+                                .ToList();
+
+                var sessionData = HttpContext.Session.GetString("financemodel");
+                List<Risebird.Entities.ViewModel.RBInterviewDetails> allItems = null;
+                if (!string.IsNullOrEmpty(sessionData))
+                    allItems = JsonConvert.DeserializeObject<List<Risebird.Entities.ViewModel.RBInterviewDetails>>(sessionData);
+
+                var stVal = st ?? DateTime.MinValue;
+                var seVal = se ?? DateTime.MinValue;
+
+                foreach (var id in idList)
+                {
+                    var item = allItems?.FirstOrDefault(x => x.id == id);
+                    if (item == null)
+                    {
+                        results.Add(new { id, email = "", success = false, message = "Interviewer not found in session." });
+                        continue;
+                    }
+                    try
+                    {
+                        var (success, message) = await _meetingService.ConfirmPaymentViaCashfree(
+                            id, index, item.Comment, item.Points.ToString(), stVal, seVal);
+                        results.Add(new { id, email = item.Comment, success, message });
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        results.Add(new { id, email = item.Comment, success = false, message = "Unexpected error during payout." });
+                    }
+                }
+
+                return Json(new { results });
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { results, error = "An unexpected error occurred." });
             }
         }
 
@@ -1941,7 +2031,8 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod,
             string irn, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
-            decimal tdsAmount, decimal netReceivable, string lineItemsJson)
+            decimal tdsAmount, decimal netReceivable, string lineItemsJson,
+            int? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null)
         {
             try
             {
@@ -1951,12 +2042,32 @@ namespace Risebird.Web.Controllers
                     try { lineItems = JsonConvert.DeserializeObject<List<InvoiceLineItemVM>>(lineItemsJson); }
                     catch { lineItems = new List<InvoiceLineItemVM>(); }
                 }
+
+                // When marking as Paid (status=2) for non-M1, cash credit amount is required
+                const int StatusPaid    = 2;
+                const int BillingModelM1 = 1;
+
+                if (status == StatusPaid && cashCreditAmount.HasValue && cashCreditAmount.Value > 0)
+                {
+                    var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
+                    if (invoice != null && invoice.BillingModel != BillingModelM1)
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                        var billingType = await _clientService.GetClientBillingType(invoice.ClientId);
+                        int? billingOwnerId = billingType == 1 ? invoice.BillingOwnerId : (int?)null;
+                        await _walletService.AddClientWalletBalance(
+                            billingType, invoice.ClientId, cashCreditAmount.Value,
+                            emailid, DateTime.Now, billingOwnerId,
+                            cashTransactionRef, null, cashTransactionDate, "CashCredit");
+                    }
+                }
+
                 var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, status,
                     subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems);
                 return Json(new
                 {
                     success,
-                    message    = success ? "Invoice updated successfully." : "Failed to update invoice.",
+                    message     = success ? "Invoice updated successfully." : "Failed to update invoice.",
                     redirectUrl = success ? Url.Action("ViewInvoice", "Finance", new { invoiceId }) : (string)null
                 });
             }

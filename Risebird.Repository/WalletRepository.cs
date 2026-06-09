@@ -175,6 +175,30 @@ namespace Risebird.Repository
             return new List<WalletVM>();
         }
 
+        public async Task<bool> UpdatePOStatus(int poId, int clientId, int status)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@POId", poId);
+                    parameters.Add("@ClientId", clientId);
+                    parameters.Add("@Status", status);
+                    parameters.Add("@ModifiedOn", DateTime.UtcNow);
+                    var affected = await con.ExecuteAsync(
+                        "UPDATE ClientPO SET Status = @Status, ModifiedOn = @ModifiedOn WHERE id = @POId AND ClientId = @ClientId",
+                        parameters);
+                    return affected > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<ClientWalletDashboardVM> GetClientWalletDashboard(int clientId, int month, int year, bool allDetails = false)
         {
             try

@@ -115,6 +115,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> UpdatePOStatus(int poId, int clientId, int status)
+        {
+            try
+            {
+                return await _walletRepository.UpdatePOStatus(poId, clientId, status);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         private static void MapPOStatus(ClientPOVM po)
         {
             var mfi = new System.Globalization.DateTimeFormatInfo();
@@ -136,6 +149,14 @@ namespace Risebird.Business
                 case 3:
                     po.StatusDesc = "Document Only";
                     po.StatusCss = "badge-secondary";
+                    break;
+                case 4:
+                    po.StatusDesc = "Complete";
+                    po.StatusCss = "badge-primary";
+                    break;
+                case 5:
+                    po.StatusDesc = "Paid";
+                    po.StatusCss = "badge-success";
                     break;
                 default:
                     po.StatusDesc = "Unknown";

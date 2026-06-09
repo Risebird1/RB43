@@ -15,6 +15,7 @@ namespace Risebird.Business.Interface
         Task<List<ClientPOVM>> GetClientPOList(int clientId, int? month = null, int? year = null, int? billingOwnerId = null, bool openOnly = false);
         Task<List<ClientPOVM>> GetPOHistory(int clientId);
         Task<List<WalletVM>> GetCashCreditHistory(int clientId);
+        Task<bool> UpdatePOStatus(int poId, int clientId, int status);
     }
 }
 

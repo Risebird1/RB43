@@ -117,6 +117,34 @@
             </div>
         </div>
 
+        <!-- ── Section 2b: Cash Credit Info (non-M1, visible only when Paid) ── -->
+        @if (Model.BillingModel != (int)Risebird.Entities.Enum.BillingModelEnum.M1 && Model.BillingModel != 0)
+        {
+            <div class="vi-card" id="cashCreditSection" style="display:@(Model.Status == 2 ? "block" : "none"); border-left:4px solid #43a047;">
+                <div class="vi-section-title" style="color:#2e7d32;">Cash Credit Information</div>
+                <p class="text-muted" style="font-size:12px;margin-top:-8px;margin-bottom:14px;">
+                    This invoice will be marked <strong>Paid</strong>. Enter the cash credit details to post the received amount into the client wallet.
+                </p>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="vi-label">Credit Amount (&#8377;) <span style="color:red;">*</span></label>
+                        <input type="number" id="cashCreditAmount" class="form-control editable-field"
+                               min="1" placeholder="Enter amount received" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="vi-label">Transaction / Reference No.</label>
+                        <input type="text" id="cashTransactionRef" class="form-control editable-field"
+                               placeholder="UTR / Ref number" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="vi-label">Payment Date</label>
+                        <input type="date" id="cashTransactionDate" class="form-control editable-field"
+                               value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+            </div>
+        }
+
         <!-- ── Section 3: Line Items ── -->
         <div class="vi-card">
             <div class="vi-section-title">Line Items</div>
@@ -201,10 +229,25 @@
     </div><!-- /content -->
 </div>
 
-<input type="hidden" id="hidInvoiceId"  value="@Model.id" />
-<input type="hidden" id="hidTaxScenario" value="@Model.TaxScenario" />
+<input type="hidden" id="hidInvoiceId"    value="@Model.id" />
+<input type="hidden" id="hidTaxScenario"  value="@Model.TaxScenario" />
+<input type="hidden" id="hidBillingModel" value="@Model.BillingModel" />
 
 <script>
+    var _billingModel = parseInt($('#hidBillingModel').val() || 0);
+    var _M1 = 1;
+
+    // Show/hide cash credit section when status changes
+    $('#editStatus').on('change', function () {
+        var isPaid = parseInt($(this).val()) === 2;
+        var isNonM1 = _billingModel !== _M1 && _billingModel !== 0;
+        if (isPaid && isNonM1) {
+            $('#cashCreditSection').slideDown(200);
+        } else {
+            $('#cashCreditSection').slideUp(200);
+        }
+    });
+
     // Live recalculate when unit rate changes
     $('#tblLineItemsBody').on('input', '.unit-rate-input', function () {
         var row   = $(this).closest('tr');
@@ -234,7 +277,21 @@
     }
 
     function saveChanges() {
-        var taxScenario = parseInt($('#hidTaxScenario').val() || 0);
+        var taxScenario  = parseInt($('#hidTaxScenario').val() || 0);
+        var selectedStatus = parseInt($('#editStatus').val());
+        var isPaid       = selectedStatus === 2;
+        var isNonM1      = _billingModel !== _M1 && _billingModel !== 0;
+
+        // Validate: cash credit amount is required when marking Paid for non-M1
+        if (isPaid && isNonM1) {
+            var cashAmt = parseInt($('#cashCreditAmount').val() || 0);
+            if (!cashAmt || cashAmt <= 0) {
+                $('#divSaveMsg').attr('class', 'alert alert-danger')
+                    .html('Credit Amount is required when marking the invoice as Paid.').show();
+                $('html, body').animate({ scrollTop: $('#cashCreditSection').offset().top - 80 }, 400);
+                return;
+            }
+        }
 
         // Collect line items
         var lineItems = [];
@@ -251,24 +308,32 @@
         var tdsAmount     = Math.round(subtotal * 10 / 100 * 100) / 100;
         var netReceivable = invoiceValue - tdsAmount;
 
+        var payload = {
+            invoiceId:     $('#hidInvoiceId').val(),
+            gstNumber:     $('#editGSTNumber').val().trim(),
+            creditPeriod:  $('#editCreditPeriod').val().trim(),
+            irn:           $('#editIRN').val().trim(),
+            status:        selectedStatus,
+            subtotal:      subtotal.toFixed(2),
+            gstAmount:     gstAmount.toFixed(2),
+            invoiceValue:  invoiceValue.toFixed(2),
+            tdsAmount:     tdsAmount.toFixed(2),
+            netReceivable: netReceivable.toFixed(2),
+            lineItemsJson: JSON.stringify(lineItems)
+        };
+
+        if (isPaid && isNonM1) {
+            payload.cashCreditAmount    = parseInt($('#cashCreditAmount').val() || 0);
+            payload.cashTransactionRef  = $('#cashTransactionRef').val().trim();
+            payload.cashTransactionDate = $('#cashTransactionDate').val();
+        }
+
         $('#btnSaveChanges').prop('disabled', true).html('<font style="font-size:12px;">Saving…</font>');
 
         $.ajax({
             type: 'POST',
             url: '/Finance/UpdateInvoiceDetails',
-            data: {
-                invoiceId:     $('#hidInvoiceId').val(),
-                gstNumber:     $('#editGSTNumber').val().trim(),
-                creditPeriod:  $('#editCreditPeriod').val().trim(),
-                irn:           $('#editIRN').val().trim(),
-                status:        $('#editStatus').val(),
-                subtotal:      subtotal.toFixed(2),
-                gstAmount:     gstAmount.toFixed(2),
-                invoiceValue:  invoiceValue.toFixed(2),
-                tdsAmount:     tdsAmount.toFixed(2),
-                netReceivable: netReceivable.toFixed(2),
-                lineItemsJson: JSON.stringify(lineItems)
-            },
+            data: payload,
             success: function (res) {
                 $('#btnSaveChanges').prop('disabled', false)
                     .html('<font style="font-size:12px;">Save Changes</font>');

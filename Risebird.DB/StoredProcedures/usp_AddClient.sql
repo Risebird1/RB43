@@ -23,6 +23,7 @@ CREATE PROCEDURE [dbo].[usp_AddClient]
 @IsCandidateavailability bit,      
 @IsMeetingNotificationSend bit,      
 @PerInterviewRate int,  
+@AIPerInterviewRate int,  
 @BillingType int,  
 @InterviewDuration int,  
 @IsMeetingAutoCancelled bit,  
@@ -54,6 +55,7 @@ Begin
     ,[IsCandidateavailability]      
     ,[IsMeetingNotificationSend]     
  ,[PerInterviewRate]  
+ ,[AIPerInterviewRate]  
  ,[BillingType]  
  ,[InterviewDuration]  
  ,[IsMeetingAutoCancelled]  
@@ -80,6 +82,7 @@ Begin
   ,@IsCandidateavailability      
   ,@IsMeetingNotificationSend    
   ,@PerInterviewRate  
+  ,@AIPerInterviewRate  
   ,@BillingType  
   ,@InterviewDuration  
   ,@IsMeetingAutoCancelled  

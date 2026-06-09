@@ -213,9 +213,12 @@
 
                     <!-- Action buttons -->
                     <div class="action-bar" style="margin-bottom:20px;">
-                        <button type="button" class="mdc-button mdc-button--raised btn-action" onclick="OpenCashCreditModal()">
-                            <span class="fa fa-plus"></span> Add Cash Credit Points
-                        </button>
+                        @if (!Model.SupportsPO)
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised btn-action" onclick="OpenCashCreditModal()">
+                                <span class="fa fa-plus"></span> Add Cash Credit Points
+                            </button>
+                        }
                         @if (Model.SupportsPO)
                         {
                             <button type="button" class="mdc-button mdc-button--raised btn-action" onclick="OpenPOCreditModal()">
@@ -238,8 +241,7 @@
                     @if (Model.SupportsPO)
                     {
                         <p class="text-muted" style="font-size:12px;margin-top:-10px;">
-                            <em>Add PO Credit Points</em> registers the PO amount and optional PDF in the PO register.
-                            <em>Cash Credit</em> is posted to the wallet later and linked to the PO.
+                            <em>Add PO Credit Points</em> registers the PO amount. Mark the invoice as <strong>Complete</strong> or <strong>Paid</strong> to unlock <em>Add Cash Credit</em>.
                         </p>
                     }
 
@@ -286,9 +288,17 @@
                                                 else { <span>—</span> }
                                             </td>
                                             <td class="text-center">
-                                                @if (po.POCreditAmount > 0 && po.PendingCashCredit > 0)
+                                                @if (po.Status < 4)
                                                 {
-                                                    <a href="javascript:void(0)" onclick="OpenCashCreditForPO(@po.id, @(po.BillingOwnerId ?? 0), @po.PendingCashCredit.ToString("0.##"))" class="btn btn-sm btn-outline-success">Add Cash Credit</a>
+                                                    <a href="javascript:void(0)" onclick="MarkPOStatus(@po.id, @Model.ClientId, 4)" class="btn btn-sm btn-outline-primary" style="margin:2px;">Mark Complete</a>
+                                                }
+                                                @if (po.Status == 4)
+                                                {
+                                                    <a href="javascript:void(0)" onclick="MarkPOStatus(@po.id, @Model.ClientId, 5)" class="btn btn-sm btn-outline-warning" style="margin:2px;">Mark Paid</a>
+                                                }
+                                                @if ((po.Status == 4 || po.Status == 5) && po.POCreditAmount > 0 && po.PendingCashCredit > 0)
+                                                {
+                                                    <a href="javascript:void(0)" onclick="OpenCashCreditForPO(@po.id, @(po.BillingOwnerId ?? 0), @po.PendingCashCredit.ToString("0.##"))" class="btn btn-sm btn-outline-success" style="margin:2px;">Add Cash Credit</a>
                                                 }
                                             </td>
                                         </tr>
@@ -618,6 +628,26 @@
         }, function (r) {
             if (r.success) { swal.fire('Success', r.message, 'success').then(function () { location.reload(); }); }
             else swal.fire('Error', r.message, 'error');
+        });
+    }
+
+    function MarkPOStatus(poId, clientId, status) {
+        var label = status === 4 ? 'Complete' : 'Paid';
+        swal.fire({
+            title: 'Mark as ' + label + '?',
+            text: 'This will update the invoice status to ' + label + '.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, mark ' + label
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
+            $.post('/Wallet/UpdatePOStatus', { poId: poId, clientId: clientId, status: status }, function (r) {
+                if (r.success) {
+                    swal.fire('Updated', r.message, 'success').then(function () { location.reload(); });
+                } else {
+                    swal.fire('Error', r.message, 'error');
+                }
+            });
         });
     }
 
