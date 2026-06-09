@@ -2586,6 +2586,26 @@ button.dm-v4-iv-cv-link {
     }
 }
 
+/* Client share (Type=ublc): interviewer panel uses full content width — layout only; grid cols below after .dm-v4-iv-grid */
+.dm-v4-page--client-share .dm-v4-block--order-interviewers-client {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box;
+}
+
+.dm-v4-page--client-share .dm-v4-block--order-interviewers-client .dm-v4-section,
+.dm-v4-page--client-share .dm-v4-block--order-interviewers-client .card,
+.dm-v4-page--client-share .dm-v4-block--order-interviewers-client .dm-v4-pinned-body,
+.dm-v4-page--client-share .dm-v4-block--order-interviewers-client .dm-v4-iv-panel {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 .dm-v4-iv-grid {
     display: grid;
     width: 100%;
@@ -2617,6 +2637,76 @@ button.dm-v4-iv-cv-link {
 .dm-v4-iv-grid--head > span {
     padding: 10px;
     align-self: center;
+}
+
+/* Client share (Type=ublc): 8-column grid — MUST follow .dm-v4-iv-grid (rows/head carry both classes) */
+.dm-v4-iv-grid.dm-v4-iv-grid--client {
+    width: 100%;
+    max-width: 100%;
+    column-gap: 10px;
+    grid-template-columns:
+        minmax(0, 1.35fr)
+        minmax(0, 0.95fr)
+        minmax(0, 1.3fr)
+        minmax(0, 0.6fr)
+        minmax(0, 0.65fr)
+        minmax(0, 0.85fr)
+        minmax(0, 1fr)
+        minmax(0, 1.1fr) !important;
+}
+
+.dm-v4-page--client-share .dm-v4-block--order-interviewers-client .dm-v4-iv-grid.dm-v4-iv-grid--client {
+    width: 100%;
+    max-width: 100%;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client > .dm-v4-iv-cell,
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client > span {
+    min-width: 0;
+    padding: 8px 8px 8px 0;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span {
+    padding: 10px 8px;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.25;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:first-child,
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:nth-child(2),
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:nth-child(3),
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:nth-child(6),
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:nth-child(7) {
+    text-align: left;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-meta {
+    max-width: none;
+    width: 100%;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-company {
+    max-width: none;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-cell--future,
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-cell--insight-all,
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-cell--stats {
+    align-self: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-cell--client-vet {
+    min-width: 0;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-vet-toggle {
+    width: 100%;
+    max-width: 100%;
 }
 
 .dm-v4-iv-cell--name {

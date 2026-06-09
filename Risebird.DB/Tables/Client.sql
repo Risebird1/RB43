@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[Client](
             [IsCandidateavailability] [bit] NULL,
             [IsMeetingNotificationSend] [bit] NULL,
             [PerInterviewRate] [int] NULL,
+            [AIPerInterviewRate] [int] NULL,
             [BillingType] [int] NULL,
             [InterviewDuration] [int] NULL,
             [IsMeetingAutoCancelled] [bit] NULL,
@@ -156,6 +157,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add [PerInterviewRate] int	
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AIPerInterviewRate')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add [AIPerInterviewRate] int	
 END
 IF NOT EXISTS(
     SELECT *

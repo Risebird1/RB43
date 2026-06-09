@@ -76,34 +76,37 @@
                         }
                     </select>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="1-7 of this month" onclick="Fetchinvoice(1,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">1-7</font></span>
+                        <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;">1-7</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="8-14 of this month" onclick="Fetchinvoice(2,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="8-14 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">8-14</font></span>
+                        <span data-toggle="tooltip" data-placement="top" title="8-14 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;">8-14</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="15-21 of this month" onclick="Fetchinvoice(3,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="15-21 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">15-21</font></span>
+                        <span data-toggle="tooltip" data-placement="top" title="15-21 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;">15-21</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" onclick="Fetchinvoice(4,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;">22-_</font></span>
+                        <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;">22-_</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-history" data-toggle="tooltip" data-placement="top" onclick="openPaymentHistory()" data-original-title="Tooltip on top">
-                            <font style="font-family: Roboto, sans-serif;font-size: 12px;padding-left: 3px;">Payment History</font>
+                            <font style="font-family: Roboto, sans-serif;font-size:10px;padding-left: 3px;">Payment History</font>
                         </span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:2px;">
                         <span class="fa fa-file" data-toggle="tooltip" data-placement="top" onclick="openmyinvoiceModel()" data-original-title="Tooltip on top">
-                            <font style="font-family: Roboto, sans-serif;font-size: 12px;padding-left: 3px;">Generate Invoice</font>
+                            <font style="font-family: Roboto, sans-serif;font-size:10px;padding-left: 3px;">Generate Invoice</font>
                         </span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-left:3px;float:right">
-                        <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;padding-left:3px;">Advance Payment</font></span>
+                        <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;padding-left:3px;">Advance Payment</font></span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-left:3px;float:right;background-color:#1976d2;color:#fff;" onclick="openBatchPayoutModal()">
+                        <span class="fa fa-paper-plane" data-toggle="tooltip" data-placement="top" data-original-title="Batch Cashfree Payout"><font style="font-family:Roboto,sans-serif;font-size:10px;padding-left:3px;">Batch Payout</font></span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right">
-                        @*<span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>*@
+                        @*<span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;"> Export Excel</font></span>*@
                         <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="ExportFNDetails()" data-original-title="Tooltip on top">
-                            <font style="font-family: Roboto, sans-serif;font-size: 12px;padding-left: 3px;"> Export Excel</font>
+                            <font style="font-family: Roboto, sans-serif;font-size:10px;padding-left: 3px;"> Export Excel</font>
                         </span>
                     </button>
                     <div id="meeting_filter" class="dataTables_filter pull-right" style="margin-left:5PX;">
@@ -424,6 +427,56 @@
                 </div>
             </div>
         </div>
+        <!-- Batch Payout Modal -->
+        <div id="myBatchPayoutModel" class="modal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="rgb(255,255,255)" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left">Batch Cashfree Payout</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeBatchPayoutModal()">
+                            <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+                        </button>
+                        <div class="modal-body">
+                            <p style="margin:0 0 8px;font-size:13px;color:#555;">Select the interviewers you want to pay via Cashfree. Only interviewers with a pending amount are listed.</p>
+                            <div class="table-responsive" style="max-height:380px;overflow-y:auto;">
+                                <table class="table table-striped table-bordered" style="font-size:13px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:40px;text-align:center;">
+                                                <input type="checkbox" id="chkSelectAllBatch" title="Select / Deselect All" onchange="toggleSelectAllBatch(this)" />
+                                            </th>
+                                            <th>Name / Email</th>
+                                            <th style="width:100px;">Amount</th>
+                                            <th style="width:110px;">Bank Verified</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblBatchPayoutBody">
+                                        <tr><td colspan="4" class="text-center">No interviewers with pending amount found.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="divBatchResult" style="display:none;max-height:200px;overflow-y:auto;margin-top:10px;"></div>
+                            <div class="col-md-12" style="margin-top:12px;padding:0;">
+                                <span id="spnBatchSelected" style="font-size:13px;color:#555;line-height:32px;">0 interviewer(s) selected</span>
+                                <button type="button" id="btnProceedBatch" onclick="confirmBatchPayout()"
+                                    class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right"
+                                    style="background-color:#1976d2;color:#fff;">
+                                    Proceed Payout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="myinvoiceModel" class="modal">
             <!-- Modal content -->
             <div class="modal-dialog modal-lg" role="document">
@@ -521,7 +574,7 @@
         return mobile.toString().trim();
     }
     function bindtableData(data) {
-
+        currentTableData = data;
         var html = '';
         if (data.length == 0) {
             html += '  <tr>';
@@ -876,6 +929,206 @@
             confirmationpayment = 0;
         }
     }
+    // ??? Batch Payout ???????????????????????????????????????????????????????????
+    // currentTableData is kept in sync with every bindtableData() call and also
+    // seeded from the server-rendered Razor model on first page load.
+    var currentTableData = [];
+
+    function openBatchPayoutModal() {
+        document.getElementById('tblBatchPayoutBody').innerHTML =
+            '<tr><td colspan="4" class="text-center"><img src="/Newassets/img/lazyload.gif" style="height:30px;" /></td></tr>';
+        document.getElementById('chkSelectAllBatch').checked = false;
+        document.getElementById('spnBatchSelected').textContent = '0 interviewer(s) selected';
+        document.getElementById('divBatchResult').style.display = 'none';
+        document.getElementById('divBatchResult').innerHTML = '';
+        document.getElementById('btnProceedBatch').disabled = false;
+        document.getElementById('myBatchPayoutModel').style.display = 'block';
+
+        $.ajax({
+            url: '/Finance/GetAllBatchPayoutCandidates',
+            type: 'GET',
+            dataType: 'json',
+            success: function (resp) {
+                var tbody = document.getElementById('tblBatchPayoutBody');
+                var html = '';
+                if (!resp.success) {
+                    html = '<tr><td colspan="4" class="text-center text-danger">' + (resp.message || 'Failed to load.') + '</td></tr>';
+                    tbody.innerHTML = html;
+                    return;
+                }
+                var list = resp.data || [];
+                if (list.length === 0) {
+                    html = '<tr><td colspan="4" class="text-center">No interviewers with pending amount and verified bank account found.</td></tr>';
+                    tbody.innerHTML = html;
+                    return;
+                }
+                for (var i = 0; i < list.length; i++) {
+                    var row = list[i];
+                    html += '<tr>';
+                    html += '<td style="text-align:center;"><input type="checkbox" class="chkBatchInterviewer" data-id="' + row.id + '" data-amount="' + row.amount + '" data-email="' + (row.email || '') + '" onchange="updateBatchCount()" /></td>';
+                    html += '<td>' + (row.email || '') + '</td>';
+                    html += '<td>' + row.amount + '</td>';
+                    html += '<td><span class="text-success">Yes</span></td>';
+                    html += '</tr>';
+                }
+                tbody.innerHTML = html;
+            },
+            error: function () {
+                document.getElementById('tblBatchPayoutBody').innerHTML =
+                    '<tr><td colspan="4" class="text-center text-danger">Failed to load interviewers. Please try again.</td></tr>';
+            }
+        });
+    }
+
+    function closeBatchPayoutModal() {
+        document.getElementById('myBatchPayoutModel').style.display = 'none';
+    }
+
+    function toggleSelectAllBatch(chk) {
+        var boxes = document.querySelectorAll('.chkBatchInterviewer');
+        for (var i = 0; i < boxes.length; i++) {
+            boxes[i].checked = chk.checked;
+        }
+        updateBatchCount();
+    }
+
+    function updateBatchCount() {
+        var checked = document.querySelectorAll('.chkBatchInterviewer:checked');
+        var allBoxes = document.querySelectorAll('.chkBatchInterviewer');
+        var totalAmt = 0;
+        for (var i = 0; i < checked.length; i++) {
+            totalAmt += parseInt(checked[i].getAttribute('data-amount') || 0);
+        }
+        var txt = checked.length + ' interviewer(s) selected';
+        if (checked.length > 0) txt += ' &nbsp;|&nbsp; Total Amount: <strong>' + totalAmt + '</strong>';
+        document.getElementById('spnBatchSelected').innerHTML = txt;
+        document.getElementById('chkSelectAllBatch').checked = allBoxes.length > 0 && checked.length === allBoxes.length;
+    }
+
+    function confirmBatchPayout() {
+        var selected = document.querySelectorAll('.chkBatchInterviewer:checked');
+        if (selected.length === 0) {
+            Swal.fire('Please select at least one interviewer.');
+            return;
+        }
+        var ids = [];
+        var totalAmt = 0;
+        for (var i = 0; i < selected.length; i++) {
+            ids.push(selected[i].getAttribute('data-id'));
+            totalAmt += parseInt(selected[i].getAttribute('data-amount') || 0);
+        }
+        Swal.fire({
+            title: 'Batch Payout',
+            text: 'Proceed with Cashfree payout for ' + ids.length + ' interviewer(s) ? Total Amount: ' + totalAmt + '?',
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: 'Yes, Proceed',
+            denyButtonText: 'Cancel'
+        }).then(function (result) {
+            
+            if (!result.value) return;
+
+            document.getElementById('btnProceedBatch').disabled = true;
+
+            // Full-screen blocking overlay
+            var overlay = document.createElement('div');
+            overlay.id = 'batchOverlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+            overlay.innerHTML =
+                '<div style="background:#fff;border-radius:10px;padding:36px 40px;min-width:320px;max-width:460px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.25);">' +
+                    '<img src="/Newassets/img/lazyload.gif" style="height:48px;width:48px;margin-bottom:16px;" />' +
+                    '<div style="font-size:17px;font-weight:700;color:#1565c0;margin-bottom:8px;">Processing Batch Payout&hellip;</div>' +
+                    '<div style="font-size:13px;color:#555;margin-bottom:16px;">Sending payments to Cashfree one by one.<br><strong>Do not close or refresh this page.</strong></div>' +
+                    '<div style="background:#dce9fb;border-radius:6px;height:10px;overflow:hidden;margin-bottom:10px;">' +
+                        '<div id="batchOverlayBar" style="height:100%;width:0%;background:#1976d2;transition:width 0.5s ease;"></div>' +
+                    '</div>' +
+                    '<div id="batchOverlayLabel" style="font-size:12px;color:#1976d2;">Initiating payouts for <strong>' + ids.length + '</strong> interviewer(s)&hellip;</div>' +
+                '</div>';
+            document.body.appendChild(overlay);
+
+            var divResult = document.getElementById('divBatchResult');
+            divResult.innerHTML = '';
+            divResult.style.display = 'none';
+
+            // Animate overlay bar to ~80% while waiting; 100% set on completion
+            var fakeProgress = 0;
+            var fakeTimer = setInterval(function () {
+                if (fakeProgress < 80) {
+                    fakeProgress += Math.random() * 8;
+                    if (fakeProgress > 80) fakeProgress = 80;
+                    var pct = fakeProgress.toFixed(1) + '%';
+                    var oBar = document.getElementById('batchOverlayBar');
+                    if (oBar) oBar.style.width = pct;
+                    var oLbl = document.getElementById('batchOverlayLabel');
+                    if (oLbl) oLbl.textContent = 'Processing\u2026 please wait, this may take a few seconds per interviewer.';
+                }
+            }, 700);
+
+            $.ajax({
+                url: "/Finance/BatchConfirmPaymentViaCashfree",
+                type: "POST",
+                data: {
+                    ids: ids.join(','),
+                    index: Generateinvoiceflag,
+                    st: St_date || '',
+                    se: Se_date || ''
+                },
+                dataType: 'json',
+                success: function (data) {
+                    clearInterval(fakeTimer);
+                    var oBar = document.getElementById('batchOverlayBar');
+                    if (oBar) oBar.style.width = '100%';
+
+                    setTimeout(function () {
+                        var ov = document.getElementById('batchOverlay');
+                        if (ov) ov.parentNode.removeChild(ov);
+                        var resultHtml = '<table class="table table-bordered table-sm" style="font-size:12px;margin:0;">';
+                        resultHtml += '<thead><tr><th>Email</th><th>Amount</th><th>Result</th></tr></thead><tbody>';
+                        var successCount = 0, failCount = 0;
+                        if (data.results && data.results.length > 0) {
+                            for (var j = 0; j < data.results.length; j++) {
+                                var r = data.results[j];
+                                var pts = '';
+                                var chkBox = document.querySelector('.chkBatchInterviewer[data-id="' + r.id + '"]');
+                                if (chkBox) pts = chkBox.getAttribute('data-amount') || '';
+                                var rowClass = r.success ? 'table-success' : 'table-danger';
+                                resultHtml += '<tr class="' + rowClass + '">';
+                                resultHtml += '<td>' + (r.email || '') + '</td>';
+                                resultHtml += '<td>' + pts + '</td>';
+                                resultHtml += '<td>' + (r.message || (r.success ? 'Success' : 'Failed')) + '</td>';
+                                resultHtml += '</tr>';
+                                if (r.success) successCount++; else failCount++;
+                            }
+                        }
+                        resultHtml += '</tbody></table>';
+
+                        var summaryBg    = failCount === 0 ? '#e8f5e9' : '#fff3e0';
+                        var summaryColor = failCount === 0 ? '#1b5e20' : '#e65100';
+                        var summaryIcon  = failCount === 0 ? '&#10003;' : '&#9888;';
+                        var summaryText  = successCount + ' payout(s) initiated successfully'
+                            + (failCount > 0 ? ' &nbsp;|&nbsp; ' + failCount + ' failed' : '');
+                        var summary = '<div style="background:' + summaryBg + ';border-radius:6px;padding:10px 14px;margin-bottom:8px;font-size:13px;font-weight:600;color:' + summaryColor + ';">'
+                            + summaryIcon + ' ' + summaryText + '</div>';
+
+                        divResult.innerHTML = summary + resultHtml;
+                        document.getElementById('btnProceedBatch').disabled = false;
+                        FinacneChangePage(_Currentpage);
+                    }, 400);
+                },
+                error: function () {
+                    clearInterval(fakeTimer);
+                    var ov = document.getElementById('batchOverlay');
+                    if (ov) ov.parentNode.removeChild(ov);
+                    divResult.innerHTML =
+                        '<div style="background:#fce4ec;border-radius:6px;padding:12px 14px;color:#b71c1c;font-size:13px;font-weight:600;">' +
+                        '&#10007; Batch payout request failed. Please try again.</div>';
+                    document.getElementById('btnProceedBatch').disabled = false;
+                }
+            });
+        });
+    }
+    // ????????????????????????????????????????????????????????????????????????????
+
     function CloseMyModelPopup() {
         var model = document.getElementById("myModal");
         model.style.display = "none";
@@ -920,6 +1173,21 @@
     var actionbutton;
     var actiontype = 1;
     var _Currentpage = 1;
+
+    // Seed currentTableData from the server-rendered Razor model so Batch Payout
+    // works even before any AJAX filter is applied.
+    currentTableData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        Model.Select(x => new {
+            id            = x.id,
+            comment       = x.Comment,
+            points        = x.Points,
+            isActive      = x.IsActive,
+            isBlocked     = x.IsBlocked,
+            isBankVerified= x.IsBankVerified,
+            mobileNumber  = x.MobileNumber
+        })
+    ));
+
     $(document).ready(function () {
         document.getElementById('addPointDate').value = new Date().toISOString().slice(0, 10);
         $("#adtxtEmailid").autocomplete({

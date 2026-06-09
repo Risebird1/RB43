@@ -26,6 +26,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
+using Risebird.Web.Helpers;
 using Syncfusion.DocIO.DLS;
 using System;
 using System.Collections.Generic;
@@ -9008,21 +9009,28 @@ namespace Risebird.Web.Controllers
         #region Delivery Head Instruction
 
         [HttpGet]
-        public async Task<JsonResult> GetDmInterviewerPanelMetrics(int irfId)
+        public async Task<JsonResult> GetDmInterviewerPanelMetrics(int irfId, string Type = null)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") == null)
+                var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                    || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
+                if (!isClientShare && HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { ok = false });
                 }
 
                 var model = await _irfService.GetEditIRF(irfId, 0, false);
-                var interviewers = model?.InterviewerCollection?
+                var source = model?.InterviewerCollection?.AsEnumerable();
+                if (isClientShare)
+                {
+                    source = source?.Where(x => x != null && x.IsActive);
+                }
+                var interviewers = source?
                     .Select(iv => new
                     {
                         userId = iv.UserId,
-                        email = iv.EmailId ?? "",
+                        email = isClientShare ? "" : (iv.EmailId ?? ""),
                         companyName = !string.IsNullOrWhiteSpace(iv.CompanyName)
                             ? iv.CompanyName.Trim()
                             : (!string.IsNullOrWhiteSpace(iv.EmploymentComment) ? iv.EmploymentComment.Trim() : null),
@@ -9043,11 +9051,13 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetDmInterviewerCvState(int irfId, int userId)
+        public async Task<JsonResult> GetDmInterviewerCvState(int irfId, int userId, string Type = null)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") == null)
+                var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                    || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
+                if (!isClientShare && HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { ok = false });
                 }
@@ -9061,10 +9071,15 @@ namespace Risebird.Web.Controllers
                     return Json(new { ok = false });
                 }
 
+                if (isClientShare)
+                {
+                    DeliveryHeadInstructionViewMode.StripInterviewerForClientView(iv);
+                }
+
                 return Json(new
                 {
                     ok = true,
-                    resumeLink = iv.ResumeLink ?? "",
+                    resumeLink = isClientShare ? "" : (iv.ResumeLink ?? ""),
                     codedCvLink = iv.CodedResumeLink ?? "",
                     cvCode = !string.IsNullOrEmpty(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : "",
                     isResumeRedactAttempted = iv.IsResumeRedactAttempted,
@@ -9083,14 +9098,75 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
+        public async Task<IActionResult> GetClientShareInterviewerInsights(int irfId, int userId, string Type = null)
+        {
+            if (!DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                && !DeliveryHeadInstructionViewMode.IsClientShareType(Type))
+            {
+                return Unauthorized();
+            }
+
+            try
+            {
+                var model = await _irfService.GetEditIRF(irfId, 0, false);
+                var iv = model?.InterviewerCollection?
+                    .FirstOrDefault(x => x.UserId == userId && x.IsActive);
+                if (iv == null || string.IsNullOrWhiteSpace(iv.EmailId))
+                {
+                    return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", new InterviewerInsightsVM());
+                }
+
+                var result = await _interviewerService.GetInterviewerInsights(iv.EmailId, model.IRFId);
+                if (result == null)
+                {
+                    result = new InterviewerInsightsVM();
+                }
+                DeliveryHeadInstructionViewMode.StripInterviewerInsightsForClientView(result);
+                result.IRFId = model.IRFId;
+                ViewBag.type = "Client";
+                ViewBag.RegularAccess = "";
+                return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", new InterviewerInsightsVM());
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> DeliveryHeadInstruction(string irfid, string Type = null)//Type = "ublc" stands for public here
         {
             var resolvedIrfId = await _irfService.ResolveSkillChannelNumericIdAsync(irfid);
             ViewBag.PageType = "";
-            if (!string.IsNullOrEmpty(Type) && Type == "ublc" /*&& HttpContext.Session.GetString("email") == null*/)
+            ViewBag.IsClientShareView = false;
+            if (DeliveryHeadInstructionViewMode.IsClientShareType(Type))
             {
                 ViewBag.PageType = "Public";
-                return View(new IRFVm { id = resolvedIrfId });
+                ViewBag.IsClientShareView = true;
+                var jobLevelsPublic = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
+                ViewBag.JobLevelList = new SelectList(jobLevelsPublic, "ID", "Name");
+                if (resolvedIrfId <= 0)
+                {
+                    ViewBag.Message = "Skill Channel not found.";
+                    return View(new IRFVm { id = 0 });
+                }
+                DeliveryHeadInstructionViewMode.SetClientShareSession(HttpContext, resolvedIrfId);
+                var publicModel = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
+                if (publicModel == null)
+                {
+                    ViewBag.Message = "Skill Channel not found.";
+                    return View(new IRFVm { id = resolvedIrfId });
+                }
+                DeliveryHeadInstructionViewMode.ApplyClientViewFilter(publicModel);
+                publicModel.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
+                publicModel.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
+                var voiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
+                publicModel.VoiceInstructionTranscript = voiceBrief?.Transcript;
+                publicModel.VoiceInstructionTranscriptUpdatedOn = voiceBrief?.TranscriptUpdatedOn;
+                await checkSkillSetandSeperate(publicModel);
+                return View(publicModel);
             }
             else if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
@@ -12052,21 +12128,32 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<JsonResult> UpdateInterviewerClientVet(int irfId, string interviewerEmail, bool isApproved, int userId)
+        public async Task<JsonResult> UpdateInterviewerClientVet(int irfId, string interviewerEmail, bool isApproved, int userId, string Type = null)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") == null)
+                var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                    || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
+
+                if (!isClientShare && HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { success = false, message = "Unauthorized", error = "You don't have permission to vet this interviewer." });
                 }
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+
+                if (!isClientShare)
                 {
-                    return Json(new { success = false, message = "You don't have permission to vet this interviewer.", error = "You don't have permission to vet this interviewer." });
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                    {
+                        return Json(new { success = false, message = "You don't have permission to vet this interviewer.", error = "You don't have permission to vet this interviewer." });
+                    }
                 }
-                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                var emailid = isClientShare
+                    ? "client-share@ublc"
+                    : HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 // Same scope as DM Approval grid (usp_GetSkillChannelDetailsForUpdate) — not assessment-group filtered.
                 var channelIv = await _irfRepository.GetSkillChannelInterviewersForEdit(irfId);
                 var ti = channelIv?.InterviewerCollection?.FirstOrDefault(x => x.UserId == userId);
@@ -12132,13 +12219,17 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>Loads saved AI resume summary JSON from interviewer CodedResumeLink (blob).</summary>
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> GetInterviewerCodedCvSummary(string codedCvLink)
+        public async Task<IActionResult> GetInterviewerCodedCvSummary(string codedCvLink, int? irfId = null, string Type = null)
         {
             const string viewPath = "~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml";
             try
             {
-                if (HttpContext.Session.GetString("email") == null)
+                var isClientShare = irfId.HasValue && irfId.Value > 0
+                    && (DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId.Value)
+                        || DeliveryHeadInstructionViewMode.IsClientShareType(Type));
+                if (!isClientShare && HttpContext.Session.GetString("email") == null)
                     return View(viewPath, (ResumeSummaryVM)null);
 
                 if (string.IsNullOrWhiteSpace(codedCvLink))
