@@ -49,6 +49,8 @@ namespace Risebird.Entities.Data
         public bool IsMeetingNotificationSend { get; set; }
         [Display(Name = "Per Interview Rate")]
         public int PerInterviewRate { get; set; }
+        [Display(Name = "AI Per Interview Rate")]
+        public int AIPerInterviewRate { get; set; }
         [Display(Name = "Billing Type")]
         public string BillingType { get; set; }
         public List<SelectListItem> BillingTypeDrop { get; set; }

@@ -22,6 +22,7 @@ Create PROCEDURE [dbo].[usp_UpdateClient]
 @IsCandidateavailability bit,    
 @IsMeetingNotificationSend bit,  
 @PerInterviewRate int,
+@AIPerInterviewRate int,
 @BillingType int,
 @InterviewDuration int,
 @IsMeetingAutoCancelled bit,
@@ -57,6 +58,7 @@ SET
   ,[IsCandidateavailability]=@IsCandidateavailability    
   ,[IsMeetingNotificationSend]=@IsMeetingNotificationSend  
   ,[PerInterviewRate]=@PerInterviewRate
+  ,[AIPerInterviewRate]=@AIPerInterviewRate
   ,[BillingType]=@BillingType
   ,[InterviewDuration]=@InterviewDuration
   ,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
