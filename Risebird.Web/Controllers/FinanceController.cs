@@ -34,8 +34,9 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IClientService _clientService;
         private readonly ICashfreePayoutService _cashfreePayoutService;
+        private readonly IWalletService _walletService;
 
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService, ICashfreePayoutService cashfreePayoutService)
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService, ICashfreePayoutService cashfreePayoutService, IWalletService walletService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -48,6 +49,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _clientService = clientService;
             _cashfreePayoutService = cashfreePayoutService;
+            _walletService = walletService;
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
@@ -1941,7 +1943,8 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod,
             string irn, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
-            decimal tdsAmount, decimal netReceivable, string lineItemsJson)
+            decimal tdsAmount, decimal netReceivable, string lineItemsJson,
+            int? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null)
         {
             try
             {
@@ -1951,12 +1954,32 @@ namespace Risebird.Web.Controllers
                     try { lineItems = JsonConvert.DeserializeObject<List<InvoiceLineItemVM>>(lineItemsJson); }
                     catch { lineItems = new List<InvoiceLineItemVM>(); }
                 }
+
+                // When marking as Paid (status=2) for non-M1, cash credit amount is required
+                const int StatusPaid    = 2;
+                const int BillingModelM1 = 1;
+
+                if (status == StatusPaid && cashCreditAmount.HasValue && cashCreditAmount.Value > 0)
+                {
+                    var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
+                    if (invoice != null && invoice.BillingModel != BillingModelM1)
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                        var billingType = await _clientService.GetClientBillingType(invoice.ClientId);
+                        int? billingOwnerId = billingType == 1 ? invoice.BillingOwnerId : (int?)null;
+                        await _walletService.AddClientWalletBalance(
+                            billingType, invoice.ClientId, cashCreditAmount.Value,
+                            emailid, DateTime.Now, billingOwnerId,
+                            cashTransactionRef, null, cashTransactionDate, "CashCredit");
+                    }
+                }
+
                 var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, status,
                     subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems);
                 return Json(new
                 {
                     success,
-                    message    = success ? "Invoice updated successfully." : "Failed to update invoice.",
+                    message     = success ? "Invoice updated successfully." : "Failed to update invoice.",
                     redirectUrl = success ? Url.Action("ViewInvoice", "Finance", new { invoiceId }) : (string)null
                 });
             }
