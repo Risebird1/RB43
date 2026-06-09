@@ -953,6 +953,23 @@
         return $('#dmV4IvPanel').attr('data-lock') !== '1';
     }
 
+    function isClientShareView() {
+        if (window.dmV4ClientShareView === true) return true;
+        var $panel = $('#dmV4IvPanel');
+        if ($panel.attr('data-client-share') === '1') return true;
+        var $page = $('.dm-v4-page');
+        return $page.attr('data-client-share') === '1';
+    }
+
+    function getClientShareTypeParam() {
+        return (window.dmV4ClientShareType || 'ublc').toString();
+    }
+
+    function getIvCanEditClientVet() {
+        var $panel = $('#dmV4IvPanel');
+        return $panel.attr('data-can-edit-client-vet') === '1' || $panel.data('can-edit-client-vet') === 1;
+    }
+
     function readRbVetFromRow($row) {
         var raw = $row.attr('data-rb-vet');
         if ($row.attr('data-is-active') !== '1') return false;
@@ -1115,6 +1132,23 @@
     }
 
     function syncVetButtons($row) {
+        if (isClientShareView()) {
+            var clientOn = readClientVetFromRow($row);
+            var vetEnabled = $row.attr('data-client-vet-enabled') === '1';
+            var $clientBtns = $row.find('[data-vet="client"] .dm-v4-vet-btn');
+            var $clientToggle = $row.find('[data-vet="client"]');
+            $clientBtns.removeClass('is-on');
+            $clientBtns.filter('[data-vet-value="' + (clientOn ? '1' : '0') + '"]').addClass('is-on');
+            var canEdit = getIvCanEditClientVet() && vetEnabled;
+            $clientBtns.prop('disabled', !canEdit);
+            $clientToggle.attr('title', !vetEnabled ? 'This interviewer is not ready for client review yet.' : '');
+            $row.find('.dm-v4-iv-vet-sub--client').text(
+                !vetEnabled
+                    ? 'Awaiting Risebird review'
+                    : (clientOn ? 'Approved for your panel' : 'Awaiting your approval')
+            );
+            return;
+        }
         var rbOn = readRbVetFromRow($row);
         var clientOn = readClientVetFromRow($row);
         $row.find('[data-vet="rb"] .dm-v4-vet-btn').removeClass('is-on');
@@ -1330,7 +1364,13 @@
 
         dmV4UpdateScreenedAtCaption($row);
         dmV4SyncDrawerScreenBtnVisibility($row);
-        dmV4SyncVerdictDrawerKyc($row);
+        if (!isClientShareView()) {
+            dmV4SyncVerdictDrawerKyc($row);
+        } else {
+            $('#dmV4VerdictDrawerScreenBtn').closest('.dm-v4-vd-section--screen').hide();
+            $('#dmV4VerdictDrawerKycSection').prop('hidden', true).hide();
+            $('#dmV4VerdictDrawerScreenedAt').hide();
+        }
 
         $('#dmV4VerdictOverlay, #dmV4VerdictDrawer').addClass('is-open').attr('aria-hidden', 'false');
     }
@@ -1392,12 +1432,23 @@
     function dmV4OpenInterviewerResumeSummary(codedCvLink, resumeLink, cvLabel) {
         var cfg = getDmIvCvConfig();
         dmV4SetResumeSummaryDrawerTitle(cvLabel);
+        var clientShareData = {};
+        if (isClientShareView()) {
+            var $row = (window._dmV4CvSummaryRow && window._dmV4CvSummaryRow.length)
+                ? window._dmV4CvSummaryRow
+                : (window._dmV4VerdictDrawerRow && window._dmV4VerdictDrawerRow.length ? window._dmV4VerdictDrawerRow : $('.dm-v4-iv-row').first());
+            var shareIrfId = parseInt($row.data('irf-id'), 10);
+            if (shareIrfId) {
+                clientShareData.irfId = shareIrfId;
+                clientShareData.Type = getClientShareTypeParam();
+            }
+        }
         if (dmV4IsSummaryCodedCvLink(codedCvLink)) {
             dmV4ShowResumeSummaryLoading('Loading saved resume summary…');
             $.ajax({
                 url: cfg.viewCodedSummaryUrl || '/IRF/GetInterviewerCodedCvSummary',
                 type: 'POST',
-                data: { codedCvLink: codedCvLink },
+                data: $.extend({ codedCvLink: codedCvLink }, clientShareData),
                 success: function (result) {
                     if (result != null && String(result).trim()) {
                         $('#id_candidateResumeSummaryBody').html(result);
@@ -2841,13 +2892,33 @@
             var $row = $(this);
             normalizeVetRowAttrs($row);
             syncVetButtons($row);
-            dmV4SyncScreenButtonLabels($row);
-            dmV4EnsureKycPlayButton($row);
+            if (!isClientShareView()) {
+                dmV4SyncScreenButtonLabels($row);
+                dmV4EnsureKycPlayButton($row);
+            }
         });
 
         $(document).off('click.dmV4IvInsightsGlobal', '.dm-v4-iv-insights-btn--global').on('click.dmV4IvInsightsGlobal', '.dm-v4-iv-insights-btn--global', function (e) {
             e.preventDefault();
-            var $row = $(this).closest('.dm-v4-iv-row');
+            var $btn = $(this);
+            var $row = $btn.closest('.dm-v4-iv-row');
+            if (isClientShareView()) {
+                var userId = parseInt($btn.data('user-id') || $row.data('user-id'), 10);
+                var irfId = parseInt($row.data('irf-id'), 10);
+                var nickname = ($btn.data('nickname') || $row.find('.dm-v4-iv-code').first().text().replace(/\s+/g, ' ').replace(/›/g, '').trim() || '').toString();
+                if (!userId || !irfId) return;
+                $.get('/IRF/GetClientShareInterviewerInsights', {
+                    irfId: irfId,
+                    userId: userId,
+                    Type: getClientShareTypeParam()
+                }, function (data) {
+                    openInterviewerInsightsModel();
+                    $('#divInsightsmodel').html(data);
+                    $('#txtheaderInsights').text(nickname ? nickname + ' (Client view)' : 'Interviewer');
+                    $('#hidlastlogin').text($('#LastLogin').val() || '');
+                });
+                return;
+            }
             var email = ($(this).data('email') || $row.data('email') || '').toString();
             if (!email) return;
             if (typeof InsightsDetails === 'function') {
@@ -2857,9 +2928,28 @@
 
         $(document).off('click.dmV4IvChannelInsights', '.dm-v4-iv-channel-insights-btn').on('click.dmV4IvChannelInsights', '.dm-v4-iv-channel-insights-btn', function (e) {
             e.preventDefault();
-            var $row = $(this).closest('.dm-v4-iv-row');
-            var email = ($(this).data('email') || $row.data('email') || '').toString();
-            var irfName = ($(this).data('irf-id-name') || $row.data('irf-name') || '').toString();
+            var $btn = $(this);
+            var $row = $btn.closest('.dm-v4-iv-row');
+            if (isClientShareView()) {
+                var userId = parseInt($btn.data('user-id') || $row.data('user-id'), 10);
+                var irfId = parseInt($btn.data('irf-id') || $row.data('irf-id'), 10);
+                var irfName = ($btn.data('irf-id-name') || $row.data('irf-name') || '').toString();
+                var nickname = ($row.find('.dm-v4-iv-code').first().text().replace(/\s+/g, ' ').replace(/›/g, '').trim() || '').toString();
+                if (!userId || !irfId) return;
+                $.get('/IRF/GetClientShareInterviewerInsights', {
+                    irfId: irfId,
+                    userId: userId,
+                    Type: getClientShareTypeParam()
+                }, function (data) {
+                    openInterviewerInsightsModel();
+                    $('#divInsightsmodel').html(data);
+                    $('#txtheaderInsights').text(nickname ? nickname + ' · ' + irfName : irfName);
+                    $('#hidlastlogin').text($('#LastLogin').val() || '');
+                });
+                return;
+            }
+            var email = ($btn.data('email') || $row.data('email') || '').toString();
+            var irfName = ($btn.data('irf-id-name') || $row.data('irf-name') || '').toString();
             if (!email) return;
             if (typeof InsightsIRFDetails === 'function') {
                 InsightsIRFDetails(email, irfName);
@@ -2871,6 +2961,8 @@
         $(document).off('click.dmV4IvCvView', '.dm-v4-iv-cv-link--view').on('click.dmV4IvCvView', '.dm-v4-iv-cv-link--view', function (e) {
             e.preventDefault();
             var $btn = $(this);
+            var $row = $btn.closest('.dm-v4-iv-row');
+            window._dmV4CvSummaryRow = $row;
             var codedCv = ($btn.data('coded-cv') || $btn.closest('.dm-v4-iv-cv-stack').data('coded-cv') || $btn.closest('.dm-v4-iv-row').data('coded-cv') || '').toString();
             var resumeLink = ($btn.data('resume-link') || $btn.closest('.dm-v4-iv-row').data('resume-link') || '').toString();
             var cvLabel = ($btn.data('cv-label') || $btn.text().replace(/\s*↗\s*$/, '').trim() || 'CV').toString();
@@ -2981,13 +3073,17 @@
         $(document).off('click.dmV4Vet', '.dm-v4-vet-btn:not(:disabled)').on('click.dmV4Vet', '.dm-v4-vet-btn:not(:disabled)', function () {
             var $btn = $(this);
             if ($btn.hasClass('is-on')) return;
-            if (!getIvCanEdit()) {
+            var vetType = $btn.closest('.dm-v4-vet-toggle').data('vet');
+            if (vetType === 'rb' && !getIvCanEdit()) {
+                if (typeof swal !== 'undefined') swal.fire('Cannot update RB Vet', 'You don\'t have permission to vet this interviewer.', 'error');
+                return;
+            }
+            if (vetType === 'client' && !getIvCanEdit() && !getIvCanEditClientVet()) {
                 if (typeof swal !== 'undefined') swal.fire('Cannot update Client Vet', 'You don\'t have permission to vet this interviewer.', 'error');
                 return;
             }
             var $row = $btn.closest('.dm-v4-iv-row');
             var isYes = $btn.attr('data-vet-value') === '1';
-            var vetType = $btn.closest('.dm-v4-vet-toggle').data('vet');
             if (vetType === 'rb') {
                 $.post('/IRF/UpdateInterviewerRbVet', {
                     transInterviewerId: parseInt($row.data('trans-id'), 10),
@@ -3014,12 +3110,16 @@
                     if (typeof swal !== 'undefined') swal.fire('RB Vet update failed', dmV4VetErrorText(res, 'Network or server error.'), 'error');
                 });
             } else if (vetType === 'client') {
-                $.post('/IRF/UpdateInterviewerClientVet', {
+                var clientVetPayload = {
                     irfId: parseInt($row.data('irf-id'), 10),
                     interviewerEmail: ($row.attr('data-email') || $row.data('email') || '').toString(),
                     isApproved: isYes,
                     userId: parseInt($row.data('user-id'), 10)
-                }, function (res) {
+                };
+                if (isClientShareView()) {
+                    clientVetPayload.Type = getClientShareTypeParam();
+                }
+                $.post('/IRF/UpdateInterviewerClientVet', clientVetPayload, function (res) {
                     if (res && res.success) {
                         applyVetCascadeRowAttrs($row, {
                             clientVet: isYes,

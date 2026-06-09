@@ -1,4 +1,5 @@
 @model Risebird.Entities.ViewModel.IRFVm
+@using Risebird.Web.Helpers
 @using Risebird.Entities.ViewModel
 @using Risebird.Entities.Data
 @using Risebird.Entities.Enum
@@ -143,14 +144,13 @@
 @{
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
     ViewData["Title"] = "Delivery Head Instruction";
-    //string displayMainContent = "block";
+    bool isClientShareView = ViewBag.IsClientShareView == true;
     bool openSubmitEmailPopup = false;
-    if (ViewBag.PageType == "Public")
-    {
-        //displayMainContent = "hide";
-        openSubmitEmailPopup = true;
-    }
 }
+<script>
+    window.dmV4ClientShareView = @(isClientShareView ? "true" : "false");
+    window.dmV4ClientShareType = '@DeliveryHeadInstructionViewMode.ClientShareTypeParam';
+</script>
 <script>
     var Header = "Delivery Head Instruction";
     $('#txtpageHeader').empty().html(Header);
@@ -162,7 +162,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20250608ivtabs" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20250608clientcols2" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -190,6 +190,33 @@
         margin-right: auto !important;
         padding: 0 15px 60px !important;
         box-sizing: border-box;
+    }
+    .interviewWrapper.dm-v4-page.dm-v4-page--client-share .dm-v4-block--order-interviewers-client {
+        width: calc(100% + 30px) !important;
+        max-width: calc(100% + 30px) !important;
+        margin-left: -15px !important;
+        margin-right: -15px !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        box-sizing: border-box;
+    }
+    .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client {
+        width: 100% !important;
+        max-width: 100% !important;
+        column-gap: 10px !important;
+        grid-template-columns:
+            minmax(0, 1.35fr)
+            minmax(0, 0.95fr)
+            minmax(0, 1.3fr)
+            minmax(0, 0.6fr)
+            minmax(0, 0.65fr)
+            minmax(0, 0.85fr)
+            minmax(0, 1fr)
+            minmax(0, 1.1fr) !important;
+    }
+    .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-meta,
+    .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-company {
+        max-width: none !important;
     }
     .dm-v4-iv-score-dim{line-height:20px;}
     input[type=number].dm-v4-inline-edit-input::-webkit-inner-spin-button,
@@ -236,7 +263,7 @@
                             <div class="loader text-center">
                                 <img src="~/Newassets/img/lazyload.gif" />
                             </div>
-                            <div class="interviewWrapper dataloading dm-v4-page">
+                            <div class="interviewWrapper dataloading dm-v4-page@(isClientShareView ? " dm-v4-page--client-share" : "")" data-client-share="@(isClientShareView ? "1" : "0")">
                                 <div class="col-md-12 pull-left pad10 dm-v4-chrome-wrap" style="padding-bottom:0;">
                                     <div class="dm-v4-chrome">
                                         <div class="dm-v4-breadcrumb">
@@ -1029,7 +1056,7 @@
                                     @* End:Sample Questions: *@
 
                                     @* 3 · Interviewers — full V4 wireframe grid *@
-                                    <div class="col-md-12 pull-left pad10 dm-v4-block dm-v4-block--order-interviewers" style="padding-bottom:0px;padding-left:0;padding-right:0;">
+                                    <div class="col-md-12 pull-left pad10 dm-v4-block dm-v4-block--order-interviewers@(isClientShareView ? " dm-v4-block--order-interviewers-client" : "")" style="padding-bottom:0px;padding-left:0;padding-right:0;">
                                         <section class="dm-v4-section dm-v4-section--pinned">
                                             @{
                                                 var ivList = Model.InterviewerCollection ?? new List<TransInterviewer>();
@@ -1041,9 +1068,18 @@
                                                 int clientVetCount = ivList.Count(x => DmV4ClientVetDisplayYes(x, dmIvLockNew, DmV4RbVetDisplayYes(x, dmIvLockNew)));
                                                 int onPanelCount = ivList.Count(x => DmV4RbVetDisplayYes(x, dmIvLockNew) && DmV4ClientVetDisplayYes(x, dmIvLockNew, DmV4RbVetDisplayYes(x, dmIvLockNew)));
                                                 var dmProfileName = (ViewBag.profileName as string ?? "").Trim().Trim('"');
-                                                bool canEditIvOps = dmProfileName != "Client" && dmProfileName != "Interviewer" && dmProfileName != "Public";
-                                                bool canUploadIvResume = DmV4CanUploadIvResume(dmProfileName);
-                                                bool canEditSurcharge = ViewBag.profileName == "Admin" || ViewBag.profileName == "SupportAdmin";
+                                                bool canEditClientVet = isClientShareView;
+                                                bool canEditIvOps = !isClientShareView && dmProfileName != "Client" && dmProfileName != "Interviewer" && dmProfileName != "Public";
+                                                bool canUploadIvResume = !isClientShareView && DmV4CanUploadIvResume(dmProfileName);
+                                                bool canEditSurcharge = !isClientShareView && (ViewBag.profileName == "Admin" || ViewBag.profileName == "SupportAdmin");
+                                                if (isClientShareView)
+                                                {
+                                                    ivList = ivList.Where(x => x.IsActive).ToList();
+                                                    ivCount = ivList.Count;
+                                                    ivActiveCount = ivCount;
+                                                    ivInactiveCount = 0;
+                                                }
+                                                bool canToggleClientVet = canEditIvOps || canEditClientVet;
                                                 string screenJdTitle = Model.JDTiltle ?? "";
                                                 string dmAssignPolicy = string.IsNullOrEmpty(Model.DmAssignmentPolicy) ? "free" : Model.DmAssignmentPolicy;
                                                 int dmDefaultCap = Model.DmDefaultInterviewCap > 0 ? Model.DmDefaultInterviewCap : 20;
@@ -1059,17 +1095,34 @@
                                                     <div class="dm-v4-section-toolbar__title-row">
                                                         <h2 style="margin:0;font-size:20px;font-weight:600;letter-spacing:-0.01em;">Interviewers</h2>
                                                         <span class="dm-v4-badge dm-v4-badge--neutral" id="dmV4IvCountBadge">@ivCount @(ivCount == 1 ? "CANDIDATE" : "CANDIDATES")</span>
+                                                        @if (!isClientShareView)
+                                                        {
                                                         <span class="dm-v4-badge dm-v4-badge--indigo" id="dmV4RbVetBadge">@rbVetCount RB-VETTED</span>
+                                                        }
                                                         <span class="dm-v4-badge dm-v4-badge--green" id="dmV4ClientVetBadge">@clientVetCount CLIENT-APPROVED</span>
+                                                        @if (!isClientShareView)
+                                                        {
                                                         <span class="dm-v4-badge dm-v4-badge--blue" id="dmV4OnPanelBadge">@onPanelCount ON PANEL</span>
+                                                        }
                                                     </div>
+                                                    @if (!isClientShareView)
+                                                    {
                                                     <p style="margin:6px 0 0;font-size:13px;color:#475569;line-height:1.5;max-width:720px;">
                                                         <strong style="color:#0f172a;">RB Vet</strong> = Risebird verified ·
                                                         <strong style="color:#0f172a;">Client Vet</strong> = client shortlist ·
                                                         Active on panel when both are <em>Yes</em>.
                                                     </p>
+                                                    }
+                                                    else
+                                                    {
+                                                    <p style="margin:6px 0 0;font-size:13px;color:#475569;line-height:1.5;max-width:720px;">
+                                                        Review each interviewer and use <strong style="color:#0f172a;">Client Vet</strong> to approve or reject them for your panel.
+                                                    </p>
+                                                    }
                                                 </div>
                                             </div>
+                                            @if (!isClientShareView)
+                                            {
                                             <div class="dm-v4-iv-policy-bar" id="dmV4IvPolicyBar"
                                                  data-irf-id="@Model.id"
                                                  data-lock="@(dmIvLockNew ? "1" : "0")"
@@ -1133,11 +1186,12 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            }
                                         <div class="card">
                                             <div class="dm-v4-pinned-body" id="hidden_fields_eight">
                                                 @Html.HiddenFor(m => m.id)
-                                                <div class="dm-v4-iv-panel" id="dmV4IvPanel" data-lock="@(dmIvLockNew ? "1" : "0")" data-cap-enforced="@(dmCapEnforced ? "1" : "0")" data-can-edit="@(canEditIvOps ? "1" : "0")" data-can-upload-resume="@(canUploadIvResume ? "1" : "0")" data-can-edit-surcharge="@(canEditSurcharge ? "1" : "0")" data-iv-tab="active">
-                                                    @if (ivCount > 0)
+                                                <div class="dm-v4-iv-panel" id="dmV4IvPanel" data-lock="@(dmIvLockNew ? "1" : "0")" data-cap-enforced="@(dmCapEnforced ? "1" : "0")" data-can-edit="@(canEditIvOps ? "1" : "0")" data-can-edit-client-vet="@(canToggleClientVet ? "1" : "0")" data-can-upload-resume="@(canUploadIvResume ? "1" : "0")" data-can-edit-surcharge="@(canEditSurcharge ? "1" : "0")" data-client-share="@(isClientShareView ? "1" : "0")" data-iv-tab="active">
+                                                    @if (ivCount > 0 && !isClientShareView)
                                                     {
                                                         <div class="dm-v4-iv-tabs" id="dmV4IvTabs" role="tablist" aria-label="Interviewer status">
                                                             <button type="button" class="dm-v4-iv-tab is-on" data-tab="active" role="tab" aria-selected="true" aria-controls="dmV4IvPanel">
@@ -1150,7 +1204,7 @@
                                                             </button>
                                                         </div>
                                                     }
-                                                    <div class="dm-v4-iv-grid dm-v4-iv-grid--head">
+                                                    <div class="dm-v4-iv-grid dm-v4-iv-grid--head@(isClientShareView ? " dm-v4-iv-grid--client" : "")">
                                                         <span>Interviewer</span>
                                                         @* <span>Company</span> *@
                                                         <span>Coded CV</span>
@@ -1159,11 +1213,17 @@
                                                         <span>Insight(all channel)</span>
                                                         <span>Channel Insights</span>
                                                         <span>Interview limit</span>
+                                                        @if (!isClientShareView)
+                                                        {
                                                         <span>Per-iv rate</span>
                                                         <span>Surcharge</span>
                                                         <span>RB Vet</span>
+                                                        }
                                                         <span>Client Vet</span>
+                                                        @if (!isClientShareView)
+                                                        {
                                                         <span></span>
+                                                        }
                                                     </div>
                                                     @if (ivCount == 0)
                                                     {
@@ -1208,26 +1268,30 @@
                                                             var dmIvLastLoginIso = DmV4IsoTimestamp(iv.LastLoginAt);
                                                             var dmIvLastInterviewIso = DmV4IsoTimestamp(iv.LastInterviewConductedAt);
                                                             var ivCompanyDisplay = DmV4IvCompanyDisplay(iv);
-                                                            <div class="dm-v4-iv-grid dm-v4-iv-row" data-row-index="@i"
-                                                                 data-user-id="@iv.UserId" data-email="@iv.EmailId" data-irf-id="@iv.IRFId" data-trans-id="@iv.id"
-                                                                 data-rb-vet="@(rbVetDisplayOn ? "1" : "0")" data-client-vet="@(clientVetOn ? "1" : "0")"
+                                                            var ivRateDisplay = iv.PerSuccessRate > 0 ? iv.PerSuccessRate.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("en-IN")) : "—";
+                                                            <div class="dm-v4-iv-grid dm-v4-iv-row@(isClientShareView ? " dm-v4-iv-grid--client" : "")" data-row-index="@i"
+                                                                 data-user-id="@iv.UserId" data-irf-id="@iv.IRFId" data-trans-id="@iv.id"
+                                                                 @if (isClientShareView) { <text>data-client-vet-enabled="@(rbVetDisplayOn ? "1" : "0")"</text> }
+                                                                 else { <text>data-email="@iv.EmailId" data-rb-vet="@(rbVetDisplayOn ? "1" : "0")" data-rate="@iv.PerSuccessRate" data-video-link="@iv.VideoLink" data-kyc-approved="@(kycOk ? "1" : "0")" data-kyc-review-url="@kycReviewUrl" data-resume-link="@(iv.ResumeLink ?? "")"</text> }
+                                                                 data-client-vet="@(clientVetOn ? "1" : "0")"
                                                                  data-is-active="@(iv.IsActive ? "1" : "0")" data-is-available="@(iv.IsAvailable ? "1" : "0")" data-client-action="@(iv.ClientAction ?? "")"
-                                                                 data-capacity="@(ivCapExplicit ? iv.InterviewCapacity.ToString() : "")" data-cap-configured="@(ivCapExplicit ? "1" : "0")" data-cap-effective="@(ivCapShowUnlimited ? "" : ivCapVal.ToString())" data-cap-from-default="@(ivCapUsesDefault ? "1" : "0")" data-assigned="@ivAssigned" data-future-assigned="@ivFutureAssignedCount" data-rate="@iv.PerSuccessRate"
-                                                                 data-video-link="@iv.VideoLink" data-interviewer-profile-id="@iv.InterviewerId"
+                                                                 data-capacity="@(ivCapExplicit ? iv.InterviewCapacity.ToString() : "")" data-cap-configured="@(ivCapExplicit ? "1" : "0")" data-cap-effective="@(ivCapShowUnlimited ? "" : ivCapVal.ToString())" data-cap-from-default="@(ivCapUsesDefault ? "1" : "0")" data-assigned="@ivAssigned" data-future-assigned="@ivFutureAssignedCount"
+                                                                 data-interviewer-profile-id="@iv.InterviewerId"
                                                                  data-ai-verdict="@(iv.AIVerdict ?? "")" data-ai-score="@iv.AIScreeningScore"
                                                                  data-verdict-tone="@verdictTone" data-verdict-label="@verdictLabel"
                                                                  data-coded-cv="@(iv.CodedResumeLink ?? "")" data-cv-code="@(cvCode ?? "")"
-                                                                 data-kyc-approved="@(kycOk ? "1" : "0")" data-kyc-review-url="@kycReviewUrl"
                                                                  data-primary-skill="@(iv.PrimarySkill ?? "")" data-total-interviews="@iv.TotalInterview"
                                                                  data-screened-at="@(iv.ModifiedAt?.ToString("o") ?? "")"
-                                                                 data-resume-link="@(iv.ResumeLink ?? "")" data-jd-title="@screenJdTitle" data-irf-name="@Model.IRFId"
+                                                                 data-jd-title="@screenJdTitle" data-irf-name="@Model.IRFId"
                                                                  data-last-login-at="@dmIvLastLoginIso" data-last-interview-at="@dmIvLastInterviewIso"
                                                                  data-company="@(ivCompanyDisplay ?? "")">
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--name">
                                                                     <div class="dm-v4-iv-name-row">
-                                                                        <button type="button" class="dm-v4-iv-code dm-v4-iv-verdict-open" data-screen-url="@screenUrl" title="View AI screening">
+                                                                        <button type="button" class="dm-v4-iv-code dm-v4-iv-verdict-open" @if (!isClientShareView) { <text>data-screen-url="@screenUrl"</text> } title="View AI screening">
                                                                             @(iv.NickName ?? "—") <i class="fa fa-chevron-right"></i>
                                                                         </button>
+                                                                        @if (!isClientShareView)
+                                                                        {
                                                                         @if (hasKycVideo)
                                                                         {
                                                                             <button type="button" class="dm-v4-iv-kyc dm-v4-iv-kyc--btn @(kycOk ? "dm-v4-iv-kyc--ok" : "dm-v4-iv-kyc--warn")" data-video-url="@iv.VideoLink" title="@kycTitle" aria-label="@kycTitle">
@@ -1243,6 +1307,7 @@
                                                                             <span class="dm-v4-iv-kyc dm-v4-iv-kyc--warn" title="@kycTitle" aria-hidden="true">
                                                                                 @Html.Raw(dmV4KycCameraSvg)
                                                                             </span>
+                                                                        }
                                                                         }
                                                                     </div>
                                                                         <div class="dm-v4-iv-name-row" style="flex-direction: column;display: flex;">
@@ -1263,10 +1328,12 @@
                                                                     {
                                                                         <div class="dm-v4-iv-email">@iv.EmailId</div>
                                                                     }
-                                                                    @if (dmIvLockNew)
+                                                                    @if (dmIvLockNew && !isClientShareView)
                                                                     {
                                                                         <span class="dm-v4-iv-status dm-v4-iv-status--@ivStatusTone" data-role="iv-status" title="Derived from RB Vet and Client Vet">@ivStatusLabel</span>
                                                                     }
+                                                                    @if (!isClientShareView)
+                                                                    {
                                                                     @if (!hasKycVideo && canEditIvOps)
                                                                     {
                                                                         <button type="button" class="dm-v4-iv-kyc-request" data-email="@iv.EmailId" data-profile-id="@iv.InterviewerId" data-review-url="@kycReviewUrl" title="Send a fresh Video KYC request to this interviewer">
@@ -1278,12 +1345,16 @@
                                                                     {
                                                                         <a href="@kycReviewUrl" target="_blank" rel="noopener" class="dm-v4-iv-kyc-pending-link" title="Open Video KYC queue to approve this file">Pending approval ↗</a>
                                                                     }
+                                                                    }
+                                                                    @if (!isClientShareView)
+                                                                    {
                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].NickName)
                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].EmailId)
                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].IRFId)
                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].id)
+                                                                    }
                                                                 </div>
                                                                 @* <div class="dm-v4-iv-cell dm-v4-iv-cell--company">
                                                                     @if (string.IsNullOrEmpty(ivCompanyDisplay))
@@ -1369,13 +1440,15 @@
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--insight-all">
                                                                     <button type="button" class="dm-v4-iv-insights-btn dm-v4-iv-insights-btn--global"
-                                                                            data-email="@iv.EmailId" title="Insights (all channels)" aria-label="Insights (all channels)">
+                                                                            @if (isClientShareView) { <text>data-user-id="@iv.UserId" data-nickname="@(iv.NickName ?? "")"</text> } else { <text>data-email="@iv.EmailId"</text> }
+                                                                            title="Insights (all channels)" aria-label="Insights (all channels)">
                                                                         <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
                                                                     </button>
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--stats">
                                                                     <button type="button" class="dm-v4-iv-stats-link dm-v4-iv-channel-insights-btn"
-                                                                            data-email="@iv.EmailId" data-irf-id-name="@Model.IRFId"
+                                                                            @if (isClientShareView) { <text>data-user-id="@iv.UserId" data-irf-id="@Model.id"</text> } else { <text>data-email="@iv.EmailId"</text> }
+                                                                            data-irf-id-name="@Model.IRFId"
                                                                             title="Channel Insights (this channel only)" aria-label="Channel Insights (this channel only)">Insights ↗</button>
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--capacity">
@@ -1433,10 +1506,9 @@
                                                                         }
                                                                     </div>
                                                                 </div>
+                                                                @if (!isClientShareView)
+                                                                {
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--rate">
-                                                                    @{
-                                                                        var ivRateDisplay = iv.PerSuccessRate > 0 ? iv.PerSuccessRate.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("en-IN")) : "—";
-                                                                    }
                                                                     @if (canEditIvOps)
                                                                     {
                                                                         <button type="button" class="dm-v4-money-pill v4-money-pill dm-v4-rate-pill" data-value="@iv.PerSuccessRate" title="Per-interview rate (INR)">
@@ -1479,24 +1551,35 @@
                                                                     <div class="dm-v4-iv-vet-sub">@(rbVetDisplayOn ? "Risebird verified" : "Awaiting RB review")</div>
                                                                     <input type="hidden" class="dm-v4-rb-vet-hidden" value="@(rbVetDisplayOn ? "true" : "false")" />
                                                                 </div>
+                                                                }
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--vet dm-v4-iv-cell--client-vet">
-                                                                    <div class="dm-v4-vet-toggle" data-vet="client" title="@(!rbVetDisplayOn ? "Needs RB Vet first." : "")">
-                                                                        <button type="button" class="dm-v4-vet-btn @(clientVetOn ? "is-on" : "")" data-vet-value="1" @(!rbVetDisplayOn || !canEditIvOps ? "disabled" : "")>Yes</button>
-                                                                        <button type="button" class="dm-v4-vet-btn @(!clientVetOn ? "is-on" : "")" data-vet-value="0" @(!rbVetDisplayOn || !canEditIvOps ? "disabled" : "")>No</button>
+                                                                    <div class="dm-v4-vet-toggle" data-vet="client" title="@(!rbVetDisplayOn && !isClientShareView ? "Needs RB Vet first." : "")">
+                                                                        <button type="button" class="dm-v4-vet-btn @(clientVetOn ? "is-on" : "")" data-vet-value="1" @(!rbVetDisplayOn || !canToggleClientVet ? "disabled" : "")>Yes</button>
+                                                                        <button type="button" class="dm-v4-vet-btn @(!clientVetOn ? "is-on" : "")" data-vet-value="0" @(!rbVetDisplayOn || !canToggleClientVet ? "disabled" : "")>No</button>
                                                                     </div>
                                                                     <div class="dm-v4-iv-vet-sub dm-v4-iv-vet-sub--client">
-                                                                        @(rbVetDisplayOn
-                                                                            ? (clientVetOn ? "Signed off by client" : "Awaiting client sign-off")
-                                                                            : "Blocked — needs RB Vet first")
+                                                                        @if (isClientShareView)
+                                                                        {
+                                                                            @(clientVetOn ? "Approved for your panel" : "Awaiting your approval")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @(rbVetDisplayOn
+                                                                                ? (clientVetOn ? "Signed off by client" : "Awaiting client sign-off")
+                                                                                : "Blocked — needs RB Vet first")
+                                                                        }
                                                                     </div>
                                                                     <input type="hidden" class="dm-v4-client-action-hidden" value="@(iv.ClientAction ?? "")" />
                                                                 </div>
+                                                                @if (!isClientShareView)
+                                                                {
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--actions">
                                                                     @if (canEditIvOps)
                                                                     {
                                                                         <button type="button" class="dm-v4-icon-btn dm-v4-icon-btn--danger" onclick="RemoveInterviewerFromSkillChannel('@iv.EmailId', '@iv.IRFId');" title="Remove from panel"><i class="fa fa-trash"></i></button>
                                                                     }
                                                                 </div>
+                                                                }
                                                             </div>
                                                         }
                                                     }
@@ -3297,7 +3380,7 @@ else
 </style>
 <script src="~/js/dm-v4-voice.js?v=20240529"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-layout.js?v=20250608ivtabs"></script>
+<script src="~/js/dm-v4-layout.js?v=20250608client"></script>
 <script src="~/js/dm-v4-questions.js?v=20240521i"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
