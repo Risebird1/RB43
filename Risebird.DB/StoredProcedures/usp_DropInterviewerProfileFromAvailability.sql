@@ -16,7 +16,11 @@ BEGIN
         ModifiedBy = @ModifiedBy
     WHERE Id = @InterviewerProfileId
 
-	update UserList set IsActive  = 0, @ModifiedBy = @ModifiedBy where id = (select UserId from InterviewerProfile where id = @InterviewerProfileId)
+	update UserList set IsActive = 0,
+		InactivationType = 'ProfileDrop',
+		InactivatedBy = ISNULL(@ModifiedBy, 'Self'),
+		InactivatedAt = GETDATE()
+	where id = (select UserId from InterviewerProfile where id = @InterviewerProfileId)
 
     SELECT @@ROWCOUNT AS RowsAffected
 END

@@ -7516,6 +7516,35 @@ NEVER:
             }
         }
 
+        [HttpPost]
+        public async Task<JsonResult> ReactivateInterviewer(int userId)
+        {
+            try
+            {
+                string emailId = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                }
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
+                if (profileName != "Admin" && profileName != "SupportAdmin" && profileName != "SeniorHR" && profileName != "SeniorInterviewerManagement")
+                    return Json(new { success = false, message = "You do not have permission to reactivate interviewers." });
+
+                var result = await _interviewerService.ReactivateInterviewer(userId, emailId);
+                if (result)
+                    return Json(new { success = true, message = "Interviewer reactivated successfully." });
+
+                return Json(new { success = false, message = "Failed to reactivate interviewer. Please try again." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred while reactivating the interviewer." });
+            }
+        }
+
         /// <summary>
         /// Gets a list of all the mags that have unassigned interviews upcoming
         /// </summary>

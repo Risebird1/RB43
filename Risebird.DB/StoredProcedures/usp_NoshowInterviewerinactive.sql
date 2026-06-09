@@ -13,7 +13,11 @@ Create Procedure usp_NoshowInterviewerinactive
 @interviewer varchar(150)  
 as  
 Begin  
-update userlist set isactive=0 where emailid in (  
+update userlist set isactive=0,
+    InactivationType = 'NoShow',
+    InactivatedBy = 'System',
+    InactivatedAt = GETDATE()
+where emailid in (  
 select im.interviewer from InterviewMeetings im  
 inner join interviewcomments ic on ic.interviewid=im.id  
 where (ic.meetingstatus=5 or ic.meetingstatus=9 ) and im.confirmationstatus=1 and im.interviewdate>=dateadd(day,-30,dateadd (minute,330,getdate())) and im.interviewdate<dateadd (minute,330,getdate())  

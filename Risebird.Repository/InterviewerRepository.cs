@@ -4329,6 +4329,26 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> ReactivateInterviewer(int userId, string reactivatedBy)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@UserId", userId);
+                dynamicParameters.Add("@ReactivatedBy", reactivatedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_ReactivateInterviewer", dynamicParameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         #region Proxy Candidate Checklist
 
         public async Task<int> SaveProxyCandidateChecklist(Risebird.Entities.Data.InterviewerProxyCandidateChecklist model)

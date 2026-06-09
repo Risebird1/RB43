@@ -2026,5 +2026,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> ReactivateInterviewer(int userId, string reactivatedBy)
+        {
+            try
+            {
+                return await _interviewerRepository.ReactivateInterviewer(userId, reactivatedBy);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
