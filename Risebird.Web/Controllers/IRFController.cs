@@ -26,6 +26,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
+using Risebird.Web.Helpers;
 using Syncfusion.DocIO.DLS;
 using System;
 using System.Collections.Generic;
@@ -1090,103 +1091,102 @@ namespace Risebird.Web.Controllers
 
         private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName, string jdTitle)
         {
-            // Plivo auto-calls on IRF creation disabled to control costs
-            return;
+            _ = System.Threading.Tasks.Task.Run(async () =>
+            {
+                try
+                {
+                    if (!int.TryParse(assessmentGroupId, out int agId))
+                        return;
+                    string magName = await _eaRepository.GetMAGNameByAssessmentGroupIdAsync(agId);
+                    if (string.IsNullOrWhiteSpace(magName))
+                        return;
 
-            //_ = System.Threading.Tasks.Task.Run(async () =>
-            //{
-            //    try
-            //    {
-            //        string magName = await _eaRepository.GetMAGNameByAssessmentGroupIdAsync(agId);
-            //        if (string.IsNullOrWhiteSpace(magName))
-            //            return;
+                    var interviewers = await _eaRepository.GetCallableInterviewersForMAGAsync(magName, onlyUncalled: true);
+                    if (interviewers == null || !interviewers.Any())
+                        return;
 
-            //        var interviewers = await _eaRepository.GetCallableInterviewersForMAGAsync(magName, onlyUncalled: true);
-            //        if (interviewers == null || !interviewers.Any())
-            //            return;
+                    string callerId = _configuration["PlivoCX:AvailabilityCallerId"]
+                                   ?? _configuration["PlivoCX:OnboardingCallerId"]
+                                   ?? _configuration["Plivo:FromNumber"]
+                                   ?? "+918031136547";
 
-            //        string callerId = _configuration["PlivoCX:AvailabilityCallerId"]
-            //                       ?? _configuration["PlivoCX:OnboardingCallerId"]
-            //                       ?? _configuration["Plivo:FromNumber"]
-            //                       ?? "+918031136547";
+                    int batchLogId = 0;
+                    string initiatedBy = "IRF AutoCall";
+                    try
+                    {
+                        batchLogId = await _eaRepository.InsertBatchCallLogAsync(magName, initiatedBy, interviewers.Count);
+                    }
+                    catch { }
 
-            //        int batchLogId = 0;
-            //        string initiatedBy = "IRF AutoCall";
-            //        try
-            //        {
-            //            batchLogId = await _eaRepository.InsertBatchCallLogAsync(magName, initiatedBy, interviewers.Count);
-            //        }
-            //        catch { }
+                    int succeeded = 0, failed = 0;
 
-            //        int succeeded = 0, failed = 0;
+                    foreach (var interviewer in interviewers)
+                    {
+                        try
+                        {
+                            int eaId = interviewer.Id;
 
-            //        foreach (var interviewer in interviewers)
-            //        {
-            //            try
-            //            {
-            //                int eaId = interviewer.Id;
+                            if (interviewer.Source == "Profile" && interviewer.InterviewerProfileId.HasValue)
+                            {
+                                eaId = await _eaRepository.EnsureEARecordForProfileInterviewerAsync(
+                                    interviewer.InterviewerProfileId.Value, magName, "IRFAutoCall");
+                                if (eaId <= 0) { failed++; continue; }
+                            }
 
-            //                if (interviewer.Source == "Profile" && interviewer.InterviewerProfileId.HasValue)
-            //                {
-            //                    eaId = await _eaRepository.EnsureEARecordForProfileInterviewerAsync(
-            //                        interviewer.InterviewerProfileId.Value, magName, "IRFAutoCall");
-            //                    if (eaId <= 0) { failed++; continue; }
-            //                }
+                            string phone = interviewer.Phone?.Trim() ?? "";
+                            if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
+                            else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
 
-            //                string phone = interviewer.Phone?.Trim() ?? "";
-            //                if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
-            //                else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
+                            await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
+                                DateTime.UtcNow, null, null, null, null, null, null, null, null, initiatedBy);
 
-            //                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
-            //                    DateTime.UtcNow, null, null, null, null, null, null, null, null, initiatedBy);
+                            var triggerRequest = new PlivoCXAvailabilityTriggerRequest
+                            {
+                                CallerId        = callerId,
+                                PhoneNumber     = phone,
+                                InterviewerName = interviewer.InterviewerName ?? "there",
+                                InterviewerEmail = interviewer.SenderEmail,
+                                MagName         = magName,
+                                LogId           = eaId.ToString(),
+                                TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                            };
 
-            //                var triggerRequest = new PlivoCXAvailabilityTriggerRequest
-            //                {
-            //                    CallerId        = callerId,
-            //                    PhoneNumber     = phone,
-            //                    InterviewerName = interviewer.InterviewerName ?? "there",
-            //                    InterviewerEmail = interviewer.SenderEmail,
-            //                    MagName         = magName,
-            //                    LogId           = eaId.ToString(),
-            //                    TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
-            //                };
+                            var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
 
-            //                var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
+                            if (!string.IsNullOrEmpty(response?.Error))
+                            {
+                                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
+                                    null, null, null, response.Error, null, null, null, null, null, null);
+                                failed++;
+                            }
+                            else
+                            {
+                                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "triggered", response?.ConversationId,
+                                    null, null, null, null, null, null, null, null, null, null);
+                                await _eaRepository.InsertHistoryAsync(eaId, "IRFAutoCall", "—",
+                                    $"Availability call triggered for IRF '{irfName}'. ConvId: {response?.ConversationId ?? "N/A"}", initiatedBy);
+                                succeeded++;
+                            }
 
-            //                if (!string.IsNullOrEmpty(response?.Error))
-            //                {
-            //                    await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
-            //                        null, null, null, response.Error, null, null, null, null, null, null);
-            //                    failed++;
-            //                }
-            //                else
-            //                {
-            //                    await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "triggered", response?.ConversationId,
-            //                        null, null, null, null, null, null, null, null, null, null);
-            //                    await _eaRepository.InsertHistoryAsync(eaId, "IRFAutoCall", "—",
-            //                        $"Availability call triggered for IRF '{irfName}'. ConvId: {response?.ConversationId ?? "N/A"}", initiatedBy);
-            //                    succeeded++;
-            //                }
+                            await System.Threading.Tasks.Task.Delay(1200);
+                        }
+                        catch
+                        {
+                            failed++;
+                        }
+                    }
 
-            //                await System.Threading.Tasks.Task.Delay(1200);
-            //            }
-            //            catch
-            //            {
-            //                failed++;
-            //            }
-            //        }
-
-            //        if (batchLogId > 0)
-            //        {
-            //            try { await _eaRepository.CompleteBatchCallLogAsync(batchLogId, succeeded, failed, 0, "Completed"); }
-            //            catch { }
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        try { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); } catch { }
-            //    }
-            //});
+                    if (batchLogId > 0)
+                    {
+                        try { await _eaRepository.CompleteBatchCallLogAsync(batchLogId, succeeded, failed, 0, "Completed"); }
+                        catch { }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    try { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); } catch { }
+                }
+            });
         }
         private async Task MakeIVRCallForAvailability(AvailabilityCheckDTO dto)
         {
@@ -9009,21 +9009,28 @@ namespace Risebird.Web.Controllers
         #region Delivery Head Instruction
 
         [HttpGet]
-        public async Task<JsonResult> GetDmInterviewerPanelMetrics(int irfId)
+        public async Task<JsonResult> GetDmInterviewerPanelMetrics(int irfId, string Type = null)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") == null)
+                var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                    || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
+                if (!isClientShare && HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { ok = false });
                 }
 
                 var model = await _irfService.GetEditIRF(irfId, 0, false);
-                var interviewers = model?.InterviewerCollection?
+                var source = model?.InterviewerCollection?.AsEnumerable();
+                if (isClientShare)
+                {
+                    source = source?.Where(x => x != null && x.IsActive);
+                }
+                var interviewers = source?
                     .Select(iv => new
                     {
                         userId = iv.UserId,
-                        email = iv.EmailId ?? "",
+                        email = isClientShare ? "" : (iv.EmailId ?? ""),
                         companyName = !string.IsNullOrWhiteSpace(iv.CompanyName)
                             ? iv.CompanyName.Trim()
                             : (!string.IsNullOrWhiteSpace(iv.EmploymentComment) ? iv.EmploymentComment.Trim() : null),
@@ -9044,11 +9051,13 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetDmInterviewerCvState(int irfId, int userId)
+        public async Task<JsonResult> GetDmInterviewerCvState(int irfId, int userId, string Type = null)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") == null)
+                var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                    || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
+                if (!isClientShare && HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { ok = false });
                 }
@@ -9062,10 +9071,15 @@ namespace Risebird.Web.Controllers
                     return Json(new { ok = false });
                 }
 
+                if (isClientShare)
+                {
+                    DeliveryHeadInstructionViewMode.StripInterviewerForClientView(iv);
+                }
+
                 return Json(new
                 {
                     ok = true,
-                    resumeLink = iv.ResumeLink ?? "",
+                    resumeLink = isClientShare ? "" : (iv.ResumeLink ?? ""),
                     codedCvLink = iv.CodedResumeLink ?? "",
                     cvCode = !string.IsNullOrEmpty(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : "",
                     isResumeRedactAttempted = iv.IsResumeRedactAttempted,
@@ -9084,14 +9098,75 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
+        public async Task<IActionResult> GetClientShareInterviewerInsights(int irfId, int userId, string Type = null)
+        {
+            if (!DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                && !DeliveryHeadInstructionViewMode.IsClientShareType(Type))
+            {
+                return Unauthorized();
+            }
+
+            try
+            {
+                var model = await _irfService.GetEditIRF(irfId, 0, false);
+                var iv = model?.InterviewerCollection?
+                    .FirstOrDefault(x => x.UserId == userId && x.IsActive);
+                if (iv == null || string.IsNullOrWhiteSpace(iv.EmailId))
+                {
+                    return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", new InterviewerInsightsVM());
+                }
+
+                var result = await _interviewerService.GetInterviewerInsights(iv.EmailId, model.IRFId);
+                if (result == null)
+                {
+                    result = new InterviewerInsightsVM();
+                }
+                DeliveryHeadInstructionViewMode.StripInterviewerInsightsForClientView(result);
+                result.IRFId = model.IRFId;
+                ViewBag.type = "Client";
+                ViewBag.RegularAccess = "";
+                return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", new InterviewerInsightsVM());
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> DeliveryHeadInstruction(string irfid, string Type = null)//Type = "ublc" stands for public here
         {
             var resolvedIrfId = await _irfService.ResolveSkillChannelNumericIdAsync(irfid);
             ViewBag.PageType = "";
-            if (!string.IsNullOrEmpty(Type) && Type == "ublc" /*&& HttpContext.Session.GetString("email") == null*/)
+            ViewBag.IsClientShareView = false;
+            if (DeliveryHeadInstructionViewMode.IsClientShareType(Type))
             {
                 ViewBag.PageType = "Public";
-                return View(new IRFVm { id = resolvedIrfId });
+                ViewBag.IsClientShareView = true;
+                var jobLevelsPublic = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
+                ViewBag.JobLevelList = new SelectList(jobLevelsPublic, "ID", "Name");
+                if (resolvedIrfId <= 0)
+                {
+                    ViewBag.Message = "Skill Channel not found.";
+                    return View(new IRFVm { id = 0 });
+                }
+                DeliveryHeadInstructionViewMode.SetClientShareSession(HttpContext, resolvedIrfId);
+                var publicModel = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
+                if (publicModel == null)
+                {
+                    ViewBag.Message = "Skill Channel not found.";
+                    return View(new IRFVm { id = resolvedIrfId });
+                }
+                DeliveryHeadInstructionViewMode.ApplyClientViewFilter(publicModel);
+                publicModel.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
+                publicModel.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
+                var voiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
+                publicModel.VoiceInstructionTranscript = voiceBrief?.Transcript;
+                publicModel.VoiceInstructionTranscriptUpdatedOn = voiceBrief?.TranscriptUpdatedOn;
+                await checkSkillSetandSeperate(publicModel);
+                return View(publicModel);
             }
             else if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
@@ -9907,7 +9982,7 @@ namespace Risebird.Web.Controllers
                                ?? _configuration["Plivo:FromNumber"]
                                ?? "+918031136547";
 
-                string source = $"Campaign - {campaign.CampaignName}";
+                string source = "Campaign";
                 string initiatedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "Manual";
 
                 int batchLogId = 0;
@@ -12053,21 +12128,32 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<JsonResult> UpdateInterviewerClientVet(int irfId, string interviewerEmail, bool isApproved, int userId)
+        public async Task<JsonResult> UpdateInterviewerClientVet(int irfId, string interviewerEmail, bool isApproved, int userId, string Type = null)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") == null)
+                var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                    || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
+
+                if (!isClientShare && HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { success = false, message = "Unauthorized", error = "You don't have permission to vet this interviewer." });
                 }
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+
+                if (!isClientShare)
                 {
-                    return Json(new { success = false, message = "You don't have permission to vet this interviewer.", error = "You don't have permission to vet this interviewer." });
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                    {
+                        return Json(new { success = false, message = "You don't have permission to vet this interviewer.", error = "You don't have permission to vet this interviewer." });
+                    }
                 }
-                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                var emailid = isClientShare
+                    ? "client-share@ublc"
+                    : HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 // Same scope as DM Approval grid (usp_GetSkillChannelDetailsForUpdate) — not assessment-group filtered.
                 var channelIv = await _irfRepository.GetSkillChannelInterviewersForEdit(irfId);
                 var ti = channelIv?.InterviewerCollection?.FirstOrDefault(x => x.UserId == userId);
@@ -12133,13 +12219,17 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>Loads saved AI resume summary JSON from interviewer CodedResumeLink (blob).</summary>
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> GetInterviewerCodedCvSummary(string codedCvLink)
+        public async Task<IActionResult> GetInterviewerCodedCvSummary(string codedCvLink, int? irfId = null, string Type = null)
         {
             const string viewPath = "~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml";
             try
             {
-                if (HttpContext.Session.GetString("email") == null)
+                var isClientShare = irfId.HasValue && irfId.Value > 0
+                    && (DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId.Value)
+                        || DeliveryHeadInstructionViewMode.IsClientShareType(Type));
+                if (!isClientShare && HttpContext.Session.GetString("email") == null)
                     return View(viewPath, (ResumeSummaryVM)null);
 
                 if (string.IsNullOrWhiteSpace(codedCvLink))

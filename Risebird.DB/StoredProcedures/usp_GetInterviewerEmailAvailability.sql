@@ -53,7 +53,7 @@ BEGIN
             (@Status IS NULL OR ea.Status = @Status)
             AND (@SenderEmail IS NULL OR ea.SenderEmail LIKE '%' + @SenderEmail + '%')
             AND (@ResumeFitment IS NULL OR ea.ResumeFitment = @ResumeFitment)
-            AND (@Source IS NULL OR ea.Source = @Source)
+            AND (@Source IS NULL OR ea.Source LIKE @Source + '%')
             AND (@IsAutoClosed IS NULL OR ISNULL(ea.IsAutoClosed, 0) = @IsAutoClosed)
             AND (@DateFrom IS NULL OR ea.ReceivedAt >= @DateFrom)
             AND (@DateTo IS NULL OR ea.ReceivedAt < DATEADD(DAY, 1, @DateTo))
