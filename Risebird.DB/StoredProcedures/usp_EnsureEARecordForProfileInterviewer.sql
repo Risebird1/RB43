@@ -47,9 +47,9 @@ BEGIN
     WHERE ip.Id = @InterviewerProfileId;
 
     INSERT INTO InterviewerEmailAvailability
-        (SenderEmail, UserId, InterviewerProfileId, InterviewerName, Phone, MagName, Status, Source, CreatedAt)
+        (SenderEmail, UserId, InterviewerProfileId, InterviewerName, Phone, MagName, Status, Source, ReceivedAt, CreatedAt)
     VALUES
-        (@Email, @UserId, @InterviewerProfileId, @Name, @Phone, @MagName, 'Open', @Source, GETUTCDATE());
+        (@Email, @UserId, @InterviewerProfileId, @Name, @Phone, @MagName, 'Open', @Source, GETUTCDATE(), GETUTCDATE());
 
     SELECT SCOPE_IDENTITY() AS Id;
 END
