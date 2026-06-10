@@ -590,6 +590,7 @@ namespace Risebird.Entities.ViewModel
         public bool GSTApplicable { get; set; }
         public int TaxScenario { get; set; }
         public string IRN { get; set; }
+        public string EInvoiceFileLink { get; set; }
         public int BillingType { get; set; }
         public decimal PerInterviewRate { get; set; }
         public decimal Subtotal { get; set; }
@@ -616,6 +617,7 @@ namespace Risebird.Entities.ViewModel
         public string GSTNumber { get; set; }
         public int TaxScenario { get; set; }
         public string IRN { get; set; }
+        public string EInvoiceFileLink { get; set; }
         public decimal Subtotal { get; set; }
         public decimal GSTAmount { get; set; }
         public decimal InvoiceValue { get; set; }

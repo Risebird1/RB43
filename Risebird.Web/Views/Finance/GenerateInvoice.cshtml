@@ -154,7 +154,25 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="gen-inv-label">IRN</label>
-                            <input type="text" id="txtIRN" name="IRN" class="form-control" placeholder="Enter IRN after upload" maxlength="200" />
+                            <input type="text" id="txtIRN" name="IRN" class="form-control" placeholder="Enter IRN" maxlength="200" />
+                        </div>
+                        <div class="form-group" style="margin-top:6px;">
+                            <label class="gen-inv-label">e-Invoice File <span style="font-weight:400;color:#888;">(PDF / Word)</span></label>
+                            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                                <label class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:11px;cursor:pointer;margin:0;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="margin-right:4px;"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+                                    Upload e-Invoice
+                                    <input type="file" id="fileEInvoice" accept=".pdf,.doc,.docx" style="display:none;" onchange="uploadEInvoiceFile(this)" />
+                                </label>
+                                <span id="spnEInvoiceUploadStatus" style="font-size:12px;color:#555;"></span>
+                            </div>
+                            <input type="hidden" id="hidEInvoiceFileLink" name="EInvoiceFileLink" value="" />
+                            <div id="divEInvoiceLink" style="display:none;margin-top:5px;">
+                                <a id="lnkEInvoiceFile" href="#" target="_blank" style="font-size:12px;color:#1976d2;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:3px;"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
+                                    View Uploaded File
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -548,5 +566,42 @@
     function escHtml(s) {
         if (!s) return '';
         return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function uploadEInvoiceFile(input) {
+        if (!input.files || !input.files[0]) return;
+        var file = input.files[0];
+        var status = document.getElementById('spnEInvoiceUploadStatus');
+        status.style.color = '#555';
+        status.textContent = 'Uploading…';
+
+        var fd = new FormData();
+        fd.append('file', file);
+
+        $.ajax({
+            url: '/Finance/UploadEInvoiceFile',
+            type: 'POST',
+            data: fd,
+            processData: false,
+            contentType: false,
+            headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+            success: function (res) {
+                if (res.success) {
+                    document.getElementById('hidEInvoiceFileLink').value = res.fileUrl;
+                    document.getElementById('lnkEInvoiceFile').href = res.fileUrl;
+                    document.getElementById('divEInvoiceLink').style.display = 'block';
+                    status.style.color = '#2e7d32';
+                    status.textContent = file.name + ' — uploaded';
+                } else {
+                    status.style.color = '#c62828';
+                    status.textContent = res.message || 'Upload failed.';
+                }
+            },
+            error: function () {
+                status.style.color = '#c62828';
+                status.textContent = 'Upload failed. Please try again.';
+            }
+        });
+        input.value = '';
     }
 </script>
