@@ -146,7 +146,7 @@
     ViewData["Title"] = "Delivery Head Instruction";
     bool isClientShareView = ViewBag.IsClientShareView == true;
     bool isSmeView = ViewBag.IsSmeView == true;
-    bool isPanelCompactView = isClientShareView || isSmeView;
+    bool isPanelCompactView = isSmeView;
     bool openSubmitEmailPopup = false;
 }
 <script>
@@ -165,7 +165,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20250608clientcols2" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20250610rubriccols" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -216,6 +216,20 @@
             minmax(0, 0.78fr)
             minmax(0, 0.78fr)
             minmax(0, 0.95fr) !important;
+    }
+    .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client-minimal {
+        width: 100% !important;
+        max-width: 100% !important;
+        column-gap: 16px !important;
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr)
+            minmax(0, 1.35fr)
+            minmax(0, 1fr) !important;
+    }
+    .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client-minimal > .dm-v4-iv-cell,
+    .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client-minimal > span {
+        padding: 10px 12px !important;
     }
     .interviewWrapper.dm-v4-page.dm-v4-page--sme .dm-v4-block--order-interviewers-client {
         width: calc(100% + 30px) !important;
@@ -336,12 +350,15 @@
                                             <div class="dm-v4-voice-hero" id="dmV4VoiceHero">
                                                 <div class="dm-v4-voice-hero__blob" aria-hidden="true"></div>
                                                 <div class="dm-v4-voice-hero__inner">
+                                                    @if (!isClientShareView)
+                                                    {
                                                     <button type="button" class="dm-v4-voice-record-btn" onclick="OpenVoiceRecordingModal(@Model.id)" title="Record voice instructions" aria-label="Record voice instructions">
                                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22" aria-hidden="true">
                                                             <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" />
                                                             <path d="M5 11a7 7 0 0014 0M12 18v3M9 21h6" stroke-linecap="round" />
                                                         </svg>
                                                     </button>
+                                                    }
                                                     <div class="dm-v4-voice-hero__main">
                                                         <div class="dm-v4-voice-hero__title-row">
                                                             <span class="dm-v4-voice-hero__title">Voice instructions</span>
@@ -393,7 +410,13 @@
                                                                     <span class="dm-v4-voice-preview-card__label">Transcript</span>
                                                                     <span class="dm-v4-badge dm-v4-badge--indigo">WHISPER</span>
                                                                 </div>
-                                                                <p class="dm-v4-voice-transcript__empty" id="dmV4VoiceTranscriptEmpty" @(dmV4HasTranscript ? "hidden" : "")>Record voice instructions to transcribe automatically, or type a brief below.</p>
+                                                                <p class="dm-v4-voice-transcript__empty" id="dmV4VoiceTranscriptEmpty" @(dmV4HasTranscript ? "hidden" : "")>@(isClientShareView ? "No transcript saved yet." : "Record voice instructions to transcribe automatically, or type a brief below.")</p>
+                                                                @if (isClientShareView)
+                                                                {
+                                                                    <div class="dm-v4-voice-transcript__readonly" id="dmV4VoiceTranscriptReadonly">@(Model.VoiceInstructionTranscript ?? "—")</div>
+                                                                }
+                                                                else
+                                                                {
                                                                 <textarea class="dm-v4-voice-transcript__input" id="dmV4VoiceTranscriptInput" rows="5" placeholder="Transcript appears here after recording. Edit and save — this text seeds rubric and sample questions.">@(Model.VoiceInstructionTranscript ?? "")</textarea>
                                                                 <p class="dm-v4-voice-transcript__meta" id="dmV4VoiceTranscriptMeta" data-updated-on="@(Model.VoiceInstructionTranscriptUpdatedOn?.ToString("o") ?? "")" @(dmV4HasTranscript ? "" : "style=\"display:none\"")>
                                                                     @if (dmV4HasTranscript && Model.VoiceInstructionTranscriptUpdatedOn.HasValue)
@@ -413,8 +436,11 @@
                                                                         <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4RetranscribeBtn" title="Re-run speech-to-text on the saved recording">Re-transcribe</button>
                                                                     }
                                                                 </div>
+                                                                }
                                                             </div>
                                                         </div>
+                                                        @if (!isClientShareView)
+                                                        {
                                                         <div class="dm-v4-voice-hero__actions">
                                                             @if (dmV4HasVoice)
                                                             {
@@ -428,6 +454,7 @@
                                                             <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4GenerateRubricFromVoiceBtn" @(dmV4HasTranscript ? "" : "disabled") title="Generate score rubric from saved transcript"><i class="fa fa-magic"></i> Rubric from voice</button>
                                                             <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4GenerateQuestionsFromVoiceBtn" @(dmV4HasTranscript ? "" : "disabled") title="Generate sample questions using transcript + rubric"><i class="fa fa-magic"></i> Questions from voice</button>
                                                         </div>
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>
@@ -452,15 +479,18 @@
                                                     </p>
                                                     <p class="dm-v4-voice-rubric-error" id="dmV4ScoreRubricRegenError" role="alert" hidden></p>
                                                 </div>
+                                                @if (!isClientShareView)
+                                                {
                                                 <div class="dm-v4-section-toolbar__actions">
                                                     <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" onclick="AddRow(); if (window.dmV4RefreshRubric) window.dmV4RefreshRubric();" title="Add skill"><i class="fa fa-plus"></i> Add skill</button>
                                                     <button type="submit" form="irfForm" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--save-rubric"><i class="fa fa-check"></i> Save score rubric</button>
                                                 </div>
+                                                }
                                             </div>
                                         <div class="card">
                                             <div class="dm-v4-pinned-body" id="hidden_fields_two">
 
-                                                @using (Html.BeginForm("DeliveryHeadInstruction", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return dmV4OnRubricFormSubmit()" }))
+                                                @using (Html.BeginForm("DeliveryHeadInstruction", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" + (isClientShareView ? " dm-v4-rubric-readonly" : ""), @id = "irfForm", @onsubmit = isClientShareView ? "return false;" : "return dmV4OnRubricFormSubmit()" }))
                                                 {
                                                     @Html.HiddenFor(m => m.SkillSetsevaluate)
                                                     <div class="dm-v4-rubric-panel">
@@ -665,12 +695,15 @@
                                                                         </div>
                                                                     </div>
                                                                 }
+                                                                @if (!isClientShareView)
+                                                                {
                                                                 <div class="dm-v4-rubric-footer">
                                                                     <span>Save the score rubric to persist weightages, elimination flags, and time limits.</span>
                                                                     <div class="tech-skill-button">
                                                                         <input type="submit" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--save-rubric" value="Save score rubric" />
                                                                     </div>
                                                                 </div>
+                                                                }
                                                     </div>
 
                                                 }
@@ -1031,6 +1064,7 @@
                                             int skillsWithQuestions = rubricSkillNames.Count(sn => sampleQsList.Any(q => string.Equals(q.SkillName, sn, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(q.Comment)));
                                             var qsBySkill = sampleQsList.Where(q => !string.IsNullOrWhiteSpace(q.SkillName)).GroupBy(q => q.SkillName, StringComparer.OrdinalIgnoreCase).ToList();
                                             int qsGlobalIndex = 0;
+                                            var aiQGenEnabled = Configuration.GetValue<bool>("FeatureFlags:EnableAIQuestionGeneration");
                                         }
                                         <div class="dm-v4-collapse" id="dmV4QuestionsCollapse">
                                             <button type="button" class="dm-v4-collapse__head" id="dmV4QuestionsToggle" aria-expanded="false" aria-controls="dmV4QuestionsPanel">
@@ -1047,18 +1081,18 @@
                                                  data-irf-id="@Model.id"
                                                  data-is-ai-preset="@(Model.IsAIInterview && Model.AIInterviewType == (int)AIInterviewTypeEnum.Preset ? "1" : "0")"
                                                  data-rubric-skills="@string.Join("|||", rubricSkillNames)">
-                                                <div class="dm-v4-questions-ai-banner">
+                                                <div class="dm-v4-questions-ai-banner@(isClientShareView ? " dm-v4-questions-ai-banner--readonly" : "")">
                                                     <div class="dm-v4-questions-ai-banner__left">
-                                                        <span class="dm-v4-questions-ai-icon"><i class="fa fa-magic"></i></span>
+                                                        <span class="dm-v4-questions-ai-icon"><i class="fa fa-file-text-o"></i></span>
                                                         <div>
-                                                            <div class="dm-v4-questions-ai-title">Generate sample questions from rubric</div>
-                                                             <div class="dm-v4-questions-ai-sub">2 questions per skill, balanced across rubric skills. Includes expected answers when using AI interview preset.</div>
+                                                            <div class="dm-v4-questions-ai-title">Sample questions</div>
+                                                             <div class="dm-v4-questions-ai-sub">Questions mapped to your score rubric@(isClientShareView ? "." : ". Generate or edit below when managing this channel.")</div>
                                                         </div>
                                                     </div>
-                                                    @{
-                                                        var aiQGenEnabled = Configuration.GetValue<bool>("FeatureFlags:EnableAIQuestionGeneration");
-                                                    }
+                                                    @if (!isClientShareView)
+                                                    {
                                                     <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4GenerateQuestionsBtn" @(aiQGenEnabled ? "" : "disabled") title="@(aiQGenEnabled ? "Generate questions from rubric using AI" : "AI question generation is not enabled yet")"><i class="fa fa-magic"></i> Generate with AI</button>
+                                                    }
                                               </div>
                                                 <div id="dmV4QuestionsSkills" class="dm-v4-questions-skills"></div>
                                             </div>
@@ -1068,7 +1102,7 @@
                                     @* End:Sample Questions: *@
 
                                     @* 3 · Interviewers — full V4 wireframe grid *@
-                                    <div class="col-md-12 pull-left pad10 dm-v4-block dm-v4-block--order-interviewers@(isPanelCompactView ? " dm-v4-block--order-interviewers-client" : "")" style="padding-bottom:0px;padding-left:0;padding-right:0;">
+                                    <div class="col-md-12 pull-left pad10 dm-v4-block dm-v4-block--order-interviewers@(isClientShareView || isSmeView ? " dm-v4-block--order-interviewers-client" : "")" style="padding-bottom:0px;padding-left:0;padding-right:0;">
                                         <section class="dm-v4-section dm-v4-section--pinned">
                                             @{
                                                 var ivList = Model.InterviewerCollection ?? new List<TransInterviewer>();
@@ -1085,7 +1119,7 @@
                                                 bool canEditIvOps = canEditDmIvOps || isSmeView;
                                                 bool canUploadIvResume = (canEditDmIvOps && DmV4CanUploadIvResume(dmProfileName)) || isSmeView;
                                                 bool canEditSurcharge = !isPanelCompactView && (ViewBag.profileName == "Admin" || ViewBag.profileName == "SupportAdmin");
-                                                if (isPanelCompactView)
+                                                if (isClientShareView || isPanelCompactView)
                                                 {
                                                     ivList = ivList.Where(x => x.IsActive).ToList();
                                                     ivCount = ivList.Count;
@@ -1140,7 +1174,7 @@
                                                         Active on panel when both are <em>Yes</em>.
                                                     </p>
                                                     }
-                                                    else
+                                                    else if (isClientShareView || isPanelCompactView)
                                                     {
                                                     <p style="margin:6px 0 0;font-size:13px;color:#475569;line-height:1.5;max-width:720px;">
                                                         Review each interviewer and use <strong style="color:#0f172a;">Client Vet</strong> to approve or reject them for your panel.
@@ -1231,6 +1265,17 @@
                                                             </button>
                                                         </div>
                                                     }
+                                                    @if (isClientShareView)
+                                                    {
+                                                    <div class="dm-v4-iv-grid dm-v4-iv-grid--head dm-v4-iv-grid--client-minimal">
+                                                        <span>Interviewer</span>
+                                                        <span>Coded CV</span>
+                                                        <span>AI verdict &amp; score</span>
+                                                        <span>Client Vet</span>
+                                                    </div>
+                                                    }
+                                                    else
+                                                    {
                                                     <div class="dm-v4-iv-grid dm-v4-iv-grid--head@(isPanelCompactView ? " dm-v4-iv-grid--client" : "")">
                                                         <span>Interviewer</span>
                                                         <span>Company</span>
@@ -1249,11 +1294,8 @@
                                                         {
                                                         <span>RB Vet</span>
                                                         }
-                                                        else if (isClientShareView)
-                                                        {
-                                                        <span>Client Vet</span>
-                                                        }
                                                     </div>
+                                                    }
                                                     @if (ivCount == 0)
                                                     {
                                                         <div class="dm-v4-iv-empty">No interviewers on this panel yet.</div>
@@ -1302,10 +1344,60 @@
                                                             var ivSelectedCount = iv.TotalSelected;
                                                             var ivRejectedCount = iv.TotalRejected;
                                                             var ivStatsInterviewerId = isPanelCompactView ? (iv.NickName ?? "") : (iv.EmailId ?? "");
+                                                            if (isClientShareView)
+                                                            {
+                                                            <div class="dm-v4-iv-grid dm-v4-iv-row dm-v4-iv-grid--client-minimal"
+                                                                 data-user-id="@iv.UserId" data-irf-id="@iv.IRFId" data-trans-id="@iv.id"
+                                                                 data-client-vet="@(clientVetOn ? "1" : "0")" data-client-vet-enabled="@(rbVetDisplayOn ? "1" : "0")"
+                                                                 data-is-active="1" data-client-action="@(iv.ClientAction ?? "")"
+                                                                 data-ai-verdict="@(iv.AIVerdict ?? "")" data-ai-score="@iv.AIScreeningScore"
+                                                                 data-verdict-tone="@verdictTone" data-verdict-label="@verdictLabel"
+                                                                 data-coded-cv="@(iv.CodedResumeLink ?? "")" data-cv-code="@(cvCode ?? "")">
+                                                                <div class="dm-v4-iv-cell dm-v4-iv-cell--name">
+                                                                    <span class="dm-v4-iv-coded-label">@(iv.NickName ?? "—")</span>
+                                                                </div>
+                                                                <div class="dm-v4-iv-cell dm-v4-iv-cell--cv">
+                                                                    @if (dmIvHasCodedCv)
+                                                                    {
+                                                                        <button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view"
+                                                                                data-coded-cv="@iv.CodedResumeLink" data-cv-label="@cvCode" title="View coded resume summary">@(cvCode) ↗</button>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="dm-v4-muted">Not available</span>
+                                                                    }
+                                                                </div>
+                                                                <div class="dm-v4-iv-cell dm-v4-iv-cell--verdict">
+                                                                    <div class="dm-v4-iv-verdict-stack dm-v4-iv-verdict-stack--client">
+                                                                        <div class="dm-v4-iv-verdict-compact">
+                                                                            <span class="dm-v4-verdict dm-v4-verdict--@verdictTone"><span class="dm-v4-verdict__icon" aria-hidden="true">@Html.Raw(DmV4VerdictIconSvg(verdictTone))</span>@verdictLabel</span>
+                                                                            <span class="dm-v4-iv-score-wrap">
+                                                                                <span class="dm-v4-iv-score dm-v4-iv-score--@verdictTone">@ivScoreDisplay</span><span class="dm-v4-iv-score-dim">/100</span>
+                                                                            </span>
+                                                                        </div>
+                                                                        <button type="button" class="dm-v4-iv-verdict-open dm-v4-iv-why-btn" title="View AI reasoning">
+                                                                            Why <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                    @if (!string.IsNullOrWhiteSpace(aiReasonFull))
+                                                                    {
+                                                                        <div class="dm-v4-iv-ai-reason-full" hidden aria-hidden="true">@aiReasonFull</div>
+                                                                    }
+                                                                </div>
+                                                                <div class="dm-v4-iv-cell dm-v4-iv-cell--vet dm-v4-iv-cell--client-vet">
+                                                                    <div class="dm-v4-vet-toggle" data-vet="client" title="@(!rbVetDisplayOn ? "Awaiting Risebird verification before you can approve." : "")">
+                                                                        <button type="button" class="dm-v4-vet-btn @(clientVetOn ? "is-on" : "")" data-vet-value="1" @(!rbVetDisplayOn || !canToggleClientVet ? "disabled" : "")>Yes</button>
+                                                                        <button type="button" class="dm-v4-vet-btn @(!clientVetOn ? "is-on" : "")" data-vet-value="0" @(!rbVetDisplayOn || !canToggleClientVet ? "disabled" : "")>No</button>
+                                                                    </div>
+                                                                    <input type="hidden" class="dm-v4-client-action-hidden" value="@(iv.ClientAction ?? "")" />
+                                                                </div>
+                                                            </div>
+                                                            }
+                                                            else
+                                                            {
                                                             <div class="dm-v4-iv-grid dm-v4-iv-row@(isPanelCompactView ? " dm-v4-iv-grid--client" : "")" data-row-index="@i"
                                                                  data-user-id="@iv.UserId" data-irf-id="@iv.IRFId" data-trans-id="@iv.id"
-                                                                 @if (isClientShareView) { <text>data-client-vet-enabled="@(rbVetDisplayOn ? "1" : "0")"</text> }
-                                                                 else if (isSmeView) { <text>data-rb-vet="@(rbVetDisplayOn ? "1" : "0")" data-resume-link="@(iv.ResumeLink ?? "")"</text> }
+                                                                 @if (isSmeView) { <text>data-rb-vet="@(rbVetDisplayOn ? "1" : "0")" data-resume-link="@(iv.ResumeLink ?? "")"</text> }
                                                                  else { <text>data-email="@iv.EmailId" data-rb-vet="@(rbVetDisplayOn ? "1" : "0")" data-rate="@iv.PerSuccessRate" data-video-link="@iv.VideoLink" data-kyc-approved="@(kycOk ? "1" : "0")" data-kyc-review-url="@kycReviewUrl" data-resume-link="@(iv.ResumeLink ?? "")"</text> }
                                                                  data-client-vet="@(clientVetOn ? "1" : "0")"
                                                                  data-is-active="@(iv.IsActive ? "1" : "0")" data-is-available="@(iv.IsAvailable ? "1" : "0")" data-client-action="@(iv.ClientAction ?? "")"
@@ -1640,6 +1732,7 @@
                                                                 </div>
                                                                 }
                                                             </div>
+                                                            }
                                                         }
                                                     }
                                                 </div>
@@ -3438,7 +3531,7 @@ else
 </style>
 <script src="~/js/dm-v4-voice.js?v=20240529"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-layout.js?v=20250608client"></script>
+<script src="~/js/dm-v4-layout.js?v=20250609clientview"></script>
 <script src="~/js/dm-v4-questions.js?v=20240521i"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
