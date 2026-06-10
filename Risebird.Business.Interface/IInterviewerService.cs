@@ -80,6 +80,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<TransInterviewer>> GetSkillChannelInterviewersToVerify(int irfId);
         Task<bool> UpdateVerifiedInterviewers(IList<TransInterviewer> interviewers, string loggedInSME);
         Task<bool> CheckIfSME(string loggedInUser);
+        Task<bool> IsSmeAssignedToIrfAsync(string loggedInUser, int irfId);
         Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList();
         Task<InterviewerProfileVM> GetInterviewerFlagDetails(string intervieweremailid);
         Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive, bool? IsBlocked);

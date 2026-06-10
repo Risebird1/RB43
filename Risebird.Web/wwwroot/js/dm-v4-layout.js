@@ -961,6 +961,18 @@
         return $page.attr('data-client-share') === '1';
     }
 
+    function isSmeView() {
+        if (window.dmV4SmeView === true) return true;
+        var $panel = $('#dmV4IvPanel');
+        if ($panel.attr('data-sme-view') === '1') return true;
+        var $page = $('.dm-v4-page');
+        return $page.attr('data-sme-view') === '1';
+    }
+
+    function isPanelCompactView() {
+        return isClientShareView() || isSmeView();
+    }
+
     function getClientShareTypeParam() {
         return (window.dmV4ClientShareType || 'ublc').toString();
     }
@@ -2093,6 +2105,9 @@
             }
             formData.append('UserId', typeof interviewerUserId !== 'undefined' ? interviewerUserId : '');
             formData.append('InterviewerEmailId', typeof interviewerEmailId !== 'undefined' ? interviewerEmailId : '');
+            if (pendingRow && pendingRow.length) {
+                formData.append('IrfId', pendingRow.data('irf-id') || '');
+            }
             var $btn = $('#btnUpload');
             $btn.prop('disabled', true);
             $.ajax({
@@ -2892,7 +2907,7 @@
             var $row = $(this);
             normalizeVetRowAttrs($row);
             syncVetButtons($row);
-            if (!isClientShareView()) {
+            if (!isPanelCompactView()) {
                 dmV4SyncScreenButtonLabels($row);
                 dmV4EnsureKycPlayButton($row);
             }
@@ -2902,7 +2917,7 @@
             e.preventDefault();
             var $btn = $(this);
             var $row = $btn.closest('.dm-v4-iv-row');
-            if (isClientShareView()) {
+            if (isPanelCompactView()) {
                 var userId = parseInt($btn.data('user-id') || $row.data('user-id'), 10);
                 var irfId = parseInt($row.data('irf-id'), 10);
                 var nickname = ($btn.data('nickname') || $row.find('.dm-v4-iv-code').first().text().replace(/\s+/g, ' ').replace(/›/g, '').trim() || '').toString();
@@ -2910,11 +2925,11 @@
                 $.get('/IRF/GetClientShareInterviewerInsights', {
                     irfId: irfId,
                     userId: userId,
-                    Type: getClientShareTypeParam()
+                    Type: isClientShareView() ? getClientShareTypeParam() : undefined
                 }, function (data) {
                     openInterviewerInsightsModel();
                     $('#divInsightsmodel').html(data);
-                    $('#txtheaderInsights').text(nickname ? nickname + ' (Client view)' : 'Interviewer');
+                    $('#txtheaderInsights').text(nickname ? nickname + (isSmeView() ? ' (SME view)' : ' (Client view)') : 'Interviewer');
                     $('#hidlastlogin').text($('#LastLogin').val() || '');
                 });
                 return;
@@ -2930,7 +2945,7 @@
             e.preventDefault();
             var $btn = $(this);
             var $row = $btn.closest('.dm-v4-iv-row');
-            if (isClientShareView()) {
+            if (isPanelCompactView()) {
                 var userId = parseInt($btn.data('user-id') || $row.data('user-id'), 10);
                 var irfId = parseInt($btn.data('irf-id') || $row.data('irf-id'), 10);
                 var irfName = ($btn.data('irf-id-name') || $row.data('irf-name') || '').toString();
@@ -2939,7 +2954,7 @@
                 $.get('/IRF/GetClientShareInterviewerInsights', {
                     irfId: irfId,
                     userId: userId,
-                    Type: getClientShareTypeParam()
+                    Type: isClientShareView() ? getClientShareTypeParam() : undefined
                 }, function (data) {
                     openInterviewerInsightsModel();
                     $('#divInsightsmodel').html(data);
@@ -2998,7 +3013,7 @@
             $.ajax({
                 url: cfg.generateSummaryUrl || '/IRF/GenerateInterviewerResumeSummaryAndSave',
                 type: 'POST',
-                data: { userId: userId, resumeLink: resumeLink },
+                data: { userId: userId, resumeLink: resumeLink, irfId: parseInt($row.data('irf-id'), 10) || 0 },
                 success: function (data, _textStatus, xhr) {
                     if (data && data.success) {
                         if (data.summaryHtml) {

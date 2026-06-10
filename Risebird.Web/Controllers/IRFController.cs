@@ -9015,29 +9015,54 @@ namespace Risebird.Web.Controllers
             {
                 var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
                     || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
-                if (!isClientShare && HttpContext.Session.GetString("email") == null)
+                var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
+                if (!isClientShare && !isSmeView && HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { ok = false });
                 }
 
+                if (isSmeView)
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                    if (!await _interviewerService.IsSmeAssignedToIrfAsync(emailid, irfId))
+                    {
+                        return Json(new { ok = false });
+                    }
+                }
+
                 var model = await _irfService.GetEditIRF(irfId, 0, false);
                 var source = model?.InterviewerCollection?.AsEnumerable();
-                if (isClientShare)
+                if (isClientShare || isSmeView)
                 {
                     source = source?.Where(x => x != null && x.IsActive);
                 }
                 var interviewers = source?
-                    .Select(iv => new
+                    .Select(iv =>
                     {
-                        userId = iv.UserId,
-                        email = isClientShare ? "" : (iv.EmailId ?? ""),
-                        companyName = !string.IsNullOrWhiteSpace(iv.CompanyName)
-                            ? iv.CompanyName.Trim()
-                            : (!string.IsNullOrWhiteSpace(iv.EmploymentComment) ? iv.EmploymentComment.Trim() : null),
-                        futureAssignedCount = iv.TotalFuture,
-                        lastLoginAt = iv.LastLoginAt.HasValue ? iv.LastLoginAt.Value.ToString("o") : (string)null,
-                        lastInterviewConductedAt = iv.LastInterviewConductedAt.HasValue
-                            ? iv.LastInterviewConductedAt.Value.ToString("o") : (string)null
+                        if (isClientShare)
+                        {
+                            DeliveryHeadInstructionViewMode.StripInterviewerForClientView(iv);
+                        }
+                        else if (isSmeView)
+                        {
+                            DeliveryHeadInstructionViewMode.StripInterviewerForSmeView(iv);
+                        }
+
+                        return new
+                        {
+                            userId = iv.UserId,
+                            email = (isClientShare || isSmeView) ? "" : (iv.EmailId ?? ""),
+                            companyName = !string.IsNullOrWhiteSpace(iv.CompanyName)
+                                ? iv.CompanyName.Trim()
+                                : (!string.IsNullOrWhiteSpace(iv.EmploymentComment) ? iv.EmploymentComment.Trim() : null),
+                            futureAssignedCount = iv.TotalFuture,
+                            lastLoginAt = iv.LastLoginAt.HasValue ? iv.LastLoginAt.Value.ToString("o") : (string)null,
+                            lastInterviewConductedAt = iv.LastInterviewConductedAt.HasValue
+                                ? iv.LastInterviewConductedAt.Value.ToString("o") : (string)null,
+                            perSuccessRate = (isClientShare || isSmeView) ? 0 : iv.PerSuccessRate,
+                            surcharge = (isClientShare || isSmeView) ? 0 : iv.Surcharge,
+                            clientAction = (isClientShare || isSmeView) ? null : iv.ClientAction
+                        };
                     })
                     .ToList();
 
@@ -9057,9 +9082,19 @@ namespace Risebird.Web.Controllers
             {
                 var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
                     || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
-                if (!isClientShare && HttpContext.Session.GetString("email") == null)
+                var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
+                if (!isClientShare && !isSmeView && HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { ok = false });
+                }
+
+                if (isSmeView)
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                    if (!await _interviewerService.IsSmeAssignedToIrfAsync(emailid, irfId))
+                    {
+                        return Json(new { ok = false });
+                    }
                 }
 
                 var model = await _irfService.GetEditIRF(irfId, 0, false);
@@ -9075,6 +9110,10 @@ namespace Risebird.Web.Controllers
                 {
                     DeliveryHeadInstructionViewMode.StripInterviewerForClientView(iv);
                 }
+                else if (isSmeView)
+                {
+                    DeliveryHeadInstructionViewMode.StripInterviewerForSmeView(iv);
+                }
 
                 return Json(new
                 {
@@ -9086,7 +9125,9 @@ namespace Risebird.Web.Controllers
                     aiVerdict = iv.AIVerdict ?? "",
                     aiScore = iv.AIScreeningScore,
                     aiReasonFull = iv.OpenAIScreeningResponse ?? "",
-                    futureAssignedCount = iv.TotalFuture
+                    futureAssignedCount = iv.TotalFuture,
+                    perSuccessRate = (isClientShare || isSmeView) ? 0 : iv.PerSuccessRate,
+                    surcharge = (isClientShare || isSmeView) ? 0 : iv.Surcharge
                 });
             }
             catch (Exception ex)
@@ -9100,10 +9141,22 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetClientShareInterviewerInsights(int irfId, int userId, string Type = null)
         {
-            if (!DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
-                && !DeliveryHeadInstructionViewMode.IsClientShareType(Type))
+            var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
+            var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
+
+            if (!isClientShare && !isSmeView)
             {
                 return Unauthorized();
+            }
+
+            if (isSmeView)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                if (!await _interviewerService.IsSmeAssignedToIrfAsync(emailid, irfId))
+                {
+                    return Unauthorized();
+                }
             }
 
             try
@@ -9121,9 +9174,19 @@ namespace Risebird.Web.Controllers
                 {
                     result = new InterviewerInsightsVM();
                 }
-                DeliveryHeadInstructionViewMode.StripInterviewerInsightsForClientView(result);
+
+                if (isSmeView)
+                {
+                    DeliveryHeadInstructionViewMode.StripInterviewerInsightsForSmeView(result);
+                    ViewBag.type = "SME";
+                }
+                else
+                {
+                    DeliveryHeadInstructionViewMode.StripInterviewerInsightsForClientView(result);
+                    ViewBag.type = "Client";
+                }
+
                 result.IRFId = model.IRFId;
-                ViewBag.type = "Client";
                 ViewBag.RegularAccess = "";
                 return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", result);
             }
@@ -9141,6 +9204,7 @@ namespace Risebird.Web.Controllers
             var resolvedIrfId = await _irfService.ResolveSkillChannelNumericIdAsync(irfid);
             ViewBag.PageType = "";
             ViewBag.IsClientShareView = false;
+            ViewBag.IsSmeView = false;
             if (DeliveryHeadInstructionViewMode.IsClientShareType(Type))
             {
                 ViewBag.PageType = "Public";
@@ -9176,15 +9240,8 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 ViewBag.profileName = profileName;
+                ViewBag.IsSmeView = false;
                 var model = new IRFVm();
-                //var level = await _irfRepository.GetLevelTech();
-                //level = level.Where(x => x.id != 1 && x.id != 7).ToList();
-                //ViewBag.LevelTech = new SelectList(level, "id", "Name");
-                //var techlevels = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
-                //                 select new { ID = (int)s, Name = s.GetDescription() };
-                //ViewBag.LevelTech = new SelectList(techlevels, "ID", "Name");
-                //var Skillset = await _irfRepository.GetSkills();
-                //ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                 var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
                 if (resolvedIrfId <= 0)
@@ -9192,6 +9249,36 @@ namespace Risebird.Web.Controllers
                     ViewBag.Message = "Skill Channel not found.";
                     return View(new IRFVm { id = 0 });
                 }
+
+                if (string.Equals(profileName, "Interviewer", StringComparison.OrdinalIgnoreCase))
+                {
+                    var isSmeForIrf = await _interviewerService.IsSmeAssignedToIrfAsync(emailid, resolvedIrfId);
+                    if (!isSmeForIrf)
+                    {
+                        ViewBag.Message = "You do not have access to this skill channel.";
+                        return View(new IRFVm { id = resolvedIrfId });
+                    }
+
+                    ViewBag.IsSmeView = true;
+                    DeliveryHeadInstructionViewMode.SetSmeSession(HttpContext, resolvedIrfId);
+                    model = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
+                    if (model == null)
+                    {
+                        ViewBag.Message = "Skill Channel not found.";
+                        return View(new IRFVm { id = resolvedIrfId });
+                    }
+
+                    DeliveryHeadInstructionViewMode.ApplySmeViewFilter(model);
+                    model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
+                    model.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
+                    var smeVoiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
+                    model.VoiceInstructionTranscript = smeVoiceBrief?.Transcript;
+                    model.VoiceInstructionTranscriptUpdatedOn = smeVoiceBrief?.TranscriptUpdatedOn;
+                    model.CandidateVideo = _irfService.GetVideoConsentForm(resolvedIrfId).Result;
+                    await checkSkillSetandSeperate(model);
+                    return View(model);
+                }
+
                 var result = await _clientService.VerifyClientAuthenticity(resolvedIrfId, emailid);
                 if (!result && profileName == "Public")
                 {
@@ -11891,7 +11978,11 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
 
-                if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
+                if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR"
+                    || (string.Equals(profileName, "Interviewer", StringComparison.OrdinalIgnoreCase)
+                        && int.TryParse(Request.Form["IrfId"], out var smeIrfId)
+                        && smeIrfId > 0
+                        && await _interviewerService.IsSmeAssignedToIrfAsync(emailId, smeIrfId)))
                 {
                     if (Request.Form.Files.Count() > 0)
                     {
@@ -12087,11 +12178,32 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Unauthorized" });
                 }
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                if (string.Equals(profileName, "Interviewer", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!await _interviewerService.IsSmeAssignedToIrfAsync(emailid, irfId))
+                    {
+                        return Json(new { success = false, message = "Forbidden" });
+                    }
+                }
+                else if (profileName == "Client" || profileName == "Public")
                 {
                     return Json(new { success = false, message = "Forbidden" });
                 }
-                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                if (string.IsNullOrWhiteSpace(interviewerEmail) && userId > 0)
+                {
+                    var ivRow = (await _irfService.GetEditIRF(irfId, 0, false))?.InterviewerCollection?
+                        .FirstOrDefault(x => x.UserId == userId);
+                    interviewerEmail = ivRow?.EmailId;
+                }
+
+                if (string.IsNullOrWhiteSpace(interviewerEmail))
+                {
+                    return Json(new { success = false, message = "Interviewer not found." });
+                }
+
                 var interviewers = new List<TransInterviewer>
                 {
                     new TransInterviewer { id = transInterviewerId, IsSMEVerified = isVerified }
@@ -12118,7 +12230,7 @@ namespace Risebird.Web.Controllers
                     transId = transInterviewerId,
                     irfId,
                     userId,
-                    email = interviewerEmail
+                    email = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId) ? null : interviewerEmail
                 });
             }
             catch (Exception ex)
@@ -12254,7 +12366,7 @@ namespace Risebird.Web.Controllers
         /// AI resume summary for DM Approval: generates summary, persists JSON to InterviewerProfile.CodedResumeLink.
         /// </summary>
         [HttpPost]
-        public async Task<JsonResult> GenerateInterviewerResumeSummaryAndSave(int userId, string resumeLink)
+        public async Task<JsonResult> GenerateInterviewerResumeSummaryAndSave(int userId, string resumeLink, int irfId = 0)
         {
             try
             {
@@ -12262,12 +12374,22 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Unauthorized" });
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
-                    return Json(new { success = false, message = "Unauthorized" });
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
 
-                if (profileName != "Admin" && profileName != "SupportAdmin" && profileName != "InterviewerManagement"
+                if (string.Equals(profileName, "Interviewer", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (irfId <= 0 || !await _interviewerService.IsSmeAssignedToIrfAsync(emailid, irfId))
+                        return Json(new { success = false, message = "Not authorized." });
+                }
+                else if (profileName == "Client" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                else if (profileName != "Admin" && profileName != "SupportAdmin" && profileName != "InterviewerManagement"
                     && profileName != "SeniorInterviewerManagement" && profileName != "SeniorHR")
+                {
                     return Json(new { success = false, message = "Not authorized." });
+                }
 
                 if (userId <= 0 || string.IsNullOrWhiteSpace(resumeLink))
                     return Json(new { success = false, message = "Resume is required." });
