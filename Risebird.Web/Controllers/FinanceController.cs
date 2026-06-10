@@ -1935,21 +1935,22 @@ namespace Risebird.Web.Controllers
 
                 return Json(new
                 {
-                    invoiceNumber     = data.InvoiceNumber,
-                    billingOwnerEmail = data.BillingOwnerEmail,
-                    billingOwnerId    = data.BillingOwnerId,
-                    billingOwners     = billingOwners,
-                    creditPeriod      = data.PaymentTerm > 0 ? data.PaymentTerm + " Days" : string.Empty,
-                    gstNumber         = data.GSTNumber,
-                    gstApplicable     = data.GSTApplicable,
-                    billingType       = data.BillingType,
-                    perInterviewRate  = data.PerInterviewRate,
-                    lineItems         = data.LineItems,
-                    subtotal          = subtotal,
-                    gstAmount         = gstAmount,
-                    invoiceValue      = invoiceValue,
-                    tdsAmount         = tdsAmount,
-                    netReceivable     = netReceivable
+                    invoiceNumber      = data.InvoiceNumber,
+                    billingOwnerEmail  = data.BillingOwnerEmail,
+                    billingOwnerId     = data.BillingOwnerId,
+                    billingOwners      = billingOwners,
+                    creditPeriod       = data.PaymentTerm > 0 ? data.PaymentTerm + " Days" : string.Empty,
+                    gstNumber          = data.GSTNumber,
+                    gstApplicable      = data.GSTApplicable,
+                    billingType        = data.BillingType,
+                    perInterviewRate   = data.PerInterviewRate,
+                    aiPerInterviewRate = data.AIPerInterviewRate,
+                    lineItems          = data.LineItems,
+                    subtotal           = subtotal,
+                    gstAmount          = gstAmount,
+                    invoiceValue       = invoiceValue,
+                    tdsAmount          = tdsAmount,
+                    netReceivable      = netReceivable
                 });
             }
             catch (Exception ex)
@@ -2030,7 +2031,7 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpPost]
         public async Task<JsonResult> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod,
-            string irn, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
+            string irn, string eInvoiceFileLink, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
             decimal tdsAmount, decimal netReceivable, string lineItemsJson,
             int? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null)
         {
@@ -2043,8 +2044,8 @@ namespace Risebird.Web.Controllers
                     catch { lineItems = new List<InvoiceLineItemVM>(); }
                 }
 
-                // When marking as Paid (status=2) for non-M1, cash credit amount is required
-                const int StatusPaid    = 2;
+                // When marking as Paid (status=3) for non-M1, cash credit amount is required
+                const int StatusPaid    = 3;
                 const int BillingModelM1 = 1;
 
                 if (status == StatusPaid && cashCreditAmount.HasValue && cashCreditAmount.Value > 0)
@@ -2062,7 +2063,7 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
-                var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, status,
+                var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
                     subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems);
                 return Json(new
                 {
@@ -2079,6 +2080,37 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        public async Task<JsonResult> UploadEInvoiceFile(IFormFile file)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                    return Json(new { success = false, message = "No file received." });
+
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                var allowed = new[] { "application/pdf", "application/msword",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
+                if (!allowed.Contains(fileMimeType))
+                    return Json(new { success = false, message = "Only PDF or Word documents are allowed." });
+
+                var uniqueFileName = $"einvoice_{DateTime.UtcNow:yyyyMMddHHmmss}_{file.FileName.Replace(" ", "_")}";
+                await _azureStorageHelper.InsertBlob(uniqueFileName, "invoicefiles", file);
+                var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
+                var blob = containerRef.GetBlockBlobReference(uniqueFileName);
+                var fileUrl = blob.Uri.ToString();
+
+                return Json(new { success = true, fileUrl });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Upload failed. Please try again." });
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> SaveGeneratedInvoice(GenerateInvoiceVM model, string LineItemsJson)
         {
@@ -2575,19 +2607,21 @@ namespace Risebird.Web.Controllers
                     int totalamount = 0;
                     foreach (var item in model)
                     {
-                        totalamount = totalamount + (item.TotalCount * item.PerInterviewRate);
+                        var baseAmount = (item.NonAIInterviewCount * item.PerInterviewRate)
+                                       + (item.AIInterviewCount  * item.AIPerInterviewRate);
+                        totalamount = totalamount + baseAmount;
                         if (item.GSTApplicable)
                         {
                             item.GST = "Yes";
-                            item.GSTAmount = (item.TotalCount * item.PerInterviewRate * 18) / 100;
+                            item.GSTAmount = (baseAmount * 18) / 100;
                         }
                         else
                         {
                             item.GST = "No";
                             item.GSTAmount = 0;
                         }
-                        item.SystemInvoiceAmount = item.GSTAmount + (item.TotalCount * item.PerInterviewRate);
-                        item.TDSAmount = (item.TotalCount * item.PerInterviewRate * 10) / 100;
+                        item.SystemInvoiceAmount = item.GSTAmount + baseAmount;
+                        item.TDSAmount = (baseAmount * 10) / 100;
                         if (item.invoicerealization == 1)
                         {
                             item.PaymentStatus = "Received";
