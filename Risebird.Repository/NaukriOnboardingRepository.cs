@@ -109,7 +109,8 @@ namespace Risebird.Repository
         public async Task<List<NaukriProspectiveInterviewerVM>> GetListAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
-            string automationStatus = null, string callStatus = null, string disposition = null)
+            string automationStatus = null, string callStatus = null, string disposition = null,
+            string funnelStage = null)
         {
             try
             {
@@ -122,6 +123,7 @@ namespace Risebird.Repository
                 p.Add("@AutomationStatus", string.IsNullOrWhiteSpace(automationStatus) ? null : automationStatus);
                 p.Add("@CallStatus", string.IsNullOrWhiteSpace(callStatus) ? null : callStatus);
                 p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
+                p.Add("@FunnelStage", string.IsNullOrWhiteSpace(funnelStage) ? null : funnelStage);
                 p.Add("@DateFrom", dateFrom);
                 p.Add("@DateTo", dateTo);
                 p.Add("@Page", page);
@@ -137,6 +139,47 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return new List<NaukriProspectiveInterviewerVM>();
+            }
+        }
+
+        public async Task<Dictionary<string, int>> GetFunnelStageCountsAsync(
+            string status, string candidateName, string magName, string source,
+            DateTime? dateFrom, DateTime? dateTo,
+            string automationStatus = null, string callStatus = null, string disposition = null,
+            string funnelStage = null)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Status", string.IsNullOrWhiteSpace(status) ? null : status);
+                p.Add("@CandidateName", string.IsNullOrWhiteSpace(candidateName) ? null : candidateName);
+                p.Add("@MagName", string.IsNullOrWhiteSpace(magName) ? null : magName);
+                p.Add("@Source", string.IsNullOrWhiteSpace(source) ? null : source);
+                p.Add("@AutomationStatus", string.IsNullOrWhiteSpace(automationStatus) ? null : automationStatus);
+                p.Add("@CallStatus", string.IsNullOrWhiteSpace(callStatus) ? null : callStatus);
+                p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
+                p.Add("@FunnelStage", string.IsNullOrWhiteSpace(funnelStage) ? null : funnelStage);
+                p.Add("@DateFrom", dateFrom);
+                p.Add("@DateTo", dateTo);
+
+                var rows = await con.QueryAsync(
+                    "usp_GetNaukriFunnelStageCounts", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+
+                var dict = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                foreach (var row in rows)
+                {
+                    string stage = row.FunnelStage as string;
+                    var key = string.IsNullOrWhiteSpace(stage) ? "New" : stage;
+                    dict[key] = (int)row.Cnt;
+                }
+                return dict;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -470,6 +513,109 @@ namespace Risebird.Repository
                 return true;
             }
             catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        // ── Prospect Onboarding redesign (Phase 2) ──────────────────────────────────
+
+        // Sets the single, unified Intent that both email replies and AI Plivo calls feed.
+        public async Task<bool> SetUnifiedIntentAsync(int id, string intent, string intentSource, DateTime? confirmedAt)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(
+                    @"UPDATE NaukriProspectiveInterviewer
+                      SET Intent            = @Intent,
+                          IntentSource      = @IntentSource,
+                          IntentConfirmedAt = ISNULL(@ConfirmedAt, IntentConfirmedAt),
+                          UpdatedAt         = GETUTCDATE()
+                      WHERE Id = @Id",
+                    new { Id = id, Intent = intent, IntentSource = intentSource, ConfirmedAt = confirmedAt },
+                    commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        // Advances the funnel forward-only (never regresses) and optionally sets the
+        // operational ticket status. Ticket status is kept separate from the funnel stage.
+        public async Task<bool> AdvanceFunnelStageAsync(int id, string funnelStage, string ticketStatus = null)
+        {
+            try
+            {
+                int newRank = FunnelStageRank(funnelStage);
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(
+                    @"UPDATE NaukriProspectiveInterviewer
+                      SET FunnelStage = CASE
+                              WHEN @NewRank >= (CASE ISNULL(FunnelStage, '')
+                                  WHEN 'Parsed'              THEN 1
+                                  WHEN 'MAGMapped'           THEN 2
+                                  WHEN 'InvitationSent'      THEN 3
+                                  WHEN 'IntentCollection'    THEN 4
+                                  WHEN 'IntentConfirmed'     THEN 5
+                                  WHEN 'EmploymentVerified'  THEN 6
+                                  WHEN 'ResumeFitment'       THEN 7
+                                  WHEN 'AcknowledgementSent' THEN 8
+                                  WHEN 'Onboarded'           THEN 9
+                                  ELSE 0 END)
+                              THEN @FunnelStage ELSE FunnelStage END,
+                          TicketStatus = ISNULL(@TicketStatus, TicketStatus),
+                          UpdatedAt    = GETUTCDATE()
+                      WHERE Id = @Id",
+                    new { Id = id, FunnelStage = funnelStage, NewRank = newRank, TicketStatus = ticketStatus },
+                    commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        public async Task<bool> SetOnboardingTypeAsync(int id, string onboardingType)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(
+                    @"UPDATE NaukriProspectiveInterviewer
+                      SET OnboardingType = @OnboardingType, UpdatedAt = GETUTCDATE()
+                      WHERE Id = @Id",
+                    new { Id = id, OnboardingType = onboardingType },
+                    commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        public async Task<int?> FindProspectIdByOnboardedUserIdAsync(int userId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                return await con.QueryFirstOrDefaultAsync<int?>(
+                    @"SELECT TOP 1 Id FROM NaukriProspectiveInterviewer
+                      WHERE OnboardedUserId = @UserId
+                      ORDER BY Id DESC",
+                    new { UserId = userId },
+                    commandTimeout: 30);
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return null; }
+        }
+
+        private static int FunnelStageRank(string stage)
+        {
+            switch (stage)
+            {
+                case "Parsed":              return 1;
+                case "MAGMapped":           return 2;
+                case "InvitationSent":      return 3;
+                case "IntentCollection":    return 4;
+                case "IntentConfirmed":     return 5;
+                case "EmploymentVerified":  return 6;
+                case "ResumeFitment":       return 7;
+                case "AcknowledgementSent": return 8;
+                case "Onboarded":           return 9;
+                default:                    return 0;
+            }
         }
 
         public async Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email)

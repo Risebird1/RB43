@@ -984,7 +984,6 @@
 
     function readRbVetFromRow($row) {
         var raw = $row.attr('data-rb-vet');
-        if ($row.attr('data-is-active') !== '1') return false;
         if (raw === '1') return true;
         if (raw === '0' && isFreeChannelPanel()
             && ($row.attr('data-is-available') === '1' || $row.attr('data-is-available') == null)
@@ -995,7 +994,6 @@
     }
 
     function readClientVetFromRow($row) {
-        if ($row.attr('data-is-active') !== '1') return false;
         var raw = $row.attr('data-client-vet');
         if (raw === '1') return true;
         var action = ($row.attr('data-client-action') || '').toLowerCase();
@@ -1089,32 +1087,23 @@
         });
     }
 
-    function ivStatusFromRow($row) {
-        var rbOn = readRbVetFromRow($row);
-        var clientOn = readClientVetFromRow($row);
+    function ivStatusBadgeFromRow($row) {
+        var isActive = readRowDbActive($row);
+        var isAvailable = ($row.attr('data-is-available') || '0') === '1';
         var clientAction = ($row.attr('data-client-action') || '').toLowerCase();
-        var active = rbOn && clientOn;
-        if (active) return { label: 'Active', tone: 'active' };
-        if (!rbOn && clientAction !== 'rejected') return { label: 'Available', tone: 'available' };
+        if (isActive) return { label: 'Active', tone: 'active' };
+        if (isAvailable && clientAction !== 'rejected') return { label: 'Available', tone: 'available' };
         return { label: 'Inactive', tone: 'inactive' };
     }
 
+    /** Updates status badge only — never mutates data-is-active (server truth for tab filter). */
     function updateIvRowStatus($row) {
-        if ($('#dmV4IvPanel').attr('data-lock') !== '1') return;
-        var status = ivStatusFromRow($row);
-        $row.attr('data-is-active', status.tone === 'active' ? '1' : '0');
+        var status = ivStatusBadgeFromRow($row);
         var $badge = $row.find('[data-role="iv-status"]');
         if (!$badge.length) return;
         $badge.removeClass('dm-v4-iv-status--active dm-v4-iv-status--available dm-v4-iv-status--inactive')
             .addClass('dm-v4-iv-status--' + status.tone)
             .text(status.label);
-    }
-
-    function normalizeVetRowAttrs($row) {
-        var rbOn = readRbVetFromRow($row);
-        var clientOn = readClientVetFromRow($row);
-        $row.attr('data-rb-vet', rbOn ? '1' : '0');
-        $row.attr('data-client-vet', clientOn ? '1' : '0');
     }
 
     function dmV4VetErrorText(res, fallback) {
@@ -1458,6 +1447,9 @@
     function dmV4OpenInterviewerResumeSummary(codedCvLink, resumeLink, cvLabel) {
         var cfg = getDmIvCvConfig();
         dmV4SetResumeSummaryDrawerTitle(cvLabel);
+        if (codedCvLink && !dmV4IsSummaryCodedCvLink(codedCvLink)) {
+            codedCvLink = '';
+        }
         var clientShareData = {};
         if (isClientShareView()) {
             var $row = (window._dmV4CvSummaryRow && window._dmV4CvSummaryRow.length)
@@ -1513,9 +1505,9 @@
             });
             return;
         }
-        if (codedCvLink) {
-            window.open(codedCvLink, '_blank', 'noopener');
-        }
+        dmV4ShowResumeSummaryLoading('No resume summary available.');
+        $('#id_candidateResumeSummaryBody').html(
+            '<p class="text-danger" style="padding:20px;">No coded resume summary is saved for this interviewer yet.</p>');
     }
 
     window.dmV4OpenInterviewerResumeSummary = dmV4OpenInterviewerResumeSummary;
@@ -1993,7 +1985,7 @@
         var cvCode = (state.cvCode || 'CV').toString();
         var redactAttempted = !!state.isResumeRedactAttempted;
         var hasResume = dmV4HasResumeLink(resumeLink);
-        var hasCoded = !!codedCvLink;
+        var hasCoded = dmV4IsSummaryCodedCvLink(codedCvLink);
         var canScreen = hasResume || hasCoded;
         var hasScreening = (parseInt(state.aiScore, 10) || 0) > 0 ||
             !!(state.aiVerdict) || !!(state.aiReasonFull);
@@ -2072,7 +2064,7 @@
         return $.getJSON(cfg.cvStateUrl, { irfId: irfId, userId: userId }).done(function (state) {
             if (state && state.ok) {
                 var rowCoded = ($row.attr('data-coded-cv') || '').toString().trim();
-                if (!state.codedCvLink && rowCoded) {
+                if (!state.codedCvLink && rowCoded && dmV4IsSummaryCodedCvLink(rowCoded)) {
                     state.codedCvLink = rowCoded;
                     state.cvCode = ($row.attr('data-cv-code') || dmV4RowCvCode($row)).toString();
                     state.isResumeRedactAttempted = true;
@@ -2278,7 +2270,10 @@
             var $wrap = $row.find('.dm-v4-iv-capacity');
             var assigned = parseInt($row.attr('data-assigned'), 10) || parseInt($wrap.attr('data-assigned'), 10) || 0;
             syncCapacityCellUi($wrap, readRowDisplayCapacity($row), assigned, isRowCapExplicit($row));
+            updateIvRowStatus($row);
         });
+        applyIvTabFilter();
+        refreshIvTabCounts();
     }
 
     function isCapEnforced() {
@@ -2321,8 +2316,8 @@
     }
 
     function shouldShowUnlimitedCap($row) {
-        if (!isCapEnforced()) return true;
         if (isRowCapExplicit($row)) return false;
+        if (!isCapEnforced()) return true;
         if (isChannelLocked()) return false;
         return true;
     }
@@ -2613,13 +2608,19 @@
             return;
         }
 
-        if (capExplicit && displayCapacity === 0) {
-            if (canEdit) {
+        if (displayCapacity === 0) {
+            if (capExplicit && canEdit) {
                 $wrap.html('<button type="button" class="dm-v4-cap-set-btn" title="Interview limit is 0 — interviewer cannot be assigned">' +
                     DM_V4_PLUS_ICON + 'Set limit</button>' +
                     '<div class="dm-v4-cap-status dm-v4-cap-status--full">Cannot be assigned</div>');
-            } else {
+            } else if (capExplicit) {
                 $wrap.html('<span class="dm-v4-cap-unlimited dm-v4-cap-unlimited--blocked">0 · Cannot assign</span>');
+            } else {
+                var zeroHtml = '<div class="dm-v4-cap-display">';
+                zeroHtml += '<span class="dm-v4-mono dm-v4-iv-cap-assigned">' + assigned + '</span><span class="dm-v4-iv-cap-sep">/</span>';
+                zeroHtml += '<span class="dm-v4-mono dm-v4-cap-readonly">0</span></div>';
+                zeroHtml += '<div class="dm-v4-cap-status dm-v4-cap-status--full">Cannot be assigned</div>';
+                $wrap.html(zeroHtml);
             }
             $row.addClass('dm-v4-iv-row--cap-full');
             return;
@@ -2922,7 +2923,6 @@
         refreshDmV4IvPanelMetrics();
         $('.dm-v4-iv-row').each(function () {
             var $row = $(this);
-            normalizeVetRowAttrs($row);
             syncVetButtons($row);
             if (!isPanelCompactView()) {
                 dmV4SyncScreenButtonLabels($row);

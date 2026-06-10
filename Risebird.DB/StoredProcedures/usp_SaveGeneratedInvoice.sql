@@ -19,6 +19,7 @@ CREATE PROCEDURE usp_SaveGeneratedInvoice
     @GSTNumber         VARCHAR(100),
     @TaxScenario       INT,
     @IRN               VARCHAR(200),
+    @EInvoiceFileLink  VARCHAR(MAX),
     @Subtotal          DECIMAL(18,2),
     @GSTAmount         DECIMAL(18,2),
     @InvoiceValue      DECIMAL(18,2),
@@ -52,12 +53,12 @@ BEGIN
     BEGIN
         INSERT INTO GeneratedInvoices
             (ClientId, BillingOwnerId, InvoiceNumber, InvoiceMonth, InvoiceYear,
-             BillingOwnerEmail, CreditPeriod, GSTNumber, TaxScenario, IRN,
+             BillingOwnerEmail, CreditPeriod, GSTNumber, TaxScenario, IRN, EInvoiceFileLink,
              Subtotal, GSTAmount, InvoiceValue, TDSAmount, NetReceivable,
              Status, CreatedOn, CreatedBy)
         VALUES
             (@ClientId, @BillingOwnerId, @InvoiceNumber, @InvoiceMonth, @InvoiceYear,
-             @BillingOwnerEmail, @CreditPeriod, @GSTNumber, @TaxScenario, @IRN,
+             @BillingOwnerEmail, @CreditPeriod, @GSTNumber, @TaxScenario, @IRN, @EInvoiceFileLink,
              @Subtotal, @GSTAmount, @InvoiceValue, @TDSAmount, @NetReceivable,
              @Status, GETDATE(), @CreatedBy)
 
@@ -76,6 +77,7 @@ BEGIN
             GSTNumber         = @GSTNumber,
             TaxScenario       = @TaxScenario,
             IRN               = @IRN,
+            EInvoiceFileLink  = CASE WHEN @EInvoiceFileLink IS NOT NULL AND @EInvoiceFileLink != '' THEN @EInvoiceFileLink ELSE EInvoiceFileLink END,
             Subtotal          = @Subtotal,
             GSTAmount         = @GSTAmount,
             InvoiceValue      = @InvoiceValue,

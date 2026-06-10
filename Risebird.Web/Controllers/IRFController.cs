@@ -7311,6 +7311,8 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") == null)
                     return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                    return Json(new { success = false, message = "Forbidden" });
 
                 var audioUrl = _irfService.FetchIRFAudioLink(irfId);
                 if (string.IsNullOrWhiteSpace(audioUrl))
@@ -7376,6 +7378,8 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") == null)
                     return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                    return Json(new { success = false, message = "Forbidden" });
 
                 if (string.IsNullOrWhiteSpace(transcript))
                     return Json(new { success = false, message = "Transcript cannot be empty." });
@@ -7408,6 +7412,8 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") == null)
                     return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                    return Json(new { success = false, message = "Forbidden" });
 
                 var brief = _irfService.FetchVoiceInstructionBrief(irfId);
                 if (string.IsNullOrWhiteSpace(brief?.Transcript))
@@ -9018,9 +9024,26 @@ namespace Risebird.Web.Controllers
             return await _clientService.VerifyClientAuthenticity(irfId, email);
         }
 
+        /// <summary>DM/SME full access; client role limited to associated IRF.</summary>
+        private async Task<bool> AuthorizeDhiMutatingAccessAsync(int irfId, string type = null)
+        {
+            if (irfId <= 0) return false;
+            var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            if (string.IsNullOrEmpty(email)) return false;
+            var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (DeliveryHeadInstructionViewMode.IsOperationalProfile(profile)) return true;
+            if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profile))
+                return await AuthorizeClientShareAccessAsync(irfId, type);
+            if (string.Equals(profile, "Interviewer", StringComparison.OrdinalIgnoreCase))
+                return await _interviewerService.IsSmeAssignedToIrfAsync(email, irfId);
+            return false;
+        }
+
         private bool IsClientShareRequest(int irfId, string type = null)
         {
             var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (DeliveryHeadInstructionViewMode.IsOperationalProfile(profile))
+                return false;
             if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profile))
                 return true;
             return DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
@@ -9157,8 +9180,8 @@ namespace Risebird.Web.Controllers
                 {
                     ok = true,
                     resumeLink = isClientShare ? "" : (iv.ResumeLink ?? ""),
-                    codedCvLink = iv.CodedResumeLink ?? "",
-                    cvCode = !string.IsNullOrEmpty(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : "",
+                    codedCvLink = DmIvCodedCvHelper.GetDisplayCodedCvLink(iv.CodedResumeLink) ?? "",
+                    cvCode = DmIvCodedCvHelper.HasDisplayCodedCv(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : "",
                     isResumeRedactAttempted = iv.IsResumeRedactAttempted,
                     aiVerdict = iv.AIVerdict ?? "",
                     aiScore = iv.AIScreeningScore,
@@ -9363,6 +9386,12 @@ namespace Risebird.Web.Controllers
                         await checkSkillSetandSeperate(model);
                         var jobLevelsErr = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
                         ViewBag.JobLevelList = new SelectList(jobLevelsErr, "ID", "Name");
+                        if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profileName))
+                        {
+                            ViewBag.IsClientShareView = true;
+                            ViewBag.PageType = "Public";
+                            DeliveryHeadInstructionViewMode.ApplyClientViewFilter(model);
+                        }
                         return View(model);
                     }
                     foreach (var item in skillsToSave)
@@ -9612,6 +9641,8 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") == null)
                     return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                    return Json(new { success = false, message = "Forbidden" });
 
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
 
@@ -9665,6 +9696,8 @@ namespace Risebird.Web.Controllers
                 {
                     return Json(new { success = false, message = "Unauthorized" });
                 }
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                    return Json(new { success = false, message = "Forbidden" });
                 if (string.IsNullOrWhiteSpace(skillName) || string.IsNullOrWhiteSpace(comment))
                 {
                     return Json(new { success = false, message = "Skill and question are required." });
@@ -12425,6 +12458,7 @@ namespace Risebird.Web.Controllers
                 if (userId <= 0 || string.IsNullOrWhiteSpace(resumeLink))
                     return Json(new { success = false, message = "Resume is required." });
 
+                // Always overwrite InterviewerProfile.CodedResumeLink — legacy Affinda/XML/PDF links are replaced on explicit Generate.
                 var summary = await _candidateService.ResumeSummaryFromLink(resumeLink);
                 if (summary == null)
                     return Json(new { success = false, message = "OpenAI did not return a valid resume summary. The resume may be unreadable, empty, or in an unsupported format." });

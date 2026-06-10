@@ -155,7 +155,7 @@ namespace Risebird.Business.Interface
         Task<List<BillingOwnerOption>> GetClientBillingOwners(int clientId);
         Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year);
         Task<InvoiceDetailVM> GetGeneratedInvoiceById(int invoiceId);
-        Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, int status,
+        Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
             List<InvoiceLineItemVM> lineItems);
         Task<string> GetNextInvoiceNumber(int month, int year);

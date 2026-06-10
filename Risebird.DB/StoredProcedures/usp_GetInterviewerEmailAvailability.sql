@@ -44,16 +44,22 @@ BEGIN
             ISNULL(ul.IsActive, 1) AS IsInterviewerActive,
             ul.InactivationType,
             COUNT(*) OVER()       AS TotalCount,
-            SUM(CASE WHEN ea.Status = 'Open'       THEN 1 ELSE 0 END) OVER() AS OpenCount,
-            SUM(CASE WHEN ea.Status = 'InProgress'  THEN 1 ELSE 0 END) OVER() AS InProgressCount,
-            SUM(CASE WHEN ea.Status = 'Verified'    THEN 1 ELSE 0 END) OVER() AS VerifiedCount,
-            SUM(CASE WHEN ea.Status = 'Closed'      THEN 1 ELSE 0 END) OVER() AS ClosedCount,
+            -- Operational status buckets: Open / InProgress / Closed always sum to the total.
+            -- The legacy 'Verified' value (AI résumé-fit) is folded into InProgress; anything
+            -- that is neither Open nor Closed (incl. NULL) counts as InProgress.
+            SUM(CASE WHEN ISNULL(ea.Status, 'Open') = 'Open'                       THEN 1 ELSE 0 END) OVER() AS OpenCount,
+            SUM(CASE WHEN ISNULL(ea.Status, 'Open') NOT IN ('Open', 'Closed')      THEN 1 ELSE 0 END) OVER() AS InProgressCount,
+            SUM(CASE WHEN ISNULL(ea.Status, 'Open') = 'Closed'                     THEN 1 ELSE 0 END) OVER() AS ClosedCount,
             ROW_NUMBER() OVER (ORDER BY ea.ReceivedAt DESC, ea.Id DESC) AS RowNum
         FROM InterviewerEmailAvailability ea
         LEFT JOIN InterviewerProfile ip ON ip.Id = ea.InterviewerProfileId
         LEFT JOIN UserList ul ON ul.id = ea.UserId
         WHERE
-            (@Status IS NULL OR ea.Status = @Status)
+            -- 'InProgress' filter also matches the legacy 'Verified' value (folded into InProgress).
+            (@Status IS NULL
+                OR ea.Status = @Status
+                OR (@Status = 'InProgress' AND ea.Status = 'Verified')
+                OR (@Status = 'Open' AND ea.Status IS NULL))
             AND (@SenderEmail IS NULL OR ea.SenderEmail LIKE '%' + @SenderEmail + '%')
             AND (@ResumeFitment IS NULL OR ea.ResumeFitment = @ResumeFitment)
             AND (@Source IS NULL OR ea.Source LIKE @Source + '%')

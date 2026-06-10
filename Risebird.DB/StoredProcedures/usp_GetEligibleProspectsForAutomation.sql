@@ -41,6 +41,10 @@ BEGIN
                 CASE WHEN np.PlivoCallStatus IN ('completed', 'answered')
                           AND LOWER(ISNULL(np.PlivoProspectDisposition, '')) = 'interested'
                      THEN 0 ELSE 1 END ASC,
+                -- Priority 5: Positive intent confirmed (email or call) but not yet onboarded — auto-continue to acknowledgement
+                CASE WHEN LOWER(ISNULL(np.Intent, '')) = 'interested'
+                          AND ISNULL(np.OnboardingCompleted, 0) = 0
+                     THEN 0 ELSE 1 END ASC,
                 -- Then chronological
                 np.ReceivedAt ASC, np.Id ASC
             ) AS RowNum
@@ -55,14 +59,22 @@ BEGIN
         WHERE np.Status IN ('Open', 'InProgress')
           AND ISNULL(np.AutomationStatus, '') NOT IN (
               'Cold', 'ManualRequired', 'Completed', 'Error',
-              'ParsingResume', 'ResolvingMAG', 'SendingEmail'
+              'ParsingResume', 'ResolvingMAG', 'SendingEmail',
+              -- Auto-onboarding has reached the acknowledgement stage; completion now
+              -- depends on the interviewer accepting the acknowledgement email (handled in the web app).
+              'AwaitingAcknowledgement'
           )
           AND ISNULL(np.PlivoCallStatus, '') NOT IN ('initiated', 'triggered')
           AND np.ResumeLink IS NOT NULL AND np.ResumeLink <> ''
-          -- Exclude prospects who already responded to email (no call needed)
+          -- Don't reprocess prospects who have already been onboarded.
+          AND ISNULL(np.OnboardingCompleted, 0) = 0
+          -- Exclude prospects who already responded to email (no call needed) — EXCEPT
+          -- those whose confirmed intent is 'Interested', which must be auto-continued through
+          -- EV → AI fitment → onboarding → acknowledgement email.
           AND (
               ISNULL(np.InvitationEmailSent, 0) = 0
               OR np.ProspectResponse IS NULL
+              OR LOWER(ISNULL(np.Intent, '')) = 'interested'
           )
           AND ISNULL(np.SelfRegistrationCompleted, 0) = 0
           AND (
@@ -86,6 +98,10 @@ BEGIN
               -- OR: Call completed — needs disposition handling
               OR (np.PlivoCallStatus IN ('completed', 'answered')
                   AND ISNULL(np.AutomationStatus, '') NOT IN ('Cold', 'ManualRequired', 'Completed'))
+              -- OR: Positive intent confirmed (email reply or AI call) but not yet onboarded —
+              --     auto-continue through EV → AI fitment → onboarding → acknowledgement email.
+              OR (LOWER(ISNULL(np.Intent, '')) = 'interested'
+                  AND ISNULL(np.OnboardingCompleted, 0) = 0)
           )
     )
     SELECT * FROM Eligible WHERE RowNum <= @BatchSize;

@@ -12,12 +12,13 @@ CREATE TABLE [dbo].[GeneratedInvoices](
     [GSTNumber]        [varchar](100) NULL,
     [TaxScenario]      [int] NULL DEFAULT 0,   -- 0=Non-GST 1=GST18%
     [IRN]              [varchar](200) NULL,
+    [EInvoiceFileLink] [varchar](MAX) NULL,
     [Subtotal]         [decimal](18,2) NULL DEFAULT 0,
     [GSTAmount]        [decimal](18,2) NULL DEFAULT 0,
     [InvoiceValue]     [decimal](18,2) NULL DEFAULT 0,
     [TDSAmount]        [decimal](18,2) NULL DEFAULT 0,
     [NetReceivable]    [decimal](18,2) NULL DEFAULT 0,
-    [Status]           [int] NULL DEFAULT 0,   -- 0=Draft 1=Generated 2=Paid 3=Partially Paid 4=Overdue
+    [Status]           [int] NULL DEFAULT 0,   -- 0=Draft 1=Generated 2=PO Pending 3=Paid
     [Owner]            [varchar](200) NULL,
     [LatestRemark]     [varchar](500) NULL,
     [UTRTrxn]          [varchar](200) NULL,
@@ -26,6 +27,12 @@ CREATE TABLE [dbo].[GeneratedInvoices](
     [CreatedBy]        [varchar](200) NULL,
  CONSTRAINT [PK_GeneratedInvoices] PRIMARY KEY CLUSTERED ([id] ASC)
 ) ON [PRIMARY]
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'EInvoiceFileLink' AND Object_ID = Object_ID(N'GeneratedInvoices'))
+BEGIN
+    ALTER TABLE GeneratedInvoices ADD [EInvoiceFileLink] [varchar](MAX) NULL
 END
 GO
 

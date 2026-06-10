@@ -10,6 +10,7 @@ CREATE PROCEDURE [dbo].[usp_GetNaukriProspectiveInterviewers]
     @AutomationStatus   VARCHAR(50)  = NULL,
     @CallStatus         VARCHAR(50)  = NULL,
     @Disposition        VARCHAR(50)  = NULL,
+    @FunnelStage        VARCHAR(50)  = NULL,
     @DateFrom           DATETIME     = NULL,
     @DateTo             DATETIME     = NULL,
     @Page               INT          = 1,
@@ -28,7 +29,8 @@ BEGIN
             ROW_NUMBER() OVER (ORDER BY np.ReceivedAt DESC, np.Id DESC) AS RowNum
         FROM NaukriProspectiveInterviewer np
         WHERE
-            (@Status IS NULL OR np.Status = @Status)
+            -- @Status now filters on the operational TicketStatus dimension (Open | InProgress | Closed).
+            (@Status IS NULL OR ISNULL(np.TicketStatus, 'Open') = @Status)
             AND (@CandidateName IS NULL OR np.CandidateName LIKE '%' + @CandidateName + '%')
             AND (@MagName IS NULL OR np.MagName LIKE '%' + @MagName + '%')
             AND (@Source IS NULL OR np.[Source] = @Source)
@@ -40,6 +42,11 @@ BEGIN
             )
             AND (@CallStatus IS NULL OR LOWER(ISNULL(np.PlivoCallStatus, '')) = LOWER(@CallStatus))
             AND (@Disposition IS NULL OR LOWER(ISNULL(np.PlivoProspectDisposition, '')) = LOWER(@Disposition))
+            AND (
+                @FunnelStage IS NULL
+                OR (@FunnelStage = '_none_' AND ISNULL(np.FunnelStage, '') = '')
+                OR np.FunnelStage = @FunnelStage
+            )
             AND (@DateFrom IS NULL OR np.ReceivedAt >= @DateFrom)
             AND (@DateTo IS NULL OR np.ReceivedAt < DATEADD(DAY, 1, @DateTo))
     )

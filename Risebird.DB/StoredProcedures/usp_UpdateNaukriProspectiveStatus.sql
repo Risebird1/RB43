@@ -10,10 +10,12 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Manual status changes now drive the operational TicketStatus (Open | InProgress | Closed).
+    -- The legacy Status column is left untouched (it carries pipeline/AI outcomes only).
     UPDATE dbo.NaukriProspectiveInterviewer
-    SET    Status     = @Status,
-           ProcessedBy = ISNULL(@ChangedBy, ProcessedBy),
-           UpdatedAt  = GETUTCDATE()
+    SET    TicketStatus = @Status,
+           ProcessedBy  = ISNULL(@ChangedBy, ProcessedBy),
+           UpdatedAt    = GETUTCDATE()
     WHERE  Id = @Id;
 
     SELECT @@ROWCOUNT AS RowsAffected;
