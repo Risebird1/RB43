@@ -1541,8 +1541,12 @@ namespace Risebird.Web.Controllers
                 }
 
                 // Step 2: Assign to Assessment Group (if not already assigned)
+                // agMapped tracks whether the interviewer is actually mapped to an AG —
+                // the record may only be auto-closed when this is true.
+                bool agMapped = record.AssessmentGroupId.HasValue && record.AssessmentGroupId.Value > 0;
+
                 if (record.InterviewerProfileId.HasValue
-                    && (!record.AssessmentGroupId.HasValue || record.AssessmentGroupId.Value <= 0)
+                    && !agMapped
                     && record.ResolvedAssessmentGroupId.HasValue && record.ResolvedAssessmentGroupId.Value > 0)
                 {
                     try
@@ -1555,6 +1559,7 @@ namespace Risebird.Web.Controllers
 
                         if (assigned)
                         {
+                            agMapped = true;
                             await _repository.InsertHistoryAsync(eaId, "AssignedToAG", null,
                                 $"AutoClose — Assigned to AG #{agId}", actor);
                             await SaveIaCp("ia_autoclose_ag_assigned",
@@ -1631,13 +1636,32 @@ namespace Risebird.Web.Controllers
                 else
                 {
                     string reason = !record.InterviewerProfileId.HasValue ? "No InterviewerProfileId"
-                        : (record.AssessmentGroupId.HasValue && record.AssessmentGroupId.Value > 0) ? "Already assigned to AG"
+                        : agMapped ? "Already assigned to AG"
                         : "No ResolvedAssessmentGroupId";
                     await SaveIaCp("ia_autoclose_ag_skip",
                         $"Skipping AG assignment for #{eaId}: {reason}", callLogId: eaId);
                 }
 
-                // Step 3: Close the record and mark as auto-closed
+                // Step 3: Only close when the interviewer is actually mapped to an AG.
+                // Closing on the AI verdict alone — while the MAG is still unresolved or the
+                // assignment failed — produces a contradictory "Closed but unresolved MAG" state.
+                if (!agMapped)
+                {
+                    string blockReason = !record.InterviewerProfileId.HasValue
+                            ? "No interviewer profile to map"
+                        : (!record.ResolvedAssessmentGroupId.HasValue || record.ResolvedAssessmentGroupId.Value <= 0)
+                            ? "MAG could not be resolved to an Assessment Group"
+                            : "Assessment Group assignment did not complete";
+
+                    await _repository.UpdateEmailAvailabilityStatusAsync(eaId, "InProgress", actor);
+                    await _repository.InsertHistoryAsync(eaId, "AutoCloseBlocked", record.Status ?? "Open",
+                        $"InProgress — Not closed: {blockReason}. Requires manual MAG/AG resolution.", actor);
+                    await SaveIaCp("ia_autoclose_not_closed",
+                        $"Record #{eaId} left InProgress (not closed): {blockReason}", callLogId: eaId);
+                    return;
+                }
+
+                // Interviewer is mapped to an AG — safe to close and mark as auto-closed.
                 await _repository.UpdateEmailAvailabilityStatusAsync(eaId, "Closed", actor);
                 await _repository.MarkAutoClosedAsync(eaId, actor);
                 await _repository.InsertHistoryAsync(eaId, "StatusChange", record.Status ?? "Open", "Closed", actor);
