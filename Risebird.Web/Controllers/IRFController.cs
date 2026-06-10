@@ -9008,15 +9008,38 @@ namespace Risebird.Web.Controllers
         }
         #region Delivery Head Instruction
 
+        private async Task<bool> AuthorizeClientShareAccessAsync(int irfId, string type = null)
+        {
+            if (irfId <= 0) return false;
+            var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (string.IsNullOrEmpty(email) || !DeliveryHeadInstructionViewMode.IsClientRoleProfile(profile))
+                return false;
+            return await _clientService.VerifyClientAuthenticity(irfId, email);
+        }
+
+        private bool IsClientShareRequest(int irfId, string type = null)
+        {
+            var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profile))
+                return true;
+            return DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                || DeliveryHeadInstructionViewMode.IsClientShareType(type);
+        }
+
         [HttpGet]
         public async Task<JsonResult> GetDmInterviewerPanelMetrics(int irfId, string Type = null)
         {
             try
             {
-                var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
-                    || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
+                var isClientShare = IsClientShareRequest(irfId, Type);
                 var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
-                if (!isClientShare && !isSmeView && HttpContext.Session.GetString("email") == null)
+                if (isClientShare)
+                {
+                    if (!await AuthorizeClientShareAccessAsync(irfId, Type))
+                        return Json(new { ok = false });
+                }
+                else if (!isSmeView && HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { ok = false });
                 }
@@ -9036,14 +9059,23 @@ namespace Risebird.Web.Controllers
                 {
                     source = source?.Where(x => x != null && x.IsActive);
                 }
-                var interviewers = source?
-                    .Select(iv =>
-                    {
-                        if (isClientShare)
+
+                if (isClientShare)
+                {
+                    var interviewers = source?
+                        .Select(iv =>
                         {
                             DeliveryHeadInstructionViewMode.StripInterviewerForClientView(iv);
-                        }
-                        else if (isSmeView)
+                            return DeliveryHeadInstructionViewMode.BuildClientPanelMetricsEntry(iv);
+                        })
+                        .ToList();
+                    return Json(new { ok = true, interviewers });
+                }
+
+                var interviewersInternal = source?
+                    .Select(iv =>
+                    {
+                        if (isSmeView)
                         {
                             DeliveryHeadInstructionViewMode.StripInterviewerForSmeView(iv);
                         }
@@ -9066,7 +9098,7 @@ namespace Risebird.Web.Controllers
                     })
                     .ToList();
 
-                return Json(new { ok = true, interviewers });
+                return Json(new { ok = true, interviewers = interviewersInternal });
             }
             catch (Exception ex)
             {
@@ -9080,10 +9112,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
-                    || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
+                var isClientShare = IsClientShareRequest(irfId, Type);
                 var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
-                if (!isClientShare && !isSmeView && HttpContext.Session.GetString("email") == null)
+                if (isClientShare)
+                {
+                    if (!await AuthorizeClientShareAccessAsync(irfId, Type))
+                        return Json(new { ok = false });
+                }
+                else if (!isSmeView && HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { ok = false });
                 }
@@ -9109,8 +9145,10 @@ namespace Risebird.Web.Controllers
                 if (isClientShare)
                 {
                     DeliveryHeadInstructionViewMode.StripInterviewerForClientView(iv);
+                    return Json(DeliveryHeadInstructionViewMode.BuildClientCvStatePayload(iv));
                 }
-                else if (isSmeView)
+
+                if (isSmeView)
                 {
                     DeliveryHeadInstructionViewMode.StripInterviewerForSmeView(iv);
                 }
@@ -9141,11 +9179,15 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetClientShareInterviewerInsights(int irfId, int userId, string Type = null)
         {
-            var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
-                || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
+            var isClientShare = IsClientShareRequest(irfId, Type);
             var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
 
-            if (!isClientShare && !isSmeView)
+            if (isClientShare)
+            {
+                return StatusCode(403);
+            }
+
+            if (!isSmeView)
             {
                 return Unauthorized();
             }
@@ -9197,120 +9239,108 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> DeliveryHeadInstruction(string irfid, string Type = null)//Type = "ublc" stands for public here
+        public async Task<IActionResult> DeliveryHeadInstruction(string irfid, string Type = null)//Type = "ublc" stands for client share link
         {
             var resolvedIrfId = await _irfService.ResolveSkillChannelNumericIdAsync(irfid);
             ViewBag.PageType = "";
             ViewBag.IsClientShareView = false;
             ViewBag.IsSmeView = false;
-            if (DeliveryHeadInstructionViewMode.IsClientShareType(Type))
+
+            var hasSession = HttpContext.Session.GetString("email") != null
+                || HttpContext.Session.GetString("profileName") != null;
+            var clientEntryRequested = DeliveryHeadInstructionViewMode.WantsClientShareEntry(HttpContext, Type);
+
+            if (!hasSession)
             {
-                ViewBag.PageType = "Public";
-                ViewBag.IsClientShareView = true;
-                var jobLevelsPublic = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
-                ViewBag.JobLevelList = new SelectList(jobLevelsPublic, "ID", "Name");
-                if (resolvedIrfId <= 0)
-                {
-                    ViewBag.Message = "Skill Channel not found.";
-                    return View(new IRFVm { id = 0 });
-                }
-                DeliveryHeadInstructionViewMode.SetClientShareSession(HttpContext, resolvedIrfId);
-                var publicModel = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
-                if (publicModel == null)
-                {
-                    ViewBag.Message = "Skill Channel not found.";
-                    return View(new IRFVm { id = resolvedIrfId });
-                }
-                DeliveryHeadInstructionViewMode.ApplyClientViewFilter(publicModel);
-                publicModel.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
-                publicModel.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
-                var voiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
-                publicModel.VoiceInstructionTranscript = voiceBrief?.Transcript;
-                publicModel.VoiceInstructionTranscriptUpdatedOn = voiceBrief?.TranscriptUpdatedOn;
-                await checkSkillSetandSeperate(publicModel);
-                return View(publicModel);
-            }
-            else if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
-            {
-                var meetingLineUpType = "";
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                ViewBag.profileName = profileName;
-                ViewBag.IsSmeView = false;
-                var model = new IRFVm();
-                var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
-                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
-                if (resolvedIrfId <= 0)
-                {
-                    ViewBag.Message = "Skill Channel not found.";
-                    return View(new IRFVm { id = 0 });
-                }
-
-                if (string.Equals(profileName, "Interviewer", StringComparison.OrdinalIgnoreCase))
-                {
-                    var isSmeForIrf = await _interviewerService.IsSmeAssignedToIrfAsync(emailid, resolvedIrfId);
-                    if (!isSmeForIrf)
-                    {
-                        ViewBag.Message = "You do not have access to this skill channel.";
-                        return View(new IRFVm { id = resolvedIrfId });
-                    }
-
-                    ViewBag.IsSmeView = true;
-                    DeliveryHeadInstructionViewMode.SetSmeSession(HttpContext, resolvedIrfId);
-                    model = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
-                    if (model == null)
-                    {
-                        ViewBag.Message = "Skill Channel not found.";
-                        return View(new IRFVm { id = resolvedIrfId });
-                    }
-
-                    DeliveryHeadInstructionViewMode.ApplySmeViewFilter(model);
-                    model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
-                    model.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
-                    var smeVoiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
-                    model.VoiceInstructionTranscript = smeVoiceBrief?.Transcript;
-                    model.VoiceInstructionTranscriptUpdatedOn = smeVoiceBrief?.TranscriptUpdatedOn;
-                    model.CandidateVideo = _irfService.GetVideoConsentForm(resolvedIrfId).Result;
-                    await checkSkillSetandSeperate(model);
-                    return View(model);
-                }
-
-                var result = await _clientService.VerifyClientAuthenticity(resolvedIrfId, emailid);
-                if (!result && profileName == "Public")
-                {
-                    ViewBag.Message = "Do not have access for this skill Channel instruction";
-                    return View(model);
-                }
-                model = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
-                if (model == null)
-                {
-                    ViewBag.Message = "Skill Channel not found.";
-                    return View(new IRFVm { id = resolvedIrfId });
-                }
-
-                model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
-                model.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
-                var voiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
-                model.VoiceInstructionTranscript = voiceBrief?.Transcript;
-                model.VoiceInstructionTranscriptUpdatedOn = voiceBrief?.TranscriptUpdatedOn;
-                model.CandidateVideo = _irfService.GetVideoConsentForm(resolvedIrfId).Result;
-                await checkSkillSetandSeperate(model);
-                return View(model);
-            }
-            else if (User.Identity?.IsAuthenticated == true)
-            {
-                // Auth cookie valid but session not restored — do not SignOut (that flashes login).
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
+                if (clientEntryRequested)
+                    return StatusCode(403, "You do not have access to this skill channel.");
+                if (User.Identity?.IsAuthenticated == true)
+                    return RedirectToAction("Index", "Home");
                 return RedirectToAction("SignIn", "Session");
             }
 
+            var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            ViewBag.profileName = profileName;
+            var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
+            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+
+            if (resolvedIrfId <= 0)
+            {
+                if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profileName))
+                    return StatusCode(403, "You do not have access to this skill channel.");
+                ViewBag.Message = "Skill Channel not found.";
+                return View(new IRFVm { id = 0 });
+            }
+
+            if (string.Equals(profileName, "Interviewer", StringComparison.OrdinalIgnoreCase))
+            {
+                var isSmeForIrf = await _interviewerService.IsSmeAssignedToIrfAsync(emailid, resolvedIrfId);
+                if (!isSmeForIrf)
+                {
+                    ViewBag.Message = "You do not have access to this skill channel.";
+                    return View(new IRFVm { id = resolvedIrfId });
+                }
+
+                ViewBag.IsSmeView = true;
+                DeliveryHeadInstructionViewMode.SetSmeSession(HttpContext, resolvedIrfId);
+                var smeModel = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
+                if (smeModel == null)
+                {
+                    ViewBag.Message = "Skill Channel not found.";
+                    return View(new IRFVm { id = resolvedIrfId });
+                }
+
+                DeliveryHeadInstructionViewMode.ApplySmeViewFilter(smeModel);
+                smeModel.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
+                smeModel.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
+                var smeVoiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
+                smeModel.VoiceInstructionTranscript = smeVoiceBrief?.Transcript;
+                smeModel.VoiceInstructionTranscriptUpdatedOn = smeVoiceBrief?.TranscriptUpdatedOn;
+                smeModel.CandidateVideo = _irfService.GetVideoConsentForm(resolvedIrfId).Result;
+                await checkSkillSetandSeperate(smeModel);
+                return View(smeModel);
+            }
+
+            if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profileName))
+            {
+                if (!await AuthorizeClientShareAccessAsync(resolvedIrfId, Type))
+                    return StatusCode(403, "You do not have access to this skill channel.");
+
+                ViewBag.PageType = "Public";
+                ViewBag.IsClientShareView = true;
+                DeliveryHeadInstructionViewMode.SetClientShareSession(HttpContext, resolvedIrfId);
+
+                var clientModel = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
+                if (clientModel == null)
+                    return StatusCode(403, "You do not have access to this skill channel.");
+
+                DeliveryHeadInstructionViewMode.ApplyClientViewFilter(clientModel);
+                clientModel.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
+                clientModel.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
+                var clientVoiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
+                clientModel.VoiceInstructionTranscript = clientVoiceBrief?.Transcript;
+                clientModel.VoiceInstructionTranscriptUpdatedOn = clientVoiceBrief?.TranscriptUpdatedOn;
+                await checkSkillSetandSeperate(clientModel);
+                return View(clientModel);
+            }
+
+            var model = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
+            if (model == null)
+            {
+                ViewBag.Message = "Skill Channel not found.";
+                return View(new IRFVm { id = resolvedIrfId });
+            }
+
+            model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
+            model.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
+            var voiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
+            model.VoiceInstructionTranscript = voiceBrief?.Transcript;
+            model.VoiceInstructionTranscriptUpdatedOn = voiceBrief?.TranscriptUpdatedOn;
+            model.CandidateVideo = _irfService.GetVideoConsentForm(resolvedIrfId).Result;
+            await checkSkillSetandSeperate(model);
+            return View(model);
         }
         [HttpPost]
         public async Task<IActionResult> DeliveryHeadInstruction(IRFVm model)
@@ -12240,21 +12270,23 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpPost]
         public async Task<JsonResult> UpdateInterviewerClientVet(int irfId, string interviewerEmail, bool isApproved, int userId, string Type = null)
         {
             try
             {
-                var isClientShare = DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
-                    || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
+                var isClientShare = IsClientShareRequest(irfId, Type);
 
-                if (!isClientShare && HttpContext.Session.GetString("email") == null)
+                if (isClientShare)
+                {
+                    if (!await AuthorizeClientShareAccessAsync(irfId, Type))
+                        return Json(new { success = false, message = "Forbidden", error = "You do not have access to this skill channel." });
+                }
+                else if (HttpContext.Session.GetString("email") == null)
                 {
                     return Json(new { success = false, message = "Unauthorized", error = "You don't have permission to vet this interviewer." });
                 }
-
-                if (!isClientShare)
+                else
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
                     if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
@@ -12263,9 +12295,7 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
-                var emailid = isClientShare
-                    ? "client-share@ublc"
-                    : HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 // Same scope as DM Approval grid (usp_GetSkillChannelDetailsForUpdate) — not assessment-group filtered.
                 var channelIv = await _irfRepository.GetSkillChannelInterviewersForEdit(irfId);
                 var ti = channelIv?.InterviewerCollection?.FirstOrDefault(x => x.UserId == userId);
@@ -12330,18 +12360,19 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        /// <summary>Loads saved AI resume summary JSON from interviewer CodedResumeLink (blob).</summary>
-        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> GetInterviewerCodedCvSummary(string codedCvLink, int? irfId = null, string Type = null)
         {
             const string viewPath = "~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml";
             try
             {
-                var isClientShare = irfId.HasValue && irfId.Value > 0
-                    && (DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId.Value)
-                        || DeliveryHeadInstructionViewMode.IsClientShareType(Type));
-                if (!isClientShare && HttpContext.Session.GetString("email") == null)
+                var isClientShare = irfId.HasValue && irfId.Value > 0 && IsClientShareRequest(irfId.Value, Type);
+                if (isClientShare)
+                {
+                    if (!await AuthorizeClientShareAccessAsync(irfId.Value, Type))
+                        return StatusCode(403);
+                }
+                else if (HttpContext.Session.GetString("email") == null)
                     return View(viewPath, (ResumeSummaryVM)null);
 
                 if (string.IsNullOrWhiteSpace(codedCvLink))
