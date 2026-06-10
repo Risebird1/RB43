@@ -1339,7 +1339,10 @@
 
     function openVerdictDrawer($row) {
         window._dmV4VerdictDrawerRow = $row;
-        var name = $row.find('.dm-v4-iv-code').first().text().replace(/\s+/g, ' ').replace(/›/g, '').trim();
+        var name = $row.find('.dm-v4-iv-coded-label').first().text().trim();
+        if (!name) {
+            name = $row.find('.dm-v4-iv-code').first().text().replace(/\s+/g, ' ').replace(/›/g, '').trim();
+        }
         var tone = verdictToneFromRow($row);
         var $full = $row.find('.dm-v4-iv-ai-reason-full');
         var reason = $full.length ? $full.text().trim() : $row.find('.dm-v4-iv-verdict-reason').text().trim();
@@ -1351,12 +1354,21 @@
         var screenScore = parseInt(scoreText, 10) || 0;
 
         $('#dmV4VerdictDrawerTitle').text(name || 'Interviewer');
-        $('#dmV4VerdictDrawerEyebrow').text('AI verdict · ' + (tone === 'pass' ? 'PASS' : tone === 'fail' ? 'BLOCK' : tone === 'warn' ? 'REVIEW' : 'PENDING'));
+        if (isClientShareView()) {
+            $('#dmV4VerdictDrawerEyebrow').text('AI verdict');
+            $('#dmV4VerdictDrawerHeroTitle').hide();
+            $('#dmV4VerdictDrawerFlags').hide().empty();
+        } else {
+            $('#dmV4VerdictDrawerEyebrow').text('AI verdict · ' + (tone === 'pass' ? 'PASS' : tone === 'fail' ? 'BLOCK' : tone === 'warn' ? 'REVIEW' : 'PENDING'));
+            $('#dmV4VerdictDrawerHeroTitle').show();
+        }
         $('.dm-v4-verdict-drawer-body').attr('class', 'dm-v4-drawer__body dm-v4-verdict-drawer-body dm-v4-verdict-drawer-body--' + tone);
 
         var $hero = $('#dmV4VerdictDrawerHero');
         $hero.attr('class', 'dm-v4-vd-hero dm-v4-vd-hero--' + tone);
-        $('#dmV4VerdictDrawerHeroTitle').text(verdictHeroTitle(tone));
+        if (!isClientShareView()) {
+            $('#dmV4VerdictDrawerHeroTitle').text(verdictHeroTitle(tone));
+        }
         $('#dmV4VerdictDrawerReason').text(reason);
 
         var $badge = $row.find('.dm-v4-verdict').first().clone().removeAttr('id');
@@ -1364,15 +1376,17 @@
 
         $('#dmV4VerdictDrawerOverall').text(screenScore > 0 ? screenScore : '—');
 
-        var bullets = parseVerdictBullets(reason, tone);
-        var flagsHtml = '';
-        bullets.forEach(function (b) {
-            flagsHtml += '<li class="dm-v4-vd-flag-item">' +
-                '<span class="dm-v4-vd-flag-item__icon" aria-hidden="true"><i class="fa ' +
-                (tone === 'pass' ? 'fa-check' : tone === 'fail' ? 'fa-times' : 'fa-exclamation') +
-                '"></i></span><span>' + $('<span/>').text(b).html() + '</span></li>';
-        });
-        $('#dmV4VerdictDrawerFlags').html(flagsHtml);
+        if (!isClientShareView()) {
+            var bullets = parseVerdictBullets(reason, tone);
+            var flagsHtml = '';
+            bullets.forEach(function (b) {
+                flagsHtml += '<li class="dm-v4-vd-flag-item">' +
+                    '<span class="dm-v4-vd-flag-item__icon" aria-hidden="true"><i class="fa ' +
+                    (tone === 'pass' ? 'fa-check' : tone === 'fail' ? 'fa-times' : 'fa-exclamation') +
+                    '"></i></span><span>' + $('<span/>').text(b).html() + '</span></li>';
+            });
+            $('#dmV4VerdictDrawerFlags').html(flagsHtml).show();
+        }
 
         dmV4UpdateScreenedAtCaption($row);
         dmV4SyncDrawerScreenBtnVisibility($row);
@@ -1629,6 +1643,9 @@
     }
 
     function refreshDmV4IvPanelMetrics() {
+        if (isClientShareView()) {
+            return $.Deferred().resolve().promise();
+        }
         var cfg = getDmIvCvConfig();
         var irfId = parseInt($('#id').val(), 10) || parseInt($('#dmV4IvPanel').closest('form').find('[name="id"]').val(), 10);
         if (!cfg.panelMetricsUrl || !irfId) {

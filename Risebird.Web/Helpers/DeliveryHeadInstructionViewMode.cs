@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using Risebird.CommonHelper;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 
 namespace Risebird.Web.Helpers
@@ -57,6 +59,46 @@ namespace Risebird.Web.Helpers
             CandidateReportMaskingHelper.ActivateMaskContext(context.Session);
         }
 
+        public static bool IsClientRoleProfile(string profileName)
+        {
+            var p = (profileName ?? string.Empty).Trim().Trim('"');
+            return p.Equals("Public", StringComparison.OrdinalIgnoreCase)
+                || p.Equals("Client", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsOperationalProfile(string profileName)
+        {
+            var p = (profileName ?? string.Empty).Trim().Trim('"');
+            if (string.IsNullOrEmpty(p)) return false;
+            if (IsClientRoleProfile(p)) return false;
+            if (p.Equals("Interviewer", StringComparison.OrdinalIgnoreCase)) return false;
+            return true;
+        }
+
+        public static bool WantsClientShareEntry(HttpContext context, string type) =>
+            IsClientShareType(type) || HasClientShareSession(context) || IsClientShareType(context);
+
+        public static string ExtractClientVisibleAiReasoning(string openAiResponse)
+        {
+            if (string.IsNullOrWhiteSpace(openAiResponse)) return null;
+            var text = openAiResponse.Trim();
+            if (text.StartsWith("{", StringComparison.Ordinal))
+            {
+                try
+                {
+                    var parsed = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(text);
+                    if (!string.IsNullOrWhiteSpace(parsed?.completeFitmentAnalysis))
+                        return parsed.completeFitmentAnalysis.Trim();
+                }
+                catch
+                {
+                    // fall through to raw text
+                }
+            }
+
+            return text;
+        }
+
         public static void ApplyClientViewFilter(IRFVm model)
         {
             if (model == null) return;
@@ -78,19 +120,34 @@ namespace Risebird.Web.Helpers
         public static TransInterviewer StripInterviewerForClientView(TransInterviewer iv)
         {
             if (iv == null) return iv;
+
+            var reasoning = ExtractClientVisibleAiReasoning(iv.OpenAIScreeningResponse);
+
             iv.EmailId = null;
             iv.PerSuccessRate = 0;
             iv.Surcharge = 0;
             iv.VideoLink = null;
             iv.IsVideoApproved = false;
             iv.ResumeLink = null;
-            iv.IsSMEVerified = false;
-            iv.IsSMEVerifiedStored = null;
             iv.ConvertedFromDocResumeLink = null;
             iv.RedMarkerReviewComment = null;
             iv.ChannelOwner = null;
             iv.ClientHr = null;
             iv.InterviewerProfileAddedBy = null;
+            iv.CompanyName = null;
+            iv.EmploymentComment = null;
+            iv.LastLoginAt = null;
+            iv.LastInterviewConductedAt = null;
+            iv.TotalCompletedMeetings = 0;
+            iv.TotalSelected = 0;
+            iv.TotalRejected = 0;
+            iv.TotalFuture = 0;
+            iv.InterviewCapacity = null;
+            iv.PrimarySkill = null;
+            iv.TotalInterview = 0;
+            iv.ModifiedAt = null;
+            iv.OpenAIScreeningResponse = reasoning;
+
             return iv;
         }
 
@@ -106,6 +163,37 @@ namespace Risebird.Web.Helpers
             iv.InterviewerProfileAddedBy = null;
             iv.RedMarkerReviewComment = null;
             return iv;
+        }
+
+        public static object BuildClientPanelMetricsEntry(TransInterviewer iv)
+        {
+            if (iv == null) return null;
+            return new
+            {
+                userId = iv.UserId,
+                nickName = iv.NickName ?? string.Empty,
+                codedCvLink = iv.CodedResumeLink ?? string.Empty,
+                cvCode = !string.IsNullOrEmpty(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : string.Empty,
+                aiVerdict = iv.AIVerdict ?? string.Empty,
+                aiScore = iv.AIScreeningScore,
+                aiReasoning = ExtractClientVisibleAiReasoning(iv.OpenAIScreeningResponse) ?? string.Empty,
+                clientAction = iv.ClientAction ?? string.Empty,
+                clientVetEnabled = iv.IsSMEVerified || iv.IsSMEVerifiedStored == true
+            };
+        }
+
+        public static object BuildClientCvStatePayload(TransInterviewer iv)
+        {
+            if (iv == null) return new { ok = false };
+            return new
+            {
+                ok = true,
+                codedCvLink = iv.CodedResumeLink ?? string.Empty,
+                cvCode = !string.IsNullOrEmpty(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : string.Empty,
+                aiVerdict = iv.AIVerdict ?? string.Empty,
+                aiScore = iv.AIScreeningScore,
+                aiReasoning = ExtractClientVisibleAiReasoning(iv.OpenAIScreeningResponse) ?? string.Empty
+            };
         }
 
         public static void StripInterviewerInsightsForClientView(InterviewerInsightsVM vm)

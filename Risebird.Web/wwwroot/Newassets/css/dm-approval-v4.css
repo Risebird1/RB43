@@ -5196,3 +5196,111 @@ button.dm-v4-money-pill {
     color: var(--dm-text-dim);
     white-space: nowrap;
 }
+
+/* Client share (Type=ublc): minimal 4-column interviewer grid — equal columns, full width */
+.dm-v4-page--client-share .dm-v4-block--order-interviewers-client .dm-v4-iv-grid.dm-v4-iv-grid--client-minimal {
+    width: 100%;
+    max-width: 100%;
+}
+
+.dm-v4-iv-grid.dm-v4-iv-grid--client-minimal {
+    width: 100%;
+    max-width: 100%;
+    column-gap: 16px;
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        minmax(0, 1.35fr)
+        minmax(0, 1fr);
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client-minimal > .dm-v4-iv-cell,
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client-minimal > span {
+    min-width: 0;
+    padding: 10px 12px;
+    box-sizing: border-box;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client-minimal.dm-v4-iv-grid--head > span {
+    padding: 12px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #64748b;
+    text-align: left;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client-minimal .dm-v4-iv-cell--vet,
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client-minimal .dm-v4-vet-toggle {
+    width: 100%;
+    max-width: 100%;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client-minimal .dm-v4-iv-verdict-stack--client {
+    width: 100%;
+}
+
+.dm-v4-iv-coded-label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+    letter-spacing: 0.02em;
+}
+
+.dm-v4-iv-verdict-stack--client {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.dm-v4-iv-verdict-compact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.dm-v4-iv-why-btn {
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4f46e5;
+    cursor: pointer;
+}
+
+.dm-v4-voice-transcript__readonly {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #334155;
+    white-space: pre-wrap;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    min-height: 80px;
+}
+
+.dm-v4-page--client-share .dm-v4-rubric-readonly input:not([type=hidden]),
+.dm-v4-page--client-share .dm-v4-rubric-readonly select,
+.dm-v4-page--client-share .dm-v4-rubric-readonly textarea {
+    pointer-events: none;
+    background: #f8fafc;
+}
+
+/* Read-only: hide edit controls only — keep all columns so layout matches internal DM view */
+.dm-v4-page--client-share .dm-v4-rubric-readonly .dm-v4-rubric-actions .dm-v4-icon-btn,
+.dm-v4-page--client-share .dm-v4-rubric-readonly .dm-v4-rubric-actions button {
+    display: none !important;
+}
+
+.dm-v4-page--client-share .dm-v4-rubric-readonly .dm-v4-rubric-drag svg {
+    visibility: hidden;
+}
+
+.dm-v4-page--client-share .dm-v4-questions-ai-banner--readonly {
+    border-style: dashed;
+}
