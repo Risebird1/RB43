@@ -57,6 +57,7 @@ namespace Risebird.Web.Controllers
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly ICashfreePayoutService _cashfreePayoutService;
+        private readonly INaukriOnboardingRepository _naukriOnboardingRepository;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
         ISkillService skillService, IProfileService profileService,
@@ -67,7 +68,8 @@ namespace Risebird.Web.Controllers
         IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper,
         IAffIndaResumeParserHelper affIndaResumeParserHelper, IEncryptionHelper encryptionHelper,
         IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper,
-        ICashfreePayoutService cashfreePayoutService)
+        ICashfreePayoutService cashfreePayoutService,
+        INaukriOnboardingRepository naukriOnboardingRepository)
 
         {
             _interviewerService = interviewerService;
@@ -94,6 +96,7 @@ namespace Risebird.Web.Controllers
             _assistantServiceHelper = assistantServiceHelper;
             _pdfReaderHelper = pdfReaderHelper;
             _cashfreePayoutService = cashfreePayoutService;
+            _naukriOnboardingRepository = naukriOnboardingRepository;
         }
 
 
@@ -5051,6 +5054,31 @@ namespace Risebird.Web.Controllers
 
                     if (result != null)
                     {
+                        // If this user came through the prospect onboarding funnel, the
+                        // acknowledgement RESPONSE is what completes onboarding — not the email send.
+                        try
+                        {
+                            var prospectId = await _naukriOnboardingRepository.FindProspectIdByOnboardedUserIdAsync(userId.Value);
+                            if (prospectId.HasValue)
+                            {
+                                if (status == 1)
+                                {
+                                    await _naukriOnboardingRepository.AdvanceFunnelStageAsync(prospectId.Value, "Onboarded", "Closed");
+                                    await _naukriOnboardingRepository.InsertHistoryAsync(prospectId.Value, "Onboarded", "\u2014",
+                                        "Interviewer accepted the acknowledgement email — onboarding complete.", "Interviewer");
+                                }
+                                else if (status == 4)
+                                {
+                                    await _naukriOnboardingRepository.AdvanceFunnelStageAsync(prospectId.Value, "AcknowledgementSent", "Closed");
+                                    await _naukriOnboardingRepository.InsertHistoryAsync(prospectId.Value, "AcknowledgementDeclined", "\u2014",
+                                        "Interviewer declined/dropped via the acknowledgement email — onboarding not completed.", "Interviewer");
+                                }
+                            }
+                        }
+                        catch (Exception nex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, nex);
+                        }
 
                         if (!string.IsNullOrEmpty(result.EmailId))
                         {

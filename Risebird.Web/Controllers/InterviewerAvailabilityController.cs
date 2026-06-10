@@ -114,7 +114,6 @@ namespace Risebird.Web.Controllers
                 ViewBag.TotalPages    = totalPages;
                 ViewBag.OpenCount     = first?.OpenCount ?? 0;
                 ViewBag.InProgressCount = first?.InProgressCount ?? 0;
-                ViewBag.VerifiedCount = first?.VerifiedCount ?? 0;
                 ViewBag.ClosedCount   = first?.ClosedCount ?? 0;
                 ViewBag.Status        = status        ?? string.Empty;
                 ViewBag.SenderEmail   = senderEmail   ?? string.Empty;
@@ -132,7 +131,7 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
-                ViewBag.OpenCount = 0; ViewBag.InProgressCount = 0; ViewBag.VerifiedCount = 0; ViewBag.ClosedCount = 0;
+                ViewBag.OpenCount = 0; ViewBag.InProgressCount = 0; ViewBag.ClosedCount = 0;
                 ViewBag.Status = status; ViewBag.SenderEmail = senderEmail; ViewBag.ResumeFitment = resumeFitment;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.Source = source; ViewBag.AutoClosed = autoClosed; ViewBag.ActiveStatus = activeStatus;
@@ -240,7 +239,7 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
-            var allowed = new[] { "Open", "InProgress", "Verified", "Closed" };
+            var allowed = new[] { "Open", "InProgress", "Closed" };
             if (id <= 0 || !Array.Exists(allowed, s => s == status))
                 return Json(new { success = false, error = "Invalid status update request." });
 
@@ -321,9 +320,9 @@ namespace Risebird.Web.Controllers
                 return Json(new { success = false, error = "Not signed in." });
 
             var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
-            var allowed = new[] { "Admin", "SupportAdmin", "SeniorHR", "SeniorInterviewerManagement" };
-            if (!Array.Exists(allowed, p => p == profileName))
-                return Json(new { success = false, error = "Not authorised." });
+            // Reactivating an inactivated interviewer is restricted to the Admin profile only.
+            if (profileName != "Admin")
+                return Json(new { success = false, error = "Not authorised. Only an Admin can reactivate an interviewer." });
 
             try
             {
@@ -540,7 +539,9 @@ namespace Risebird.Web.Controllers
                     && !string.IsNullOrEmpty(analysis.verdict)
                     && analysis.verdict.ToLower().Contains("yes");
 
-                string newStatus = isPositiveVerdict ? "Verified" : "InProgress";
+                // A positive AI verdict no longer becomes a distinct "Verified" status; the record
+                // stays operationally "InProgress" (the verdict/score is preserved and returned below).
+                string newStatus = "InProgress";
 
                 var ok = await _repository.UpdateEmailAvailabilityVerificationAsync(
                     id, employmentVerified: null, resumeAIAnalysisCompleted: true,
@@ -1475,13 +1476,10 @@ namespace Risebird.Web.Controllers
                                 if (!string.IsNullOrWhiteSpace(analysisJson))
                                 {
                                     var analysis = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(analysisJson);
-                                    bool isPositive = analysis != null
-                                        && !string.IsNullOrEmpty(analysis.verdict)
-                                        && analysis.verdict.ToLower().Contains("yes");
 
                                     await _repository.UpdateEmailAvailabilityVerificationAsync(
                                         eaId, employmentVerified: null, resumeAIAnalysisCompleted: true,
-                                        resumeAIAnalysisResult: analysisJson, newStatus: isPositive ? "Verified" : "InProgress");
+                                        resumeAIAnalysisResult: analysisJson, newStatus: "InProgress");
 
                                     await _repository.InsertHistoryAsync(eaId, "ResumeAnalysis", null,
                                         $"AutoClose — Verdict: {analysis?.verdict}, Score: {analysis?.fitmentScore}", actor);
