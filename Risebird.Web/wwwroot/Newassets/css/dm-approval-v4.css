@@ -5271,36 +5271,3 @@ button.dm-v4-money-pill {
     color: #4f46e5;
     cursor: pointer;
 }
-
-.dm-v4-voice-transcript__readonly {
-    font-size: 13px;
-    line-height: 1.6;
-    color: #334155;
-    white-space: pre-wrap;
-    padding: 10px 12px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    min-height: 80px;
-}
-
-.dm-v4-page--client-share .dm-v4-rubric-readonly input:not([type=hidden]),
-.dm-v4-page--client-share .dm-v4-rubric-readonly select,
-.dm-v4-page--client-share .dm-v4-rubric-readonly textarea {
-    pointer-events: none;
-    background: #f8fafc;
-}
-
-/* Read-only: hide edit controls only — keep all columns so layout matches internal DM view */
-.dm-v4-page--client-share .dm-v4-rubric-readonly .dm-v4-rubric-actions .dm-v4-icon-btn,
-.dm-v4-page--client-share .dm-v4-rubric-readonly .dm-v4-rubric-actions button {
-    display: none !important;
-}
-
-.dm-v4-page--client-share .dm-v4-rubric-readonly .dm-v4-rubric-drag svg {
-    visibility: hidden;
-}
-
-.dm-v4-page--client-share .dm-v4-questions-ai-banner--readonly {
-    border-style: dashed;
-}
