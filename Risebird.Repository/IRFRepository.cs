@@ -801,6 +801,9 @@ namespace Risebird.Repository
                                     OpenAIScreeningResponse = dt.Columns.Contains("OpenAIScreeningResponse") && !string.IsNullOrEmpty(dt.Rows[i]["OpenAIScreeningResponse"].ToString()) ? dt.Rows[i]["OpenAIScreeningResponse"].ToString() : null,
                                     TotalInterview = dt.Columns.Contains("TotalInterview") && dt.Rows[i]["TotalInterview"] != DBNull.Value && !string.IsNullOrEmpty(dt.Rows[i]["TotalInterview"].ToString()) ? Convert.ToInt32(dt.Rows[i]["TotalInterview"]) : 0,
                                     TotalFuture = dt.Columns.Contains("TotalFuture") && dt.Rows[i]["TotalFuture"] != DBNull.Value ? Convert.ToInt32(dt.Rows[i]["TotalFuture"]) : 0,
+                                    TotalCompletedMeetings = dt.Columns.Contains("TotalCompletedMeetings") && dt.Rows[i]["TotalCompletedMeetings"] != DBNull.Value ? Convert.ToInt32(dt.Rows[i]["TotalCompletedMeetings"]) : 0,
+                                    TotalSelected = dt.Columns.Contains("TotalSelected") && dt.Rows[i]["TotalSelected"] != DBNull.Value ? Convert.ToInt32(dt.Rows[i]["TotalSelected"]) : 0,
+                                    TotalRejected = dt.Columns.Contains("TotalRejected") && dt.Rows[i]["TotalRejected"] != DBNull.Value ? Convert.ToInt32(dt.Rows[i]["TotalRejected"]) : 0,
                                     VideoLink = dt.Columns.Contains("VideoLink") && !string.IsNullOrEmpty(dt.Rows[i]["VideoLink"].ToString()) ? dt.Rows[i]["VideoLink"].ToString() : null,
                                     IsVideoApproved = dt.Columns.Contains("IsVideoApproved") && !string.IsNullOrEmpty(dt.Rows[i]["IsVideoApproved"].ToString()) && Convert.ToBoolean(dt.Rows[i]["IsVideoApproved"]),
                                     InterviewCapacity = dt.Columns.Contains("InterviewCapacity") && dt.Rows[i]["InterviewCapacity"] != DBNull.Value && !string.IsNullOrEmpty(dt.Rows[i]["InterviewCapacity"].ToString())

@@ -977,5 +977,15 @@ namespace Risebird.Business
             return null;
         }
 
+        public Task<IDictionary<string, string>> EnsureCandidatePseudonymsAsync(IEnumerable<string> candidateEmails, string createdBy = null)
+        {
+            return _candidateRepository.EnsureCandidatePseudonymsAsync(candidateEmails, createdBy);
+        }
+
+        public Task<CandidatePseudonymResolveVM> ResolveCandidatePseudonymAsync(string nickName)
+        {
+            return _candidateRepository.ResolveCandidatePseudonymAsync(nickName);
+        }
+
     }
 }
