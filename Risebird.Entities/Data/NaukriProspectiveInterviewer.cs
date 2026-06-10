@@ -68,6 +68,18 @@ namespace Risebird.Entities.Data
         public bool?    PlivoKycAccepted            { get; set; }
         public string   PlivoCalledBy               { get; set; }
 
+        // Unified Intent (populated by both email replies and AI Plivo calls)
+        public string   Intent                      { get; set; }
+        public string   IntentSource                { get; set; }
+        public DateTime? IntentConfirmedAt          { get; set; }
+
+        // Ticket status (operational) is separate from FunnelStage (pipeline position)
+        public string   TicketStatus                { get; set; }
+        public string   FunnelStage                 { get; set; }
+
+        // Onboarding type for reporting: SelfOnboarded | IntentAutoProcessed | ManuallyOnboarded
+        public string   OnboardingType              { get; set; }
+
         public string   Status                      { get; set; }
         public string   Source                      { get; set; }
         public string   ProcessedBy                 { get; set; }

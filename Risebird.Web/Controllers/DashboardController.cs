@@ -7529,8 +7529,9 @@ NEVER:
                 }
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
-                if (profileName != "Admin" && profileName != "SupportAdmin" && profileName != "SeniorHR" && profileName != "SeniorInterviewerManagement")
-                    return Json(new { success = false, message = "You do not have permission to reactivate interviewers." });
+                // Reactivating an inactivated interviewer is restricted to the Admin profile only.
+                if (profileName != "Admin")
+                    return Json(new { success = false, message = "You do not have permission to reactivate interviewers. Only an Admin can do this." });
 
                 var result = await _interviewerService.ReactivateInterviewer(userId, emailId);
                 if (result)

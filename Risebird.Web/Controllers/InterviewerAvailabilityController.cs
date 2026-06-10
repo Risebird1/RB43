@@ -114,7 +114,6 @@ namespace Risebird.Web.Controllers
                 ViewBag.TotalPages    = totalPages;
                 ViewBag.OpenCount     = first?.OpenCount ?? 0;
                 ViewBag.InProgressCount = first?.InProgressCount ?? 0;
-                ViewBag.VerifiedCount = first?.VerifiedCount ?? 0;
                 ViewBag.ClosedCount   = first?.ClosedCount ?? 0;
                 ViewBag.Status        = status        ?? string.Empty;
                 ViewBag.SenderEmail   = senderEmail   ?? string.Empty;
@@ -132,7 +131,7 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
-                ViewBag.OpenCount = 0; ViewBag.InProgressCount = 0; ViewBag.VerifiedCount = 0; ViewBag.ClosedCount = 0;
+                ViewBag.OpenCount = 0; ViewBag.InProgressCount = 0; ViewBag.ClosedCount = 0;
                 ViewBag.Status = status; ViewBag.SenderEmail = senderEmail; ViewBag.ResumeFitment = resumeFitment;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.Source = source; ViewBag.AutoClosed = autoClosed; ViewBag.ActiveStatus = activeStatus;
@@ -240,7 +239,7 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
-            var allowed = new[] { "Open", "InProgress", "Verified", "Closed" };
+            var allowed = new[] { "Open", "InProgress", "Closed" };
             if (id <= 0 || !Array.Exists(allowed, s => s == status))
                 return Json(new { success = false, error = "Invalid status update request." });
 
@@ -321,9 +320,9 @@ namespace Risebird.Web.Controllers
                 return Json(new { success = false, error = "Not signed in." });
 
             var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
-            var allowed = new[] { "Admin", "SupportAdmin", "SeniorHR", "SeniorInterviewerManagement" };
-            if (!Array.Exists(allowed, p => p == profileName))
-                return Json(new { success = false, error = "Not authorised." });
+            // Reactivating an inactivated interviewer is restricted to the Admin profile only.
+            if (profileName != "Admin")
+                return Json(new { success = false, error = "Not authorised. Only an Admin can reactivate an interviewer." });
 
             try
             {
@@ -540,7 +539,9 @@ namespace Risebird.Web.Controllers
                     && !string.IsNullOrEmpty(analysis.verdict)
                     && analysis.verdict.ToLower().Contains("yes");
 
-                string newStatus = isPositiveVerdict ? "Verified" : "InProgress";
+                // A positive AI verdict no longer becomes a distinct "Verified" status; the record
+                // stays operationally "InProgress" (the verdict/score is preserved and returned below).
+                string newStatus = "InProgress";
 
                 var ok = await _repository.UpdateEmailAvailabilityVerificationAsync(
                     id, employmentVerified: null, resumeAIAnalysisCompleted: true,
@@ -1475,13 +1476,10 @@ namespace Risebird.Web.Controllers
                                 if (!string.IsNullOrWhiteSpace(analysisJson))
                                 {
                                     var analysis = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(analysisJson);
-                                    bool isPositive = analysis != null
-                                        && !string.IsNullOrEmpty(analysis.verdict)
-                                        && analysis.verdict.ToLower().Contains("yes");
 
                                     await _repository.UpdateEmailAvailabilityVerificationAsync(
                                         eaId, employmentVerified: null, resumeAIAnalysisCompleted: true,
-                                        resumeAIAnalysisResult: analysisJson, newStatus: isPositive ? "Verified" : "InProgress");
+                                        resumeAIAnalysisResult: analysisJson, newStatus: "InProgress");
 
                                     await _repository.InsertHistoryAsync(eaId, "ResumeAnalysis", null,
                                         $"AutoClose — Verdict: {analysis?.verdict}, Score: {analysis?.fitmentScore}", actor);
@@ -1541,8 +1539,12 @@ namespace Risebird.Web.Controllers
                 }
 
                 // Step 2: Assign to Assessment Group (if not already assigned)
+                // agMapped tracks whether the interviewer is actually mapped to an AG —
+                // the record may only be auto-closed when this is true.
+                bool agMapped = record.AssessmentGroupId.HasValue && record.AssessmentGroupId.Value > 0;
+
                 if (record.InterviewerProfileId.HasValue
-                    && (!record.AssessmentGroupId.HasValue || record.AssessmentGroupId.Value <= 0)
+                    && !agMapped
                     && record.ResolvedAssessmentGroupId.HasValue && record.ResolvedAssessmentGroupId.Value > 0)
                 {
                     try
@@ -1555,6 +1557,7 @@ namespace Risebird.Web.Controllers
 
                         if (assigned)
                         {
+                            agMapped = true;
                             await _repository.InsertHistoryAsync(eaId, "AssignedToAG", null,
                                 $"AutoClose — Assigned to AG #{agId}", actor);
                             await SaveIaCp("ia_autoclose_ag_assigned",
@@ -1631,13 +1634,32 @@ namespace Risebird.Web.Controllers
                 else
                 {
                     string reason = !record.InterviewerProfileId.HasValue ? "No InterviewerProfileId"
-                        : (record.AssessmentGroupId.HasValue && record.AssessmentGroupId.Value > 0) ? "Already assigned to AG"
+                        : agMapped ? "Already assigned to AG"
                         : "No ResolvedAssessmentGroupId";
                     await SaveIaCp("ia_autoclose_ag_skip",
                         $"Skipping AG assignment for #{eaId}: {reason}", callLogId: eaId);
                 }
 
-                // Step 3: Close the record and mark as auto-closed
+                // Step 3: Only close when the interviewer is actually mapped to an AG.
+                // Closing on the AI verdict alone — while the MAG is still unresolved or the
+                // assignment failed — produces a contradictory "Closed but unresolved MAG" state.
+                if (!agMapped)
+                {
+                    string blockReason = !record.InterviewerProfileId.HasValue
+                            ? "No interviewer profile to map"
+                        : (!record.ResolvedAssessmentGroupId.HasValue || record.ResolvedAssessmentGroupId.Value <= 0)
+                            ? "MAG could not be resolved to an Assessment Group"
+                            : "Assessment Group assignment did not complete";
+
+                    await _repository.UpdateEmailAvailabilityStatusAsync(eaId, "InProgress", actor);
+                    await _repository.InsertHistoryAsync(eaId, "AutoCloseBlocked", record.Status ?? "Open",
+                        $"InProgress — Not closed: {blockReason}. Requires manual MAG/AG resolution.", actor);
+                    await SaveIaCp("ia_autoclose_not_closed",
+                        $"Record #{eaId} left InProgress (not closed): {blockReason}", callLogId: eaId);
+                    return;
+                }
+
+                // Interviewer is mapped to an AG — safe to close and mark as auto-closed.
                 await _repository.UpdateEmailAvailabilityStatusAsync(eaId, "Closed", actor);
                 await _repository.MarkAutoClosedAsync(eaId, actor);
                 await _repository.InsertHistoryAsync(eaId, "StatusChange", record.Status ?? "Open", "Closed", actor);

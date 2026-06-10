@@ -19,6 +19,8 @@
     bool canDelete = profileName == "Admin" || profileName == "SupportAdmin";
     bool canDrop = canDelete || profileName == "HR" || profileName == "SeniorHR"
                 || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement";
+    // Reactivating an inactivated interviewer is restricted to the Admin profile only.
+    bool canReactivate = profileName == "Admin";
 
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selEmail)
                    || !string.IsNullOrEmpty(selFitment) || !string.IsNullOrEmpty(selDateFrom)
@@ -222,14 +224,12 @@
 
                 @{ int cardOpen = ViewBag.OpenCount != null ? (int)ViewBag.OpenCount : 0;
                    int cardIP = ViewBag.InProgressCount != null ? (int)ViewBag.InProgressCount : 0;
-                   int cardVerified = ViewBag.VerifiedCount != null ? (int)ViewBag.VerifiedCount : 0;
                    int cardClosed = ViewBag.ClosedCount != null ? (int)ViewBag.ClosedCount : 0; }
                 <div class="row g-3 mb-4">
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-success">@cardVerified</div><div class="stat-label">Verified</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value" style="color:#6c757d;">@cardClosed</div><div class="stat-label">Closed</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-3"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-3"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-3"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-3"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value" style="color:#6c757d;">@cardClosed</div><div class="stat-label">Closed</div></div></div>
                 </div>
 
                 <form asp-action="Index" asp-controller="InterviewerAvailability" method="get" id="filterForm">
@@ -242,7 +242,6 @@
                                     <option value="">All statuses</option>
                                     @if (selStatus == "Open") { <option value="Open" selected>Open</option> } else { <option value="Open">Open</option> }
                                     @if (selStatus == "InProgress") { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option> }
-                                    @if (selStatus == "Verified") { <option value="Verified" selected>Verified</option> } else { <option value="Verified">Verified</option> }
                                     @if (selStatus == "Closed") { <option value="Closed" selected>Closed</option> } else { <option value="Closed">Closed</option> }
                                 </select>
                                 <select name="resumeFitment" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
@@ -304,8 +303,12 @@
                                     <tbody>
                                         @foreach (var r in Model)
                                         {
-                                            string rStatus = r.Status?.ToLower() ?? "open";
-                                            string statusCss = rStatus switch { "open" => "status-open", "inprogress" => "status-inprogress", "verified" => "status-verified", "closed" => "status-closed", _ => "bg-light border" };
+                                            string rStatusRaw = string.IsNullOrWhiteSpace(r.Status) ? "Open" : r.Status;
+                                            // Legacy 'Verified' (AI résumé-fit) is folded into the operational 'In Progress' state.
+                                            if (string.Equals(rStatusRaw, "Verified", StringComparison.OrdinalIgnoreCase)) rStatusRaw = "InProgress";
+                                            string rStatus = rStatusRaw.ToLower();
+                                            string statusCss = rStatus switch { "open" => "status-open", "inprogress" => "status-inprogress", "closed" => "status-closed", _ => "bg-light border" };
+                                            string statusLabel = string.Equals(rStatusRaw, "InProgress", StringComparison.OrdinalIgnoreCase) ? "In Progress" : rStatusRaw;
 
                                             <tr id="row-@r.Id">
                                                 <td class="col-num text-muted" style="font-size:12px">@r.Id</td>
@@ -373,7 +376,7 @@
                                                     }
                                                 </td>
                                                 <td class="col-status">
-                                                    <span class="intent-badge @statusCss" style="word-break:normal;">@(r.Status ?? "Open")</span>
+                                                    <span class="intent-badge @statusCss" style="word-break:normal;">@statusLabel</span>
                                                     @if (r.ResumeAIAnalysisCompleted == true)
                                                     {
                                                         string aiVerdictText = "AI";
@@ -428,7 +431,7 @@
                                                                     <i class="fas fa-user-times" style="font-size:11px;"></i>
                                                                 </button>
                                                             }
-                                                            else
+                                                            else if (canReactivate)
                                                             {
                                                                 <button type="button" title="Reactivate interviewer"
                                                                         class="btn btn-sm btn-reactivate-interviewer"
@@ -814,8 +817,12 @@
     }
 
     function updateStatusBadge(s) {
-        var b = $('#mgmStatusBadge'); b.text(s).removeClass('bg-warning bg-primary bg-success bg-secondary bg-danger text-dark');
-        switch ((s || '').toLowerCase()) { case 'open': b.addClass('bg-warning text-dark'); break; case 'inprogress': b.addClass('bg-primary'); break; case 'verified': b.addClass('bg-success'); break; case 'closed': b.addClass('bg-secondary'); break; default: b.addClass('bg-light text-dark'); }
+        var raw = s || 'Open';
+        // Legacy 'Verified' is folded into the operational 'In Progress' state.
+        if (raw.toLowerCase() === 'verified') raw = 'InProgress';
+        var label = raw.toLowerCase() === 'inprogress' ? 'In Progress' : raw;
+        var b = $('#mgmStatusBadge'); b.text(label).removeClass('bg-warning bg-primary bg-success bg-secondary bg-danger text-dark');
+        switch (raw.toLowerCase()) { case 'open': b.addClass('bg-warning text-dark'); break; case 'inprogress': b.addClass('bg-primary'); break; case 'closed': b.addClass('bg-secondary'); break; default: b.addClass('bg-light text-dark'); }
     }
 
     var iaDefaultSubtitles = {
@@ -963,7 +970,7 @@
                     if(currentRecord){currentRecord.resumeAIAnalysisCompleted=true;currentRecord.resumeAIAnalysisResult=res.analysisResult;}
                     if (res.isPositiveVerdict) {
                         markStep(1,'completed',h);
-                        updateStatusBadge('Verified');
+                        updateStatusBadge('InProgress');
                     } else {
                         markStep(1,'failed', h + '<br/><span class="text-danger" style="font-size:11px;"><strong>Fitment negative — next step is blocked.</strong></span>');
                         btn.prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed');
