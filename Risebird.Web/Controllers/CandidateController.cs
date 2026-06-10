@@ -7663,5 +7663,38 @@ namespace Risebird.Web.Controllers
             }).ToList());
         }
 
+        /// <summary>Admin-only: map a candidate coded ID back to real identity (CandidatePseudonym lookup).</summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> ResolveCandidatePseudonym(string nickName)
+        {
+            if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+            {
+                return Json(new { ok = false, message = "Unauthorized" });
+            }
+
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (profileName != "Admin" && profileName != "SupportAdmin" && profileName != "SeniorHR"
+                && profileName != "SeniorInterviewerManagement" && profileName != "Finance")
+            {
+                return Json(new { ok = false, message = "Forbidden" });
+            }
+
+            var resolved = await _candidateService.ResolveCandidatePseudonymAsync(nickName);
+            if (resolved == null)
+            {
+                return Json(new { ok = false, message = "Coded ID not found" });
+            }
+
+            return Json(new
+            {
+                ok = true,
+                nickName = resolved.NickName,
+                candidateEmail = resolved.CandidateEmail,
+                candidateName = resolved.CandidateName,
+                candidateMasterId = resolved.CandidateMasterId
+            });
+        }
+
     }
 }

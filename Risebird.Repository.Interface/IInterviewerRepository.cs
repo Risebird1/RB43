@@ -96,6 +96,7 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveSMEAudio(int irfId, int interviewerProfileId, string feedbackAudioLink);
         Task<bool> UpdateVerifiedInterviewers(List<TransInterviewer> interviewers, string loggedInSME);
         Task<bool> CheckIfSME(string loggedInUser);
+        Task<bool> IsSmeAssignedToIrfAsync(string loggedInUser, int irfId);
         Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList();
         Task<InterviewerProfileVM> GetInterviewerFlagDetails(string intervieweremailid);
         Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive,bool? IsBlocked);

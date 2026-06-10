@@ -961,6 +961,18 @@
         return $page.attr('data-client-share') === '1';
     }
 
+    function isSmeView() {
+        if (window.dmV4SmeView === true) return true;
+        var $panel = $('#dmV4IvPanel');
+        if ($panel.attr('data-sme-view') === '1') return true;
+        var $page = $('.dm-v4-page');
+        return $page.attr('data-sme-view') === '1';
+    }
+
+    function isPanelCompactView() {
+        return isClientShareView() || isSmeView();
+    }
+
     function getClientShareTypeParam() {
         return (window.dmV4ClientShareType || 'ublc').toString();
     }
@@ -1327,7 +1339,10 @@
 
     function openVerdictDrawer($row) {
         window._dmV4VerdictDrawerRow = $row;
-        var name = $row.find('.dm-v4-iv-code').first().text().replace(/\s+/g, ' ').replace(/›/g, '').trim();
+        var name = $row.find('.dm-v4-iv-coded-label').first().text().trim();
+        if (!name) {
+            name = $row.find('.dm-v4-iv-code').first().text().replace(/\s+/g, ' ').replace(/›/g, '').trim();
+        }
         var tone = verdictToneFromRow($row);
         var $full = $row.find('.dm-v4-iv-ai-reason-full');
         var reason = $full.length ? $full.text().trim() : $row.find('.dm-v4-iv-verdict-reason').text().trim();
@@ -1339,12 +1354,21 @@
         var screenScore = parseInt(scoreText, 10) || 0;
 
         $('#dmV4VerdictDrawerTitle').text(name || 'Interviewer');
-        $('#dmV4VerdictDrawerEyebrow').text('AI verdict · ' + (tone === 'pass' ? 'PASS' : tone === 'fail' ? 'BLOCK' : tone === 'warn' ? 'REVIEW' : 'PENDING'));
+        if (isClientShareView()) {
+            $('#dmV4VerdictDrawerEyebrow').text('AI verdict');
+            $('#dmV4VerdictDrawerHeroTitle').hide();
+            $('#dmV4VerdictDrawerFlags').hide().empty();
+        } else {
+            $('#dmV4VerdictDrawerEyebrow').text('AI verdict · ' + (tone === 'pass' ? 'PASS' : tone === 'fail' ? 'BLOCK' : tone === 'warn' ? 'REVIEW' : 'PENDING'));
+            $('#dmV4VerdictDrawerHeroTitle').show();
+        }
         $('.dm-v4-verdict-drawer-body').attr('class', 'dm-v4-drawer__body dm-v4-verdict-drawer-body dm-v4-verdict-drawer-body--' + tone);
 
         var $hero = $('#dmV4VerdictDrawerHero');
         $hero.attr('class', 'dm-v4-vd-hero dm-v4-vd-hero--' + tone);
-        $('#dmV4VerdictDrawerHeroTitle').text(verdictHeroTitle(tone));
+        if (!isClientShareView()) {
+            $('#dmV4VerdictDrawerHeroTitle').text(verdictHeroTitle(tone));
+        }
         $('#dmV4VerdictDrawerReason').text(reason);
 
         var $badge = $row.find('.dm-v4-verdict').first().clone().removeAttr('id');
@@ -1352,15 +1376,17 @@
 
         $('#dmV4VerdictDrawerOverall').text(screenScore > 0 ? screenScore : '—');
 
-        var bullets = parseVerdictBullets(reason, tone);
-        var flagsHtml = '';
-        bullets.forEach(function (b) {
-            flagsHtml += '<li class="dm-v4-vd-flag-item">' +
-                '<span class="dm-v4-vd-flag-item__icon" aria-hidden="true"><i class="fa ' +
-                (tone === 'pass' ? 'fa-check' : tone === 'fail' ? 'fa-times' : 'fa-exclamation') +
-                '"></i></span><span>' + $('<span/>').text(b).html() + '</span></li>';
-        });
-        $('#dmV4VerdictDrawerFlags').html(flagsHtml);
+        if (!isClientShareView()) {
+            var bullets = parseVerdictBullets(reason, tone);
+            var flagsHtml = '';
+            bullets.forEach(function (b) {
+                flagsHtml += '<li class="dm-v4-vd-flag-item">' +
+                    '<span class="dm-v4-vd-flag-item__icon" aria-hidden="true"><i class="fa ' +
+                    (tone === 'pass' ? 'fa-check' : tone === 'fail' ? 'fa-times' : 'fa-exclamation') +
+                    '"></i></span><span>' + $('<span/>').text(b).html() + '</span></li>';
+            });
+            $('#dmV4VerdictDrawerFlags').html(flagsHtml).show();
+        }
 
         dmV4UpdateScreenedAtCaption($row);
         dmV4SyncDrawerScreenBtnVisibility($row);
@@ -1617,6 +1643,9 @@
     }
 
     function refreshDmV4IvPanelMetrics() {
+        if (isClientShareView()) {
+            return $.Deferred().resolve().promise();
+        }
         var cfg = getDmIvCvConfig();
         var irfId = parseInt($('#id').val(), 10) || parseInt($('#dmV4IvPanel').closest('form').find('[name="id"]').val(), 10);
         if (!cfg.panelMetricsUrl || !irfId) {
@@ -2093,6 +2122,9 @@
             }
             formData.append('UserId', typeof interviewerUserId !== 'undefined' ? interviewerUserId : '');
             formData.append('InterviewerEmailId', typeof interviewerEmailId !== 'undefined' ? interviewerEmailId : '');
+            if (pendingRow && pendingRow.length) {
+                formData.append('IrfId', pendingRow.data('irf-id') || '');
+            }
             var $btn = $('#btnUpload');
             $btn.prop('disabled', true);
             $.ajax({
@@ -2892,7 +2924,7 @@
             var $row = $(this);
             normalizeVetRowAttrs($row);
             syncVetButtons($row);
-            if (!isClientShareView()) {
+            if (!isPanelCompactView()) {
                 dmV4SyncScreenButtonLabels($row);
                 dmV4EnsureKycPlayButton($row);
             }
@@ -2902,7 +2934,7 @@
             e.preventDefault();
             var $btn = $(this);
             var $row = $btn.closest('.dm-v4-iv-row');
-            if (isClientShareView()) {
+            if (isPanelCompactView()) {
                 var userId = parseInt($btn.data('user-id') || $row.data('user-id'), 10);
                 var irfId = parseInt($row.data('irf-id'), 10);
                 var nickname = ($btn.data('nickname') || $row.find('.dm-v4-iv-code').first().text().replace(/\s+/g, ' ').replace(/›/g, '').trim() || '').toString();
@@ -2910,11 +2942,11 @@
                 $.get('/IRF/GetClientShareInterviewerInsights', {
                     irfId: irfId,
                     userId: userId,
-                    Type: getClientShareTypeParam()
+                    Type: isClientShareView() ? getClientShareTypeParam() : undefined
                 }, function (data) {
                     openInterviewerInsightsModel();
                     $('#divInsightsmodel').html(data);
-                    $('#txtheaderInsights').text(nickname ? nickname + ' (Client view)' : 'Interviewer');
+                    $('#txtheaderInsights').text(nickname ? nickname + (isSmeView() ? ' (SME view)' : ' (Client view)') : 'Interviewer');
                     $('#hidlastlogin').text($('#LastLogin').val() || '');
                 });
                 return;
@@ -2930,7 +2962,7 @@
             e.preventDefault();
             var $btn = $(this);
             var $row = $btn.closest('.dm-v4-iv-row');
-            if (isClientShareView()) {
+            if (isPanelCompactView()) {
                 var userId = parseInt($btn.data('user-id') || $row.data('user-id'), 10);
                 var irfId = parseInt($btn.data('irf-id') || $row.data('irf-id'), 10);
                 var irfName = ($btn.data('irf-id-name') || $row.data('irf-name') || '').toString();
@@ -2939,7 +2971,7 @@
                 $.get('/IRF/GetClientShareInterviewerInsights', {
                     irfId: irfId,
                     userId: userId,
-                    Type: getClientShareTypeParam()
+                    Type: isClientShareView() ? getClientShareTypeParam() : undefined
                 }, function (data) {
                     openInterviewerInsightsModel();
                     $('#divInsightsmodel').html(data);
@@ -2998,7 +3030,7 @@
             $.ajax({
                 url: cfg.generateSummaryUrl || '/IRF/GenerateInterviewerResumeSummaryAndSave',
                 type: 'POST',
-                data: { userId: userId, resumeLink: resumeLink },
+                data: { userId: userId, resumeLink: resumeLink, irfId: parseInt($row.data('irf-id'), 10) || 0 },
                 success: function (data, _textStatus, xhr) {
                     if (data && data.success) {
                         if (data.summaryHtml) {
