@@ -33,6 +33,7 @@ BEGIN
         c.GSTApplicable,
         c.BillingType,
         c.PerInterviewRate,
+        ISNULL(c.AIPerInterviewRate, 0) AS AIPerInterviewRate,
         ul.EmailId         AS BillingOwnerEmail,
         ul.id              AS BillingOwnerId
     FROM Client c
@@ -46,16 +47,22 @@ BEGIN
     LEFT JOIN UserList ul ON ul.id = bo.BillingOwner
     WHERE c.id = @ClientId
 
-    -- 2. Line items
+    -- 2. Line items — AI interviews use AIPerInterviewRate, others use PerInterviewRate
     --    BillingType=1 (@BillingOwnerId > 0): filter by ClientId + BillingOwner
     --    BillingType=2/3 (@BillingOwnerId = 0): filter by ClientId only
     SELECT
-        irf.IRFId                                     AS ProductName,
-        ISNULL(irf.JDTiltle, irf.IRFId)               AS Description,
-        COUNT(im.id)                                  AS Qty,
-        ISNULL(c.PerInterviewRate, 0)                 AS UnitRate,
-        COUNT(im.id) * ISNULL(c.PerInterviewRate, 0)  AS LineTotal,
-        'Wallet'                                      AS Basis
+        irf.IRFId                                                                         AS ProductName,
+        ISNULL(irf.JDTiltle, irf.IRFId)                                                  AS Description,
+        COUNT(im.id)                                                                      AS Qty,
+        CASE WHEN ISNULL(IRF.IsAIInterview, 0) = 1
+             THEN ISNULL(c.AIPerInterviewRate, 0)
+             ELSE ISNULL(c.PerInterviewRate, 0)
+        END                                                                               AS UnitRate,
+        COUNT(im.id) * CASE WHEN ISNULL(IRF.IsAIInterview, 0) = 1
+                            THEN ISNULL(c.AIPerInterviewRate, 0)
+                            ELSE ISNULL(c.PerInterviewRate, 0)
+                       END                                                                AS LineTotal,
+        CASE WHEN ISNULL(IRF.IsAIInterview, 0) = 1 THEN 'AI Interview' ELSE 'Non-AI Interview' END AS Basis
     FROM InterviewMeetings im
     JOIN IRF               ON IRF.IRFId      = im.IRFId
     JOIN InterviewComments ic ON ic.InterviewId = im.id
@@ -65,9 +72,9 @@ BEGIN
       AND im.interviewDate <  @EndDate
       AND (ic.MeetingStatus = 4 OR ic.MeetingStatus = 6
            OR ic.MeetingStatus = 7 OR ic.MeetingStatus = 8)
-      AND ISNULL(im.RedoInterview,0)=0
+      AND ISNULL(im.RedoInterview, 0) = 0
       AND (@BillingOwnerId = 0 OR IRF.BillingOwner = @BillingOwnerId)
-    GROUP BY irf.IRFId, irf.JDTiltle, c.PerInterviewRate
+    GROUP BY irf.IRFId, irf.JDTiltle, IRF.IsAIInterview, c.PerInterviewRate, c.AIPerInterviewRate
     ORDER BY irf.IRFId
 END
 GO

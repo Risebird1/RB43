@@ -85,8 +85,10 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Name</th>
-                                                            <th>Total Interviews</th>
-                                                            <th>Per Interview Rate</th>
+                                                            <th>Non-AI Interviews</th>
+                                                            <th>Non-AI Rate</th>
+                                                            <th>AI Interviews</th>
+                                                            <th>AI Rate</th>
                                                             <th>Amount</th>
                                                             <th>GST</th>
                                                             <th>GST Amount</th>
@@ -101,8 +103,10 @@
                                                     <tfoot>
                                                         <tr>
                                                             <th>Name</th>
-                                                            <th>Total Interviews</th>
-                                                            <th>Per Interview Rate</th>
+                                                            <th>Non-AI Interviews</th>
+                                                            <th>Non-AI Rate</th>
+                                                            <th>AI Interviews</th>
+                                                            <th>AI Rate</th>
                                                             <th>Amount</th>
                                                             <th>GST</th>
                                                             <th>GST Amount</th>
@@ -124,9 +128,11 @@
 
                                                             <tr>
                                                                 <td>@item.Name<input type="hidden" id="hidclient_@item.id" value="@item.Name" /></td>
-                                                                <td>@item.TotalCount<input type="hidden" id="hidinterviewcount_@item.id" value="@item.TotalCount" /></td>
+                                                                <td>@item.NonAIInterviewCount<input type="hidden" id="hidnonaicnt_@item.id" value="@item.NonAIInterviewCount" /></td>
                                                                 <td>@item.PerInterviewRate<input type="hidden" id="hidrate_@item.id" value="@item.PerInterviewRate" /></td>
-                                                                <td>@(item.TotalCount * item.PerInterviewRate)</td>
+                                                                <td>@item.AIInterviewCount<input type="hidden" id="hidaicnt_@item.id" value="@item.AIInterviewCount" /></td>
+                                                                <td>@item.AIPerInterviewRate<input type="hidden" id="hidairate_@item.id" value="@item.AIPerInterviewRate" /></td>
+                                                                <td>@((item.NonAIInterviewCount * item.PerInterviewRate) + (item.AIInterviewCount * item.AIPerInterviewRate))<input type="hidden" id="hidinterviewcount_@item.id" value="@item.TotalCount" /></td>
                                                                 <td>@item.GST</td>
                                                                 <td>@item.GSTAmount</td>
                                                                 <td>@item.SystemInvoiceAmount</td>

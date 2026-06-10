@@ -1935,21 +1935,22 @@ namespace Risebird.Web.Controllers
 
                 return Json(new
                 {
-                    invoiceNumber     = data.InvoiceNumber,
-                    billingOwnerEmail = data.BillingOwnerEmail,
-                    billingOwnerId    = data.BillingOwnerId,
-                    billingOwners     = billingOwners,
-                    creditPeriod      = data.PaymentTerm > 0 ? data.PaymentTerm + " Days" : string.Empty,
-                    gstNumber         = data.GSTNumber,
-                    gstApplicable     = data.GSTApplicable,
-                    billingType       = data.BillingType,
-                    perInterviewRate  = data.PerInterviewRate,
-                    lineItems         = data.LineItems,
-                    subtotal          = subtotal,
-                    gstAmount         = gstAmount,
-                    invoiceValue      = invoiceValue,
-                    tdsAmount         = tdsAmount,
-                    netReceivable     = netReceivable
+                    invoiceNumber      = data.InvoiceNumber,
+                    billingOwnerEmail  = data.BillingOwnerEmail,
+                    billingOwnerId     = data.BillingOwnerId,
+                    billingOwners      = billingOwners,
+                    creditPeriod       = data.PaymentTerm > 0 ? data.PaymentTerm + " Days" : string.Empty,
+                    gstNumber          = data.GSTNumber,
+                    gstApplicable      = data.GSTApplicable,
+                    billingType        = data.BillingType,
+                    perInterviewRate   = data.PerInterviewRate,
+                    aiPerInterviewRate = data.AIPerInterviewRate,
+                    lineItems          = data.LineItems,
+                    subtotal           = subtotal,
+                    gstAmount          = gstAmount,
+                    invoiceValue       = invoiceValue,
+                    tdsAmount          = tdsAmount,
+                    netReceivable      = netReceivable
                 });
             }
             catch (Exception ex)
@@ -2575,19 +2576,21 @@ namespace Risebird.Web.Controllers
                     int totalamount = 0;
                     foreach (var item in model)
                     {
-                        totalamount = totalamount + (item.TotalCount * item.PerInterviewRate);
+                        var baseAmount = (item.NonAIInterviewCount * item.PerInterviewRate)
+                                       + (item.AIInterviewCount  * item.AIPerInterviewRate);
+                        totalamount = totalamount + baseAmount;
                         if (item.GSTApplicable)
                         {
                             item.GST = "Yes";
-                            item.GSTAmount = (item.TotalCount * item.PerInterviewRate * 18) / 100;
+                            item.GSTAmount = (baseAmount * 18) / 100;
                         }
                         else
                         {
                             item.GST = "No";
                             item.GSTAmount = 0;
                         }
-                        item.SystemInvoiceAmount = item.GSTAmount + (item.TotalCount * item.PerInterviewRate);
-                        item.TDSAmount = (item.TotalCount * item.PerInterviewRate * 10) / 100;
+                        item.SystemInvoiceAmount = item.GSTAmount + baseAmount;
+                        item.TDSAmount = (baseAmount * 10) / 100;
                         if (item.invoicerealization == 1)
                         {
                             item.PaymentStatus = "Received";
