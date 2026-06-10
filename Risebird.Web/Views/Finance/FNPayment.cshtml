@@ -1078,51 +1078,53 @@
                     clearInterval(fakeTimer);
                     var oBar = document.getElementById('batchOverlayBar');
                     if (oBar) oBar.style.width = '100%';
-
-                    setTimeout(function () {
                         var ov = document.getElementById('batchOverlay');
                         if (ov) ov.parentNode.removeChild(ov);
-                        var resultHtml = '<table class="table table-bordered table-sm" style="font-size:12px;margin:0;">';
-                        resultHtml += '<thead><tr><th>Email</th><th>Amount</th><th>Result</th></tr></thead><tbody>';
+
                         var successCount = 0, failCount = 0;
                         if (data.results && data.results.length > 0) {
                             for (var j = 0; j < data.results.length; j++) {
-                                var r = data.results[j];
-                                var pts = '';
-                                var chkBox = document.querySelector('.chkBatchInterviewer[data-id="' + r.id + '"]');
-                                if (chkBox) pts = chkBox.getAttribute('data-amount') || '';
-                                var rowClass = r.success ? 'table-success' : 'table-danger';
-                                resultHtml += '<tr class="' + rowClass + '">';
-                                resultHtml += '<td>' + (r.email || '') + '</td>';
-                                resultHtml += '<td>' + pts + '</td>';
-                                resultHtml += '<td>' + (r.message || (r.success ? 'Success' : 'Failed')) + '</td>';
-                                resultHtml += '</tr>';
-                                if (r.success) successCount++; else failCount++;
+                                if (data.results[j].success) successCount++; else failCount++;
                             }
                         }
-                        resultHtml += '</tbody></table>';
-
-                        var summaryBg    = failCount === 0 ? '#e8f5e9' : '#fff3e0';
-                        var summaryColor = failCount === 0 ? '#1b5e20' : '#e65100';
-                        var summaryIcon  = failCount === 0 ? '&#10003;' : '&#9888;';
-                        var summaryText  = successCount + ' payout(s) initiated successfully'
-                            + (failCount > 0 ? ' &nbsp;|&nbsp; ' + failCount + ' failed' : '');
-                        var summary = '<div style="background:' + summaryBg + ';border-radius:6px;padding:10px 14px;margin-bottom:8px;font-size:13px;font-weight:600;color:' + summaryColor + ';">'
-                            + summaryIcon + ' ' + summaryText + '</div>';
-
-                        divResult.innerHTML = summary + resultHtml;
                         document.getElementById('btnProceedBatch').disabled = false;
-                        FinacneChangePage(_Currentpage);
-                    }, 400);
+
+                        if (failCount === 0) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Batch Payout Successful',
+                                text: successCount + ' payout(s) initiated successfully.',
+                                confirmButtonText: 'OK'
+                            }).then(function () {
+                                closeBatchPayoutModal();
+                                FinacneChangePage(_Currentpage);
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Batch Payout Completed with Errors',
+                                html: '<b>' + successCount + '</b> payout(s) succeeded &nbsp;|&nbsp; <b>' + failCount + '</b> failed.<br/>Please review and retry the failed entries.',
+                                confirmButtonText: 'OK'
+                            }).then(function () {
+                                closeBatchPayoutModal();
+                                FinacneChangePage(_Currentpage);
+                            });
+                        }
                 },
                 error: function () {
                     clearInterval(fakeTimer);
                     var ov = document.getElementById('batchOverlay');
                     if (ov) ov.parentNode.removeChild(ov);
-                    divResult.innerHTML =
-                        '<div style="background:#fce4ec;border-radius:6px;padding:12px 14px;color:#b71c1c;font-size:13px;font-weight:600;">' +
-                        '&#10007; Batch payout request failed. Please try again.</div>';
                     document.getElementById('btnProceedBatch').disabled = false;
+
+                    setTimeout(function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Batch Payout Failed',
+                            text: 'The batch payout request could not be completed. Please try again.',
+                            confirmButtonText: 'OK'
+                        });
+                    }, 200);
                 }
             });
         });
