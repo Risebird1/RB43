@@ -285,7 +285,7 @@
         </div>
 
         <div class="rbpay">
-            <div id="myModal" class="modal">
+            <div id="myModal" class="modal" style="z-index:1100">
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-dialog modal-lg" role="document">
@@ -455,10 +455,11 @@
                                             <th>Name / Email</th>
                                             <th style="width:100px;">Amount</th>
                                             <th style="width:110px;">Bank Verified</th>
+                                            <th style="width:60px;text-align:center;">Details</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tblBatchPayoutBody">
-                                        <tr><td colspan="4" class="text-center">No interviewers with pending amount found.</td></tr>
+                                        <tr><td colspan="5" class="text-center">No interviewers with pending amount found.</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -936,7 +937,7 @@
 
     function openBatchPayoutModal() {
         document.getElementById('tblBatchPayoutBody').innerHTML =
-            '<tr><td colspan="4" class="text-center"><img src="/Newassets/img/lazyload.gif" style="height:30px;" /></td></tr>';
+            '<tr><td colspan="5" class="text-center"><img src="/Newassets/img/lazyload.gif" style="height:30px;" /></td></tr>';
         document.getElementById('chkSelectAllBatch').checked = false;
         document.getElementById('spnBatchSelected').textContent = '0 interviewer(s) selected';
         document.getElementById('divBatchResult').style.display = 'none';
@@ -952,13 +953,13 @@
                 var tbody = document.getElementById('tblBatchPayoutBody');
                 var html = '';
                 if (!resp.success) {
-                    html = '<tr><td colspan="4" class="text-center text-danger">' + (resp.message || 'Failed to load.') + '</td></tr>';
+                    html = '<tr><td colspan="5" class="text-center text-danger">' + (resp.message || 'Failed to load.') + '</td></tr>';
                     tbody.innerHTML = html;
                     return;
                 }
                 var list = resp.data || [];
                 if (list.length === 0) {
-                    html = '<tr><td colspan="4" class="text-center">No interviewers with pending amount and verified bank account found.</td></tr>';
+                    html = '<tr><td colspan="5" class="text-center">No interviewers with pending amount and verified bank account found.</td></tr>';
                     tbody.innerHTML = html;
                     return;
                 }
@@ -969,6 +970,16 @@
                     html += '<td>' + (row.email || '') + '</td>';
                     html += '<td>' + row.amount + '</td>';
                     html += '<td><span class="text-success">Yes</span></td>';
+                    html += '<td style="text-align:center;">'
+                         +    '<button onclick="viewBatchInterviewerDetails(' + row.id + ',\'' + (row.email || '') + '\')" '
+                         +      'title="View payment details" '
+                         +      'style="background:none;border:none;cursor:pointer;padding:2px 5px;color:#1976d2;">'
+                         +      '<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" viewBox="0 0 16 16">'
+                         +        '<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>'
+                         +        '<path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>'
+                         +      '</svg>'
+                         +    '</button>'
+                         + '</td>';
                     html += '</tr>';
                 }
                 tbody.innerHTML = html;
@@ -982,6 +993,21 @@
 
     function closeBatchPayoutModal() {
         document.getElementById('myBatchPayoutModel').style.display = 'none';
+    }
+
+    function viewBatchInterviewerDetails(id, email) {
+        $.ajax({
+            type: 'POST',
+            url: '/Finance/GetInterviewerPaymentDetails',
+            data: { id: id, flag: Generateinvoiceflag, st: St_date, se: Se_date },
+            success: function (data) {
+                binddata(data.result);
+                $('#txtInterviewerEmailid').text(email);
+                $('#txtAmountD').text('Amount: ' + data.totalAmount);
+                $('#txtTdsdeductedD').text('Tds deducted: ' + data.tds);
+                $('#txtPayableAmountD').text('Payable Amount: ' + data.payableAmount);
+            }
+        });
     }
 
     function toggleSelectAllBatch(chk) {
