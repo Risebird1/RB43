@@ -7587,12 +7587,19 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> ClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null)
+        public async Task<IActionResult> ClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, string maskCandidate = null)
         {
             try
             {
                 ViewBag.InterviewId = interviewId;
                 ViewBag.IrfId = irfId;
+                if (CandidateReportMaskingHelper.IsMaskCandidateParam(maskCandidate))
+                {
+                    CandidateReportMaskingHelper.ActivateMaskContext(HttpContext.Session);
+                }
+
+                var shouldMaskCandidate = CandidateReportMaskingHelper.ShouldMaskCandidate(Request, HttpContext.Session, maskCandidate);
+                ViewBag.MaskCandidate = shouldMaskCandidate;
                 if (!string.IsNullOrEmpty(uniqueid) && string.IsNullOrEmpty(publicEmailId))
                 {
                     ViewBag.SecurelyShared = "True";
@@ -7679,6 +7686,12 @@ namespace Risebird.Web.Controllers
                 {
                     model.IsQCRequired = false;
                 }
+
+                if (shouldMaskCandidate)
+                {
+                    await CandidateReportMaskingHelper.ApplyMaskingAsync(model, _candidateService, email);
+                }
+
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;
@@ -8097,10 +8110,18 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool downloadPdf = false)
+        public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool downloadPdf = false, string maskCandidate = null)
         {
             try
             {
+                if (CandidateReportMaskingHelper.IsMaskCandidateParam(maskCandidate))
+                {
+                    CandidateReportMaskingHelper.ActivateMaskContext(HttpContext.Session);
+                }
+
+                var shouldMaskCandidate = CandidateReportMaskingHelper.ShouldMaskCandidate(Request, HttpContext.Session, maskCandidate);
+                ViewBag.MaskCandidate = shouldMaskCandidate;
+
                 ViewBag.PageStatus = "Mainurl";
                 var email = HttpContext.Session.GetString("email") ?? string.Empty;
                 email = email.Replace("\"", "");
@@ -8154,6 +8175,12 @@ namespace Risebird.Web.Controllers
                 model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
                 string output = Regex.Replace(model.InterviewerComment ?? string.Empty, "<.*?>", string.Empty);
                 model.InterviewerComment = output;
+
+                if (shouldMaskCandidate)
+                {
+                    await CandidateReportMaskingHelper.ApplyMaskingAsync(model, _candidateService, email);
+                }
+
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;

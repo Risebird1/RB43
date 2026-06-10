@@ -2,7 +2,29 @@
 @using Risebird.CommonHelper;
 @using Risebird.Entities.Data
 @using Risebird.Entities.Enum
+<style>
+    .iv-stats-candidate-coded {
+        display: inline-block;
+        font-family: 'IBM Plex Mono', Consolas, monospace;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: #4f46e5;
+        background: #eef2ff;
+        border: 1px solid #dbe1ff;
+        border-radius: 6px;
+        padding: 3px 8px;
+        line-height: 1.3;
+    }
+    .iv-stats-candidate-coded--empty {
+        color: #94a3b8;
+        background: transparent;
+        border-color: transparent;
+        font-weight: 500;
+    }
+</style>
 @{
+    var maskCandidateReport = ViewBag.MaskCandidate == true;
     //string customHeight = "none";
     //if (ViewBag.DisplayType == "popup")
     //{
@@ -76,8 +98,19 @@
 
                             <td>@item.interviewDate</td>
                             <td>
-                                <p style="margin:0px;">@item.candidateEmail</p>
-                                <p style="margin:0px;"><span style="color:#4878cf;display:inline-block;margin-top:5px;">Jd Title :</span> @item.JDTiltle</p>
+                                @if (!string.IsNullOrWhiteSpace(item.candidateCodedId))
+                                {
+                                    <span class="iv-stats-candidate-coded" title="Candidate coded ID">@item.candidateCodedId</span>
+                                }
+                                else if (!string.IsNullOrWhiteSpace(item.candidateEmail))
+                                {
+                                    @* Legacy surfaces not yet pseudonymized *@
+                                    <span class="iv-stats-candidate-coded">@item.candidateEmail</span>
+                                }
+                                else
+                                {
+                                    <span class="iv-stats-candidate-coded iv-stats-candidate-coded--empty">—</span>
+                                }
                             </td>
                             <td>@item.SkillChannel</td>
                             <td>@item.ProjectUniqueid</td>
@@ -107,13 +140,13 @@
                             <td>
                                 @if (item.InterviewStatus.HasValue && item.InterviewStatus.Value == (int)InterviewStatus.Selected)
                                 {
-                                    <a target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId=item.interviewId, irfId = item.irfId, IsSelected = true })'>
+                                    <a target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId=item.interviewId, irfId = item.irfId, IsSelected = true, maskCandidate = maskCandidateReport ? "1" : null })'>
                                         Report
                                     </a>
                                 }
                                 else
                                 {
-                                    <a target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.interviewId, irfId = item.irfId, IsSelected = false })'>
+                                    <a target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.interviewId, irfId = item.irfId, IsSelected = false, maskCandidate = maskCandidateReport ? "1" : null })'>
                                         Report
                                     </a>
                                 }
@@ -162,7 +195,7 @@
                                     </button>
                                     <span>
                                         <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
-                                            <div onclick="PaymentSLADetails('@item.interviewId','@item.candidateEmail','@item.interviewer',false,'CompletedInterview',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
+                                            <div onclick="PaymentSLADetails('@item.interviewId','@(item.candidateCodedId ?? "")','@item.interviewer',false,'CompletedInterview',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
                                                 <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
                                             </div>
                                         </button>

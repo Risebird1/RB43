@@ -43,6 +43,9 @@ select distinct ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, c.NickName, 
 ip.VideoLink, isnull(ip.IsVideoApproved, 0) as IsVideoApproved, ip.EmploymentComment,
 isnull(sti.TotalInterview, 0) as TotalInterview,
 isnull(fti.TotalFuture, 0) as TotalFuture,
+isnull(tcm.TotalCompletedMeetings, 0) as TotalCompletedMeetings,
+isnull(tsel.TotalSelected, 0) as TotalSelected,
+isnull(trej.TotalRejected, 0) as TotalRejected,
 ul.LastLogin as LastLogin,
 lic.LastInterviewConductedAt as LastInterviewConductedAt
 from  (SELECT  UserId, NickName, ResumeLink, CodedResumeLink,CompanyName, IsResumeRedactAttempted, PrimarySkill =   
@@ -70,6 +73,29 @@ outer apply (
       and im.confirmationStatus = 1
       and ic.MeetingStatus in (4, 6, 7, 8)
 ) lic
+outer apply (
+    select count(im.id) as TotalCompletedMeetings
+    from InterviewMeetings im
+    left join InterviewComments ic on ic.InterviewId = im.id
+    where im.IRFId = @irfName and im.interviewer = ul.EmailId
+      and ic.MeetingStatus in (4, 6, 7, 8)
+) tcm
+outer apply (
+    select count(im.id) as TotalSelected
+    from InterviewMeetings im
+    left join InterviewComments ic on ic.InterviewId = im.id
+    where im.IRFId = @irfName and im.interviewer = ul.EmailId
+      and (ic.InterviewStatus = 2 or ic.InterviewStatus = 4)
+      and ic.MeetingStatus in (4, 6, 8)
+) tsel
+outer apply (
+    select count(im.id) as TotalRejected
+    from InterviewMeetings im
+    left join InterviewComments ic on ic.InterviewId = im.id
+    where im.IRFId = @irfName and im.interviewer = ul.EmailId
+      and (ic.InterviewStatus = 3 or ic.InterviewStatus = 5 or ic.InterviewStatus = 1)
+      and ic.MeetingStatus in (4, 6, 8)
+) trej
 where ti.IRFId=@irfId and ul.IsActive=1  
   
 --selectability details  

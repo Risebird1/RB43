@@ -3071,6 +3071,38 @@ namespace Risebird.Repository
 
         }
 
+        public async Task<bool> IsSmeAssignedToIrfAsync(string loggedInUser, int irfId)
+        {
+            if (string.IsNullOrWhiteSpace(loggedInUser) || irfId <= 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    const string sql = @"
+SELECT CAST(CASE WHEN EXISTS (
+    SELECT 1
+    FROM dbo.SkillChannelSMEs scs
+    INNER JOIN dbo.InterviewerProfile ip ON ip.id = scs.InterviewerProfileId
+    INNER JOIN dbo.UserList ul ON ul.id = ip.UserId
+    WHERE LOWER(LTRIM(RTRIM(ul.EmailId))) = LOWER(LTRIM(RTRIM(@emailID)))
+      AND scs.IRFId = @irfId
+      AND (scs.IsDeleted IS NULL OR scs.IsDeleted = 0)
+) THEN 1 ELSE 0 END AS BIT)";
+
+                    return await SqlMapper.QuerySingleAsync<bool>(con, sql, new { emailID = loggedInUser.Trim(), irfId });
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
 
         public async Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList()

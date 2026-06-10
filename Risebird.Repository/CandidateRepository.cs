@@ -2135,5 +2135,140 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<IDictionary<string, string>> EnsureCandidatePseudonymsAsync(IEnumerable<string> candidateEmails, string createdBy = null)
+        {
+            var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var emails = candidateEmails?
+                .Where(e => !string.IsNullOrWhiteSpace(e))
+                .Select(e => e.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList() ?? new List<string>();
+
+            if (emails.Count == 0)
+            {
+                return result;
+            }
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await con.OpenAsync();
+
+                    var existingRows = await con.QueryAsync<(string CandidateEmail, string NickName)>(
+                        "SELECT CandidateEmail, NickName FROM dbo.CandidatePseudonym WHERE CandidateEmail IN @emails",
+                        new { emails });
+
+                    foreach (var row in existingRows)
+                    {
+                        if (!string.IsNullOrWhiteSpace(row.CandidateEmail))
+                        {
+                            result[row.CandidateEmail.Trim()] = row.NickName;
+                        }
+                    }
+
+                    var takenNickNames = new HashSet<string>(
+                        (await con.QueryAsync<string>("SELECT NickName FROM dbo.CandidatePseudonym"))
+                            .Where(n => !string.IsNullOrWhiteSpace(n)),
+                        StringComparer.OrdinalIgnoreCase);
+
+                    foreach (var email in emails)
+                    {
+                        if (result.Keys.Any(k => string.Equals(k, email, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            continue;
+                        }
+
+                        var nameRow = await con.QueryFirstOrDefaultAsync<CandidatePseudonymNameRow>(
+                            @"SELECT ul.FirstName, ul.LastName, cm.id AS CandidateMasterId, cm.Name AS MasterName
+                              FROM dbo.UserList ul
+                              LEFT JOIN dbo.CandidatesMaster cm ON cm.UserId = ul.id
+                              WHERE LOWER(LTRIM(RTRIM(ul.EmailId))) = LOWER(LTRIM(RTRIM(@email)))",
+                            new { email });
+
+                        var seedId = nameRow?.CandidateMasterId
+                            ?? Math.Abs(StringComparer.OrdinalIgnoreCase.GetHashCode(email));
+                        string nickName;
+                        if (nameRow != null && (!string.IsNullOrWhiteSpace(nameRow.FirstName) || !string.IsNullOrWhiteSpace(nameRow.LastName)))
+                        {
+                            nickName = CandidatePseudonymHelper.BuildNickName(nameRow.FirstName, nameRow.LastName, seedId, takenNickNames);
+                        }
+                        else if (nameRow != null && !string.IsNullOrWhiteSpace(nameRow.MasterName))
+                        {
+                            var parts = nameRow.MasterName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            nickName = CandidatePseudonymHelper.BuildNickName(
+                                parts.Length > 0 ? parts[0] : null,
+                                parts.Length > 1 ? parts[1] : null,
+                                seedId,
+                                takenNickNames);
+                        }
+                        else
+                        {
+                            nickName = CandidatePseudonymHelper.BuildNickNameFromEmail(email, seedId, takenNickNames);
+                        }
+
+                        takenNickNames.Add(nickName);
+
+                        await con.ExecuteAsync(
+                            @"INSERT INTO dbo.CandidatePseudonym (CandidateMasterId, CandidateEmail, NickName, CreatedBy)
+                              VALUES (@CandidateMasterId, @CandidateEmail, @NickName, @CreatedBy)",
+                            new
+                            {
+                                CandidateMasterId = nameRow?.CandidateMasterId,
+                                CandidateEmail = email,
+                                NickName = nickName,
+                                CreatedBy = createdBy
+                            });
+
+                        result[email] = nickName;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return result;
+        }
+
+        public async Task<CandidatePseudonymResolveVM> ResolveCandidatePseudonymAsync(string nickName)
+        {
+            if (string.IsNullOrWhiteSpace(nickName))
+            {
+                return null;
+            }
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QueryFirstOrDefaultAsync<CandidatePseudonymResolveVM>(
+                        @"SELECT cp.NickName,
+                                 cp.CandidateEmail,
+                                 COALESCE(NULLIF(LTRIM(RTRIM(cm.Name)), ''), NULLIF(LTRIM(RTRIM(ul.FirstName + ' ' + ul.LastName)), ''), cp.CandidateEmail) AS CandidateName,
+                                 cp.CandidateMasterId
+                          FROM dbo.CandidatePseudonym cp
+                          LEFT JOIN dbo.UserList ul ON LOWER(LTRIM(RTRIM(ul.EmailId))) = LOWER(LTRIM(RTRIM(cp.CandidateEmail)))
+                          LEFT JOIN dbo.CandidatesMaster cm ON cm.id = cp.CandidateMasterId OR cm.UserId = ul.id
+                          WHERE cp.NickName = @nickName",
+                        new { nickName = nickName.Trim() });
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        private sealed class CandidatePseudonymNameRow
+        {
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public int? CandidateMasterId { get; set; }
+            public string MasterName { get; set; }
+        }
+
     }
 }

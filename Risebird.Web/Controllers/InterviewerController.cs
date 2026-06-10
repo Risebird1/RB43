@@ -13,6 +13,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using Risebird.Web.Helpers;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
@@ -4736,10 +4737,19 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> InterviewerStatsDetailsForClient(int userId, string statType, string clientEmailId, string interviewerEmailId = null, int? irfId = null, string irfName = null, string usePl = null)
+        public async Task<IActionResult> InterviewerStatsDetailsForClient(int userId, string statType, string clientEmailId, string interviewerEmailId = null, int? irfId = null, string irfName = null, string usePl = null, string maskCandidate = null)
         {
             try
             {
+                if (CandidateReportMaskingHelper.IsMaskCandidateParam(maskCandidate))
+                {
+                    CandidateReportMaskingHelper.ActivateMaskContext(HttpContext.Session);
+                }
+
+                ViewBag.MaskCandidate = CandidateReportMaskingHelper.IsMaskCandidateParam(maskCandidate)
+                    || HttpContext.Session.GetString(CandidateReportMaskingHelper.SessionKey) == "1"
+                    || DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId ?? 0);
+
                 IEnumerable<StatsDetailsVM> statsDetailsList;
                 statsDetailsList = await _interviewerService.GetInterviewerStatsAndRatingsDetails(userId, statType, irfId, clientEmailId);
                 statsDetailsList = statsDetailsList.Select(x =>
