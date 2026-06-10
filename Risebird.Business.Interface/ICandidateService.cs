@@ -50,5 +50,9 @@ namespace Risebird.Business.Interface
         Task<ResumeSummaryVM> ResumeSummaryFromLink(string resumeLink);
         Task<Candidate> GetDetailsForCandidateResumeScreeningByAI(int irfId, int candidateMasterId);
         Task<bool> SaveCandidateOpenAIScreeningResultsV2(int irfId, int candidateMasterId, string screeningResponseJson, string verdict, int resumeScreeningScore);
+
+        Task<IDictionary<string, string>> EnsureCandidatePseudonymsAsync(IEnumerable<string> candidateEmails, string createdBy = null);
+
+        Task<CandidatePseudonymResolveVM> ResolveCandidatePseudonymAsync(string nickName);
     }
 }

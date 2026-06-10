@@ -63,6 +63,12 @@ namespace Risebird.Repository.Interface
         
         /// <summary>Gets candidate info by resume ID after parsing.</summary>
         Task<CandidateResumeInfo> GetCandidateByResumeId(int candidateResumeId);
+
+        /// <summary>Returns stable coded IDs for candidate emails; creates pseudonym rows when missing.</summary>
+        Task<IDictionary<string, string>> EnsureCandidatePseudonymsAsync(IEnumerable<string> candidateEmails, string createdBy = null);
+
+        /// <summary>Admin-only: resolve a coded candidate ID to real identity.</summary>
+        Task<CandidatePseudonymResolveVM> ResolveCandidatePseudonymAsync(string nickName);
     }
 
     public class CandidateResumeInfo

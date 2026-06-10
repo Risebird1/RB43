@@ -23,11 +23,13 @@ namespace Risebird.Business
         private readonly IIRFRepository _irfRepository;
         private readonly IActivityTrackerRepository _activityTrackerRepository;
         private readonly IEncryptionHelper _encryptionHelper;
+        private readonly ICandidateService _candidateService;
 
         public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger,
             IUserService userService, IMeetingRespository meetingRespository,
             INotificationHelper notificationHelper, IPasswordHelper passwordHelper,
-            IIRFRepository irfRepository, IActivityTrackerRepository activityTrackerRepository, IEncryptionHelper encryptionHelper)
+            IIRFRepository irfRepository, IActivityTrackerRepository activityTrackerRepository, IEncryptionHelper encryptionHelper,
+            ICandidateService candidateService)
         {
             _interviewerRepository = interviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -38,6 +40,7 @@ namespace Risebird.Business
             _irfRepository = irfRepository;
             _activityTrackerRepository = activityTrackerRepository;
             _encryptionHelper = encryptionHelper;
+            _candidateService = candidateService;
         }
 
         #region Interviewer Profile Service Functions
@@ -1459,6 +1462,11 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public Task<bool> IsSmeAssignedToIrfAsync(string loggedInUser, int irfId)
+        {
+            return _interviewerRepository.IsSmeAssignedToIrfAsync(loggedInUser, irfId);
+        }
         public async Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList()
         {
             try
@@ -1525,7 +1533,45 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.GetInterviewerStatsAndRatingsDetails(interviewerUserId, type, irfId, clientEmailId);
+                var rows = (await _interviewerRepository.GetInterviewerStatsAndRatingsDetails(interviewerUserId, type, irfId, clientEmailId))?.ToList();
+                if (rows == null || rows.Count == 0)
+                {
+                    return rows;
+                }
+
+                var emails = rows
+                    .Select(r => r.candidateEmail)
+                    .Where(e => !string.IsNullOrWhiteSpace(e))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                var pseudonyms = emails.Count > 0
+                    ? await _candidateService.EnsureCandidatePseudonymsAsync(emails)
+                    : new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (var row in rows)
+                {
+                    if (!string.IsNullOrWhiteSpace(row.candidateEmail))
+                    {
+                        if (pseudonyms.TryGetValue(row.candidateEmail.Trim(), out var codedId))
+                        {
+                            row.candidateCodedId = codedId;
+                        }
+                        else
+                        {
+                            var match = pseudonyms.FirstOrDefault(kv =>
+                                string.Equals(kv.Key, row.candidateEmail, StringComparison.OrdinalIgnoreCase));
+                            if (!string.IsNullOrEmpty(match.Value))
+                            {
+                                row.candidateCodedId = match.Value;
+                            }
+                        }
+                    }
+
+                    row.candidateEmail = null;
+                }
+
+                return rows;
             }
             catch (SqlTypeException ex)
             {

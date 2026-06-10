@@ -2610,20 +2610,18 @@ button.dm-v4-iv-cv-link {
     display: grid;
     width: 100%;
     box-sizing: border-box;
-    /* Interviewer | CV | Verdict | Future | Insight | Ch insights | Cap | Rate | Surcharge | RB vet | Client vet | Actions */
+    /* Interviewer | Company | CV | Verdict | Outcomes | Cap | Rate | Surcharge | RB vet | Client vet */
     grid-template-columns:
-        minmax(0, 1.55fr)
-        minmax(0, 0.95fr)
-        minmax(0, 1.15fr)
-        36px
-        44px
-        minmax(0, 0.62fr)
-        minmax(0, 0.78fr)
+        minmax(240px, 1.75fr)
+        minmax(0, 0.72fr)
+        minmax(0, 0.9fr)
+        minmax(0, 1.1fr)
+        minmax(0, 0.82fr)
         minmax(0, 0.72fr)
         minmax(0, 0.68fr)
+        minmax(0, 0.62fr)
         76px
-        84px
-        32px;
+        84px;
     align-items: start;
     border-bottom: 1px solid var(--dm-border);
 }
@@ -2645,14 +2643,13 @@ button.dm-v4-iv-cv-link {
     max-width: 100%;
     column-gap: 10px;
     grid-template-columns:
-        minmax(0, 1.35fr)
-        minmax(0, 0.95fr)
-        minmax(0, 1.3fr)
-        minmax(0, 0.6fr)
-        minmax(0, 0.65fr)
-        minmax(0, 0.85fr)
-        minmax(0, 1fr)
-        minmax(0, 1.1fr) !important;
+        minmax(240px, 1.4fr)
+        minmax(0, 0.8fr)
+        minmax(0, 0.9fr)
+        minmax(0, 1.1fr)
+        minmax(0, 0.78fr)
+        minmax(0, 0.78fr)
+        minmax(0, 0.95fr) !important;
 }
 
 .dm-v4-page--client-share .dm-v4-block--order-interviewers-client .dm-v4-iv-grid.dm-v4-iv-grid--client {
@@ -2678,8 +2675,9 @@ button.dm-v4-iv-cv-link {
 .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:first-child,
 .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:nth-child(2),
 .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:nth-child(3),
-.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:nth-child(6),
-.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:nth-child(7) {
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:nth-child(4),
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:nth-child(5),
+.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client.dm-v4-iv-grid--head > span:nth-child(6) {
     text-align: left;
 }
 
@@ -2690,14 +2688,6 @@ button.dm-v4-iv-cv-link {
 
 .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-company {
     max-width: none;
-}
-
-.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-cell--future,
-.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-cell--insight-all,
-.dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-cell--stats {
-    align-self: center;
-    justify-content: center;
-    text-align: center;
 }
 
 .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client .dm-v4-iv-cell--client-vet {
@@ -2744,7 +2734,7 @@ button.dm-v4-iv-cv-link {
     flex-direction: column;
     gap: 2px;
     width: 100%;
-    max-width: 200px;
+    max-width: 260px;
     margin-top: 2px;
 }
 
@@ -2757,6 +2747,34 @@ button.dm-v4-iv-cv-link {
     text-overflow: ellipsis;
     max-width: 100%;
     cursor: default;
+}
+
+.dm-v4-iv-meta__line--actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--dm-text-dim);
+    font-size: 11px;
+    line-height: 1.35;
+    cursor: default;
+    overflow: visible;
+}
+
+.dm-v4-iv-meta__future {
+    font-size: 11px;
+    color: var(--dm-text-dim);
+}
+
+.dm-v4-iv-meta__future .dm-v4-iv-future-count {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--dm-text-mid);
+}
+
+.dm-v4-iv-meta__sep {
+    color: var(--dm-text-dim);
+    opacity: 0.7;
+    user-select: none;
 }
 
 .dm-v4-iv-grid--head {
@@ -2806,10 +2824,6 @@ button.dm-v4-iv-cv-link {
 .dm-v4-iv-cell {
     padding: 12px 10px;
     min-width: 0;
-}
-
-.dm-v4-iv-cell--actions {
-    text-align: right;
 }
 
 .dm-v4-iv-empty {
@@ -5106,26 +5120,6 @@ button.dm-v4-money-pill {
     font-weight: 600 !important;
 }
 
-.dm-v4-iv-cell--future {
-    align-self: center;
-}
-
-.dm-v4-iv-cell--insight-all {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    align-self: center;
-    padding-right: 0 !important;
-}
-
-.dm-v4-iv-grid--head > span:nth-child(5) {
-    text-align: center;
-    padding-left: 4px;
-    padding-right: 4px;
-    line-height: 1.2;
-    white-space: normal;
-}
-
 .dm-v4-iv-insights-btn {
     display: inline-flex;
     align-items: center;
@@ -5139,6 +5133,13 @@ button.dm-v4-money-pill {
     color: var(--dm-accent, #4f46e5);
     cursor: pointer;
     line-height: 1;
+    flex-shrink: 0;
+}
+
+.dm-v4-iv-insights-btn--inline {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
 }
 
 .dm-v4-iv-insights-btn:hover {
@@ -5146,25 +5147,13 @@ button.dm-v4-money-pill {
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
-.dm-v4-iv-insights-btn--global .fa {
-    font-size: 12px;
-}
-
-.dm-v4-iv-stats-link {
+.dm-v4-iv-insights-btn--global .fa,
+.dm-v4-iv-insights-btn--channel .fa {
     font-size: 11px;
-    font-weight: 600;
-    color: var(--dm-accent, #2563eb);
-    text-decoration: none;
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-family: inherit;
-    line-height: 1.3;
 }
 
-.dm-v4-iv-stats-link:hover {
-    text-decoration: underline;
+.dm-v4-iv-insights-btn--inline .fa {
+    font-size: 10px;
 }
 
 .dm-v4-mono {
@@ -5172,10 +5161,38 @@ button.dm-v4-money-pill {
     font-variant-numeric: tabular-nums;
 }
 
-.dm-v4-iv-cell--future .dm-v4-iv-future-count {
-    display: inline-block;
-    min-width: 1ch;
-    font-size: 13px;
+.dm-v4-iv-cell--outcomes {
+    align-self: center;
+    min-width: 0;
+}
+
+.dm-v4-iv-outcomes {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.dm-v4-iv-outcomes__link {
+    display: block;
+    font-size: 11px;
     font-weight: 600;
-    color: var(--dm-text);
+    line-height: 1.35;
+    color: var(--dm-accent, #4f46e5);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dm-v4-iv-outcomes__link:hover {
+    text-decoration: underline;
+}
+
+.dm-v4-iv-outcomes__empty {
+    display: block;
+    font-size: 11px;
+    line-height: 1.35;
+    color: var(--dm-text-dim);
+    white-space: nowrap;
 }
