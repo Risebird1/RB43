@@ -39,8 +39,14 @@ namespace Risebird.Entities.ViewModel
             limitedPolicy;
 
         /// <summary>DHI cell label when no effective cap applies (free policy, or limited without lock and no row cap).</summary>
-        public static bool ShowUnlimited(bool limitedPolicy, int? interviewCapacity, bool lockOn) =>
-            !limitedPolicy || (!lockOn && !interviewCapacity.HasValue);
+        public static bool ShowUnlimited(bool limitedPolicy, int? interviewCapacity, bool lockOn)
+        {
+            if (IsExplicitZeroCap(interviewCapacity)) return false;
+            if (interviewCapacity.HasValue) return false;
+            if (!limitedPolicy) return true;
+            if (lockOn) return false;
+            return true;
+        }
 
         public static bool ShowUnlimited(bool limitedPolicy, int? interviewCapacity) =>
             ShowUnlimited(limitedPolicy, interviewCapacity, false);

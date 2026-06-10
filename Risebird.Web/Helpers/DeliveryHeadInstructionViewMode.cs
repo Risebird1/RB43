@@ -172,8 +172,8 @@ namespace Risebird.Web.Helpers
             {
                 userId = iv.UserId,
                 nickName = iv.NickName ?? string.Empty,
-                codedCvLink = iv.CodedResumeLink ?? string.Empty,
-                cvCode = !string.IsNullOrEmpty(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : string.Empty,
+                codedCvLink = DmIvCodedCvHelper.GetDisplayCodedCvLink(iv.CodedResumeLink) ?? string.Empty,
+                cvCode = DmIvCodedCvHelper.HasDisplayCodedCv(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : string.Empty,
                 aiVerdict = iv.AIVerdict ?? string.Empty,
                 aiScore = iv.AIScreeningScore,
                 aiReasoning = ExtractClientVisibleAiReasoning(iv.OpenAIScreeningResponse) ?? string.Empty,
@@ -188,8 +188,8 @@ namespace Risebird.Web.Helpers
             return new
             {
                 ok = true,
-                codedCvLink = iv.CodedResumeLink ?? string.Empty,
-                cvCode = !string.IsNullOrEmpty(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : string.Empty,
+                codedCvLink = DmIvCodedCvHelper.GetDisplayCodedCvLink(iv.CodedResumeLink) ?? string.Empty,
+                cvCode = DmIvCodedCvHelper.HasDisplayCodedCv(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : string.Empty,
                 aiVerdict = iv.AIVerdict ?? string.Empty,
                 aiScore = iv.AIScreeningScore,
                 aiReasoning = ExtractClientVisibleAiReasoning(iv.OpenAIScreeningResponse) ?? string.Empty

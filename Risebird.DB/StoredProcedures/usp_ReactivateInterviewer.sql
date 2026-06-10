@@ -31,9 +31,9 @@ BEGIN
     WHERE UserId = @UserId
       AND RedMarkerStatus = 3
 
-    UPDATE TransInterviewer
-    SET IsActive = 1
-    WHERE UserId = @UserId
+    -- NOTE: We intentionally do NOT reactivate the interviewer in their existing skill channels.
+    -- Reactivation only restores the user account; the interviewer's TransInterviewer (skill
+    -- channel) memberships are left as-is and must be re-enabled deliberately if required.
 
     INSERT INTO RedMarkerStatusDetails (InterviewerUserid, IRFId, Comment, Type, CreatedOn, CreatedBy, Status)
     VALUES (@UserId, 0, 'Reactivated by admin', 'TotalInterview', GETDATE(), @ReactivatedBy, 0)

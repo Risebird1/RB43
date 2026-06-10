@@ -9,6 +9,9 @@
     ViewData["Title"] = "Total Interviews Details";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    // Reactivating an inactivated interviewer is restricted to the Admin profile only.
+    string profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
+    bool canReactivate = profileName == "Admin";
 }
 <script>
     var Header = "<div>Total Interviews Details</div>";
@@ -174,7 +177,7 @@
                                                                         </svg>
                                                                     </span>
                                                                 </button>
-                                                                @if (ViewBag.Type == "Removed")
+                                                                @if (ViewBag.Type == "Removed" && canReactivate)
                                                                 {
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Reactivate Interviewer" style="width:27px!important;height:27px!important;background:#28a745 !important;border-color:#28a745 !important;">
                                                                         <span onclick="javascript:reactivateInterviewer('@item.UserId');" title="Reactivate Interviewer" class="mdc-fab__icon material-icons">

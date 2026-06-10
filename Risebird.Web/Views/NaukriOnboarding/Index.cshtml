@@ -14,16 +14,33 @@
     string selAutoStatus = ViewBag.AutomationStatus as string ?? string.Empty;
     string selCallStatus = ViewBag.CallStatus as string ?? string.Empty;
     string selDisposition = ViewBag.Disposition as string ?? string.Empty;
+    string selFunnelStage = ViewBag.FunnelStage as string ?? string.Empty;
     string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
     bool canDelete = profileName == "Admin" || profileName == "SupportAdmin";
     int MaxCallsTotal = 5;
 
+    var funnelCounts = ViewBag.FunnelCounts as Dictionary<string, int> ?? new Dictionary<string, int>();
+    // Ordered funnel stages: (value, display label). "_none_" maps to records with no stage yet.
+    var funnelStages = new (string Value, string Key, string Label)[] {
+        ("_none_",             "New",                "New"),
+        ("Parsed",             "Parsed",             "Parsed"),
+        ("MAGMapped",          "MAGMapped",          "MAG Mapped"),
+        ("InvitationSent",     "InvitationSent",     "Invitation Sent"),
+        ("IntentCollection",   "IntentCollection",   "Intent Collection"),
+        ("IntentConfirmed",    "IntentConfirmed",    "Intent Confirmed"),
+        ("EmploymentVerified", "EmploymentVerified", "Employment Verified"),
+        ("ResumeFitment",      "ResumeFitment",      "Resume Fitment"),
+        ("AcknowledgementSent","AcknowledgementSent","Acknowledgement Sent"),
+        ("Onboarded",          "Onboarded",          "Onboarded")
+    };
+
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selName)
                    || !string.IsNullOrEmpty(selMag) || !string.IsNullOrEmpty(selSource)
                    || !string.IsNullOrEmpty(selAutoStatus)
                    || !string.IsNullOrEmpty(selCallStatus) || !string.IsNullOrEmpty(selDisposition)
+                   || !string.IsNullOrEmpty(selFunnelStage)
                    || !string.IsNullOrEmpty(selDateFrom) || !string.IsNullOrEmpty(selDateTo);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
@@ -39,9 +56,42 @@
         if (!string.IsNullOrEmpty(selAutoStatus)) q += $"&automationStatus={Uri.EscapeDataString(selAutoStatus)}";
         if (!string.IsNullOrEmpty(selCallStatus)) q += $"&callStatus={Uri.EscapeDataString(selCallStatus)}";
         if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
+        if (!string.IsNullOrEmpty(selFunnelStage)) q += $"&funnelStage={Uri.EscapeDataString(selFunnelStage)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return Url.Action("Index", "NaukriOnboarding") + q;
+    }
+
+    // Build a URL that toggles the funnel-stage filter while preserving all other filters.
+    string funnelUrl(string stageValue)
+    {
+        var q = $"?page=1&pageSize={pageSize}";
+        if (!string.IsNullOrEmpty(selStatus)) q += $"&status={Uri.EscapeDataString(selStatus)}";
+        if (!string.IsNullOrEmpty(selName)) q += $"&candidateName={Uri.EscapeDataString(selName)}";
+        if (!string.IsNullOrEmpty(selMag)) q += $"&magName={Uri.EscapeDataString(selMag)}";
+        if (!string.IsNullOrEmpty(selSource)) q += $"&source={Uri.EscapeDataString(selSource)}";
+        if (!string.IsNullOrEmpty(selAutoStatus)) q += $"&automationStatus={Uri.EscapeDataString(selAutoStatus)}";
+        if (!string.IsNullOrEmpty(selCallStatus)) q += $"&callStatus={Uri.EscapeDataString(selCallStatus)}";
+        if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
+        // Toggle: clicking the active stage clears the filter.
+        if (!string.IsNullOrEmpty(stageValue) && stageValue != selFunnelStage) q += $"&funnelStage={Uri.EscapeDataString(stageValue)}";
+        if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
+        if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
+        return Url.Action("Index", "NaukriOnboarding") + q;
+    }
+
+    string funnelLabel(string stage)
+    {
+        if (string.IsNullOrWhiteSpace(stage)) return "New";
+        foreach (var fs in new (string Key, string Label)[] {
+            ("New","New"), ("Parsed","Parsed"), ("MAGMapped","MAG Mapped"), ("InvitationSent","Invitation Sent"),
+            ("IntentCollection","Intent Collection"), ("IntentConfirmed","Intent Confirmed"),
+            ("EmploymentVerified","Employment Verified"), ("ResumeFitment","Resume Fitment"),
+            ("AcknowledgementSent","Acknowledgement Sent"), ("Onboarded","Onboarded") })
+        {
+            if (string.Equals(fs.Key, stage, StringComparison.OrdinalIgnoreCase)) return fs.Label;
+        }
+        return stage;
     }
 }
 
@@ -60,6 +110,18 @@
     .badge { width:auto;padding:5px!important;}
     .nk-stat .stat-value { font-size:1.5rem; font-weight:700; }
     .nk-stat .stat-label { font-size:13px; font-weight:500; color:#495057; }
+
+    .nk-funnel-panel { border-left:3px solid #0d6efd !important; }
+    .nk-funnel-title { font-size:12.5px; font-weight:700; color:#334155; text-transform:uppercase; letter-spacing:.03em; }
+    .nk-funnel-total { font-size:11px; font-weight:600; color:#0d6efd; background:#eaf1ff; border:1px solid #cfe0ff; border-radius:20px; padding:2px 10px; }
+    .nk-funnel-divider { width:1px; align-self:stretch; background:#e2e8f0; margin:0 2px; }
+    .nk-funnel-pill { display:inline-flex; align-items:center; gap:6px; text-decoration:none; background:#f8fafc; border:1px solid #e2e8f0; border-radius:20px; padding:3px 6px 3px 11px; transition:all .12s; }
+    .nk-funnel-pill:hover { background:#eef2f7; border-color:#cbd5e1; }
+    .nk-funnel-pill.active { background:#0d6efd; border-color:#0d6efd; box-shadow:0 2px 6px rgba(13,110,253,.25); }
+    .nk-funnel-pill-label { font-size:11.5px; font-weight:500; color:#475569; white-space:nowrap; }
+    .nk-funnel-pill.active .nk-funnel-pill-label { color:#fff; }
+    .nk-funnel-pill-count { font-size:11px; font-weight:700; color:#1e293b; background:#fff; border:1px solid #e2e8f0; border-radius:12px; min-width:22px; text-align:center; padding:1px 6px; }
+    .nk-funnel-pill.active .nk-funnel-pill-count { color:#0d6efd; border-color:#fff; }
 
     #nkTable { table-layout:auto; width:100%; min-width:1200px; font-size:12px; }
     #nkTable.table-sm > thead > tr > th, #nkTable.table-sm > tbody > tr > td { padding:0.3rem 0.45rem; vertical-align:top; }
@@ -214,18 +276,39 @@
                 @if (TempData["Success"] != null) { <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i>@TempData["Success"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
                 @if (TempData["Error"] != null) { <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
 
-                @{ var cardOpen = Model.Count(r => string.Equals(r.Status, "Open", StringComparison.OrdinalIgnoreCase));
-                   var cardIP = Model.Count(r => string.Equals(r.Status, "InProgress", StringComparison.OrdinalIgnoreCase));
-                   var cardVerified = Model.Count(r => string.Equals(r.Status, "Verified", StringComparison.OrdinalIgnoreCase));
-                   var cardOnboarded = Model.Count(r => string.Equals(r.Status, "Onboarded", StringComparison.OrdinalIgnoreCase));
-                   var cardRejected = Model.Count(r => string.Equals(r.Status, "Rejected", StringComparison.OrdinalIgnoreCase)); }
+                @{
+                   // Operational ticket-status cards (Open / In Progress / Closed). Counts are for the
+                   // current page; the global pipeline distribution lives in the Funnel Stages row below.
+                   Func<Risebird.Entities.ViewModel.NaukriProspectiveInterviewerVM, string> ticketOf = r => string.IsNullOrWhiteSpace(r.TicketStatus) ? "Open" : r.TicketStatus;
+                   var cardOpen = Model.Count(r => string.Equals(ticketOf(r), "Open", StringComparison.OrdinalIgnoreCase));
+                   var cardIP = Model.Count(r => string.Equals(ticketOf(r), "InProgress", StringComparison.OrdinalIgnoreCase));
+                   var cardClosed = Model.Count(r => string.Equals(ticketOf(r), "Closed", StringComparison.OrdinalIgnoreCase));
+                   var cardOnboarded = funnelCounts.TryGetValue("Onboarded", out var onbCnt) ? onbCnt : 0; }
                 <div class="row g-3 mb-4">
                     <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
                     <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
                     <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-success">@cardVerified</div><div class="stat-label">Verified</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-secondary">@cardClosed</div><div class="stat-label">Closed</div></div></div>
                     <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value" style="color:#0f5132;">@cardOnboarded</div><div class="stat-label">Onboarded</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-danger">@cardRejected</div><div class="stat-label">Rejected</div></div></div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4 nk-funnel-panel">
+                    <div class="card-body py-2 px-3">
+                        <div class="d-flex align-items-center flex-wrap gap-2">
+                            <span class="nk-funnel-title"><i class="fas fa-filter me-1"></i>Funnel Stages</span>
+                            <span class="nk-funnel-total" title="Sum across all stages equals the @(hasFilters ? "matched" : "total") records">@totalCount total</span>
+                            <span class="nk-funnel-divider"></span>
+                            @foreach (var fs in funnelStages)
+                            {
+                                int c = funnelCounts.TryGetValue(fs.Key, out var cv) ? cv : 0;
+                                bool active = string.Equals(selFunnelStage, fs.Value, StringComparison.OrdinalIgnoreCase);
+                                <a href="@funnelUrl(fs.Value)" class="nk-funnel-pill @(active ? "active" : "")" title="@fs.Label">
+                                    <span class="nk-funnel-pill-label">@fs.Label</span>
+                                    <span class="nk-funnel-pill-count">@c</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
                 </div>
 
                 <form asp-action="Index" asp-controller="NaukriOnboarding" method="get" id="filterForm">
@@ -234,13 +317,10 @@
                     <div class="card border-0 shadow-sm mb-3">
                         <div class="card-body py-2 px-3">
                             <div class="d-flex align-items-center gap-2" style="flex-wrap:nowrap;width:100%;">
-                                <select name="status" class="form-select nk-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()">
+                                <select name="status" class="form-select nk-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()" title="Operational ticket status">
                                     <option value="">All statuses</option>
                                     @if (selStatus == "Open") { <option value="Open" selected>Open</option> } else { <option value="Open">Open</option> }
                                     @if (selStatus == "InProgress") { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option> }
-                                    @if (selStatus == "Verified") { <option value="Verified" selected>Verified</option> } else { <option value="Verified">Verified</option> }
-                                    @if (selStatus == "Onboarded") { <option value="Onboarded" selected>Onboarded</option> } else { <option value="Onboarded">Onboarded</option> }
-                                    @if (selStatus == "Rejected") { <option value="Rejected" selected>Rejected</option> } else { <option value="Rejected">Rejected</option> }
                                     @if (selStatus == "Closed") { <option value="Closed" selected>Closed</option> } else { <option value="Closed">Closed</option> }
                                 </select>
                                 <input type="text" name="candidateName" class="form-control nk-filter-control" placeholder="Candidate name..." style="flex:1 1 0;min-width:130px;" value="@selName" />
@@ -253,15 +333,15 @@
                                 <select name="automationStatus" class="form-select nk-filter-control" style="flex:1 1 0;min-width:130px;max-width:165px;" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All automation</option>
                                     @{ var autoOpts = new[] {
-                                        ("_any_", "Any (automated)"),
-                                        ("_none_", "Not automated"),
-                                        ("EmailSent", "Email Sent"),
-                                        ("CallTriggered", "Calling"),
-                                        ("AwaitingRetry", "Retry Pending"),
-                                        ("Cold", "Cold"),
-                                        ("ManualRequired", "Manual Required"),
-                                        ("Completed", "Completed"),
-                                        ("Error", "Error")
+                                        ("_any_", "Picked up by automation"),
+                                        ("_none_", "Not yet picked up"),
+                                        ("EmailSent", "Email sent \u2013 awaiting reply"),
+                                        ("CallTriggered", "AI call in progress"),
+                                        ("AwaitingRetry", "Waiting to retry"),
+                                        ("Cold", "No response (cold)"),
+                                        ("ManualRequired", "Needs manual review"),
+                                        ("Completed", "Automation completed"),
+                                        ("Error", "Processing error")
                                     };}
                                     @foreach (var (val, label) in autoOpts)
                                     {
@@ -282,6 +362,13 @@
                                     @foreach (var (val, label) in dispOpts)
                                     {
                                         if (selDisposition == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
+                                    }
+                                </select>
+                                <select name="funnelStage" class="form-select nk-filter-control" style="flex:1 1 0;min-width:130px;max-width:175px;" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">All funnel stages</option>
+                                    @foreach (var fs in funnelStages)
+                                    {
+                                        if (selFunnelStage == fs.Value) { <option value="@fs.Value" selected>@fs.Label</option> } else { <option value="@fs.Value">@fs.Label</option> }
                                     }
                                 </select>
                                 <input type="date" name="dateFrom" class="form-control nk-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
@@ -316,17 +403,18 @@
                                             <th class="col-mag">MAG</th><th class="col-skills">Key Skills</th>
                                             <th style="min-width:90px;">Call</th>
                                             <th style="min-width:80px;">Auto</th>
+                                            <th style="min-width:120px;">Funnel Stage</th>
                                             <th class="col-status">Status</th><th class="col-actions">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach (var r in Model)
                                         {
-                                            string rStatus = r.Status?.ToLower() ?? "open";
+                                            string rTicket = string.IsNullOrWhiteSpace(r.TicketStatus) ? "Open" : r.TicketStatus;
+                                            string rStatus = rTicket.ToLower();
                                             string statusCss = rStatus switch {
                                                 "open" => "status-open", "inprogress" => "status-inprogress",
-                                                "verified" => "status-verified", "onboarded" => "status-onboarded",
-                                                "rejected" => "status-rejected", "closed" => "status-closed",
+                                                "closed" => "status-closed",
                                                 _ => "bg-light border" };
 
                                             <tr id="row-@r.Id">
@@ -393,10 +481,10 @@
                                                     @if (!string.IsNullOrEmpty(r.AutomationStatus))
                                                     {
                                                         string autoBg = r.AutomationStatus switch {
-                                                            "EmailSent" or "Completed" => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
+                                                            "EmailSent" or "Completed" or "AwaitingAcknowledgement" => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
                                                             "Cold" => "background:#f8d7da;color:#842029;border:1px solid #dc3545;",
                                                             "ManualRequired" or "Error" => "background:#fff3cd;color:#856404;border:1px solid #ffc107;",
-                                                            "CallTriggered" or "ParsingResume" or "SelectingChannel" or "SendingEmail" => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
+                                                            "CallTriggered" or "ParsingResume" or "ResolvingMAG" or "SelectingChannel" or "SendingEmail" or "AutoOnboarding" => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
                                                             "AwaitingRetry" or "CallFailed" => "background:#e2e3e5;color:#41464b;border:1px solid #6c757d;",
                                                             _ => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
                                                         };
@@ -405,17 +493,20 @@
                                                             && string.IsNullOrEmpty(r.PlivoCallStatus)
                                                             && string.IsNullOrEmpty(r.ProspectResponse);
                                                         string autoLabel = r.AutomationStatus switch {
-                                                            "ParsingResume" => "Parsing",
-                                                            "SelectingChannel" => "Selecting",
-                                                            "CallTriggered" => "Calling",
-                                                            "CallFailed" => "Call Failed",
-                                                            "AwaitingRetry" => "Retry Pending",
-                                                            "SendingEmail" => "Emailing",
-                                                            "EmailSent" => emailSentAwaitingResponse ? "Awaiting Reply" : "Email Sent",
-                                                            "ManualRequired" => "Manual",
-                                                            "Cold" => "Cold",
-                                                            "Completed" => "Done",
-                                                            "Error" => "Error",
+                                                            "ParsingResume" => "Parsing resume",
+                                                            "ResolvingMAG" => "Resolving MAG",
+                                                            "SelectingChannel" => "Resolving MAG",
+                                                            "CallTriggered" => "AI calling",
+                                                            "CallFailed" => "Call failed",
+                                                            "AwaitingRetry" => "Waiting to retry",
+                                                            "SendingEmail" => "Sending email",
+                                                            "EmailSent" => emailSentAwaitingResponse ? "Awaiting reply" : "Email sent",
+                                                            "AutoOnboarding" => "Onboarding",
+                                                            "AwaitingAcknowledgement" => "Awaiting acceptance",
+                                                            "ManualRequired" => "Needs manual review",
+                                                            "Cold" => "No response",
+                                                            "Completed" => "Completed",
+                                                            "Error" => "Processing error",
                                                             _ => r.AutomationStatus
                                                         };
                                                         <span class="intent-badge" style="@autoBg font-size:9.5px;" title="Automation: @r.AutomationStatus">
@@ -431,8 +522,26 @@
                                                         <span class="text-muted" style="font-size:9px;">—</span>
                                                     }
                                                 </td>
+                                                <td style="font-size:11px;white-space:nowrap;">
+                                                    @{
+                                                        string fStage = string.IsNullOrWhiteSpace(r.FunnelStage) ? "New" : r.FunnelStage;
+                                                        string fCss = fStage switch {
+                                                            "Onboarded"           => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
+                                                            "AcknowledgementSent" => "background:#e9d8fd;color:#553c9a;border:1px solid #805ad5;",
+                                                            "ResumeFitment"       => "background:#fde6d3;color:#9c4221;border:1px solid #ed8936;",
+                                                            "EmploymentVerified"  => "background:#d1f0e0;color:#1c6b47;border:1px solid #28a745;",
+                                                            "IntentConfirmed"     => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
+                                                            "IntentCollection"    => "background:#e0ecff;color:#1e40af;border:1px solid #3b82f6;",
+                                                            "InvitationSent"      => "background:#e2e3ff;color:#3730a3;border:1px solid #6366f1;",
+                                                            "MAGMapped"           => "background:#fde9c8;color:#92660e;border:1px solid #e6a817;",
+                                                            "Parsed"              => "background:#d0f0f5;color:#0c5460;border:1px solid #17a2b8;",
+                                                            _                      => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
+                                                        };
+                                                    }
+                                                    <span class="intent-badge" style="@fCss font-size:10px;white-space:nowrap;">@funnelLabel(fStage)</span>
+                                                </td>
                                                 <td class="col-status">
-                                                    <span class="intent-badge @statusCss" style="font-size:12px;white-space:break-spaces;">@(r.Status ?? "Open")</span>
+                                                    <span class="intent-badge @statusCss" style="font-size:12px;white-space:break-spaces;">@(string.Equals(rTicket, "InProgress", StringComparison.OrdinalIgnoreCase) ? "In Progress" : rTicket)</span>
                                                     @if (r.ResumeAIAnalysisCompleted == true)
                                                     {
                                                         string aiBadgeClass = "text-info";
@@ -533,7 +642,6 @@
                 <div class="d-flex align-items-center gap-2 flex-wrap mgm-status-btns" id="mgmStatusActions">
                     <span class="text-muted" style="font-size:12px;">Change to</span>
                     <button type="button" class="btn btn-outline-primary btn-sm btn-mgm-status" data-status="InProgress"><i class="fas fa-hourglass-half me-1"></i>In Progress</button>
-                    <button type="button" class="btn btn-outline-danger btn-sm btn-mgm-status" data-status="Rejected"><i class="fas fa-ban me-1"></i>Reject</button>
                     <button type="button" class="btn btn-outline-secondary btn-sm btn-mgm-status" data-status="Closed"><i class="fas fa-times-circle me-1"></i>Close</button>
                     <button type="button" class="btn btn-outline-warning btn-sm btn-mgm-status" data-status="Open"><i class="fas fa-redo me-1"></i>Reopen</button>
                 </div>
@@ -797,21 +905,41 @@
                                 </div>
                             </div>
 
-                            <!-- M3: Onboard Interviewer -->
+                            <!-- M3: Send Acknowledgement -->
                             <div class="mgm-action-card pending disabled" id="mStep3Card">
                                 <div class="d-flex align-items-start gap-3">
-                                    <span class="mgm-step-number pending" id="mStep3Number" style="background:#198754;color:#fff;font-size:10px;"><i class="fas fa-user-plus"></i></span>
+                                    <span class="mgm-step-number pending" id="mStep3Number" style="background:#0d6efd;color:#fff;font-size:11px;">AK</span>
                                     <div class="flex-grow-1">
                                         <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
                                             <div class="flex-grow-1" style="min-width:180px;">
-                                                <strong style="font-size:13px;">Onboard Interviewer</strong>
-                                                <div class="text-muted mt-1" style="font-size:11.5px;" id="mStep3Subtitle">Create interviewer profile, map to Assessment Group, and send acknowledgement email</div>
+                                                <strong style="font-size:13px;">Send Acknowledgement</strong>
+                                                <div class="text-muted mt-1" style="font-size:11.5px;" id="mStep3Subtitle">Creates the interviewer profile, maps to the Assessment Group &amp; channels, and emails the acknowledgement (accept / decline) to the interviewer</div>
                                             </div>
                                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                                <button type="button" class="btn btn-success btn-sm mgm-action-btn" id="btnManualOnboard"><i class="fas fa-user-plus me-1"></i>Onboard</button>
+                                                <button type="button" class="btn btn-primary btn-sm mgm-action-btn" id="btnManualOnboard"><i class="fas fa-paper-plane me-1"></i>Send Acknowledgement</button>
+                                                <button type="button" class="btn btn-outline-primary btn-sm mgm-action-btn" id="btnResendAck" style="display:none;"><i class="fas fa-redo me-1"></i>Resend</button>
                                             </div>
                                         </div>
                                         <div class="mgm-result-block" id="mStep3Result" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- M4: Onboarding -->
+                            <div class="mgm-action-card pending disabled" id="mStep4Card">
+                                <div class="d-flex align-items-start gap-3">
+                                    <span class="mgm-step-number pending" id="mStep4Number" style="background:#198754;color:#fff;font-size:10px;"><i class="fas fa-user-plus"></i></span>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                                            <div class="flex-grow-1" style="min-width:180px;">
+                                                <strong style="font-size:13px;">Onboarding</strong>
+                                                <div class="text-muted mt-1" style="font-size:11.5px;" id="mStep4Subtitle">Onboarding completes once the interviewer accepts the acknowledgement email</div>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <button type="button" class="btn btn-outline-success btn-sm mgm-action-btn" id="btnCheckOnboarding"><i class="fas fa-sync-alt me-1"></i>Refresh Status</button>
+                                            </div>
+                                        </div>
+                                        <div class="mgm-result-block" id="mStep4Result" style="display:none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -922,7 +1050,7 @@
         $('#mgmSubject').text(r.subject || '\u2014');
         var skillsFull = r.keySkills || '\u2014';
         $('#mgmSkills').text(skillsFull).attr('title', skillsFull);
-        updateStatusBadge(r.status || 'Open');
+        updateStatusBadge(r.ticketStatus || 'Open');
 
         $('#mgmParsedEmail').text(r.parsedEmail || '\u2014');
         $('#mgmParsedPhone').text(r.parsedPhone || '\u2014');
@@ -1005,16 +1133,19 @@
         $('#manualStepsBody').hide();
         $('#manualToggleIcon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
         $('#btnToggleManualSteps').html('<i class="fas fa-chevron-down me-1" id="manualToggleIcon"></i>Expand');
-        ['mStep1Card','mStep2Card','mStep3Card'].forEach(function(id){ $('#'+id).removeClass('completed failed disabled').addClass('pending'); });
-        $('#mStep2Card, #mStep3Card').addClass('disabled');
-        $('#mStep1Result, #mStep2Result, #mStep3Result').hide().empty();
+        ['mStep1Card','mStep2Card','mStep3Card','mStep4Card'].forEach(function(id){ $('#'+id).removeClass('completed failed disabled').addClass('pending'); });
+        $('#mStep2Card, #mStep3Card, #mStep4Card').addClass('disabled');
+        $('#mStep1Result, #mStep2Result, #mStep3Result, #mStep4Result').hide().empty();
         $('#btnTriggerEV').prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment').show();
         $('#btnRetryEV').hide();
         $('#btnRunAIAnalysis').prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Run AI Analysis');
-        $('#btnManualOnboard').prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Onboard');
+        $('#btnManualOnboard').prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Send Acknowledgement');
+        $('#btnResendAck').hide();
+        $('#btnCheckOnboarding').prop('disabled',false).html('<i class="fas fa-sync-alt me-1"></i>Refresh Status');
         $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
         $('#mStep2Subtitle').html('AI evaluates the resume against the MAG\'s specialization');
-        $('#mStep3Subtitle').html('Create interviewer profile, map to Assessment Group, and send acknowledgement email');
+        $('#mStep3Subtitle').html('Creates the interviewer profile, maps to the Assessment Group &amp; channels, and emails the acknowledgement (accept / decline) to the interviewer');
+        $('#mStep4Subtitle').html('Onboarding completes once the interviewer accepts the acknowledgement email');
     }
 
     /* ── MAG edit dropdown (Step 2) ──────────────────────────────── */
@@ -1261,7 +1392,7 @@
         var status = $(this).data('status'); if (!currentRecordId) return;
         $.ajax({ url: '@Url.Action("UpdateStatus", "NaukriOnboarding")', type: 'POST',
             data: { __RequestVerificationToken: verificationToken, id: currentRecordId, status: status },
-            success: function (res) { if (res.success) { updateStatusBadge(res.status); if (currentRecord) currentRecord.status = res.status; } }
+            success: function (res) { if (res.success) { updateStatusBadge(res.status); if (currentRecord) currentRecord.ticketStatus = res.status; } }
         });
     });
 
@@ -1603,22 +1734,17 @@
     /* ══════════ Manual Onboarding Section ══════════ */
 
     function showManualSectionIfReady() {
+        // The manual onboarding controls (EV → AI → Send Acknowledgement → Onboarding) are always
+        // available so an operator can run them on demand; the banner only highlights cases that
+        // explicitly need manual help.
+        $('#manualOnboardSection').show();
         if (!currentRecord) return;
         var r = currentRecord;
-        var step1Ok = r.resumeParseCompleted === true && r.isExistingInterviewer !== true;
-        var step2Ok = r.resolvedAssessmentGroupId > 0 && ($('#step2Card').hasClass('completed') || r.applicationLink || r.invitationEmailSent === true);
-
         var pref = (r.plivoOnboardingPreference || '').toLowerCase();
         var resp = (r.prospectResponse || '');
         var needsManual = pref === 'manual_onboarding' || pref === 'need_clarity' || pref === 'facing_errors'
                        || resp === 'ManualSupport' || resp === 'NeedClarity';
-
-        if (step1Ok && step2Ok) {
-            $('#manualOnboardSection').show();
-        } else if (step1Ok && needsManual) {
-            $('#manualOnboardSection').show();
-            $('#manualOnboardBanner').show();
-        }
+        if (needsManual) $('#manualOnboardBanner').show();
     }
 
     function syncManualOnboarding(r, step1Done, step2Done) {
@@ -1642,12 +1768,8 @@
             reason = 'The prospect clicked <strong>Need Clarity</strong> in the invitation email.';
         }
 
-        // Always show the manual section if step 1 is done (operator may choose manual onboarding at any time)
-        if (step1Done && step2Done) {
-            $('#manualOnboardSection').show();
-        } else if (step1Done && needsManual) {
-            $('#manualOnboardSection').show();
-        }
+        // The manual onboarding section is always available so an operator can run the steps on demand.
+        $('#manualOnboardSection').show();
 
         if (needsManual) {
             $('#manualOnboardBanner').show();
@@ -1680,11 +1802,29 @@
             mMarkStep(2, isPositive ? 'completed' : 'failed', aiHtml);
         }
 
+        // M3 (Send Acknowledgement): profile created + acknowledgement email sent.
         if (r.onboardingCompleted === true) {
-            var obHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Interviewer onboarded successfully!</span>';
-            if (r.onboardedUserId) obHtml += '<br/><strong>UserId:</strong> ' + r.onboardedUserId;
-            if (r.onboardedProfileId) obHtml += ' &mdash; <strong>ProfileId:</strong> ' + r.onboardedProfileId;
-            mMarkStep(3, 'completed', obHtml);
+            var ackHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Profile created &amp; mapped.</span>';
+            if (r.onboardedUserId) ackHtml += '<br/><strong>UserId:</strong> ' + r.onboardedUserId;
+            if (r.onboardedProfileId) ackHtml += ' &mdash; <strong>ProfileId:</strong> ' + r.onboardedProfileId;
+            if (r.acknowledgementEmailSent === true) {
+                ackHtml += '<br/><span class="text-success"><i class="fas fa-paper-plane me-1"></i>Acknowledgement email sent.</span>';
+            } else {
+                ackHtml += '<br/><span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Acknowledgement email failed &mdash; use Resend.</span>';
+            }
+            mMarkStep(3, 'completed', ackHtml);
+            $('#btnResendAck').show().prop('disabled', false);
+
+            // M4 (Onboarding): completes only when the interviewer ACCEPTS the acknowledgement email.
+            var fs = (r.funnelStage || '').toLowerCase();
+            if (fs === 'onboarded') {
+                var obHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Interviewer accepted the acknowledgement &mdash; onboarding complete!</span>';
+                if (r.onboardedUserId) obHtml += '<br/><strong>UserId:</strong> ' + r.onboardedUserId;
+                mMarkStep(4, 'completed', obHtml);
+            } else {
+                $('#mStep4Card').removeClass('disabled');
+                mMarkStep(4, 'pending', '<span class="text-warning"><i class="fas fa-hourglass-half me-1"></i>Awaiting the interviewer\'s acceptance of the acknowledgement email. Use <strong>Refresh Status</strong> to check.</span>');
+            }
         }
     }
 
@@ -1695,7 +1835,8 @@
             card.addClass('completed');
             if (step === 1) { $('#btnTriggerEV').hide(); $('#btnRetryEV').hide(); $('#mStep1Subtitle').html('<span class="text-success" style="font-size:11px;">Employment verified</span>'); }
             if (step === 2) { $('#btnRunAIAnalysis').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed'); $('#mStep2Subtitle').html('<span class="text-success" style="font-size:11px;">AI analysis complete</span>'); }
-            if (step === 3) { $('#btnManualOnboard').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Onboarded'); $('#mStep3Subtitle').html('<span class="text-success" style="font-size:11px;">Interviewer onboarded</span>'); }
+            if (step === 3) { $('#btnManualOnboard').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Acknowledgement Sent'); $('#mStep3Subtitle').html('<span class="text-success" style="font-size:11px;">Profile created &amp; acknowledgement sent</span>'); }
+            if (step === 4) { $('#btnCheckOnboarding').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Onboarded'); $('#mStep4Subtitle').html('<span class="text-success" style="font-size:11px;">Interviewer onboarded</span>'); }
         } else if (state === 'failed') {
             card.addClass('failed');
         } else { card.addClass('pending'); }
@@ -1703,6 +1844,7 @@
 
         if (step === 1 && state === 'completed') { $('#mStep2Card').removeClass('disabled'); }
         if (step === 2 && state === 'completed') { $('#mStep3Card').removeClass('disabled'); }
+        if (step === 3 && state === 'completed') { $('#mStep4Card').removeClass('disabled'); }
     }
 
     $('#btnToggleManualSteps').on('click', function () {
@@ -1809,38 +1951,82 @@
         });
     });
 
-    /* ── M3: Onboard Interviewer ── */
+    /* ── M3: Send Acknowledgement (create profile + map + email acknowledgement) ── */
 
     $('#btnManualOnboard').on('click', function () {
         if (!currentRecordId) return;
-        if (!confirm('This will create a UserList and InterviewerProfile entry and map the interviewer to the Assessment Group. Proceed?')) return;
+        if (!confirm('This will create a UserList and InterviewerProfile entry, map the interviewer to the Assessment Group & channels, and email them the acknowledgement (accept / decline). Onboarding completes only once the interviewer accepts it. Proceed?')) return;
         var btn = $(this);
-        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Onboarding...');
-        $('#mStep3Subtitle').text('Creating interviewer profile...');
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Sending...');
+        $('#mStep3Subtitle').text('Creating profile and sending acknowledgement...');
 
         $.ajax({
             url: '@Url.Action("OnboardInterviewer", "NaukriOnboarding")', type: 'POST', timeout: 120000,
             data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
             success: function (res) {
                 if (res.success) {
-                    var obHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message || 'Interviewer onboarded successfully!') + '</span>';
-                    if (res.userId) obHtml += '<br/><strong>UserId:</strong> ' + res.userId;
-                    if (res.profileId) obHtml += ' &mdash; <strong>ProfileId:</strong> ' + res.profileId;
-                    mMarkStep(3, 'completed', obHtml);
-                    updateStatusBadge('Onboarded');
-                    if (currentRecord) { currentRecord.onboardingCompleted = true; currentRecord.onboardedUserId = res.userId; }
+                    var ackHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message || 'Profile created and acknowledgement email sent.') + '</span>';
+                    if (res.userId) ackHtml += '<br/><strong>UserId:</strong> ' + res.userId;
+                    if (res.profileId) ackHtml += ' &mdash; <strong>ProfileId:</strong> ' + res.profileId;
+                    mMarkStep(3, 'completed', ackHtml);
+                    $('#btnResendAck').show().prop('disabled', false);
+                    if (currentRecord) {
+                        currentRecord.onboardingCompleted = true;
+                        currentRecord.onboardedUserId = res.userId;
+                        currentRecord.onboardedProfileId = res.profileId;
+                        currentRecord.acknowledgementEmailSent = res.acknowledgementEmailSent !== false;
+                    }
+                    // M4 (Onboarding) is now pending the interviewer's acceptance.
+                    $('#mStep4Card').removeClass('disabled');
+                    mMarkStep(4, 'pending', '<span class="text-warning"><i class="fas fa-hourglass-half me-1"></i>Awaiting the interviewer\'s acceptance of the acknowledgement email. Use <strong>Refresh Status</strong> to check.</span>');
                 } else {
-                    mMarkStep(3, 'failed', '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Onboarding failed.') + '</span>');
-                    btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry');
-                    $('#mStep3Subtitle').html('Create interviewer profile, map to Assessment Group, and send acknowledgement email');
+                    mMarkStep(3, 'failed', '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Could not send acknowledgement.') + '</span>');
+                    btn.prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Retry');
+                    $('#mStep3Subtitle').html('Creates the interviewer profile, maps to the Assessment Group &amp; channels, and emails the acknowledgement (accept / decline) to the interviewer');
                 }
             },
             error: function () {
                 mMarkStep(3, 'failed', '<span class="text-danger">Request failed.</span>');
-                btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry');
-                $('#mStep3Subtitle').html('Create interviewer profile, map to Assessment Group, and send acknowledgement email');
+                btn.prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Retry');
+                $('#mStep3Subtitle').html('Creates the interviewer profile, maps to the Assessment Group &amp; channels, and emails the acknowledgement (accept / decline) to the interviewer');
             }
         });
+    });
+
+    /* ── M3: Resend Acknowledgement ── */
+
+    $('#btnResendAck').on('click', function () {
+        if (!currentRecordId) return;
+        var btn = $(this);
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Resending...');
+        $.ajax({
+            url: '@Url.Action("ResendAcknowledgement", "NaukriOnboarding")', type: 'POST', timeout: 60000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            success: function (res) {
+                btn.prop('disabled',false).html('<i class="fas fa-redo me-1"></i>Resend');
+                if (res.success) {
+                    if (currentRecord) currentRecord.acknowledgementEmailSent = true;
+                    $('#mStep3Result').append('<br/><span class="text-success"><i class="fas fa-paper-plane me-1"></i>Acknowledgement email resent.</span>');
+                } else {
+                    alert(res.error || 'Could not resend the acknowledgement email.');
+                }
+            },
+            error: function () {
+                btn.prop('disabled',false).html('<i class="fas fa-redo me-1"></i>Resend');
+                alert('Request failed. Please try again.');
+            }
+        });
+    });
+
+    /* ── M4: Onboarding — refresh acceptance status ── */
+
+    $('#btnCheckOnboarding').on('click', function () {
+        if (!currentRecordId) return;
+        var btn = $(this);
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Refreshing...');
+        $('#mgmLoading').show(); $('#mgmContent').hide();
+        resetPipeline();
+        loadRecordDetails(currentRecordId);
     });
 
     /* ── Plivo Call ─────────────────────────────────────────── */

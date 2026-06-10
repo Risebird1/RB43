@@ -124,3 +124,40 @@ BEGIN
     ALTER TABLE NaukriProspectiveInterviewer ADD [SelfRegistrationCompleted] BIT NULL
 END
 GO
+
+-- Prospect Onboarding redesign (Phase 1): unified intent + ticket/funnel split + onboarding type
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'Intent' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [Intent] VARCHAR(50) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'IntentSource' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [IntentSource] VARCHAR(50) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'IntentConfirmedAt' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [IntentConfirmedAt] DATETIME NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'TicketStatus' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [TicketStatus] VARCHAR(50) NULL DEFAULT 'Open'
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'FunnelStage' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [FunnelStage] VARCHAR(50) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'OnboardingType' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [OnboardingType] VARCHAR(50) NULL
+END
+GO

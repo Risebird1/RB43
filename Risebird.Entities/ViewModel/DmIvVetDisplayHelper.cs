@@ -23,6 +23,12 @@ namespace Risebird.Entities.ViewModel
 
             if (iv.IsSMEVerifiedStored == true || iv.IsSMEVerified) return true;
 
+            // Preserved panel: active on channel before lock flip — implicit vet must still display Yes.
+            if (iv.IsActive && iv.IsAvailable
+                && !string.Equals(iv.ClientAction, "Rejected", StringComparison.OrdinalIgnoreCase)
+                && iv.IsSMEVerifiedStored == null)
+                return true;
+
             if (!channelLocked && iv.IsAvailable
                 && !string.Equals(iv.ClientAction, "Rejected", StringComparison.OrdinalIgnoreCase)
                 && iv.IsSMEVerifiedStored == null)
@@ -44,8 +50,38 @@ namespace Risebird.Entities.ViewModel
 
             if (DmIvActiveHelper.IsClientVetYes(iv.ClientAction)) return true;
 
+            // Preserved active panel on locked channel (implicit client approval before lock).
+            if (channelLocked && iv.IsActive && rbVetYes && iv.IsAvailable) return true;
+
             if (!channelLocked && rbVetYes && iv.IsAvailable) return true;
 
+            return false;
+        }
+
+        /// <summary>
+        /// Stored RB vet for row data attributes and vet-toggle baseline (not display-only derivation).
+        /// </summary>
+        public static bool ResolveRbVetStored(TransInterviewer iv)
+        {
+            if (iv == null) return false;
+            if (iv.IsSMEVerifiedStored == false) return false;
+            if (iv.IsSMEVerifiedStored == true || iv.IsSMEVerified) return true;
+            if (iv.IsActive && iv.IsAvailable
+                && !string.Equals(iv.ClientAction, "Rejected", StringComparison.OrdinalIgnoreCase)
+                && iv.IsSMEVerifiedStored == null)
+                return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Stored Client vet for row data attributes and vet-toggle baseline.
+        /// </summary>
+        public static bool ResolveClientVetStored(TransInterviewer iv, bool rbVetStored)
+        {
+            if (iv == null) return false;
+            if (string.Equals(iv.ClientAction, "Rejected", StringComparison.OrdinalIgnoreCase)) return false;
+            if (DmIvActiveHelper.IsClientVetYes(iv.ClientAction)) return true;
+            if (iv.IsActive && rbVetStored && iv.IsAvailable) return true;
             return false;
         }
     }
