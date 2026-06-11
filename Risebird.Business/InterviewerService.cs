@@ -1727,11 +1727,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId)
+        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId, bool activateChannels = true)
         {
             try
             {
-                var result = await _interviewerRepository.UpdateInterviewerActiveStatus(status, userId);
+                var result = await _interviewerRepository.UpdateInterviewerActiveStatus(status, userId, activateChannels);
 
                 if (result != null)
                 {

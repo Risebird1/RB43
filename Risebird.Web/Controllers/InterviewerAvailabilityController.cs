@@ -80,6 +80,7 @@ namespace Risebird.Web.Controllers
             string source        = null,
             string autoClosed    = null,
             string activeStatus  = null,
+            string recentlyAvailable = null,
             int    page          = 1,
             int    pageSize      = 25)
         {
@@ -101,8 +102,12 @@ namespace Risebird.Web.Controllers
                 if (activeStatus == "active") isInterviewerActive = true;
                 else if (activeStatus == "inactive") isInterviewerActive = false;
 
+                bool? isRecentlyAvailable = null;
+                if (recentlyAvailable == "yes") isRecentlyAvailable = true;
+                else if (recentlyAvailable == "no") isRecentlyAvailable = false;
+
                 var records = await _repository.GetEmailAvailabilityAsync(
-                    status, senderEmail, resumeFitment, dtFrom, dtTo, page, pageSize, source, isAutoClosed, isInterviewerActive);
+                    status, senderEmail, resumeFitment, dtFrom, dtTo, page, pageSize, source, isAutoClosed, isInterviewerActive, isRecentlyAvailable);
 
                 var first      = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -115,6 +120,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.OpenCount     = first?.OpenCount ?? 0;
                 ViewBag.InProgressCount = first?.InProgressCount ?? 0;
                 ViewBag.ClosedCount   = first?.ClosedCount ?? 0;
+                ViewBag.RecentlyAvailableCount = first?.RecentlyAvailableCount ?? 0;
+                ViewBag.RecentlyAvailable = recentlyAvailable ?? string.Empty;
                 ViewBag.Status        = status        ?? string.Empty;
                 ViewBag.SenderEmail   = senderEmail   ?? string.Empty;
                 ViewBag.ResumeFitment = resumeFitment  ?? string.Empty;
@@ -132,6 +139,7 @@ namespace Risebird.Web.Controllers
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 ViewBag.Page = 1; ViewBag.PageSize = pageSize; ViewBag.TotalCount = 0; ViewBag.TotalPages = 1;
                 ViewBag.OpenCount = 0; ViewBag.InProgressCount = 0; ViewBag.ClosedCount = 0;
+                ViewBag.RecentlyAvailableCount = 0; ViewBag.RecentlyAvailable = recentlyAvailable;
                 ViewBag.Status = status; ViewBag.SenderEmail = senderEmail; ViewBag.ResumeFitment = resumeFitment;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.Source = source; ViewBag.AutoClosed = autoClosed; ViewBag.ActiveStatus = activeStatus;

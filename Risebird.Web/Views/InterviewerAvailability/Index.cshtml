@@ -15,6 +15,7 @@
     string selSource = ViewBag.Source as string ?? string.Empty;
     string selAutoClosed = ViewBag.AutoClosed as string ?? string.Empty;
     string selActiveStatus = ViewBag.ActiveStatus as string ?? string.Empty;
+    string selRecentlyAvailable = ViewBag.RecentlyAvailable as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
     bool canDelete = profileName == "Admin" || profileName == "SupportAdmin";
     bool canDrop = canDelete || profileName == "HR" || profileName == "SeniorHR"
@@ -25,7 +26,8 @@
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selEmail)
                    || !string.IsNullOrEmpty(selFitment) || !string.IsNullOrEmpty(selDateFrom)
                    || !string.IsNullOrEmpty(selDateTo) || !string.IsNullOrEmpty(selSource)
-                   || !string.IsNullOrEmpty(selAutoClosed) || !string.IsNullOrEmpty(selActiveStatus);
+                   || !string.IsNullOrEmpty(selAutoClosed) || !string.IsNullOrEmpty(selActiveStatus)
+                   || !string.IsNullOrEmpty(selRecentlyAvailable);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
     int last = Math.Min(page * pageSize, totalCount);
@@ -41,6 +43,23 @@
         if (!string.IsNullOrEmpty(selSource)) q += $"&source={Uri.EscapeDataString(selSource)}";
         if (!string.IsNullOrEmpty(selAutoClosed)) q += $"&autoClosed={Uri.EscapeDataString(selAutoClosed)}";
         if (!string.IsNullOrEmpty(selActiveStatus)) q += $"&activeStatus={Uri.EscapeDataString(selActiveStatus)}";
+        if (!string.IsNullOrEmpty(selRecentlyAvailable)) q += $"&recentlyAvailable={Uri.EscapeDataString(selRecentlyAvailable)}";
+        return Url.Action("Index", "InterviewerAvailability") + q;
+    }
+
+    // URL that keeps the current filters but sets the Recently-Available filter to a given value.
+    string recentlyUrl(string ra)
+    {
+        var q = $"?page=1&pageSize={pageSize}";
+        if (!string.IsNullOrEmpty(selStatus)) q += $"&status={Uri.EscapeDataString(selStatus)}";
+        if (!string.IsNullOrEmpty(selEmail)) q += $"&senderEmail={Uri.EscapeDataString(selEmail)}";
+        if (!string.IsNullOrEmpty(selFitment)) q += $"&resumeFitment={Uri.EscapeDataString(selFitment)}";
+        if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
+        if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
+        if (!string.IsNullOrEmpty(selSource)) q += $"&source={Uri.EscapeDataString(selSource)}";
+        if (!string.IsNullOrEmpty(selAutoClosed)) q += $"&autoClosed={Uri.EscapeDataString(selAutoClosed)}";
+        if (!string.IsNullOrEmpty(selActiveStatus)) q += $"&activeStatus={Uri.EscapeDataString(selActiveStatus)}";
+        if (!string.IsNullOrEmpty(ra)) q += $"&recentlyAvailable={Uri.EscapeDataString(ra)}";
         return Url.Action("Index", "InterviewerAvailability") + q;
     }
 }
@@ -67,6 +86,11 @@
     .status-open { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
     .status-closed { background:#d1e7dd; color:#0a3622; border:1px solid #198754; }
     .status-inprogress { background:#cfe2ff; color:#0a3278; border:1px solid #0d6efd; }
+
+    .ia-recent-card { transition:box-shadow .15s ease, transform .15s ease; }
+    .ia-recent-card:hover { box-shadow:0 4px 14px rgba(25,135,84,0.25) !important; transform:translateY(-1px); }
+    .ia-recent-active { border:2px solid #198754 !important; background:#f0fbf4; }
+    .ia-recent-badge { background:#d1e7dd; color:#0a3622; border:1px solid #198754; font-size:9px; margin-left:4px; }
     .status-verified { background:#d1e7dd; color:#0a3622; border:1px solid #198754; }
 
     .intent-badge { display:inline-block; font-size:10.5px; padding:0.22em 0.5em; border-radius:3px; font-weight:500; white-space:normal; line-height:1.3; max-width:100%; word-break:break-word; }
@@ -224,12 +248,22 @@
 
                 @{ int cardOpen = ViewBag.OpenCount != null ? (int)ViewBag.OpenCount : 0;
                    int cardIP = ViewBag.InProgressCount != null ? (int)ViewBag.InProgressCount : 0;
-                   int cardClosed = ViewBag.ClosedCount != null ? (int)ViewBag.ClosedCount : 0; }
+                   int cardClosed = ViewBag.ClosedCount != null ? (int)ViewBag.ClosedCount : 0;
+                   int cardRecent = ViewBag.RecentlyAvailableCount != null ? (int)ViewBag.RecentlyAvailableCount : 0;
+                   bool raActive = selRecentlyAvailable == "yes"; }
                 <div class="row g-3 mb-4">
-                    <div class="col-6 col-sm-3 col-md-3"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-3"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-3"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-3"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value" style="color:#6c757d;">@cardClosed</div><div class="stat-label">Closed</div></div></div>
+                    <div class="col-6 col-sm-4 col-md"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
+                    <div class="col-6 col-sm-4 col-md"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
+                    <div class="col-6 col-sm-4 col-md"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
+                    <div class="col-6 col-sm-4 col-md"><div class="card border-0 shadow-sm text-center py-3 ia-stat"><div class="stat-value" style="color:#6c757d;">@cardClosed</div><div class="stat-label">Closed</div></div></div>
+                    <div class="col-12 col-sm-4 col-md">
+                        <a href="@recentlyUrl(raActive ? "" : "yes")" class="text-decoration-none" title="Interviewers who indicated availability in the last 48 hours. These are excluded from outbound outreach.">
+                            <div class="card border-0 shadow-sm text-center py-3 ia-stat ia-recent-card @(raActive ? "ia-recent-active" : "")">
+                                <div class="stat-value text-success">@cardRecent</div>
+                                <div class="stat-label"><i class="fas fa-bolt me-1"></i>Recently Available</div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
 
                 <form asp-action="Index" asp-controller="InterviewerAvailability" method="get" id="filterForm">
@@ -267,6 +301,11 @@
                                     <option value="">All interviewers</option>
                                     @if (selActiveStatus == "active") { <option value="active" selected>Active</option> } else { <option value="active">Active</option> }
                                     @if (selActiveStatus == "inactive") { <option value="inactive" selected>Inactive</option> } else { <option value="inactive">Inactive</option> }
+                                </select>
+                                <select name="recentlyAvailable" class="form-select ia-filter-control" style="flex:1 1 0;min-width:130px;max-width:160px;" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">Availability (48h)</option>
+                                    @if (selRecentlyAvailable == "yes") { <option value="yes" selected>Recently available</option> } else { <option value="yes">Recently available</option> }
+                                    @if (selRecentlyAvailable == "no") { <option value="no" selected>Not recently available</option> } else { <option value="no">Not recently available</option> }
                                 </select>
                                 <input type="text" name="senderEmail" class="form-control ia-filter-control" placeholder="Sender email..." style="flex:1 1 0;min-width:130px;" value="@selEmail" />
                                 <input type="date" name="dateFrom" class="form-control ia-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
@@ -319,6 +358,7 @@
                                                 </td>
                                                 <td class="col-name">
                                                     <span class="fw-semibold" style="font-size:12px;white-space:break-spaces;">@(r.InterviewerName ?? r.InterviewerNickName ?? "—")</span>
+                                                    @if (r.IsRecentlyAvailable) { <span class="badge ia-recent-badge" title="Indicated availability in the last 48h — excluded from outbound outreach"><i class="fas fa-bolt"></i> Recently available</span> }
                                                     @if (r.Experience.HasValue) { <br /><span class="text-muted" style="font-size:10px;">@r.Experience yr exp</span> }
                                                 </td>
                                                 <td class="col-phone" style="font-size:12px;">
