@@ -102,6 +102,13 @@ namespace Risebird.Entities.ViewModel
 
         // Pagination
         public int      TotalCount                  { get; set; }
+
+        // Global status breakdown (across all matched records, not just this page).
+        // Open + InProgress + Closed + Onboarded == TotalCount.
+        public int      OpenCount                   { get; set; }
+        public int      InProgressCount             { get; set; }
+        public int      ClosedCount                 { get; set; }
+        public int      OnboardedCount              { get; set; }
     }
 
     public class RelayNaukriPayload

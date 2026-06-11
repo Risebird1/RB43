@@ -10,8 +10,19 @@ BEGIN
     FROM MasterAssessmentGroup mag
     WHERE mag.MAGName = @MagName AND ISNULL(mag.IsDeleted, 0) = 0;
 
+    -- Interviewers who already signaled a favorable availability for this MAG within the
+    -- last 48 hours. They are "recently available" and must be excluded from outbound
+    -- outreach (we already know they're available — no need to call/email them again).
+    ;WITH RecentlyAvailable AS (
+        SELECT ea.InterviewerProfileId, ea.SenderEmail
+        FROM InterviewerEmailAvailability ea
+        WHERE ea.MagName = @MagName
+          AND ea.ReceivedAt >= DATEADD(HOUR, -48, GETUTCDATE())
+          AND dbo.fn_IsFavorableAvailabilityIntent(ea.AvailabilityIntent, ea.MailBodyIntent, ea.ConcernsOrNotInterested) = 1
+    ),
+
     -- EA interviewers (priority) — exclude inactive/deleted/dropped
-    ;WITH EAList AS (
+    EAList AS (
         SELECT ea.Id,
                ea.InterviewerProfileId,
                ea.InterviewerName,
@@ -30,6 +41,11 @@ BEGIN
           AND (@OnlyUncalled = 0 OR ISNULL(ea.PlivoCallStatus, '') = '')
           AND (ul.Id IS NULL OR ul.IsActive = 1)
           AND (ip.Id IS NULL OR (ISNULL(ip.IsDeleted, 0) = 0 AND ISNULL(ip.Isavailable, 0) <> 4))
+          AND NOT EXISTS (
+              SELECT 1 FROM RecentlyAvailable ra
+              WHERE (ea.InterviewerProfileId IS NOT NULL AND ra.InterviewerProfileId = ea.InterviewerProfileId)
+                 OR ra.SenderEmail = ea.SenderEmail
+          )
     ),
 
     -- Distinct EA profile IDs for this MAG to exclude from Profile list
@@ -62,6 +78,10 @@ BEGIN
           AND ul.IsActive = 1
           AND LEN(ISNULL(ul.MobileNumber, '')) >= 10
           AND NOT EXISTS (SELECT 1 FROM EAProfileIds ep WHERE ep.InterviewerProfileId = ip.Id)
+          AND NOT EXISTS (
+              SELECT 1 FROM RecentlyAvailable ra
+              WHERE ra.InterviewerProfileId = ip.Id OR ra.SenderEmail = ul.EmailId
+          )
     )
 
     SELECT Id, InterviewerProfileId, InterviewerName, SenderEmail, Phone, ExperienceYears, PlivoCallStatus, Source, SortPriority

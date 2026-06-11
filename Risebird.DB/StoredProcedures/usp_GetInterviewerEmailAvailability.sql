@@ -11,6 +11,7 @@ CREATE PROCEDURE [dbo].[usp_GetInterviewerEmailAvailability]
     @Source              VARCHAR(50)  = NULL,
     @IsAutoClosed        BIT          = NULL,
     @IsInterviewerActive BIT          = NULL,
+    @RecentlyAvailable   BIT          = NULL,
     @Page                INT          = 1,
     @PageSize            INT          = 25
 AS
@@ -50,6 +51,13 @@ BEGIN
             SUM(CASE WHEN ISNULL(ea.Status, 'Open') = 'Open'                       THEN 1 ELSE 0 END) OVER() AS OpenCount,
             SUM(CASE WHEN ISNULL(ea.Status, 'Open') NOT IN ('Open', 'Closed')      THEN 1 ELSE 0 END) OVER() AS InProgressCount,
             SUM(CASE WHEN ISNULL(ea.Status, 'Open') = 'Closed'                     THEN 1 ELSE 0 END) OVER() AS ClosedCount,
+            -- "Recently available": favorable availability signal received within the last 48 hours.
+            CAST(CASE WHEN ea.ReceivedAt >= DATEADD(HOUR, -48, GETUTCDATE())
+                       AND dbo.fn_IsFavorableAvailabilityIntent(ea.AvailabilityIntent, ea.MailBodyIntent, ea.ConcernsOrNotInterested) = 1
+                      THEN 1 ELSE 0 END AS BIT) AS IsRecentlyAvailable,
+            SUM(CASE WHEN ea.ReceivedAt >= DATEADD(HOUR, -48, GETUTCDATE())
+                      AND dbo.fn_IsFavorableAvailabilityIntent(ea.AvailabilityIntent, ea.MailBodyIntent, ea.ConcernsOrNotInterested) = 1
+                     THEN 1 ELSE 0 END) OVER() AS RecentlyAvailableCount,
             ROW_NUMBER() OVER (ORDER BY ea.ReceivedAt DESC, ea.Id DESC) AS RowNum
         FROM InterviewerEmailAvailability ea
         LEFT JOIN InterviewerProfile ip ON ip.Id = ea.InterviewerProfileId
@@ -64,6 +72,13 @@ BEGIN
             AND (@ResumeFitment IS NULL OR ea.ResumeFitment = @ResumeFitment)
             AND (@Source IS NULL OR ea.Source LIKE @Source + '%')
             AND (@IsAutoClosed IS NULL OR ISNULL(ea.IsAutoClosed, 0) = @IsAutoClosed)
+            AND (@RecentlyAvailable IS NULL
+                 OR (@RecentlyAvailable = 1
+                     AND ea.ReceivedAt >= DATEADD(HOUR, -48, GETUTCDATE())
+                     AND dbo.fn_IsFavorableAvailabilityIntent(ea.AvailabilityIntent, ea.MailBodyIntent, ea.ConcernsOrNotInterested) = 1)
+                 OR (@RecentlyAvailable = 0
+                     AND NOT (ea.ReceivedAt >= DATEADD(HOUR, -48, GETUTCDATE())
+                              AND dbo.fn_IsFavorableAvailabilityIntent(ea.AvailabilityIntent, ea.MailBodyIntent, ea.ConcernsOrNotInterested) = 1)))
             AND (@DateFrom IS NULL OR ea.ReceivedAt >= @DateFrom)
             AND (@DateTo IS NULL OR ea.ReceivedAt < DATEADD(DAY, 1, @DateTo))
             AND (@IsInterviewerActive IS NULL OR ISNULL(ul.IsActive, 1) = @IsInterviewerActive)
