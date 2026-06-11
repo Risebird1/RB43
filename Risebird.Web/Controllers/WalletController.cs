@@ -659,6 +659,23 @@ namespace Risebird.Web.Controllers
             });
         }
 
+        #region Wallet Details — All Clients Summary (Finance)
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> WalletDetails(int? month = null, int? year = null)
+        {
+            if (!IsFinanceOrAdmin()) return RedirectToAction("SignOut", "Session");
+
+            var selectedMonth = month ?? DateTime.Now.Month;
+            var selectedYear  = year  ?? DateTime.Now.Year;
+
+            var model = await _walletService.GetAllClientsWalletSummary(selectedMonth, selectedYear);
+            return View(model);
+        }
+
+        #endregion
+
         private bool IsFinanceOrAdmin()
         {
             if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
