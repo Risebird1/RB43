@@ -3709,13 +3709,14 @@ SELECT CAST(CASE WHEN EXISTS (
         //    }
         //    return false;
         //}
-        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId)
+        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId, bool activateChannels = true)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@status", status);
                 dynamicParameters.Add("@userId", userId);
+                dynamicParameters.Add("@ActivateChannels", activateChannels);
                 //dynamicParameters.Add("@targetIrf", targetIrf);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

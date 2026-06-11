@@ -101,7 +101,7 @@ namespace Risebird.Business.Interface
         Task<SaveOperationResult> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser);
 
 
-        Task<UserList> UpdateInterviewerActiveStatus(int status, int userId);
+        Task<UserList> UpdateInterviewerActiveStatus(int status, int userId, bool activateChannels = true);
         Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForInterviewerPostAdding(int userId);
         Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForApplicantUponEdit(int applicantId);
         Task<bool> AddTargetSkillChannelToInterviewerPreOnboarding(InterviewerProfileVM interviewerProfile);
