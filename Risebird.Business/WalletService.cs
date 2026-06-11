@@ -225,6 +225,23 @@ namespace Risebird.Business
                 return new ClientWalletDashboardVM { ClientId = clientId, SelectedMonth = month, SelectedYear = year };
             }
         }
+
+        public async Task<AllClientsWalletVM> GetAllClientsWalletSummary(int month, int year)
+        {
+            var vm = await _walletRepository.GetAllClientsWalletSummary(month, year);
+
+            var mfi = new System.Globalization.DateTimeFormatInfo();
+            vm.PeriodLabel = mfi.GetMonthName(month) + " " + year;
+
+            foreach (var row in vm.Clients)
+            {
+                row.BillingModelDesc = System.Enum.IsDefined(typeof(BillingModelEnum), row.BillingModel)
+                    ? ((BillingModelEnum)row.BillingModel).GetDescription()
+                    : "—";
+            }
+
+            return vm;
+        }
     }
 }
 

@@ -231,6 +231,31 @@ namespace Risebird.Repository
                 return new ClientWalletDashboardVM { ClientId = clientId, SelectedMonth = month, SelectedYear = year };
             }
         }
+
+        public async Task<AllClientsWalletVM> GetAllClientsWalletSummary(int month, int year)
+        {
+            var vm = new AllClientsWalletVM { SelectedMonth = month, SelectedYear = year };
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                var parameters = new DynamicParameters();
+                parameters.Add("@Month", month);
+                parameters.Add("@Year",  year);
+
+                using var multi = await con.QueryMultipleAsync(
+                    "usp_GetAllClientsWalletSummary",
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+
+                vm.Clients            = (await multi.ReadAsync<ClientWalletSummaryRowVM>()).ToList();
+                vm.BillingOwnerCounts = (await multi.ReadAsync<BillingOwnerInterviewCountVM>()).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return vm;
+        }
     }
 }
 
