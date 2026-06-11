@@ -55,6 +55,7 @@ namespace Risebird.Repository.Interface
         Task<(List<IAInterviewerCallOutcome> Items, int TotalCount)> GetInterviewerCallOutcomesForMAGAsync(string magName, int page = 1, int pageSize = 25);
 
         Task<int> EnsureEARecordForProfileInterviewerAsync(int interviewerProfileId, string magName, string source = null);
+        Task<InterviewerEmailAvailabilityVM> GetProfileInterviewerContactAsync(int interviewerProfileId);
         Task<bool> MarkAutoClosedAsync(int id, string autoClosedBy);
 
         // MAG lookup

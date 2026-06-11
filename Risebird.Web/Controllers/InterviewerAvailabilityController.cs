@@ -7,6 +7,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.PlivoCXModels;
 using Risebird.Entities.Enum;
+using Risebird.Entities.Helpers;
 using Risebird.Entities.ViewModel;
 using Risebird.Business.Interface;
 using Risebird.Repository.Interface;
@@ -978,11 +979,27 @@ namespace Risebird.Web.Controllers
                 return Content("Error: Could not parse hangup payload.", "text/html");
             }
 
-            // Resolve record ID
-            if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int parsedId))
-                recordId = parsedId;
+            // Resolve record ID.
+            // A plain integer log_id points at an existing InterviewerEmailAvailability row.
+            // A "PROF~…" token identifies a profile interviewer for whom NO row exists yet —
+            // the row is created below only if the disposition confirms availability.
+            bool   isDeferredProfileCall = false;
+            int    deferredProfileId     = 0;
+            string deferredMagName       = null;
+            string deferredSource        = null;
 
-            if (!recordId.HasValue && !string.IsNullOrEmpty(payload.PhoneNumber))
+            if (!string.IsNullOrEmpty(payload.LogId) && int.TryParse(payload.LogId, out int parsedId))
+            {
+                recordId = parsedId;
+            }
+            else if (AvailabilityCallToken.TryParse(payload.LogId, out deferredProfileId, out deferredMagName, out deferredSource))
+            {
+                isDeferredProfileCall = true;
+                await SaveIaCp("ia_hangup_deferred_token",
+                    $"Deferred profile call. profileId={deferredProfileId}, mag='{deferredMagName}', intent='{payload.Intent}'");
+            }
+
+            if (!recordId.HasValue && !isDeferredProfileCall && !string.IsNullOrEmpty(payload.PhoneNumber))
             {
                 await SaveIaCp("ia_hangup_logid_missing",
                     $"log_id missing. Trying phone lookup: {payload.PhoneNumber}");
@@ -996,7 +1013,7 @@ namespace Risebird.Web.Controllers
                 }
             }
 
-            if (!recordId.HasValue)
+            if (!recordId.HasValue && !isDeferredProfileCall)
             {
                 await SaveIaCp("ia_hangup_no_record",
                     $"Could not resolve record. log_id='{payload.LogId}', phone='{payload.PhoneNumber}'");
@@ -1005,6 +1022,34 @@ namespace Risebird.Web.Controllers
 
             try
             {
+                string intentLower = payload.Intent?.ToLower();
+
+                // For a deferred profile call, the interviewer is only added to
+                // InterviewerEmailAvailability when they have CONFIRMED availability on the call.
+                if (isDeferredProfileCall)
+                {
+                    if (!IsConfirmedAvailableIntent(intentLower))
+                    {
+                        await SaveIaCp("ia_hangup_deferred_skip",
+                            $"No availability record created for profile #{deferredProfileId} — disposition '{payload.Intent ?? "none"}' is not a confirmed availability.");
+                        return Content($"OK. No record created (intent='{payload.Intent ?? "none"}').", "text/html");
+                    }
+
+                    int createdId = await _repository.EnsureEARecordForProfileInterviewerAsync(
+                        deferredProfileId, deferredMagName, deferredSource);
+                    if (createdId <= 0)
+                    {
+                        await SaveIaCp("ia_hangup_deferred_create_failed",
+                            $"Confirmed availability but could not create availability record for profile #{deferredProfileId} (inactive/deleted?).");
+                        return Content("Error: Could not create availability record.", "text/html");
+                    }
+
+                    recordId = createdId;
+                    await SaveIaCp("ia_hangup_deferred_created",
+                        $"Created availability record #{recordId} for profile #{deferredProfileId} after confirmed availability.",
+                        callLogId: recordId);
+                }
+
                 int? duration = null;
                 if (!string.IsNullOrEmpty(payload.Duration) && int.TryParse(payload.Duration, out int dur))
                     duration = dur;
@@ -1044,9 +1089,8 @@ namespace Risebird.Web.Controllers
                     $"Processing finished for record #{recordId}. parseMethod={parseMethod}",
                     callLogId: recordId);
 
-                // Auto-close if disposition is favorable ("available")
-                string intentLower = payload.Intent?.ToLower();
-                if (intentLower == "available")
+                // Auto-close if disposition is a confirmed availability
+                if (IsConfirmedAvailableIntent(intentLower))
                 {
                     _ = Task.Run(async () =>
                     {
@@ -1266,14 +1310,58 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                int eaId = id;
+                var calledBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                var callerId = _configuration["PlivoCX:AvailabilityCallerId"]
+                            ?? _configuration["PlivoCX:OnboardingCallerId"]
+                            ?? _configuration["Plivo:FromNumber"]
+                            ?? "+918031136547";
 
-                if (source == "Profile" && !string.IsNullOrEmpty(magName))
+                // ── Profile interviewer (no availability record yet) ──────────────────
+                // Do NOT create an InterviewerEmailAvailability row up-front. The row is
+                // created by the hangup webhook only if the call confirms availability.
+                if (source == "Profile")
                 {
-                    eaId = await _repository.EnsureEARecordForProfileInterviewerAsync(id, magName, "BatchCall");
-                    if (eaId <= 0)
-                        return Json(new { success = false, error = "Could not create availability record for this interviewer." });
+                    if (string.IsNullOrEmpty(magName))
+                        return Json(new { success = false, error = "MAG name is required to call a profile interviewer." });
+
+                    var contact = await _repository.GetProfileInterviewerContactAsync(id);
+                    if (contact == null)
+                        return Json(new { success = false, error = "Interviewer profile not found or inactive." });
+
+                    string profilePhone = contact.UserMobileNumber ?? contact.Phone;
+                    if (string.IsNullOrWhiteSpace(profilePhone))
+                        return Json(new { success = false, error = "No phone number." });
+
+                    profilePhone = NormalizePhone(profilePhone);
+
+                    var profileTrigger = new PlivoCXAvailabilityTriggerRequest
+                    {
+                        CallerId         = callerId,
+                        PhoneNumber      = profilePhone,
+                        InterviewerName  = contact.InterviewerName ?? "there",
+                        InterviewerEmail = contact.SenderEmail,
+                        MagName          = magName,
+                        LogId            = AvailabilityCallToken.Build(id, magName, "BatchCall"),
+                        TodayDate        = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                    };
+
+                    var profileResponse = await _plivoCXService.TriggerAvailabilityCallAsync(profileTrigger);
+                    if (!string.IsNullOrEmpty(profileResponse?.Error))
+                        return Json(new { success = false, error = $"Plivo trigger failed: {profileResponse.Error}" });
+
+                    return Json(new
+                    {
+                        success         = true,
+                        conversationId  = profileResponse?.ConversationId,
+                        interviewerName = contact.InterviewerName,
+                        phone           = profilePhone,
+                        eaId            = 0,        // no record yet — created only on confirmed availability
+                        deferred        = true
+                    });
                 }
+
+                // ── Existing availability record ──────────────────────────────────────
+                int eaId = id;
 
                 var record = await _repository.GetEmailAvailabilityByIdAsync(eaId);
                 if (record == null)
@@ -1285,15 +1373,8 @@ namespace Risebird.Web.Controllers
 
                 phone = NormalizePhone(phone);
 
-                var calledBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
-
                 await _repository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
                     DateTime.UtcNow, null, null, null, null, null, null, null, null, calledBy);
-
-                var callerId = _configuration["PlivoCX:AvailabilityCallerId"]
-                            ?? _configuration["PlivoCX:OnboardingCallerId"]
-                            ?? _configuration["Plivo:FromNumber"]
-                            ?? "+918031136547";
 
                 var triggerRequest = new PlivoCXAvailabilityTriggerRequest
                 {
@@ -1678,6 +1759,27 @@ namespace Risebird.Web.Controllers
                 await SaveIaCp("ia_autoclose_fatal",
                     $"Auto-close fatal error for #{eaId}: {ex.Message}", callLogId: eaId);
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        // A Plivo availability call only "confirms availability" when the AI-assessed
+        // disposition is positive/interested. Anything else (not_available, no_answer,
+        // unsubscribe, callback, empty) is NOT a confirmation.
+        private static bool IsConfirmedAvailableIntent(string intent)
+        {
+            if (string.IsNullOrWhiteSpace(intent))
+                return false;
+
+            switch (intent.Trim().ToLowerInvariant())
+            {
+                case "available":
+                case "interested":
+                case "yes":
+                case "confirmed":
+                case "willing":
+                    return true;
+                default:
+                    return false;
             }
         }
 
