@@ -79,6 +79,7 @@ namespace Risebird.Web.Controllers
             string callStatus        = null,
             string disposition       = null,
             string funnelStage       = null,
+            string funnelMode        = null,
             string dateFrom          = null,
             string dateTo            = null,
             int    page              = 1,
@@ -90,13 +91,16 @@ namespace Risebird.Web.Controllers
                 if (pageSize < 10) pageSize = 10;
                 if (pageSize > 200) pageSize = 200;
 
+                // Funnel match mode: how the selected stage is compared. Defaults to exact ('at').
+                if (funnelMode != "reached" && funnelMode != "not") funnelMode = "at";
+
                 DateTime? dtFrom = null, dtTo = null;
                 if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pTo)) dtTo = pTo;
 
-                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition, funnelStage);
+                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition, funnelStage, funnelMode);
 
-                var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage);
+                var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, funnelMode);
 
                 var first = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -114,7 +118,13 @@ namespace Risebird.Web.Controllers
                 ViewBag.CallStatus = callStatus ?? string.Empty;
                 ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
+                ViewBag.FunnelMode = funnelMode ?? "at";
                 ViewBag.FunnelCounts = funnelCounts;
+                // Global status breakdown (Open + InProgress + Closed + Onboarded = Total).
+                ViewBag.OpenCount = first?.OpenCount ?? 0;
+                ViewBag.InProgressCount = first?.InProgressCount ?? 0;
+                ViewBag.ClosedCount = first?.ClosedCount ?? 0;
+                ViewBag.OnboardedCount = first?.OnboardedCount ?? 0;
                 ViewBag.DateFrom = dateFrom ?? string.Empty;
                 ViewBag.DateTo = dateTo ?? string.Empty;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
@@ -131,6 +141,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.CallStatus = callStatus ?? string.Empty;
                 ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
+                ViewBag.FunnelMode = funnelMode ?? "at";
                 ViewBag.FunnelCounts = new Dictionary<string, int>();
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";

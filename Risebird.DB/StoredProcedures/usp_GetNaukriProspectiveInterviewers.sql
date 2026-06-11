@@ -11,6 +11,7 @@ CREATE PROCEDURE [dbo].[usp_GetNaukriProspectiveInterviewers]
     @CallStatus         VARCHAR(50)  = NULL,
     @Disposition        VARCHAR(50)  = NULL,
     @FunnelStage        VARCHAR(50)  = NULL,
+    @FunnelMode         VARCHAR(10)  = 'at',   -- at | reached | not  (how @FunnelStage is matched)
     @DateFrom           DATETIME     = NULL,
     @DateTo             DATETIME     = NULL,
     @Page               INT          = 1,
@@ -26,6 +27,16 @@ BEGIN
         SELECT
             np.*,
             COUNT(*) OVER() AS TotalCount,
+            -- Global status breakdown over the matched set. 'Onboarded' (a FunnelStage outcome) is
+            -- carved out first so the four buckets partition the total exactly:
+            --   Open + InProgress + Closed + Onboarded = TotalCount.
+            SUM(CASE WHEN ISNULL(np.FunnelStage, '') = 'Onboarded' THEN 1 ELSE 0 END) OVER() AS OnboardedCount,
+            SUM(CASE WHEN ISNULL(np.FunnelStage, '') <> 'Onboarded'
+                      AND ISNULL(np.TicketStatus, 'Open') = 'Open'                  THEN 1 ELSE 0 END) OVER() AS OpenCount,
+            SUM(CASE WHEN ISNULL(np.FunnelStage, '') <> 'Onboarded'
+                      AND ISNULL(np.TicketStatus, 'Open') NOT IN ('Open', 'Closed') THEN 1 ELSE 0 END) OVER() AS InProgressCount,
+            SUM(CASE WHEN ISNULL(np.FunnelStage, '') <> 'Onboarded'
+                      AND ISNULL(np.TicketStatus, 'Open') = 'Closed'                THEN 1 ELSE 0 END) OVER() AS ClosedCount,
             ROW_NUMBER() OVER (ORDER BY np.ReceivedAt DESC, np.Id DESC) AS RowNum
         FROM NaukriProspectiveInterviewer np
         WHERE
@@ -44,8 +55,16 @@ BEGIN
             AND (@Disposition IS NULL OR LOWER(ISNULL(np.PlivoProspectDisposition, '')) = LOWER(@Disposition))
             AND (
                 @FunnelStage IS NULL
-                OR (@FunnelStage = '_none_' AND ISNULL(np.FunnelStage, '') = '')
-                OR np.FunnelStage = @FunnelStage
+                -- 'at'      : prospect is currently sitting at the selected stage (exact match).
+                OR (ISNULL(@FunnelMode, 'at') = 'at' AND (
+                        (@FunnelStage = '_none_' AND ISNULL(np.FunnelStage, '') = '')
+                        OR np.FunnelStage = @FunnelStage))
+                -- 'reached' : prospect has reached the selected milestone or moved beyond it.
+                OR (@FunnelMode = 'reached'
+                        AND dbo.fn_NaukriFunnelStageRank(np.FunnelStage) >= dbo.fn_NaukriFunnelStageRank(@FunnelStage))
+                -- 'not'     : prospect has NOT yet reached the selected milestone (the complement).
+                OR (@FunnelMode = 'not'
+                        AND dbo.fn_NaukriFunnelStageRank(np.FunnelStage) <  dbo.fn_NaukriFunnelStageRank(@FunnelStage))
             )
             AND (@DateFrom IS NULL OR np.ReceivedAt >= @DateFrom)
             AND (@DateTo IS NULL OR np.ReceivedAt < DATEADD(DAY, 1, @DateTo))

@@ -74,12 +74,17 @@ namespace Risebird.Entities.ViewModel
         public string   PlivoNotes                  { get; set; }
         public string   PlivoCalledBy               { get; set; }
 
+        // True when this record reflects a favorable availability signal received within the
+        // "recently available" window (last 48 hours).
+        public bool     IsRecentlyAvailable         { get; set; }
+
         // Pagination
         public int      TotalCount                  { get; set; }
         public int      OpenCount                   { get; set; }
         public int      InProgressCount             { get; set; }
         public int      VerifiedCount               { get; set; }
         public int      ClosedCount                 { get; set; }
+        public int      RecentlyAvailableCount      { get; set; }
     }
 
     public class RelayInterviewerAvailabilityPayload

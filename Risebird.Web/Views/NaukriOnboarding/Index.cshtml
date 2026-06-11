@@ -15,6 +15,8 @@
     string selCallStatus = ViewBag.CallStatus as string ?? string.Empty;
     string selDisposition = ViewBag.Disposition as string ?? string.Empty;
     string selFunnelStage = ViewBag.FunnelStage as string ?? string.Empty;
+    string selFunnelMode = ViewBag.FunnelMode as string ?? "at";
+    if (selFunnelMode != "reached" && selFunnelMode != "not") selFunnelMode = "at";
     string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
@@ -57,13 +59,14 @@
         if (!string.IsNullOrEmpty(selCallStatus)) q += $"&callStatus={Uri.EscapeDataString(selCallStatus)}";
         if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
         if (!string.IsNullOrEmpty(selFunnelStage)) q += $"&funnelStage={Uri.EscapeDataString(selFunnelStage)}";
+        if (!string.IsNullOrEmpty(selFunnelStage) && selFunnelMode != "at") q += $"&funnelMode={selFunnelMode}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return Url.Action("Index", "NaukriOnboarding") + q;
     }
 
-    // Build a URL that toggles the funnel-stage filter while preserving all other filters.
-    string funnelUrl(string stageValue)
+    // Common (non-funnel) filters shared by the funnel URL helpers.
+    string funnelBaseQuery()
     {
         var q = $"?page=1&pageSize={pageSize}";
         if (!string.IsNullOrEmpty(selStatus)) q += $"&status={Uri.EscapeDataString(selStatus)}";
@@ -73,10 +76,31 @@
         if (!string.IsNullOrEmpty(selAutoStatus)) q += $"&automationStatus={Uri.EscapeDataString(selAutoStatus)}";
         if (!string.IsNullOrEmpty(selCallStatus)) q += $"&callStatus={Uri.EscapeDataString(selCallStatus)}";
         if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
-        // Toggle: clicking the active stage clears the filter.
-        if (!string.IsNullOrEmpty(stageValue) && stageValue != selFunnelStage) q += $"&funnelStage={Uri.EscapeDataString(stageValue)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
+        return q;
+    }
+
+    // Build a URL that toggles the funnel-stage filter (preserving the active match mode).
+    string funnelUrl(string stageValue)
+    {
+        var q = funnelBaseQuery();
+        // Toggle: clicking the active stage (in the same mode) clears the filter.
+        bool clearing = stageValue == selFunnelStage;
+        if (!string.IsNullOrEmpty(stageValue) && !clearing)
+        {
+            q += $"&funnelStage={Uri.EscapeDataString(stageValue)}";
+            if (selFunnelMode != "at") q += $"&funnelMode={selFunnelMode}";
+        }
+        return Url.Action("Index", "NaukriOnboarding") + q;
+    }
+
+    // Build a URL that switches the funnel match mode (at | reached | not), keeping the selected stage.
+    string funnelModeUrl(string mode)
+    {
+        var q = funnelBaseQuery();
+        if (!string.IsNullOrEmpty(selFunnelStage)) q += $"&funnelStage={Uri.EscapeDataString(selFunnelStage)}";
+        if (mode != "at") q += $"&funnelMode={mode}";
         return Url.Action("Index", "NaukriOnboarding") + q;
     }
 
@@ -122,6 +146,23 @@
     .nk-funnel-pill.active .nk-funnel-pill-label { color:#fff; }
     .nk-funnel-pill-count { font-size:11px; font-weight:700; color:#1e293b; background:#fff; border:1px solid #e2e8f0; border-radius:12px; min-width:22px; text-align:center; padding:1px 6px; }
     .nk-funnel-pill.active .nk-funnel-pill-count { color:#0d6efd; border-color:#fff; }
+    .nk-pill-glyph { font-size:10px; color:#fff; }
+
+    /* "Reached" active pill = green, "Not reached" active pill = amber/red, so the complement reads at a glance. */
+    .nk-funnel-pill.active.mode-reached { background:#198754; border-color:#198754; box-shadow:0 2px 6px rgba(25,135,84,.25); }
+    .nk-funnel-pill.active.mode-reached .nk-funnel-pill-count { color:#198754; }
+    .nk-funnel-pill.active.mode-not { background:#b54708; border-color:#b54708; box-shadow:0 2px 6px rgba(181,71,8,.25); }
+    .nk-funnel-pill.active.mode-not .nk-funnel-pill-count { color:#b54708; }
+
+    /* Segmented match-mode toggle */
+    .nk-funnel-mode { display:inline-flex; border:1px solid #e2e8f0; border-radius:20px; overflow:hidden; background:#f8fafc; }
+    .nk-mode-btn { font-size:11px; font-weight:600; color:#64748b; text-decoration:none; padding:4px 11px; border-right:1px solid #e2e8f0; white-space:nowrap; transition:all .12s; }
+    .nk-mode-btn:last-child { border-right:0; }
+    .nk-mode-btn:hover { background:#eef2f7; color:#334155; }
+    .nk-mode-btn.active.nk-mode-at { background:#0d6efd; color:#fff; }
+    .nk-mode-btn.active.nk-mode-reached { background:#198754; color:#fff; }
+    .nk-mode-btn.active.nk-mode-not { background:#b54708; color:#fff; }
+    .nk-funnel-hint { font-size:10.5px; color:#64748b; font-weight:500; flex-basis:100%; margin-top:2px; }
 
     #nkTable { table-layout:auto; width:100%; min-width:1200px; font-size:12px; }
     #nkTable.table-sm > thead > tr > th, #nkTable.table-sm > tbody > tr > td { padding:0.3rem 0.45rem; vertical-align:top; }
@@ -277,19 +318,19 @@
                 @if (TempData["Error"] != null) { <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
 
                 @{
-                   // Operational ticket-status cards (Open / In Progress / Closed). Counts are for the
-                   // current page; the global pipeline distribution lives in the Funnel Stages row below.
-                   Func<Risebird.Entities.ViewModel.NaukriProspectiveInterviewerVM, string> ticketOf = r => string.IsNullOrWhiteSpace(r.TicketStatus) ? "Open" : r.TicketStatus;
-                   var cardOpen = Model.Count(r => string.Equals(ticketOf(r), "Open", StringComparison.OrdinalIgnoreCase));
-                   var cardIP = Model.Count(r => string.Equals(ticketOf(r), "InProgress", StringComparison.OrdinalIgnoreCase));
-                   var cardClosed = Model.Count(r => string.Equals(ticketOf(r), "Closed", StringComparison.OrdinalIgnoreCase));
-                   var cardOnboarded = funnelCounts.TryGetValue("Onboarded", out var onbCnt) ? onbCnt : 0; }
+                   // Global status breakdown across all matched records (not just the current page).
+                   // 'Onboarded' is carved out of Closed so the four cards partition the total:
+                   //   Open + In Progress + Closed + Onboarded = Total.
+                   int cardOpen = ViewBag.OpenCount != null ? (int)ViewBag.OpenCount : 0;
+                   int cardIP = ViewBag.InProgressCount != null ? (int)ViewBag.InProgressCount : 0;
+                   int cardClosed = ViewBag.ClosedCount != null ? (int)ViewBag.ClosedCount : 0;
+                   int cardOnboarded = ViewBag.OnboardedCount != null ? (int)ViewBag.OnboardedCount : 0; }
                 <div class="row g-3 mb-4">
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-secondary">@cardClosed</div><div class="stat-label">Closed</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value" style="color:#0f5132;">@cardOnboarded</div><div class="stat-label">Onboarded</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="All @(hasFilters ? "matched" : "") records. Open + In Progress + Closed + Onboarded add up to this."><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="Open tickets (not yet onboarded)"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="In-progress tickets (not yet onboarded)"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="Closed without onboarding (e.g. not interested, unsubscribed). Onboarded prospects are counted separately."><div class="stat-value text-secondary">@cardClosed</div><div class="stat-label">Closed</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="Successfully onboarded (a closed/successful outcome, shown separately from Closed)"><div class="stat-value" style="color:#0f5132;">@cardOnboarded</div><div class="stat-label">Onboarded</div></div></div>
                 </div>
 
                 <div class="card border-0 shadow-sm mb-4 nk-funnel-panel">
@@ -298,14 +339,40 @@
                             <span class="nk-funnel-title"><i class="fas fa-filter me-1"></i>Funnel Stages</span>
                             <span class="nk-funnel-total" title="Sum across all stages equals the @(hasFilters ? "matched" : "total") records">@totalCount total</span>
                             <span class="nk-funnel-divider"></span>
+                            @{
+                                // Match-mode toggle. 'at' = exact stage (default), 'reached' = this milestone or beyond,
+                                // 'not' = the complement (hasn't reached this milestone yet).
+                                var modeOpts = new (string Val, string Label, string Tip)[] {
+                                    ("at",      "At stage",     "Prospects currently sitting at the selected stage"),
+                                    ("reached", "Reached \u002B","Prospects that have reached the selected milestone or moved beyond it"),
+                                    ("not",     "Not reached",  "Prospects that have NOT yet reached the selected milestone (the complement)")
+                                };
+                            }
+                            <span class="nk-funnel-mode" role="group" aria-label="Funnel match mode">
+                                @foreach (var m in modeOpts)
+                                {
+                                    <a href="@funnelModeUrl(m.Val)" class="nk-mode-btn nk-mode-@m.Val @(selFunnelMode == m.Val ? "active" : "")" title="@m.Tip">@m.Label</a>
+                                }
+                            </span>
+                            <span class="nk-funnel-divider"></span>
                             @foreach (var fs in funnelStages)
                             {
                                 int c = funnelCounts.TryGetValue(fs.Key, out var cv) ? cv : 0;
                                 bool active = string.Equals(selFunnelStage, fs.Value, StringComparison.OrdinalIgnoreCase);
-                                <a href="@funnelUrl(fs.Value)" class="nk-funnel-pill @(active ? "active" : "")" title="@fs.Label">
+                                string pillTip = selFunnelMode == "reached" ? $"Reached \u201C{fs.Label}\u201D or beyond"
+                                               : selFunnelMode == "not"     ? $"Has NOT yet reached \u201C{fs.Label}\u201D"
+                                               :                              $"Currently at \u201C{fs.Label}\u201D";
+                                string modeCls = active ? (selFunnelMode == "reached" ? "active mode-reached" : selFunnelMode == "not" ? "active mode-not" : "active") : "";
+                                <a href="@funnelUrl(fs.Value)" class="nk-funnel-pill @modeCls" title="@pillTip">
+                                    @if (active && selFunnelMode == "reached") { <i class="fas fa-angle-double-right nk-pill-glyph"></i> }
+                                    else if (active && selFunnelMode == "not") { <i class="fas fa-ban nk-pill-glyph"></i> }
                                     <span class="nk-funnel-pill-label">@fs.Label</span>
                                     <span class="nk-funnel-pill-count">@c</span>
                                 </a>
+                            }
+                            @if (selFunnelMode != "at")
+                            {
+                                <span class="nk-funnel-hint"><i class="fas fa-info-circle me-1"></i>Counts show the live stage distribution; the active <b>@(selFunnelMode == "reached" ? "Reached" : "Not reached")</b> mode filters the table by milestone.</span>
                             }
                         </div>
                     </div>
@@ -314,6 +381,7 @@
                 <form asp-action="Index" asp-controller="NaukriOnboarding" method="get" id="filterForm">
                     <input type="hidden" name="page" value="1" />
                     <input type="hidden" name="pageSize" value="@pageSize" />
+                    <input type="hidden" name="funnelMode" value="@selFunnelMode" />
                     <div class="card border-0 shadow-sm mb-3">
                         <div class="card-body py-2 px-3">
                             <div class="d-flex align-items-center gap-2" style="flex-wrap:nowrap;width:100%;">

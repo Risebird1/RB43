@@ -14,6 +14,7 @@ CREATE PROCEDURE [dbo].[usp_GetNaukriFunnelStageCounts]
     @CallStatus         VARCHAR(50)  = NULL,
     @Disposition        VARCHAR(50)  = NULL,
     @FunnelStage        VARCHAR(50)  = NULL,
+    @FunnelMode         VARCHAR(10)  = 'at',   -- at | reached | not  (how @FunnelStage is matched)
     @DateFrom           DATETIME     = NULL,
     @DateTo             DATETIME     = NULL
 AS
@@ -39,8 +40,13 @@ BEGIN
         AND (@Disposition IS NULL OR LOWER(ISNULL(np.PlivoProspectDisposition, '')) = LOWER(@Disposition))
         AND (
             @FunnelStage IS NULL
-            OR (@FunnelStage = '_none_' AND ISNULL(np.FunnelStage, '') = '')
-            OR np.FunnelStage = @FunnelStage
+            OR (ISNULL(@FunnelMode, 'at') = 'at' AND (
+                    (@FunnelStage = '_none_' AND ISNULL(np.FunnelStage, '') = '')
+                    OR np.FunnelStage = @FunnelStage))
+            OR (@FunnelMode = 'reached'
+                    AND dbo.fn_NaukriFunnelStageRank(np.FunnelStage) >= dbo.fn_NaukriFunnelStageRank(@FunnelStage))
+            OR (@FunnelMode = 'not'
+                    AND dbo.fn_NaukriFunnelStageRank(np.FunnelStage) <  dbo.fn_NaukriFunnelStageRank(@FunnelStage))
         )
         AND (@DateFrom IS NULL OR np.ReceivedAt >= @DateFrom)
         AND (@DateTo IS NULL OR np.ReceivedAt < DATEADD(DAY, 1, @DateTo))

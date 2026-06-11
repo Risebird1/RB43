@@ -120,7 +120,7 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveInterviewerPreOnboardingVerdict(string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
         Task<SaveOperationResult> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser);
         Task UpdatePreOnboardingVerdictInterviewerProfileId(int preOnboardingVerdictId, int interviewerProfileId, string modifiedBy);
-        Task<UserList> UpdateInterviewerActiveStatus(int status, int userId);
+        Task<UserList> UpdateInterviewerActiveStatus(int status, int userId, bool activateChannels = true);
         Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForInterviewerPostAdding(int userId);
         Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForApplicantUponEdit(int applicantId);
         Task<bool> AddTargetSkillChannelToInterviewerPreOnboarding(int userId, int targetIrfId);

@@ -5060,7 +5060,16 @@ namespace Risebird.Web.Controllers
 
                 if (userId.HasValue && userId.Value > 0)//!string.IsNullOrEmpty(userId)
                 {
-                    var result = await _interviewerService.UpdateInterviewerActiveStatus(status, userId.Value);//, irf
+                    // Detect whether this user came through the NaukriOnboarding prospect funnel.
+                    // For such interviewers we DO NOT auto-activate their skill channels on
+                    // acknowledgement — channels remain Available (IsActive = 0) so an operator can
+                    // manually review and activate them. Their UserList account is still activated.
+                    int? prospectId = null;
+                    try { prospectId = await _naukriOnboardingRepository.FindProspectIdByOnboardedUserIdAsync(userId.Value); }
+                    catch (Exception nex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, nex); }
+                    bool activateChannels = !prospectId.HasValue;
+
+                    var result = await _interviewerService.UpdateInterviewerActiveStatus(status, userId.Value, activateChannels);//, irf
 
                     if (result != null)
                     {
@@ -5068,7 +5077,6 @@ namespace Risebird.Web.Controllers
                         // acknowledgement RESPONSE is what completes onboarding — not the email send.
                         try
                         {
-                            var prospectId = await _naukriOnboardingRepository.FindProspectIdByOnboardedUserIdAsync(userId.Value);
                             if (prospectId.HasValue)
                             {
                                 if (status == 1)

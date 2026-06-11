@@ -49,5 +49,17 @@ BEGIN
             AND ti.IsCampaignActivity = 1
             AND ti.CampaignId = @CampaignId
       )
+      -- Exclude "recently available": signaled a favorable availability within the last 48h
+      -- for any MAG belonging to this campaign's assessment groups.
+      AND NOT EXISTS (
+          SELECT 1
+          FROM InterviewerEmailAvailability ea
+          INNER JOIN MasterAssessmentGroup mag
+              ON mag.MAGName = ea.MagName AND ISNULL(mag.IsDeleted, 0) = 0
+          WHERE (ea.UserId = ul.Id OR ea.InterviewerProfileId = ipr.Id OR ea.SenderEmail = ul.EmailId)
+            AND mag.AssessmentGroupId IN (SELECT id FROM @tbl_AllAssessmentGroups)
+            AND ea.ReceivedAt >= DATEADD(HOUR, -48, GETUTCDATE())
+            AND dbo.fn_IsFavorableAvailabilityIntent(ea.AvailabilityIntent, ea.MailBodyIntent, ea.ConcernsOrNotInterested) = 1
+      )
 END
 GO
