@@ -3451,9 +3451,9 @@ SELECT CAST(CASE WHEN EXISTS (
                     parameters.Add("@CodedResumeLink", model.CodedResumeLink);
                     parameters.Add("@IsResumeRedactAttempted", model.IsResumeRedactAttempted);
                     parameters.Add("@IsResumeRedactFailed", model.IsResumeRedactFailed);
-                    var results = await SqlMapper.QueryAsync(con, "usp_SaveInterviewerCodedResume", parameters,
+                    var rows = await con.ExecuteAsync("usp_SaveInterviewerCodedResume", parameters,
                            commandType: CommandType.StoredProcedure);
-                    return true;
+                    return rows > 0;
                 }
             }
             catch (SqlException ex)

@@ -15,7 +15,11 @@ Create PROCEDURE usp_GetRevenueDetailsByDate
 @month int    
 AS        
 BEGIN        
-Select distinct cl.id, cl.Name, Count(im.id) as TotalCount, cl.PerInterviewRate, cl.BillingType,
+Select distinct cl.id, cl.Name,
+    Count(im.id) as TotalCount,
+    SUM(CASE WHEN ISNULL(IRF.IsAIInterview, 0) = 0 THEN 1 ELSE 0 END) AS NonAIInterviewCount,
+    SUM(CASE WHEN ISNULL(IRF.IsAIInterview, 0) = 1 THEN 1 ELSE 0 END) AS AIInterviewCount,
+    cl.PerInterviewRate, cl.AIPerInterviewRate, cl.BillingType,
     Po.POPendingAmount, Inv.InvoiceAmount, cl.GSTApplicable, cl.PaymentTerm,
     ISNULL(GI.GenInvoiceAmount, 0)  AS GeneratedInvoiceAmount,
     ISNULL(GI.GenInvoiceCount, 0)   AS GeneratedInvoiceCount,
@@ -57,7 +61,7 @@ outer Apply (
 where im.interviewDate >= @StartDate and im.interviewDate < @EndDate         
 and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6 or ic.MeetingStatus = 7 or ic.MeetingStatus = 8)
 and IsNull(im.RedoInterview, 0) = 0                  
-group by cl.id, cl.Name, cl.PerInterviewRate, cl.BillingType,
+group by cl.id, cl.Name, cl.PerInterviewRate, cl.AIPerInterviewRate, cl.BillingType,
     Po.POPendingAmount, Inv.InvoiceAmount, cl.GSTApplicable, cl.PaymentTerm,
     GI.GenInvoiceAmount, GI.GenInvoiceCount, BOC.TotalBillingOwnerCount
 END    

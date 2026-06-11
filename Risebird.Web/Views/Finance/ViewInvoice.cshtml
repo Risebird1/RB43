@@ -103,15 +103,32 @@
                     <label class="vi-label">IRN <span class="tag-edit">(editable)</span></label>
                     <input type="text" id="editIRN" class="form-control editable-field"
                            value="@Model.IRN" placeholder="IRN" />
+                    <div style="margin-top:8px;">
+                        <label class="vi-label">e-Invoice File <span style="font-weight:400;color:#888;">(PDF / Word)</span></label>
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;">
+                            <label class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:11px;cursor:pointer;margin:0;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:4px;"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+                                Upload e-Invoice
+                                <input type="file" id="fileEInvoiceView" accept=".pdf,.doc,.docx" style="display:none;" onchange="uploadEInvoiceFileView(this)" />
+                            </label>
+                            <span id="spnEInvoiceViewStatus" style="font-size:12px;color:#555;"></span>
+                        </div>
+                        <input type="hidden" id="hidEInvoiceFileLinkView" value="@Model.EInvoiceFileLink" />
+                        <div id="divEInvoiceLinkView" style="margin-top:5px;@(string.IsNullOrEmpty(Model.EInvoiceFileLink) ? "display:none;" : "")">
+                            <a id="lnkEInvoiceFileView" href="@Model.EInvoiceFileLink" target="_blank" style="font-size:12px;color:#1976d2;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:3px;"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
+                                View Uploaded File
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-4 mt-3">
                     <label class="vi-label">Status <span class="tag-edit">(editable)</span></label>
                     <select id="editStatus" class="form-control editable-field">
                         @if (Model.Status == 0) { <option value="0" selected="selected">Draft</option> } else { <option value="0">Draft</option> }
                         @if (Model.Status == 1) { <option value="1" selected="selected">Generated</option> } else { <option value="1">Generated</option> }
-                        @if (Model.Status == 2) { <option value="2" selected="selected">Paid</option> } else { <option value="2">Paid</option> }
-                        @if (Model.Status == 3) { <option value="3" selected="selected">Partially Paid</option> } else { <option value="3">Partially Paid</option> }
-                        @if (Model.Status == 4) { <option value="4" selected="selected">Overdue</option> } else { <option value="4">Overdue</option> }
+                        @if (Model.Status == 2) { <option value="2" selected="selected">PO Pending</option> } else { <option value="2">PO Pending</option> }
+                        @if (Model.Status == 3) { <option value="3" selected="selected">Paid</option> } else { <option value="3">Paid</option> }
                     </select>
                 </div>
             </div>
@@ -120,7 +137,7 @@
         <!-- ── Section 2b: Cash Credit Info (non-M1, visible only when Paid) ── -->
         @if (Model.BillingModel != (int)Risebird.Entities.Enum.BillingModelEnum.M1 && Model.BillingModel != 0)
         {
-            <div class="vi-card" id="cashCreditSection" style="display:@(Model.Status == 2 ? "block" : "none"); border-left:4px solid #43a047;">
+            <div class="vi-card" id="cashCreditSection" style="display:@(Model.Status == 3 ? "block" : "none"); border-left:4px solid #43a047;">
                 <div class="vi-section-title" style="color:#2e7d32;">Cash Credit Information</div>
                 <p class="text-muted" style="font-size:12px;margin-top:-8px;margin-bottom:14px;">
                     This invoice will be marked <strong>Paid</strong>. Enter the cash credit details to post the received amount into the client wallet.
@@ -239,7 +256,7 @@
 
     // Show/hide cash credit section when status changes
     $('#editStatus').on('change', function () {
-        var isPaid = parseInt($(this).val()) === 2;
+        var isPaid = parseInt($(this).val()) === 3;
         var isNonM1 = _billingModel !== _M1 && _billingModel !== 0;
         if (isPaid && isNonM1) {
             $('#cashCreditSection').slideDown(200);
@@ -279,7 +296,7 @@
     function saveChanges() {
         var taxScenario  = parseInt($('#hidTaxScenario').val() || 0);
         var selectedStatus = parseInt($('#editStatus').val());
-        var isPaid       = selectedStatus === 2;
+        var isPaid       = selectedStatus === 3;
         var isNonM1      = _billingModel !== _M1 && _billingModel !== 0;
 
         // Validate: cash credit amount is required when marking Paid for non-M1
@@ -309,17 +326,18 @@
         var netReceivable = invoiceValue - tdsAmount;
 
         var payload = {
-            invoiceId:     $('#hidInvoiceId').val(),
-            gstNumber:     $('#editGSTNumber').val().trim(),
-            creditPeriod:  $('#editCreditPeriod').val().trim(),
-            irn:           $('#editIRN').val().trim(),
-            status:        selectedStatus,
-            subtotal:      subtotal.toFixed(2),
-            gstAmount:     gstAmount.toFixed(2),
-            invoiceValue:  invoiceValue.toFixed(2),
-            tdsAmount:     tdsAmount.toFixed(2),
-            netReceivable: netReceivable.toFixed(2),
-            lineItemsJson: JSON.stringify(lineItems)
+            invoiceId:        $('#hidInvoiceId').val(),
+            gstNumber:        $('#editGSTNumber').val().trim(),
+            creditPeriod:     $('#editCreditPeriod').val().trim(),
+            irn:              $('#editIRN').val().trim(),
+            eInvoiceFileLink: $('#hidEInvoiceFileLinkView').val().trim(),
+            status:           selectedStatus,
+            subtotal:         subtotal.toFixed(2),
+            gstAmount:        gstAmount.toFixed(2),
+            invoiceValue:     invoiceValue.toFixed(2),
+            tdsAmount:        tdsAmount.toFixed(2),
+            netReceivable:    netReceivable.toFixed(2),
+            lineItemsJson:    JSON.stringify(lineItems)
         };
 
         if (isPaid && isNonM1) {
@@ -350,5 +368,42 @@
                 $('#divSaveMsg').attr('class', 'alert alert-danger').html('An error occurred.').show();
             }
         });
+    }
+
+    function uploadEInvoiceFileView(input) {
+        if (!input.files || !input.files[0]) return;
+        var file = input.files[0];
+        var status = document.getElementById('spnEInvoiceViewStatus');
+        status.style.color = '#555';
+        status.textContent = 'Uploading…';
+
+        var fd = new FormData();
+        fd.append('file', file);
+
+        $.ajax({
+            url: '/Finance/UploadEInvoiceFile',
+            type: 'POST',
+            data: fd,
+            processData: false,
+            contentType: false,
+            headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+            success: function (res) {
+                if (res.success) {
+                    document.getElementById('hidEInvoiceFileLinkView').value = res.fileUrl;
+                    document.getElementById('lnkEInvoiceFileView').href = res.fileUrl;
+                    document.getElementById('divEInvoiceLinkView').style.display = 'block';
+                    status.style.color = '#2e7d32';
+                    status.textContent = file.name + ' — uploaded';
+                } else {
+                    status.style.color = '#c62828';
+                    status.textContent = res.message || 'Upload failed.';
+                }
+            },
+            error: function () {
+                status.style.color = '#c62828';
+                status.textContent = 'Upload failed. Please try again.';
+            }
+        });
+        input.value = '';
     }
 </script>

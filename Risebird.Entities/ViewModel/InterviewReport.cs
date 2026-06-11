@@ -502,7 +502,10 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public string Name { get; set; }
         public int TotalCount { get; set; }
+        public int NonAIInterviewCount { get; set; }
+        public int AIInterviewCount { get; set; }
         public int PerInterviewRate { get; set; }
+        public int AIPerInterviewRate { get; set; }
         public string IRFId { get; set; }
         public string BillingOwner { get; set; }
         public int BillingType { get; set; }
@@ -587,6 +590,7 @@ namespace Risebird.Entities.ViewModel
         public bool GSTApplicable { get; set; }
         public int TaxScenario { get; set; }
         public string IRN { get; set; }
+        public string EInvoiceFileLink { get; set; }
         public int BillingType { get; set; }
         public decimal PerInterviewRate { get; set; }
         public decimal Subtotal { get; set; }
@@ -613,6 +617,7 @@ namespace Risebird.Entities.ViewModel
         public string GSTNumber { get; set; }
         public int TaxScenario { get; set; }
         public string IRN { get; set; }
+        public string EInvoiceFileLink { get; set; }
         public decimal Subtotal { get; set; }
         public decimal GSTAmount { get; set; }
         public decimal InvoiceValue { get; set; }
@@ -651,6 +656,7 @@ namespace Risebird.Entities.ViewModel
         public bool GSTApplicable { get; set; }
         public int BillingType { get; set; }
         public decimal PerInterviewRate { get; set; }
+        public decimal AIPerInterviewRate { get; set; }
         public string BillingOwnerEmail { get; set; }
         public int BillingOwnerId { get; set; }
         public string InvoiceNumber { get; set; }
