@@ -465,6 +465,15 @@ namespace Risebird.Repository
             return id;
         }
 
+        public async Task<InterviewerEmailAvailabilityVM> GetProfileInterviewerContactAsync(int interviewerProfileId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            return await con.QueryFirstOrDefaultAsync<InterviewerEmailAvailabilityVM>(
+                "usp_GetProfileInterviewerContact",
+                new { InterviewerProfileId = interviewerProfileId },
+                commandType: CommandType.StoredProcedure, commandTimeout: 15);
+        }
+
         public async Task<bool> MarkAutoClosedAsync(int id, string autoClosedBy)
         {
             using var con = new SqlConnection(_connectionString);

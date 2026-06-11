@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.PlivoCXModels;
 using Risebird.Entities.Enum;
+using Risebird.Entities.Helpers;
 using Risebird.Repository.Interface;
 using System;
 using System.Linq;
@@ -142,19 +143,8 @@ namespace Risebird.AzureTimerFunctions
                     if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
                     else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
 
-                    int eaId = await _eaRepository.EnsureEARecordForProfileInterviewerAsync(
-                        interviewer.InterviewerProfileId, campaign.MagName, source);
-
-                    if (eaId <= 0)
-                    {
-                        _log.LogWarning($"[CampaignBatchCall] Could not ensure EA record for profile #{interviewer.InterviewerProfileId}. Skipping.");
-                        failed++;
-                        continue;
-                    }
-
-                    await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
-                        DateTime.UtcNow, null, null, null, null, null, null, null, null, initiatedBy);
-
+                    // Defer record creation: the InterviewerEmailAvailability row is created
+                    // by the hangup webhook only if the call confirms availability.
                     var triggerRequest = new PlivoCXAvailabilityTriggerRequest
                     {
                         CallerId         = callerId,
@@ -162,26 +152,16 @@ namespace Risebird.AzureTimerFunctions
                         InterviewerName  = interviewer.InterviewerName ?? "there",
                         InterviewerEmail = interviewer.SenderEmail,
                         MagName          = campaign.MagName,
-                        LogId            = eaId.ToString(),
+                        LogId            = AvailabilityCallToken.Build(interviewer.InterviewerProfileId, campaign.MagName, source),
                         TodayDate        = DateTime.Now.ToString("dddd, dd MMMM yyyy")
                     };
 
                     var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
 
                     if (!string.IsNullOrEmpty(response?.Error))
-                    {
-                        await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
-                            null, null, null, response.Error, null, null, null, null, null, null);
                         failed++;
-                    }
                     else
-                    {
-                        await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "triggered", response?.ConversationId,
-                            null, null, null, null, null, null, null, null, null, null);
-                        await _eaRepository.InsertHistoryAsync(eaId, "CampaignBatchCall", "—",
-                            $"Availability call triggered for campaign '{campaign.CampaignName}'. ConvId: {response?.ConversationId ?? "N/A"}", initiatedBy);
                         succeeded++;
-                    }
 
                     await Task.Delay(1200);
                 }

@@ -23,6 +23,7 @@ using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Data.PlivoCXModels;
 using Risebird.Entities.Data.VapiModels;
 using Risebird.Entities.Enum;
+using Risebird.Entities.Helpers;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
@@ -1124,21 +1125,23 @@ namespace Risebird.Web.Controllers
                     {
                         try
                         {
+                            // Profile interviewers (not yet in InterviewerEmailAvailability) are NOT
+                            // inserted up-front. We pass a self-contained token as log_id; the hangup
+                            // webhook creates the row only if the call confirms availability.
+                            bool deferred = interviewer.Source == "Profile" && interviewer.InterviewerProfileId.HasValue;
                             int eaId = interviewer.Id;
 
-                            if (interviewer.Source == "Profile" && interviewer.InterviewerProfileId.HasValue)
-                            {
-                                eaId = await _eaRepository.EnsureEARecordForProfileInterviewerAsync(
-                                    interviewer.InterviewerProfileId.Value, magName, "IRFAutoCall");
-                                if (eaId <= 0) { failed++; continue; }
-                            }
+                            string logId = deferred
+                                ? AvailabilityCallToken.Build(interviewer.InterviewerProfileId.Value, magName, "IRFAutoCall")
+                                : eaId.ToString();
 
                             string phone = interviewer.Phone?.Trim() ?? "";
                             if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
                             else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
 
-                            await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
-                                DateTime.UtcNow, null, null, null, null, null, null, null, null, initiatedBy);
+                            if (!deferred)
+                                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
+                                    DateTime.UtcNow, null, null, null, null, null, null, null, null, initiatedBy);
 
                             var triggerRequest = new PlivoCXAvailabilityTriggerRequest
                             {
@@ -1147,7 +1150,7 @@ namespace Risebird.Web.Controllers
                                 InterviewerName = interviewer.InterviewerName ?? "there",
                                 InterviewerEmail = interviewer.SenderEmail,
                                 MagName         = magName,
-                                LogId           = eaId.ToString(),
+                                LogId           = logId,
                                 TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
                             };
 
@@ -1155,16 +1158,20 @@ namespace Risebird.Web.Controllers
 
                             if (!string.IsNullOrEmpty(response?.Error))
                             {
-                                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
-                                    null, null, null, response.Error, null, null, null, null, null, null);
+                                if (!deferred)
+                                    await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
+                                        null, null, null, response.Error, null, null, null, null, null, null);
                                 failed++;
                             }
                             else
                             {
-                                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "triggered", response?.ConversationId,
-                                    null, null, null, null, null, null, null, null, null, null);
-                                await _eaRepository.InsertHistoryAsync(eaId, "IRFAutoCall", "—",
-                                    $"Availability call triggered for IRF '{irfName}'. ConvId: {response?.ConversationId ?? "N/A"}", initiatedBy);
+                                if (!deferred)
+                                {
+                                    await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "triggered", response?.ConversationId,
+                                        null, null, null, null, null, null, null, null, null, null);
+                                    await _eaRepository.InsertHistoryAsync(eaId, "IRFAutoCall", "—",
+                                        $"Availability call triggered for IRF '{irfName}'. ConvId: {response?.ConversationId ?? "N/A"}", initiatedBy);
+                                }
                                 succeeded++;
                             }
 
@@ -10150,13 +10157,8 @@ namespace Risebird.Web.Controllers
                         if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
                         else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
 
-                        int eaId = await _eaRepository.EnsureEARecordForProfileInterviewerAsync(
-                            interviewer.InterviewerProfileId, campaign.MagName, source);
-                        if (eaId <= 0) { failed++; continue; }
-
-                        await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
-                            DateTime.UtcNow, null, null, null, null, null, null, null, null, initiatedBy);
-
+                        // Defer record creation: the row is created by the hangup webhook only
+                        // if the call confirms availability.
                         var triggerRequest = new PlivoCXAvailabilityTriggerRequest
                         {
                             CallerId         = callerId,
@@ -10164,26 +10166,16 @@ namespace Risebird.Web.Controllers
                             InterviewerName  = interviewer.InterviewerName ?? "there",
                             InterviewerEmail = interviewer.SenderEmail,
                             MagName          = campaign.MagName,
-                            LogId            = eaId.ToString(),
+                            LogId            = AvailabilityCallToken.Build(interviewer.InterviewerProfileId, campaign.MagName, source),
                             TodayDate        = DateTime.Now.ToString("dddd, dd MMMM yyyy")
                         };
 
                         var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
 
                         if (!string.IsNullOrEmpty(response?.Error))
-                        {
-                            await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
-                                null, null, null, response.Error, null, null, null, null, null, null);
                             failed++;
-                        }
                         else
-                        {
-                            await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "triggered", response?.ConversationId,
-                                null, null, null, null, null, null, null, null, null, null);
-                            await _eaRepository.InsertHistoryAsync(eaId, "CampaignBatchCall", "—",
-                                $"Availability call triggered for campaign '{campaign.CampaignName}'. ConvId: {response?.ConversationId ?? "N/A"}", initiatedBy);
                             succeeded++;
-                        }
 
                         await System.Threading.Tasks.Task.Delay(1200);
                     }
