@@ -1,8 +1,50 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Risebird.Entities.ViewModel
 {
+    // ── All-clients wallet summary page ──────────────────────────────────────────
+    public class BillingOwnerInterviewCountVM
+    {
+        public int    ClientId             { get; set; }
+        public int    BillingOwnerId       { get; set; }
+        public string BillingOwnerEmail    { get; set; }
+        public string BillingOwnerName     { get; set; }
+        public int    MonthInterviewCount  { get; set; }
+    }
+
+    public class ClientWalletSummaryRowVM
+    {
+        public int     ClientId           { get; set; }
+        public string  ClientName         { get; set; }
+        public int     BillingType        { get; set; }   // 1=User Scope, 3=Client Scope
+        public int     BillingModel       { get; set; }
+        public string  BillingModelDesc   { get; set; }
+        public int     PerInterviewRate   { get; set; }
+        public int     AIPerInterviewRate { get; set; }
+        public int     MonthInterviewCount { get; set; }
+        public decimal MonthCredit        { get; set; }
+        public decimal MonthDebit         { get; set; }
+        public decimal MonthNet           => MonthCredit - MonthDebit;
+        public decimal OverallBalance     { get; set; }
+        public int     TransactionCount   { get; set; }
+    }
+
+    public class AllClientsWalletVM
+    {
+        public int    SelectedMonth      { get; set; }
+        public int    SelectedYear       { get; set; }
+        public string PeriodLabel        { get; set; }
+        public List<ClientWalletSummaryRowVM>     Clients            { get; set; } = new List<ClientWalletSummaryRowVM>();
+        public List<BillingOwnerInterviewCountVM> BillingOwnerCounts { get; set; } = new List<BillingOwnerInterviewCountVM>();
+        public decimal TotalMonthCredit    => Clients.Sum(c => c.MonthCredit);
+        public decimal TotalMonthDebit     => Clients.Sum(c => c.MonthDebit);
+        public decimal TotalMonthNet       => TotalMonthCredit - TotalMonthDebit;
+        public decimal TotalOverallBalance => Clients.Sum(c => c.OverallBalance);
+    }
+
+    // ── Existing VMs (unchanged) ─────────────────────────────────────────────────
     public class ClientWalletDashboardVM
     {
         public int ClientId { get; set; }
@@ -76,7 +118,7 @@ namespace Risebird.Entities.ViewModel
     public class WalletVM
     {
         public int id { get; set; }
-        public int BillingType { get; set; } // 1: Billing Owner (Client Users), 3: Client
+        public int BillingType { get; set; }
         public int ClientId { get; set; }
         public int BillingOwnerId { get; set; }
         public string CreatedBy { get; set; }
@@ -107,4 +149,3 @@ namespace Risebird.Entities.ViewModel
         public string PONumber { get; set; }
     }
 }
-
