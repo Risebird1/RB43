@@ -68,7 +68,8 @@ namespace Risebird.Repository
         public async Task<List<InterviewerEmailAvailabilityVM>> GetEmailAvailabilityAsync(
             string status, string senderEmail, string resumeFitment,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
-            string source = null, bool? isAutoClosed = null, bool? isInterviewerActive = null)
+            string source = null, bool? isAutoClosed = null, bool? isInterviewerActive = null,
+            bool? recentlyAvailable = null)
         {
             try
             {
@@ -80,6 +81,7 @@ namespace Risebird.Repository
                 parameters.Add("@Source", string.IsNullOrWhiteSpace(source) ? null : source);
                 parameters.Add("@IsAutoClosed", isAutoClosed);
                 parameters.Add("@IsInterviewerActive", isInterviewerActive);
+                parameters.Add("@RecentlyAvailable", recentlyAvailable);
                 parameters.Add("@DateFrom", dateFrom);
                 parameters.Add("@DateTo", dateTo);
                 parameters.Add("@Page", page);

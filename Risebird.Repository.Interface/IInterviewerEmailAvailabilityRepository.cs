@@ -18,7 +18,8 @@ namespace Risebird.Repository.Interface
         Task<List<InterviewerEmailAvailabilityVM>> GetEmailAvailabilityAsync(
             string status, string senderEmail, string resumeFitment,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
-            string source = null, bool? isAutoClosed = null, bool? isInterviewerActive = null);
+            string source = null, bool? isAutoClosed = null, bool? isInterviewerActive = null,
+            bool? recentlyAvailable = null);
 
         Task<InterviewerEmailAvailabilityVM> GetEmailAvailabilityByIdAsync(int id);
 

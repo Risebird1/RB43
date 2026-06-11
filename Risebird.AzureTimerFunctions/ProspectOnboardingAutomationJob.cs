@@ -91,14 +91,13 @@ namespace Risebird.AzureTimerFunctions
 
             try
             {
-                // Business hours guard: 9 AM – 9 PM IST (UTC+5:30 → UTC 3:30–15:30)
-                var utcNow = DateTime.UtcNow;
-                var istHour = utcNow.AddHours(5).AddMinutes(30).Hour;
-                if (istHour < 9 || istHour >= 21)
-                {
-                    _log.LogInformation($"[OnboardAuto] Outside business hours (IST {istHour}:xx). Skipping.");
-                    return;
-                }
+                // Business-hours (9 AM – 9 PM IST) applies ONLY to prospect-facing communication steps —
+                // the invitation email, the recruitment call, and the onboarding/acknowledgement-email
+                // finalization. Those are guarded individually below via IsWithinBusinessHours().
+                // Non-communication steps (resume parse, MAG resolution, employment verification, AI
+                // résumé fitment) run around the clock, so the job itself is NOT skipped off-hours.
+                var istHour = DateTime.UtcNow.AddHours(5).AddMinutes(30).Hour;
+                _log.LogInformation($"[OnboardAuto] IST hour {istHour}:xx — prospect communications {(IsWithinBusinessHours() ? "ENABLED" : "DEFERRED (off-hours)")}.");
 
                 var prospects = await _repository.GetEligibleProspectsForAutomationAsync(2);
                 if (prospects == null || !prospects.Any())
@@ -233,6 +232,13 @@ namespace Risebird.AzureTimerFunctions
                     await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
                     await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
                         "Automation: no MAG application link available.", "AutomationJob");
+                    return;
+                }
+
+                // Communication step — do not email a prospect outside business hours (9 AM–9 PM IST).
+                if (!IsWithinBusinessHours())
+                {
+                    _log.LogInformation($"[OnboardAuto] #{p.Id} — outside business hours. Deferring invitation email until 9 AM–9 PM IST.");
                     return;
                 }
 
@@ -513,6 +519,18 @@ namespace Risebird.AzureTimerFunctions
             }
 
             // ── Onboard + acknowledgement email ──────────────────────────────────────
+            // This finalization sends the acknowledgement email to the prospect, so it is a
+            // communication step gated to business hours (9 AM–9 PM IST). Employment Verification and
+            // AI fitment above have already run and been persisted, so on the next in-hours run this
+            // method resumes here (those gates are skipped) and proceeds to onboard.
+            if (!IsWithinBusinessHours())
+            {
+                _log.LogInformation($"[OnboardAuto] #{rec.Id} — EV & AI fitment complete; deferring onboarding + acknowledgement email until business hours (9 AM–9 PM IST).");
+                await _repository.InsertHistoryAsync(rec.Id, "AutomationNote", "—",
+                    "Automation: EV & AI fitment passed; onboarding + acknowledgement email deferred until business hours (9 AM–9 PM IST).", "AutomationJob");
+                return;
+            }
+
             await AutoOnboardInterviewerAsync(rec, agId.Value);
         }
 
@@ -888,11 +906,17 @@ namespace Risebird.AzureTimerFunctions
             }
         }
 
-        private static bool IsWithinCallWindow()
+        /// <summary>
+        /// Business hours for all prospect-facing communication (emails &amp; calls): 9 AM–9 PM IST.
+        /// Non-communication pipeline steps ignore this window.
+        /// </summary>
+        private static bool IsWithinBusinessHours()
         {
             var ist = DateTime.UtcNow.AddHours(5).AddMinutes(30);
             return ist.Hour >= 9 && ist.Hour < 21;
         }
+
+        private static bool IsWithinCallWindow() => IsWithinBusinessHours();
 
         private async Task<bool> TriggerCallAsync(Entities.ViewModel.NaukriProspectiveInterviewerVM p)
         {
