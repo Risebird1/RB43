@@ -104,10 +104,14 @@
     /// <summary>True when TransInterviewer.InterviewCapacity is set (explicit per-row override).</summary>
     bool DmV4CapExplicit(TransInterviewer iv) =>
         iv?.InterviewCapacity != null;
-    int DmV4CapVal(TransInterviewer iv, int channelDefaultCap, bool lockOn, bool limitedPolicy) =>
-        DmIvCapHelper.GetEffectiveCap(lockOn && limitedPolicy, iv?.InterviewCapacity, channelDefaultCap);
-    bool DmV4CapShowUnlimited(bool limitedPolicy, TransInterviewer iv, bool lockOn) =>
-        DmIvCapHelper.ShowUnlimited(limitedPolicy, iv?.InterviewCapacity, lockOn);
+    DmIvCapRowState DmV4CapState(TransInterviewer iv, int channelDefaultCap, bool limitedPolicy) =>
+        DmIvCapHelper.GetCapStateForRow(limitedPolicy, iv?.InterviewCapacity, iv?.TotalFuture ?? 0, channelDefaultCap);
+    int DmV4CapVal(TransInterviewer iv, int channelDefaultCap, bool limitedPolicy) =>
+        DmV4CapState(iv, channelDefaultCap, limitedPolicy).EffectiveCap;
+    bool DmV4CapShowUnlimited(TransInterviewer iv, int channelDefaultCap, bool limitedPolicy) =>
+        DmV4CapState(iv, channelDefaultCap, limitedPolicy).ShowUnlimited;
+    bool DmV4CapUsesDefault(TransInterviewer iv, int channelDefaultCap, bool limitedPolicy) =>
+        DmV4CapState(iv, channelDefaultCap, limitedPolicy).UsesChannelDefault;
     bool DmV4CapExplicitZero(TransInterviewer iv) =>
         iv?.InterviewCapacity != null && iv.InterviewCapacity.Value == 0;
     string DmV4IsoTimestamp(DateTime? value) =>
@@ -1208,13 +1212,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="dm-v4-iv-policy-divider" aria-hidden="true"></div>
-                                                <div class="dm-v4-iv-policy-col">
+                                                <div class="dm-v4-iv-policy-col@(dmCapEnforced ? "" : " dm-v4-iv-policy-col--cap-disabled")" id="dmV4DefaultCapCol">
                                                     <div class="dm-v4-iv-policy-icon" aria-hidden="true">
                                                         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 13l4-4 3 3 5-7" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5h5v5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                                     </div>
                                                     <div class="dm-v4-iv-policy-body">
                                                         <div class="dm-v4-iv-policy-title">Default interview cap</div>
-                                                        <div class="dm-v4-iv-policy-sub">Used for newly added interviewers. Existing caps stay until you bulk-apply.</div>
+                                                        <div class="dm-v4-iv-policy-sub">@(dmCapEnforced ? "Used for newly added interviewers. Existing caps stay until you bulk-apply." : "Not used while assignment policy is Free.")</div>
                                                         <div class="dm-v4-iv-policy-control dm-v4-iv-policy-control--cap">
                                                             <div class="dm-v4-stepper" id="dmV4DefaultCapStepper">
                                                                 <button type="button" class="dm-v4-stepper-btn" data-step="-1" @(canEditIvOps ? "" : "disabled") aria-label="Decrease default cap">−</button>
@@ -1313,10 +1317,11 @@
                                                             var cvCode = !string.IsNullOrEmpty(dmIvDisplayCodedCvLink) ? (iv.NickName ?? "CV") : null;
                                                             var screenUrl = Url.Action("ScreenInterviewer", "AIScreener", new { jdTitle = screenJdTitle, userId = iv.UserId, irfId = Model.id, irfName = Model.IRFId });
                                                             var ivCapExplicit = DmV4CapExplicit(iv);
-                                                            var ivCapVal = DmV4CapVal(iv, dmDefaultCap, dmIvLockNew, dmCapEnforced);
-                                                            var ivCapShowUnlimited = DmV4CapShowUnlimited(dmCapEnforced, iv, dmIvLockNew);
-                                                            var ivCapUsesDefault = dmCapEnforced && dmIvLockNew && !ivCapExplicit;
-                                                            var ivCapExplicitZero = DmV4CapExplicitZero(iv);
+                                                            var ivCapState = DmV4CapState(iv, dmDefaultCap, dmCapEnforced);
+                                                            var ivCapVal = ivCapState.EffectiveCap;
+                                                            var ivCapShowUnlimited = ivCapState.ShowUnlimited;
+                                                            var ivCapUsesDefault = ivCapState.UsesChannelDefault;
+                                                            var ivCapExplicitZero = ivCapState.IsExplicitZero;
                                                             var ivFutureAssignedCount = iv.TotalFuture;
                                                             var ivAssigned = ivFutureAssignedCount;
                                                             var ivCapShowBar = !ivCapShowUnlimited && ivCapVal > 0;
@@ -1594,10 +1599,6 @@
                                                                         else if (dmCapEnforced && ivCapExplicitZero)
                                                                         {
                                                                             <span class="dm-v4-cap-unlimited dm-v4-cap-unlimited--blocked">0 · Cannot assign</span>
-                                                                        }
-                                                                        else if (!ivCapExplicit && !dmIvLockNew && dmCapEnforced && canEditIvOps)
-                                                                        {
-                                                                            <button type="button" class="dm-v4-cap-set-btn" title="Set interview limit">@Html.Raw(dmV4PlusIcon) Set limit</button>
                                                                         }
                                                                         else
                                                                         {

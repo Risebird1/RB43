@@ -2295,11 +2295,13 @@ button.dm-v4-iv-cv-link {
     min-width: 0;
 }
 
-.dm-v4-iv-policy-divider {
-    background: var(--dm-border);
-    width: 1px;
-    min-height: 100%;
-    align-self: stretch;
+.dm-v4-iv-policy-col--cap-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.dm-v4-iv-policy-col--cap-disabled .dm-v4-iv-policy-sub {
+    font-style: italic;
 }
 
 .dm-v4-iv-policy-icon {
