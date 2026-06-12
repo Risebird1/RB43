@@ -1586,12 +1586,12 @@
                                                                         {
                                                                             <span class="dm-v4-cap-unlimited" title="No interview limit configured">Unlimited</span>
                                                                         }
-                                                                        else if (ivCapExplicitZero && canEditIvOps)
+                                                                        else if (dmCapEnforced && ivCapExplicitZero && canEditIvOps)
                                                                         {
                                                                             <button type="button" class="dm-v4-cap-set-btn" title="Interview limit is 0 — interviewer cannot be assigned">@Html.Raw(dmV4PlusIcon) Set limit</button>
                                                                             <div class="dm-v4-cap-status dm-v4-cap-status--full">Cannot be assigned</div>
                                                                         }
-                                                                        else if (ivCapExplicitZero)
+                                                                        else if (dmCapEnforced && ivCapExplicitZero)
                                                                         {
                                                                             <span class="dm-v4-cap-unlimited dm-v4-cap-unlimited--blocked">0 · Cannot assign</span>
                                                                         }
