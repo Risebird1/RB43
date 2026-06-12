@@ -9,7 +9,7 @@
 --   ClientId = 177 : count statuses 1,3,4,6,7,8,9
 --   All others     : count statuses 4,6,7,8  (completed only)
 -- ============================================================
-CREATE OR ALTER PROCEDURE [dbo].[usp_GetAllClientsWalletSummary]
+CREATE OR ALTER PROCEDURE [dbo].[usp_GetAllClientsWalletSummary] 
     @Month  INT,
     @Year   INT
 AS
@@ -66,30 +66,50 @@ BEGIN
         ic.MonthInterviewCount DESC,
         c.Name;
 
-    -- ── RS2: Billing-owner-wise interview count (owner from IRF) ─────────
+    -- ── RS2: Billing-owner-wise interview count + month credit/debit ─────
+    -- Only relevant when BillingType = 1 (User Scope); credit/debit pulled
+    -- from Wallet filtered by BillingOwnerId and month.
+	;WITH WalletSummary AS
+(
+    SELECT
+        ClientId,
+        BillingOwnerId,
+        SUM(Credit) AS MonthCredit,
+        SUM(Debit)  AS MonthDebit
+    FROM Wallet
+    WHERE BillingType = 1
+      AND CreatedOn >= DATEFROMPARTS(@Year,@Month,1)
+      AND CreatedOn < DATEADD(MONTH,1,DATEFROMPARTS(@Year,@Month,1))
+    GROUP BY ClientId, BillingOwnerId
+)
     SELECT
         irf.ClientId,
         ISNULL(irf.BillingOwner, 0)                                             AS BillingOwnerId,
         ISNULL(ul.EmailId, 'Unassigned')                                        AS BillingOwnerEmail,
         ISNULL(RTRIM(LTRIM(ISNULL(ul.FirstName,'') + ' ' + ISNULL(ul.LastName,''))), 'Unassigned') AS BillingOwnerName,
-        COUNT(DISTINCT im.id)                                                   AS MonthInterviewCount
+        COUNT(DISTINCT im.id)                                                   AS MonthInterviewCount,
+       ISNULL(ws.MonthCredit,0) AS MonthCredit,
+       ISNULL(ws.MonthDebit,0) AS MonthDebit
     FROM InterviewMeetings im
-    INNER JOIN IRF            irf ON irf.IRFId      = im.IRFId
-    LEFT  JOIN InterviewComments ic ON ic.InterviewId = im.id
-    LEFT  JOIN UserList        ul  ON ul.id           = irf.BillingOwner
+    INNER JOIN IRF             irf ON irf.IRFId       = im.IRFId
+    LEFT  JOIN InterviewComments ic  ON ic.InterviewId  = im.id
+    LEFT  JOIN UserList         ul   ON ul.id            = irf.BillingOwner
+    LEFT JOIN WalletSummary ws ON ws.ClientId = irf.ClientId   AND ws.BillingOwnerId = irf.BillingOwner
     WHERE MONTH(im.interviewDate) = @Month
       AND YEAR(im.interviewDate)  = @Year
+      AND ISNULL(im.RedoInterview, 0) = 0
       AND (
             (irf.ClientId = 177 AND ic.MeetingStatus IN (1,3,4,6,7,8,9))
          OR (irf.ClientId <> 177 AND ic.MeetingStatus IN (4,6,7,8))
           )
-		  AND ISNULL(im.RedoInterview,0)=0
     GROUP BY
         irf.ClientId,
         irf.BillingOwner,
         ul.EmailId,
         ul.FirstName,
-        ul.LastName
+        ul.LastName,
+		ws.MonthCredit,
+        ws.MonthDebit
     ORDER BY
         irf.ClientId,
         MonthInterviewCount DESC;
