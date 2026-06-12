@@ -2,57 +2,120 @@ using System;
 
 namespace Risebird.Entities.ViewModel
 {
+    /// <summary>
+    /// Unified cap display/enforcement state for one interviewer row on a channel.
+    /// Option B: per-row InterviewCapacity is always stored; assignmentPolicy gates enforcement.
+    /// </summary>
+    public sealed class DmIvCapRowState
+    {
+        public bool ShowUnlimited { get; init; }
+        public bool IsCapEnforced { get; init; }
+        public bool IsExplicitZero { get; init; }
+        public bool UsesChannelDefault { get; init; }
+        public int EffectiveCap { get; init; }
+        public bool IsCapReached { get; init; }
+        public bool AssignmentAllowed { get; init; }
+    }
+
     public static class DmIvCapHelper
     {
         public const int DefaultCapFallback = 20;
 
-        /// <summary>Per-row cap when set; otherwise channel default (min 1) on locked channels.</summary>
-        public static int GetEffectiveCap(bool lockOn, int? interviewCapacity, int channelDefaultCap)
-        {
-            if (!lockOn) return 0;
-            if (interviewCapacity.HasValue) return interviewCapacity.Value;
-            return channelDefaultCap > 0 ? channelDefaultCap : DefaultCapFallback;
-        }
+        /// <summary>True when channel assignment policy is "limited".</summary>
+        public static bool IsLimitedPolicy(string assignmentPolicy) =>
+            string.Equals(assignmentPolicy?.Trim(), "limited", StringComparison.OrdinalIgnoreCase);
 
-        /// <summary>Cap enforcement for open-interview assign applies when the channel is locked.</summary>
-        public static bool IsCapEnforced(bool lockOn) => lockOn;
+        public static bool IsLimitedPolicy(bool limitedPolicy) => limitedPolicy;
 
-        public static bool IsCapEnforced(bool lockOn, int? interviewCapacity) => lockOn;
-
-        public static int GetDisplayCap(int? interviewCapacity, int channelDefaultCap, bool lockOn) =>
-            GetEffectiveCap(lockOn, interviewCapacity, channelDefaultCap);
-
-        public static int GetDisplayCap(int? interviewCapacity) =>
-            interviewCapacity ?? 0;
-
-        public static bool IsCapReached(int futureAssigned, int? interviewCapacity, bool lockOn, int channelDefaultCap) =>
-            lockOn && futureAssigned >= GetEffectiveCap(lockOn, interviewCapacity, channelDefaultCap);
-
-        public static bool IsCapReached(int futureAssigned, int? interviewCapacity, bool lockOn) =>
-            IsCapReached(futureAssigned, interviewCapacity, lockOn, DefaultCapFallback);
+        public static bool IsExplicitZeroCap(int? interviewCapacity) =>
+            interviewCapacity.HasValue && interviewCapacity.Value == 0;
 
         public static bool IsCapConfigured(int? interviewCapacity) =>
             interviewCapacity.HasValue;
 
-        /// <summary>DHI table: show per-interviewer limit UI only when channel policy is "limited".</summary>
-        public static bool ShowCapColumn(bool limitedPolicy) =>
-            limitedPolicy;
+        /// <summary>DHI table: show per-interviewer limit column when channel policy is "limited".</summary>
+        public static bool ShowCapColumn(bool limitedPolicy) => limitedPolicy;
 
-        /// <summary>DHI cell label when no effective cap applies (free policy, or limited without lock and no row cap).</summary>
-        public static bool ShowUnlimited(bool limitedPolicy, int? interviewCapacity, bool lockOn)
+        /// <summary>
+        /// Single decision tree for cap display and assignment enforcement.
+        /// (a) Free policy → unlimited / allow.
+        /// (b) Limited + null cap → channel default (implicit 20).
+        /// (c) Limited + explicit 0 → 0/0 / block.
+        /// (d) Limited + cap &gt; 0 and count ≥ cap → warn / block.
+        /// (e) Limited + cap &gt; 0 and count &lt; cap → progress / allow.
+        /// </summary>
+        public static DmIvCapRowState GetCapStateForRow(
+            string assignmentPolicy,
+            int? interviewCapacity,
+            int futureAssigned,
+            int channelDefaultCap)
         {
-            // Free assignment suppresses all per-row cap UI and warnings.
-            if (!limitedPolicy) return true;
-            if (IsExplicitZeroCap(interviewCapacity)) return false;
-            if (interviewCapacity.HasValue) return false;
-            if (lockOn) return false;
-            return true;
+            if (!IsLimitedPolicy(assignmentPolicy))
+            {
+                // Free mode: stored caps are ignored (Option B shadow state).
+                return new DmIvCapRowState
+                {
+                    ShowUnlimited = true,
+                    IsCapEnforced = false,
+                    AssignmentAllowed = true
+                };
+            }
+
+            if (IsExplicitZeroCap(interviewCapacity))
+            {
+                return new DmIvCapRowState
+                {
+                    ShowUnlimited = false,
+                    IsCapEnforced = true,
+                    IsExplicitZero = true,
+                    EffectiveCap = 0,
+                    IsCapReached = true,
+                    AssignmentAllowed = false
+                };
+            }
+
+            var usesDefault = !interviewCapacity.HasValue;
+            var effective = interviewCapacity
+                ?? (channelDefaultCap > 0 ? channelDefaultCap : DefaultCapFallback);
+            var reached = futureAssigned >= effective;
+
+            return new DmIvCapRowState
+            {
+                ShowUnlimited = false,
+                IsCapEnforced = true,
+                UsesChannelDefault = usesDefault,
+                EffectiveCap = effective,
+                IsCapReached = reached,
+                AssignmentAllowed = !reached
+            };
         }
 
-        public static bool ShowUnlimited(bool limitedPolicy, int? interviewCapacity) =>
-            ShowUnlimited(limitedPolicy, interviewCapacity, false);
+        public static DmIvCapRowState GetCapStateForRow(
+            bool limitedPolicy,
+            int? interviewCapacity,
+            int futureAssigned,
+            int channelDefaultCap) =>
+            GetCapStateForRow(limitedPolicy ? "limited" : "free", interviewCapacity, futureAssigned, channelDefaultCap);
 
-        public static bool IsExplicitZeroCap(int? interviewCapacity) =>
-            interviewCapacity.HasValue && interviewCapacity.Value == 0;
+        public static int GetEffectiveCap(bool limitedPolicy, int? interviewCapacity, int channelDefaultCap) =>
+            GetCapStateForRow(limitedPolicy, interviewCapacity, 0, channelDefaultCap).EffectiveCap;
+
+        public static bool IsCapEnforced(string assignmentPolicy) =>
+            IsLimitedPolicy(assignmentPolicy);
+
+        public static bool IsCapEnforced(bool limitedPolicy) =>
+            limitedPolicy;
+
+        public static int GetDisplayCap(int? interviewCapacity, int channelDefaultCap, bool limitedPolicy) =>
+            GetEffectiveCap(limitedPolicy, interviewCapacity, channelDefaultCap);
+
+        public static bool IsCapReached(int futureAssigned, int? interviewCapacity, bool limitedPolicy, int channelDefaultCap) =>
+            GetCapStateForRow(limitedPolicy, interviewCapacity, futureAssigned, channelDefaultCap).IsCapReached;
+
+        public static bool ShowUnlimited(bool limitedPolicy, int? interviewCapacity) =>
+            GetCapStateForRow(limitedPolicy, interviewCapacity, 0, DefaultCapFallback).ShowUnlimited;
+
+        public static bool ShowUnlimited(bool limitedPolicy, int? interviewCapacity, bool lockOn) =>
+            ShowUnlimited(limitedPolicy, interviewCapacity);
     }
 }
