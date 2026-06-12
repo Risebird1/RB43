@@ -7,11 +7,14 @@ namespace Risebird.Entities.ViewModel
     // ── All-clients wallet summary page ──────────────────────────────────────────
     public class BillingOwnerInterviewCountVM
     {
-        public int    ClientId             { get; set; }
-        public int    BillingOwnerId       { get; set; }
-        public string BillingOwnerEmail    { get; set; }
-        public string BillingOwnerName     { get; set; }
-        public int    MonthInterviewCount  { get; set; }
+        public int     ClientId             { get; set; }
+        public int     BillingOwnerId       { get; set; }
+        public string  BillingOwnerEmail    { get; set; }
+        public string  BillingOwnerName     { get; set; }
+        public int     MonthInterviewCount  { get; set; }
+        public decimal MonthCredit          { get; set; }
+        public decimal MonthDebit           { get; set; }
+        public decimal MonthNet             => MonthCredit - MonthDebit;
     }
 
     public class ClientWalletSummaryRowVM
