@@ -285,15 +285,15 @@
                                                             <td>@item.InvoiceNumber</td>
                                                             <td>@item.IRN</td>
                                                             <td class="text-right">@item.GrossAmount.ToString("N2")</td>
-                                                            <td style="width:auto;" class="col-status">
+                                                            <td  class="col-status">
                                                                 @{
                                                                     string statusBadge = item.Status switch
                                                                     {
-                                                                        0 => "<span class='badge badge-secondary'>Draft</span>",
-                                                                        1 => "<span class='badge badge-info'>Generated</span>",
-                                                                        2 => "<span class='badge badge-warning'>PO Pending</span>",
-                                                                        3 => "<span class='badge badge-success'>Paid</span>",
-                                                                        _ => "<span class='badge badge-secondary'>Unknown</span>"
+                                                                        0 => "<span style='width:auto;' class='badge badge-secondary'>Draft</span>",
+                                                                        1 => "<span style='width:auto;' class='badge badge-info'>Generated</span>",
+                                                                        2 => "<span style='width:auto;' class='badge badge-warning'>PO Pending</span>",
+                                                                        3 => "<span style='width:auto;' class='badge badge-success'>Paid</span>",
+                                                                        _ => "<span style='width:auto;' class='badge badge-secondary'>Unknown</span>"
                                                                     };
                                                                 }
                                                                 @Html.Raw(statusBadge)
