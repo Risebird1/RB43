@@ -4,6 +4,10 @@
 --   RS1: One row per client — month credit/debit, interview count,
 --        BillingType from Client table.
 --   RS2: Billing-owner-wise interview count, BillingOwner from IRF.
+--
+-- MeetingStatus rules (from InterviewComments):
+--   ClientId = 177 : count statuses 1,3,4,6,7,8,9
+--   All others     : count statuses 4,6,7,8  (completed only)
 -- ============================================================
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetAllClientsWalletSummary]
     @Month  INT,
@@ -19,9 +23,15 @@ BEGIN
             irf.ClientId,
             COUNT(DISTINCT im.id) AS MonthInterviewCount
         FROM InterviewMeetings im
-        INNER JOIN IRF irf ON irf.IRFId = im.IRFId
+        INNER JOIN IRF            irf ON irf.IRFId      = im.IRFId
+        LEFT  JOIN InterviewComments ic ON ic.InterviewId = im.id
         WHERE MONTH(im.interviewDate) = @Month
           AND YEAR(im.interviewDate)  = @Year
+          AND (
+                (irf.ClientId = 177 AND ic.MeetingStatus IN (1,3,4,6,7,8,9))
+             OR (irf.ClientId <> 177 AND ic.MeetingStatus IN (4,6,7,8))
+              )
+         AND ISNULL(im.RedoInterview,0)=0
         GROUP BY irf.ClientId
     )
 
@@ -33,7 +43,7 @@ BEGIN
         c.PerInterviewRate,
         c.AIPerInterviewRate,
         ISNULL(c.BillingType, 3)                                   AS BillingType,
-        ISNULL(ic.MonthInterviewCount, 0)                          AS MonthInterviewCount,
+        ic.MonthInterviewCount,
         ISNULL(SUM(CASE WHEN MONTH(w.CreatedOn) = @Month
                          AND YEAR(w.CreatedOn)  = @Year
                         THEN w.Credit ELSE 0 END), 0)              AS MonthCredit,
@@ -45,8 +55,8 @@ BEGIN
                    THEN 1 END)                                      AS TransactionCount,
         ISNULL(SUM(w.Credit), 0) - ISNULL(SUM(w.Debit), 0)        AS OverallBalance
     FROM Client c
-    LEFT JOIN InterviewCountPerClient ic ON ic.ClientId = c.id
-    LEFT JOIN Wallet w ON w.ClientId = c.id
+    INNER JOIN InterviewCountPerClient ic ON ic.ClientId = c.id
+    LEFT  JOIN Wallet w ON w.ClientId = c.id
     GROUP BY
         c.id, c.Name, c.BillingModel, c.BillingType,
         c.PerInterviewRate, c.AIPerInterviewRate,
@@ -64,10 +74,16 @@ BEGIN
         ISNULL(RTRIM(LTRIM(ISNULL(ul.FirstName,'') + ' ' + ISNULL(ul.LastName,''))), 'Unassigned') AS BillingOwnerName,
         COUNT(DISTINCT im.id)                                                   AS MonthInterviewCount
     FROM InterviewMeetings im
-    INNER JOIN IRF irf ON irf.IRFId = im.IRFId
-    LEFT  JOIN UserList ul ON ul.id = irf.BillingOwner
+    INNER JOIN IRF            irf ON irf.IRFId      = im.IRFId
+    LEFT  JOIN InterviewComments ic ON ic.InterviewId = im.id
+    LEFT  JOIN UserList        ul  ON ul.id           = irf.BillingOwner
     WHERE MONTH(im.interviewDate) = @Month
       AND YEAR(im.interviewDate)  = @Year
+      AND (
+            (irf.ClientId = 177 AND ic.MeetingStatus IN (1,3,4,6,7,8,9))
+         OR (irf.ClientId <> 177 AND ic.MeetingStatus IN (4,6,7,8))
+          )
+		  AND ISNULL(im.RedoInterview,0)=0
     GROUP BY
         irf.ClientId,
         irf.BillingOwner,
