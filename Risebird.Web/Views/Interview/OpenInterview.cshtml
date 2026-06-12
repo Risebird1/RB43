@@ -298,9 +298,14 @@
                                                     }
                                                     @foreach (var item in Model)
                                                     {
-                                                        var ivCapEnforced = DmIvCapHelper.IsCapEnforced(item.DmIvLockNew);
-                                                        var ivEffectiveCap = DmIvCapHelper.GetDisplayCap(item.InterviewCapacity, item.DmDefaultInterviewCap, item.DmIvLockNew);
-                                                        var ivCapReached = DmIvCapHelper.IsCapReached(item.IvFutureAssignedCount, item.InterviewCapacity, item.DmIvLockNew, item.DmDefaultInterviewCap);
+                                                        var ivCapState = DmIvCapHelper.GetCapStateForRow(
+                                                            item.DmAssignmentPolicy,
+                                                            item.InterviewCapacity,
+                                                            item.IvFutureAssignedCount,
+                                                            item.DmDefaultInterviewCap > 0 ? item.DmDefaultInterviewCap : DmIvCapHelper.DefaultCapFallback);
+                                                        var ivCapEnforced = ivCapState.IsCapEnforced;
+                                                        var ivEffectiveCap = ivCapState.EffectiveCap;
+                                                        var ivCapReached = ivCapState.IsCapReached && ivCapEnforced;
                                                         var ivCapTitle = ivCapReached
                                                             ? $"Interview limit reached ({ivEffectiveCap}). You can't take more interviews on this channel right now."
                                                             : "Assign Yourself";

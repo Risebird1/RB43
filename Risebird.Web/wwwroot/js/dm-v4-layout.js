@@ -2243,6 +2243,8 @@
         if (!$bar.length) return;
         var lock = isPolicyLockOn($bar);
         var policy = $bar.data('policy') === 'limited' ? 'limited' : 'free';
+        var limited = policy === 'limited';
+        var canEdit = $bar.data('can-edit') === '1' || $bar.data('can-edit') === 1;
         var cap = parseInt($bar.data('default-cap'), 10);
         if (isNaN(cap) || cap < 1) cap = getDefaultCap();
         $bar.find('[data-segment="lock"] .dm-v4-segment-btn').removeClass('is-on')
@@ -2250,6 +2252,9 @@
         $bar.find('[data-segment="assign"] .dm-v4-segment-btn').removeClass('is-on')
             .filter('[data-value="' + policy + '"]').addClass('is-on');
         $('#dmV4DefaultCapVal').text(cap);
+        $('#dmV4DefaultCapStepper .dm-v4-stepper-btn').prop('disabled', !canEdit || !limited);
+        $('#dmV4ApplyCapAllBtn').prop('disabled', !canEdit || !limited);
+        $('#dmV4DefaultCapCol').toggleClass('dm-v4-iv-policy-col--cap-disabled', !limited);
     }
 
     function updatePolicySubtext() {
@@ -2310,32 +2315,81 @@
         return cap !== null && cap === 0;
     }
 
+    /**
+     * Unified cap decision tree — mirrors DmIvCapHelper.GetCapStateForRow (Option B).
+     * Policy gates enforcement; stored caps are never cleared on Free↔Limit transitions.
+     */
+    function getCapStateForRow(policy, explicitCap, assigned, channelDefault) {
+        var limited = policy === 'limited';
+        assigned = parseInt(assigned, 10) || 0;
+        channelDefault = parseInt(channelDefault, 10);
+        if (isNaN(channelDefault) || channelDefault < 1) channelDefault = 20;
+
+        if (!limited) {
+            return {
+                showUnlimited: true,
+                isCapEnforced: false,
+                isExplicitZero: false,
+                usesDefault: false,
+                effectiveCap: 0,
+                isCapReached: false,
+                assignmentAllowed: true
+            };
+        }
+
+        if (explicitCap !== null && explicitCap === 0) {
+            return {
+                showUnlimited: false,
+                isCapEnforced: true,
+                isExplicitZero: true,
+                usesDefault: false,
+                effectiveCap: 0,
+                isCapReached: true,
+                assignmentAllowed: false
+            };
+        }
+
+        var usesDefault = explicitCap === null;
+        var effective = usesDefault ? channelDefault : explicitCap;
+        var reached = assigned >= effective;
+        return {
+            showUnlimited: false,
+            isCapEnforced: true,
+            isExplicitZero: false,
+            usesDefault: usesDefault,
+            effectiveCap: effective,
+            isCapReached: reached,
+            assignmentAllowed: !reached
+        };
+    }
+
+    function getAssignmentPolicy() {
+        var $bar = getPolicyBar();
+        return $bar.length && $bar.data('policy') === 'limited' ? 'limited' : 'free';
+    }
+
+    function getCapStateForRowFromRow($row) {
+        var assigned = parseInt($row.attr('data-assigned'), 10) || 0;
+        return getCapStateForRow(
+            getAssignmentPolicy(),
+            readRowExplicitCapacity($row),
+            assigned,
+            getChannelDefaultCap()
+        );
+    }
+
     function rowUsesChannelDefault($row) {
-        if (isRowCapExplicit($row)) return false;
-        return $row.attr('data-cap-from-default') === '1' ||
-            (isCapEnforced() && isChannelLocked());
+        return getCapStateForRowFromRow($row).usesDefault;
     }
 
     function readRowDisplayCapacity($row) {
-        var explicit = readRowExplicitCapacity($row);
-        if (explicit !== null) return explicit;
-        var effectiveRaw = ($row.attr('data-cap-effective') || '').toString().trim();
-        if (effectiveRaw !== '') {
-            var effective = parseInt(effectiveRaw, 10);
-            if (!isNaN(effective)) return effective;
-        }
-        if (isCapEnforced() && isChannelLocked()) {
-            return getChannelDefaultCap();
-        }
-        return null;
+        var state = getCapStateForRowFromRow($row);
+        if (state.showUnlimited) return null;
+        return state.effectiveCap;
     }
 
     function shouldShowUnlimitedCap($row) {
-        if (!isCapEnforced()) return true;
-        if (isRowExplicitZeroCap($row)) return false;
-        if (isRowCapExplicit($row)) return false;
-        if (isChannelLocked()) return false;
-        return true;
+        return getCapStateForRowFromRow($row).showUnlimited;
     }
 
     function capBarClass(assigned, capacity) {
@@ -2593,51 +2647,43 @@
     function renderCapacityCell($wrap, displayCapacity, assigned, capExplicit, usesDefaultOverride) {
         var $row = $wrap.closest('.dm-v4-iv-row');
         var canEdit = getIvCanEdit();
-        if (typeof capExplicit === 'undefined') {
-            capExplicit = isRowCapExplicit($row);
+        assigned = parseInt(assigned, 10);
+        if (isNaN(assigned)) assigned = parseInt($row.attr('data-assigned'), 10) || 0;
+
+        var explicitCap = readRowExplicitCapacity($row);
+        var state = getCapStateForRow(getAssignmentPolicy(), explicitCap, assigned, getChannelDefaultCap());
+        if (typeof usesDefaultOverride === 'boolean') {
+            state = $.extend({}, state, { usesDefault: usesDefaultOverride });
         }
-        if (displayCapacity == null || displayCapacity === '') {
-            displayCapacity = readRowDisplayCapacity($row);
-        }
-        var numericCap = displayCapacity == null ? null : parseInt(displayCapacity, 10);
-        if (numericCap !== null && isNaN(numericCap)) numericCap = null;
 
-        var usesDefault = typeof usesDefaultOverride === 'boolean'
-            ? usesDefaultOverride
-            : rowUsesChannelDefault($row);
-
-        capExplicit = isRowCapExplicit($row);
-
-        if (capExplicit) {
-            numericCap = readRowExplicitCapacity($row);
-            $wrap.attr('data-capacity', numericCap).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
-            $row.attr('data-capacity', numericCap).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
-            $wrap.attr('data-cap-effective', numericCap);
-            $row.attr('data-cap-effective', numericCap);
-            usesDefault = false;
+        if (explicitCap !== null) {
+            $wrap.attr('data-capacity', explicitCap).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+            $row.attr('data-capacity', explicitCap).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+            $wrap.attr('data-cap-effective', explicitCap);
+            $row.attr('data-cap-effective', explicitCap);
         } else {
             $wrap.attr('data-capacity', '').attr('data-cap-configured', '0');
             $row.attr('data-capacity', '').attr('data-cap-configured', '0');
-            if (numericCap != null && (numericCap > 0 || (isCapEnforced() && isChannelLocked()))) {
-                $wrap.attr('data-cap-effective', numericCap);
-                $row.attr('data-cap-effective', numericCap);
+            if (!state.showUnlimited) {
+                $wrap.attr('data-cap-effective', state.effectiveCap);
+                $row.attr('data-cap-effective', state.effectiveCap);
             } else {
                 $wrap.attr('data-cap-effective', '');
                 $row.attr('data-cap-effective', '');
             }
-            $row.attr('data-cap-from-default', usesDefault ? '1' : '0');
-            $wrap.attr('data-cap-from-default', usesDefault ? '1' : '0');
+            $row.attr('data-cap-from-default', state.usesDefault ? '1' : '0');
+            $wrap.attr('data-cap-from-default', state.usesDefault ? '1' : '0');
         }
         $wrap.attr('data-assigned', assigned);
         $row.attr('data-assigned', assigned);
 
-        if (shouldShowUnlimitedCap($row)) {
+        if (state.showUnlimited) {
             $wrap.html('<span class="dm-v4-cap-unlimited" title="No interview limit configured">Unlimited</span>');
             $row.removeClass('dm-v4-iv-row--cap-full');
             return;
         }
 
-        if (isCapEnforced() && isRowExplicitZeroCap($row)) {
+        if (state.isExplicitZero) {
             if (canEdit) {
                 $wrap.html('<button type="button" class="dm-v4-cap-set-btn" title="Interview limit is 0 — interviewer cannot be assigned">' +
                     DM_V4_PLUS_ICON + 'Set limit</button>' +
@@ -2649,48 +2695,27 @@
             return;
         }
 
-        if (numericCap == null) {
-            if (isCapEnforced() && isChannelLocked()) {
-                numericCap = getChannelDefaultCap();
-                usesDefault = true;
-            } else if (isCapEnforced() && canEdit) {
-                $wrap.html('<button type="button" class="dm-v4-cap-set-btn" title="Set interview limit">' + DM_V4_PLUS_ICON + 'Set limit</button>');
-                $row.removeClass('dm-v4-iv-row--cap-full');
-                return;
-            } else {
-                $wrap.html('<span class="dm-v4-cap-unlimited" title="No interview limit configured">Unlimited</span>');
-                $row.removeClass('dm-v4-iv-row--cap-full');
-                return;
-            }
-        }
-
-        displayCapacity = numericCap;
-
-        if (!capExplicit && !isChannelLocked() && isCapEnforced() && canEdit) {
-            $wrap.html('<button type="button" class="dm-v4-cap-set-btn" title="Set interview limit">' + DM_V4_PLUS_ICON + 'Set limit</button>');
-            $row.removeClass('dm-v4-iv-row--cap-full');
-            return;
-        }
-
-        var pct = displayCapacity > 0 ? Math.min(100, Math.round((assigned / Math.max(1, displayCapacity)) * 100)) : 0;
-        var bar = capBarClass(assigned, displayCapacity);
-        var full = displayCapacity > 0 && assigned >= displayCapacity;
+        var displayCap = state.effectiveCap;
+        var usesDefault = state.usesDefault;
+        var pct = displayCap > 0 ? Math.min(100, Math.round((assigned / Math.max(1, displayCap)) * 100)) : 0;
+        var bar = capBarClass(assigned, displayCap);
+        var full = state.isCapReached;
         var near = !full && pct >= 80;
         var html = '<div class="dm-v4-cap-display">';
         html += '<span class="dm-v4-mono dm-v4-iv-cap-assigned">' + assigned + '</span><span class="dm-v4-iv-cap-sep">/</span>';
         if (canEdit) {
-            html += buildCapPillHtml(displayCapacity, usesDefault);
+            html += buildCapPillHtml(displayCap, usesDefault);
         } else {
-            html += '<span class="dm-v4-mono dm-v4-cap-readonly">' + displayCapacity +
+            html += '<span class="dm-v4-mono dm-v4-cap-readonly">' + displayCap +
                 (usesDefault ? ' <span class="dm-v4-cap-pill-default">(default)</span>' : '') + '</span>';
         }
         html += '</div>';
-        if (displayCapacity > 0) {
+        if (displayCap > 0) {
             html += '<div class="dm-v4-cap-bar"><span class="dm-v4-cap-bar-fill dm-v4-cap-bar-fill--' + bar + '" style="width:' + pct + '%"></span></div>';
         }
-        if (isCapEnforced() && full) {
+        if (state.isCapEnforced && full) {
             html += '<div class="dm-v4-cap-status dm-v4-cap-status--full">FULL · CAPPED</div>';
-        } else if (isCapEnforced() && near) {
+        } else if (state.isCapEnforced && near) {
             html += '<div class="dm-v4-cap-status dm-v4-cap-status--near">NEAR LIMIT</div>';
         }
         $wrap.html(html);
