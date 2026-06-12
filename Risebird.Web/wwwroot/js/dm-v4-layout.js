@@ -2291,9 +2291,23 @@
         return n;
     }
 
+    /** Parsed per-row cap when persisted; null = unset (not zero). */
+    function readRowExplicitCapacity($row) {
+        if ($row.attr('data-cap-configured') !== '1') return null;
+        var raw = ($row.attr('data-capacity') || '').toString().trim();
+        if (raw === '') return null;
+        var n = parseInt(raw, 10);
+        return isNaN(n) ? null : n;
+    }
+
     /** True when TransInterviewer.InterviewCapacity is persisted (explicit override). */
     function isRowCapExplicit($row) {
-        return $row.attr('data-cap-configured') === '1';
+        return readRowExplicitCapacity($row) !== null;
+    }
+
+    function isRowExplicitZeroCap($row) {
+        var cap = readRowExplicitCapacity($row);
+        return cap !== null && cap === 0;
     }
 
     function rowUsesChannelDefault($row) {
@@ -2303,12 +2317,13 @@
     }
 
     function readRowDisplayCapacity($row) {
-        if (isRowCapExplicit($row)) {
-            var explicit = parseInt($row.attr('data-capacity'), 10);
-            return isNaN(explicit) ? 0 : explicit;
+        var explicit = readRowExplicitCapacity($row);
+        if (explicit !== null) return explicit;
+        var effectiveRaw = ($row.attr('data-cap-effective') || '').toString().trim();
+        if (effectiveRaw !== '') {
+            var effective = parseInt(effectiveRaw, 10);
+            if (!isNaN(effective)) return effective;
         }
-        var effective = parseInt($row.attr('data-cap-effective'), 10);
-        if (!isNaN(effective)) return effective;
         if (isCapEnforced() && isChannelLocked()) {
             return getChannelDefaultCap();
         }
@@ -2316,8 +2331,9 @@
     }
 
     function shouldShowUnlimitedCap($row) {
-        if (isRowCapExplicit($row)) return false;
         if (!isCapEnforced()) return true;
+        if (isRowExplicitZeroCap($row)) return false;
+        if (isRowCapExplicit($row)) return false;
         if (isChannelLocked()) return false;
         return true;
     }
@@ -2489,7 +2505,7 @@
         var orig = origVal;
         if (orig == null || isNaN(orig)) {
             orig = readRowDisplayCapacity($row);
-            if (orig == null || isNaN(orig)) orig = 0;
+            if (orig == null || isNaN(orig)) orig = getChannelDefaultCap();
         }
 
         var $pill = $wrap.find('.dm-v4-cap-pill');
@@ -2540,13 +2556,17 @@
             capExplicit = isRowCapExplicit($row);
         }
         if (capExplicit) {
-            displayCapacity = parseInt(displayCapacity, 10);
-            if (isNaN(displayCapacity)) displayCapacity = 0;
-            $wrap.attr('data-capacity', displayCapacity).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
-            $row.attr('data-capacity', displayCapacity).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
-            $wrap.attr('data-cap-effective', displayCapacity);
-            $row.attr('data-cap-effective', displayCapacity);
-        } else {
+            displayCapacity = readRowExplicitCapacity($row);
+            if (displayCapacity == null) {
+                capExplicit = false;
+            } else {
+                $wrap.attr('data-capacity', displayCapacity).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+                $row.attr('data-capacity', displayCapacity).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+                $wrap.attr('data-cap-effective', displayCapacity);
+                $row.attr('data-cap-effective', displayCapacity);
+            }
+        }
+        if (!capExplicit) {
             $wrap.attr('data-capacity', '').attr('data-cap-configured', '0');
             $row.attr('data-capacity', '').attr('data-cap-configured', '0');
             if (displayCapacity != null && !isNaN(displayCapacity)) {
@@ -2554,6 +2574,9 @@
                 $row.attr('data-cap-effective', displayCapacity);
                 $row.attr('data-cap-from-default', rowUsesChannelDefault($row) ? '1' : '0');
                 $wrap.attr('data-cap-from-default', $row.attr('data-cap-from-default'));
+            } else {
+                $wrap.attr('data-cap-effective', '');
+                $row.attr('data-cap-effective', '');
             }
         }
         $wrap.attr('data-assigned', assigned);
@@ -2576,25 +2599,31 @@
         if (displayCapacity == null || displayCapacity === '') {
             displayCapacity = readRowDisplayCapacity($row);
         }
-        displayCapacity = displayCapacity == null ? 0 : parseInt(displayCapacity, 10);
-        if (isNaN(displayCapacity)) displayCapacity = 0;
+        var numericCap = displayCapacity == null ? null : parseInt(displayCapacity, 10);
+        if (numericCap !== null && isNaN(numericCap)) numericCap = null;
 
         var usesDefault = typeof usesDefaultOverride === 'boolean'
             ? usesDefaultOverride
             : rowUsesChannelDefault($row);
 
+        capExplicit = isRowCapExplicit($row);
+
         if (capExplicit) {
-            $wrap.attr('data-capacity', displayCapacity).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
-            $row.attr('data-capacity', displayCapacity).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
-            $wrap.attr('data-cap-effective', displayCapacity);
-            $row.attr('data-cap-effective', displayCapacity);
+            numericCap = readRowExplicitCapacity($row);
+            $wrap.attr('data-capacity', numericCap).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+            $row.attr('data-capacity', numericCap).attr('data-cap-configured', '1').attr('data-cap-from-default', '0');
+            $wrap.attr('data-cap-effective', numericCap);
+            $row.attr('data-cap-effective', numericCap);
             usesDefault = false;
         } else {
             $wrap.attr('data-capacity', '').attr('data-cap-configured', '0');
             $row.attr('data-capacity', '').attr('data-cap-configured', '0');
-            if (displayCapacity > 0 || (isCapEnforced() && isChannelLocked())) {
-                $wrap.attr('data-cap-effective', displayCapacity);
-                $row.attr('data-cap-effective', displayCapacity);
+            if (numericCap != null && (numericCap > 0 || (isCapEnforced() && isChannelLocked()))) {
+                $wrap.attr('data-cap-effective', numericCap);
+                $row.attr('data-cap-effective', numericCap);
+            } else {
+                $wrap.attr('data-cap-effective', '');
+                $row.attr('data-cap-effective', '');
             }
             $row.attr('data-cap-from-default', usesDefault ? '1' : '0');
             $wrap.attr('data-cap-from-default', usesDefault ? '1' : '0');
@@ -2608,23 +2637,34 @@
             return;
         }
 
-        if (displayCapacity === 0) {
-            if (capExplicit && canEdit) {
+        if (isCapEnforced() && isRowExplicitZeroCap($row)) {
+            if (canEdit) {
                 $wrap.html('<button type="button" class="dm-v4-cap-set-btn" title="Interview limit is 0 — interviewer cannot be assigned">' +
                     DM_V4_PLUS_ICON + 'Set limit</button>' +
                     '<div class="dm-v4-cap-status dm-v4-cap-status--full">Cannot be assigned</div>');
-            } else if (capExplicit) {
-                $wrap.html('<span class="dm-v4-cap-unlimited dm-v4-cap-unlimited--blocked">0 · Cannot assign</span>');
             } else {
-                var zeroHtml = '<div class="dm-v4-cap-display">';
-                zeroHtml += '<span class="dm-v4-mono dm-v4-iv-cap-assigned">' + assigned + '</span><span class="dm-v4-iv-cap-sep">/</span>';
-                zeroHtml += '<span class="dm-v4-mono dm-v4-cap-readonly">0</span></div>';
-                zeroHtml += '<div class="dm-v4-cap-status dm-v4-cap-status--full">Cannot be assigned</div>';
-                $wrap.html(zeroHtml);
+                $wrap.html('<span class="dm-v4-cap-unlimited dm-v4-cap-unlimited--blocked">0 · Cannot assign</span>');
             }
             $row.addClass('dm-v4-iv-row--cap-full');
             return;
         }
+
+        if (numericCap == null) {
+            if (isCapEnforced() && isChannelLocked()) {
+                numericCap = getChannelDefaultCap();
+                usesDefault = true;
+            } else if (isCapEnforced() && canEdit) {
+                $wrap.html('<button type="button" class="dm-v4-cap-set-btn" title="Set interview limit">' + DM_V4_PLUS_ICON + 'Set limit</button>');
+                $row.removeClass('dm-v4-iv-row--cap-full');
+                return;
+            } else {
+                $wrap.html('<span class="dm-v4-cap-unlimited" title="No interview limit configured">Unlimited</span>');
+                $row.removeClass('dm-v4-iv-row--cap-full');
+                return;
+            }
+        }
+
+        displayCapacity = numericCap;
 
         if (!capExplicit && !isChannelLocked() && isCapEnforced() && canEdit) {
             $wrap.html('<button type="button" class="dm-v4-cap-set-btn" title="Set interview limit">' + DM_V4_PLUS_ICON + 'Set limit</button>');
