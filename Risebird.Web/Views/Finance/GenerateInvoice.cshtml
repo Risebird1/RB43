@@ -5,50 +5,415 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 <style>
-    .gen-inv-card { background: #fff; border-radius: 8px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,.10); margin-bottom: 16px; }
-    .gen-inv-section-title { font-size: 13px; font-weight: 700; color: #5c6bc0; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 14px; border-bottom: 2px solid #e8eaf6; padding-bottom: 6px; }
-    .gen-inv-label { font-size: 12px; font-weight: 600; color: #555; margin-bottom: 4px; }
-    .auto-field          { background: #f5f7fa !important; color: #333; }
-    .auto-field-editable { background: #fffde7 !important; color: #333; border: 1px solid #ffe082; }
-    .totals-table td { padding: 6px 12px; font-size: 14px; }
-    .totals-table .label-col { color: #666; width: 60%; text-align: right; padding-right: 20px; }
-    .totals-table .val-col { font-weight: 600; text-align: right; min-width: 130px; }
-    .invoice-value-row td { font-size: 16px; font-weight: 700; color: #1a237e; border-top: 2px solid #c5cae9; border-bottom: 2px solid #c5cae9; }
-    .line-items-table th { background: #e8eaf6; font-size: 12px; font-weight: 700; }
-    .line-items-table td, .line-items-table th { vertical-align: middle; }
-    .btn-draft    { background: #fff; border: 1px solid #5c6bc0; color: #5c6bc0; }
-    .btn-draft:hover { background: #e8eaf6; }
-    .btn-generate { background: #3949ab; color: #fff; }
-    .btn-generate:hover { background: #283593; }
-    .tag-auto { font-size: 10px; color: #999; font-style: italic; margin-left: 4px; }
-    #divNoLineItems { color: #aaa; font-size: 13px; padding: 16px 0; }
+    /* ── Generate Invoice page (scoped) ── */
+    .gen-inv-page {
+        --gen-inv-primary: #42a5f5;
+        --gen-inv-primary-light: #e3f2fd;
+        --gen-inv-primary-dark: #1e88e5;
+        --gen-inv-border: #dce0e8;
+        --gen-inv-text: #2c3e50;
+        --gen-inv-muted: #6b7280;
+        --gen-inv-control-h: 40px;
+    }
+
+    .gen-inv-page > .content {
+        padding-top: 8px;
+        max-width: 1200px;
+    }
+
+    .gen-inv-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding: 0 4px;
+    }
+
+    .gen-inv-page-title {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--gen-inv-primary);
+    }
+
+    .gen-inv-invoice-badge {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gen-inv-primary);
+        background: var(--gen-inv-primary-light);
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 1px solid #90caf9;
+    }
+
+    .gen-inv-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 22px 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+        border: 1px solid var(--gen-inv-border);
+        margin-bottom: 18px;
+    }
+
+    .gen-inv-section-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--gen-inv-primary);
+        letter-spacing: .6px;
+        text-transform: uppercase;
+        margin: 0 0 18px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--gen-inv-primary-light);
+    }
+
+    .gen-inv-row {
+        --bs-gutter-y: 1rem;
+        margin-bottom: 0;
+    }
+
+    #divAutoFields {
+        margin-top: 12px;
+        padding-top: 16px;
+        border-top: 1px solid var(--gen-inv-border);
+    }
+
+    .gen-inv-field {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        margin-bottom: 0;
+    }
+
+    .gen-inv-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--gen-inv-muted);
+        letter-spacing: .4px;
+        text-transform: uppercase;
+        margin: 0 0 6px;
+        min-height: 18px;
+        line-height: 1.3;
+        display: block;
+    }
+
+    .gen-inv-page .form-control {
+        width: 100%;
+        height: var(--gen-inv-control-h) !important;
+        min-height: var(--gen-inv-control-h);
+        line-height: 1.4 !important;
+        padding: 8px 12px !important;
+        box-sizing: border-box;
+        border-radius: 6px !important;
+        border: 1px solid var(--gen-inv-border) !important;
+        background: #fff !important;
+        color: var(--gen-inv-text);
+        font-size: 13px !important;
+        box-shadow: none !important;
+        margin: 0;
+    }
+
+    .gen-inv-page select.form-control {
+        padding-right: 32px !important;
+        -webkit-appearance: menulist;
+        appearance: auto;
+        cursor: pointer;
+    }
+
+    .gen-inv-page .form-control:focus {
+        border-color: var(--gen-inv-primary) !important;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(66, 165, 245, .18) !important;
+    }
+
+    .gen-inv-page .form-control:disabled,
+    .gen-inv-page .form-control[readonly].auto-field {
+        background: #f3f4f6 !important;
+        color: #4b5563;
+        cursor: default;
+    }
+
+    .auto-field-editable {
+        background: #fffbeb !important;
+        border-color: #fcd34d !important;
+    }
+
+    .tag-auto {
+        font-size: 10px;
+        font-weight: 500;
+        color: #9ca3af;
+        font-style: italic;
+        text-transform: none;
+        letter-spacing: 0;
+        margin-left: 4px;
+    }
+
+    /* Line items table — match Finance/InvoiceList (.journey) grey header */
+    .gen-inv-table-wrap {
+        border: 1px solid #dee2e65e;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .gen-inv-table {
+        width: 100%;
+        margin-bottom: 0;
+        font-size: 13px;
+        font-family: Roboto, sans-serif;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .gen-inv-table thead th {
+        background: #e0e0e0 !important;
+        color: #676767 !important;
+        font-size: 13px;
+        font-weight: 500 !important;
+        letter-spacing: normal;
+        text-transform: none;
+        padding: 7px 10px !important;
+        border: 1px solid #dee2e65e !important;
+        border-top: none;
+        vertical-align: middle !important;
+        white-space: nowrap;
+        font-family: Roboto, sans-serif;
+    }
+
+    .gen-inv-table tbody td {
+        padding: 8px 10px !important;
+        border: 1px solid #dee2e65e !important;
+        border-top: none;
+        vertical-align: middle !important;
+        line-height: 1.4;
+        color: var(--gen-inv-text);
+        font-family: Roboto, sans-serif;
+    }
+
+    .gen-inv-table tbody tr:nth-child(even) {
+        background: #fafafa;
+    }
+
+    .gen-inv-table tbody tr:hover {
+        background: #f5f5f5;
+    }
+
+    .gen-inv-table tfoot td {
+        padding: 8px 10px !important;
+        background: #ececec !important;
+        border: 1px solid #dee2e65e !important;
+        font-weight: 500 !important;
+        font-size: 13px;
+        color: #676767 !important;
+        font-family: Roboto, sans-serif;
+        vertical-align: middle !important;
+    }
+
+    .gen-inv-table .col-num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .gen-inv-table .col-idx {
+        text-align: center;
+        color: var(--gen-inv-muted);
+        width: 48px;
+    }
+
+    /* Totals panel */
+    .gen-inv-totals-wrap {
+        background: #fafbfc;
+        border: 1px solid var(--gen-inv-border);
+        border-radius: 8px;
+        padding: 4px 0;
+        overflow: hidden;
+    }
+
+    .gen-inv-totals-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    .gen-inv-totals-table td {
+        padding: 10px 18px;
+        font-size: 14px;
+        border-bottom: 1px solid #eef0f4;
+        vertical-align: middle;
+    }
+
+    .gen-inv-totals-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .gen-inv-totals-table .label-col {
+        color: var(--gen-inv-muted);
+        text-align: right;
+        width: 62%;
+        padding-right: 16px;
+    }
+
+    .gen-inv-totals-table .val-col {
+        font-weight: 600;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: var(--gen-inv-text);
+        min-width: 140px;
+    }
+
+    .gen-inv-totals-table .invoice-value-row td {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--gen-inv-primary);
+        background: var(--gen-inv-primary-light);
+        border-top: 2px solid #90caf9;
+        border-bottom: 2px solid #90caf9;
+    }
+
+    .gen-inv-totals-table .net-row td {
+        font-size: 15px;
+        font-weight: 700;
+        background: #f0fdf4;
+    }
+
+    .gen-inv-totals-table .net-row .val-col {
+        color: #15803d;
+    }
+
+    .gen-inv-totals-table .tds-row .val-col {
+        color: #b91c1c;
+    }
+
+    /* Upload + actions */
+    .gen-inv-upload-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        min-height: var(--gen-inv-control-h);
+    }
+
+    .gen-inv-upload-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 36px;
+        padding: 0 14px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #fff;
+        background: var(--gen-inv-primary);
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 0;
+        line-height: 1;
+    }
+
+    .gen-inv-upload-btn:hover {
+        background: var(--gen-inv-primary-dark);
+    }
+
+    .gen-inv-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding-top: 4px;
+    }
+
+    .gen-inv-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+        height: 40px !important;
+        padding: 0 20px !important;
+        font-size: 13px !important;
+        font-weight: 600;
+        border-radius: 6px !important;
+        cursor: pointer;
+        line-height: 1 !important;
+        border: none;
+    }
+
+    .gen-inv-btn--draft {
+        background: #fff !important;
+        border: 1px solid var(--gen-inv-primary) !important;
+        color: var(--gen-inv-primary) !important;
+    }
+
+    .gen-inv-btn--draft:hover {
+        background: var(--gen-inv-primary-light) !important;
+    }
+
+    .gen-inv-btn--generate {
+        background: var(--gen-inv-primary) !important;
+        color: #fff !important;
+    }
+
+    .gen-inv-btn--generate:hover {
+        background: var(--gen-inv-primary-dark) !important;
+    }
+
+    .gen-inv-btn:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+
+    #divNoLineItems {
+        color: var(--gen-inv-muted);
+        font-size: 13px;
+        padding: 28px 16px;
+        text-align: center;
+        background: #fafbfc;
+        border-radius: 8px;
+        border: 1px dashed var(--gen-inv-border);
+    }
+
+    #divMsg {
+        margin: 0 0 16px !important;
+        border-radius: 8px;
+    }
+
+    #divDuplicateWarning {
+        border-radius: 8px;
+        margin-bottom: 14px !important;
+    }
+
+    @@media (max-width: 767px) {
+        .gen-inv-card {
+            padding: 16px;
+        }
+
+        .gen-inv-table thead th,
+        .gen-inv-table tbody td,
+        .gen-inv-table tfoot td {
+            padding: 8px 10px;
+            font-size: 12px;
+        }
+    }
 </style>
 
-<div class="main-panel" id="main-panel">
-    <div class="pt30">
-        <div class="col-md-12 nopad" style="margin:0px;">
-            <div class="card-header bg-w clearfix">
-                <div class="pull-left">
-                    <div class="mobile-view"><h4 class="card-title">Generate Invoice</h4></div>
-                    <div id="divInvoiceHeader" style="display:none;">
-                        <label id="lblInvoiceNum" style="font-weight:700;font-size:14px;color:#3949ab;"></label>
-                    </div>
-                </div>
+<div class="main-panel gen-inv-page" id="main-panel">
+    <div class="content">
+        <div class="gen-inv-page-header">
+            <h4 class="gen-inv-page-title">Generate Invoice</h4>
+            <div id="divInvoiceHeader" class="gen-inv-invoice-badge" style="display:none;">
+                <span id="lblInvoiceNum"></span>
             </div>
         </div>
-    </div>
 
     @if (TempData["GenerateInvoiceMsg"] != null)
     {
-        <div id="divMsg" class="alert @(TempData["GenerateInvoiceMsg"].ToString().StartsWith("Success") ? "alert-success" : "alert-danger")" style="margin:10px 15px;">
+        <div id="divMsg" class="alert @(TempData["GenerateInvoiceMsg"].ToString().StartsWith("Success") ? "alert-success" : "alert-danger")">
             @TempData["GenerateInvoiceMsg"]
         </div>
     }
 
-    <div class="content">
         <form id="invoiceForm" method="post" action="@Url.Action("SaveGeneratedInvoice","Finance")">
             @Html.AntiForgeryToken()
             <input type="hidden" id="hidId"            name="id"            value="0" />
@@ -58,10 +423,10 @@
             <!-- ── Section 1: Client & Period ── -->
             <div class="gen-inv-card">
                 <div class="gen-inv-section-title">Invoice Details</div>
-                <div class="row">
+                <div class="row g-3 gen-inv-row">
                     <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="gen-inv-label">CLIENT <span class="text-danger">*</span></label>
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="ddlClient">Client <span class="text-danger">*</span></label>
                             @Html.DropDownList("ClientId",
                                 (SelectList)ViewBag.ClientList,
                                 "-- Select Client --",
@@ -69,8 +434,8 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="form-group">
-                            <label class="gen-inv-label">MONTH <span class="text-danger">*</span></label>
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="ddlMonth">Month <span class="text-danger">*</span></label>
                             @{
                                 int curMonth = (int)ViewBag.CurrentMonth;
                                 int curYear  = (int)ViewBag.CurrentYear;
@@ -96,8 +461,8 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="form-group">
-                            <label class="gen-inv-label">YEAR <span class="text-danger">*</span></label>
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="ddlYear">Year <span class="text-danger">*</span></label>
                             <select id="ddlYear" name="InvoiceYear" class="form-control" required>
                                 @for (int y = DateTime.Now.Year; y >= 2020; y--)
                                 {
@@ -115,36 +480,36 @@
                     </div>
                 </div>
 
-                <div class="row" id="divAutoFields" style="display:none;">
+                <div class="row g-3 gen-inv-row" id="divAutoFields" style="display:none;">
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="gen-inv-label">INVOICE NUMBER <span class="tag-auto">auto</span></label>
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtInvoiceNumber">Invoice Number <span class="tag-auto">auto</span></label>
                             <input type="text" id="txtInvoiceNumber" name="InvoiceNumber" class="form-control auto-field" readonly />
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="gen-inv-label">BILLING OWNER ENTITY <span class="tag-auto" id="lblBillingOwnerTag">auto</span></label>
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="ddlBillingOwner">Billing Owner Entity <span class="tag-auto" id="lblBillingOwnerTag">auto</span></label>
                             <select id="ddlBillingOwner" name="BillingOwnerEmail" class="form-control" style="display:none;"></select>
                             <input type="text" id="txtBillingOwner" name="BillingOwnerEmail" class="form-control auto-field-editable" placeholder="Billing owner email" maxlength="200" style="display:none;" />
                             <input type="hidden" id="hidBillingOwnerId" name="BillingOwnerId" value="0" />
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="gen-inv-label">CREDIT PERIOD <span class="tag-auto">auto</span></label>
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtCreditPeriod">Credit Period <span class="tag-auto">auto</span></label>
                             <input type="text" id="txtCreditPeriod" name="CreditPeriod" class="form-control auto-field-editable" placeholder="e.g. 45 Days" maxlength="100" />
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="gen-inv-label">GST NUMBER <span class="tag-auto">auto</span></label>
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtGSTNumber">GST Number <span class="tag-auto">auto</span></label>
                             <input type="text" id="txtGSTNumber" name="GSTNumber" class="form-control auto-field-editable" placeholder="GST number" maxlength="100" />
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="gen-inv-label">TAX SCENARIO</label>
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="ddlTaxScenario">Tax Scenario</label>
                             <select id="ddlTaxScenario" name="TaxScenario" class="form-control">
                                 <option value="0">Non-GST</option>
                                 <option value="1">GST 18%</option>
@@ -152,23 +517,25 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="gen-inv-label">IRN</label>
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtIRN">IRN</label>
                             <input type="text" id="txtIRN" name="IRN" class="form-control" placeholder="Enter IRN" maxlength="200" />
                         </div>
-                        <div class="form-group" style="margin-top:6px;">
-                            <label class="gen-inv-label">e-Invoice File <span style="font-weight:400;color:#888;">(PDF / Word)</span></label>
-                            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                                <label class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:11px;cursor:pointer;margin:0;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="margin-right:4px;"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label">e-Invoice File <span class="tag-auto">PDF / Word</span></label>
+                            <div class="gen-inv-upload-row">
+                                <label class="gen-inv-upload-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
                                     Upload e-Invoice
                                     <input type="file" id="fileEInvoice" accept=".pdf,.doc,.docx" style="display:none;" onchange="uploadEInvoiceFile(this)" />
                                 </label>
                                 <span id="spnEInvoiceUploadStatus" style="font-size:12px;color:#555;"></span>
                             </div>
                             <input type="hidden" id="hidEInvoiceFileLink" name="EInvoiceFileLink" value="" />
-                            <div id="divEInvoiceLink" style="display:none;margin-top:5px;">
-                                <a id="lnkEInvoiceFile" href="#" target="_blank" style="font-size:12px;color:#1976d2;">
+                            <div id="divEInvoiceLink" style="display:none;margin-top:8px;">
+                                <a id="lnkEInvoiceFile" href="#" target="_blank" style="font-size:12px;color:#42a5f5;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:3px;"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
                                     View Uploaded File
                                 </a>
@@ -184,25 +551,25 @@
                     Line Items
                     <span class="tag-auto">auto-populated from wallet</span>
                 </div>
-                <div id="divNoLineItems" class="text-center" style="display:none;">No interviews found for the selected client &amp; month.</div>
-                <div class="table-responsive" id="divLineItemsTable">
-                    <table class="table table-bordered line-items-table" id="tblLineItems">
+                <div id="divNoLineItems" style="display:none;">No interviews found for the selected client &amp; month.</div>
+                <div class="gen-inv-table-wrap table-responsive" id="divLineItemsTable">
+                    <table class="table table-striped table-bordered journey gen-inv-table" id="tblLineItems">
                         <thead>
                             <tr>
-                                <th style="width:5%">#</th>
+                                <th class="col-idx">#</th>
                                 <th>Product</th>
                                 <th>Description</th>
-                                <th class="text-right" style="width:10%">Qty</th>
-                                <th class="text-right" style="width:12%">Unit (&#8377;)</th>
-                                <th class="text-right" style="width:14%">Line Total (&#8377;)</th>
+                                <th class="col-num" style="width:10%">Qty</th>
+                                <th class="col-num" style="width:12%">Unit (&#8377;)</th>
+                                <th class="col-num" style="width:14%">Line Total (&#8377;)</th>
                                 <th style="width:10%">Basis</th>
                             </tr>
                         </thead>
                         <tbody id="tblLineItemsBody"></tbody>
                         <tfoot>
-                            <tr style="background:#f5f7fa;font-weight:700;">
-                                <td colspan="5" class="text-right">Subtotal</td>
-                                <td class="text-right" id="tdSubtotal">0.00</td>
+                            <tr>
+                                <td colspan="5" class="text-end col-num">Subtotal</td>
+                                <td class="col-num" id="tdSubtotal">0.00</td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -212,32 +579,35 @@
 
             <!-- ── Section 3: Totals ── -->
             <div class="gen-inv-card" id="divTotalsCard" style="display:none;">
-                <div class="row">
-                    <div class="col-md-6 col-md-offset-6">
-                        <table class="totals-table" style="width:100%;">
-                            <tbody>
-                                <tr>
-                                    <td class="label-col">Subtotal</td>
-                                    <td class="val-col" id="tdTotSubtotal">&#8377; 0.00</td>
-                                </tr>
-                                <tr id="trGST">
-                                    <td class="label-col" id="tdGSTLabel">GST 18%</td>
-                                    <td class="val-col" id="tdGSTAmount">&#8377; 0.00</td>
-                                </tr>
-                                <tr class="invoice-value-row">
-                                    <td class="label-col">Invoice Value</td>
-                                    <td class="val-col" id="tdInvoiceValue">&#8377; 0.00</td>
-                                </tr>
-                                <tr>
-                                    <td class="label-col">TDS 10% (net payment)</td>
-                                    <td class="val-col" style="color:#c62828;" id="tdTDSAmount">- &#8377; 0.00</td>
-                                </tr>
-                                <tr style="font-weight:700;font-size:15px;">
-                                    <td class="label-col">Net Receivable</td>
-                                    <td class="val-col" style="color:#2e7d32;" id="tdNetReceivable">&#8377; 0.00</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="gen-inv-section-title">Invoice Summary</div>
+                <div class="row justify-content-end">
+                    <div class="col-md-6 col-lg-5">
+                        <div class="gen-inv-totals-wrap">
+                            <table class="gen-inv-totals-table">
+                                <tbody>
+                                    <tr>
+                                        <td class="label-col">Subtotal</td>
+                                        <td class="val-col" id="tdTotSubtotal">&#8377; 0.00</td>
+                                    </tr>
+                                    <tr id="trGST">
+                                        <td class="label-col" id="tdGSTLabel">GST 18%</td>
+                                        <td class="val-col" id="tdGSTAmount">&#8377; 0.00</td>
+                                    </tr>
+                                    <tr class="invoice-value-row">
+                                        <td class="label-col">Invoice Value</td>
+                                        <td class="val-col" id="tdInvoiceValue">&#8377; 0.00</td>
+                                    </tr>
+                                    <tr class="tds-row">
+                                        <td class="label-col">TDS 10% (net payment)</td>
+                                        <td class="val-col" id="tdTDSAmount">- &#8377; 0.00</td>
+                                    </tr>
+                                    <tr class="net-row">
+                                        <td class="label-col">Net Receivable</td>
+                                        <td class="val-col" id="tdNetReceivable">&#8377; 0.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
                         <!-- hidden fields for totals -->
                         <input type="hidden" name="Subtotal"      id="hidSubtotal"      value="0" />
@@ -252,24 +622,21 @@
 
             <!-- ── Action Buttons ── -->
             <div class="gen-inv-card" id="divActionsCard" style="display:none;">
-                <!-- Duplicate invoice warning -->
                 <div id="divDuplicateWarning"
                      class="alert alert-danger"
                      role="alert"
-                     style="display:none; font-size:13px; margin-bottom:10px;">
+                     style="display:none;">
                 </div>
-                <div class="row">
-                    <div class="col-md-12 text-right">
-                        <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded btn-draft"
-                                onclick="submitInvoice(0)" style="margin-right:8px;">
-                            <font style="font-size:12px;">Save as Draft</font>
-                        </button>
-                        <button type="button" id="btnGenerateInvoice"
-                                class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-generate"
-                                onclick="submitInvoice(1)">
-                            <font style="font-size:12px;">Generate Invoice</font>
-                        </button>
-                    </div>
+                <div class="gen-inv-actions">
+                    <button type="button" class="gen-inv-btn gen-inv-btn--draft"
+                            onclick="submitInvoice(0)">
+                        Save as Draft
+                    </button>
+                    <button type="button" id="btnGenerateInvoice"
+                            class="gen-inv-btn gen-inv-btn--generate"
+                            onclick="submitInvoice(1)">
+                        Generate Invoice
+                    </button>
                 </div>
             </div>
 
@@ -513,12 +880,12 @@
             var lt = parseFloat(item.lineTotal) || 0;
             subtotal += lt;
             var row = '<tr>' +
-                '<td>' + (i + 1) + '</td>' +
+                '<td class="col-idx">' + (i + 1) + '</td>' +
                 '<td>' + escHtml(item.productName) + '</td>' +
                 '<td>' + escHtml(item.description) + '</td>' +
-                '<td class="text-right">' + (parseInt(item.qty) || 0) + '</td>' +
-                '<td class="text-right">&#8377; ' + formatNum(item.unitRate) + '</td>' +
-                '<td class="text-right">&#8377; ' + formatNum(lt) + '</td>' +
+                '<td class="col-num">' + (parseInt(item.qty) || 0) + '</td>' +
+                '<td class="col-num">&#8377; ' + formatNum(item.unitRate) + '</td>' +
+                '<td class="col-num">&#8377; ' + formatNum(lt) + '</td>' +
                 '<td>' + escHtml(item.basis) + '</td>' +
                 '</tr>';
             tbody.append(row);
