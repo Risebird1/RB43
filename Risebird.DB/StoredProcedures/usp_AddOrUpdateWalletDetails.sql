@@ -19,10 +19,10 @@ BEGIN
 Declare @BillingType int,@Clientid int,@BillingOwnerId int,@IRFId int,@Debit int      
 Declare @MeetingStatus int,@InterviewerUserid int,@RedoInterview bit,@Comment varchar(max),@CandidateEmail varchar(200),@Interviewstatus int,@InterviewDuration int      
 Declare @CreatedOn Datetime=DateAdd(Minute,330,Getdate())      
-Declare @BillingClientId int,@IsAIInterview bit
+Declare @BillingClientId int,@IsAIInterview bit,@InterviewDate datetime
 
 Select @BillingType=cl.BillingType,@BillingOwnerId=IRF.BillingOwner,@Clientid=cl.id,@IRFId=IRF.id,@InterviewerUserid=ul.id,@RedoInterview=IsNull(im.RedoInterview,0),
-@CandidateEmail=im.candidateEmail,@IsAIInterview=ISNULL(IRF.IsAIInterview,0)
+@CandidateEmail=im.candidateEmail,@IsAIInterview=ISNULL(IRF.IsAIInterview,0),@InterviewDate=im.interviewDate
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId join Client cl on cl.Id=IRF.ClientId       
 left join UserList ul on ul.EmailId=im.interviewer      
 where im.id=@Interviewid  
@@ -31,8 +31,8 @@ Select @BillingClientId=id from ClientBillingDetails where Clientid=@Clientid
 
 IF(@Transaction='Cr')        
 BEGIN        
-Insert into Wallet(BillingType,ClientId,BillingOwnerId,CreatedBy,Credit,Debit,CreatedOn,Comment,Balance,InterviewId,IRFId,TransactionType)      
-values(@BillingType,@Clientid,@BillingOwnerId,@CreatedBy,@Credit,0,@CreatedOn,'Credit',0,0,0,@TransactionType)      
+Insert into Wallet(BillingType,ClientId,BillingOwnerId,CreatedBy,Credit,Debit,CreatedOn,Comment,Balance,InterviewId,IRFId,TransactionType,TransactionDate)      
+values(@BillingType,@Clientid,@BillingOwnerId,@CreatedBy,@Credit,0,@CreatedOn,'Credit',0,0,0,@TransactionType,@InterviewDate)      
 END        
 ELSE        
 BEGIN        
@@ -95,14 +95,14 @@ BEGIN
   end      
    if exists(select top 1 id from Wallet where InterviewId = @Interviewid)      
    Begin      
-   Update Wallet set BillingType=@BillingType,BillingOwnerId=@BillingOwnerId,Debit=@Debit where InterviewId=@Interviewid      
+   Update Wallet set BillingType=@BillingType,BillingOwnerId=@BillingOwnerId,Debit=@Debit,TransactionDate=@InterviewDate where InterviewId=@Interviewid      
    end      
    else      
    begin    
     if(@Debit>0)  
     begin  
-    Insert into Wallet(BillingType,ClientId,BillingOwnerId,CreatedBy,Credit,Debit,CreatedOn,Comment,Balance,InterviewId,IRFId,TransactionType)      
-    values(@BillingType,@Clientid,@BillingOwnerId,@CreatedBy,0,@Debit,@CreatedOn,@Comment,0,@Interviewid,@IRFId,@TransactionType)      
+    Insert into Wallet(BillingType,ClientId,BillingOwnerId,CreatedBy,Credit,Debit,CreatedOn,Comment,Balance,InterviewId,IRFId,TransactionType,TransactionDate)      
+    values(@BillingType,@Clientid,@BillingOwnerId,@CreatedBy,0,@Debit,@CreatedOn,@Comment,0,@Interviewid,@IRFId,@TransactionType,@InterviewDate)      
     end  
    end      
 END        
