@@ -13,7 +13,7 @@
         1 => "<span class='badge badge-primary'>M1</span>",
         2 => "<span class='badge badge-success'>M2</span>",
         3 => "<span class='badge badge-warning'>M3</span>",
-        4 => "<span class='badge badge-secondary'>M4</span>",
+        4 => "<span class='badge badge-info'>M4</span>",
         _ => "<span class='badge badge-light'>—</span>"
     };
     string BillingModelFull(int bm) => bm switch
@@ -271,6 +271,12 @@
                                                             <th>Billing Owner</th>
                                                             <th>Email</th>
                                                             <th>Interviews — @Model.PeriodLabel</th>
+                                                            @if (cl.BillingType == 1)
+                                                            {
+                                                                <th>Month Credit (&#8377;)</th>
+                                                                <th>Month Debit (&#8377;)</th>
+                                                                <th>Month Net (&#8377;)</th>
+                                                            }
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -280,6 +286,12 @@
                                                                 <td>@ow.BillingOwnerName</td>
                                                                 <td style="color:#888;">@ow.BillingOwnerEmail</td>
                                                                 <td><span class="int-badge active">@ow.MonthInterviewCount</span></td>
+                                                                @if (cl.BillingType == 1)
+                                                                {
+                                                                    <td class="amount-credit">&#8377;@ow.MonthCredit.ToString("N0")</td>
+                                                                    <td class="amount-debit">&#8377;@ow.MonthDebit.ToString("N0")</td>
+                                                                    <td class="@(ow.MonthNet >= 0 ? "amount-pos" : "amount-neg")">&#8377;@ow.MonthNet.ToString("N0")</td>
+                                                                }
                                                             </tr>
                                                         }
                                                     </tbody>

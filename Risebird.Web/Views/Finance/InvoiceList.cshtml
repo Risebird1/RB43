@@ -26,8 +26,56 @@
 
 <link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    /* Invoice List — table + status badge fixes (scoped) */
+    .invoice-list-page table.journey th,
+    .invoice-list-page table.journey td {
+        max-width: none;
+        vertical-align: middle !important;
+        line-height: 1.4 !important;
+        padding: 8px 10px !important;
+    }
 
-<div class="main-panel" id="main-panel">
+    .invoice-list-page #tblInvoiceList thead th,
+    .invoice-list-page #tblInvoiceList tfoot th {
+        background: #e0e0e0 !important;
+        color: #676767 !important;
+        font-weight: 500 !important;
+        font-size: 13px;
+        font-family: Roboto, sans-serif;
+        padding: 7px 10px !important;
+        vertical-align: middle !important;
+        white-space: nowrap;
+        border: 1px solid #dee2e65e !important;
+    }
+
+    .invoice-list-page #tblInvoiceList tbody td {
+        font-family: Roboto, sans-serif;
+        font-size: 13px;
+        color: #333;
+    }
+
+    .invoice-list-page #tblInvoiceList .col-status {
+        min-width: 115px;
+        white-space: nowrap;
+        overflow: visible;
+        text-align: center;
+    }
+
+    .invoice-list-page #tblInvoiceList .badge {
+        display: inline-block;
+        line-height: 1.25;
+        padding: 5px 10px;
+        margin: 0;
+        white-space: nowrap;
+        vertical-align: middle;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: .3px;
+    }
+</style>
+
+<div class="main-panel invoice-list-page" id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad invoice-details" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -194,7 +242,7 @@
                                                         <th>Invoice #</th>
                                                         <th>IRN</th>
                                                         <th>Gross (&#8377;)</th>
-                                                        <th>Status</th>
+                                                        <th class="col-status">Status</th>
                                                         <th>Owner</th>
                                                         <th>Latest Remark</th>
                                                         <th>UTR / Trxn</th>
@@ -211,7 +259,7 @@
                                                         <th>Invoice #</th>
                                                         <th>IRN</th>
                                                         <th>Gross (&#8377;)</th>
-                                                        <th>Status</th>
+                                                        <th class="col-status">Status</th>
                                                         <th>Owner</th>
                                                         <th>Latest Remark</th>
                                                         <th>UTR / Trxn</th>
@@ -222,7 +270,7 @@
                                                     @if (!Model.Any())
                                                     {
                                                         <tr>
-                                                            <td colspan="12" class="text-center">No records found for the selected month.</td>
+                                                            <td colspan="13" class="text-center">No records found for the selected month.</td>
                                                         </tr>
                                                     }
                                                     @{int rowNo = 1;}
@@ -237,15 +285,15 @@
                                                             <td>@item.InvoiceNumber</td>
                                                             <td>@item.IRN</td>
                                                             <td class="text-right">@item.GrossAmount.ToString("N2")</td>
-                                                            <td>
+                                                            <td  class="col-status">
                                                                 @{
                                                                     string statusBadge = item.Status switch
                                                                     {
-                                                                        0 => "<span class='badge badge-secondary'>Draft</span>",
-                                                                        1 => "<span class='badge badge-info'>Generated</span>",
-                                                                        2 => "<span class='badge badge-warning'>PO Pending</span>",
-                                                                        3 => "<span class='badge badge-success'>Paid</span>",
-                                                                        _ => "<span class='badge badge-secondary'>Unknown</span>"
+                                                                        0 => "<span style='width:auto;' class='badge badge-secondary'>Draft</span>",
+                                                                        1 => "<span style='width:auto;' class='badge badge-info'>Generated</span>",
+                                                                        2 => "<span style='width:auto;' class='badge badge-warning'>PO Pending</span>",
+                                                                        3 => "<span style='width:auto;' class='badge badge-success'>Paid</span>",
+                                                                        _ => "<span style='width:auto;' class='badge badge-secondary'>Unknown</span>"
                                                                     };
                                                                 }
                                                                 @Html.Raw(statusBadge)

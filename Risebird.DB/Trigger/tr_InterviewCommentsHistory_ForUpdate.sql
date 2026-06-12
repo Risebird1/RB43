@@ -16,14 +16,14 @@ ON InterviewComments
 FOR UPDATE
 AS
 BEGIN
- Declare @id int, @interviewId int, @candiateEmailId varchar(200), @irfName varchar(25), @status varchar(50), @meetingStatus int
+ Declare @id int, @interviewId int, @candiateEmailId varchar(200), @irfName varchar(25), @status varchar(50), @meetingStatus int,@videoduration int
  Select @id = Id from inserted
- Select @meetingStatus = MeetingStatus from InterviewComments where id = @id
+ Select @meetingStatus = MeetingStatus,@videoduration=ISNULL(VideoDuration,0) from InterviewComments where id = @id
 
  Select @interviewId = InterviewId from InterviewComments where id = @id
 
- Declare @oldmeetingStatus int
- set @oldmeetingStatus=(Select top (1) MeetingStatus From InterviewCommentsHistory where InterviewId=@interviewId order by PerformedAt desc)
+ Declare @oldmeetingStatus int,@oldvideoduration int
+ Select top (1)  @oldmeetingStatus = MeetingStatus,@oldvideoduration = ISNULL(VideoDuration,0)  From InterviewCommentsHistory where InterviewId=@interviewId order by PerformedAt desc
 
  insert into InterviewCommentsHistory
  (id,	InterviewId,	InterviewStatus	,InterviewerComment	,FraudCheckStatus,	HRComment,	QCStatus,	QCComment,
@@ -41,7 +41,7 @@ BEGIN
  CreatedOn,	ModifiedOn,	CreatedBy,	ModifiedBy, DATEADD(minute, 330, getdate()), ModifiedBy, 'Updated'
  from InterviewComments where id = @id )
 
- if(@meetingStatus!=@oldmeetingStatus)
+ if(@meetingStatus!=@oldmeetingStatus or @videoduration!=@oldvideoduration)
  begin
  Exec usp_AddOrUpdateWalletDetails @interviewId,'System','InterviewBilling','Dr',0
  end
