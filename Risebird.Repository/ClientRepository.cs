@@ -239,6 +239,8 @@ namespace Risebird.Repository
             parameters.Add("@PlanType", entity.PlanType);
             parameters.Add("@IsVideoRequired", entity.IsVideoRequired);
             parameters.Add("@BillingModel", entity.BillingModel);
+            parameters.Add("@BillingCurrency", string.IsNullOrEmpty(entity.BillingCurrency) ? "INR" : entity.BillingCurrency);
+            parameters.Add("@InterviewerBillingType", entity.InterviewerBillingType == 0 ? 1 : entity.InterviewerBillingType);
             if (entity.GSTApplicable == 1)
             {
                 parameters.Add("@GSTApplicable", true);

@@ -88,5 +88,13 @@ namespace Risebird.Entities.Data
         public int PlanType { get; set; }
         public bool IsPlanFlixable { get; set; }
         public bool IsVideoRequired { get; set; }
+
+        [Display(Name = "Billing Currency")]
+        public string BillingCurrency { get; set; }
+        public List<SelectListItem> BillingCurrencyDrop { get; set; }
+
+        [Display(Name = "Interviewer Billing Type")]
+        public int InterviewerBillingType { get; set; }
+        public List<SelectListItem> InterviewerBillingTypeDrop { get; set; }
     }
 }
