@@ -93,7 +93,7 @@ namespace Risebird.Entities.Data
         public string BillingCurrency { get; set; }
         public List<SelectListItem> BillingCurrencyDrop { get; set; }
 
-        [Display(Name = "Interviewer Billing Type")]
+        [Display(Name = "Interview Billing Type")]
         public int InterviewerBillingType { get; set; }
         public List<SelectListItem> InterviewerBillingTypeDrop { get; set; }
     }
