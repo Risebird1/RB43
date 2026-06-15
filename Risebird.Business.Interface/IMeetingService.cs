@@ -136,6 +136,13 @@ namespace Risebird.Business.Interface
 
         Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string transferId = null, string cfTransferId = null, string payoutStatus = null);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
+
+        /// <summary>
+        /// Re-initiates a Cashfree payout for a PaymentHistory row whose <c>PayoutStatus</c>
+        /// is <c>TRANSFER_FAILED</c>. Inserts a new PaymentHistory row for the retry attempt
+        /// and returns (success, message).
+        /// </summary>
+        Task<Tuple<bool, string>> RetryPaymentViaCashfree(int paymentHistoryId);
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<Meeting>> FetchOpenMeetingById(string id);
         string ReassignMeeting(string id, string meetingid, string Emailid);
