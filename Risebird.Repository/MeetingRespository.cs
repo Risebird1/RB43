@@ -5284,6 +5284,29 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<List<InvoiceListVM>> GetPaidInvoiceList(int fromYear = 0, int fromMonth = 0, int toYear = 0, int toMonth = 0)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@FromYear",  fromYear);
+                    parameters.Add("@FromMonth", fromMonth);
+                    parameters.Add("@ToYear",    toYear);
+                    parameters.Add("@ToMonth",   toMonth);
+                    var result = await SqlMapper.QueryAsync<InvoiceListVM>(con, "usp_GetPaidInvoices", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<InvoiceListVM>();
+            }
+        }
+
         public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0)
         {
             try

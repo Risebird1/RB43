@@ -2179,7 +2179,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> InvoiceList()
+        public async Task<IActionResult> InvoiceList(string tab = "monthly")
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2189,61 +2189,117 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "Finance")
                 {
-                    var currentMonth = DateTime.Now.Month;
-                    var currentYear  = DateTime.Now.Year;
-                    var prevMonth    = DateTime.Now.AddMonths(-1).Month;
-                    var prevYear     = DateTime.Now.AddMonths(-1).Year;
-                    int month = prevMonth;
-                    int year  = prevYear;
+                    // Normalise — only three valid values
+                    if (tab != "unpaid" && tab != "paid") tab = "monthly";
+                    ViewBag.ActiveTab = tab;
 
-                    var model = new List<InvoiceListVM>();
-
-                    if (HttpContext.Session.GetString("InvoiceListFilter") != null)
-                    {
-                        var filter = JsonConvert.DeserializeObject<InvoiceListFilter>(HttpContext.Session.GetString("InvoiceListFilter"));
-                        if (filter.Month != null && filter.Year != null)
-                        {
-                            month = Convert.ToInt32(filter.Month);
-                            year  = Convert.ToInt32(filter.Year);
-                        }
-                        model = await _meetingService.GetInvoiceList(month, year);
-                        if (model == null) model = new List<InvoiceListVM>();
-                        model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
-                            ? ((BillingModelEnum)x.BillingModel).GetDescription()
-                            : string.Empty);
-                        filter.Client = filter.Client == null
-                            ? model.Select(x => x.ClientName).ToArray()
-                            : filter.Client;
-                        filter.Status = filter.Status == null
-                            ? model.Select(x => x.Status.ToString()).Distinct().ToArray()
-                            : filter.Status;
-                        model = model.Where(x =>
-                            filter.Client.Contains(x.ClientName) &&
-                            filter.Status.Contains(x.Status.ToString())).ToList();
-                    }
-                    else
-                    {
-                        model = await _meetingService.GetInvoiceList(month, year);
-                        if (model == null) model = new List<InvoiceListVM>();
-                        model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
-                            ? ((BillingModelEnum)x.BillingModel).GetDescription()
-                            : string.Empty);
-                    }
-
-                    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
-                    ViewBag.SelectedMonth = month;
-                    ViewBag.SelectedYear  = year;
-                    ViewBag.DateResult    = mfi.GetMonthName(month) + " " + year;
-                    ViewBag.TotalGross    = model.Sum(x => x.GrossAmount);
-                    ViewBag.ClientList    = _projectService.GetClients().Select(x => x.Name).Where(x => !string.IsNullOrEmpty(x)).Distinct();
-
+                    // ── Unpaid list is always loaded (drives the badge on every tab) ──
                     var unpaidList = await _meetingService.GetUnpaidInvoiceList();
                     unpaidList.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
                         ? ((BillingModelEnum)x.BillingModel).GetDescription()
                         : string.Empty);
-                    ViewBag.UnpaidList      = unpaidList;
-                    ViewBag.UnpaidCount     = unpaidList.Count;
+                    ViewBag.UnpaidList       = unpaidList;
+                    ViewBag.UnpaidCount      = unpaidList.Count;
                     ViewBag.UnpaidTotalGross = unpaidList.Sum(x => x.GrossAmount);
+
+                    // ── Monthly data: skip when Paid tab is active ──
+                    var model = new List<InvoiceListVM>();
+                    if (tab != "paid")
+                    {
+                        var prevMonth = DateTime.Now.AddMonths(-1).Month;
+                        var prevYear  = DateTime.Now.AddMonths(-1).Year;
+                        int month = prevMonth;
+                        int year  = prevYear;
+
+                        if (HttpContext.Session.GetString("InvoiceListFilter") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InvoiceListFilter>(HttpContext.Session.GetString("InvoiceListFilter"));
+                            if (filter.Month != null && filter.Year != null)
+                            {
+                                month = Convert.ToInt32(filter.Month);
+                                year  = Convert.ToInt32(filter.Year);
+                            }
+                            model = await _meetingService.GetInvoiceList(month, year);
+                            if (model == null) model = new List<InvoiceListVM>();
+                            model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                                ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                                : string.Empty);
+                            filter.Client = filter.Client == null
+                                ? model.Select(x => x.ClientName).ToArray()
+                                : filter.Client;
+                            filter.Status = filter.Status == null
+                                ? model.Select(x => x.Status.ToString()).Distinct().ToArray()
+                                : filter.Status;
+                            model = model.Where(x =>
+                                filter.Client.Contains(x.ClientName) &&
+                                filter.Status.Contains(x.Status.ToString())).ToList();
+                        }
+                        else
+                        {
+                            model = await _meetingService.GetInvoiceList(month, year);
+                            if (model == null) model = new List<InvoiceListVM>();
+                            model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                                ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                                : string.Empty);
+                        }
+
+                        System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                        ViewBag.SelectedMonth = month;
+                        ViewBag.SelectedYear  = year;
+                        ViewBag.DateResult    = mfi.GetMonthName(month) + " " + year;
+                        ViewBag.TotalGross    = model.Sum(x => x.GrossAmount);
+                        ViewBag.ClientList    = _projectService.GetClients().Select(x => x.Name).Where(x => !string.IsNullOrEmpty(x)).Distinct();
+                        ViewBag.MonthlyLoaded = true;
+                    }
+                    else
+                    {
+                        // Paid tab active — provide safe stubs so the view renders without null errors
+                        ViewBag.SelectedMonth = 0;
+                        ViewBag.SelectedYear  = 0;
+                        ViewBag.DateResult    = string.Empty;
+                        ViewBag.TotalGross    = 0m;
+                        ViewBag.ClientList    = Enumerable.Empty<string>();
+                        ViewBag.MonthlyLoaded = false;
+                    }
+
+                    // ── Paid data: skip when Monthly or Unpaid tab is active ──
+                    int paidFromYear = 0, paidFromMonth = 0, paidToYear = 0, paidToMonth = 0;
+                    var paidFilterJson = HttpContext.Session.GetString("PaidInvoiceFilter");
+                    if (!string.IsNullOrEmpty(paidFilterJson))
+                    {
+                        try
+                        {
+                            var pf = JsonConvert.DeserializeObject<dynamic>(paidFilterJson);
+                            paidFromYear  = pf.FromYear  != null ? (int)pf.FromYear  : 0;
+                            paidFromMonth = pf.FromMonth != null ? (int)pf.FromMonth : 0;
+                            paidToYear    = pf.ToYear    != null ? (int)pf.ToYear    : 0;
+                            paidToMonth   = pf.ToMonth   != null ? (int)pf.ToMonth   : 0;
+                        }
+                        catch { /* ignore bad session data */ }
+                    }
+                    ViewBag.PaidFromYear  = paidFromYear;
+                    ViewBag.PaidFromMonth = paidFromMonth;
+                    ViewBag.PaidToYear    = paidToYear;
+                    ViewBag.PaidToMonth   = paidToMonth;
+
+                    if (tab == "paid")
+                    {
+                        var paidList = await _meetingService.GetPaidInvoiceList(paidFromYear, paidFromMonth, paidToYear, paidToMonth);
+                        paidList.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                            ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                            : string.Empty);
+                        ViewBag.PaidList       = paidList;
+                        ViewBag.PaidCount      = paidList.Count;
+                        ViewBag.PaidTotalGross = paidList.Sum(x => x.GrossAmount);
+                        ViewBag.PaidLoaded     = true;
+                    }
+                    else
+                    {
+                        ViewBag.PaidList       = new List<InvoiceListVM>();
+                        ViewBag.PaidCount      = 0;
+                        ViewBag.PaidTotalGross = 0m;
+                        ViewBag.PaidLoaded     = false;
+                    }
 
                     if (TempData["InvoiceListMessage"] != null)
                     {
@@ -2311,6 +2367,25 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        [HttpPost]
+        public IActionResult FilterPaidInvoices(int fromYear, int fromMonth, int toYear, int toMonth)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var pf = new { FromYear = fromYear, FromMonth = fromMonth, ToYear = toYear, ToMonth = toMonth };
+                HttpContext.Session.SetString("PaidInvoiceFilter", JsonConvert.SerializeObject(pf));
+                return RedirectToAction("InvoiceList", new { tab = "paid" });
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        [HttpGet]
+        public IActionResult ResetPaidInvoiceFilter()
+        {
+            HttpContext.Session.Remove("PaidInvoiceFilter");
+            return RedirectToAction("InvoiceList", new { tab = "paid" });
         }
 
         #endregion
