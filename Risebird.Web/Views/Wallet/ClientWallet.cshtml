@@ -518,7 +518,7 @@
 <script>
     var _clientId = @Model.ClientId;
     var _billingType = @Model.BillingType;
-    var _requiresOwner = @Model.BillingType == 1 ? 'true' : 'false';
+    var _requiresOwner = @(Model.BillingType == 1 ? "true" : "false");
 
     function ApplyDetailsFilter() {
         var scope = $('input[name="detailsScope"]:checked').val() || 'month';
