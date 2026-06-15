@@ -44,14 +44,14 @@ BEGIN
         c.AIPerInterviewRate,
         ISNULL(c.BillingType, 3)                                   AS BillingType,
         ic.MonthInterviewCount,
-        ISNULL(SUM(CASE WHEN MONTH(w.CreatedOn) = @Month
-                         AND YEAR(w.CreatedOn)  = @Year
+        ISNULL(SUM(CASE WHEN MONTH(w.TransactionDate) = @Month
+                         AND YEAR(w.TransactionDate)  = @Year
                         THEN w.Credit ELSE 0 END), 0)              AS MonthCredit,
-        ISNULL(SUM(CASE WHEN MONTH(w.CreatedOn) = @Month
-                         AND YEAR(w.CreatedOn)  = @Year
+        ISNULL(SUM(CASE WHEN MONTH(w.TransactionDate) = @Month
+                         AND YEAR(w.TransactionDate)  = @Year
                         THEN w.Debit  ELSE 0 END), 0)              AS MonthDebit,
-        COUNT(CASE WHEN MONTH(w.CreatedOn) = @Month
-                    AND YEAR(w.CreatedOn)  = @Year
+        COUNT(CASE WHEN MONTH(w.TransactionDate) = @Month
+                    AND YEAR(w.TransactionDate)  = @Year
                    THEN 1 END)                                      AS TransactionCount,
         ISNULL(SUM(w.Credit), 0) - ISNULL(SUM(w.Debit), 0)        AS OverallBalance
     FROM Client c
@@ -115,3 +115,4 @@ BEGIN
         MonthInterviewCount DESC;
 END
 GO
+

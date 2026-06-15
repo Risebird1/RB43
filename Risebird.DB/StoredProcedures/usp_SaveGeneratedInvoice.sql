@@ -33,8 +33,6 @@ BEGIN
 
     -- Duplicate check: ClientId + BillingOwnerId + Month + Year must be unique for Generated invoices.
     -- Allow saving a Draft (Status=0) freely; block a second Generated (Status=1) invoice.
-    IF @id = 0 AND @Status = 1
-    BEGIN
         IF EXISTS (
             SELECT 1 FROM GeneratedInvoices
             WHERE ClientId      = @ClientId
@@ -47,7 +45,6 @@ BEGIN
             SELECT -1 AS NewId, 'Invoice already generated for this Client, Billing Owner, Month and Year.' AS ErrorMessage
             RETURN
         END
-    END
 
     IF @id = 0
     BEGIN
