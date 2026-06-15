@@ -367,6 +367,22 @@ namespace Risebird.Repository.Interface
         Task<PaymentHistoryEmailDetails> GetPaymentDetailsByTransferId(string transferId, string cfTransferId);
 
         /// <summary>
+        /// Fetches a single PaymentHistory row by its primary key, including the interviewer's
+        /// <c>Userid</c>, <c>InterviewerEmailid</c>, <c>Amount</c>, <c>TotalAmount</c>, and <c>PayoutStatus</c>.
+        /// Returns <c>null</c> if no matching row is found.
+        /// </summary>
+        Task<RBInterviewDetails> GetPaymentHistoryById(int id);
+
+        /// <summary>
+        /// Updates an existing TRANSFER_FAILED PaymentHistory row in-place with new Cashfree
+        /// transfer references from a retry attempt. Clears <c>TransferUtr</c> and
+        /// <c>TransactionDate</c> (the new transfer has not yet settled) and resets
+        /// <c>PaymentDate</c> to now.
+        /// </summary>
+        /// <returns>Number of rows updated (0 if no matching row was found).</returns>
+        Task<int> UpdatePaymentHistoryForRetry(int id, string transferId, string cfTransferId, string payoutStatus);
+
+        /// <summary>
         /// Inserts a single row into <c>PaymentLogs</c> capturing the full context of one
         /// <c>TransactionStatus</c> webhook call (input, output, errors, parsed fields).
         /// </summary>
