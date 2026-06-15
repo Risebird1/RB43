@@ -15,13 +15,20 @@
     string[] FilterClient = new string[] { };
     string[] FilterStatus = new string[] { };
 
-    bool hasAnyRemark = Model.Any(m => !string.IsNullOrEmpty(m.LatestRemark));
+    bool hasAnyRemark        = Model.Any(m => !string.IsNullOrEmpty(m.LatestRemark));
+
+    var unpaidList           = ViewBag.UnpaidList as List<InvoiceListVM> ?? new List<InvoiceListVM>();
+    bool unpaidHasAnyRemark  = unpaidList.Any(m => !string.IsNullOrEmpty(m.LatestRemark));
+
+    // Active tab: remember across page loads via query string
+    string activeTab = Context.Request.Query["tab"].ToString();
+    if (string.IsNullOrEmpty(activeTab)) activeTab = "monthly";
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("InvoiceListFilter") != null)
 {
-    filter      = JsonConvert.DeserializeObject<InvoiceListFilter>(HttpContextAccessor.HttpContext.Session.GetString("InvoiceListFilter"));
-    Month       = filter.Month  != null ? filter.Month  : string.Empty;
-    Year        = filter.Year   != null ? filter.Year   : string.Empty;
+    filter       = JsonConvert.DeserializeObject<InvoiceListFilter>(HttpContextAccessor.HttpContext.Session.GetString("InvoiceListFilter"));
+    Month        = filter.Month  != null ? filter.Month  : string.Empty;
+    Year         = filter.Year   != null ? filter.Year   : string.Empty;
     FilterClient = filter.Client != null ? filter.Client : new string[] { };
     FilterStatus = filter.Status != null ? filter.Status : new string[] { };
 }
@@ -29,7 +36,6 @@
 <link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 <style>
-    /* Invoice List — table + status badge fixes (scoped) */
     .invoice-list-page table.journey th,
     .invoice-list-page table.journey td {
         max-width: none;
@@ -37,9 +43,8 @@
         line-height: 1.4 !important;
         padding: 8px 10px !important;
     }
-
-    .invoice-list-page #tblInvoiceList thead th,
-    .invoice-list-page #tblInvoiceList tfoot th {
+    .invoice-list-page .inv-tab-table thead th,
+    .invoice-list-page .inv-tab-table tfoot th {
         background: #e0e0e0 !important;
         color: #676767 !important;
         font-weight: 500 !important;
@@ -50,21 +55,18 @@
         white-space: nowrap;
         border: 1px solid #dee2e65e !important;
     }
-
-    .invoice-list-page #tblInvoiceList tbody td {
+    .invoice-list-page .inv-tab-table tbody td {
         font-family: Roboto, sans-serif;
         font-size: 13px;
         color: #333;
     }
-
-    .invoice-list-page #tblInvoiceList .col-status {
+    .invoice-list-page .inv-tab-table .col-status {
         min-width: 115px;
         white-space: nowrap;
         overflow: visible;
         text-align: center;
     }
-
-    .invoice-list-page #tblInvoiceList .badge {
+    .invoice-list-page .inv-tab-table .badge {
         display: inline-block;
         line-height: 1.25;
         padding: 5px 10px;
@@ -75,6 +77,48 @@
         font-weight: 600;
         letter-spacing: .3px;
     }
+    /* Tab styles */
+    .inv-nav-tabs {
+        border-bottom: 2px solid #dee2e6;
+        margin-bottom: 16px;
+    }
+    .inv-nav-tabs .nav-link {
+        color: #555;
+        font-size: 13px;
+        font-family: Roboto, sans-serif;
+        font-weight: 500;
+        border: none;
+        border-bottom: 3px solid transparent;
+        border-radius: 0;
+        padding: 9px 20px;
+        margin-bottom: -2px;
+    }
+    .inv-nav-tabs .nav-link.active {
+        color: #3949ab;
+        border-bottom: 3px solid #3949ab;
+        background: transparent;
+    }
+    .inv-nav-tabs .nav-link:hover:not(.active) {
+        color: #3949ab;
+        border-bottom: 3px solid #c5cae9;
+        background: transparent;
+    }
+    .inv-tab-badge {
+        display: inline-block;
+        background: #ef5350;
+        color: #fff;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 1px 7px;
+        margin-left: 5px;
+        vertical-align: middle;
+    }
+    .inv-summary-label {
+        color: forestgreen;
+        font-weight: 600;
+        font-size: 13px;
+    }
 </style>
 
 <div class="main-panel invoice-list-page" id="main-panel">
@@ -84,11 +128,6 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"><h4 class="card-title">Invoice List</h4></div>
-                    <div>
-                        <label style="color: forestgreen; font-weight:600;">
-                            Month: @ViewBag.DateResult &nbsp;|&nbsp; Total Gross: &#8377;@ViewBag.TotalGross.ToString("N2")
-                        </label>
-                    </div>
                 </div>
                 <div class="pull-right client-ms">
                     <a href="@Url.Action("GenerateInvoice", "Finance")" target="_blank"
@@ -101,7 +140,7 @@
                         <div class="mdc-button__ripple"></div>
                     </a>
                     <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded"
-                            data-bs-toggle="modal" data-bs-target="#filterModal">
+                            id="btnFilterModal" data-bs-toggle="modal" data-bs-target="#filterModal">
                         <span class="mdc-button__label">
                             <span class="fa fa-filter"></span>
                             <font style="font-family:Roboto,sans-serif;font-size:12px;"> Filter</font>
@@ -126,7 +165,7 @@
 
                         <div class="dataloading">
 
-                            <!-- Filter Modal -->
+                            <!-- Filter Modal (monthly tab only) -->
                             <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
@@ -227,115 +266,258 @@
                             </div>
                             <!-- /Filter Modal -->
 
-                            <!-- Data Table -->
-                            <div id="tableID">
-                                <div id="invoicelist_wrapper" class="dataTables_wrapper dt-bootstrap4 pt-10">
-                                    <div class="clearfix"></div>
-                                    <div class="col-sm-12 nopad rbpay mtop-5">
-                                        <div class="table-responsive">
-                                            <table id="tblInvoiceList" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
-                                                    <thead>
+                            <!-- ── Tabs ── -->
+                            <ul class="nav inv-nav-tabs" id="invoiceTabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link @(activeTab == "unpaid" ? "active" : "")"
+                                       id="tab-unpaid" href="#pane-unpaid" data-bs-toggle="tab" role="tab">
+                                        Unpaid
+                                        @if (ViewBag.UnpaidCount > 0)
+                                        {
+                                            <span class="inv-tab-badge">@ViewBag.UnpaidCount</span>
+                                        }
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(activeTab != "unpaid" ? "active" : "")"
+                                       id="tab-monthly" href="#pane-monthly" data-bs-toggle="tab" role="tab">
+                                        Monthly
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+
+                                <!-- ══ UNPAID TAB ══ -->
+                                <div class="tab-pane fade @(activeTab == "unpaid" ? "show active" : "")"
+                                     id="pane-unpaid" role="tabpanel">
+
+                                    <div style="margin-bottom:10px;">
+                                        <span class="inv-summary-label">
+                                            All Unpaid Invoices &nbsp;|&nbsp;
+                                            Total Gross: &#8377;@ViewBag.UnpaidTotalGross.ToString("N2")
+                                        </span>
+                                    </div>
+
+                                    <div class="table-responsive">
+                                        <table id="tblUnpaid" class="table table-striped table-bordered journey inv-tab-table" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Client</th>
+                                                    <th>Period</th>
+                                                    <th>Model</th>
+                                                    <th>Billing Type</th>
+                                                    <th>Billing Owner</th>
+                                                    <th>Invoice #</th>
+                                                    <th>IRN</th>
+                                                    <th>Gross (&#8377;)</th>
+                                                    <th class="col-status">Status</th>
+                                                    <th>Owner</th>
+                                                    @if (unpaidHasAnyRemark) { <th>Latest Remark</th> }
+                                                    <th>UTR / Trxn</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Client</th>
+                                                    <th>Period</th>
+                                                    <th>Model</th>
+                                                    <th>Billing Type</th>
+                                                    <th>Billing Owner</th>
+                                                    <th>Invoice #</th>
+                                                    <th>IRN</th>
+                                                    <th>Gross (&#8377;)</th>
+                                                    <th class="col-status">Status</th>
+                                                    <th>Owner</th>
+                                                    @if (unpaidHasAnyRemark) { <th>Latest Remark</th> }
+                                                    <th>UTR / Trxn</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @if (!unpaidList.Any())
+                                                {
                                                     <tr>
-                                                        <th>#</th>
-                                                        <th>Client</th>
-                                                        <th>Model</th>
-                                                        <th>Billing Type</th>
-                                                        <th>Billing Owner</th>
-                                                        <th>Invoice #</th>
-                                                        <th>IRN</th>
-                                                        <th>Gross (&#8377;)</th>
-                                                        <th class="col-status">Status</th>
-                                                        <th>Owner</th>
-                                                        @if (hasAnyRemark) { <th>Latest Remark</th> }
-                                                        <th>UTR / Trxn</th>
-                                                        <th>Actions</th>
+                                                        <td colspan="@(unpaidHasAnyRemark ? 14 : 13)" class="text-center">No unpaid invoices found.</td>
                                                     </tr>
-                                                </thead>
-                                                <tfoot>
+                                                }
+                                                @{int unpaidRow = 1; var months = new[]{"","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};}
+                                                @foreach (var item in unpaidList)
+                                                {
                                                     <tr>
-                                                        <th>#</th>
-                                                        <th>Client</th>
-                                                        <th>Model</th>
-                                                        <th>Billing Type</th>
-                                                        <th>Billing Owner</th>
-                                                        <th>Invoice #</th>
-                                                        <th>IRN</th>
-                                                        <th>Gross (&#8377;)</th>
-                                                        <th class="col-status">Status</th>
-                                                        <th>Owner</th>
-                                                        @if (hasAnyRemark) { <th>Latest Remark</th> }
-                                                        <th>UTR / Trxn</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </tfoot>
-                                                <tbody id="tblBodyInvoiceList">
-                                                    @if (!Model.Any())
-                                                    {
-                                                        <tr>
-                                                            <td colspan="@(hasAnyRemark ? 13 : 12)" class="text-center">No records found for the selected month.</td>
-                                                        </tr>
-                                                    }
-                                                    @{int rowNo = 1;}
-                                                    @foreach (var item in Model)
-                                                    {
-                                                        <tr>
-                                                            <td>@rowNo</td>
-                                                            <td>@item.ClientName</td>
-                                                            <td>@item.InvoiceModel</td>
-                                                            <td>
-                                                                @(item.BillingType == 1 ? "Billing Owner" :
-                                                                  item.BillingType == 2 ? "Skill Channel" : "Client")
-                                                            </td>
-                                                            <td>@(item.BillingType == 1 ? item.BillingOwnerEmail : "Client")</td>
-                                                            <td>@item.InvoiceNumber</td>
-                                                            <td>@item.IRN</td>
-                                                            <td class="text-right">@item.GrossAmount.ToString("N2")</td>
-                                                            <td class="col-status">
-                                                                @{
-                                                                    string statusBadge = item.Status switch
-                                                                    {
-                                                                        0 => "<span style='width:auto;' class='badge badge-secondary'>Draft</span>",
-                                                                        1 => "<span style='width:auto;' class='badge badge-info'>Generated</span>",
-                                                                        2 => "<span style='width:auto;' class='badge badge-warning'>PO Pending</span>",
-                                                                        3 => "<span style='width:auto;' class='badge badge-success'>Paid</span>",
-                                                                        _ => "<span style='width:auto;' class='badge badge-secondary'>Unknown</span>"
-                                                                    };
-                                                                }
-                                                                @Html.Raw(statusBadge)
-                                                            </td>
-                                                            <td>@item.Owner</td>
-                                                            @if (hasAnyRemark)
-                                                            {
-                                                                <td title="@item.LatestRemark">
-                                                                    @(item.LatestRemark?.Length > 40
-                                                                        ? item.LatestRemark.Substring(0, 40) + "…"
-                                                                        : item.LatestRemark)
-                                                                </td>
-                                                            }
-                                                            <td>
-                                                                @if (item.BillingModel != 1 && item.BillingModel != 0)
+                                                        <td>@unpaidRow</td>
+                                                        <td>@item.ClientName</td>
+                                                        <td style="white-space:nowrap;">
+                                                            @(item.InvoiceMonth >= 1 && item.InvoiceMonth <= 12 ? months[item.InvoiceMonth] : item.InvoiceMonth.ToString()) @item.InvoiceYear
+                                                        </td>
+                                                        <td>@item.InvoiceModel</td>
+                                                        <td>
+                                                            @(item.BillingType == 1 ? "Billing Owner" :
+                                                              item.BillingType == 2 ? "Skill Channel" : "Client")
+                                                        </td>
+                                                        <td>@(item.BillingType == 1 ? item.BillingOwnerEmail : "Client")</td>
+                                                        <td>@item.InvoiceNumber</td>
+                                                        <td>@item.IRN</td>
+                                                        <td class="text-right">@item.GrossAmount.ToString("N2")</td>
+                                                        <td class="col-status">
+                                                            @{
+                                                                string uBadge = item.Status switch
                                                                 {
-                                                                    @item.UTRTrxn
-                                                                }
+                                                                    0 => "<span style='width:auto;' class='badge badge-secondary'>Draft</span>",
+                                                                    1 => "<span style='width:auto;' class='badge badge-info'>Generated</span>",
+                                                                    2 => "<span style='width:auto;' class='badge badge-warning'>PO Pending</span>",
+                                                                    _ => "<span style='width:auto;' class='badge badge-secondary'>Unknown</span>"
+                                                                };
+                                                            }
+                                                            @Html.Raw(uBadge)
+                                                        </td>
+                                                        <td>@item.Owner</td>
+                                                        @if (unpaidHasAnyRemark)
+                                                        {
+                                                            <td title="@item.LatestRemark">
+                                                                @(item.LatestRemark?.Length > 40
+                                                                    ? item.LatestRemark.Substring(0, 40) + "…"
+                                                                    : item.LatestRemark)
                                                             </td>
-                                                            <td class="text-center">
-                                                                <a href="@Url.Action("ViewInvoice","Finance", new { invoiceId = item.id })"
-                                                                   target="_blank"
-                                                                   class="btn btn-sm btn-outline-primary"
-                                                                   title="View / Edit Invoice">
-                                                                    <i class="fa fa-eye"></i> View
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                        rowNo++;
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                        }
+                                                        <td>
+                                                            @if (item.BillingModel != 1 && item.BillingModel != 0)
+                                                            { @item.UTRTrxn }
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <a href="@Url.Action("ViewInvoice","Finance", new { invoiceId = item.id })"
+                                                               target="_blank"
+                                                               class="btn btn-sm btn-outline-primary"
+                                                               title="View / Edit Invoice">
+                                                                <i class="fa fa-eye"></i> View
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    unpaidRow++;
+                                                }
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
+                                <!-- /UNPAID TAB -->
+
+                                <!-- ══ MONTHLY TAB ══ -->
+                                <div class="tab-pane fade @(activeTab != "unpaid" ? "show active" : "")"
+                                     id="pane-monthly" role="tabpanel">
+
+                                    <div style="margin-bottom:10px;">
+                                        <span class="inv-summary-label">
+                                            Month: @ViewBag.DateResult &nbsp;|&nbsp;
+                                            Total Gross: &#8377;@ViewBag.TotalGross.ToString("N2")
+                                        </span>
+                                    </div>
+
+                                    <div class="table-responsive">
+                                        <table id="tblInvoiceList" class="table table-striped table-bordered journey inv-tab-table" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Client</th>
+                                                    <th>Model</th>
+                                                    <th>Billing Type</th>
+                                                    <th>Billing Owner</th>
+                                                    <th>Invoice #</th>
+                                                    <th>IRN</th>
+                                                    <th>Gross (&#8377;)</th>
+                                                    <th class="col-status">Status</th>
+                                                    <th>Owner</th>
+                                                    @if (hasAnyRemark) { <th>Latest Remark</th> }
+                                                    <th>UTR / Trxn</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Client</th>
+                                                    <th>Model</th>
+                                                    <th>Billing Type</th>
+                                                    <th>Billing Owner</th>
+                                                    <th>Invoice #</th>
+                                                    <th>IRN</th>
+                                                    <th>Gross (&#8377;)</th>
+                                                    <th class="col-status">Status</th>
+                                                    <th>Owner</th>
+                                                    @if (hasAnyRemark) { <th>Latest Remark</th> }
+                                                    <th>UTR / Trxn</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody id="tblBodyInvoiceList">
+                                                @if (!Model.Any())
+                                                {
+                                                    <tr>
+                                                        <td colspan="@(hasAnyRemark ? 13 : 12)" class="text-center">No records found for the selected month.</td>
+                                                    </tr>
+                                                }
+                                                @{int rowNo = 1;}
+                                                @foreach (var item in Model)
+                                                {
+                                                    <tr>
+                                                        <td>@rowNo</td>
+                                                        <td>@item.ClientName</td>
+                                                        <td>@item.InvoiceModel</td>
+                                                        <td>
+                                                            @(item.BillingType == 1 ? "Billing Owner" :
+                                                              item.BillingType == 2 ? "Skill Channel" : "Client")
+                                                        </td>
+                                                        <td>@(item.BillingType == 1 ? item.BillingOwnerEmail : "Client")</td>
+                                                        <td>@item.InvoiceNumber</td>
+                                                        <td>@item.IRN</td>
+                                                        <td class="text-right">@item.GrossAmount.ToString("N2")</td>
+                                                        <td class="col-status">
+                                                            @{
+                                                                string statusBadge = item.Status switch
+                                                                {
+                                                                    0 => "<span style='width:auto;' class='badge badge-secondary'>Draft</span>",
+                                                                    1 => "<span style='width:auto;' class='badge badge-info'>Generated</span>",
+                                                                    2 => "<span style='width:auto;' class='badge badge-warning'>PO Pending</span>",
+                                                                    3 => "<span style='width:auto;' class='badge badge-success'>Paid</span>",
+                                                                    _ => "<span style='width:auto;' class='badge badge-secondary'>Unknown</span>"
+                                                                };
+                                                            }
+                                                            @Html.Raw(statusBadge)
+                                                        </td>
+                                                        <td>@item.Owner</td>
+                                                        @if (hasAnyRemark)
+                                                        {
+                                                            <td title="@item.LatestRemark">
+                                                                @(item.LatestRemark?.Length > 40
+                                                                    ? item.LatestRemark.Substring(0, 40) + "…"
+                                                                    : item.LatestRemark)
+                                                            </td>
+                                                        }
+                                                        <td>
+                                                            @if (item.BillingModel != 1 && item.BillingModel != 0)
+                                                            { @item.UTRTrxn }
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <a href="@Url.Action("ViewInvoice","Finance", new { invoiceId = item.id })"
+                                                               target="_blank"
+                                                               class="btn btn-sm btn-outline-primary"
+                                                               title="View / Edit Invoice">
+                                                                <i class="fa fa-eye"></i> View
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    rowNo++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- /MONTHLY TAB -->
+
                             </div>
-                            <!-- /Data Table -->
+                            <!-- /tab-content -->
 
                         </div>
                     </div>
@@ -343,7 +525,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 
@@ -363,6 +544,7 @@
 
 <script>
     $(document).ready(function () {
+        // Filter modal
         $('#Month').val('');
         $('#Year').val('');
         $('#FilterClient').val('');
@@ -376,7 +558,28 @@
             window.location.href = '/Finance/ResetInvoiceList';
         });
 
+        // Hide filter button when on Unpaid tab
+        $('#tab-unpaid').on('shown.bs.tab', function () {
+            $('#btnFilterModal').hide();
+            localStorage.setItem('invoiceActiveTab', 'unpaid');
+        });
+        $('#tab-monthly').on('shown.bs.tab', function () {
+            $('#btnFilterModal').show();
+            localStorage.setItem('invoiceActiveTab', 'monthly');
+        });
+
+        // Restore last active tab from localStorage
+        var savedTab = localStorage.getItem('invoiceActiveTab');
+        if (savedTab === 'unpaid') {
+            $('#tab-unpaid').tab('show');
+            $('#btnFilterModal').hide();
+        } else {
+            $('#tab-monthly').tab('show');
+        }
+
+        // Init both DataTables
         applyDataTable();
+        applyUnpaidDataTable();
     });
 
     function ApplySessionFilter() {
@@ -387,36 +590,47 @@
     }
 
     function applyDataTable() {
+        if ($.fn.DataTable.isDataTable('#tblInvoiceList')) return;
         $('#tblInvoiceList').DataTable({
             pagingType: 'full_numbers',
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
             order: [],
             responsive: true,
-            language: {
-                search: '_INPUT_',
-                searchPlaceholder: 'Search records'
-            },
+            language: { search: '_INPUT_', searchPlaceholder: 'Search records' },
             fnInitComplete: function () {
-                $('.dataTables_filter input:eq(0)').after(
-                    "<button onclick='searchResult()' type='button' id='search'>&nbsp;</button>" +
-                    "<span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'>" +
-                    "<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'>" +
-                    "<path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>"
-                );
+                $('.dataTables_filter input:eq(0)').after(refreshBtn('tblInvoiceList'));
             }
         });
     }
 
-    function searchResult() {
-        $('#tblInvoiceList').DataTable();
+    function applyUnpaidDataTable() {
+        if ($.fn.DataTable.isDataTable('#tblUnpaid')) return;
+        $('#tblUnpaid').DataTable({
+            pagingType: 'full_numbers',
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+            order: [],
+            responsive: true,
+            language: { search: '_INPUT_', searchPlaceholder: 'Search records' },
+            fnInitComplete: function () {
+                $('.dataTables_filter input:eq(1)').after(refreshBtn('tblUnpaid'));
+            }
+        });
     }
 
-    function RefreshSearch() {
-        $('#tblInvoiceList').DataTable().destroy();
-        setTimeout(applyDataTable, 1000);
+    function refreshBtn(tableId) {
+        return "<span class='ref-btn' onclick='RefreshTable(\"" + tableId + "\")'>" +
+            "<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'>" +
+            "<path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>";
+    }
+
+    function RefreshTable(tableId) {
+        $('#' + tableId).DataTable().destroy();
+        setTimeout(function () {
+            if (tableId === 'tblInvoiceList') applyDataTable();
+            else applyUnpaidDataTable();
+        }, 800);
     }
 </script>
-
 
 <script type="text/javascript">
     $(".dataloading").hide();

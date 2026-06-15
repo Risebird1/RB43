@@ -5266,6 +5266,24 @@ namespace Risebird.Repository
         }
 
 
+        public async Task<List<InvoiceListVM>> GetUnpaidInvoiceList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<InvoiceListVM>(con, "usp_GetUnpaidInvoices",
+                        commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<InvoiceListVM>();
+            }
+        }
+
         public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0)
         {
             try

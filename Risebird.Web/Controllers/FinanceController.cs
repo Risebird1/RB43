@@ -2237,6 +2237,14 @@ namespace Risebird.Web.Controllers
                     ViewBag.TotalGross    = model.Sum(x => x.GrossAmount);
                     ViewBag.ClientList    = _projectService.GetClients().Select(x => x.Name).Where(x => !string.IsNullOrEmpty(x)).Distinct();
 
+                    var unpaidList = await _meetingService.GetUnpaidInvoiceList();
+                    unpaidList.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                        ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                        : string.Empty);
+                    ViewBag.UnpaidList      = unpaidList;
+                    ViewBag.UnpaidCount     = unpaidList.Count;
+                    ViewBag.UnpaidTotalGross = unpaidList.Sum(x => x.GrossAmount);
+
                     if (TempData["InvoiceListMessage"] != null)
                     {
                         ViewBag.Message = TempData["InvoiceListMessage"].ToString();

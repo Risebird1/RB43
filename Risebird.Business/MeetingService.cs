@@ -3185,6 +3185,12 @@ namespace Risebird.Business
             catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return null; }
         }
 
+        public async Task<List<InvoiceListVM>> GetUnpaidInvoiceList()
+        {
+            try { return await _meetingRespository.GetUnpaidInvoiceList(); }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return new List<InvoiceListVM>(); }
+        }
+
         public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
             List<InvoiceLineItemVM> lineItems, string latestRemark = null, string utrTrxn = null)
