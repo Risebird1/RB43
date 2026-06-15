@@ -3187,7 +3187,7 @@ namespace Risebird.Business
 
         public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
-            List<InvoiceLineItemVM> lineItems)
+            List<InvoiceLineItemVM> lineItems, string latestRemark = null, string utrTrxn = null)
         {
             try
             {
@@ -3199,7 +3199,7 @@ namespace Risebird.Business
                     await Task.WhenAll(tasks);
                 }
                 return await _meetingRespository.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
-                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable);
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, latestRemark, utrTrxn);
             }
             catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return false; }
         }

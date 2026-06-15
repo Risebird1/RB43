@@ -37,6 +37,9 @@ BEGIN
         gi.CreatedBy,
         gi.CreatedOn,
         gi.ModifiedOn,
+        gi.EInvoiceFileLink,
+        gi.LatestRemark,
+        gi.UTRTrxn,
         ISNULL(c.BillingType, 0)                              AS BillingType,
         ISNULL(c.BillingModel, 0)                             AS BillingModel
     FROM GeneratedInvoices gi

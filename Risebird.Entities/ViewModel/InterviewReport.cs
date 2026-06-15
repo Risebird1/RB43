@@ -629,6 +629,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime? ModifiedOn { get; set; }
         public int BillingType { get; set; }
         public int BillingModel { get; set; }
+        public string LatestRemark { get; set; }
+        public string UTRTrxn { get; set; }
         public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
     }
 

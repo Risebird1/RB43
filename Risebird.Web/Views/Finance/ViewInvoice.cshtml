@@ -82,6 +82,13 @@
                     <input type="text" class="form-control auto-field"
                            value="@Model.CreatedOn?.ToString("dd MMM yyyy")" readonly />
                 </div>
+                @if (Model.BillingModel != (int)Risebird.Entities.Enum.BillingModelEnum.M1 && Model.BillingModel != 0 && !string.IsNullOrEmpty(Model.UTRTrxn))
+                {
+                    <div class="col-md-4 mt-3">
+                        <label class="vi-label">UTR / Trxn No.</label>
+                        <input type="text" class="form-control auto-field" value="@Model.UTRTrxn" readonly />
+                    </div>
+                }
             </div>
         </div>
 
@@ -121,6 +128,11 @@
                             </a>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="vi-label">Latest Remark <span class="tag-edit">(editable)</span></label>
+                    <input type="text" id="editLatestRemark" class="form-control editable-field"
+                           value="@Model.LatestRemark" placeholder="Add remark" maxlength="500" />
                 </div>
                 <div class="col-md-4 mt-3">
                     <label class="vi-label">Status <span class="tag-edit">(editable)</span></label>
@@ -337,7 +349,8 @@
             invoiceValue:     invoiceValue.toFixed(2),
             tdsAmount:        tdsAmount.toFixed(2),
             netReceivable:    netReceivable.toFixed(2),
-            lineItemsJson:    JSON.stringify(lineItems)
+            lineItemsJson:    JSON.stringify(lineItems),
+            latestRemark:     $('#editLatestRemark').val().trim()
         };
 
         if (isPaid && isNonM1) {

@@ -19,7 +19,6 @@ CREATE TABLE [dbo].[GeneratedInvoices](
     [TDSAmount]        [decimal](18,2) NULL DEFAULT 0,
     [NetReceivable]    [decimal](18,2) NULL DEFAULT 0,
     [Status]           [int] NULL DEFAULT 0,   -- 0=Draft 1=Generated 2=PO Pending 3=Paid
-    [Owner]            [varchar](200) NULL,
     [LatestRemark]     [varchar](500) NULL,
     [UTRTrxn]          [varchar](200) NULL,
     [CreatedOn]        [datetime] NULL DEFAULT GETDATE(),
@@ -33,6 +32,18 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'EInvoiceFileLink' AND Object_ID = Object_ID(N'GeneratedInvoices'))
 BEGIN
     ALTER TABLE GeneratedInvoices ADD [EInvoiceFileLink] [varchar](MAX) NULL
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'LatestRemark' AND Object_ID = Object_ID(N'GeneratedInvoices'))
+BEGIN
+    ALTER TABLE GeneratedInvoices ADD [LatestRemark] [varchar](500) NULL
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'UTRTrxn' AND Object_ID = Object_ID(N'GeneratedInvoices'))
+BEGIN
+    ALTER TABLE GeneratedInvoices ADD [UTRTrxn] [varchar](200) NULL
 END
 GO
 

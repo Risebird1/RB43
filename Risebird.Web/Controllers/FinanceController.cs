@@ -2063,7 +2063,8 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod,
             string irn, string eInvoiceFileLink, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
             decimal tdsAmount, decimal netReceivable, string lineItemsJson,
-            int? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null)
+            int? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null,
+            string latestRemark = null)
         {
             try
             {
@@ -2094,7 +2095,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
-                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems);
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems, latestRemark, cashTransactionRef);
                 return Json(new
                 {
                     success,

@@ -164,7 +164,7 @@ namespace Risebird.Business.Interface
         Task<InvoiceDetailVM> GetGeneratedInvoiceById(int invoiceId);
         Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
-            List<InvoiceLineItemVM> lineItems);
+            List<InvoiceLineItemVM> lineItems, string latestRemark = null, string utrTrxn = null);
         Task<string> GetNextInvoiceNumber(int month, int year);
         Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model);
         List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null);
