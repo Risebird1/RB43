@@ -240,6 +240,17 @@
                                                                             </svg>
                                                                         </span>
                                                                     </button>
+                                                                    @if (item.PayoutStatus == "TRANSFER_FAILED")
+                                                                    {
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Retry Payment" style="background-color:#e53935;" title="Retry Payment">
+                                                                            <span onclick="RetryPayment(@item.id)" title="Retry Payment" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                                                                                    <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+                                                                                    <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 7.757 2.997a.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+                                                                                </svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
                                                                 </td>
                                                             </tr>
                                                         }
@@ -313,6 +324,33 @@
             }
         });
     }
+    function RetryPayment(paymentHistoryId) {
+        if (!confirm('Are you sure you want to retry the payment for this failed transaction?')) return;
+        var btn = event.currentTarget;
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        $.ajax({
+            type: "POST",
+            url: "/Finance/RetryPaymentViaCashfree",
+            data: { paymentHistoryId: paymentHistoryId },
+            success: function (data) {
+                if (data.success) {
+                    alert('Payment retry initiated successfully.\nReference: ' + (data.payoutId || 'N/A'));
+                    location.reload();
+                } else {
+                    alert('Retry failed: ' + (data.message || 'Unknown error'));
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                }
+            },
+            error: function () {
+                alert('An error occurred while retrying the payment. Please try again.');
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        });
+    }
+
     function binddata(data) {
         var model = document.getElementById("myModal");
         model.style.display = "block";

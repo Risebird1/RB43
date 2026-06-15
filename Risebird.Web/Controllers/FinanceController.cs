@@ -828,6 +828,36 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
+        /// Re-initiates a Cashfree payout for a PaymentHistory row whose PayoutStatus is TRANSFER_FAILED.
+        /// Returns structured JSON: { success, message, payoutId }.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> RetryPaymentViaCashfree(int paymentHistoryId)
+        {
+            try
+            {
+                if (paymentHistoryId <= 0)
+                    return Json(new { success = false, message = "Invalid payment history id." });
+
+                var (success, message) = await _meetingService.RetryPaymentViaCashfree(paymentHistoryId);
+                if (!success)
+                    return Json(new { success = false, message });
+
+                var payoutId = string.Empty;
+                var refIndex = message.IndexOf("Reference:", StringComparison.OrdinalIgnoreCase);
+                if (refIndex >= 0)
+                    payoutId = message.Substring(refIndex + "Reference:".Length).Trim();
+
+                return Json(new { success = true, message, payoutId });
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { success = false, message = "An unexpected error occurred. Please try again." });
+            }
+        }
+
+        /// <summary>
         /// Refreshes the Cashfree transfer status for a previously initiated payout.
         /// Returns structured JSON: { success, payoutId, status, amount, utr, updated } on success.
         /// </summary>

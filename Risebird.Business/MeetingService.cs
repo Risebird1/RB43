@@ -3736,6 +3736,74 @@ namespace Risebird.Business
         }
 
         /// <summary>
+        /// Re-initiates a Cashfree payout for a PaymentHistory row whose PayoutStatus is TRANSFER_FAILED.
+        /// Inserts a new PaymentHistory row for the retry and returns (success, message).
+        /// </summary>
+        public async Task<Tuple<bool, string>> RetryPaymentViaCashfree(int paymentHistoryId)
+        {
+            try
+            {
+                // 1. Load the original failed payment history row
+                var original = await _meetingRespository.GetPaymentHistoryById(paymentHistoryId);
+                if (original == null)
+                    return Tuple.Create(false, "Payment history record not found.");
+
+                if (!string.Equals(original.PayoutStatus, "TRANSFER_FAILED", StringComparison.OrdinalIgnoreCase))
+                    return Tuple.Create(false, "Retry is only allowed for payments with status TRANSFER_FAILED.");
+
+                var payableAmount = original.Points;   // Amount already stored is the payable (post-TDS) amount
+                var email         = original.InterviewerEmailid;
+                var userId        = original.Userid;
+
+                if (payableAmount < 1)
+                    return Tuple.Create(false, "Payable amount must be at least ₹1.");
+
+                // 2. Fetch bank details
+                var bankDetails = await _interviewerRepository.GetInterviewerBankDetailsByUserId(userId);
+                if (bankDetails == null || string.IsNullOrWhiteSpace(bankDetails.AccountNumber) || string.IsNullOrWhiteSpace(bankDetails.IFSCCode))
+                    return Tuple.Create(false, "Bank account details are missing or incomplete for this interviewer.");
+
+                // 3. Build a unique transfer id for the retry attempt
+                var transferId = $"RB_{userId}_R_{DateTime.Now:yyyyMMddHHmmss}";
+                if (transferId.Length > 40)
+                    transferId = transferId.Substring(0, 40);
+
+                var mobilenumber = NormalizeMobile(bankDetails.MobileNumber);
+
+                // 4. Call Cashfree
+                var payoutResult = await _cashfreePayoutService.CreatePayoutToBankAsync(
+                    accountName:   bankDetails.AccountName ?? bankDetails.FirstName,
+                    accountNumber: bankDetails.AccountNumber,
+                    ifscCode:      bankDetails.IFSCCode,
+                    email:         bankDetails.InterviewerEmailid ?? email,
+                    phone:         mobilenumber,
+                    amount:        payableAmount,
+                    transferId:    transferId,
+                    remarks:       "Risebird interviewer payout retry");
+
+                if (!payoutResult.Success)
+                    return Tuple.Create(false, payoutResult.ErrorMessage ?? "Cashfree payout retry failed.");
+
+                // 5. Update the existing PaymentHistory row with the new Cashfree transfer references
+                var rowsUpdated = await _meetingRespository.UpdatePaymentHistoryForRetry(
+                    paymentHistoryId,
+                    transferId:    payoutResult.PayoutId,
+                    cfTransferId:  payoutResult.CFPayoutId,
+                    payoutStatus:  payoutResult.Status);
+
+                if (rowsUpdated == 0)
+                    return Tuple.Create(false, $"Payout retry succeeded but failed to update history record. Ref: {payoutResult.PayoutId}");
+
+                return Tuple.Create(true, $"Payment retry initiated via Cashfree. Reference: {payoutResult.PayoutId}");
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Tuple.Create(false, "An unexpected error occurred during payment retry. Please try again.");
+            }
+        }
+
+        /// <summary>
         /// Retrieves the current Cashfree transfer status for the given transferId.
         /// </summary>
         public async Task<CashfreePayoutResult> GetCashfreePayoutStatus(string transferId)

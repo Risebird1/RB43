@@ -151,12 +151,12 @@
 
                     @* ── Summary Pills ── *@
                     <div style="margin-bottom: 14px;">
-                        <span class="stat-pill blue">
+                        @* <span class="stat-pill blue">
                             <i class="fa fa-users"></i> Active Clients <strong>@activeCount</strong>
                         </span>
                         <span class="stat-pill">
                             <i class="fa fa-building"></i> All Clients <strong>@totalCount</strong>
-                        </span>
+                        </span> *@
                         <span class="stat-pill">
                             <i class="fa fa-calendar-check-o"></i> Total Interviews <strong>@Model.Clients.Sum(c => c.MonthInterviewCount)</strong>
                         </span>

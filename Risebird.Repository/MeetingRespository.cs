@@ -4530,6 +4530,50 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<RBInterviewDetails> GetPaymentHistoryById(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QuerySingleOrDefaultAsync<RBInterviewDetails>(
+                        "usp_GetPaymentHistoryById",
+                        new { id },
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<int> UpdatePaymentHistoryForRetry(int id, string transferId, string cfTransferId, string payoutStatus)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@id",           id);
+                parameters.Add("@TransferId",   transferId);
+                parameters.Add("@CfTransferId", cfTransferId);
+                parameters.Add("@PayoutStatus", payoutStatus);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QuerySingleOrDefaultAsync<int>(
+                        "usp_UpdatePaymentHistoryForRetry",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
         public async Task<List<RBInterviewDetails>> FetchFNPaymentHistory()
         {
             try
