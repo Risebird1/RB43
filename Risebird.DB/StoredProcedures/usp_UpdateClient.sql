@@ -38,7 +38,9 @@ Create PROCEDURE [dbo].[usp_UpdateClient]
 @IsPlanFlixable bit,
 @PlanType int,
 @IsVideoRequired bit,
-@BillingModel int
+@BillingModel int,
+@BillingCurrency varchar(10),
+@InterviewerBillingType int
 AS          
 Begin          
       
@@ -75,6 +77,8 @@ SET
   ,[PlanType]=@PlanType
   ,[IsVideoRequired]=@IsVideoRequired
   ,[BillingModel]=@BillingModel
+  ,[BillingCurrency]=@BillingCurrency
+  ,[InterviewerBillingType]=@InterviewerBillingType
 WHERE          
       Id = @id          
 End     
