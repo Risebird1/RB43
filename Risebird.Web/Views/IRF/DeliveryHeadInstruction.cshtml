@@ -1702,7 +1702,9 @@
                                                                         <button type="button" class="dm-v4-vet-btn @(rbVetDisplayOn ? "is-on" : "")" data-vet-value="1" @(canEditIvOps ? "" : "disabled")>Yes</button>
                                                                         <button type="button" class="dm-v4-vet-btn @(!rbVetDisplayOn ? "is-on" : "")" data-vet-value="0" @(canEditIvOps ? "" : "disabled")>No</button>
                                                                     </div>
-                                                                    <div class="dm-v4-iv-vet-sub">@(rbVetDisplayOn ? "Risebird verified" : "Awaiting RB review")</div>
+                                                                    <div class="dm-v4-iv-vet-sub">@(!iv.IsActive
+                                                                        ? (ivStatusTone == "available" ? "Awaiting RB review" : "Inactive on panel")
+                                                                        : (rbVetDisplayOn ? "Risebird verified" : "Awaiting RB review"))</div>
                                                                     <input type="hidden" class="dm-v4-rb-vet-hidden" value="@(rbVetDisplayOn ? "true" : "false")" />
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--vet dm-v4-iv-cell--client-vet">
@@ -1711,9 +1713,11 @@
                                                                         <button type="button" class="dm-v4-vet-btn @(!clientVetOn ? "is-on" : "")" data-vet-value="0" @(!rbVetDisplayOn || !canToggleClientVet ? "disabled" : "")>No</button>
                                                                     </div>
                                                                     <div class="dm-v4-iv-vet-sub dm-v4-iv-vet-sub--client">
-                                                                        @(rbVetDisplayOn
-                                                                            ? (clientVetOn ? "Signed off by client" : "Awaiting client sign-off")
-                                                                            : "Blocked — needs RB Vet first")
+                                                                        @(!iv.IsActive
+                                                                            ? (ivStatusTone == "inactive" ? "Inactive on panel" : "Blocked — needs RB Vet first")
+                                                                            : (rbVetDisplayOn
+                                                                                ? (clientVetOn ? "Signed off by client" : "Awaiting client sign-off")
+                                                                                : "Blocked — needs RB Vet first"))
                                                                     </div>
                                                                     <input type="hidden" class="dm-v4-client-action-hidden" value="@(iv.ClientAction ?? "")" />
                                                                 </div>
@@ -1725,7 +1729,9 @@
                                                                         <button type="button" class="dm-v4-vet-btn @(rbVetDisplayOn ? "is-on" : "")" data-vet-value="1" @(canEditIvOps ? "" : "disabled")>Yes</button>
                                                                         <button type="button" class="dm-v4-vet-btn @(!rbVetDisplayOn ? "is-on" : "")" data-vet-value="0" @(canEditIvOps ? "" : "disabled")>No</button>
                                                                     </div>
-                                                                    <div class="dm-v4-iv-vet-sub">@(rbVetDisplayOn ? "Risebird verified" : "Awaiting RB review")</div>
+                                                                    <div class="dm-v4-iv-vet-sub">@(!iv.IsActive
+                                                                        ? (ivStatusTone == "available" ? "Awaiting RB review" : "Inactive on panel")
+                                                                        : (rbVetDisplayOn ? "Risebird verified" : "Awaiting RB review"))</div>
                                                                     <input type="hidden" class="dm-v4-rb-vet-hidden" value="@(rbVetDisplayOn ? "true" : "false")" />
                                                                 </div>
                                                                 }
@@ -3543,9 +3549,9 @@ else
         white-space:normal;
     }
 </style>
-<script src="~/js/dm-v4-voice.js?v=20240529"></script>
+<script src="~/js/dm-v4-voice.js?v=20250609voiceloader"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-layout.js?v=20250609smehide"></script>
+<script src="~/js/dm-v4-layout.js?v=20250609inactivevet"></script>
 <script src="~/js/dm-v4-questions.js?v=20240609a"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>

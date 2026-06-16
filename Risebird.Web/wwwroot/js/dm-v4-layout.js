@@ -1105,6 +1105,7 @@
     }
 
     function readRbVetFromRow($row) {
+        if (!readRowDbActive($row)) return false;
         var raw = $row.attr('data-rb-vet');
         if (raw === '1') return true;
         if (raw === '0' && isFreeChannelPanel()
@@ -1116,6 +1117,7 @@
     }
 
     function readClientVetFromRow($row) {
+        if (!readRowDbActive($row)) return false;
         var raw = $row.attr('data-client-vet');
         if (raw === '1') return true;
         var action = ($row.attr('data-client-action') || '').toLowerCase();
@@ -1135,6 +1137,7 @@
         var panel = 0;
         $rows.each(function () {
             var $row = $(this);
+            if (!readRowDbActive($row)) return;
             var rbOn = readRbVetFromRow($row);
             var clientOn = readClientVetFromRow($row);
             if (rbOn) rb += 1;
@@ -1274,13 +1277,29 @@
         }
         var rbOn = readRbVetFromRow($row);
         var clientOn = readClientVetFromRow($row);
+        var isActive = readRowDbActive($row);
+        var status = ivStatusBadgeFromRow($row);
         $row.find('[data-vet="rb"] .dm-v4-vet-btn').removeClass('is-on');
         $row.find('[data-vet="rb"] .dm-v4-vet-btn[data-vet-value="' + (rbOn ? '1' : '0') + '"]').addClass('is-on');
         $row.find('[data-vet="client"] .dm-v4-vet-btn').removeClass('is-on');
         $row.find('[data-vet="client"] .dm-v4-vet-btn[data-vet-value="' + (clientOn ? '1' : '0') + '"]').addClass('is-on');
+        var $rbSub = $row.find('.dm-v4-iv-cell--rb-vet .dm-v4-iv-vet-sub');
+        if ($rbSub.length) {
+            if (!isActive) {
+                $rbSub.text(status.tone === 'available' ? 'Awaiting RB review' : 'Inactive on panel');
+            } else {
+                $rbSub.text(rbOn ? 'Risebird verified' : 'Awaiting RB review');
+            }
+        }
         var $clientBtns = $row.find('[data-vet="client"] .dm-v4-vet-btn');
         var $clientToggle = $row.find('[data-vet="client"]');
-        if (!rbOn) {
+        if (!isActive) {
+            $clientBtns.prop('disabled', true);
+            $clientToggle.attr('title', status.tone === 'available' ? 'Needs RB Vet first.' : 'Inactive on panel');
+            $row.find('.dm-v4-iv-vet-sub--client').text(
+                status.tone === 'inactive' ? 'Inactive on panel' : 'Blocked — needs RB Vet first'
+            );
+        } else if (!rbOn) {
             $clientBtns.prop('disabled', true);
             $clientToggle.attr('title', 'Needs RB Vet first.');
             $row.find('.dm-v4-iv-vet-sub--client').text('Blocked — needs RB Vet first');
@@ -2354,6 +2373,42 @@
         $('#dmV4IvPanel').attr('data-lock', val);
     }
 
+    function setAssignmentPolicy($bar, policy) {
+        $bar = $bar && $bar.length ? $bar : getPolicyBar();
+        if (!$bar.length) return;
+        var val = String(policy || '').toLowerCase() === 'limited' ? 'limited' : 'free';
+        $bar.attr('data-policy', val).data('policy', val);
+    }
+
+    function getAssignmentPolicy() {
+        var $bar = getPolicyBar();
+        if (!$bar.length) return 'free';
+        var attrVal = ($bar.attr('data-policy') || '').toString().toLowerCase();
+        if (attrVal === 'limited' || attrVal === 'free') return attrVal;
+        var dataVal = ($bar.data('policy') || '').toString().toLowerCase();
+        return dataVal === 'limited' ? 'limited' : 'free';
+    }
+
+    function readRowAssignedCount($row) {
+        var assigned = parseInt($row.attr('data-future-assigned'), 10);
+        if (isNaN(assigned)) assigned = parseInt($row.attr('data-assigned'), 10);
+        if (isNaN(assigned)) {
+            assigned = parseInt($row.find('.dm-v4-iv-capacity').attr('data-assigned'), 10);
+        }
+        return isNaN(assigned) ? 0 : assigned;
+    }
+
+    /** Re-render every Interview Limit cell from current policy + row cap attrs (Free↔Limit). */
+    function refreshInterviewLimitCellsForPolicy() {
+        $('.dm-v4-iv-row').each(function () {
+            var $row = $(this);
+            var $wrap = $row.find('.dm-v4-iv-capacity');
+            if (!$wrap.length) return;
+            renderCapacityCell($wrap, null, readRowAssignedCount($row), isRowCapExplicit($row));
+            updateIvRowStatus($row);
+        });
+    }
+
     function getIvCanEdit() {
         var $panel = $('#dmV4IvPanel');
         if ($panel.data('can-edit') === 1 || $panel.data('can-edit') === '1') return true;
@@ -2393,7 +2448,7 @@
         $.post('/IRF/SaveDmIvPolicy', {
             irfId: parseInt($bar.data('irf-id'), 10),
             dmIvLockNew: isPolicyLockOn($bar),
-            dmAssignmentPolicy: $bar.data('policy') || 'free',
+            dmAssignmentPolicy: getAssignmentPolicy(),
             dmDefaultInterviewCap: getDefaultCap()
         }).fail(function () {
             if (typeof swal !== 'undefined') swal.fire('Failed to save policy settings.', '', 'error');
@@ -2404,7 +2459,7 @@
         var $bar = getPolicyBar();
         if (!$bar.length) return;
         var lock = isPolicyLockOn($bar);
-        var policy = $bar.data('policy') === 'limited' ? 'limited' : 'free';
+        var policy = getAssignmentPolicy();
         var limited = policy === 'limited';
         var canEdit = $bar.data('can-edit') === '1' || $bar.data('can-edit') === 1;
         var cap = parseInt($bar.data('default-cap'), 10);
@@ -2423,7 +2478,7 @@
         var $bar = getPolicyBar();
         if (!$bar.length) return;
         var lock = isPolicyLockOn($bar);
-        var limited = $bar.data('policy') === 'limited';
+        var limited = getAssignmentPolicy() === 'limited';
         $('#dmV4IvLockSub').text(lock
             ? 'New interviewers join as RB Vet pending. Client Vet auto-cascades to pending until Risebird clears them.'
             : 'New interviewers are auto-RB-vetted and auto-Client-approved. Override per row if needed.');
@@ -2432,13 +2487,7 @@
             : 'Active interviewers can be assigned to any interview without further review.');
         $('#dmV4IvPanel').attr('data-cap-enforced', limited ? '1' : '0');
         syncPolicyBarControls();
-        $('.dm-v4-iv-row').each(function () {
-            var $row = $(this);
-            var $wrap = $row.find('.dm-v4-iv-capacity');
-            var assigned = parseInt($row.attr('data-assigned'), 10) || parseInt($wrap.attr('data-assigned'), 10) || 0;
-            syncCapacityCellUi($wrap, readRowDisplayCapacity($row), assigned, isRowCapExplicit($row));
-            updateIvRowStatus($row);
-        });
+        refreshInterviewLimitCellsForPolicy();
         applyIvTabFilter();
         refreshIvTabCounts();
     }
@@ -2523,11 +2572,6 @@
             isCapReached: reached,
             assignmentAllowed: !reached
         };
-    }
-
-    function getAssignmentPolicy() {
-        var $bar = getPolicyBar();
-        return $bar.length && $bar.data('policy') === 'limited' ? 'limited' : 'free';
     }
 
     function getCapStateForRowFromRow($row) {
@@ -3416,7 +3460,7 @@
             if ($seg.data('segment') === 'lock') {
                 setPolicyLockOn($bar, $btn.data('value') === 'on');
             } else if ($seg.data('segment') === 'assign') {
-                $bar.data('policy', $btn.data('value'));
+                setAssignmentPolicy($bar, $btn.attr('data-value') || $btn.data('value'));
             }
             updatePolicySubtext();
             saveDmIvPolicy();

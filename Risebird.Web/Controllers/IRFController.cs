@@ -7379,7 +7379,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UpdateVoiceInstructionTranscript(int irfId, string transcript, bool regenerateRubric = true)
+        public async Task<JsonResult> UpdateVoiceInstructionTranscript(int irfId, string transcript, bool regenerateRubric = false)
         {
             try
             {
