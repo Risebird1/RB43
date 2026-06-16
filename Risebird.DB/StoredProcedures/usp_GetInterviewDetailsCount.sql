@@ -31,7 +31,7 @@ left join [dbo].[UserList] ul on inte.UserId = ul.id
 left join UserList ulc on ulc.EmailId = im.candidateEmail        
 join CandidatesMaster cm on cm.UserId = ulc.id        
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id        
-where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow and tirf.IsActive=1      
+where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow and tirf.IsActive=1 and ISNULL(ul.IsInterviewerAccess, 0)=1
 union       
 select im.id from InterviewMeetings im          
 inner join IRF irf on im.IRFId=irf.IRFId           
@@ -41,7 +41,7 @@ left join [dbo].[UserList] ul on inte.UserId = ul.id
 left join UserList ulc on ulc.EmailId = im.candidateEmail        
 join CandidatesMaster cm on cm.UserId = ulc.id        
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id        
-where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow and tirf.IsActive=1)  
+where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow and tirf.IsActive=1 and ISNULL(ul.IsInterviewerAccess,0)=1 and ISNULL(inte.IsDeleted,0)=0)  
 Select Count(*) OpenInterviewCount from CTE     
   
 select Count(im.id) as PendingReportCount from InterviewMeetings im                 
