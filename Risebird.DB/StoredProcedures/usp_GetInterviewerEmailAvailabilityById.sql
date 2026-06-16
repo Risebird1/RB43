@@ -34,7 +34,7 @@ BEGIN
         ip.AssessmentGroupId  AS ExistingAssessmentGroupIds,
         ul.EmailId            AS UserEmail,
         ul.MobileNumber       AS UserMobileNumber,
-        ISNULL(ul.IsActive, 1) AS IsInterviewerActive,
+        ISNULL(ul.IsInterviewerAccess, 1) AS IsInterviewerActive,
         ul.InactivationType,
         magInfo.MAGName       AS MasterAssessmentGroupName,
         magInfo.AssessmentGroupId AS ResolvedAssessmentGroupId,

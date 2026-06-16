@@ -34,7 +34,8 @@ Create PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @LinkedinLink nvarchar(max),              
 @Blog nvarchar(max),              
 @IsLeadInterviewer bit,              
-@IsActive bit,              
+@IsActive bit,
+@IsInterviewerAccess bit = null,
 @IsApproved bit,              
 @AssessmentGroupId varchar(100),          
 @UserPassword nvarchar(60),       
@@ -102,7 +103,8 @@ Begin
     [FirstName] = @FirstName,              
     [LastName] = @LastName,              
     [EmailId] = @EmailId,              
-    [IsActive] = @IsActive,              
+    [IsActive] = @IsActive,
+    [IsInterviewerAccess] = ISNULL(@IsInterviewerAccess, [IsInterviewerAccess]),
     [MobileNumber] = @MobileNumber,               
   [WhatsappNumber]=@WhatsappNumber          
     where Id = @UserId;              

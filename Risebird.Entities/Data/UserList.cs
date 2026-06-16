@@ -25,6 +25,7 @@ namespace Risebird.Entities.Data
         public string MobileNumber { get; set; }
 
         public bool IsActive { get; set; }
+        public bool IsInterviewerAccess { get; set; }
         public DateTime LastLogin { get; set; }
         public DateTime LastLogout { get; set; }
         public string ImageURL { get; set; }

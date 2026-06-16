@@ -17,8 +17,9 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Note: IsActive is only modified via the Edit Interviewer Profile form (Admin only).
     UPDATE UserList
-    SET IsActive = 1,
+    SET IsInterviewerAccess = 1,
         InactivationType = NULL,
         InactivatedBy    = NULL,
         InactivatedAt    = NULL
