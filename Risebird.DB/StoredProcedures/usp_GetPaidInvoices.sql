@@ -9,7 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
--- Fetches all paid invoices (Status = 3).
+-- Fetches all paid invoices (Status = 5).
 -- Pass 0 to bypass a date bound.
 --   @FromYear / @FromMonth : 0 = no lower bound
 --   @ToYear   / @ToMonth   : 0 = no upper bound
@@ -44,7 +44,7 @@ BEGIN
     FROM GeneratedInvoices gi
     LEFT JOIN Client   c  ON c.id  = gi.ClientId
     LEFT JOIN UserList ul ON ul.id = gi.BillingOwnerId
-    WHERE gi.Status = 3
+    WHERE gi.Status = 5
       AND (@FromYear  = 0 OR (gi.InvoiceYear * 100 + gi.InvoiceMonth) >= (@FromYear * 100 + @FromMonth))
       AND (@ToYear    = 0 OR (gi.InvoiceYear * 100 + gi.InvoiceMonth) <= (@ToYear   * 100 + @ToMonth))
     ORDER BY gi.InvoiceYear DESC, gi.InvoiceMonth DESC, c.Name, gi.id

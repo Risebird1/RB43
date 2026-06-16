@@ -18,7 +18,7 @@ CREATE TABLE [dbo].[GeneratedInvoices](
     [InvoiceValue]     [decimal](18,2) NULL DEFAULT 0,
     [TDSAmount]        [decimal](18,2) NULL DEFAULT 0,
     [NetReceivable]    [decimal](18,2) NULL DEFAULT 0,
-    [Status]           [int] NULL DEFAULT 0,   -- 0=Draft 1=Generated 2=PO Pending 3=Paid
+    [Status]           [int] NULL DEFAULT 0,   -- 0=Draft 1=Generated 2=PO Pending 3=Approval Pending 4=Invoice Realisation Pending 5=Paid
     [LatestRemark]     [varchar](500) NULL,
     [UTRTrxn]          [varchar](200) NULL,
     [CreatedOn]        [datetime] NULL DEFAULT GETDATE(),

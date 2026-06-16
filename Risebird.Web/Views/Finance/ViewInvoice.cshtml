@@ -140,7 +140,9 @@
                         @if (Model.Status == 0) { <option value="0" selected="selected">Draft</option> } else { <option value="0">Draft</option> }
                         @if (Model.Status == 1) { <option value="1" selected="selected">Generated</option> } else { <option value="1">Generated</option> }
                         @if (Model.Status == 2) { <option value="2" selected="selected">PO Pending</option> } else { <option value="2">PO Pending</option> }
-                        @if (Model.Status == 3) { <option value="3" selected="selected">Paid</option> } else { <option value="3">Paid</option> }
+                        @if (Model.Status == 3) { <option value="3" selected="selected">Approval Pending</option> } else { <option value="3">Approval Pending</option> }
+                        @if (Model.Status == 4) { <option value="4" selected="selected">Invoice Realisation Pending</option> } else { <option value="4">Invoice Realisation Pending</option> }
+                        @if (Model.Status == 5) { <option value="5" selected="selected">Paid</option> } else { <option value="5">Paid</option> }
                     </select>
                 </div>
             </div>
@@ -149,7 +151,7 @@
         <!-- ── Section 2b: Cash Credit Info (non-M1, visible only when Paid) ── -->
         @if (Model.BillingModel != (int)Risebird.Entities.Enum.BillingModelEnum.M1 && Model.BillingModel != 0)
         {
-            <div class="vi-card" id="cashCreditSection" style="display:@(Model.Status == 3 ? "block" : "none"); border-left:4px solid #43a047;">
+            <div class="vi-card" id="cashCreditSection" style="display:@(Model.Status == 5 ? "block" : "none"); border-left:4px solid #43a047;">
                 <div class="vi-section-title" style="color:#2e7d32;">Cash Credit Information</div>
                 <p class="text-muted" style="font-size:12px;margin-top:-8px;margin-bottom:14px;">
                     This invoice will be marked <strong>Paid</strong>. Enter the cash credit details to post the received amount into the client wallet.
@@ -268,7 +270,7 @@
 
     // Show/hide cash credit section when status changes
     $('#editStatus').on('change', function () {
-        var isPaid = parseInt($(this).val()) === 3;
+        var isPaid = parseInt($(this).val()) === 5;
         var isNonM1 = _billingModel !== _M1 && _billingModel !== 0;
         if (isPaid && isNonM1) {
             $('#cashCreditSection').slideDown(200);
@@ -308,7 +310,7 @@
     function saveChanges() {
         var taxScenario  = parseInt($('#hidTaxScenario').val() || 0);
         var selectedStatus = parseInt($('#editStatus').val());
-        var isPaid       = selectedStatus === 3;
+        var isPaid       = selectedStatus === 5;
         var isNonM1      = _billingModel !== _M1 && _billingModel !== 0;
 
         // Validate: cash credit amount is required when marking Paid for non-M1

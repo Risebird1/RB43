@@ -2075,8 +2075,8 @@ namespace Risebird.Web.Controllers
                     catch { lineItems = new List<InvoiceLineItemVM>(); }
                 }
 
-                // When marking as Paid (status=3) for non-M1, cash credit amount is required
-                const int StatusPaid    = 3;
+                // When marking as Paid (status=5) for non-M1, cash credit amount is required
+                const int StatusPaid    = 5;
                 const int BillingModelM1 = 1;
 
                 if (status == StatusPaid && cashCreditAmount.HasValue && cashCreditAmount.Value > 0)

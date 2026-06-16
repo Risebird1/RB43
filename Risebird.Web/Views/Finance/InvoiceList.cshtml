@@ -269,7 +269,9 @@
                                                                         <option value="0">Draft</option>
                                                                         <option value="1">Generated</option>
                                                                         <option value="2">PO Pending</option>
-                                                                        <option value="3">Paid</option>
+                                                                        <option value="3">Approval Pending</option>
+                                                                        <option value="4">Invoice Realisation Pending</option>
+                                                                        <option value="5">Paid</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -405,6 +407,8 @@
                                                                     0 => "<span style='width:auto;' class='badge badge-secondary'>Draft</span>",
                                                                     1 => "<span style='width:auto;' class='badge badge-info'>Generated</span>",
                                                                     2 => "<span style='width:auto;' class='badge badge-warning'>PO Pending</span>",
+                                                                    3 => "<span style='width:auto;' class='badge badge-primary'>Approval Pending</span>",
+                                                                    4 => "<span style='width:auto;' class='badge badge-danger'>Invoice Realisation Pending</span>",
                                                                     _ => "<span style='width:auto;' class='badge badge-secondary'>Unknown</span>"
                                                                 };
                                                             }
@@ -665,7 +669,9 @@
                                                                     0 => "<span style='width:auto;' class='badge badge-secondary'>Draft</span>",
                                                                     1 => "<span style='width:auto;' class='badge badge-info'>Generated</span>",
                                                                     2 => "<span style='width:auto;' class='badge badge-warning'>PO Pending</span>",
-                                                                    3 => "<span style='width:auto;' class='badge badge-success'>Paid</span>",
+                                                                    3 => "<span style='width:auto;' class='badge badge-primary'>Approval Pending</span>",
+                                                                    4 => "<span style='width:auto;' class='badge badge-danger'>Invoice Realisation Pending</span>",
+                                                                    5 => "<span style='width:auto;' class='badge badge-success'>Paid</span>",
                                                                     _ => "<span style='width:auto;' class='badge badge-secondary'>Unknown</span>"
                                                                 };
                                                             }
