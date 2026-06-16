@@ -72,6 +72,113 @@
         );
     }
 
+    function getEtiquettePanelEl() {
+        return $('#dmV4AdvancedPanel');
+    }
+
+    function getEtiquetteIrfId() {
+        var $panel = getEtiquettePanelEl();
+        var id = $panel.data('irf-id') || $panel.attr('data-irf-id') || $('#id').val();
+        return id ? parseInt(id, 10) : 0;
+    }
+
+    function getEtiquetteRequestData(extra) {
+        var data = $.extend({ irfId: getEtiquetteIrfId() }, extra || {});
+        if (window.dmV4ClientShareView === true) {
+            data.Type = getClientShareTypeParam();
+        }
+        return data;
+    }
+
+    function normalizeEtiquetteState(raw) {
+        if (!raw) return null;
+        var dress = (raw.dressCode || raw.DressCode || 'formal').toString().toLowerCase();
+        var camera = raw.cameraRequired != null ? raw.cameraRequired : raw.CameraRequired;
+        var noEating = raw.noEatingRule != null ? raw.noEatingRule : raw.NoEatingRule;
+        return {
+            dressCode: dress === 'match' ? 'match' : 'formal',
+            cameraRequired: camera === true || camera === 'true' || camera === 1 || camera === '1',
+            noEatingRule: !(noEating === false || noEating === 'false' || noEating === 0 || noEating === '0')
+        };
+    }
+
+    function readEtiquetteFromPanelData() {
+        var $panel = getEtiquettePanelEl();
+        return normalizeEtiquetteState({
+            dressCode: $panel.attr('data-etiquette-dress'),
+            cameraRequired: $panel.attr('data-etiquette-camera'),
+            noEatingRule: $panel.attr('data-etiquette-no-eating')
+        });
+    }
+
+    function syncEtiquettePanelDataAttrs(state) {
+        var normalized = normalizeEtiquetteState(state);
+        if (!normalized) return;
+        var $panel = getEtiquettePanelEl();
+        $panel.attr('data-etiquette-dress', normalized.dressCode);
+        $panel.attr('data-etiquette-camera', normalized.cameraRequired ? '1' : '0');
+        $panel.attr('data-etiquette-no-eating', normalized.noEatingRule ? '1' : '0');
+    }
+
+    function applyEtiquettePanelState(state) {
+        var normalized = normalizeEtiquetteState(state);
+        if (!normalized) return;
+        var $card = $('.dm-v4-advanced-card--etiquette');
+        if (!$card.length) return;
+        $card.find('.dm-v4-etiquette-option[data-etiquette="dress"]').each(function () {
+            var value = ($(this).attr('data-dress-value') || 'formal').toLowerCase();
+            $(this).toggleClass('is-on', value === normalized.dressCode);
+        });
+        var $camera = $card.find('.dm-v4-etiquette-list li[data-rule="camera"] .dm-v4-dm-toggle--btn').first();
+        var $noEating = $card.find('.dm-v4-etiquette-list li[data-rule="no-eating"] .dm-v4-dm-toggle--btn').first();
+        if ($camera.length) {
+            $camera.toggleClass('is-on', normalized.cameraRequired).attr('aria-checked', normalized.cameraRequired ? 'true' : 'false');
+        }
+        if ($noEating.length) {
+            $noEating.toggleClass('is-on', normalized.noEatingRule).attr('aria-checked', normalized.noEatingRule ? 'true' : 'false');
+        }
+        syncEtiquettePanelDataAttrs(normalized);
+    }
+
+    function readEtiquetteFromDom() {
+        var $card = $('.dm-v4-advanced-card--etiquette');
+        var dressCode = 'formal';
+        $card.find('.dm-v4-etiquette-option[data-etiquette="dress"].is-on').each(function () {
+            dressCode = ($(this).attr('data-dress-value') || 'formal').toLowerCase() === 'match' ? 'match' : 'formal';
+        });
+        var $camera = $card.find('.dm-v4-etiquette-list li[data-rule="camera"] .dm-v4-dm-toggle--btn').first();
+        var $noEating = $card.find('.dm-v4-etiquette-list li[data-rule="no-eating"] .dm-v4-dm-toggle--btn').first();
+        return {
+            dressCode: dressCode,
+            cameraRequired: $camera.hasClass('is-on'),
+            noEatingRule: $noEating.hasClass('is-on')
+        };
+    }
+
+    function saveEtiquetteToServer(state) {
+        var normalized = normalizeEtiquetteState(state);
+        if (!normalized || !getEtiquetteIrfId()) return $.Deferred().resolve({ success: false }).promise();
+        return $.post('/IRF/UpdateDmInterviewerEtiquette', getEtiquetteRequestData({
+            dressCode: normalized.dressCode,
+            cameraRequired: normalized.cameraRequired,
+            noEatingRule: normalized.noEatingRule
+        })).then(function (res) {
+            if (res && res.success) {
+                syncEtiquettePanelDataAttrs(normalized);
+            }
+            return res;
+        });
+    }
+
+    function loadEtiquetteFromServer() {
+        if (!getEtiquetteIrfId()) return $.Deferred().resolve().promise();
+        return $.post('/IRF/GetDmInterviewerEtiquetteJson', getEtiquetteRequestData()).then(function (res) {
+            if (res && res.success && res.etiquette) {
+                applyEtiquettePanelState(res.etiquette);
+            }
+        });
+    }
+
     function buildAdvancedNested() {
         var $target = $('#dm-v4-advanced-nested');
         if (!$target.length) return;
@@ -119,22 +226,28 @@
         $checksCard.append($checksInner);
         $target.append($checksCard);
 
+        var etiquetteState = readEtiquetteFromPanelData() || {
+            dressCode: 'formal',
+            cameraRequired: true,
+            noEatingRule: true
+        };
+
         var $etiquetteCard = $(
             '<div class="dm-v4-advanced-card dm-v4-advanced-card--etiquette">' +
             '<div class="dm-v4-advanced-card__head"><span class="dm-v4-advanced-card__title">Interviewer etiquette</span>' +
             '<span class="dm-v4-badge dm-v4-badge--green dm-v4-badge--xs">DEFAULTS ON</span></div>' +
             '<div class="dm-v4-advanced-card__body">' +
             '<div class="dm-v4-etiquette-label">Dress code</div>' +
-            '<label class="dm-v4-etiquette-option is-on" data-etiquette="dress"><span class="dm-v4-etiquette-radio"></span><span><strong>Strict formal</strong><span class="dm-v4-etiquette-sub">Business attire · neutral background</span></span></label>' +
-            '<label class="dm-v4-etiquette-option" data-etiquette="dress"><span class="dm-v4-etiquette-radio"></span><span><strong>Interviewer\'s choice — match candidate</strong><span class="dm-v4-etiquette-sub">Mirror role\'s expected level</span></span></label>' +
+            '<label class="dm-v4-etiquette-option' + (etiquetteState.dressCode === 'formal' ? ' is-on' : '') + '" data-etiquette="dress" data-dress-value="formal"><span class="dm-v4-etiquette-radio"></span><span><strong>Strict formal</strong><span class="dm-v4-etiquette-sub">Business attire · neutral background</span></span></label>' +
+            '<label class="dm-v4-etiquette-option' + (etiquetteState.dressCode === 'match' ? ' is-on' : '') + '" data-etiquette="dress" data-dress-value="match"><span class="dm-v4-etiquette-radio"></span><span><strong>Interviewer\'s choice — match candidate</strong><span class="dm-v4-etiquette-sub">Mirror role\'s expected level</span></span></label>' +
             '<ul class="dm-v4-etiquette-list"></ul></div></div>'
         );
         var $etiquetteList = $etiquetteCard.find('.dm-v4-etiquette-list');
         $etiquetteList.append(
-            $('<li data-etiquette="rule"></li>').append('<span>Camera-on with neutral background required</span>').append(buildDmToggleButton(true))
+            $('<li data-etiquette="rule" data-rule="camera"></li>').append('<span>Camera-on with neutral background required</span>').append(buildDmToggleButton(etiquetteState.cameraRequired))
         );
         $etiquetteList.append(
-            $('<li data-etiquette="rule"></li>').append('<span>No eating, walking or smoking during interview</span>').append(buildDmToggleButton(true))
+            $('<li data-etiquette="rule" data-rule="no-eating"></li>').append('<span>No eating, walking or smoking during interview</span>').append(buildDmToggleButton(etiquetteState.noEatingRule))
         );
         $target.append($etiquetteCard);
 
@@ -192,12 +305,18 @@
         });
         $(document).off('click.dmV4EtiquetteDress', '.dm-v4-etiquette-option[data-etiquette="dress"]').on('click.dmV4EtiquetteDress', '.dm-v4-etiquette-option[data-etiquette="dress"]', function () {
             var $card = $(this).closest('.dm-v4-advanced-card--etiquette');
+            var previous = readEtiquetteFromDom();
             $card.find('.dm-v4-etiquette-option[data-etiquette="dress"]').removeClass('is-on');
             $(this).addClass('is-on');
+            var next = readEtiquetteFromDom();
+            if (next.dressCode !== previous.dressCode) {
+                saveEtiquetteToServer(next);
+            }
         });
         $(document).off('click.dmV4EtiquetteRule', '.dm-v4-etiquette-list .dm-v4-dm-toggle--btn').on('click.dmV4EtiquetteRule', '.dm-v4-etiquette-list .dm-v4-dm-toggle--btn', function () {
             var on = !$(this).hasClass('is-on');
             $(this).toggleClass('is-on', on).attr('aria-checked', on ? 'true' : 'false');
+            saveEtiquetteToServer(readEtiquetteFromDom());
         });
     }
 
@@ -210,6 +329,9 @@
             $(this).attr('aria-expanded', open ? 'true' : 'false');
             if (open) {
                 $panel.prop('hidden', false).slideDown(180);
+                if ($collapse.attr('id') === 'dmV4AdvancedCollapse') {
+                    loadEtiquetteFromServer();
+                }
             } else {
                 $panel.slideUp(180, function () { $panel.prop('hidden', true); });
             }
@@ -983,6 +1105,7 @@
     }
 
     function readRbVetFromRow($row) {
+        if (!readRowDbActive($row)) return false;
         var raw = $row.attr('data-rb-vet');
         if (raw === '1') return true;
         if (raw === '0' && isFreeChannelPanel()
@@ -994,6 +1117,7 @@
     }
 
     function readClientVetFromRow($row) {
+        if (!readRowDbActive($row)) return false;
         var raw = $row.attr('data-client-vet');
         if (raw === '1') return true;
         var action = ($row.attr('data-client-action') || '').toLowerCase();
@@ -1013,6 +1137,7 @@
         var panel = 0;
         $rows.each(function () {
             var $row = $(this);
+            if (!readRowDbActive($row)) return;
             var rbOn = readRbVetFromRow($row);
             var clientOn = readClientVetFromRow($row);
             if (rbOn) rb += 1;
@@ -1152,13 +1277,29 @@
         }
         var rbOn = readRbVetFromRow($row);
         var clientOn = readClientVetFromRow($row);
+        var isActive = readRowDbActive($row);
+        var status = ivStatusBadgeFromRow($row);
         $row.find('[data-vet="rb"] .dm-v4-vet-btn').removeClass('is-on');
         $row.find('[data-vet="rb"] .dm-v4-vet-btn[data-vet-value="' + (rbOn ? '1' : '0') + '"]').addClass('is-on');
         $row.find('[data-vet="client"] .dm-v4-vet-btn').removeClass('is-on');
         $row.find('[data-vet="client"] .dm-v4-vet-btn[data-vet-value="' + (clientOn ? '1' : '0') + '"]').addClass('is-on');
+        var $rbSub = $row.find('.dm-v4-iv-cell--rb-vet .dm-v4-iv-vet-sub');
+        if ($rbSub.length) {
+            if (!isActive) {
+                $rbSub.text(status.tone === 'available' ? 'Awaiting RB review' : 'Inactive on panel');
+            } else {
+                $rbSub.text(rbOn ? 'Risebird verified' : 'Awaiting RB review');
+            }
+        }
         var $clientBtns = $row.find('[data-vet="client"] .dm-v4-vet-btn');
         var $clientToggle = $row.find('[data-vet="client"]');
-        if (!rbOn) {
+        if (!isActive) {
+            $clientBtns.prop('disabled', true);
+            $clientToggle.attr('title', status.tone === 'available' ? 'Needs RB Vet first.' : 'Inactive on panel');
+            $row.find('.dm-v4-iv-vet-sub--client').text(
+                status.tone === 'inactive' ? 'Inactive on panel' : 'Blocked — needs RB Vet first'
+            );
+        } else if (!rbOn) {
             $clientBtns.prop('disabled', true);
             $clientToggle.attr('title', 'Needs RB Vet first.');
             $row.find('.dm-v4-iv-vet-sub--client').text('Blocked — needs RB Vet first');
@@ -1973,7 +2114,34 @@
         }
     }
 
+    function dmV4RenderClientCvCell($row, state) {
+        if (!isClientShareView()) return;
+        var $cell = $row.find('.dm-v4-iv-cell--cv').first();
+        if (!$cell.length) return;
+
+        var codedCvLink = (state && state.codedCvLink != null ? state.codedCvLink : $row.attr('data-coded-cv') || '').toString().trim();
+        var cvCode = (state && state.cvCode != null ? state.cvCode : $row.attr('data-cv-code') || '').toString().trim();
+        var hasCoded = dmV4IsSummaryCodedCvLink(codedCvLink);
+
+        $row.attr('data-coded-cv', hasCoded ? codedCvLink : '');
+        $row.attr('data-cv-code', hasCoded ? (cvCode || 'CV') : '');
+
+        if (hasCoded) {
+            $cell.html(
+                '<button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view" data-coded-cv="' +
+                $('<span/>').text(codedCvLink).html() + '" data-cv-label="' + $('<span/>').text(cvCode || 'CV').html() +
+                '" title="View coded resume summary">' + $('<span/>').text(cvCode || 'CV').html() + ' ↗</button>'
+            );
+        } else {
+            $cell.html('<span class="dm-v4-muted">Not available</span>');
+        }
+    }
+
     function dmV4RenderCvStack($row, state, opts) {
+        if (isClientShareView()) {
+            dmV4RenderClientCvCell($row, state);
+            return;
+        }
         opts = opts || {};
         var canEdit = getIvCanEdit();
         var canUpload = getIvCanUploadResume();
@@ -1998,7 +2166,7 @@
 
         var html = '';
         if (canUpload && !hasResume) {
-            html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--upload" title="Upload interviewer resume (PDF)">' +
+            html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--upload" title="Upload interviewer resume (PDF, DOC, or DOCX)">' +
                 '<i class="fa fa-upload" aria-hidden="true"></i> Upload Resume</button>';
         } else if (hasCoded) {
             html += '<button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view" data-coded-cv="' +
@@ -2061,8 +2229,16 @@
         var irfId = dmV4ResolveRowIrfId($row);
         var userId = parseInt($row.attr('data-user-id'), 10);
         if (!irfId || !userId) return $.Deferred().reject().promise();
-        return $.getJSON(cfg.cvStateUrl, { irfId: irfId, userId: userId }).done(function (state) {
+        var requestData = { irfId: irfId, userId: userId };
+        if (isClientShareView()) {
+            requestData.Type = getClientShareTypeParam();
+        }
+        return $.getJSON(cfg.cvStateUrl, requestData).done(function (state) {
             if (state && state.ok) {
+                if (isClientShareView()) {
+                    dmV4RenderClientCvCell($row, state);
+                    return;
+                }
                 var rowCoded = ($row.attr('data-coded-cv') || '').toString().trim();
                 if (!state.codedCvLink && rowCoded && dmV4IsSummaryCodedCvLink(rowCoded)) {
                     state.codedCvLink = rowCoded;
@@ -2106,10 +2282,15 @@
             var formData = new FormData();
             var filesInput = document.getElementsByName('ResumeFiles')[0];
             if (!filesInput || !filesInput.files.length) {
-                if (typeof swal !== 'undefined') swal.fire('Please select a PDF resume to upload.');
+                if (typeof swal !== 'undefined') swal.fire('Please select a PDF, DOC, or DOCX resume to upload.');
                 return;
             }
             for (var i = 0; i < filesInput.files.length; i++) {
+                var fileName = (filesInput.files[i].name || '').toLowerCase();
+                if (!/\.(pdf|doc|docx)$/.test(fileName)) {
+                    if (typeof swal !== 'undefined') swal.fire('Please select a PDF, DOC, or DOCX resume to upload.');
+                    return;
+                }
                 formData.append('ResumeFiles', filesInput.files[i]);
             }
             formData.append('UserId', typeof interviewerUserId !== 'undefined' ? interviewerUserId : '');
@@ -2192,6 +2373,42 @@
         $('#dmV4IvPanel').attr('data-lock', val);
     }
 
+    function setAssignmentPolicy($bar, policy) {
+        $bar = $bar && $bar.length ? $bar : getPolicyBar();
+        if (!$bar.length) return;
+        var val = String(policy || '').toLowerCase() === 'limited' ? 'limited' : 'free';
+        $bar.attr('data-policy', val).data('policy', val);
+    }
+
+    function getAssignmentPolicy() {
+        var $bar = getPolicyBar();
+        if (!$bar.length) return 'free';
+        var attrVal = ($bar.attr('data-policy') || '').toString().toLowerCase();
+        if (attrVal === 'limited' || attrVal === 'free') return attrVal;
+        var dataVal = ($bar.data('policy') || '').toString().toLowerCase();
+        return dataVal === 'limited' ? 'limited' : 'free';
+    }
+
+    function readRowAssignedCount($row) {
+        var assigned = parseInt($row.attr('data-future-assigned'), 10);
+        if (isNaN(assigned)) assigned = parseInt($row.attr('data-assigned'), 10);
+        if (isNaN(assigned)) {
+            assigned = parseInt($row.find('.dm-v4-iv-capacity').attr('data-assigned'), 10);
+        }
+        return isNaN(assigned) ? 0 : assigned;
+    }
+
+    /** Re-render every Interview Limit cell from current policy + row cap attrs (Free↔Limit). */
+    function refreshInterviewLimitCellsForPolicy() {
+        $('.dm-v4-iv-row').each(function () {
+            var $row = $(this);
+            var $wrap = $row.find('.dm-v4-iv-capacity');
+            if (!$wrap.length) return;
+            renderCapacityCell($wrap, null, readRowAssignedCount($row), isRowCapExplicit($row));
+            updateIvRowStatus($row);
+        });
+    }
+
     function getIvCanEdit() {
         var $panel = $('#dmV4IvPanel');
         if ($panel.data('can-edit') === 1 || $panel.data('can-edit') === '1') return true;
@@ -2231,7 +2448,7 @@
         $.post('/IRF/SaveDmIvPolicy', {
             irfId: parseInt($bar.data('irf-id'), 10),
             dmIvLockNew: isPolicyLockOn($bar),
-            dmAssignmentPolicy: $bar.data('policy') || 'free',
+            dmAssignmentPolicy: getAssignmentPolicy(),
             dmDefaultInterviewCap: getDefaultCap()
         }).fail(function () {
             if (typeof swal !== 'undefined') swal.fire('Failed to save policy settings.', '', 'error');
@@ -2242,7 +2459,7 @@
         var $bar = getPolicyBar();
         if (!$bar.length) return;
         var lock = isPolicyLockOn($bar);
-        var policy = $bar.data('policy') === 'limited' ? 'limited' : 'free';
+        var policy = getAssignmentPolicy();
         var limited = policy === 'limited';
         var canEdit = $bar.data('can-edit') === '1' || $bar.data('can-edit') === 1;
         var cap = parseInt($bar.data('default-cap'), 10);
@@ -2261,7 +2478,7 @@
         var $bar = getPolicyBar();
         if (!$bar.length) return;
         var lock = isPolicyLockOn($bar);
-        var limited = $bar.data('policy') === 'limited';
+        var limited = getAssignmentPolicy() === 'limited';
         $('#dmV4IvLockSub').text(lock
             ? 'New interviewers join as RB Vet pending. Client Vet auto-cascades to pending until Risebird clears them.'
             : 'New interviewers are auto-RB-vetted and auto-Client-approved. Override per row if needed.');
@@ -2270,13 +2487,7 @@
             : 'Active interviewers can be assigned to any interview without further review.');
         $('#dmV4IvPanel').attr('data-cap-enforced', limited ? '1' : '0');
         syncPolicyBarControls();
-        $('.dm-v4-iv-row').each(function () {
-            var $row = $(this);
-            var $wrap = $row.find('.dm-v4-iv-capacity');
-            var assigned = parseInt($row.attr('data-assigned'), 10) || parseInt($wrap.attr('data-assigned'), 10) || 0;
-            syncCapacityCellUi($wrap, readRowDisplayCapacity($row), assigned, isRowCapExplicit($row));
-            updateIvRowStatus($row);
-        });
+        refreshInterviewLimitCellsForPolicy();
         applyIvTabFilter();
         refreshIvTabCounts();
     }
@@ -2361,11 +2572,6 @@
             isCapReached: reached,
             assignmentAllowed: !reached
         };
-    }
-
-    function getAssignmentPolicy() {
-        var $bar = getPolicyBar();
-        return $bar.length && $bar.data('policy') === 'limited' ? 'limited' : 'free';
     }
 
     function getCapStateForRowFromRow($row) {
@@ -2997,6 +3203,7 @@
 
         $(document).off('click.dmV4IvInsightsGlobal', '.dm-v4-iv-insights-btn--global').on('click.dmV4IvInsightsGlobal', '.dm-v4-iv-insights-btn--global', function (e) {
             e.preventDefault();
+            if (isSmeView()) return;
             var $btn = $(this);
             var $row = $btn.closest('.dm-v4-iv-row');
             if (isPanelCompactView()) {
@@ -3025,6 +3232,7 @@
 
         $(document).off('click.dmV4IvChannelInsights', '.dm-v4-iv-channel-insights-btn').on('click.dmV4IvChannelInsights', '.dm-v4-iv-channel-insights-btn', function (e) {
             e.preventDefault();
+            if (isSmeView()) return;
             var $btn = $(this);
             var $row = $btn.closest('.dm-v4-iv-row');
             if (isPanelCompactView()) {
@@ -3068,6 +3276,7 @@
 
         $(document).off('click.dmV4IvCvUpload', '.dm-v4-iv-cv-btn--upload').on('click.dmV4IvCvUpload', '.dm-v4-iv-cv-btn--upload', function (e) {
             e.preventDefault();
+            if (isClientShareView()) return;
             var $row = $(this).closest('.dm-v4-iv-row');
             window.dmV4PendingUploadRow = $row;
             var userId = parseInt($row.data('user-id'), 10);
@@ -3079,6 +3288,7 @@
 
         $(document).off('click.dmV4IvCvSummary', '.dm-v4-iv-cv-btn--summary').on('click.dmV4IvCvSummary', '.dm-v4-iv-cv-btn--summary', function (e) {
             e.preventDefault();
+            if (isClientShareView()) return;
             var $btn = $(this);
             if ($btn.prop('disabled')) return;
             var $row = $btn.closest('.dm-v4-iv-row');
@@ -3250,7 +3460,7 @@
             if ($seg.data('segment') === 'lock') {
                 setPolicyLockOn($bar, $btn.data('value') === 'on');
             } else if ($seg.data('segment') === 'assign') {
-                $bar.data('policy', $btn.data('value'));
+                setAssignmentPolicy($bar, $btn.attr('data-value') || $btn.data('value'));
             }
             updatePolicySubtext();
             saveDmIvPolicy();
@@ -3512,6 +3722,7 @@
 
     };
 
+    window.dmV4RefreshEtiquette = loadEtiquetteFromServer;
     window.dmV4InitIvEditable = initIvEditableFields;
 
 })(jQuery);
