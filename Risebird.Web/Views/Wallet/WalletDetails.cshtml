@@ -151,27 +151,24 @@
 
                     @* ── Summary Pills ── *@
                     <div style="margin-bottom: 14px;">
-                        @* <span class="stat-pill blue">
-                            <i class="fa fa-users"></i> Active Clients <strong>@activeCount</strong>
-                        </span>
-                        <span class="stat-pill">
-                            <i class="fa fa-building"></i> All Clients <strong>@totalCount</strong>
-                        </span> *@
                         <span class="stat-pill">
                             <i class="fa fa-calendar-check-o"></i> Total Interviews <strong>@Model.Clients.Sum(c => c.MonthInterviewCount)</strong>
                         </span>
-                        <span class="stat-pill green">
-                            <i class="fa fa-arrow-up"></i> Month Credit <strong>&#8377;@Model.TotalMonthCredit.ToString("N0")</strong>
-                        </span>
-                        <span class="stat-pill red">
-                            <i class="fa fa-arrow-down"></i> Month Debit <strong>&#8377;@Model.TotalMonthDebit.ToString("N0")</strong>
-                        </span>
-                        <span class="stat-pill @(Model.TotalMonthNet >= 0 ? "green" : "red")">
-                            <i class="fa fa-balance-scale"></i> Month Net <strong>&#8377;@Model.TotalMonthNet.ToString("N0")</strong>
-                        </span>
-                        <span class="stat-pill purple">
-                            <i class="fa fa-database"></i> Overall Balance <strong>&#8377;@Model.TotalOverallBalance.ToString("N0")</strong>
-                        </span>
+                        @foreach (var tot in Model.TotalsByCurrency)
+                        {
+                            <span class="stat-pill green">
+                                <i class="fa fa-arrow-up"></i> Month Credit (@tot.Currency) <strong>@tot.Symbol@tot.MonthCredit.ToString("N0")</strong>
+                            </span>
+                            <span class="stat-pill red">
+                                <i class="fa fa-arrow-down"></i> Month Debit (@tot.Currency) <strong>@tot.Symbol@tot.MonthDebit.ToString("N0")</strong>
+                            </span>
+                            <span class="stat-pill @(tot.MonthNet >= 0 ? "green" : "red")">
+                                <i class="fa fa-balance-scale"></i> Month Net (@tot.Currency) <strong>@tot.Symbol@tot.MonthNet.ToString("N0")</strong>
+                            </span>
+                            <span class="stat-pill purple">
+                                <i class="fa fa-database"></i> Overall Balance (@tot.Currency) <strong>@tot.Symbol@tot.OverallBalance.ToString("N0")</strong>
+                            </span>
+                        }
                     </div>
 
                     @* ── Search ── *@
@@ -191,22 +188,25 @@
                                     <th>Billing Model</th>
                                     <th>Rates</th>
                                     <th>Interviews</th>
-                                    <th>Month Credit (&#8377;)</th>
-                                    <th>Month Debit (&#8377;)</th>
-                                    <th>Month Net (&#8377;)</th>
-                                    <th>Overall Balance (&#8377;)</th>
+                                    <th>Month Credit</th>
+                                    <th>Month Debit</th>
+                                    <th>Month Net</th>
+                                    <th>Overall Balance</th>
                                     <th>Wallet Txns</th>
                                 </tr>
                             </thead>
                             <tfoot>
-                                <tr>
-                                    <th colspan="5" style="text-align:right;">Totals</th>
-                                    <th class="amount-credit">&#8377;@Model.TotalMonthCredit.ToString("N0")</th>
-                                    <th class="amount-debit">&#8377;@Model.TotalMonthDebit.ToString("N0")</th>
-                                    <th class="@(Model.TotalMonthNet >= 0 ? "amount-pos" : "amount-neg")">&#8377;@Model.TotalMonthNet.ToString("N0")</th>
-                                    <th class="amount-neutral">&#8377;@Model.TotalOverallBalance.ToString("N0")</th>
-                                    <th></th>
-                                </tr>
+                                @foreach (var tot in Model.TotalsByCurrency)
+                                {
+                                    <tr>
+                                        <th colspan="5" style="text-align:right;">Totals (@tot.Currency)</th>
+                                        <th class="amount-credit">@tot.Symbol@tot.MonthCredit.ToString("N0")</th>
+                                        <th class="amount-debit">@tot.Symbol@tot.MonthDebit.ToString("N0")</th>
+                                        <th class="@(tot.MonthNet >= 0 ? "amount-pos" : "amount-neg")">@tot.Symbol@tot.MonthNet.ToString("N0")</th>
+                                        <th class="amount-neutral">@tot.Symbol@tot.OverallBalance.ToString("N0")</th>
+                                        <th></th>
+                                    </tr>
+                                }
                             </tfoot>
                             <tbody>
                                 @{ int rowIdx = 0; }
@@ -236,8 +236,8 @@
                                             }
                                         </td>
                                         <td style="font-size:11px;">
-                                            &#8377;@cl.PerInterviewRate / interview<br />
-                                            <span style="color:#888;">AI: &#8377;@cl.AIPerInterviewRate</span>
+                                            @cl.CurrencySymbol@cl.PerInterviewRate / interview<br />
+                                            <span style="color:#888;">AI: @cl.CurrencySymbol@cl.AIPerInterviewRate</span>
                                         </td>
                                         <td>
                                             @if (isActive)
@@ -253,10 +253,10 @@
                                                 <span class="int-badge inactive">0</span>
                                             }
                                         </td>
-                                        <td class="amount-credit">&#8377;@cl.MonthCredit.ToString("N0")</td>
-                                        <td class="amount-debit">&#8377;@cl.MonthDebit.ToString("N0")</td>
-                                        <td class="@(cl.MonthNet >= 0 ? "amount-pos" : "amount-neg")">&#8377;@cl.MonthNet.ToString("N0")</td>
-                                        <td class="amount-neutral">&#8377;@cl.OverallBalance.ToString("N0")</td>
+                                        <td class="amount-credit">@cl.CurrencySymbol@cl.MonthCredit.ToString("N0")</td>
+                                        <td class="amount-debit">@cl.CurrencySymbol@cl.MonthDebit.ToString("N0")</td>
+                                        <td class="@(cl.MonthNet >= 0 ? "amount-pos" : "amount-neg")">@cl.CurrencySymbol@cl.MonthNet.ToString("N0")</td>
+                                        <td class="amount-neutral">@cl.CurrencySymbol@cl.OverallBalance.ToString("N0")</td>
                                         <td style="color:#888;">@cl.TransactionCount</td>
                                     </tr>
 
@@ -270,13 +270,13 @@
                                                         <tr>
                                                             <th>Billing Owner</th>
                                                             <th>Email</th>
-                                                            <th>Interviews — @Model.PeriodLabel</th>
-                                                            @if (cl.BillingType == 1)
-                                                            {
-                                                                <th>Month Credit (&#8377;)</th>
-                                                                <th>Month Debit (&#8377;)</th>
-                                                                <th>Month Net (&#8377;)</th>
-                                                            }
+                                                                        <th>Interviews — @Model.PeriodLabel</th>
+                                                                            @if (cl.BillingType == 1)
+                                                                            {
+                                                                                <th>Month Credit (@cl.BillingCurrency)</th>
+                                                                                <th>Month Debit (@cl.BillingCurrency)</th>
+                                                                                <th>Month Net (@cl.BillingCurrency)</th>
+                                                                            }
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -287,11 +287,11 @@
                                                                 <td style="color:#888;">@ow.BillingOwnerEmail</td>
                                                                 <td><span class="int-badge active">@ow.MonthInterviewCount</span></td>
                                                                 @if (cl.BillingType == 1)
-                                                                {
-                                                                    <td class="amount-credit">&#8377;@ow.MonthCredit.ToString("N0")</td>
-                                                                    <td class="amount-debit">&#8377;@ow.MonthDebit.ToString("N0")</td>
-                                                                    <td class="@(ow.MonthNet >= 0 ? "amount-pos" : "amount-neg")">&#8377;@ow.MonthNet.ToString("N0")</td>
-                                                                }
+                                                                                {
+                                                                                    <td class="amount-credit">@cl.CurrencySymbol@ow.MonthCredit.ToString("N0")</td>
+                                                                                    <td class="amount-debit">@cl.CurrencySymbol@ow.MonthDebit.ToString("N0")</td>
+                                                                                    <td class="@(ow.MonthNet >= 0 ? "amount-pos" : "amount-neg")">@cl.CurrencySymbol@ow.MonthNet.ToString("N0")</td>
+                                                                                }
                                                             </tr>
                                                         }
                                                     </tbody>

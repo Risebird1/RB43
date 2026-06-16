@@ -293,6 +293,8 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateVideoConsentFile(int irfid, string uploadedFileURL);
         Task<string> GetVideoConsentForm(int irfid);
         Task<bool> UpdateCandidateChecks(int irfid, bool CandidateCheckvalue, string CandidateCheckName);
+        Task<DmInterviewerEtiquetteVm> GetDmInterviewerEtiquette(int irfId);
+        Task<bool> UpdateDmInterviewerEtiquette(int irfId, string dressCode, bool cameraRequired, bool noEatingRule);
         Task<bool> UpdateNewPriority(int irfid, int PriorityLevel);
         Task<string> GetAssessmentGroupFromIRFId(int irfId);
         Task<IEnumerable<AssignmentVM>> GetUnassignedInterviewsMAG();

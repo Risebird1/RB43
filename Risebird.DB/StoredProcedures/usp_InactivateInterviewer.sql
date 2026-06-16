@@ -23,9 +23,10 @@ BEGIN
         FROM UserList     
         WHERE id = @InterviewerId    
     
-        -- Update UserList to set IsActive = 0 with inactivation tracking
+        -- Update UserList to set IsInterviewerAccess = 0 with inactivation tracking
+        -- Note: IsActive is only modified via the Edit Interviewer Profile form (Admin only).
         UPDATE UserList     
-        SET IsActive = 0,
+        SET IsInterviewerAccess = 0,
             InactivationType = CASE WHEN @blockinterviewer = 1 THEN 'ManualBlock' ELSE 'ManualRemove' END,
             InactivatedBy = @ModifiedBy,
             InactivatedAt = @modifiedOn
