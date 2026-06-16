@@ -9,33 +9,37 @@ GO
 
 -- Updates editable fields + recalculated financial totals on an existing invoice.
 CREATE PROCEDURE usp_UpdateInvoiceDetails
-    @InvoiceId     INT,
-    @GSTNumber     VARCHAR(100),
-    @CreditPeriod  VARCHAR(100),
+    @InvoiceId        INT,
+    @GSTNumber        VARCHAR(100),
+    @CreditPeriod     VARCHAR(100),
     @IRN              VARCHAR(200),
     @EInvoiceFileLink VARCHAR(MAX),
     @Status           INT,
-    @Subtotal      DECIMAL(18,2),
-    @GSTAmount     DECIMAL(18,2),
-    @InvoiceValue  DECIMAL(18,2),
-    @TDSAmount     DECIMAL(18,2),
-    @NetReceivable DECIMAL(18,2)
+    @Subtotal         DECIMAL(18,2),
+    @GSTAmount        DECIMAL(18,2),
+    @InvoiceValue     DECIMAL(18,2),
+    @TDSAmount        DECIMAL(18,2),
+    @NetReceivable    DECIMAL(18,2),
+    @LatestRemark     VARCHAR(500) = NULL,
+    @UTRTrxn          VARCHAR(200) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
     UPDATE GeneratedInvoices SET
-        GSTNumber     = @GSTNumber,
-        CreditPeriod  = @CreditPeriod,
+        GSTNumber        = @GSTNumber,
+        CreditPeriod     = @CreditPeriod,
         IRN              = @IRN,
         EInvoiceFileLink = CASE WHEN @EInvoiceFileLink IS NOT NULL AND @EInvoiceFileLink != '' THEN @EInvoiceFileLink ELSE EInvoiceFileLink END,
         Status           = @Status,
-        Subtotal      = @Subtotal,
-        GSTAmount     = @GSTAmount,
-        InvoiceValue  = @InvoiceValue,
-        TDSAmount     = @TDSAmount,
-        NetReceivable = @NetReceivable,
-        ModifiedOn    = GETDATE()
+        Subtotal         = @Subtotal,
+        GSTAmount        = @GSTAmount,
+        InvoiceValue     = @InvoiceValue,
+        TDSAmount        = @TDSAmount,
+        NetReceivable    = @NetReceivable,
+        LatestRemark     = CASE WHEN @LatestRemark IS NOT NULL THEN @LatestRemark ELSE LatestRemark END,
+        UTRTrxn          = CASE WHEN @UTRTrxn IS NOT NULL AND @UTRTrxn != '' THEN @UTRTrxn ELSE UTRTrxn END,
+        ModifiedOn       = GETDATE()
     WHERE id = @InvoiceId
 
     SELECT @@ROWCOUNT AS UpdatedRows
