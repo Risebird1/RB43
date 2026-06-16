@@ -40,8 +40,8 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-
-                            <table id="skillLevel" class="table table-striped table-bordered" cellspacing="0" style="width:100%;">
+                        <div style="overflow-x: auto; width: 100%;">
+                            <table id="skillLevel" class="table table-striped table-bordered" cellspacing="0" style="width:100%; min-width: 1200px;">
                                 <thead>
                                     <tr>
 
@@ -51,6 +51,8 @@
                                         <th>Billing Type</th>
                                         <th>Per Interview Rate</th>
                                         <th>AI Per Interview Rate</th>
+                                        <th>Billing Currency</th>
+                                        <th>Interview Billing Type</th>
                                         <th>Logo</th>
                                         <th>URL</th>
                                         <th>Company Video(GIF)</th>
@@ -68,6 +70,8 @@
                                         <th>Billing Type</th>
                                         <th>Per Interview Rate</th>
                                         <th>AI Per Interview Rate</th>
+                                        <th>Billing Currency</th>
+                                        <th>Interview Billing Type</th>
                                         <th>Logo</th>
                                         <th>URL</th>
                                         <th>Company Video(GIF)</th>
@@ -132,6 +136,21 @@
                                             }
                                             <td>@item.PerInterviewRate</td>
                                             <td>@item.AIPerInterviewRate</td>
+                                            <td>@(string.IsNullOrEmpty(item.BillingCurrency) ? "INR" : item.BillingCurrency)</td>
+                                            <td>
+                                                @if (item.InterviewerBillingType == 2)
+                                                {
+                                                    <text>Skill Channel</text>
+                                                }
+                                                else if (item.InterviewerBillingType == 3)
+                                                {
+                                                    <text>Interviewer</text>
+                                                }
+                                                else
+                                                {
+                                                    <text>Client</text>
+                                                }
+                                            </td>
                                             @if (item.LogoLink != null && item.LogoLink != "")
                                             {
                                                 <td>
@@ -207,6 +226,7 @@
                                     }
                                 </tbody>
                             </table>
+                        </div>
                         </div>
 
 

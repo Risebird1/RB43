@@ -292,6 +292,21 @@ namespace Risebird.Entities.Enum
         [Description("Paid")]
         Paid = 1
     }
+    public enum GeneratedInvoiceStatus
+    {
+        [Description("Draft")]
+        Draft = 0,
+        [Description("Generated")]
+        Generated = 1,
+        [Description("PO Pending")]
+        POPending = 2,
+        [Description("Approval Pending")]
+        ApprovalPending = 3,
+        [Description("Invoice Realisation Pending")]
+        InvoiceRealisationPending = 4,
+        [Description("Paid")]
+        Paid = 5
+    }
     //public enum JoinabilityType
     //{
 
