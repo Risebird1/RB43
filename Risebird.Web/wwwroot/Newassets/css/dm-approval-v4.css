@@ -5242,6 +5242,32 @@ button.dm-v4-money-pill {
     width: 100%;
 }
 
+/* Client share: Coded CV column is read-only — link or empty state only */
+.dm-v4-page--client-share .dm-v4-iv-cell--cv .dm-v4-iv-cv-btn,
+.dm-v4-page--client-share .dm-v4-iv-cell--cv .dm-v4-iv-cv-stack {
+    display: none !important;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-cell--cv .dm-v4-iv-cv-link--view {
+    display: inline-flex;
+}
+
+/* Interviewer (SME) DM page: hide company column and peer insights */
+.dm-v4-page--sme .dm-v4-iv-cell--company,
+.dm-v4-page--sme .dm-v4-iv-insights-btn {
+    display: none !important;
+}
+
+.dm-v4-page--sme .dm-v4-iv-grid.dm-v4-iv-grid--client {
+    grid-template-columns:
+        minmax(240px, 1.4fr)
+        minmax(0, 0.9fr)
+        minmax(0, 1.1fr)
+        minmax(0, 0.78fr)
+        minmax(0, 0.78fr)
+        minmax(0, 0.95fr);
+}
+
 .dm-v4-iv-coded-label {
     font-family: "IBM Plex Mono", ui-monospace, monospace;
     font-size: 13px;

@@ -9212,61 +9212,12 @@ namespace Risebird.Web.Controllers
             var isClientShare = IsClientShareRequest(irfId, Type);
             var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
 
-            if (isClientShare)
+            if (isClientShare || isSmeView)
             {
                 return StatusCode(403);
             }
 
-            if (!isSmeView)
-            {
-                return Unauthorized();
-            }
-
-            if (isSmeView)
-            {
-                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                if (!await _interviewerService.IsSmeAssignedToIrfAsync(emailid, irfId))
-                {
-                    return Unauthorized();
-                }
-            }
-
-            try
-            {
-                var model = await _irfService.GetEditIRF(irfId, 0, false);
-                var iv = model?.InterviewerCollection?
-                    .FirstOrDefault(x => x.UserId == userId && x.IsActive);
-                if (iv == null || string.IsNullOrWhiteSpace(iv.EmailId))
-                {
-                    return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", new InterviewerInsightsVM());
-                }
-
-                var result = await _interviewerService.GetInterviewerInsights(iv.EmailId, model.IRFId);
-                if (result == null)
-                {
-                    result = new InterviewerInsightsVM();
-                }
-
-                if (isSmeView)
-                {
-                    DeliveryHeadInstructionViewMode.StripInterviewerInsightsForSmeView(result);
-                    ViewBag.type = "SME";
-                }
-                else
-                {
-                    DeliveryHeadInstructionViewMode.StripInterviewerInsightsForClientView(result);
-                    ViewBag.type = "Client";
-                }
-
-                result.IRFId = model.IRFId;
-                ViewBag.RegularAccess = "";
-                return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", result);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", new InterviewerInsightsVM());
-            }
+            return Unauthorized();
         }
 
         [HttpGet]
@@ -9622,7 +9573,45 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetDeliveryHeadSampleQuestionsJson(int irfId)
+        public async Task<JsonResult> GetDmInterviewerEtiquetteJson(int irfId, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false });
+                var etiquette = await _irfService.GetDmInterviewerEtiquette(irfId);
+                return Json(new { success = etiquette != null, etiquette });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateDmInterviewerEtiquette(int irfId, string dressCode, bool cameraRequired, bool noEatingRule, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false });
+                var result = await _irfService.UpdateDmInterviewerEtiquette(irfId, dressCode, cameraRequired, noEatingRule);
+                return Json(new { success = result });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetDeliveryHeadSampleQuestionsJson(int irfId, string Type = null)
         {
             try
             {
@@ -9630,8 +9619,13 @@ namespace Risebird.Web.Controllers
                 {
                     return Json(new { success = false, questions = new List<SkillComment>() });
                 }
-                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                var questions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfId, emailid);
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                {
+                    return Json(new { success = false, questions = new List<SkillComment>() });
+                }
+                // DHI sample questions are a shared IRF pool for internal DM and client share (ublc).
+                // Do not filter by CreatedBy — otherwise AI/manual questions from one side are hidden on the other.
+                var questions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfId, emailId: null);
                 return Json(new { success = true, questions = questions ?? new List<SkillComment>() });
             }
             catch (Exception ex)
@@ -9642,13 +9636,13 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GenerateQuestionsFromRubric(int irfId, bool useVoiceTranscript = false)
+        public async Task<JsonResult> GenerateQuestionsFromRubric(int irfId, bool useVoiceTranscript = false, string Type = null)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") == null)
                     return Json(new { success = false, message = "Unauthorized" });
-                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
                     return Json(new { success = false, message = "Forbidden" });
 
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
@@ -12051,35 +12045,41 @@ namespace Risebird.Web.Controllers
                             {
                                 var fileName = file.FileName.Replace(" ", "_");
                                 FileInfo fi = new FileInfo(fileName);
-                                if (fi.Extension.ToLower() == ".pdf")
+                                var ext = fi.Extension.ToLowerInvariant();
+                                if (ext != ".pdf" && ext != ".doc" && ext != ".docx")
                                 {
-                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
-                                    if (fileMimeType == "application/pdf")
-                                    {
-                                        await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
-                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                        var blob = containerRef.GetBlockBlobReference(fileName);
-                                        string uploadedaudioFileURL = blob.Uri.ToString();
+                                    return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                                }
 
-                                        if (uploadedaudioFileURL == null)
-                                        {
-                                            return Json("Resume upload has failed.");
-                                        }
-                                        else
-                                        {
-                                            var sas = _sasUrlHelper.CreateSasUrl("resumes");
-                                            sasUrl = uploadedaudioFileURL + "?" + sas;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        return Json("Please select valid file for import(.pdf)!");
-                                    }
-                                }
-                                else
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                                if (ext == ".pdf")
                                 {
-                                    return Json("Please select valid file for import(.pdf)!");
+                                    if (fileMimeType != "application/pdf")
+                                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
                                 }
+                                else if (ext == ".doc")
+                                {
+                                    if (fileMimeType != "application/msword")
+                                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                                }
+                                else if (ext == ".docx")
+                                {
+                                    if (fileMimeType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                                }
+
+                                await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    return Json("Resume upload has failed.");
+                                }
+
+                                var sas = _sasUrlHelper.CreateSasUrl("resumes");
+                                sasUrl = uploadedaudioFileURL + "?" + sas;
                             }
                             var result = await _interviewerService.UpdateInterviewerResume(userId, sasUrl, emailId);
                             if (result)
@@ -12099,7 +12099,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return Json("Please select valid file for import(.pdf)!");
+                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
                     }
                 }
                 else

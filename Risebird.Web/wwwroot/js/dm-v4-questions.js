@@ -298,9 +298,17 @@
 
 
 
+    function getQuestionsRequestData() {
+        var data = { irfId: getIrfId() };
+        if (window.dmV4ClientShareView === true) {
+            data.Type = (window.dmV4ClientShareType || 'ublc').toString();
+        }
+        return data;
+    }
+
     function loadQuestions() {
 
-        return $.post('/IRF/GetDeliveryHeadSampleQuestionsJson', { irfId: getIrfId() }).then(function (res) {
+        return $.post('/IRF/GetDeliveryHeadSampleQuestionsJson', getQuestionsRequestData()).then(function (res) {
 
             if (res && res.success) {
 
@@ -381,7 +389,7 @@
             $.ajax({
                 url: '/IRF/GenerateQuestionsFromRubric',
                 type: 'POST',
-                data: { irfId: irfId },
+                data: getQuestionsRequestData(),
                 timeout: 300000
             })
             .done(function (res) {
