@@ -2277,7 +2277,7 @@ namespace Risebird.Web.Controllers
                         }
                         catch { /* ignore bad session data */ }
                     }
-                    ViewBag.PaidFromYear  = paidFromYear;
+                    ViewBag.PaidFromYear  = paidFromYear; ViewBag.
                     ViewBag.PaidFromMonth = paidFromMonth;
                     ViewBag.PaidToYear    = paidToYear;
                     ViewBag.PaidToMonth   = paidToMonth;

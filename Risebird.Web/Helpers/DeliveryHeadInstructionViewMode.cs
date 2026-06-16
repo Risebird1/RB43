@@ -162,6 +162,8 @@ namespace Risebird.Web.Helpers
             iv.ClientHr = null;
             iv.InterviewerProfileAddedBy = null;
             iv.RedMarkerReviewComment = null;
+            iv.CompanyName = null;
+            iv.EmploymentComment = null;
             return iv;
         }
 

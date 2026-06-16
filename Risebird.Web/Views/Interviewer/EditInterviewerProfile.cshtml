@@ -193,18 +193,26 @@
                                         @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
                                         {
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @*@Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { id = "txt_IsActive", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
+                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Is Active</label>
                                                 @Html.DropDownListFor(model => model.IsActive, new[]
                                                          {   new SelectListItem { Text = "No", Value = "false" },
                                     new SelectListItem { Text = "Yes", Value = "true"} },
                                                          new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
                                                 @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                             </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Interviewer Access</label>
+                                                @Html.DropDownListFor(model => model.IsInterviewerAccess, new[]
+                                                         {   new SelectListItem { Text = "No", Value = "false" },
+                                    new SelectListItem { Text = "Yes", Value = "true"} },
+                                                         new { id = "drp_IsInterviewerAccess", @class = "select-css form-control text-box single-line" })
+                                                @Html.ValidationMessageFor(model => model.IsInterviewerAccess, "", new { @class = "text-danger" })
+                                            </div>
                                         }
                                         else
                                         {
                                             @Html.HiddenFor(model => model.IsActive)
+                                            @Html.HiddenFor(model => model.IsInterviewerAccess)
                                         }
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })

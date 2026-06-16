@@ -19,19 +19,31 @@ namespace Risebird.Entities.ViewModel
 
     public class ClientWalletSummaryRowVM
     {
-        public int     ClientId           { get; set; }
-        public string  ClientName         { get; set; }
-        public int     BillingType        { get; set; }   // 1=User Scope, 3=Client Scope
-        public int     BillingModel       { get; set; }
-        public string  BillingModelDesc   { get; set; }
-        public int     PerInterviewRate   { get; set; }
-        public int     AIPerInterviewRate { get; set; }
+        public int     ClientId            { get; set; }
+        public string  ClientName          { get; set; }
+        public int     BillingType         { get; set; }   // 1=User Scope, 3=Client Scope
+        public int     BillingModel        { get; set; }
+        public string  BillingModelDesc    { get; set; }
+        public int     PerInterviewRate    { get; set; }
+        public int     AIPerInterviewRate  { get; set; }
         public int     MonthInterviewCount { get; set; }
-        public decimal MonthCredit        { get; set; }
-        public decimal MonthDebit         { get; set; }
-        public decimal MonthNet           => MonthCredit - MonthDebit;
-        public decimal OverallBalance     { get; set; }
-        public int     TransactionCount   { get; set; }
+        public decimal MonthCredit         { get; set; }
+        public decimal MonthDebit          { get; set; }
+        public decimal MonthNet            => MonthCredit - MonthDebit;
+        public decimal OverallBalance      { get; set; }
+        public int     TransactionCount    { get; set; }
+        public string  BillingCurrency     { get; set; } = "INR";
+        public string  CurrencySymbol      => BillingCurrency == "USD" ? "$" : "₹";
+    }
+
+    public class WalletCurrencyTotalVM
+    {
+        public string  Currency       { get; set; }
+        public string  Symbol         { get; set; }
+        public decimal MonthCredit    { get; set; }
+        public decimal MonthDebit     { get; set; }
+        public decimal MonthNet       => MonthCredit - MonthDebit;
+        public decimal OverallBalance { get; set; }
     }
 
     public class AllClientsWalletVM
@@ -41,10 +53,31 @@ namespace Risebird.Entities.ViewModel
         public string PeriodLabel        { get; set; }
         public List<ClientWalletSummaryRowVM>     Clients            { get; set; } = new List<ClientWalletSummaryRowVM>();
         public List<BillingOwnerInterviewCountVM> BillingOwnerCounts { get; set; } = new List<BillingOwnerInterviewCountVM>();
+
+        // Legacy single-currency totals (INR-only, kept for backward compat)
         public decimal TotalMonthCredit    => Clients.Sum(c => c.MonthCredit);
         public decimal TotalMonthDebit     => Clients.Sum(c => c.MonthDebit);
         public decimal TotalMonthNet       => TotalMonthCredit - TotalMonthDebit;
         public decimal TotalOverallBalance => Clients.Sum(c => c.OverallBalance);
+
+        // Per-currency totals for mixed-currency display
+        public List<WalletCurrencyTotalVM> TotalsByCurrency =>
+            Clients
+                .GroupBy(c => string.IsNullOrEmpty(c.BillingCurrency) ? "INR" : c.BillingCurrency)
+                .OrderBy(g => g.Key)
+                .Select(g => new WalletCurrencyTotalVM
+                {
+                    Currency       = g.Key,
+                    Symbol         = g.Key == "USD" ? "$" : "₹",
+                    MonthCredit    = g.Sum(c => c.MonthCredit),
+                    MonthDebit     = g.Sum(c => c.MonthDebit),
+                    OverallBalance = g.Sum(c => c.OverallBalance)
+                })
+                .ToList();
+
+        public bool HasMixedCurrencies =>
+            Clients.Select(c => string.IsNullOrEmpty(c.BillingCurrency) ? "INR" : c.BillingCurrency)
+                   .Distinct().Count() > 1;
     }
 
     // ── Existing VMs (unchanged) ─────────────────────────────────────────────────
