@@ -15,6 +15,7 @@
     string strtDte = string.Empty;
     string endDte = string.Empty;
     var slaActionTab = ViewBag.actionstatus as string ?? "";
+    var embeddedSingleInterview = ViewBag.EmbeddedSingleInterview == true;
 }
 <input type="hidden" value="@ViewBag.actionstatus" id="hidactionstatus" />
 <input type="hidden" value="@ViewBag.returnBack" id="hidreturnBack" />
@@ -211,7 +212,7 @@
                                                     <td>Channel Owner</td>
                                                     <td>Created By</td>
                                                     <td>Created Date</td>
-                                                    @if (ViewBag.actionstatus == "SLACompleted")
+                                                    @if (ViewBag.actionstatus == "SLACompleted" && !embeddedSingleInterview)
                                                     {
                                                         <td>Status</td>
                                                     }
@@ -222,7 +223,7 @@
                                                         <td>QC Status</td>
                                                     }
                                                     @* <td>QC RedFlags</td> *@
-                                                    @if (ViewBag.actionstatus != "SLACompleted")
+                                                    @if (ViewBag.actionstatus != "SLACompleted" || embeddedSingleInterview)
                                                     {
                                                         <td>Action</td>
                                                     }
@@ -248,7 +249,7 @@
                                                     <td>Channel Owner</td>
                                                     <td>Created By</td>
                                                     <td>Created Date</td>
-                                                    @if (ViewBag.actionstatus == "SLACompleted")
+                                                    @if (ViewBag.actionstatus == "SLACompleted" && !embeddedSingleInterview)
                                                     {
                                                         <td>Status</td>
                                                     }
@@ -259,7 +260,7 @@
                                                         <td>QC Status</td>
                                                     }
                                                     @* <td>QC RedFlags</td> *@
-                                                    @if (ViewBag.actionstatus != "SLACompleted")
+                                                    @if (ViewBag.actionstatus != "SLACompleted" || embeddedSingleInterview)
                                                     {
                                                         <td>Action</td>
                                                     }
@@ -348,7 +349,7 @@
                                                         <td>@item.ChannelOwner</td>
                                                         <td>@item.CreatedBy</td>
                                                         <td>@item.CreatedOn</td>
-                                                        @if (ViewBag.actionstatus == "SLACompleted")
+                                                        @if (ViewBag.actionstatus == "SLACompleted" && !embeddedSingleInterview)
                                                         {
                                                             if (item.isapproved == 1)
                                                             {
@@ -384,7 +385,7 @@
                                                         {
                                                             <td class="text-center">0</td>
                                                         } *@
-                                                        @if (ViewBag.actionstatus != "SLACompleted")
+                                                        @if (ViewBag.actionstatus != "SLACompleted" || embeddedSingleInterview)
                                                         {
                                                             <td>
                                                                 <span>
@@ -490,65 +491,7 @@
 </div>
 
 
-<div id="paymentSlaInterviewDetailModal" class="modal modal-bg" style="z-index:1033">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span><i style="font-size:22px; color:#fff;position:relative;top:10px;" class="fas fa-info-circle" aria-hidden="true"></i></span>
-                </div>
-                <h5 class="modal-title pull-left">Interview details</h5>
-            </div>
-            <button type="button" class="close" aria-label="Close">
-                <span onclick="closePaymentSlaInterviewDetailModal()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-            </button>
-            <div class="modal-body">
-                <div class="qc-interview-detail-body">
-                    <div class="qc-interview-detail-row">
-                        <div class="qc-interview-detail-cell">
-                            <div class="qc-interview-detail-label">Interview duration</div>
-                            <div id="psaDetailInterviewDuration" class="qc-interview-detail-value"></div>
-                        </div>
-
-                        <div class="qc-interview-detail-cell">
-                            <div class="qc-interview-detail-label">Deficit duration</div>
-                            <div id="psaDetailDeficitDuration" class="qc-interview-detail-value"></div>
-                        </div>
-                       
-                    </div>
-                    <div class="qc-interview-detail-row">
-                        <div class="qc-interview-detail-cell qc-interview-detail-cell--multiline">
-                            <div class="qc-interview-detail-label">Interviewer join</div>
-                            <div id="psaDetailInterviewerJoin" class="qc-interview-detail-value"></div>
-                        </div>
-                        <div class="qc-interview-detail-cell">
-                            <div class="qc-interview-detail-label">Interviewer late join</div>
-                            <div id="psaDetailInterviewerLateJoin" class="qc-interview-detail-value"></div>
-                        </div>
-                        <div class="qc-interview-detail-cell" style="visibility:hidden;border:0;background:transparent;padding:0;min-height:0;height:auto;"></div>
-                    </div>
-                    <div class="qc-interview-detail-row">
-                        <div class="qc-interview-detail-cell">
-                            <div class="qc-interview-detail-label">Meeting status</div>
-                            <div id="psaDetailMeetingStatus" class="qc-interview-detail-value"></div>
-                        </div>
-                        <div class="qc-interview-detail-cell">
-                            <div class="qc-interview-detail-label">Interview status</div>
-                            <div id="psaDetailInterviewStatus" class="qc-interview-detail-value"></div>
-                        </div>
-                        <div class="qc-interview-detail-cell" style="visibility:hidden;border:0;background:transparent;padding:0;min-height:0;height:auto;"></div>
-                    </div>
-                      <div class="qc-interview-detail-row">
-                    <div class="qc-interview-detail-cell">
-                        <div class="qc-interview-detail-label">Candidate rating</div>
-                        <div id="psaDetailCandidateRating" class="qc-interview-detail-value"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+@await Html.PartialAsync("~/Views/Common/_InterviewDetailsModal.cshtml")
 
 <div id="IRFSkillModel" class="modal modal-bg" style="z-index:3">
     <div class="modal-dialog modal-lg" role="document">
@@ -624,6 +567,12 @@
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 @await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")
 
+<script>
+    window.InterviewDetailsModalConfig = {
+        fetchUrl: '@Url.Action("FetchMoreDetailsInterview", "Interview")'
+    };
+</script>
+<script src="~/js/interview-details-modal.js?v=20250609evidence"></script>
 <script src="~/js/TwilioCallMaker.js"></script>
 @if (ViewBag.Message != null)
 {
@@ -745,154 +694,6 @@
     function closeIRFSkillModel() {
         var model = document.getElementById("IRFSkillModel");
         model.style.display = "none";
-    }
-
-    var _paymentSlaDetailInterviewId = '';
-
-    function pickVmProp(obj, camel, pascal) {
-        if (!obj) return undefined;
-        if (obj[camel] !== undefined && obj[camel] !== null) return obj[camel];
-        if (obj[pascal] !== undefined && obj[pascal] !== null) return obj[pascal];
-        return undefined;
-    }
-
-    function openPaymentSlaInterviewDetailModal(interviewId) {
-        _paymentSlaDetailInterviewId = String(interviewId);
-        var modal = document.getElementById('paymentSlaInterviewDetailModal');
-        if (!modal) return;
-
-        $('#psaDetailInterviewDuration').text('Loading…');
-        $('#psaDetailDeficitDuration').text('Loading…');
-        $('#psaDetailCandidateRating').empty();
-        $('#psaDetailInterviewerJoin').empty();
-        $('#psaDetailInterviewerLateJoin').empty();
-        $('#psaDetailMeetingStatus').text('Loading…');
-        $('#psaDetailInterviewStatus').text('Loading…');
-        modal.style.display = 'block';
-
-        $.ajax({
-            type: 'GET',
-            url: '@Url.Action("FetchMoreDetailsInterview", "Interview")',
-            data: { interviewId: interviewId },
-            traditional: true,
-            success: function (rows) {
-                if (!rows || !rows.length) {
-                    $('#psaDetailInterviewDuration').text('');
-                    $('#psaDetailDeficitDuration').text('');
-                    $('#psaDetailCandidateRating').html('<span style="font-size:12px;color:#64748b;">No details found.</span>');
-                    $('#psaDetailInterviewerJoin').empty();
-                    $('#psaDetailInterviewerLateJoin').empty();
-                    $('#psaDetailMeetingStatus').text('');
-                    $('#psaDetailInterviewStatus').text('');
-                    return;
-                }
-                var row = rows[0];
-
-                var dur = pickVmProp(row, 'interviewDuration', 'InterviewDuration');
-                var deficit = pickVmProp(row, 'deficit', 'Deficit');
-                var rating = parseInt(pickVmProp(row, 'rating', 'Rating'), 10);
-                var joinedRaw = pickVmProp(row, 'joinedon', 'Joinedon');
-                var lateVal = pickVmProp(row, 'interviewerLateJoin', 'InterviewerLateJoin');
-                var late = parseInt(lateVal, 10) !== 0;
-                var video = pickVmProp(row, 'isVideoRequired', 'IsVideoRequired') === true || pickVmProp(row, 'isVideoRequired', 'IsVideoRequired') === 'true' || pickVmProp(row, 'isVideoRequired', 'IsVideoRequired') === 1;
-
-                var interviewDateStr = pickVmProp(row, 'interviewDate', 'InterviewDate');
-                var confirmation = String(pickVmProp(row, 'confirmationStatus', 'ConfirmationStatus') || '').trim();
-                var meetingDesc = String(pickVmProp(row, 'meetingStatusStatusDesc', 'MeetingStatusStatusDesc') || '');
-                var interviewStatDesc = String(pickVmProp(row, 'intervieweStatusStatDesc', 'IntervieweStatusStatDesc') || '');
-
-                var meetingStatus = '';
-                var idt = interviewDateStr ? new Date(interviewDateStr) : null;
-                if (idt && !isNaN(idt.getTime()) && idt > new Date() && confirmation.toLowerCase() !== 'cancelled') {
-                    meetingStatus = 'Scheduled';
-                } else if (meetingDesc && meetingDesc !== '0') {
-                    meetingStatus = meetingDesc;
-                }
-
-                var interviewStatus = (interviewStatDesc && interviewStatDesc !== '0') ? interviewStatDesc : '';
-
-                $('#psaDetailInterviewDuration').text((dur !== undefined && dur !== null && dur !== '') ? (dur + ' (mins)') : '');
-                $('#psaDetailDeficitDuration').text((deficit !== undefined && deficit !== null && deficit !== '') ? (deficit + ' (mins)') : '');
-
-                var elRat = document.getElementById('psaDetailCandidateRating');
-                if (elRat) {
-                    elRat.innerHTML = '';
-                    if (!isNaN(rating) && rating !== 0) {
-                        var lbl = document.createElement('label');
-                        lbl.style.cssText = 'color:#42a5f5;font-size:15px;cursor:pointer;margin:0;';
-                        lbl.textContent = rating + ' ';
-                        var span = document.createElement('span');
-                        span.style.cssText = 'color:grey;text-transform:lowercase;';
-                        span.textContent = 'out of 5';
-                        lbl.appendChild(span);
-                        lbl.addEventListener('click', function () {
-                            PaymentComplianceDetails(_paymentSlaDetailInterviewId, 'Candidate');
-                        });
-                        elRat.appendChild(lbl);
-                    } else {
-                        var na = document.createElement('span');
-                        na.style.cssText = 'font-size:15px;color:grey';
-                        na.textContent = 'NA';
-                        elRat.appendChild(na);
-                    }
-                }
-
-                var elJoin = document.getElementById('psaDetailInterviewerJoin');
-                if (elJoin) {
-                    elJoin.innerHTML = '';
-                    if (video) {
-                        var wrap = document.createElement('div');
-                        wrap.style.cssText = 'position:relative;z-index:10;width:fit-content;margin-bottom:6px;';
-                        var inner = document.createElement('div');
-                        inner.className = 'absCenter';
-                        inner.innerHTML = '<button class="infoButton" style="top:8px;left:-16px;"><div class="infoButton-btn" style="width:15px;height:15px;"><span class="infoButton-btn-text" style="position:relative;font-size:13px;width:10px;height:21px;left:-7px;top:0px;">i</span></div><div class="infoButton-container" style="bottom:calc(-100% + 35px);"><div class="infoButton-container-message" style="position:relative;top:-14px;padding:4px 7px;width:auto;"><b style="color:red">Interviewer video on</b> is mandatory by client, else 100% payment deduction</div></div></button>';
-                        wrap.appendChild(inner);
-                        elJoin.appendChild(wrap);
-                    }
-                    var joinedText = '';
-                    if (joinedRaw) {
-                        var jd = new Date(joinedRaw);
-                        joinedText = isNaN(jd.getTime()) ? String(joinedRaw) : jd.toLocaleString();
-                    }
-                    var div = document.createElement('div');
-                    div.textContent = joinedText;
-                    elJoin.appendChild(div);
-                }
-
-                var elLate = document.getElementById('psaDetailInterviewerLateJoin');
-                if (elLate) {
-                    elLate.innerHTML = '';
-                    if (late) {
-                        var y = document.createElement('span');
-                        y.style.color = 'green';
-                        y.textContent = 'Yes';
-                        elLate.appendChild(y);
-                    } else {
-                        var n = document.createElement('span');
-                        n.style.cssText = 'color:#000;font-weight:400';
-                        n.textContent = 'No';
-                        elLate.appendChild(n);
-                    }
-                }
-
-                $('#psaDetailMeetingStatus').text(meetingStatus);
-                $('#psaDetailInterviewStatus').text(interviewStatus);
-            },
-            error: function () {
-                $('#psaDetailInterviewDuration').text('');
-                $('#psaDetailDeficitDuration').text('');
-                $('#psaDetailCandidateRating').html('<span style="font-size:12px;color:#b91c1c;">Unable to load details.</span>');
-                $('#psaDetailInterviewerJoin').empty();
-                $('#psaDetailInterviewerLateJoin').empty();
-                $('#psaDetailMeetingStatus').text('');
-                $('#psaDetailInterviewStatus').text('');
-            }
-        });
-    }
-
-    function closePaymentSlaInterviewDetailModal() {
-        var m = document.getElementById('paymentSlaInterviewDetailModal');
-        if (m) m.style.display = 'none';
     }
 
     function bindSkillData(data) {

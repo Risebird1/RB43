@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.StatsDetailsVM>
+@model IEnumerable<Risebird.Entities.ViewModel.StatsDetailsVM>
 @using Risebird.CommonHelper;
 @using Risebird.Entities.Data
 @using Risebird.Entities.Enum
@@ -22,9 +22,41 @@
         border-color: transparent;
         font-weight: 500;
     }
+    .iv-evidence-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px;
+    }
+    .iv-evidence-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: #fff;
+        color: #334155;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .iv-evidence-btn:hover {
+        background: #eef2ff;
+        border-color: #c7d2fe;
+        color: #4338ca;
+        text-decoration: none;
+    }
+    .iv-evidence-btn .ti {
+        font-size: 15px;
+        line-height: 1;
+    }
 </style>
 @{
     var maskCandidateReport = ViewBag.MaskCandidate == true;
+    var showEvidenceColumn = ViewBag.ShowEvidenceColumn == true;
     //string customHeight = "none";
     //if (ViewBag.DisplayType == "popup")
     //{
@@ -58,6 +90,10 @@
                     <th>Meeting Status</th>
                     <th>Interview Status</th>
                     <th>Report</th>
+                    @if (showEvidenceColumn)
+                    {
+                        <th>Evidence</th>
+                    }
                     @*  <th>Interviewer Joining Time</th> *@
                     @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
                     {
@@ -80,6 +116,10 @@
                     <th>Meeting Status</th>
                     <th>Interview Status</th>
                     <th>Report</th>
+                    @if (showEvidenceColumn)
+                    {
+                        <th>Evidence</th>
+                    }
                     @*  <th>Interviewer Joining Time</th> *@
                     @if (ViewBag.ClientEmailId == null && ViewBag.UsePl != "Public")
                     {
@@ -152,6 +192,15 @@
                                 }
 
                             </td>
+                            @if (showEvidenceColumn)
+                            {
+                                <td>
+                                    @if (item.interviewId.HasValue && item.interviewId.Value > 0)
+                                    {
+                                        @await Html.PartialAsync("~/Views/Interviewer/_StatsDetailsEvidenceActions.cshtml", item)
+                                    }
+                                </td>
+                            }
                             @*  <td>
                                 @(item.InterviewerJoinTime.HasValue ? item.InterviewerJoinTime.Value.ToString() : "NA")
                             </td> *@

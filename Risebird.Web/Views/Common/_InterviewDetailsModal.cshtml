@@ -1,0 +1,89 @@
+@* Reusable Interview Details modal (extracted from Payment SLA page). *@
+<style>
+    #paymentSlaInterviewDetailModal .modal-dialog { max-width: 920px; }
+    #paymentSlaInterviewDetailModal .qc-interview-detail-body { padding: 4px 0 8px; }
+    #paymentSlaInterviewDetailModal .qc-interview-detail-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    #paymentSlaInterviewDetailModal .qc-interview-detail-cell {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        background: #fff;
+        min-height: 72px;
+    }
+    #paymentSlaInterviewDetailModal .qc-interview-detail-cell--multiline { min-height: 88px; }
+    #paymentSlaInterviewDetailModal .qc-interview-detail-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 6px;
+    }
+    #paymentSlaInterviewDetailModal .qc-interview-detail-value {
+        font-size: 14px;
+        color: #0f172a;
+        word-break: break-word;
+    }
+</style>
+<div id="paymentSlaInterviewDetailModal" class="modal modal-bg" style="z-index:1033">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><i style="font-size:22px; color:#fff;position:relative;top:10px;" class="fas fa-info-circle" aria-hidden="true"></i></span>
+                </div>
+                <h5 class="modal-title pull-left">Interview details</h5>
+            </div>
+            <button type="button" class="close" aria-label="Close">
+                <span onclick="closePaymentSlaInterviewDetailModal()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="qc-interview-detail-body">
+                    <div class="qc-interview-detail-row">
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Interview duration</div>
+                            <div id="psaDetailInterviewDuration" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Deficit duration</div>
+                            <div id="psaDetailDeficitDuration" class="qc-interview-detail-value"></div>
+                        </div>
+                    </div>
+                    <div class="qc-interview-detail-row">
+                        <div class="qc-interview-detail-cell qc-interview-detail-cell--multiline">
+                            <div class="qc-interview-detail-label">Interviewer join</div>
+                            <div id="psaDetailInterviewerJoin" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Interviewer late join</div>
+                            <div id="psaDetailInterviewerLateJoin" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell" style="visibility:hidden;border:0;background:transparent;padding:0;min-height:0;height:auto;"></div>
+                    </div>
+                    <div class="qc-interview-detail-row">
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Meeting status</div>
+                            <div id="psaDetailMeetingStatus" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Interview status</div>
+                            <div id="psaDetailInterviewStatus" class="qc-interview-detail-value"></div>
+                        </div>
+                        <div class="qc-interview-detail-cell" style="visibility:hidden;border:0;background:transparent;padding:0;min-height:0;height:auto;"></div>
+                    </div>
+                    <div class="qc-interview-detail-row">
+                        <div class="qc-interview-detail-cell">
+                            <div class="qc-interview-detail-label">Candidate rating</div>
+                            <div id="psaDetailCandidateRating" class="qc-interview-detail-value"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

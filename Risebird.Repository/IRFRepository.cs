@@ -791,6 +791,7 @@ namespace Risebird.Repository
                                     Surcharge = !string.IsNullOrEmpty(dt.Rows[i]["Surcharge"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Surcharge"]) : 0,
                                     PrimarySkill = !string.IsNullOrEmpty(dt.Rows[i]["PrimarySkill"].ToString()) ? dt.Rows[i]["PrimarySkill"].ToString() : null,
                                     EmailId = !string.IsNullOrEmpty(dt.Rows[i]["EmailId"].ToString()) ? dt.Rows[i]["EmailId"].ToString() : null,
+                                    MobileNumber = dt.Columns.Contains("MobileNumber") && !string.IsNullOrEmpty(dt.Rows[i]["MobileNumber"].ToString()) ? dt.Rows[i]["MobileNumber"].ToString() : null,
                                     NickName = !string.IsNullOrEmpty(dt.Rows[i]["NickName"].ToString()) ? dt.Rows[i]["NickName"].ToString() : null,
                                     ResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["ResumeLink"].ToString()) ? dt.Rows[i]["ResumeLink"].ToString() : null,
                                     CodedResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["CodedResumeLink"].ToString()) ? dt.Rows[i]["CodedResumeLink"].ToString() : null,
