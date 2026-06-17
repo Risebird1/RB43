@@ -186,6 +186,9 @@ namespace Risebird.Web.Controllers
                         record.AvailabilityIntent,
                         record.MailBodyIntent,
                         record.ConcernsOrNotInterested,
+                        record.Intent,
+                        record.IntentSource,
+                        intentConfirmedAt = record.IntentConfirmedAt?.ToString("dd MMM yyyy, HH:mm"),
                         record.ResumeFitment,
                         record.ResumeLink,
                         record.HasAttachment,
@@ -1085,6 +1088,18 @@ namespace Risebird.Web.Controllers
                 await _repository.InsertHistoryAsync(recordId.Value, "PlivoCallCompleted", "—",
                     historyDetail, "PlivoCX Webhook");
 
+                // Unified Intent — the call disposition feeds the same single Intent as an
+                // email reply. no_answer / unknown leaves any existing intent untouched.
+                string callIntent = MapCallDispositionToIntent(payload.Intent);
+                if (!string.IsNullOrEmpty(callIntent))
+                {
+                    await _repository.SetUnifiedIntentAsync(recordId.Value, callIntent, "Call", DateTime.UtcNow);
+                    await _repository.InsertHistoryAsync(recordId.Value, "IntentSet", "—",
+                        $"Unified Intent set to '{callIntent}' (source: Call)", "PlivoCX Webhook");
+                    await SaveIaCp("ia_hangup_intent_set",
+                        $"Unified intent '{callIntent}' set for record #{recordId} from call", callLogId: recordId);
+                }
+
                 await SaveIaCp("ia_hangup_complete",
                     $"Processing finished for record #{recordId}. parseMethod={parseMethod}",
                     callLogId: recordId);
@@ -1783,6 +1798,59 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ── Unified availability intent ────────────────────────────────────────────
+        // Both the email reply and the Plivo voice-agent call feed ONE canonical Intent
+        // so the dashboard never shows a blank intent for call-driven records.
+        // Canonical values: "Available" | "NotAvailable" | "Unsubscribe".
+
+        // Maps a Plivo call disposition to the canonical intent.
+        // Returns null for no_answer / unknown so a previously-set intent is not overwritten.
+        private static string MapCallDispositionToIntent(string disposition)
+        {
+            switch ((disposition ?? "").Trim().ToLowerInvariant())
+            {
+                case "available":
+                case "interested":
+                case "yes":
+                case "confirmed":
+                case "willing":
+                    return "Available";
+                case "not_available":
+                case "notavailable":
+                case "not_interested":
+                case "no":
+                case "declined":
+                    return "NotAvailable";
+                case "unsubscribe":
+                    return "Unsubscribe";
+                default:
+                    return null;
+            }
+        }
+
+        // Maps the email-extracted availability fields to the canonical intent.
+        // Returns null when the signal is ambiguous (so we don't assert an intent we can't infer).
+        private static string MapEmailToIntent(string availabilityIntent, string mailBodyIntent, string concernsOrNotInterested)
+        {
+            var combined = $"{availabilityIntent} {mailBodyIntent} {concernsOrNotInterested}".ToLowerInvariant();
+            if (combined.Contains("unsubscribe"))
+                return "Unsubscribe";
+
+            if (IsFavorableAvailabilityIntent(availabilityIntent, mailBodyIntent, concernsOrNotInterested))
+                return "Available";
+
+            var concern = (concernsOrNotInterested ?? "").Trim().ToLowerInvariant();
+            bool hasBlockingConcern = !string.IsNullOrEmpty(concern)
+                && concern != "none" && concern != "no" && concern != "n/a" && concern != "na" && concern != "nil";
+
+            var text = $"{availabilityIntent} {mailBodyIntent}".ToLowerInvariant();
+            var negativeKeywords = new[] { "not available", "unavailable", "not interested", "declined", "decline" };
+            if (hasBlockingConcern || negativeKeywords.Any(k => text.Contains(k)))
+                return "NotAvailable";
+
+            return null;
+        }
+
         private async Task SaveIaCp(
             string name, string msg, string convId = null, int? callLogId = null, string extra = null)
         {
@@ -1944,6 +2012,19 @@ namespace Risebird.Web.Controllers
 
                 if (newId > 0)
                     await _repository.InsertHistoryAsync(newId, "RecordCreated", null, "Open", "Relay.app");
+
+                // Unified Intent — the email reply feeds the same single Intent as the Plivo call.
+                if (newId > 0)
+                {
+                    string emailIntent = MapEmailToIntent(
+                        payload.AvailabilityIntent, payload.MailBodyIntent, payload.ConcernsOrNotInterested);
+                    if (!string.IsNullOrEmpty(emailIntent))
+                    {
+                        await _repository.SetUnifiedIntentAsync(newId, emailIntent, "Email", record.ReceivedAt);
+                        await _repository.InsertHistoryAsync(newId, "IntentSet", "—",
+                            $"Unified Intent set to '{emailIntent}' (source: Email)", "Relay.app");
+                    }
+                }
 
                 // Auto-close if the Relay-extracted availability intent is favorable
                 if (newId > 0 && IsFavorableAvailabilityIntent(
