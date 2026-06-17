@@ -112,7 +112,7 @@ namespace Risebird.Web.Helpers
         {
             if (model == null) return;
             model.InterviewerCollection = model.InterviewerCollection?
-                .Where(iv => iv != null && iv.IsActive)
+                .Where(iv => iv != null)
                 .Select(StripInterviewerForSmeView)
                 .ToList() ?? new List<TransInterviewer>();
         }

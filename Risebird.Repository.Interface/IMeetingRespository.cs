@@ -191,7 +191,7 @@ namespace Risebird.Repository.Interface
         Task<List<InvoiceListVM>> GetPaidInvoiceList(int fromYear = 0, int fromMonth = 0, int toYear = 0, int toMonth = 0);
         Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
-            string latestRemark = null, string utrTrxn = null); // utrTrxn = cashTransactionRef from payment
+            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null);
         Task UpdateInvoiceLineItem(int lineItemId, decimal unitRate, decimal lineTotal);
         Task<string> GetNextInvoiceNumber(int month, int year);
         Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model);

@@ -101,6 +101,8 @@
         if (tone == "available") return "Available";
         return "Inactive";
     }
+    DmIvInactiveReasonResult DmV4InactiveReasonBadge(TransInterviewer iv, bool channelLocked) =>
+        !iv.IsActive ? DmIvInactiveReasonHelper.Resolve(iv, channelLocked) : null;
     /// <summary>True when TransInterviewer.InterviewCapacity is set (explicit per-row override).</summary>
     bool DmV4CapExplicit(TransInterviewer iv) =>
         iv?.InterviewCapacity != null;
@@ -174,7 +176,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20250609smehide" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20250609ratecap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -1121,7 +1123,7 @@
                                                 bool canEditIvOps = canEditDmIvOps || isSmeView;
                                                 bool canUploadIvResume = (canEditDmIvOps && DmV4CanUploadIvResume(dmProfileName)) || isSmeView;
                                                 bool canEditSurcharge = !isPanelCompactView && (ViewBag.profileName == "Admin" || ViewBag.profileName == "SupportAdmin");
-                                                if (isClientShareView || isPanelCompactView)
+                                                if (isClientShareView)
                                                 {
                                                     ivList = ivList.Where(x => x.IsActive).ToList();
                                                     ivCount = ivList.Count;
@@ -1254,7 +1256,7 @@
                                             <div class="dm-v4-pinned-body" id="hidden_fields_eight">
                                                 @Html.HiddenFor(m => m.id)
                                                 <div class="dm-v4-iv-panel" id="dmV4IvPanel" data-lock="@(isClientShareView ? "0" : (dmIvLockNew ? "1" : "0"))" data-cap-enforced="@(isClientShareView ? "0" : (dmCapEnforced ? "1" : "0"))" data-can-edit="@(isClientShareView ? "0" : (canEditIvOps ? "1" : "0"))" data-can-edit-client-vet="@(canToggleClientVet ? "1" : "0")" data-can-upload-resume="@(isClientShareView ? "0" : (canUploadIvResume ? "1" : "0"))" data-can-edit-surcharge="@(isClientShareView ? "0" : (canEditSurcharge ? "1" : "0"))" data-client-share="@(isClientShareView ? "1" : "0")" data-sme-view="@(isSmeView ? "1" : "0")" data-iv-tab="active">
-                                                    @if (ivCount > 0 && !isPanelCompactView && !isClientShareView)
+                                                    @if (ivCount > 0 && !isClientShareView)
                                                     {
                                                         <div class="dm-v4-iv-tabs" id="dmV4IvTabs" role="tablist" aria-label="Interviewer status">
                                                             <button type="button" class="dm-v4-iv-tab is-on" data-tab="active" role="tab" aria-selected="true" aria-controls="dmV4IvPanel">
@@ -1353,6 +1355,7 @@
                                                             var ivSelectedCount = iv.TotalSelected;
                                                             var ivRejectedCount = iv.TotalRejected;
                                                             var ivStatsInterviewerId = isPanelCompactView ? (iv.NickName ?? "") : (iv.EmailId ?? "");
+                                                            var ivInactiveReason = DmV4InactiveReasonBadge(iv, dmIvLockNew);
                                                             if (isClientShareView)
                                                             {
                                                             <div class="dm-v4-iv-grid dm-v4-iv-row dm-v4-iv-grid--client-minimal"
@@ -1410,6 +1413,7 @@
                                                                  else { <text>data-email="@iv.EmailId" data-rb-vet="@(rbVetStoredOn ? "1" : "0")" data-rate="@iv.PerSuccessRate" data-video-link="@iv.VideoLink" data-kyc-approved="@(kycOk ? "1" : "0")" data-kyc-review-url="@kycReviewUrl" data-resume-link="@(iv.ResumeLink ?? "")"</text> }
                                                                  data-client-vet="@(clientVetStoredOn ? "1" : "0")"
                                                                  data-is-active="@(iv.IsActive ? "1" : "0")" data-is-available="@(iv.IsAvailable ? "1" : "0")" data-client-action="@(iv.ClientAction ?? "")"
+                                                                 data-ever-activated="@(DmIvInactiveReasonHelper.WasEverActivatedOnChannel(iv) ? "1" : "0")"
                                                                  data-capacity="@(ivCapExplicit ? iv.InterviewCapacity.ToString() : "")" data-cap-configured="@(ivCapExplicit ? "1" : "0")" data-cap-effective="@(ivCapShowUnlimited ? "" : ivCapVal.ToString())" data-cap-from-default="@(ivCapUsesDefault ? "1" : "0")" data-assigned="@ivAssigned" data-future-assigned="@ivFutureAssignedCount"
                                                                  data-interviewer-profile-id="@iv.InterviewerId"
                                                                  data-ai-verdict="@(iv.AIVerdict ?? "")" data-ai-score="@iv.AIScreeningScore"
@@ -1474,6 +1478,12 @@
                                                                     @if (dmIvLockNew && !isPanelCompactView)
                                                                     {
                                                                         <span class="dm-v4-iv-status dm-v4-iv-status--@ivStatusTone" data-role="iv-status" title="Derived from RB Vet and Client Vet">@ivStatusLabel</span>
+                                                                    }
+                                                                    @if (ivInactiveReason != null)
+                                                                    {
+                                                                        <span class="dm-v4-iv-inactive-reason dm-v4-iv-inactive-reason--@ivInactiveReason.Tone"
+                                                                              data-inactive-reason="@ivInactiveReason.Category"
+                                                                              title="@ivInactiveReason.Label">@ivInactiveReason.Label</span>
                                                                     }
                                                                     @if (!isPanelCompactView)
                                                                     {
@@ -1663,19 +1673,9 @@
                                                                 @if (!isPanelCompactView)
                                                                 {
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--rate">
-                                                                    @if (canEditIvOps)
-                                                                    {
-                                                                        <button type="button" class="dm-v4-money-pill v4-money-pill dm-v4-rate-pill" data-value="@iv.PerSuccessRate" title="Per-interview rate (INR)">
-                                                                            <span class="dm-v4-money-unit">₹</span><span class="dm-v4-money-val">@ivRateDisplay</span>
-                                                                            @Html.Raw(dmV4MoneyEditIcon)
-                                                                        </button>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <span class="dm-v4-money-pill dm-v4-money-pill--readonly">
-                                                                            <span class="dm-v4-money-unit">₹</span><span class="dm-v4-money-val">@ivRateDisplay</span>
-                                                                        </span>
-                                                                    }
+                                                                    <span class="dm-v4-money-pill dm-v4-money-pill--readonly dm-v4-rate-readonly" title="Per-interview rate (INR) — read only">
+                                                                        <span class="dm-v4-money-unit">₹</span><span class="dm-v4-money-val">@ivRateDisplay</span>
+                                                                    </span>
                                                                     <div class="dm-v4-iv-cap-hint">per iv</div>
                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].PerSuccessRate)
                                                                 </div>
@@ -1683,7 +1683,7 @@
                                                                     @if (canEditSurcharge)
                                                                     {
                                                                         var surchargeDisplay = iv.Surcharge > 0 ? iv.Surcharge.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("en-IN")) : "0";
-                                                                        <button type="button" class="dm-v4-money-pill v4-money-pill dm-v4-surcharge-pill" data-value="@iv.Surcharge" data-user-id="@iv.UserId" data-irf-id="@Model.id" title="Surcharge amount in INR (max ₹@iv.PerSuccessRate)">
+                                                                        <button type="button" class="dm-v4-money-pill v4-money-pill dm-v4-surcharge-pill" data-value="@iv.Surcharge" data-user-id="@iv.UserId" data-irf-id="@Model.id" title="Surcharge amount in INR (max ₹500)">
                                                                             <span class="dm-v4-money-unit">₹</span><span class="dm-v4-money-val">@surchargeDisplay</span>
                                                                             @Html.Raw(dmV4MoneyEditIcon)
                                                                         </button>
@@ -3552,7 +3552,7 @@ else
 </style>
 <script src="~/js/dm-v4-voice.js?v=20250609voiceloader"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-layout.js?v=20250609inactivevet"></script>
+<script src="~/js/dm-v4-layout.js?v=20250609ratecap"></script>
 <script src="~/js/dm-v4-questions.js?v=20240609a"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>

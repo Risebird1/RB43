@@ -12655,15 +12655,17 @@ namespace Risebird.Web.Controllers
                 {
                     return Json(new { success = false, message = "Forbidden" });
                 }
-                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                var rate = Math.Max(0, perSuccessRate);
-                var ok = await _irfService.UpdateTransInterviewerPerSuccessRate(transInterviewerId, rate, emailid);
-                return Json(new { success = ok, perSuccessRate = rate });
+
+                return Json(new
+                {
+                    success = false,
+                    message = "Per-interview rate cannot be changed from DM Approval."
+                });
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false });
+                return Json(new { success = false, message = "Per-interview rate cannot be changed from DM Approval." });
             }
         }
 
@@ -12721,7 +12723,7 @@ namespace Risebird.Web.Controllers
                             return Json(new { success = false, message = "Interviewer not found on this channel." });
                         }
 
-                        if (!DmIvSurchargeHelper.TryValidate(surcharge, ti.PerSuccessRate, out var validationError))
+                        if (!DmIvSurchargeHelper.TryValidate(surcharge, out var validationError))
                         {
                             return Json(new { success = false, message = validationError });
                         }

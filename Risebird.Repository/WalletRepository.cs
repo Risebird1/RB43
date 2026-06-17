@@ -74,22 +74,23 @@ namespace Risebird.Repository
             }
             return 0;
         }
-        public async Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, DateTime? CreatedOn, int? billingOwnerId = null, string transactionRefNumber = null, string invoicePDF = null, DateTime? transactionDate = null, string transactionType = "Manual", int? clientPOId = null)
+        public async Task<bool> AddClientWalletBalance(int billingType, int clientId, int CreditAmount, string loginedUser, DateTime? CreatedOn, int? billingOwnerId = null, string transactionRefNumber = null, string invoicePDF = null, DateTime? transactionDate = null, string transactionType = "Manual", int? clientPOId = null, int? invoiceId = null)
         {
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@ClientId", clientId);
-                parameters.Add("@BillingType", billingType);
-                parameters.Add("@BillingOwnerId", billingOwnerId);
-                parameters.Add("@CreatedBy", loginedUser);
-                parameters.Add("@TransactionType", transactionType);
-                parameters.Add("@Credit", CreditAmount);
-                parameters.Add("@CreatedOn", DateTime.Now);
-                parameters.Add("@TransactionDate", transactionDate);
-                parameters.Add("@TransactionRefNumber", transactionRefNumber);
-                parameters.Add("@InvoicePDF", invoicePDF);
-                parameters.Add("@ClientPOId", clientPOId);
+                parameters.Add("@ClientId",            clientId);
+                parameters.Add("@BillingType",         billingType);
+                parameters.Add("@BillingOwnerId",      billingOwnerId);
+                parameters.Add("@CreatedBy",           loginedUser);
+                parameters.Add("@TransactionType",     transactionType);
+                parameters.Add("@Credit",              CreditAmount);
+                parameters.Add("@CreatedOn",           DateTime.Now);
+                parameters.Add("@TransactionDate",     transactionDate);
+                parameters.Add("@TransactionRefNumber",transactionRefNumber);
+                parameters.Add("@InvoicePDF",          invoicePDF);
+                parameters.Add("@ClientPOId",          clientPOId);
+                parameters.Add("@InvoiceId",           invoiceId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddCreditWalletDetails", parameters,

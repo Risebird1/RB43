@@ -1251,10 +1251,58 @@
         }
         if (typeof opts.active !== 'undefined') {
             $row.attr('data-is-active', opts.active ? '1' : '0');
+            if (opts.active) {
+                $row.attr('data-ever-activated', '1');
+            }
         }
         if (typeof opts.available !== 'undefined') {
             $row.attr('data-is-available', opts.available ? '1' : '0');
         }
+    }
+
+    function readRowEverActivated($row) {
+        return ($row.attr('data-ever-activated') || '0') === '1';
+    }
+
+    function inferInactiveReasonFromRow($row) {
+        if (readRowDbActive($row)) return null;
+        var channelLocked = isPolicyLockOn(getPolicyBar());
+        var available = ($row.attr('data-is-available') || '0') === '1';
+        var action = ($row.attr('data-client-action') || '').toLowerCase();
+        var rejected = action === 'rejected';
+        var rbStored = $row.attr('data-rb-vet');
+        var rbVetYes = rbStored === '1';
+        var rbVetExplicitNo = rbStored === '0';
+        var everActivated = readRowEverActivated($row);
+
+        if (!everActivated && channelLocked && available && !rejected && !rbVetYes && rbStored !== '0') {
+            return { label: 'Pending RB Review', tone: 'info' };
+        }
+        if (!everActivated && channelLocked && available && !rejected && !rbVetYes) {
+            return { label: 'Pending RB Review', tone: 'info' };
+        }
+        if (everActivated && rejected && rbVetYes) {
+            return { label: 'Removed by Client', tone: 'warning' };
+        }
+        if (everActivated && (rbVetExplicitNo || (rejected && !rbVetYes))) {
+            return { label: 'Removed by RB', tone: 'warning' };
+        }
+        return { label: 'Inactive — reason unknown', tone: 'unknown' };
+    }
+
+    function syncInactiveReasonBadge($row) {
+        var $badge = $row.find('.dm-v4-iv-inactive-reason');
+        if (!$badge.length) return;
+        var reason = inferInactiveReasonFromRow($row);
+        if (!reason) {
+            $badge.text('').attr('title', '');
+            return;
+        }
+        $badge
+            .removeClass('dm-v4-iv-inactive-reason--info dm-v4-iv-inactive-reason--warning dm-v4-iv-inactive-reason--unknown')
+            .addClass('dm-v4-iv-inactive-reason--' + reason.tone)
+            .text(reason.label)
+            .attr('title', reason.label);
     }
 
     function syncVetButtons($row) {
@@ -1273,6 +1321,7 @@
                     ? 'Awaiting Risebird review'
                     : (clientOn ? 'Approved for your panel' : 'Awaiting your approval')
             );
+            syncInactiveReasonBadge($row);
             return;
         }
         var rbOn = readRbVetFromRow($row);
@@ -1313,6 +1362,7 @@
             $row.find('.dm-v4-iv-vet-sub--client').text(clientOn ? 'Signed off by client' : 'Awaiting client sign-off');
         }
         updateIvRowStatus($row);
+        syncInactiveReasonBadge($row);
     }
 
     function getRubricSkillNames() {
@@ -2607,6 +2657,7 @@
     }
 
     /* Reference dm-shared.jsx I.edit / I.plus */
+    var DM_V4_SURCHARGE_MAX = 500;
     var DM_V4_EDIT_ICON = '<span class="dm-v4-money-edit-icon" aria-hidden="true">' +
         '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" width="9" height="9">' +
         '<path d="M3 13l.7-3 6.6-6.6a1 1 0 011.4 0l1 1a1 1 0 010 1.4L6.1 12.3 3 13z" stroke-linejoin="round"/></svg></span>';
@@ -2631,21 +2682,30 @@
         return String(v);
     }
 
-    function getSurchargeMax($row) {
-        return Math.max(0, parseInt($row.data('rate'), 10) || 0);
+    function getSurchargeMax() {
+        return DM_V4_SURCHARGE_MAX;
     }
 
-    function validateSurchargeAmount(surcharge, maxRate) {
+    function validateSurchargeAmount(surcharge) {
         if (surcharge < 0) {
             return 'Surcharge cannot be negative.';
         }
-        if (maxRate <= 0 && surcharge > 0) {
-            return 'Set a per-interview rate before applying a surcharge.';
-        }
-        if (surcharge > maxRate) {
-            return 'Surcharge cannot exceed 100% of the interview cost (max ₹' + maxRate.toLocaleString('en-IN') + ').';
+        if (surcharge > DM_V4_SURCHARGE_MAX) {
+            return 'Maximum surcharge is ₹500';
         }
         return null;
+    }
+
+    function clearSurchargeInlineError($row) {
+        $row.find('.dm-v4-iv-cell--surcharge .dm-v4-surcharge-error').remove();
+    }
+
+    function showSurchargeInlineError($row, message) {
+        var $cell = $row.find('.dm-v4-iv-cell--surcharge');
+        clearSurchargeInlineError($row);
+        $('<p class="dm-v4-surcharge-error" role="alert"></p>')
+            .text(message || 'Maximum surcharge is ₹500')
+            .appendTo($cell);
     }
 
     function buildMoneyPillHtml(value, kind, attrs) {
@@ -2658,7 +2718,7 @@
             : '<span class="dm-v4-money-val">' + display + '</span><span class="dm-v4-money-unit">%</span>';
         var title = kind === 'rate'
             ? 'Per-interview rate (INR)'
-            : 'Surcharge amount in INR (max = base interview rate)';
+            : 'Surcharge amount in INR (max ₹500)';
         var data = ' data-value="' + v + '"';
         if (attrs.userId != null) data += ' data-user-id="' + attrs.userId + '"';
         if (attrs.irfId != null) data += ' data-irf-id="' + attrs.irfId + '"';
@@ -2670,10 +2730,12 @@
      */
     function startMoneyPillEdit($pill) {
         if (!$pill.length || $pill.data('dm-v4-editing')) return;
+        if ($pill.hasClass('dm-v4-rate-pill')) return;
         $pill.data('dm-v4-editing', true);
 
-        var kind = $pill.hasClass('dm-v4-rate-pill') ? 'rate' : 'surcharge';
+        var kind = 'surcharge';
         var $row = $pill.closest('.dm-v4-iv-row');
+        clearSurchargeInlineError($row);
         var orig = parseInt($pill.attr('data-value'), 10);
         if (isNaN(orig)) orig = 0;
         var meta = {
@@ -2681,13 +2743,7 @@
             irfId: $pill.data('irfId') || $pill.data('irf-id')
         };
 
-        var $input = $('<input type="number" class="dm-v4-inline-edit-input" min="0" />').val(orig);
-        if (kind === 'surcharge') {
-            var maxSurcharge = getSurchargeMax($row);
-            if (maxSurcharge > 0) {
-                $input.attr('max', maxSurcharge);
-            }
-        }
+        var $input = $('<input type="number" class="dm-v4-inline-edit-input" min="0" max="' + DM_V4_SURCHARGE_MAX + '" />').val(orig);
 
         $pill.replaceWith($input);
         $input.focus().select();
@@ -2697,32 +2753,23 @@
             if (finished) return;
             finished = true;
             var n = doCommit ? Math.max(0, parseInt($input.val(), 10) || 0) : orig;
-            if (kind === 'surcharge' && doCommit) {
-                var maxRate = getSurchargeMax($row);
-                var validationError = validateSurchargeAmount(n, maxRate);
+            if (doCommit) {
+                var validationError = validateSurchargeAmount(n);
                 if (validationError) {
-                    if (typeof swal !== 'undefined') {
-                        swal.fire('Invalid surcharge', validationError, 'error');
-                    } else {
-                        alert(validationError);
-                    }
+                    showSurchargeInlineError($row, validationError);
                     doCommit = false;
                     n = orig;
+                } else {
+                    clearSurchargeInlineError($row);
                 }
             }
-            var attrs = kind === 'surcharge' ? { userId: meta.userId, irfId: meta.irfId } : {};
+            var attrs = { userId: meta.userId, irfId: meta.irfId };
             $input.replaceWith(buildMoneyPillHtml(n, kind, attrs));
 
             if (!doCommit) return;
 
-            if (kind === 'rate') {
-                $row.attr('data-rate', n);
-                $row.find('input[name*="PerSuccessRate"]').val(n);
-                saveRate($row, n);
-            } else {
-                $row.find('input[name*="Surcharge"]').val(n);
-                saveSurcharge($row, n);
-            }
+            $row.find('input[name*="Surcharge"]').val(n);
+            saveSurcharge($row, n);
         };
 
         $input.on('blur.dmV4MoneyEdit', function () {
@@ -2970,31 +3017,11 @@
         });
     }
 
-    function saveRate($row, rate) {
-        $.post('/IRF/UpdateInterviewerPerSuccessRate', {
-            transInterviewerId: parseInt($row.data('trans-id'), 10),
-            perSuccessRate: rate
-        }, function (res) {
-            if (res && res.success) {
-                $row.attr('data-rate', res.perSuccessRate);
-                var $pill = $row.find('.dm-v4-rate-pill');
-                if ($pill.length) {
-                    $pill.attr('data-value', res.perSuccessRate);
-                    $pill.find('.dm-v4-money-val').text(moneyDisplayValue(res.perSuccessRate, 'rate'));
-                }
-                var $surchargePill = $row.find('.dm-v4-surcharge-pill');
-                if ($surchargePill.length) {
-                    $surchargePill.attr('title', 'Surcharge amount in INR (max ₹' + moneyDisplayValue(res.perSuccessRate, 'rate') + ')');
-                }
-                updateSurchargeExtra($row);
-            }
-        });
-    }
-
     function saveSurcharge($row, surcharge) {
         var $pill = $row.find('.dm-v4-surcharge-pill');
         var userId = $pill.data('userId') || $pill.data('user-id') || $row.data('user-id');
         var irfId = $pill.data('irfId') || $pill.data('irf-id') || $row.data('irf-id');
+        clearSurchargeInlineError($row);
         $.post('/IRF/SaveSurcharge', {
             userId: userId,
             surcharge: surcharge,
@@ -3003,13 +3030,10 @@
             var ok = res && (res.success === true || res.success === 'true');
             if (!ok) {
                 var msg = (res && res.message) ? res.message : 'Failed to save surcharge.';
-                if (typeof swal !== 'undefined') {
-                    swal.fire('Surcharge not saved', msg, 'error');
-                } else {
-                    alert(msg);
-                }
+                showSurchargeInlineError($row, msg);
                 return;
             }
+            clearSurchargeInlineError($row);
             var saved = res.surcharge != null ? res.surcharge : surcharge;
             $pill = $row.find('.dm-v4-surcharge-pill');
             if ($pill.length) {
@@ -3074,10 +3098,8 @@
             if ($surchargePill.length && !$surchargePill.find('.dm-v4-money-edit-icon').length) {
                 $surchargePill.append(DM_V4_EDIT_ICON);
             }
-            var $rateBtn = $row.find('.dm-v4-rate-pill');
-            if ($rateBtn.length && !$rateBtn.find('.dm-v4-money-edit-icon').length) {
-                var rv = parseInt($rateBtn.data('value'), 10) || 0;
-                $rateBtn.replaceWith(buildMoneyPillHtml(rv, 'rate', {}));
+            if ($surchargePill.length) {
+                $surchargePill.attr('title', 'Surcharge amount in INR (max ₹500)');
             }
             var $capPill = $row.find('.dm-v4-cap-pill');
             if ($capPill.length && !$capPill.find('.dm-v4-money-edit-icon').length) {
@@ -3547,14 +3569,7 @@
             startCapInlineEdit($(this).closest('.dm-v4-iv-row'), orig);
         });
 
-        /* Rate & surcharge — reference V4MoneyPill: whole pill click opens inline edit */
-        $(document).off('click.dmV4MoneyPill', '#dmV4IvPanel .dm-v4-rate-pill').on('click.dmV4MoneyPill', '#dmV4IvPanel .dm-v4-rate-pill', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (!getIvCanEdit()) return;
-            startMoneyPillEdit($(this));
-        });
-
+        /* Surcharge — inline edit on pill click (Per-IV rate is read-only on DM Approval) */
         $(document).off('click.dmV4SurchargePill', '#dmV4IvPanel .dm-v4-surcharge-pill').on('click.dmV4SurchargePill', '#dmV4IvPanel .dm-v4-surcharge-pill', function (e) {
             e.preventDefault();
             e.stopPropagation();

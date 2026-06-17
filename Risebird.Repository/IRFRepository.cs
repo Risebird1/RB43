@@ -816,6 +816,8 @@ namespace Risebird.Repository
                                         ? Convert.ToInt32(dt.Rows[i]["InterviewCapacity"]) : (int?)null,
                                     ModifiedAt = dt.Columns.Contains("ModifiedAt") && !string.IsNullOrEmpty(dt.Rows[i]["ModifiedAt"].ToString())
                                         ? Convert.ToDateTime(dt.Rows[i]["ModifiedAt"]) : (DateTime?)null,
+                                    ActivatedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "ActivatedAt"),
+                                    AddedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "AddedAt"),
                                     LastLoginAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "LastLogin"),
                                     LastInterviewConductedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "LastInterviewConductedAt"),
 
