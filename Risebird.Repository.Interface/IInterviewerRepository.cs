@@ -145,7 +145,7 @@ namespace Risebird.Repository.Interface
         Task<InterviewerDirectApplicationVM> InsertApplicantsRenewed(InterviewerDirectApplicationVM obj);
         Task<bool> SaveApplicantErrorMessage(int id, string errorMessage);
 
-        Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer);
+        Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer, string inactivationType = null);
         Task<bool> ReactivateInterviewer(int userId, string reactivatedBy);
         Task<bool> SaveExternalApplicantResume(int id, string resumeLink = null);
 
