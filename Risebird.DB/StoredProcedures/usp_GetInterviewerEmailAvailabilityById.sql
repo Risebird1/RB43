@@ -14,6 +14,7 @@ BEGIN
         ea.JobTitle, ea.InterviewerName, ea.Phone, ea.MagName, ea.IRFReference,
         ea.HasLoginCredentials, ea.SlotsPerDay, ea.TimeFrame,
         ea.AvailabilityIntent, ea.MailBodyIntent, ea.ConcernsOrNotInterested,
+        ea.Intent, ea.IntentSource, ea.IntentConfirmedAt,
         ea.ResumeFitment, ea.ResumeLink, ea.HasAttachment,
         ea.Status,
         ea.EmploymentVerified, ea.ResumeAIAnalysisCompleted, ea.ResumeAIAnalysisResult,

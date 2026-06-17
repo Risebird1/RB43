@@ -15,6 +15,7 @@ CREATE PROCEDURE [dbo].[usp_GetNaukriFunnelStageCounts]
     @Disposition        VARCHAR(50)  = NULL,
     @FunnelStage        VARCHAR(50)  = NULL,
     @FunnelMode         VARCHAR(10)  = 'at',   -- at | reached | not  (how @FunnelStage is matched)
+    @OnboardingType     VARCHAR(50)  = NULL,   -- SelfOnboarded | IntentAutoProcessed | ManuallyOnboarded | _none_
     @DateFrom           DATETIME     = NULL,
     @DateTo             DATETIME     = NULL
 AS
@@ -47,6 +48,11 @@ BEGIN
                     AND dbo.fn_NaukriFunnelStageRank(np.FunnelStage) >= dbo.fn_NaukriFunnelStageRank(@FunnelStage))
             OR (@FunnelMode = 'not'
                     AND dbo.fn_NaukriFunnelStageRank(np.FunnelStage) <  dbo.fn_NaukriFunnelStageRank(@FunnelStage))
+        )
+        AND (
+            @OnboardingType IS NULL
+            OR (@OnboardingType = '_none_' AND ISNULL(np.OnboardingType, '') = '')
+            OR np.OnboardingType = @OnboardingType
         )
         AND (@DateFrom IS NULL OR np.ReceivedAt >= @DateFrom)
         AND (@DateTo IS NULL OR np.ReceivedAt < DATEADD(DAY, 1, @DateTo))

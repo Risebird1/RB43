@@ -23,6 +23,11 @@ namespace Risebird.Entities.ViewModel
         public string   AvailabilityIntent          { get; set; }
         public string   MailBodyIntent              { get; set; }
         public string   ConcernsOrNotInterested     { get; set; }
+        // Unified availability intent — fed by BOTH the email reply and the Plivo
+        // voice-agent call. Canonical values: 'Available' | 'NotAvailable' | 'Unsubscribe'.
+        public string   Intent                      { get; set; }
+        public string   IntentSource                { get; set; }   // 'Email' | 'Call'
+        public DateTime? IntentConfirmedAt          { get; set; }
         public string   ResumeFitment               { get; set; }
         public string   ResumeLink                  { get; set; }
         public bool     HasAttachment               { get; set; }
