@@ -3,14 +3,15 @@ using System;
 namespace Risebird.Entities.ViewModel
 {
     /// <summary>
-    /// Per-interviewer surcharge on DM Approval: whole-number INR amount, max = base interview rate (100% of cost).
+    /// Per-interviewer surcharge on DM Approval: whole-number INR amount, hard cap ₹500 (global).
     /// </summary>
     public static class DmIvSurchargeHelper
     {
-        public static int GetMaxSurcharge(int perSuccessRate) =>
-            Math.Max(0, perSuccessRate);
+        public const int MaxSurchargeInr = 500;
 
-        public static bool TryValidate(int surcharge, int perSuccessRate, out string errorMessage)
+        public static int GetMaxSurcharge() => MaxSurchargeInr;
+
+        public static bool TryValidate(int surcharge, out string errorMessage)
         {
             errorMessage = null;
             if (surcharge < 0)
@@ -19,16 +20,9 @@ namespace Risebird.Entities.ViewModel
                 return false;
             }
 
-            var max = GetMaxSurcharge(perSuccessRate);
-            if (perSuccessRate <= 0 && surcharge > 0)
+            if (surcharge > MaxSurchargeInr)
             {
-                errorMessage = "Set a per-interview rate before applying a surcharge.";
-                return false;
-            }
-
-            if (surcharge > max)
-            {
-                errorMessage = $"Surcharge cannot exceed 100% of the interview cost (max ₹{max:N0}).";
+                errorMessage = "Surcharge cannot exceed ₹500";
                 return false;
             }
 
