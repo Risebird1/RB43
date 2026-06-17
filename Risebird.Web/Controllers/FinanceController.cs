@@ -2063,7 +2063,8 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod,
             string irn, string eInvoiceFileLink, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
             decimal tdsAmount, decimal netReceivable, string lineItemsJson,
-            int? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null)
+            decimal? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null,
+            string latestRemark = null)
         {
             try
             {
@@ -2074,11 +2075,11 @@ namespace Risebird.Web.Controllers
                     catch { lineItems = new List<InvoiceLineItemVM>(); }
                 }
 
-                // When marking as Paid (status=3) for non-M1, cash credit amount is required
-                const int StatusPaid    = 3;
+                const int StatusPaid     = 5;
                 const int BillingModelM1 = 1;
 
-                if (status == StatusPaid && cashCreditAmount.HasValue && cashCreditAmount.Value > 0)
+                // When marking as Paid (status=5), post InvoiceValue (base amount) to the client wallet
+                if (status == StatusPaid)
                 {
                     var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
                     if (invoice != null && invoice.BillingModel != BillingModelM1)
@@ -2086,15 +2087,21 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                         var billingType = await _clientService.GetClientBillingType(invoice.ClientId);
                         int? billingOwnerId = billingType == 1 ? invoice.BillingOwnerId : (int?)null;
+                        // Credit = InvoiceValue (Subtotal + GST — full invoice value).
+                        // Passing invoiceId ensures existing wallet row is updated, not duplicated.
                         await _walletService.AddClientWalletBalance(
-                            billingType, invoice.ClientId, cashCreditAmount.Value,
+                            billingType, invoice.ClientId, (int)subtotal,
                             emailid, DateTime.Now, billingOwnerId,
-                            cashTransactionRef, null, cashTransactionDate, "CashCredit");
+                            cashTransactionRef, null, cashTransactionDate, "CashCredit",
+                            invoiceId: invoiceId);
                     }
                 }
 
+                // Save cashCreditAmount on the invoice record for reference
+                decimal? savedCashAmount = (cashCreditAmount.HasValue && cashCreditAmount.Value > 0)
+                    ? (decimal?)cashCreditAmount.Value : null;
                 var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
-                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems);
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems, latestRemark, cashTransactionRef, savedCashAmount);
                 return Json(new
                 {
                     success,
@@ -2142,7 +2149,8 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveGeneratedInvoice(GenerateInvoiceVM model, string LineItemsJson)
+        public async Task<IActionResult> SaveGeneratedInvoice(GenerateInvoiceVM model, string LineItemsJson,
+            int? CashCreditAmount = null, string CashTransactionRef = null, DateTime? CashTransactionDate = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2156,16 +2164,45 @@ namespace Risebird.Web.Controllers
                         try { model.LineItems = JsonConvert.DeserializeObject<List<InvoiceLineItemVM>>(LineItemsJson); }
                         catch { model.LineItems = new List<InvoiceLineItemVM>(); }
                     }
-                            var invoiceId = await _meetingService.SaveGeneratedInvoice(model);
-                            if (invoiceId > 0)
+
+                    // Attach transaction fields to the model so the SP saves them in one shot
+                    if (CashCreditAmount.HasValue && CashCreditAmount.Value > 0)
+                        model.CashCreditAmount = CashCreditAmount;
+                    if (!string.IsNullOrWhiteSpace(CashTransactionRef))
+                        model.UTRTrxn = CashTransactionRef;
+
+                    var invoiceId = await _meetingService.SaveGeneratedInvoice(model);
+                    if (invoiceId > 0)
+                    {
+                        // When saved as Paid (status=5), post InvoiceValue (base amount) to client wallet
+                        if (model.Status == 5)
+                        {
+                            try
                             {
-                                TempData["InvoiceListMessage"] = "Success: Invoice saved successfully.";
-                                return RedirectToAction("InvoiceList");
+                                var billingType    = await _clientService.GetClientBillingType(model.ClientId);
+                                int? billingOwnerId = billingType == 1 ? model.BillingOwnerId : (int?)null;
+                                // Credit = InvoiceValue (base amount).
+                                // Passing invoiceId ensures existing wallet row is updated, not duplicated.
+                                await _walletService.AddClientWalletBalance(
+                                    billingType, model.ClientId, (int)model.InvoiceValue,
+                                    emailid, DateTime.Now, billingOwnerId,
+                                    CashTransactionRef, null, CashTransactionDate, "CashCredit",
+                                    invoiceId: invoiceId);
                             }
-                            TempData["GenerateInvoiceMsg"] = invoiceId == -1
-                                ? "Error: An invoice has already been generated for this Client, Billing Owner, Month and Year. Duplicate invoices are not allowed."
-                                : "Error: Could not save invoice.";
-                            return RedirectToAction("GenerateInvoice");
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            }
+                        }
+
+                        TempData["InvoiceListMessage"] = "Success: Invoice saved successfully.";
+                        return RedirectToAction("InvoiceList");
+                    }
+
+                    TempData["GenerateInvoiceMsg"] = invoiceId == -1
+                        ? "Error: An invoice has already been generated for this Client, Billing Owner, Month and Year. Duplicate invoices are not allowed."
+                        : "Error: Could not save invoice.";
+                    return RedirectToAction("GenerateInvoice");
                 }
                 return RedirectToAction("SignOut", "Session");
             }
@@ -2178,7 +2215,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> InvoiceList()
+        public async Task<IActionResult> InvoiceList(string tab = "monthly")
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2188,53 +2225,117 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "Finance")
                 {
-                    var currentMonth = DateTime.Now.Month;
-                    var currentYear  = DateTime.Now.Year;
-                    var prevMonth    = DateTime.Now.AddMonths(-1).Month;
-                    var prevYear     = DateTime.Now.AddMonths(-1).Year;
-                    int month = prevMonth;
-                    int year  = prevYear;
+                    // Normalise — only three valid values
+                    if (tab != "unpaid" && tab != "paid") tab = "monthly";
+                    ViewBag.ActiveTab = tab;
 
+                    // ── Unpaid list is always loaded (drives the badge on every tab) ──
+                    var unpaidList = await _meetingService.GetUnpaidInvoiceList();
+                    unpaidList.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                        ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                        : string.Empty);
+                    ViewBag.UnpaidList       = unpaidList;
+                    ViewBag.UnpaidCount      = unpaidList.Count;
+                    ViewBag.UnpaidTotalGross = unpaidList.Sum(x => x.GrossAmount);
+
+                    // ── Monthly data: skip when Paid tab is active ──
                     var model = new List<InvoiceListVM>();
-
-                    if (HttpContext.Session.GetString("InvoiceListFilter") != null)
+                    if (tab != "paid")
                     {
-                        var filter = JsonConvert.DeserializeObject<InvoiceListFilter>(HttpContext.Session.GetString("InvoiceListFilter"));
-                        if (filter.Month != null && filter.Year != null)
+                        var prevMonth = DateTime.Now.AddMonths(-1).Month;
+                        var prevYear  = DateTime.Now.AddMonths(-1).Year;
+                        int month = prevMonth;
+                        int year  = prevYear;
+
+                        if (HttpContext.Session.GetString("InvoiceListFilter") != null)
                         {
-                            month = Convert.ToInt32(filter.Month);
-                            year  = Convert.ToInt32(filter.Year);
+                            var filter = JsonConvert.DeserializeObject<InvoiceListFilter>(HttpContext.Session.GetString("InvoiceListFilter"));
+                            if (filter.Month != null && filter.Year != null)
+                            {
+                                month = Convert.ToInt32(filter.Month);
+                                year  = Convert.ToInt32(filter.Year);
+                            }
+                            model = await _meetingService.GetInvoiceList(month, year);
+                            if (model == null) model = new List<InvoiceListVM>();
+                            model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                                ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                                : string.Empty);
+                            filter.Client = filter.Client == null
+                                ? model.Select(x => x.ClientName).ToArray()
+                                : filter.Client;
+                            filter.Status = filter.Status == null
+                                ? model.Select(x => x.Status.ToString()).Distinct().ToArray()
+                                : filter.Status;
+                            model = model.Where(x =>
+                                filter.Client.Contains(x.ClientName) &&
+                                filter.Status.Contains(x.Status.ToString())).ToList();
                         }
-                        model = await _meetingService.GetInvoiceList(month, year);
-                        if (model == null) model = new List<InvoiceListVM>();
-                        model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
-                            ? ((BillingModelEnum)x.BillingModel).GetDescription()
-                            : string.Empty);
-                        filter.Client = filter.Client == null
-                            ? model.Select(x => x.ClientName).ToArray()
-                            : filter.Client;
-                        filter.Status = filter.Status == null
-                            ? model.Select(x => x.Status.ToString()).Distinct().ToArray()
-                            : filter.Status;
-                        model = model.Where(x =>
-                            filter.Client.Contains(x.ClientName) &&
-                            filter.Status.Contains(x.Status.ToString())).ToList();
+                        else
+                        {
+                            model = await _meetingService.GetInvoiceList(month, year);
+                            if (model == null) model = new List<InvoiceListVM>();
+                            model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                                ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                                : string.Empty);
+                        }
+
+                        System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                        ViewBag.SelectedMonth = month;
+                        ViewBag.SelectedYear  = year;
+                        ViewBag.DateResult    = mfi.GetMonthName(month) + " " + year;
+                        ViewBag.TotalGross    = model.Sum(x => x.GrossAmount);
+                        ViewBag.ClientList    = _projectService.GetClients().Select(x => x.Name).Where(x => !string.IsNullOrEmpty(x)).Distinct();
+                        ViewBag.MonthlyLoaded = true;
                     }
                     else
                     {
-                        model = await _meetingService.GetInvoiceList(month, year);
-                        if (model == null) model = new List<InvoiceListVM>();
-                        model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
-                            ? ((BillingModelEnum)x.BillingModel).GetDescription()
-                            : string.Empty);
+                        // Paid tab active — provide safe stubs so the view renders without null errors
+                        ViewBag.SelectedMonth = 0;
+                        ViewBag.SelectedYear  = 0;
+                        ViewBag.DateResult    = string.Empty;
+                        ViewBag.TotalGross    = 0m;
+                        ViewBag.ClientList    = Enumerable.Empty<string>();
+                        ViewBag.MonthlyLoaded = false;
                     }
 
-                    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
-                    ViewBag.SelectedMonth = month;
-                    ViewBag.SelectedYear  = year;
-                    ViewBag.DateResult    = mfi.GetMonthName(month) + " " + year;
-                    ViewBag.TotalGross    = model.Sum(x => x.GrossAmount);
-                    ViewBag.ClientList    = _projectService.GetClients().Select(x => x.Name).Where(x => !string.IsNullOrEmpty(x)).Distinct();
+                    // ── Paid data: skip when Monthly or Unpaid tab is active ──
+                    int paidFromYear = 0, paidFromMonth = 0, paidToYear = 0, paidToMonth = 0;
+                    var paidFilterJson = HttpContext.Session.GetString("PaidInvoiceFilter");
+                    if (!string.IsNullOrEmpty(paidFilterJson))
+                    {
+                        try
+                        {
+                            var pf = JsonConvert.DeserializeObject<dynamic>(paidFilterJson);
+                            paidFromYear  = pf.FromYear  != null ? (int)pf.FromYear  : 0;
+                            paidFromMonth = pf.FromMonth != null ? (int)pf.FromMonth : 0;
+                            paidToYear    = pf.ToYear    != null ? (int)pf.ToYear    : 0;
+                            paidToMonth   = pf.ToMonth   != null ? (int)pf.ToMonth   : 0;
+                        }
+                        catch { /* ignore bad session data */ }
+                    }
+                    ViewBag.PaidFromYear  = paidFromYear; 
+                    ViewBag.PaidFromMonth = paidFromMonth;
+                    ViewBag.PaidToYear    = paidToYear;
+                    ViewBag.PaidToMonth   = paidToMonth;
+
+                    if (tab == "paid")
+                    {
+                        var paidList = await _meetingService.GetPaidInvoiceList(paidFromYear, paidFromMonth, paidToYear, paidToMonth);
+                        paidList.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                            ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                            : string.Empty);
+                        ViewBag.PaidList       = paidList;
+                        ViewBag.PaidCount      = paidList.Count;
+                        ViewBag.PaidTotalGross = paidList.Sum(x => x.GrossAmount);
+                        ViewBag.PaidLoaded     = true;
+                    }
+                    else
+                    {
+                        ViewBag.PaidList       = new List<InvoiceListVM>();
+                        ViewBag.PaidCount      = 0;
+                        ViewBag.PaidTotalGross = 0m;
+                        ViewBag.PaidLoaded     = false;
+                    }
 
                     if (TempData["InvoiceListMessage"] != null)
                     {
@@ -2302,6 +2403,25 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        [HttpPost]
+        public IActionResult FilterPaidInvoices(int fromYear, int fromMonth, int toYear, int toMonth)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var pf = new { FromYear = fromYear, FromMonth = fromMonth, ToYear = toYear, ToMonth = toMonth };
+                HttpContext.Session.SetString("PaidInvoiceFilter", JsonConvert.SerializeObject(pf));
+                return RedirectToAction("InvoiceList", new { tab = "paid" });
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        [HttpGet]
+        public IActionResult ResetPaidInvoiceFilter()
+        {
+            HttpContext.Session.Remove("PaidInvoiceFilter");
+            return RedirectToAction("InvoiceList", new { tab = "paid" });
         }
 
         #endregion

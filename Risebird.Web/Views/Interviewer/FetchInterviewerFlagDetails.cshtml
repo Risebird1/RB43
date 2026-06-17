@@ -35,7 +35,7 @@
 
             <th>Lead Interviewer</th>
             <th> Approved</th>
-            <th> Active</th>
+            <th> Interviewer Access</th>
             <th> Blocked</th>
             <th> Interested</th>
         </tr>
@@ -59,8 +59,8 @@
             </td>
             <td>
                 <div class="custom-select">
-                    @Html.DropDownListFor(model => model.IsActive, new[]{   new SelectListItem { Text = "No", Value = "false" },
-                    new SelectListItem { Text = "Yes", Value = "true"} }, new { @class = "text-box single-line", @onchange = "changeIsActive()" })
+                    @Html.DropDownListFor(model => model.IsInterviewerAccess, new[]{   new SelectListItem { Text = "No", Value = "false" },
+                    new SelectListItem { Text = "Yes", Value = "true"} }, new { @class = "text-box single-line", @onchange = "changeIsInterviewerAccess()" })
                 </div>
             </td>
             <td>
@@ -98,17 +98,17 @@
             }
         });
     }
-    function changeIsActive() {
+    function changeIsInterviewerAccess() {
         var Emailid = $("#EmailId").val();
-        var isActive = $("#IsActive").val();
+        var isInterviewerAccess = $("#IsInterviewerAccess").val();
         $.ajax({
             url: '/Interviewer/InterviewerFlagUpdate',
-            data: { 'Emailid': Emailid, 'IsActive': isActive },
+            data: { 'Emailid': Emailid, 'IsInterviewerAccess': isInterviewerAccess },
             success: function (data) {
-                swal.fire("Interviewer active status updated successfully.");
-                if(isActive=='true'){
+                swal.fire("Interviewer access status updated successfully.");
+                if(isInterviewerAccess=='true'){
                    captureInterviewerRelatedclick('Suspious Interviewer', 'Flag Active Y',0,interviewerid);
-                }else if(isActive=='false'){
+                }else if(isInterviewerAccess=='false'){
                     captureInterviewerRelatedclick('Suspious Interviewer', 'Flag Active N',0,interviewerid);
                 }
             }

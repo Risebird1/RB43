@@ -368,6 +368,24 @@ BEGIN
     ALTER TABLE Client
     Add BillingModel int NULL
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'BillingCurrency')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add BillingCurrency varchar(10) NULL DEFAULT 'INR'
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewerBillingType')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add InterviewerBillingType int NULL DEFAULT 1
+END
 
 END
 

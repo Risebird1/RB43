@@ -416,9 +416,12 @@
 
         <form id="invoiceForm" method="post" action="@Url.Action("SaveGeneratedInvoice","Finance")">
             @Html.AntiForgeryToken()
-            <input type="hidden" id="hidId"            name="id"            value="0" />
-            <input type="hidden" id="hidStatus"        name="Status"        value="0" />
-            <input type="hidden" id="hidLineItemsJson" name="LineItemsJson" value="" />
+            <input type="hidden" id="hidId"                   name="id"                   value="0" />
+            <input type="hidden" id="hidStatus"               name="Status"               value="0" />
+            <input type="hidden" id="hidLineItemsJson"        name="LineItemsJson"        value="" />
+            <input type="hidden" id="hidCashCreditAmount"    name="CashCreditAmount"    value="" />
+            <input type="hidden" id="hidCashTransactionRef"  name="CashTransactionRef"  value="" />
+            <input type="hidden" id="hidCashTransactionDate" name="CashTransactionDate" value="" />
 
             <!-- ── Section 1: Client & Period ── -->
             <div class="gen-inv-card">
@@ -610,12 +613,55 @@
                         </div>
 
                         <!-- hidden fields for totals -->
-                        <input type="hidden" name="Subtotal"      id="hidSubtotal"      value="0" />
-                        <input type="hidden" name="GSTAmount"     id="hidGSTAmount"     value="0" />
-                        <input type="hidden" name="InvoiceValue"  id="hidInvoiceValue"  value="0" />
-                        <input type="hidden" name="TDSAmount"     id="hidTDSAmount"     value="0" />
-                        <input type="hidden" name="NetReceivable" id="hidNetReceivable" value="0" />
-                        <input type="hidden" name="BillingType"   id="hidBillingType"   value="0" />
+                        <input type="hidden" name="Subtotal"             id="hidSubtotal"             value="0" />
+                        <input type="hidden" name="GSTAmount"            id="hidGSTAmount"            value="0" />
+                        <input type="hidden" name="InvoiceValue"         id="hidInvoiceValue"         value="0" />
+                        <input type="hidden" name="TDSAmount"            id="hidTDSAmount"            value="0" />
+                        <input type="hidden" name="NetReceivable"        id="hidNetReceivable"        value="0" />
+                        <input type="hidden" name="InvoiceBaseAmount"    id="hidInvoiceBaseAmount"    value="0" />
+                        <input type="hidden" name="NetReceivableAmount"  id="hidNetReceivableAmount"  value="0" />
+                        <input type="hidden" name="BillingType"          id="hidBillingType"          value="0" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Transaction Details (shown when Save as Paid is requested) ── -->
+            <div class="gen-inv-card" id="divTransactionCard" style="display:none; border-left:4px solid #43a047;">
+                <div class="gen-inv-section-title" style="color:#2e7d32;">Payment / Transaction Details</div>
+                <p style="font-size:12px;color:#6b7280;margin-top:-10px;margin-bottom:16px;">
+                    The invoice base amount will be credited to the client wallet. Fill in the remaining payment details below.
+                </p>
+                <div class="row g-3 gen-inv-row">
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label">Invoice Base Amount (&#8377;)</label>
+                            <input type="text" id="txtInvoiceBaseAmt" class="form-control auto-field" readonly placeholder="—" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label">Net Receivable (&#8377;)</label>
+                            <input type="text" id="txtNetReceivableAmt" class="form-control auto-field" readonly placeholder="—" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtPaidCreditAmount">Credit Amount (&#8377;) <span style="font-size:10px;color:#9ca3af;font-style:italic;">(reference)</span></label>
+                            <input type="number" id="txtPaidCreditAmount" class="form-control" min="0" placeholder="Actual amount received (optional)" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtPaidTransactionRef">Transaction / UTR Ref No.</label>
+                            <input type="text" id="txtPaidTransactionRef" class="form-control" placeholder="UTR / Ref number" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtPaidTransactionDate">Payment Date</label>
+                            <input type="date" id="txtPaidTransactionDate" class="form-control"
+                                   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -636,6 +682,12 @@
                             class="gen-inv-btn gen-inv-btn--generate"
                             onclick="submitInvoice(1)">
                         Generate Invoice
+                    </button>
+                    <button type="button" id="btnSaveAsPaid"
+                            class="gen-inv-btn"
+                            style="background:#43a047 !important; color:#fff !important;"
+                            onclick="handleSaveAsPaid()">
+                        Save as Paid
                     </button>
                 </div>
             </div>
@@ -916,12 +968,48 @@
         $('#hidInvoiceValue').val(invValue.toFixed(2));
         $('#hidTDSAmount').val(tdsAmt.toFixed(2));
         $('#hidNetReceivable').val(netRec.toFixed(2));
+        // InvoiceBaseAmount = Subtotal (base before GST); NetReceivableAmount = net after TDS
+        $('#hidInvoiceBaseAmount').val(subtotal.toFixed(2));
+        $('#hidNetReceivableAmount').val(netRec.toFixed(2));
     }
 
     function submitInvoice(status) {
         if (!$('#ddlClient').val()) { alert('Please select a client.'); return; }
         if (!$('#txtInvoiceNumber').val()) { alert('Invoice number not generated. Please reselect client & month.'); return; }
         $('#hidStatus').val(status);
+        $('#invoiceForm').submit();
+    }
+
+    // ── Save as Paid ──────────────────────────────────────────────────────────
+    // First click expands the transaction details section.
+    // Second click (when section is visible) validates and submits with status=5.
+    function handleSaveAsPaid() {
+        if (!$('#ddlClient').val()) { alert('Please select a client.'); return; }
+        if (!$('#txtInvoiceNumber').val()) { alert('Invoice number not generated. Please reselect client & month.'); return; }
+
+        var sectionVisible = $('#divTransactionCard').is(':visible');
+
+        if (!sectionVisible) {
+            // Populate read-only info fields: InvoiceBaseAmount = Subtotal, NetReceivable = after TDS
+            var baseAmt = parseFloat($('#hidSubtotal').val()) || 0;
+            var netRec  = parseFloat($('#hidNetReceivable').val()) || 0;
+            $('#txtInvoiceBaseAmt').val(baseAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#txtNetReceivableAmt').val(netRec.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#divTransactionCard').slideDown(200);
+            $('#btnSaveAsPaid').text('Confirm Save as Paid');
+            $('html, body').animate({ scrollTop: $('#divTransactionCard').offset().top - 80 }, 300);
+            return;
+        }
+
+        // InvoiceValue drives the wallet credit — cashCreditAmount is optional reference only
+        var cashAmt = parseFloat($('#txtPaidCreditAmount').val() || 0);
+
+        // Transfer transaction details to hidden form fields
+        $('#hidCashCreditAmount').val(cashAmt > 0 ? cashAmt : '');
+        $('#hidCashTransactionRef').val($('#txtPaidTransactionRef').val().trim());
+        $('#hidCashTransactionDate').val($('#txtPaidTransactionDate').val());
+
+        $('#hidStatus').val(5);
         $('#invoiceForm').submit();
     }
 

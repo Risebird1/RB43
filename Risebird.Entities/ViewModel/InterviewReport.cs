@@ -600,6 +600,10 @@ namespace Risebird.Entities.ViewModel
         public decimal NetReceivable { get; set; }
         public int Status { get; set; }
         public string CreatedBy { get; set; }
+        public decimal? CashCreditAmount { get; set; }
+        public string UTRTrxn { get; set; }
+        public decimal InvoiceBaseAmount { get; set; }
+        public decimal NetReceivableAmount { get; set; }
         public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
     }
 
@@ -629,6 +633,11 @@ namespace Risebird.Entities.ViewModel
         public DateTime? ModifiedOn { get; set; }
         public int BillingType { get; set; }
         public int BillingModel { get; set; }
+        public string LatestRemark { get; set; }
+        public string UTRTrxn { get; set; }
+        public decimal CashCreditAmount { get; set; }
+        public decimal InvoiceBaseAmount { get; set; }
+        public decimal NetReceivableAmount { get; set; }
         public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
     }
 

@@ -678,6 +678,12 @@ namespace Risebird.Repository
                             _resultVM.DmIvLockNew = dt.Columns.Contains("DmIvLockNew") && !string.IsNullOrEmpty(dt.Rows[0]["DmIvLockNew"].ToString()) && Convert.ToBoolean(dt.Rows[0]["DmIvLockNew"]);
                             _resultVM.DmAssignmentPolicy = dt.Columns.Contains("DmAssignmentPolicy") && !string.IsNullOrEmpty(dt.Rows[0]["DmAssignmentPolicy"].ToString()) ? dt.Rows[0]["DmAssignmentPolicy"].ToString() : "free";
                             _resultVM.DmDefaultInterviewCap = dt.Columns.Contains("DmDefaultInterviewCap") && !string.IsNullOrEmpty(dt.Rows[0]["DmDefaultInterviewCap"].ToString()) ? Convert.ToInt32(dt.Rows[0]["DmDefaultInterviewCap"]) : 20;
+                            _resultVM.DmEtiquetteDressCode = dt.Columns.Contains("DmEtiquetteDressCode") && !string.IsNullOrEmpty(dt.Rows[0]["DmEtiquetteDressCode"].ToString())
+                                ? dt.Rows[0]["DmEtiquetteDressCode"].ToString()
+                                : "formal";
+                            _resultVM.DmEtiquetteNoEatingRule = !dt.Columns.Contains("DmEtiquetteNoEatingRule")
+                                || string.IsNullOrEmpty(dt.Rows[0]["DmEtiquetteNoEatingRule"].ToString())
+                                || Convert.ToBoolean(dt.Rows[0]["DmEtiquetteNoEatingRule"]);
 
                         }
                         else
@@ -810,6 +816,8 @@ namespace Risebird.Repository
                                         ? Convert.ToInt32(dt.Rows[i]["InterviewCapacity"]) : (int?)null,
                                     ModifiedAt = dt.Columns.Contains("ModifiedAt") && !string.IsNullOrEmpty(dt.Rows[i]["ModifiedAt"].ToString())
                                         ? Convert.ToDateTime(dt.Rows[i]["ModifiedAt"]) : (DateTime?)null,
+                                    ActivatedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "ActivatedAt"),
+                                    AddedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "AddedAt"),
                                     LastLoginAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "LastLogin"),
                                     LastInterviewConductedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "LastInterviewConductedAt"),
 
@@ -10249,6 +10257,68 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<DmInterviewerEtiquetteVm> GetDmInterviewerEtiquette(int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    const string sql = @"
+SELECT
+    CASE WHEN LOWER(LTRIM(RTRIM(ISNULL(DmEtiquetteDressCode, 'formal')))) = 'match' THEN 'match' ELSE 'formal' END AS DressCode,
+    ISNULL(IsVideoRequired, 0) AS CameraRequired,
+    ISNULL(DmEtiquetteNoEatingRule, 1) AS NoEatingRule
+FROM IRF
+WHERE id = @irfId";
+                    return await SqlMapper.QueryFirstOrDefaultAsync<DmInterviewerEtiquetteVm>(con, sql, new { irfId });
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> UpdateDmInterviewerEtiquette(int irfId, string dressCode, bool cameraRequired, bool noEatingRule)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfId", irfId);
+                        parameters.Add("@dressCode", dressCode);
+                        parameters.Add("@cameraRequired", cameraRequired);
+                        parameters.Add("@noEatingRule", noEatingRule);
+                        await SqlMapper.ExecuteAsync(con, "dbo.usp_UpdateDmInterviewerEtiquette", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<bool> UpdateNewPriority(int irfid, int PriorityLevel)
         {
             try

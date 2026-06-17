@@ -14,7 +14,7 @@ GO
 CREATE PROCEDURE [dbo].[usp_GetInterviewerDetails]       
 AS      
 BEGIN      
-select intp.*,intp.IsInterest as IsInterested, ul.FirstName, ul.LastName,ul.IsActive, ul.EmailId, ul.MobileNumber, ul.UserPassword, PrimarySkill =       
+select intp.*,intp.IsInterest as IsInterested, ul.FirstName, ul.LastName,ul.IsActive, ul.IsInterviewerAccess, ul.EmailId, ul.MobileNumber, ul.UserPassword, PrimarySkill =       
    STUFF((SELECT distinct  ', ' + Name      
    FROM (select tis.InterviewerProfileId, ski.Name from TransInterviewerSkill tis join Skill ski on tis.SkillId = ski.id ) b      
    WHERE b.InterviewerProfileId = intp.Id      

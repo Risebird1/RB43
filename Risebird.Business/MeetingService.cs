@@ -3185,13 +3185,24 @@ namespace Risebird.Business
             catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return null; }
         }
 
+        public async Task<List<InvoiceListVM>> GetUnpaidInvoiceList()
+        {
+            try { return await _meetingRespository.GetUnpaidInvoiceList(); }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return new List<InvoiceListVM>(); }
+        }
+
+        public async Task<List<InvoiceListVM>> GetPaidInvoiceList(int fromYear = 0, int fromMonth = 0, int toYear = 0, int toMonth = 0)
+        {
+            try { return await _meetingRespository.GetPaidInvoiceList(fromYear, fromMonth, toYear, toMonth); }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return new List<InvoiceListVM>(); }
+        }
+
         public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
-            List<InvoiceLineItemVM> lineItems)
+            List<InvoiceLineItemVM> lineItems, string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null)
         {
             try
             {
-                // Update each edited line item first
                 if (lineItems != null && lineItems.Any())
                 {
                     var tasks = lineItems.Select(li =>
@@ -3199,7 +3210,7 @@ namespace Risebird.Business
                     await Task.WhenAll(tasks);
                 }
                 return await _meetingRespository.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
-                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable);
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, latestRemark, utrTrxn, cashCreditAmount);
             }
             catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return false; }
         }

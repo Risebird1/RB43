@@ -10,7 +10,8 @@ CREATE TABLE [dbo].[UserList](
 			[MobileNumber][BIGINT] NULL,	
 			[LastLogin] [datetime] NULL,		
 			[LastLogout] [datetime] NULL,		
-			[IsActive] [bit] NULL,			
+			[IsActive] [bit] NULL,
+			[IsInterviewerAccess] [bit] NULL,
 			[ImageURL] [nvarchar](1000) NULL,
 			[Isonline] [bit] NULL,	
 			[UserPassword] [nvarchar](60) NULL,
@@ -82,6 +83,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE UserList
     Add [AadhaarVerified] [bit] NULL
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsInterviewerAccess')
+      AND Object_ID = Object_ID(N'UserList'))
+BEGIN
+    ALTER TABLE UserList
+    ADD [IsInterviewerAccess] [bit] NULL
+   
 END
 END
 
