@@ -5360,26 +5360,27 @@ namespace Risebird.Repository
 
         public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
-            string latestRemark = null, string utrTrxn = null)
+            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@InvoiceId",        invoiceId);
-                    parameters.Add("@GSTNumber",        gstNumber);
-                    parameters.Add("@CreditPeriod",     creditPeriod);
-                    parameters.Add("@IRN",              irn);
-                    parameters.Add("@EInvoiceFileLink", eInvoiceFileLink);
-                    parameters.Add("@Status",           status);
-                    parameters.Add("@Subtotal",         subtotal);
-                    parameters.Add("@GSTAmount",        gstAmount);
-                    parameters.Add("@InvoiceValue",     invoiceValue);
-                    parameters.Add("@TDSAmount",        tdsAmount);
-                    parameters.Add("@NetReceivable",    netReceivable);
-                    parameters.Add("@LatestRemark",     latestRemark);
-                    parameters.Add("@UTRTrxn",          utrTrxn);
+                    parameters.Add("@InvoiceId",         invoiceId);
+                    parameters.Add("@GSTNumber",         gstNumber);
+                    parameters.Add("@CreditPeriod",      creditPeriod);
+                    parameters.Add("@IRN",               irn);
+                    parameters.Add("@EInvoiceFileLink",  eInvoiceFileLink);
+                    parameters.Add("@Status",            status);
+                    parameters.Add("@Subtotal",          subtotal);
+                    parameters.Add("@GSTAmount",         gstAmount);
+                    parameters.Add("@InvoiceValue",      invoiceValue);
+                    parameters.Add("@TDSAmount",         tdsAmount);
+                    parameters.Add("@NetReceivable",     netReceivable);
+                    parameters.Add("@LatestRemark",      latestRemark);
+                    parameters.Add("@UTRTrxn",           utrTrxn);
+                    parameters.Add("@CashCreditAmount",  cashCreditAmount);
                     var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_UpdateInvoiceDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return (result.FirstOrDefault()?.UpdatedRows ?? 0) > 0;
@@ -5501,6 +5502,8 @@ namespace Risebird.Repository
                     parameters.Add("@NetReceivable",     model.NetReceivable);
                     parameters.Add("@Status",            model.Status);
                     parameters.Add("@CreatedBy",         model.CreatedBy);
+                    parameters.Add("@CashCreditAmount",  model.CashCreditAmount);
+                    parameters.Add("@UTRTrxn",           model.UTRTrxn);
                     var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_SaveGeneratedInvoice", parameters, commandType: CommandType.StoredProcedure);
                     return (int)(result.FirstOrDefault()?.NewId ?? 0);
                 }

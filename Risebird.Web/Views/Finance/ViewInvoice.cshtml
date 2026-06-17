@@ -153,21 +153,42 @@
         {
             <div class="vi-card" id="cashCreditSection" style="display:@(Model.Status == 5 ? "block" : "none"); border-left:4px solid #43a047;">
                 <div class="vi-section-title" style="color:#2e7d32;">Cash Credit Information</div>
-                <p class="text-muted" style="font-size:12px;margin-top:-8px;margin-bottom:14px;">
-                    This invoice will be marked <strong>Paid</strong>. Enter the cash credit details to post the received amount into the client wallet.
-                </p>
+                @if (Model.Status == 5)
+                {
+                    <div class="alert alert-success" style="font-size:12px;padding:8px 12px;margin-top:-8px;margin-bottom:14px;">
+                        <strong>Payment already recorded.</strong> The transaction reference below was saved when this invoice was marked Paid.
+                        You may update the details and re-save if needed (entering an amount will add a new wallet credit entry).
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted" style="font-size:12px;margin-top:-8px;margin-bottom:14px;">
+                        This invoice will be marked <strong>Paid</strong>. Enter the cash credit details to post the received amount into the client wallet.
+                    </p>
+                }
                 <div class="row">
                     <div class="col-md-4">
-                        <label class="vi-label">Credit Amount (&#8377;) <span style="color:red;">*</span></label>
-                        <input type="number" id="cashCreditAmount" class="form-control editable-field"
-                               min="1" placeholder="Enter amount received" />
+                        <label class="vi-label">Invoice Base Amount (&#8377;)</label>
+                        <input type="text" class="form-control auto-field"
+                               value="@((Model.InvoiceBaseAmount > 0 ? Model.InvoiceBaseAmount : Model.Subtotal).ToString("N2", System.Globalization.CultureInfo.InvariantCulture))" readonly />
                     </div>
                     <div class="col-md-4">
+                        <label class="vi-label">Net Receivable Amount (&#8377;)</label>
+                        <input type="text" class="form-control auto-field"
+                               value="@((Model.NetReceivableAmount > 0 ? Model.NetReceivableAmount : Model.NetReceivable).ToString("N2", System.Globalization.CultureInfo.InvariantCulture))" readonly />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="vi-label">Credit Amount (&#8377;) <span class="tag-edit">(reference)</span></label>
+                        <input type="number" id="cashCreditAmount" class="form-control editable-field"
+                               min="0" placeholder="Actual amount received (optional)"
+                               value="@(Model.CashCreditAmount > 0 ? Model.CashCreditAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) : "")" />
+                    </div>
+                    <div class="col-md-4 mt-3">
                         <label class="vi-label">Transaction / Reference No.</label>
                         <input type="text" id="cashTransactionRef" class="form-control editable-field"
-                               placeholder="UTR / Ref number" />
+                               value="@Model.UTRTrxn" placeholder="UTR / Ref number" />
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-3">
                         <label class="vi-label">Payment Date</label>
                         <input type="date" id="cashTransactionDate" class="form-control editable-field"
                                value="@DateTime.Now.ToString("yyyy-MM-dd")" />
@@ -265,8 +286,10 @@
 <input type="hidden" id="hidBillingModel" value="@Model.BillingModel" />
 
 <script>
-    var _billingModel = parseInt($('#hidBillingModel').val() || 0);
-    var _M1 = 1;
+    var _billingModel  = parseInt($('#hidBillingModel').val() || 0);
+    var _M1            = 1;
+    var _alreadyPaid   = @(Model.Status == 5 ? "true" : "false");
+    var _existingUTR   = '@Html.Raw((Model.UTRTrxn ?? "").Replace("'", "\\'"))';
 
     // Show/hide cash credit section when status changes
     $('#editStatus').on('change', function () {
@@ -313,16 +336,8 @@
         var isPaid       = selectedStatus === 5;
         var isNonM1      = _billingModel !== _M1 && _billingModel !== 0;
 
-        // Validate: cash credit amount is required when marking Paid for non-M1
-        if (isPaid && isNonM1) {
-            var cashAmt = parseInt($('#cashCreditAmount').val() || 0);
-            if (!cashAmt || cashAmt <= 0) {
-                $('#divSaveMsg').attr('class', 'alert alert-danger')
-                    .html('Credit Amount is required when marking the invoice as Paid.').show();
-                $('html, body').animate({ scrollTop: $('#cashCreditSection').offset().top - 80 }, 400);
-                return;
-            }
-        }
+        // Wallet credit uses InvoiceValue (base amount) — cashCreditAmount is stored as reference only.
+        // No mandatory validation needed; section is informational when status = Paid.
 
         // Collect line items
         var lineItems = [];
@@ -356,7 +371,7 @@
         };
 
         if (isPaid && isNonM1) {
-            payload.cashCreditAmount    = parseInt($('#cashCreditAmount').val() || 0);
+            payload.cashCreditAmount    = parseFloat($('#cashCreditAmount').val() || 0);
             payload.cashTransactionRef  = $('#cashTransactionRef').val().trim();
             payload.cashTransactionDate = $('#cashTransactionDate').val();
         }
