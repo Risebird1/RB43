@@ -2815,6 +2815,41 @@ button.dm-v4-iv-cv-link {
     color: #64748b;
 }
 
+/* Inactive tab: reason badge (Pending RB / Removed by RB|Client / Unknown) */
+.dm-v4-iv-inactive-reason {
+    display: none;
+    align-items: center;
+    margin-top: 6px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+    max-width: 100%;
+    white-space: normal;
+    text-align: left;
+}
+
+#dmV4IvPanel[data-iv-tab="inactive"] .dm-v4-iv-row[data-is-active="0"] .dm-v4-iv-inactive-reason {
+    display: inline-flex;
+}
+
+.dm-v4-iv-inactive-reason--info {
+    background: var(--dm-accent-soft);
+    color: var(--dm-accent);
+}
+
+.dm-v4-iv-inactive-reason--warning {
+    background: var(--dm-amber-soft);
+    color: var(--dm-amber);
+}
+
+.dm-v4-iv-inactive-reason--unknown {
+    background: var(--dm-raised);
+    color: var(--dm-text-mid);
+}
+
 .dm-v4-iv-row {
     background: #fff;
 }
@@ -3420,6 +3455,19 @@ button.dm-v4-money-pill {
     font-size: 9px;
     color: var(--dm-accent);
     margin-left: 1px;
+}
+
+.dm-v4-rate-readonly {
+    cursor: default;
+    pointer-events: none;
+}
+
+.dm-v4-surcharge-error {
+    margin: 6px 0 0;
+    font-size: 11px;
+    line-height: 1.35;
+    color: #b45309;
+    font-weight: 600;
 }
 
 .dm-v4-rate-pill,

@@ -40,6 +40,9 @@ BEGIN
         gi.EInvoiceFileLink,
         gi.LatestRemark,
         gi.UTRTrxn,
+        ISNULL(gi.CashCreditAmount, 0)                        AS CashCreditAmount,
+        ISNULL(gi.InvoiceBaseAmount, 0)                       AS InvoiceBaseAmount,
+        ISNULL(gi.NetReceivableAmount, 0)                     AS NetReceivableAmount,
         ISNULL(c.BillingType, 0)                              AS BillingType,
         ISNULL(c.BillingModel, 0)                             AS BillingModel
     FROM GeneratedInvoices gi

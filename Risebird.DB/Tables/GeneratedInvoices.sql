@@ -47,6 +47,24 @@ BEGIN
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'CashCreditAmount' AND Object_ID = Object_ID(N'GeneratedInvoices'))
+BEGIN
+    ALTER TABLE GeneratedInvoices ADD [CashCreditAmount] [decimal](18,2) NULL DEFAULT 0
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'InvoiceBaseAmount' AND Object_ID = Object_ID(N'GeneratedInvoices'))
+BEGIN
+    ALTER TABLE GeneratedInvoices ADD [InvoiceBaseAmount] [decimal](18,2) NULL DEFAULT 0
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'NetReceivableAmount' AND Object_ID = Object_ID(N'GeneratedInvoices'))
+BEGIN
+    ALTER TABLE GeneratedInvoices ADD [NetReceivableAmount] [decimal](18,2) NULL DEFAULT 0
+END
+GO
+
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'GeneratedInvoiceLineItems')
 BEGIN
 CREATE TABLE [dbo].[GeneratedInvoiceLineItems](
