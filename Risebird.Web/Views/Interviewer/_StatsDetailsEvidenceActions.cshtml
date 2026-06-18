@@ -1,0 +1,33 @@
+@model Risebird.Entities.ViewModel.StatsDetailsVM
+@{
+    var interviewId = Model?.interviewId ?? 0;
+    var irfId = Model?.irfId ?? 0;
+    if (ViewBag.IRFId != null)
+    {
+        var pageIrf = Convert.ToInt32(ViewBag.IRFId);
+        if (pageIrf > 0) { irfId = pageIrf; }
+    }
+}
+<div class="iv-evidence-actions">
+    <a class="iv-evidence-btn" target="_blank" rel="noopener"
+       href="@Url.Action("TransciptAnalysis", "AIScreener", new { interviewId = interviewId, irfId = irfId })"
+       aria-label="AI Transcript Verdict" title="AI Transcript Verdict"><i class="ti ti-microphone" aria-hidden="true"></i></a>
+    <a class="iv-evidence-btn" target="_blank" rel="noopener"
+       href="@Url.Action("AIClientReport", "Interview", new { InterviewId = interviewId, irfId = irfId, isOpenAIQC = true })"
+       aria-label="AI Report Verdict" title="AI Report Verdict"><i class="ti ti-file-text" aria-hidden="true"></i></a>
+    <a class="iv-evidence-btn" target="_blank" rel="noopener"
+       href="@Url.Action("ContradictionReport", "Interview", new { interviewId = interviewId })"
+       aria-label="AI Contradiction Verdict" title="AI Contradiction Verdict"><i class="ti ti-arrows-cross" aria-hidden="true"></i></a>
+    <a class="iv-evidence-btn" target="_blank" rel="noopener"
+       href="@Url.Action("QCMergedAIDetails", "Interview", new { interviewId = interviewId })"
+       aria-label="Payment Deduction Reasoning" title="Payment Deduction Reasoning"><i class="ti ti-receipt" aria-hidden="true"></i></a>
+    <a class="iv-evidence-btn" target="_blank" rel="noopener"
+       href="@Url.Action("PaymentSlaDetails", "Interview", new { interviewId = interviewId, returnBack = 0 })"
+       aria-label="Non-AI Reasoning" title="Non-AI Reasoning"><i class="ti ti-message-circle" aria-hidden="true"></i></a>
+    <button type="button" class="iv-evidence-btn"
+            onclick="openPaymentSlaInterviewDetailModal(@interviewId);"
+            aria-label="Interview Details" title="Interview Details"><i class="ti ti-info-circle" aria-hidden="true"></i></button>
+    <a class="iv-evidence-btn" target="_blank" rel="noopener"
+       href="@Url.Action("PaymentSlaDetails", "Interview", new { interviewId = interviewId, returnBack = 0 })"
+       aria-label="QC Red Flag Table" title="QC Red Flag Table"><i class="ti ti-flag" aria-hidden="true"></i></a>
+</div>
