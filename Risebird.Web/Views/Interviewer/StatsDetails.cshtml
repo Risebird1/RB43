@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.StatsDetailsVM>
+@model IEnumerable<Risebird.Entities.ViewModel.StatsDetailsVM>
 
 
 @{
@@ -49,6 +49,10 @@
 
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+@if (ViewBag.ShowEvidenceColumn == true)
+{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@latest/tabler-icons.min.css" />
+}
 
 <div class="@panelclass" id="main-panel">
 
@@ -110,6 +114,17 @@
     </div>
 
 </div>
+
+@if (ViewBag.ShowEvidenceColumn == true)
+{
+    @await Html.PartialAsync("~/Views/Common/_InterviewDetailsModal.cshtml")
+    <script>
+        window.InterviewDetailsModalConfig = {
+            fetchUrl: '@Url.Action("FetchMoreDetailsInterview", "Interview")'
+        };
+    </script>
+    <script src="~/js/interview-details-modal.js?v=20250609evidence4"></script>
+}
 
 <script>
 

@@ -379,8 +379,36 @@
                                                 </td>
                                                 <td class="col-company" style="font-size:12px;" title="@(r.CompanyName ?? "")">@(r.CompanyName ?? "—")</td>
                                                 <td class="col-intent-summary">
-                                                    @if (!string.IsNullOrWhiteSpace(r.MailBodyIntent)) { <span class="intent-badge bg-light border" style="font-size:10px;">@r.MailBodyIntent</span> }
+                                                    @{
+                                                        string uIntent = (r.Intent ?? "").Trim();
+                                                        string uIntentCss = uIntent switch {
+                                                            "Available"    => "background:#d1fae5;color:#065f46;",
+                                                            "NotAvailable" => "background:#fee2e2;color:#991b1b;",
+                                                            "Unsubscribe"  => "background:#fef3c7;color:#92400e;",
+                                                            _ => "background:#f3f4f6;color:#6b7280;"
+                                                        };
+                                                        string uIntentLabel = uIntent switch {
+                                                            "Available"    => "Available",
+                                                            "NotAvailable" => "Not Available",
+                                                            "Unsubscribe"  => "Unsubscribe",
+                                                            _ => uIntent
+                                                        };
+                                                        string uSrcIcon = (r.IntentSource ?? "") switch {
+                                                            "Call"  => "<i class='fas fa-phone-alt' title='From voice call' style='font-size:8px;margin-left:3px;opacity:.7;'></i>",
+                                                            "Email" => "<i class='fas fa-envelope' title='From email reply' style='font-size:8px;margin-left:3px;opacity:.7;'></i>",
+                                                            _ => ""
+                                                        };
+                                                    }
+                                                    @if (!string.IsNullOrWhiteSpace(uIntent))
+                                                    {
+                                                        <span class="intent-badge" style="@uIntentCss font-weight:600;">@uIntentLabel@Html.Raw(uSrcIcon)</span>
+                                                    }
+                                                    @if (!string.IsNullOrWhiteSpace(r.MailBodyIntent)) { <span class="intent-badge bg-light border mt-1" style="font-size:10px;">@r.MailBodyIntent</span> }
                                                     @if (!string.IsNullOrWhiteSpace(r.AvailabilityIntent)) { <div class="mail-preview-text mt-1" style="-webkit-line-clamp:2;">@r.AvailabilityIntent</div> }
+                                                    @if (string.IsNullOrWhiteSpace(uIntent) && string.IsNullOrWhiteSpace(r.MailBodyIntent) && string.IsNullOrWhiteSpace(r.AvailabilityIntent))
+                                                    {
+                                                        <span class="text-muted">—</span>
+                                                    }
                                                 </td>
                                                 <td class="col-source" style="font-size:11px;">
                                                     @{
@@ -608,6 +636,9 @@
                         </div>
                     </div>
 
+                    <div class="row mb-2">
+                        <div class="col-md-12"><div class="mgm-section-title">Intent</div><div id="mgmUnifiedIntent"></div></div>
+                    </div>
                     <div class="row mb-3">
                         <div class="col-md-4"><div class="mgm-section-title">Mail Body Intent</div><div class="intent-badge bg-light border" id="mgmMailIntent"></div></div>
                         <div class="col-md-4"><div class="mgm-section-title">Availability Intent</div><div style="font-size:12px;" id="mgmAvailIntent"></div></div>
@@ -829,6 +860,20 @@
         $('#mgmName').text(r.interviewerName || r.interviewerNickName || '—'); $('#mgmJobTitle').text(r.jobTitle || '—');
         $('#mgmMag').text((r.magName || '—') + (r.assessmentGroupName ? ' \u2192 ' + r.assessmentGroupName : ''));
         
+        (function () {
+            var ui = (r.intent || '').trim();
+            var map = {
+                'Available':    { label: 'Available',     cls: 'bg-success' },
+                'NotAvailable': { label: 'Not Available', cls: 'bg-danger' },
+                'Unsubscribe':  { label: 'Unsubscribe',   cls: 'bg-warning text-dark' }
+            };
+            if (ui && map[ui]) {
+                var srcTxt = r.intentSource ? ' <span class="text-muted" style="font-size:10px;">(via ' + r.intentSource + (r.intentConfirmedAt ? ', ' + r.intentConfirmedAt : '') + ')</span>' : '';
+                $('#mgmUnifiedIntent').html('<span class="badge ' + map[ui].cls + '">' + map[ui].label + '</span>' + srcTxt);
+            } else {
+                $('#mgmUnifiedIntent').html('<span class="text-muted">Not yet captured</span>');
+            }
+        })();
         $('#mgmMailIntent').text(r.mailBodyIntent || '—'); $('#mgmAvailIntent').text(r.availabilityIntent || '—');
         $('#mgmConcerns').text(r.concernsOrNotInterested || 'None'); $('#mgmMailBody').text(r.mailContent || '');
         updateStatusBadge(r.status || 'Open');

@@ -1189,6 +1189,50 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public async Task<RunResult> GenerateTechRubricRevision(string revisionPrompt)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(revisionPrompt))
+                    return null;
+
+                string threadId = await CreateThreadAsync(plainAssistantMessage: revisionPrompt);
+                if (string.IsNullOrEmpty(threadId))
+                    return null;
+
+                string runId = await CreateRun(threadId);
+                if (string.IsNullOrEmpty(runId))
+                    return null;
+
+                string runStatus = string.Empty;
+                int pollInterval = 10000;
+                int maxPollInterval = 30000;
+                int maxAttempts = 12;
+                int attempts = 0;
+
+                while (runStatus != "completed")
+                {
+                    await Task.Delay(pollInterval);
+                    runStatus = await RetrieveRun(runId, threadId);
+                    attempts++;
+                    if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                        || runStatus == null || attempts >= maxAttempts)
+                        break;
+                    pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
+                }
+
+                if (runStatus == "completed")
+                    await RetrieveRunStepsForTokenUsage(runId, threadId);
+
+                return await ListRunMessages(threadId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<RunResult> GenerateTranscriptAnalysis(string transcriptData)
         {
             try
