@@ -50,7 +50,7 @@
                                                     <th>Interviewer</th>
                                                     @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
                                                     {
-                                                        <th>Billing(USD)</th>
+                                                        <th>Billing(@(Model?.FirstOrDefault()?.BillingCurrency ?? "INR"))</th>
                                                     }
                                                     <th class="text-center">Mobile</th>
                                                     <th>Resume Link</th>
@@ -73,7 +73,7 @@
                                                     <th>Interviewer</th>
                                                     @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
                                                     {
-                                                        <th>Billing(USD)</th>
+                                                        <th>Billing(@(Model?.FirstOrDefault()?.BillingCurrency ?? "INR"))</th>
                                                     }
                                                     <th class="text-center">Mobile</th>
                                                     <th>Resume Link</th>

@@ -2804,6 +2804,36 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper37">
+                                <div id="survey-feedback">
+                                    <div style="cursor:pointer" onclick="SkillChannelBilling()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div>
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#267da97d;padding:3px!important;"><img src="/img/int-billing.png" style="position: relative;top: -1px;left: 2px;"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span style="margin-bottom:20px;"><strong> Skill Channel's Billing </strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left" style="padding:3px;position:relative;left:0px;line-height: 40px;">
+                                                            <div class="header-front"></div>
+                                                            <strong><span onclick="SkillChannelBilling()" style="font-size:15px;">Click here </span> </strong>
+                                                        </div>
+                                                        <div class="pull-right">
+                                                            <button class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     }
 
                     @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
@@ -3157,6 +3187,9 @@
 
     function InterviewersBilling() {
         window.open('/Dashboard/SkillChannelInterviewerBilling', '_blank');
+    }
+    function SkillChannelBilling() {
+        window.open('/Dashboard/SkillChannelBillingRate', '_blank');
     }
      function RemovedInterviewers() {
         window.open('/Dashboard/ClientRemovedInterviewers', '_blank');
