@@ -2218,17 +2218,26 @@
         if (canUpload && !hasResume) {
             html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--upload" title="Upload interviewer resume (PDF, DOC, or DOCX)">' +
                 '<i class="fa fa-upload" aria-hidden="true"></i> Upload Resume</button>';
+        } else if (hasResume) {
+            html += '<a class="dm-v4-iv-cv-link dm-v4-iv-cv-link--resume" target="_blank" rel="noopener" href="' +
+                $('<span/>').text(resumeLink).html().replace(/ /g, '%20') +
+                '" title="Open interviewer resume">Resume ↗</a>';
+            if (hasCoded) {
+                html += '<button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view" data-coded-cv="' +
+                    $('<span/>').text(codedCvLink).html() + '" data-resume-link="' + $('<span/>').text(resumeLink).html() +
+                    '" data-cv-label="' + $('<span/>').text(cvCode).html() + '" title="View AI resume summary">Summary ↗</button>';
+            } else if (canEdit) {
+                html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--summary" data-resume-link="' +
+                    $('<span/>').text(resumeLink).html() + '" title="Generate AI resume summary and save as coded CV">' +
+                    '<span class="dm-v4-iv-cv-btn__icon" aria-hidden="true"><i class="fa fa-magic"></i></span>' +
+                    '<span class="dm-v4-iv-cv-btn__text"><span class="dm-v4-iv-cv-btn__title">Generate</span>' +
+                    '<span class="dm-v4-iv-cv-btn__sub">Resume Summary</span></span></button>';
+            }
         } else if (hasCoded) {
             html += '<button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view" data-coded-cv="' +
                 $('<span/>').text(codedCvLink).html() + '" data-resume-link="' + $('<span/>').text(resumeLink).html() +
                 '" data-cv-label="' + $('<span/>').text(cvCode).html() + '" title="View AI resume summary">' +
                 $('<span/>').text(cvCode).html() + ' ↗</button>';
-        } else if (canEdit && hasResume && !hasCoded) {
-            html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--summary" data-resume-link="' +
-                $('<span/>').text(resumeLink).html() + '" title="Generate AI resume summary and save as coded CV">' +
-                '<span class="dm-v4-iv-cv-btn__icon" aria-hidden="true"><i class="fa fa-magic"></i></span>' +
-                '<span class="dm-v4-iv-cv-btn__text"><span class="dm-v4-iv-cv-btn__title">Generate</span>' +
-                '<span class="dm-v4-iv-cv-btn__sub">Resume Summary</span></span></button>';
         } else if (redactAttempted && !hasCoded) {
             html += '<span class="dm-v4-muted">—</span>';
         } else if (!hasCoded) {

@@ -124,6 +124,7 @@ namespace Risebird.Web.Helpers
             var reasoning = ExtractClientVisibleAiReasoning(iv.OpenAIScreeningResponse);
 
             iv.EmailId = null;
+            iv.MobileNumber = null;
             iv.PerSuccessRate = 0;
             iv.Surcharge = 0;
             iv.VideoLink = null;
@@ -155,6 +156,7 @@ namespace Risebird.Web.Helpers
         {
             if (iv == null) return iv;
             iv.EmailId = null;
+            iv.MobileNumber = null;
             iv.PerSuccessRate = 0;
             iv.Surcharge = 0;
             iv.ClientAction = null;
