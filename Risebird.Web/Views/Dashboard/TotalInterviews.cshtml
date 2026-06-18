@@ -228,9 +228,10 @@
                                                                             "NoShow" => "System (No-Show)",
                                                                             "ProfileDrop" => "Self (Profile Drop)",
                                                                             "Blacklist" => "System (Blacklist)",
+                                                                            "Unsubscribe" => "Self (Unsubscribe)",
                                                                             _ => string.IsNullOrEmpty(item.InactivationType) ? "—" : item.InactivationType
                                                                         };
-                                                                        bool isSystem = item.InactivationType == "NoShow" || item.InactivationType == "Blacklist";
+                                                                        bool isSystem = item.InactivationType == "NoShow" || item.InactivationType == "Blacklist" || item.InactivationType == "Unsubscribe";
                                                                         string badgeBg = isSystem ? "#fef3c7" : (item.InactivationType == "ProfileDrop" ? "#e0f2fe" : "#f3f4f6");
                                                                         string badgeFg = isSystem ? "#92400e" : (item.InactivationType == "ProfileDrop" ? "#0369a1" : "#374151");
                                                                     }

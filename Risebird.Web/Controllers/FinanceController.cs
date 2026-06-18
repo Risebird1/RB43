@@ -2063,7 +2063,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod,
             string irn, string eInvoiceFileLink, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
             decimal tdsAmount, decimal netReceivable, string lineItemsJson,
-            int? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null,
+            decimal? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null,
             string latestRemark = null)
         {
             try
@@ -2075,11 +2075,11 @@ namespace Risebird.Web.Controllers
                     catch { lineItems = new List<InvoiceLineItemVM>(); }
                 }
 
-                // When marking as Paid (status=5) for non-M1, cash credit amount is required
-                const int StatusPaid    = 5;
+                const int StatusPaid     = 5;
                 const int BillingModelM1 = 1;
 
-                if (status == StatusPaid && cashCreditAmount.HasValue && cashCreditAmount.Value > 0)
+                // When marking as Paid (status=5), post InvoiceValue (base amount) to the client wallet
+                if (status == StatusPaid)
                 {
                     var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
                     if (invoice != null && invoice.BillingModel != BillingModelM1)
@@ -2087,15 +2087,21 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                         var billingType = await _clientService.GetClientBillingType(invoice.ClientId);
                         int? billingOwnerId = billingType == 1 ? invoice.BillingOwnerId : (int?)null;
+                        // Credit = InvoiceValue (Subtotal + GST — full invoice value).
+                        // Passing invoiceId ensures existing wallet row is updated, not duplicated.
                         await _walletService.AddClientWalletBalance(
-                            billingType, invoice.ClientId, cashCreditAmount.Value,
+                            billingType, invoice.ClientId, (int)subtotal,
                             emailid, DateTime.Now, billingOwnerId,
-                            cashTransactionRef, null, cashTransactionDate, "CashCredit");
+                            cashTransactionRef, null, cashTransactionDate, "CashCredit",
+                            invoiceId: invoiceId);
                     }
                 }
 
+                // Save cashCreditAmount on the invoice record for reference
+                decimal? savedCashAmount = (cashCreditAmount.HasValue && cashCreditAmount.Value > 0)
+                    ? (decimal?)cashCreditAmount.Value : null;
                 var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
-                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems, latestRemark, cashTransactionRef);
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems, latestRemark, cashTransactionRef, savedCashAmount);
                 return Json(new
                 {
                     success,
@@ -2143,7 +2149,8 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveGeneratedInvoice(GenerateInvoiceVM model, string LineItemsJson)
+        public async Task<IActionResult> SaveGeneratedInvoice(GenerateInvoiceVM model, string LineItemsJson,
+            int? CashCreditAmount = null, string CashTransactionRef = null, DateTime? CashTransactionDate = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2157,16 +2164,45 @@ namespace Risebird.Web.Controllers
                         try { model.LineItems = JsonConvert.DeserializeObject<List<InvoiceLineItemVM>>(LineItemsJson); }
                         catch { model.LineItems = new List<InvoiceLineItemVM>(); }
                     }
-                            var invoiceId = await _meetingService.SaveGeneratedInvoice(model);
-                            if (invoiceId > 0)
+
+                    // Attach transaction fields to the model so the SP saves them in one shot
+                    if (CashCreditAmount.HasValue && CashCreditAmount.Value > 0)
+                        model.CashCreditAmount = CashCreditAmount;
+                    if (!string.IsNullOrWhiteSpace(CashTransactionRef))
+                        model.UTRTrxn = CashTransactionRef;
+
+                    var invoiceId = await _meetingService.SaveGeneratedInvoice(model);
+                    if (invoiceId > 0)
+                    {
+                        // When saved as Paid (status=5), post InvoiceValue (base amount) to client wallet
+                        if (model.Status == 5)
+                        {
+                            try
                             {
-                                TempData["InvoiceListMessage"] = "Success: Invoice saved successfully.";
-                                return RedirectToAction("InvoiceList");
+                                var billingType    = await _clientService.GetClientBillingType(model.ClientId);
+                                int? billingOwnerId = billingType == 1 ? model.BillingOwnerId : (int?)null;
+                                // Credit = InvoiceValue (base amount).
+                                // Passing invoiceId ensures existing wallet row is updated, not duplicated.
+                                await _walletService.AddClientWalletBalance(
+                                    billingType, model.ClientId, (int)model.InvoiceValue,
+                                    emailid, DateTime.Now, billingOwnerId,
+                                    CashTransactionRef, null, CashTransactionDate, "CashCredit",
+                                    invoiceId: invoiceId);
                             }
-                            TempData["GenerateInvoiceMsg"] = invoiceId == -1
-                                ? "Error: An invoice has already been generated for this Client, Billing Owner, Month and Year. Duplicate invoices are not allowed."
-                                : "Error: Could not save invoice.";
-                            return RedirectToAction("GenerateInvoice");
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            }
+                        }
+
+                        TempData["InvoiceListMessage"] = "Success: Invoice saved successfully.";
+                        return RedirectToAction("InvoiceList");
+                    }
+
+                    TempData["GenerateInvoiceMsg"] = invoiceId == -1
+                        ? "Error: An invoice has already been generated for this Client, Billing Owner, Month and Year. Duplicate invoices are not allowed."
+                        : "Error: Could not save invoice.";
+                    return RedirectToAction("GenerateInvoice");
                 }
                 return RedirectToAction("SignOut", "Session");
             }

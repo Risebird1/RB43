@@ -110,7 +110,7 @@ namespace Risebird.Repository
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string funnelMode = null)
+            string funnelStage = null, string funnelMode = null, string onboardingType = null)
         {
             try
             {
@@ -125,6 +125,7 @@ namespace Risebird.Repository
                 p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
                 p.Add("@FunnelStage", string.IsNullOrWhiteSpace(funnelStage) ? null : funnelStage);
                 p.Add("@FunnelMode", string.IsNullOrWhiteSpace(funnelMode) ? "at" : funnelMode);
+                p.Add("@OnboardingType", string.IsNullOrWhiteSpace(onboardingType) ? null : onboardingType);
                 p.Add("@DateFrom", dateFrom);
                 p.Add("@DateTo", dateTo);
                 p.Add("@Page", page);
@@ -147,7 +148,7 @@ namespace Risebird.Repository
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string funnelMode = null)
+            string funnelStage = null, string funnelMode = null, string onboardingType = null)
         {
             try
             {
@@ -162,6 +163,7 @@ namespace Risebird.Repository
                 p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
                 p.Add("@FunnelStage", string.IsNullOrWhiteSpace(funnelStage) ? null : funnelStage);
                 p.Add("@FunnelMode", string.IsNullOrWhiteSpace(funnelMode) ? "at" : funnelMode);
+                p.Add("@OnboardingType", string.IsNullOrWhiteSpace(onboardingType) ? null : onboardingType);
                 p.Add("@DateFrom", dateFrom);
                 p.Add("@DateTo", dateTo);
 

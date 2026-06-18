@@ -43,4 +43,9 @@ END
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'InvoiceId' AND Object_ID = Object_ID(N'Wallet'))
+BEGIN
+    ALTER TABLE Wallet ADD [InvoiceId] [int] NULL
+END
+GO
 
