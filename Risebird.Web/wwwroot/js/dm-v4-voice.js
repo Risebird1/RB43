@@ -66,11 +66,11 @@
     }
 
     function showRubricVoiceResult(rubricRes) {
-        var msg = (rubricRes && rubricRes.message) || 'Score rubric regenerated from voice brief.';
-        var added = rubricRes && rubricRes.addedFromVoice;
-        var reloadRequired = rubricRes && (rubricRes.reloadRequired || added > 0);
-        var icon = added > 0 ? 'success' : 'info';
-        var title = added > 0 ? 'Rubric updated' : 'Rubric unchanged';
+        var msg = (rubricRes && rubricRes.message) || 'Score rubric updated from voice brief.';
+        var changed = rubricRes && rubricRes.changed === true;
+        var reloadRequired = rubricRes && (rubricRes.reloadRequired || changed);
+        var icon = changed ? 'success' : 'info';
+        var title = changed ? 'Rubric revised' : 'Rubric unchanged';
 
         function afterAlert() {
             if (reloadRequired) {

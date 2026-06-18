@@ -1449,6 +1449,10 @@
                                                                         }
                                                                         }
                                                                     </div>
+                                                                    @if (canEditDmIvOps && !string.IsNullOrWhiteSpace(iv.MobileNumber))
+                                                                    {
+                                                                        <div class="dm-v4-iv-phone">@iv.MobileNumber</div>
+                                                                    }
                                                                     <div class="dm-v4-iv-meta" aria-label="Interviewer activity">
                                                                         <div class="dm-v4-iv-meta__line" data-meta="login"></div>
                                                                         <div class="dm-v4-iv-meta__line" data-meta="interview"></div>
@@ -1531,23 +1535,33 @@
                                                                                 <i class="fa fa-upload" aria-hidden="true"></i> Upload Resume
                                                                             </button>
                                                                         }
+                                                                        else if (dmIvHasResume && !isClientShareView)
+                                                                        {
+                                                                            <a class="dm-v4-iv-cv-link dm-v4-iv-cv-link--resume" target="_blank" rel="noopener"
+                                                                               href="@iv.ResumeLink.Replace(" ", "%20")" title="Open interviewer resume">Resume ↗</a>
+                                                                            @if (dmIvHasOpenAiCodedCv)
+                                                                            {
+                                                                                <button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view"
+                                                                                        data-coded-cv="@dmIvDisplayCodedCvLink" data-resume-link="@(iv.ResumeLink ?? "")"
+                                                                                        data-cv-label="@cvCode" title="View AI resume summary">Summary ↗</button>
+                                                                            }
+                                                                            else if (canEditIvOps)
+                                                                            {
+                                                                                <button style="padding: 4px 8px;" type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--summary"
+                                                                                        data-user-id="@iv.UserId" data-irf-id="@Model.id" data-email="@iv.EmailId"
+                                                                                        data-resume-link="@iv.ResumeLink" title="Generate AI resume summary and save as coded CV">
+                                                                                    <span class="dm-v4-iv-cv-btn__text">
+                                                                                        <span class="dm-v4-iv-cv-btn__title">Generate</span>
+                                                                                        <span class="dm-v4-iv-cv-btn__sub" style="font-size: 9px;">Resume Summary</span>
+                                                                                    </span>
+                                                                                </button>
+                                                                            }
+                                                                        }
                                                                         else if (dmIvHasOpenAiCodedCv)
                                                                         {
                                                                             <button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view"
                                                                                     data-coded-cv="@dmIvDisplayCodedCvLink" data-resume-link="@(iv.ResumeLink ?? "")"
                                                                                     data-cv-label="@cvCode" title="View AI resume summary">@(cvCode) ↗</button>
-                                                                        }
-                                                                        else if (canEditIvOps && dmIvHasResume)
-                                                                        {
-                                                                            <button style="padding: 4px 8px;" type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--summary"
-                                                                                    data-user-id="@iv.UserId" data-irf-id="@Model.id" data-email="@iv.EmailId"
-                                                                                    data-resume-link="@iv.ResumeLink" title="Generate AI resume summary and save as coded CV">
-                                                                                @* <span class="dm-v4-iv-cv-btn__icon" aria-hidden="true"><i class="fa fa-magic"></i></span> *@
-                                                                                <span class="dm-v4-iv-cv-btn__text">
-                                                                                    <span class="dm-v4-iv-cv-btn__title">Generate</span>
-                                                                                    <span class="dm-v4-iv-cv-btn__sub" style="font-size: 9px;">Resume Summary</span>
-                                                                                </span>
-                                                                            </button>
                                                                         }
                                                                         else if (iv.IsResumeRedactAttempted && !dmIvHasOpenAiCodedCv)
                                                                         {
@@ -3550,9 +3564,9 @@ else
         white-space:normal;
     }
 </style>
-<script src="~/js/dm-v4-voice.js?v=20250609voiceloader"></script>
+<script src="~/js/dm-v4-voice.js?v=20250609rubricrev"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-layout.js?v=20250609ratecap"></script>
+<script src="~/js/dm-v4-layout.js?v=20250609ivphonecv"></script>
 <script src="~/js/dm-v4-questions.js?v=20240609a"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>

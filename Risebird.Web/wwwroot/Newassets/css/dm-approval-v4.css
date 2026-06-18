@@ -2096,6 +2096,17 @@
     font-family: 'IBM Plex Mono', Consolas, monospace;
 }
 
+.dm-v4-iv-phone {
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--dm-text-dim);
+    font-family: 'IBM Plex Mono', Consolas, monospace;
+}
+
+.dm-v4-iv-cv-link--resume {
+    text-decoration: none;
+}
+
 .dm-v4-iv-skills {
     font-size: 13px;
     color: var(--dm-text-mid);

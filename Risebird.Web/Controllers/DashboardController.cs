@@ -20,6 +20,7 @@ using Risebird.Repository;
 using Risebird.Entities.Data.AffIndaModels;
 //using Risebird.Repository;
 using Risebird.Repository.Interface;
+using Risebird.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -6945,57 +6946,51 @@ NEVER:
             }
         }
 
-        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> AIQCNegative()
+        public async Task<IActionResult> AIQCNegative(int? interviewId = null)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "Interviewer")
-                    {
-                        var model = await _dashboardService.GetAIQCNegativeVerdictReports();
-                        model = model.Select(x =>
-                        {
-                            x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
-                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                            x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
-                            return x;
-                        }).ToList();
-                        foreach (var item in model)
-                        {
-
-                            if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
-                            {
-                                if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
-                                {
-                                    item.MeetingStatusStatusDesc = "Status Pending";
-                                }
-                            }
-                            else
-                            {
-                                item.MeetingStatusStatusDesc = string.Empty;
-
-                            }
-                        }
-
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
+                if (!CompletedInterviewsViewMode.TryAuthorizeEvidenceEndpoints(HttpContext, out var profileName))
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
+
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                ViewBag.Profile = profileName;
+                ViewBag.InterviewIdFilter = interviewId;
+                var model = await _dashboardService.GetAIQCNegativeVerdictReports();
+                if (interviewId.HasValue)
+                {
+                    model = model.Where(x => x.InterviewId == interviewId.Value).ToList();
+                }
+                model = model.Select(x =>
+                {
+                    x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                    x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
+                    return x;
+                }).ToList();
+                foreach (var item in model)
+                {
+
+                    if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                    {
+                        if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                        {
+                            item.MeetingStatusStatusDesc = "Status Pending";
+                        }
+                    }
+                    else
+                    {
+                        item.MeetingStatusStatusDesc = string.Empty;
+
+                    }
+                }
+
+                return View(model);
             }
             catch (Exception ex)
             {
