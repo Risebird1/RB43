@@ -19,7 +19,8 @@ Begin
   IRF.SendIntervieweravailbilityOn,IsNull(DATEDIFF(SECOND, IRF.SendIntervieweravailbilityOn, GetDate()),0) as AvailbilityHour,  
   ipr.isVerified,ipr.IsEmployed,ipr.CompanyName,ipr.EmploymentComment,ipr.AvailabilityResponseDate,ti.PerSuccessRate,IRF.JDLink,  
   Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTitle,  
-  IRF.InterviewDuration, ipr.VideoConfirmation,ipr.RedMarker, ti.[Source], ti.ClientAction,ibr.BillingRate,Client.[Name] as ClientName,IRF.JobCountry,IRF.CompanyType,IRF.Heuristicsscore      
+  IRF.InterviewDuration, ipr.VideoConfirmation,ipr.RedMarker, ti.[Source], ti.ClientAction,ibr.BillingRate,Client.[Name] as ClientName,IRF.JobCountry,IRF.CompanyType,IRF.Heuristicsscore,
+  ISNULL(Client.BillingCurrency,'INR') AS BillingCurrency      
   from TransInterviewer ti join InterviewerProfile ipr on ipr.UserId = ti.UserId        
   join UserList ul on ul.id = ti.UserId        
   join IRF on irf.id = ti.IRFId    
@@ -31,6 +32,6 @@ Begin
     and Isnull(ibr.BillingRate,0)=0
   group by ti.IRFId, ul.EmailId, ipr.ResumeLink, ipr.UserId, irf.IRFId, ti.AIVerdict, ipr.ResumeLink, ul.MobileNumber, IRF.IRFId,ul.uniqueid,ul.FirstName+' '+ul.LastName,Case when ti.IsActive=1 and ul.isactive=1 then 1 else 0 end,ti.IsAvailable,  
   IRF.SendIntervieweravailbilityOn,ipr.isVerified,ipr.IsEmployed,ipr.CompanyName,ipr.EmploymentComment,ipr.AvailabilityResponseDate,  
-  ti.PerSuccessRate,IRF.JDLink, Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,IRF.InterviewDuration,ipr.VideoConfirmation,ipr.RedMarker, ti.[Source], ti.ClientAction, agc.CampaignName,ibr.BillingRate,Client.[Name],IRF.JobCountry,IRF.CompanyType,IRF.Heuristicsscore         
+  ti.PerSuccessRate,IRF.JDLink, Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end,IRF.InterviewDuration,ipr.VideoConfirmation,ipr.RedMarker, ti.[Source], ti.ClientAction, agc.CampaignName,ibr.BillingRate,Client.[Name],IRF.JobCountry,IRF.CompanyType,IRF.Heuristicsscore,Client.BillingCurrency         
 End   
 GO
