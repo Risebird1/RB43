@@ -2095,6 +2095,57 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<IEnumerable<SkillChannelBillingRateVM>> GetSkillChannelBillingRates()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<SkillChannelBillingRateVM>(
+                        con, "usp_GetSkillChannelBillingRates", null,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result?.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> SaveSkillChannelBillingRate(int irfId, int billingRate, string createdBy)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@IRFId", irfId);
+                parameters.Add("@BillingRate", billingRate);
+                parameters.Add("@CreatedBy", createdBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveSkillChannelBillingRate", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public async Task<IEnumerable<PQIDetails>> GetClientRemovedInterviewers()
         {
             try

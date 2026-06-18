@@ -49,7 +49,13 @@ BEGIN
 	  Select @Debit=BillingRate from InterviewerBillingRate where IRFId=@IRFId and Userid=IsNull(@InterviewerUserid,0)      
 	  Set @Debit=ISNULL(@Debit,0)      
   end
-  
+  -- InterviewerBillingType = 2 (Skill Channel): rate comes from SkillChannelBillingRate per IRF
+   else if(@InterviewerBillingType=2)
+  begin
+      Select @Debit=ISNULL(scbr.BillingRate, cl.PerInterviewRate)
+      From IRF Inner Join Client cl ON cl.id = IRF.ClientId Left  Join SkillChannelBillingRate scbr ON scbr.IRFId = IRF.id Where IRF.id = @IRFId
+      Set @Debit=ISNULL(@Debit,0)
+  end
   -- Custom billing formula clients (e.g. Apexon): rate from ClientBillingDetails × PerInterviewRate
   else if(@BillingClientId > 0)
   begin

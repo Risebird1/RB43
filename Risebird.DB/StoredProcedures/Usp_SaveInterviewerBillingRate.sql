@@ -23,7 +23,7 @@ BEGIN
     Select @resolvedBillingType = ISNULL(@billingtype, ISNULL(cl.BillingCurrency, 'INR'))
     From IRF
     Join Client cl ON cl.id = IRF.ClientId
-    Where IRF.IRFId = @IRFid
+    Where IRF.id = @IRFid
 
     Set @resolvedBillingType = ISNULL(@resolvedBillingType, 'INR')
 
