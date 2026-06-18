@@ -22,6 +22,9 @@ namespace Risebird.Entities.Data
         public string   AvailabilityIntent          { get; set; }
         public string   MailBodyIntent              { get; set; }
         public string   ConcernsOrNotInterested     { get; set; }
+        public string   Intent                      { get; set; }
+        public string   IntentSource                { get; set; }
+        public DateTime? IntentConfirmedAt          { get; set; }
         public string   ResumeFitment               { get; set; }
         public string   ResumeLink                  { get; set; }
         public bool     HasAttachment               { get; set; }

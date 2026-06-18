@@ -17,13 +17,13 @@ namespace Risebird.Repository.Interface
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string funnelMode = null);
+            string funnelStage = null, string funnelMode = null, string onboardingType = null);
 
         Task<Dictionary<string, int>> GetFunnelStageCountsAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string funnelMode = null);
+            string funnelStage = null, string funnelMode = null, string onboardingType = null);
 
         Task<NaukriProspectiveInterviewerVM> GetByIdAsync(int id);
 

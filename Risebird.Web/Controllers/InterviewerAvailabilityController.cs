@@ -186,6 +186,9 @@ namespace Risebird.Web.Controllers
                         record.AvailabilityIntent,
                         record.MailBodyIntent,
                         record.ConcernsOrNotInterested,
+                        record.Intent,
+                        record.IntentSource,
+                        intentConfirmedAt = record.IntentConfirmedAt?.ToString("dd MMM yyyy, HH:mm"),
                         record.ResumeFitment,
                         record.ResumeLink,
                         record.HasAttachment,
@@ -1030,6 +1033,16 @@ namespace Risebird.Web.Controllers
                 {
                     if (!IsConfirmedAvailableIntent(intentLower))
                     {
+                        // Unsubscribe on a deferred profile call: no availability record is created,
+                        // but the interviewer must still be deactivated system-wide.
+                        if (string.Equals(MapCallDispositionToIntent(intentLower), "Unsubscribe", StringComparison.OrdinalIgnoreCase))
+                        {
+                            await DeactivateProfileInterviewerOnUnsubscribeAsync(deferredProfileId, "voice call");
+                            await SaveIaCp("ia_hangup_deferred_unsubscribe",
+                                $"Unsubscribe disposition on deferred profile call for profile #{deferredProfileId} — interviewer deactivated system-wide.");
+                            return Content("OK. Unsubscribe processed — interviewer deactivated.", "text/html");
+                        }
+
                         await SaveIaCp("ia_hangup_deferred_skip",
                             $"No availability record created for profile #{deferredProfileId} — disposition '{payload.Intent ?? "none"}' is not a confirmed availability.");
                         return Content($"OK. No record created (intent='{payload.Intent ?? "none"}').", "text/html");
@@ -1084,6 +1097,26 @@ namespace Risebird.Web.Controllers
 
                 await _repository.InsertHistoryAsync(recordId.Value, "PlivoCallCompleted", "—",
                     historyDetail, "PlivoCX Webhook");
+
+                // Unified Intent — the call disposition feeds the same single Intent as an
+                // email reply. no_answer / unknown leaves any existing intent untouched.
+                string callIntent = MapCallDispositionToIntent(payload.Intent);
+                if (!string.IsNullOrEmpty(callIntent))
+                {
+                    await _repository.SetUnifiedIntentAsync(recordId.Value, callIntent, "Call", DateTime.UtcNow);
+                    await _repository.InsertHistoryAsync(recordId.Value, "IntentSet", "—",
+                        $"Unified Intent set to '{callIntent}' (source: Call)", "PlivoCX Webhook");
+                    await SaveIaCp("ia_hangup_intent_set",
+                        $"Unified intent '{callIntent}' set for record #{recordId} from call", callLogId: recordId);
+
+                    // Unsubscribe on the call → deactivate the interviewer system-wide.
+                    if (string.Equals(callIntent, "Unsubscribe", StringComparison.OrdinalIgnoreCase))
+                    {
+                        await DeactivateInterviewerOnUnsubscribeAsync(recordId.Value, "voice call");
+                        await SaveIaCp("ia_hangup_unsubscribe",
+                            $"Unsubscribe disposition on record #{recordId} — interviewer deactivated system-wide.", callLogId: recordId);
+                    }
+                }
 
                 await SaveIaCp("ia_hangup_complete",
                     $"Processing finished for record #{recordId}. parseMethod={parseMethod}",
@@ -1783,6 +1816,162 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ── Unified availability intent ────────────────────────────────────────────
+        // Both the email reply and the Plivo voice-agent call feed ONE canonical Intent
+        // so the dashboard never shows a blank intent for call-driven records.
+        // Canonical values: "Available" | "NotAvailable" | "Unsubscribe".
+
+        // Maps a Plivo call disposition to the canonical intent.
+        // Returns null for no_answer / unknown so a previously-set intent is not overwritten.
+        private static string MapCallDispositionToIntent(string disposition)
+        {
+            switch ((disposition ?? "").Trim().ToLowerInvariant())
+            {
+                case "available":
+                case "interested":
+                case "yes":
+                case "confirmed":
+                case "willing":
+                    return "Available";
+                case "not_available":
+                case "notavailable":
+                case "not_interested":
+                case "no":
+                case "declined":
+                    return "NotAvailable";
+                case "unsubscribe":
+                case "drop":
+                case "drop_profile":
+                case "dropprofile":
+                case "drop_my_profile":
+                case "drop my profile":
+                case "remove":
+                case "remove_me":
+                case "remove_my_profile":
+                case "remove my profile":
+                    return "Unsubscribe";
+                default:
+                    return null;
+            }
+        }
+
+        // Recognises the various ways a "stop contacting me / remove me" request can be phrased,
+        // from either a call disposition or free-text email body. Any of these resolves to the
+        // canonical 'Unsubscribe' intent (which triggers system-wide deactivation).
+        private static bool IsUnsubscribeText(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return false;
+            var t = text.ToLowerInvariant();
+            return t.Contains("unsubscribe")
+                || t.Contains("drop my profile")
+                || t.Contains("drop profile")
+                || t.Contains("remove my profile")
+                || t.Contains("remove my account")
+                || t.Contains("delete my profile")
+                || t.Contains("delete my account")
+                || t.Contains("stop contacting")
+                || t.Contains("stop emailing")
+                || t.Contains("take me off");
+        }
+
+        // Maps the email-extracted availability fields to the canonical intent.
+        // Returns null when the signal is ambiguous (so we don't assert an intent we can't infer).
+        private static string MapEmailToIntent(string availabilityIntent, string mailBodyIntent, string concernsOrNotInterested)
+        {
+            var combined = $"{availabilityIntent} {mailBodyIntent} {concernsOrNotInterested}".ToLowerInvariant();
+            if (IsUnsubscribeText(combined))
+                return "Unsubscribe";
+
+            if (IsFavorableAvailabilityIntent(availabilityIntent, mailBodyIntent, concernsOrNotInterested))
+                return "Available";
+
+            var concern = (concernsOrNotInterested ?? "").Trim().ToLowerInvariant();
+            bool hasBlockingConcern = !string.IsNullOrEmpty(concern)
+                && concern != "none" && concern != "no" && concern != "n/a" && concern != "na" && concern != "nil";
+
+            var text = $"{availabilityIntent} {mailBodyIntent}".ToLowerInvariant();
+            var negativeKeywords = new[] { "not available", "unavailable", "not interested", "declined", "decline" };
+            if (hasBlockingConcern || negativeKeywords.Any(k => text.Contains(k)))
+                return "NotAvailable";
+
+            return null;
+        }
+
+        // ── Unsubscribe → system-wide deactivation ──────────────────────────────────
+        // When an interviewer's unified intent resolves to 'Unsubscribe' (from EITHER a voice
+        // call or an email reply) they must be pulled out of active circulation everywhere:
+        //   • UserList.IsActive = 0  (with InactivationType = 'Unsubscribe')
+        //   • every TransInterviewer (IRF) row → IsActive = 0, IsAvailable = 0
+        // and the availability ticket is closed. Idempotent: a no-op if already inactive or if
+        // the sender isn't a known interviewer in the system.
+        private async Task DeactivateInterviewerOnUnsubscribeAsync(int eaId, string medium)
+        {
+            try
+            {
+                var rec = await _repository.GetEmailAvailabilityByIdAsync(eaId);
+                if (rec == null) return;
+
+                // Unsubscribe ends the conversation — close the ticket regardless.
+                if (!string.Equals(rec.Status, "Closed", StringComparison.OrdinalIgnoreCase))
+                {
+                    await _repository.UpdateEmailAvailabilityStatusAsync(eaId, "Closed", "System (Unsubscribe)");
+                    await _repository.InsertHistoryAsync(eaId, "StatusChange", rec.Status ?? "Open", "Closed", "System (Unsubscribe)");
+                }
+
+                // No linked system user → nothing active to deactivate.
+                if (!rec.UserId.HasValue || rec.UserId.Value <= 0)
+                {
+                    await _repository.InsertHistoryAsync(eaId, "UnsubscribeNoUser", "—",
+                        $"Unsubscribe received via {medium}, but no linked system user to deactivate.", "System (Unsubscribe)");
+                    return;
+                }
+
+                // Already inactive — don't repeat the work.
+                if (!rec.IsInterviewerActive)
+                {
+                    await _repository.InsertHistoryAsync(eaId, "UnsubscribeAlreadyInactive", "—",
+                        $"Unsubscribe received via {medium}; interviewer (UserId {rec.UserId}) already inactive.", "System (Unsubscribe)");
+                    return;
+                }
+
+                var reason = $"Auto-inactivated: interviewer requested unsubscribe / drop profile via {medium}.";
+                var ok = await _interviewerService.InactivateInterviewer(
+                    rec.UserId.Value, "System (Unsubscribe)", reason, false, "Unsubscribe");
+
+                await _repository.InsertHistoryAsync(eaId,
+                    ok ? "InterviewerInactivated" : "UnsubscribeInactivateFailed",
+                    "Active",
+                    ok ? $"Interviewer (UserId {rec.UserId}) inactivated system-wide (UserList + TransInterviewer) due to unsubscribe via {medium}."
+                       : $"Failed to inactivate interviewer (UserId {rec.UserId}) on unsubscribe via {medium}.",
+                    "System (Unsubscribe)");
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        // Unsubscribe handling for a deferred profile call (IRF auto-call / batch / campaign to an
+        // EXISTING profile interviewer) where no availability record is — or should be — created.
+        // We still deactivate the interviewer system-wide. No-op if already inactive/dropped.
+        private async Task DeactivateProfileInterviewerOnUnsubscribeAsync(int interviewerProfileId, string medium)
+        {
+            try
+            {
+                var contact = await _repository.GetProfileInterviewerContactAsync(interviewerProfileId);
+                if (contact == null || !contact.UserId.HasValue || contact.UserId.Value <= 0)
+                    return; // already inactive/dropped, or not resolvable — nothing to deactivate
+
+                var reason = $"Auto-inactivated: profile interviewer requested unsubscribe / drop profile via {medium}.";
+                await _interviewerService.InactivateInterviewer(
+                    contact.UserId.Value, "System (Unsubscribe)", reason, false, "Unsubscribe");
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
         private async Task SaveIaCp(
             string name, string msg, string convId = null, int? callLogId = null, string extra = null)
         {
@@ -1944,6 +2133,23 @@ namespace Risebird.Web.Controllers
 
                 if (newId > 0)
                     await _repository.InsertHistoryAsync(newId, "RecordCreated", null, "Open", "Relay.app");
+
+                // Unified Intent — the email reply feeds the same single Intent as the Plivo call.
+                if (newId > 0)
+                {
+                    string emailIntent = MapEmailToIntent(
+                        payload.AvailabilityIntent, payload.MailBodyIntent, payload.ConcernsOrNotInterested);
+                    if (!string.IsNullOrEmpty(emailIntent))
+                    {
+                        await _repository.SetUnifiedIntentAsync(newId, emailIntent, "Email", record.ReceivedAt);
+                        await _repository.InsertHistoryAsync(newId, "IntentSet", "—",
+                            $"Unified Intent set to '{emailIntent}' (source: Email)", "Relay.app");
+
+                        // Unsubscribe in the email reply → deactivate the interviewer system-wide.
+                        if (string.Equals(emailIntent, "Unsubscribe", StringComparison.OrdinalIgnoreCase))
+                            await DeactivateInterviewerOnUnsubscribeAsync(newId, "email reply");
+                    }
+                }
 
                 // Auto-close if the Relay-extracted availability intent is favorable
                 if (newId > 0 && IsFavorableAvailabilityIntent(

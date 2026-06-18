@@ -4340,7 +4340,7 @@ SELECT CAST(CASE WHEN EXISTS (
                 return null;
             }
         }
-        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer)
+        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer, string inactivationType = null)
         {
             try
             {
@@ -4350,6 +4350,7 @@ SELECT CAST(CASE WHEN EXISTS (
                 dynamicParameters.Add("@modifiedOn", DateTime.Now);
                 dynamicParameters.Add("@comment", comment);
                 dynamicParameters.Add("@blockinterviewer", blockinterviewer);
+                dynamicParameters.Add("@InactivationType", string.IsNullOrWhiteSpace(inactivationType) ? null : inactivationType);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "usp_InactivateInterviewer", dynamicParameters, commandType: CommandType.StoredProcedure);
