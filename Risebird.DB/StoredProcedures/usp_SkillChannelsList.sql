@@ -19,7 +19,7 @@ from IRF inner join Client on IRF.ClientId = Client.id
 outer Apply (Select Count(id) TotalInterviewers From TransInterviewer where IRFId=IRF.id) ti    
 outer Apply (Select Count(id) ActiveInterviewers From TransInterviewer where IRFId=IRF.id and IsActive=1) tai    
 outer Apply (Select Count(id) InActiveInterviewers From TransInterviewer where IRFId=IRF.id and IsActive=0) tii    
-where IRF.Clientid=177    
+where ISNULL(Client.InterviewerBillingType,1) = 3
 order by IRF.StartDate desc    
 END
 GO

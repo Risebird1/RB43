@@ -52,6 +52,7 @@ namespace Risebird.Entities.ViewModel
         public string IRFName { get; set; }
         public string AIVerdict { get; set; }
         public int BillingRate { get; set; }
+        public string BillingCurrency { get; set; } = "INR";
     }
     public class AssessmentIRFListVM
     {

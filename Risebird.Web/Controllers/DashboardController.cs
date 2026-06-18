@@ -7087,6 +7087,70 @@ NEVER:
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        #region Skill Channel Billing Rate
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> SkillChannelBillingRate()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance")
+                    {
+                        var model = await _dashboardService.GetSkillChannelBillingRates();
+                        if (model == null) model = new List<SkillChannelBillingRateVM>();
+                        model = model.Select(x =>
+                        {
+                            x.Heuristicsscore = !string.IsNullOrWhiteSpace(x.Heuristicsscore)
+                                ? ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription()
+                                : string.Empty;
+                            x.CompanyType = !string.IsNullOrWhiteSpace(x.CompanyType)
+                                ? ((CompanyType)Convert.ToInt32(x.CompanyType)).GetDescription()
+                                : string.Empty;
+                            x.JobCountry = x.JobCountry == "2" ? "Onsite" : "Offshore";
+                            return x;
+                        }).ToList();
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> SaveSkillChannelBillingRate(int irfId, int billingRate)
+        {
+            try
+            {
+                var createdBy = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var result = await _dashboardService.SaveSkillChannelBillingRate(irfId, billingRate, createdBy);
+                return Json(result ? "Success" : "Failed");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Error");
+            }
+        }
+        #endregion
+
         #region Client Action Data
         public async Task<IActionResult> ClientRemovedInterviewers()
         {
