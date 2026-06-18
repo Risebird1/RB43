@@ -963,8 +963,8 @@ namespace Risebird.Web.Controllers
                 await _repository.InsertHistoryAsync(id, "InvitationEmailSent", "\u2014",
                     $"Sent to: {email}, MAG: {magName} (AG: {agId}), Link: {appLink}", user);
 
-                // Invitation sent → entering Intent Collection (awaiting email reply or AI Plivo call).
-                await _repository.AdvanceFunnelStageAsync(id, "IntentCollection", "InProgress");
+                // Invitation sent → 'Invitation Sent' (awaiting email reply or AI Plivo call).
+                await _repository.AdvanceFunnelStageAsync(id, "InvitationSent", "InProgress");
 
                 return Json(new { success = true, message = "Invitation email sent to " + email + ".", applicationLink = appLink });
             }
@@ -999,10 +999,7 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrEmpty(emailIntent))
                 {
                     await _repository.SetUnifiedIntentAsync(id, emailIntent, "Email", DateTime.UtcNow);
-                    string ticket = (emailIntent == "NotInterested" || emailIntent == "Unsubscribe") ? "Closed" : "InProgress";
-                    await _repository.AdvanceFunnelStageAsync(id, "IntentConfirmed", ticket);
-                    await _repository.InsertHistoryAsync(id, "IntentConfirmed", "\u2014",
-                        $"Unified Intent set to '{emailIntent}' (source: Email)", "Prospect");
+                    await ApplyIntentToFunnelAsync(id, emailIntent, "Email");
                 }
 
                 string message = response switch
@@ -1524,8 +1521,8 @@ namespace Risebird.Web.Controllers
                 await _repository.InsertHistoryAsync(id, "PlivoCallInitiated", "—",
                     $"Call triggered to {phone}. ConversationId: {conversationId ?? "N/A"}", calledBy);
 
-                // Call placed → prospect is in Intent Collection (awaiting call disposition).
-                await _repository.AdvanceFunnelStageAsync(id, "IntentCollection", "InProgress");
+                // Call placed → prospect is awaiting response (awaiting call disposition).
+                await _repository.AdvanceFunnelStageAsync(id, "AwaitingResponse", "InProgress");
 
                 return Json(new
                 {
@@ -1751,10 +1748,7 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrEmpty(callIntent))
                 {
                     await _repository.SetUnifiedIntentAsync(recordId.Value, callIntent, "Call", DateTime.UtcNow);
-                    string ticket = (callIntent == "NotInterested" || callIntent == "Unsubscribe") ? "Closed" : "InProgress";
-                    await _repository.AdvanceFunnelStageAsync(recordId.Value, "IntentConfirmed", ticket);
-                    await _repository.InsertHistoryAsync(recordId.Value, "IntentConfirmed", "—",
-                        $"Unified Intent set to '{callIntent}' (source: Call)", "PlivoCX Webhook");
+                    await ApplyIntentToFunnelAsync(recordId.Value, callIntent, "Call");
                     await SaveOnbCp("ob_hangup_intent_set",
                         $"Unified intent '{callIntent}' set for record #{recordId} from call", callLogId: recordId);
                 }
@@ -1831,6 +1825,33 @@ namespace Risebird.Web.Controllers
         }
 
         // ── Prospect Onboarding redesign (Phase 2): unified-intent mapping helpers ──
+
+        // Maps a confirmed unified intent onto the funnel:
+        //   • Interested              → 'IntentConfirmed' (positive; pipeline continues, ticket InProgress)
+        //   • NotInterested           → terminal 'NotInterested' (ticket Closed)
+        //   • Unsubscribe/Drop profile→ terminal 'Unsubscribe'  (ticket Closed)
+        // Terminal outcomes are set unconditionally (they are exits off the happy path).
+        private async Task ApplyIntentToFunnelAsync(int id, string intent, string source)
+        {
+            switch ((intent ?? "").Trim())
+            {
+                case "Interested":
+                    await _repository.AdvanceFunnelStageAsync(id, "IntentConfirmed", "InProgress");
+                    await _repository.InsertHistoryAsync(id, "IntentConfirmed", "\u2014",
+                        $"Unified Intent set to 'Interested' (source: {source}). Funnel \u2192 Intent Confirmed.", source == "Call" ? "PlivoCX Webhook" : "Prospect");
+                    break;
+                case "NotInterested":
+                    await _repository.SetFunnelOutcomeAsync(id, "NotInterested", "Closed");
+                    await _repository.InsertHistoryAsync(id, "IntentConfirmed", "\u2014",
+                        $"Unified Intent set to 'NotInterested' (source: {source}). Funnel \u2192 Not Interested.", source == "Call" ? "PlivoCX Webhook" : "Prospect");
+                    break;
+                case "Unsubscribe":
+                    await _repository.SetFunnelOutcomeAsync(id, "Unsubscribe", "Closed");
+                    await _repository.InsertHistoryAsync(id, "IntentConfirmed", "\u2014",
+                        $"Unified Intent set to 'Unsubscribe / Drop profile' (source: {source}). Funnel \u2192 Drop / Unsubscribe.", source == "Call" ? "PlivoCX Webhook" : "Prospect");
+                    break;
+            }
+        }
 
         // Maps an email-button response to the canonical unified intent.
         private static string MapEmailResponseToIntent(string response)
