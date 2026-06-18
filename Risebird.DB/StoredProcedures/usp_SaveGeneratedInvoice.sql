@@ -41,7 +41,7 @@ BEGIN
               AND BillingOwnerId = @BillingOwnerId
               AND InvoiceMonth  = @InvoiceMonth
               AND InvoiceYear   = @InvoiceYear
-              AND Status        = 1
+              AND Status        != 0
         )
         BEGIN
             SELECT -1 AS NewId, 'Invoice already generated for this Client, Billing Owner, Month and Year.' AS ErrorMessage

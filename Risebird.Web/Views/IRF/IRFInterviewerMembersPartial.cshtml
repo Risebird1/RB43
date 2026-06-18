@@ -13,7 +13,7 @@
                             <th>EmailId</th>
                             @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
                             {
-                                <th>Billing(USD)</th>
+                                <th>Billing(@(Model?.FirstOrDefault()?.BillingCurrency ?? "INR"))</th>
                             }
                             @* <th>Client Action</th>*@
                             @* <th>Type</th>*@

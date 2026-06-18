@@ -9891,7 +9891,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Userid", Userid);
                 dynamicParameters.Add("@CreatedOn", DateTime.Now);
                 dynamicParameters.Add("@billingrate", billingrate);
-                dynamicParameters.Add("@billingtype", "USD");
+                // BillingType (currency) is resolved from Client.BillingCurrency inside the SP via IRFId
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await SqlMapper.QueryAsync(con, "Usp_SaveInterviewerBillingRate", dynamicParameters,
