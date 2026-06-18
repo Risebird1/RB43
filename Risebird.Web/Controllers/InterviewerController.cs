@@ -4720,6 +4720,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.UsePl = usePl;
                     }
+                    ViewBag.ShowEvidenceColumn = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, null, ViewBag.UsePl as string);
                     return View("StatsDetails", statsDetailsList);
 
                     //else
@@ -4778,12 +4779,47 @@ namespace Risebird.Web.Controllers
                         statsDetailsList = statsDetailsList.OrderByDescending(x => x.interviewDate).Take(5);
                     }
                 }
+                ViewBag.ShowEvidenceColumn = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, clientEmailId, ViewBag.UsePl as string);
                 return View("StatsDetails", statsDetailsList);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        /// <summary>Role-filtered JSON for Completed Interviews rows (evidence metadata stripped for client views).</summary>
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> InterviewerStatsDetailsData(int userId, string statType, string clientEmailId = null, int? irfId = null, string usePl = null, string maskCandidate = null)
+        {
+            try
+            {
+                if (CandidateReportMaskingHelper.IsMaskCandidateParam(maskCandidate))
+                {
+                    CandidateReportMaskingHelper.ActivateMaskContext(HttpContext.Session);
+                }
+
+                var statsDetailsList = await _interviewerService.GetInterviewerStatsAndRatingsDetails(userId, statType, irfId, clientEmailId);
+                statsDetailsList = statsDetailsList.Select(x =>
+                {
+                    x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                    return x;
+                }).ToList();
+
+                if (string.Equals(usePl, "Public", StringComparison.OrdinalIgnoreCase))
+                {
+                    statsDetailsList = statsDetailsList.OrderByDescending(x => x.interviewDate).Take(5).ToList();
+                }
+
+                var showEvidence = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, clientEmailId, usePl);
+                return Json(CompletedInterviewsViewMode.BuildApiResponse(statsDetailsList, showEvidence));
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { showEvidenceColumn = false, rows = Array.Empty<object>(), error = "Unable to load stats details." });
             }
         }
 

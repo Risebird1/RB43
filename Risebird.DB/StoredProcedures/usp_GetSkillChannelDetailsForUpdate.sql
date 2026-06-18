@@ -39,7 +39,7 @@ Select * from TransJoinability where IRFId = @irfId and @isJoinabilitySelectabil
 --Do not filter by assessment-group membership; manually added panel members must appear on DM Approval.
 DECLARE @irfName varchar(50) = (SELECT IRFID FROM IRF WHERE id = @irfId)
 
-select distinct ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted,
+select distinct ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, ul.MobileNumber, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted,
 ip.VideoLink, isnull(ip.IsVideoApproved, 0) as IsVideoApproved, ip.EmploymentComment,
 isnull(sti.TotalInterview, 0) as TotalInterview,
 isnull(fti.TotalFuture, 0) as TotalFuture,
