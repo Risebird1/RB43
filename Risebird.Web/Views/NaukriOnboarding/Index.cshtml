@@ -17,6 +17,7 @@
     string selFunnelStage = ViewBag.FunnelStage as string ?? string.Empty;
     string selFunnelMode = ViewBag.FunnelMode as string ?? "at";
     if (selFunnelMode != "reached" && selFunnelMode != "not") selFunnelMode = "at";
+    string selOnboardingType = ViewBag.OnboardingType as string ?? string.Empty;
     string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
@@ -43,6 +44,7 @@
                    || !string.IsNullOrEmpty(selAutoStatus)
                    || !string.IsNullOrEmpty(selCallStatus) || !string.IsNullOrEmpty(selDisposition)
                    || !string.IsNullOrEmpty(selFunnelStage)
+                   || !string.IsNullOrEmpty(selOnboardingType)
                    || !string.IsNullOrEmpty(selDateFrom) || !string.IsNullOrEmpty(selDateTo);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
@@ -60,6 +62,7 @@
         if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
         if (!string.IsNullOrEmpty(selFunnelStage)) q += $"&funnelStage={Uri.EscapeDataString(selFunnelStage)}";
         if (!string.IsNullOrEmpty(selFunnelStage) && selFunnelMode != "at") q += $"&funnelMode={selFunnelMode}";
+        if (!string.IsNullOrEmpty(selOnboardingType)) q += $"&onboardingType={Uri.EscapeDataString(selOnboardingType)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return Url.Action("Index", "NaukriOnboarding") + q;
@@ -76,6 +79,7 @@
         if (!string.IsNullOrEmpty(selAutoStatus)) q += $"&automationStatus={Uri.EscapeDataString(selAutoStatus)}";
         if (!string.IsNullOrEmpty(selCallStatus)) q += $"&callStatus={Uri.EscapeDataString(selCallStatus)}";
         if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
+        if (!string.IsNullOrEmpty(selOnboardingType)) q += $"&onboardingType={Uri.EscapeDataString(selOnboardingType)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return q;
@@ -439,6 +443,19 @@
                                         if (selFunnelStage == fs.Value) { <option value="@fs.Value" selected>@fs.Label</option> } else { <option value="@fs.Value">@fs.Label</option> }
                                     }
                                 </select>
+                                <select name="onboardingType" class="form-select nk-filter-control" style="flex:1 1 0;min-width:140px;max-width:175px;" onchange="document.getElementById('filterForm').submit()" title="How the interviewer was onboarded">
+                                    <option value="">All onboarding types</option>
+                                    @{ var onbTypeOpts = new[] {
+                                        ("SelfOnboarded",      "Self-Onboarded"),
+                                        ("IntentAutoProcessed","Intent + Auto Processed"),
+                                        ("ManuallyOnboarded",  "Manually Onboarded"),
+                                        ("_none_",             "Not onboarded yet")
+                                    };}
+                                    @foreach (var (val, label) in onbTypeOpts)
+                                    {
+                                        if (selOnboardingType == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
+                                    }
+                                </select>
                                 <input type="date" name="dateFrom" class="form-control nk-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
                                 <span class="text-muted flex-shrink-0" style="font-size:11px;">\u2013</span>
                                 <input type="date" name="dateTo" class="form-control nk-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateTo" onchange="document.getElementById('filterForm').submit()" />
@@ -607,6 +624,28 @@
                                                         };
                                                     }
                                                     <span class="intent-badge" style="@fCss font-size:10px;white-space:nowrap;">@funnelLabel(fStage)</span>
+                                                    @if (!string.IsNullOrWhiteSpace(r.OnboardingType))
+                                                    {
+                                                        string obLabel = r.OnboardingType switch {
+                                                            "SelfOnboarded"       => "Self",
+                                                            "IntentAutoProcessed" => "Auto",
+                                                            "ManuallyOnboarded"   => "Manual",
+                                                            _                      => r.OnboardingType
+                                                        };
+                                                        string obTitle = r.OnboardingType switch {
+                                                            "SelfOnboarded"       => "Self-Onboarded (via MAG link)",
+                                                            "IntentAutoProcessed" => "Intent + Auto Processed",
+                                                            "ManuallyOnboarded"   => "Manually Onboarded",
+                                                            _                      => r.OnboardingType
+                                                        };
+                                                        string obCss = r.OnboardingType switch {
+                                                            "SelfOnboarded"       => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
+                                                            "IntentAutoProcessed" => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
+                                                            "ManuallyOnboarded"   => "background:#fff3cd;color:#664d03;border:1px solid #ffc107;",
+                                                            _                      => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
+                                                        };
+                                                        <div class="mt-1"><span class="intent-badge" style="@obCss font-size:9px;white-space:nowrap;" title="@obTitle"><i class="fas fa-user-check me-1"></i>@obLabel</span></div>
+                                                    }
                                                 </td>
                                                 <td class="col-status">
                                                     <span class="intent-badge @statusCss" style="font-size:12px;white-space:break-spaces;">@(string.Equals(rTicket, "InProgress", StringComparison.OrdinalIgnoreCase) ? "In Progress" : rTicket)</span>

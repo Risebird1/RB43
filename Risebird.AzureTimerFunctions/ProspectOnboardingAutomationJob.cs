@@ -193,6 +193,18 @@ namespace Risebird.AzureTimerFunctions
                 return;
             }
 
+            // ── Step 1.5: Detect self-registration via the MAG link ───────────────
+            // If the prospect completed the MAG application form themselves, an active
+            // UserList entry now exists for their email. This must be reflected in the
+            // funnel as 'Onboarded' (mirrors NaukriOnboardingController.CheckSelfRegistration,
+            // which previously only ran when an operator opened the record). Detecting it
+            // here also prevents the pipeline from calling them again or auto-creating a
+            // duplicate profile.
+            //   • OnboardedUserId == null  → the system has NOT auto-created a profile, so a
+            //     user found by email means the prospect registered themselves.
+            if (await TryReflectSelfRegistrationAsync(p))
+                return;
+
             // ── Step 2: Resolve MAG & generate application link ───────────────────
             if (string.IsNullOrWhiteSpace(p.ApplicationLink))
             {
@@ -388,6 +400,38 @@ namespace Risebird.AzureTimerFunctions
         /// email — self-registration, clicking a response link, or completing onboarding.
         /// When true, the Plivo call is unnecessary.
         /// </summary>
+        /// <summary>
+        /// Detects whether the prospect has self-registered via the MAG application link and,
+        /// if so, reflects it in the funnel (stage → 'Onboarded', ticket → 'Closed') and stops
+        /// further automation. Returns true when self-registration was detected and finalized.
+        ///
+        /// "Self-registered" mirrors the operator-facing CheckSelfRegistration definition:
+        /// an active UserList entry exists for the prospect's email that the system did NOT
+        /// auto-create (OnboardedUserId is still null).
+        /// </summary>
+        private async Task<bool> TryReflectSelfRegistrationAsync(NaukriProspectiveInterviewerVM p)
+        {
+            if (p.SelfRegistrationCompleted == true
+                || p.OnboardingCompleted == true
+                || p.OnboardedUserId.HasValue
+                || string.IsNullOrWhiteSpace(p.ParsedEmail))
+                return false;
+
+            var (userId, profileId) = await _repository.FindUserByEmailAsync(p.ParsedEmail);
+            if (!userId.HasValue || userId.Value <= 0)
+                return false;
+
+            await _repository.UpdateSelfRegistrationAsync(p.Id, true, userId.Value, profileId);
+            await _repository.SetOnboardingTypeAsync(p.Id, "SelfOnboarded");
+            await _repository.AdvanceFunnelStageAsync(p.Id, "Onboarded", "Closed");
+            await _repository.UpdateAutomationStatusAsync(p.Id, "Completed");
+            await _repository.InsertHistoryAsync(p.Id, "SelfRegistered", "—",
+                $"Prospect self-registered via MAG link (UserId: {userId.Value}). Funnel advanced to Onboarded.", "AutomationJob");
+
+            _log.LogInformation($"[OnboardAuto] #{p.Id} — detected self-registration (UserId {userId.Value}). Marked Onboarded.");
+            return true;
+        }
+
         private static bool HasProspectRespondedToEmail(Entities.ViewModel.NaukriProspectiveInterviewerVM p)
         {
             if (p.SelfRegistrationCompleted == true)

@@ -80,6 +80,7 @@ namespace Risebird.Web.Controllers
             string disposition       = null,
             string funnelStage       = null,
             string funnelMode        = null,
+            string onboardingType    = null,
             string dateFrom          = null,
             string dateTo            = null,
             int    page              = 1,
@@ -98,9 +99,9 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pTo)) dtTo = pTo;
 
-                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition, funnelStage, funnelMode);
+                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition, funnelStage, funnelMode, onboardingType);
 
-                var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, funnelMode);
+                var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, funnelMode, onboardingType);
 
                 var first = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -119,6 +120,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
                 ViewBag.FunnelMode = funnelMode ?? "at";
+                ViewBag.OnboardingType = onboardingType ?? string.Empty;
                 ViewBag.FunnelCounts = funnelCounts;
                 // Global status breakdown (Open + InProgress + Closed + Onboarded = Total).
                 ViewBag.OpenCount = first?.OpenCount ?? 0;
@@ -142,6 +144,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
                 ViewBag.FunnelMode = funnelMode ?? "at";
+                ViewBag.OnboardingType = onboardingType ?? string.Empty;
                 ViewBag.FunnelCounts = new Dictionary<string, int>();
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
@@ -741,9 +744,11 @@ namespace Risebird.Web.Controllers
 
                 await _repository.UpdateOnboardingResultAsync(id, userId, profileId, agId, ackSent);
 
-                // Onboarding type for reporting: Self / Intent+Auto / Manual.
+                // Onboarding type for reporting. This action is operator-initiated, so the canonical
+                // type is 'ManuallyOnboarded' — even if automation had touched the record earlier
+                // (the fully-automated path is tagged 'IntentAutoProcessed' by the automation job itself).
+                // A self-registered prospect (rare here) is still attributed to 'SelfOnboarded'.
                 string onboardingType = record.SelfRegistrationCompleted == true ? "SelfOnboarded"
-                    : !string.IsNullOrWhiteSpace(record.AutomationStatus) ? "IntentAutoProcessed"
                     : "ManuallyOnboarded";
                 await _repository.SetOnboardingTypeAsync(id, onboardingType);
 
@@ -827,7 +832,6 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(record.OnboardingType))
                 {
                     string onboardingType = record.SelfRegistrationCompleted == true ? "SelfOnboarded"
-                        : !string.IsNullOrWhiteSpace(record.AutomationStatus) ? "IntentAutoProcessed"
                         : "ManuallyOnboarded";
                     await _repository.SetOnboardingTypeAsync(id, onboardingType);
                 }
