@@ -374,9 +374,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var rows = await con.ExecuteAsync(
-                    "UPDATE NaukriProspectiveInterviewer SET ResumeLink = @Link, HasAttachment = 1, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
-                    new { Link = resumeLink, Id = id }, commandTimeout: 30);
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriResumeLink",
+                    new { Id = id, Link = resumeLink },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return rows > 0;
             }
             catch (Exception ex)
@@ -432,8 +433,9 @@ namespace Risebird.Repository
             {
                 using var con = new SqlConnection(_connectionString);
                 return await con.QueryFirstOrDefaultAsync<int?>(
-                    "SELECT Id FROM InterviewerProfile WHERE UserId = @UserId",
-                    new { UserId = userId }, commandTimeout: 30);
+                    "usp_GetInterviewerProfileIdByUserId",
+                    new { UserId = userId },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
             }
             catch (Exception ex)
             {
@@ -504,16 +506,9 @@ namespace Risebird.Repository
             {
                 using var con = new SqlConnection(_connectionString);
                 await con.ExecuteAsync(
-                    @"UPDATE NaukriProspectiveInterviewer
-                      SET SelfRegistrationCompleted = @Completed,
-                          OnboardedUserId = ISNULL(@UserId, OnboardedUserId),
-                          OnboardedProfileId = ISNULL(@ProfileId, OnboardedProfileId),
-                          OnboardingCompleted = CASE WHEN @Completed = 1 THEN 1 ELSE OnboardingCompleted END,
-                          Status = CASE WHEN @Completed = 1 THEN 'Onboarded' ELSE Status END,
-                          UpdatedAt = GETUTCDATE()
-                      WHERE Id = @Id",
+                    "usp_UpdateNaukriSelfRegistration",
                     new { Id = id, Completed = completed, UserId = userId, ProfileId = profileId },
-                    commandTimeout: 30);
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return true;
             }
             catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
@@ -528,14 +523,9 @@ namespace Risebird.Repository
             {
                 using var con = new SqlConnection(_connectionString);
                 await con.ExecuteAsync(
-                    @"UPDATE NaukriProspectiveInterviewer
-                      SET Intent            = @Intent,
-                          IntentSource      = @IntentSource,
-                          IntentConfirmedAt = ISNULL(@ConfirmedAt, IntentConfirmedAt),
-                          UpdatedAt         = GETUTCDATE()
-                      WHERE Id = @Id",
+                    "usp_SetNaukriUnifiedIntent",
                     new { Id = id, Intent = intent, IntentSource = intentSource, ConfirmedAt = confirmedAt },
-                    commandTimeout: 30);
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return true;
             }
             catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
@@ -547,28 +537,28 @@ namespace Risebird.Repository
         {
             try
             {
-                int newRank = FunnelStageRank(funnelStage);
                 using var con = new SqlConnection(_connectionString);
                 await con.ExecuteAsync(
-                    @"UPDATE NaukriProspectiveInterviewer
-                      SET FunnelStage = CASE
-                              WHEN @NewRank >= (CASE ISNULL(FunnelStage, '')
-                                  WHEN 'Parsed'              THEN 1
-                                  WHEN 'MAGMapped'           THEN 2
-                                  WHEN 'InvitationSent'      THEN 3
-                                  WHEN 'IntentCollection'    THEN 4
-                                  WHEN 'IntentConfirmed'     THEN 5
-                                  WHEN 'EmploymentVerified'  THEN 6
-                                  WHEN 'ResumeFitment'       THEN 7
-                                  WHEN 'AcknowledgementSent' THEN 8
-                                  WHEN 'Onboarded'           THEN 9
-                                  ELSE 0 END)
-                              THEN @FunnelStage ELSE FunnelStage END,
-                          TicketStatus = ISNULL(@TicketStatus, TicketStatus),
-                          UpdatedAt    = GETUTCDATE()
-                      WHERE Id = @Id",
-                    new { Id = id, FunnelStage = funnelStage, NewRank = newRank, TicketStatus = ticketStatus },
-                    commandTimeout: 30);
+                    "usp_AdvanceNaukriFunnelStage",
+                    new { Id = id, FunnelStage = funnelStage, TicketStatus = ticketStatus },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        // Sets a TERMINAL/branch funnel outcome (Duplicate, NotInterested, Unsubscribe, Cold)
+        // UNCONDITIONALLY — these are exits off the happy path, so the forward-only rank guard
+        // used by AdvanceFunnelStageAsync does not apply. Optionally sets the ticket status.
+        public async Task<bool> SetFunnelOutcomeAsync(int id, string funnelStage, string ticketStatus = null)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(
+                    "usp_SetNaukriFunnelOutcome",
+                    new { Id = id, FunnelStage = funnelStage, TicketStatus = ticketStatus },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return true;
             }
             catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
@@ -580,11 +570,9 @@ namespace Risebird.Repository
             {
                 using var con = new SqlConnection(_connectionString);
                 await con.ExecuteAsync(
-                    @"UPDATE NaukriProspectiveInterviewer
-                      SET OnboardingType = @OnboardingType, UpdatedAt = GETUTCDATE()
-                      WHERE Id = @Id",
+                    "usp_SetNaukriOnboardingType",
                     new { Id = id, OnboardingType = onboardingType },
-                    commandTimeout: 30);
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return true;
             }
             catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
@@ -596,30 +584,11 @@ namespace Risebird.Repository
             {
                 using var con = new SqlConnection(_connectionString);
                 return await con.QueryFirstOrDefaultAsync<int?>(
-                    @"SELECT TOP 1 Id FROM NaukriProspectiveInterviewer
-                      WHERE OnboardedUserId = @UserId
-                      ORDER BY Id DESC",
+                    "usp_FindNaukriProspectByOnboardedUserId",
                     new { UserId = userId },
-                    commandTimeout: 30);
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
             }
             catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return null; }
-        }
-
-        private static int FunnelStageRank(string stage)
-        {
-            switch (stage)
-            {
-                case "Parsed":              return 1;
-                case "MAGMapped":           return 2;
-                case "InvitationSent":      return 3;
-                case "IntentCollection":    return 4;
-                case "IntentConfirmed":     return 5;
-                case "EmploymentVerified":  return 6;
-                case "ResumeFitment":       return 7;
-                case "AcknowledgementSent": return 8;
-                case "Onboarded":           return 9;
-                default:                    return 0;
-            }
         }
 
         public async Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email)
@@ -628,8 +597,9 @@ namespace Risebird.Repository
             {
                 using var con = new SqlConnection(_connectionString);
                 var row = await con.QueryFirstOrDefaultAsync<dynamic>(
-                    "SELECT TOP 1 ul.id AS UserId, ip.Id AS ProfileId FROM UserList ul LEFT JOIN InterviewerProfile ip ON ip.UserId = ul.id WHERE LOWER(LTRIM(RTRIM(ul.EmailId))) = @Email AND ul.IsActive = 1",
-                    new { Email = email.Trim().ToLower() }, commandTimeout: 30);
+                    "usp_FindActiveUserByEmail",
+                    new { Email = email?.Trim() },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 if (row == null) return (null, null);
                 return ((int?)row.UserId, (int?)row.ProfileId);
             }
@@ -673,10 +643,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var sql = @"SELECT TOP 1 Id FROM NaukriProspectiveInterviewer
-                            WHERE ParsedPhone = @Phone AND PlivoCallStatus = @Status
-                            ORDER BY Id DESC";
-                return await con.QueryFirstOrDefaultAsync<int?>(sql, new { Phone = phone, Status = callStatus });
+                return await con.QueryFirstOrDefaultAsync<int?>(
+                    "usp_FindNaukriProspectByPhoneAndCallStatus",
+                    new { Phone = phone, Status = callStatus },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
             }
             catch (Exception ex)
             {
@@ -726,13 +696,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var sql = @"SELECT TOP 1 ti.id
-                            FROM TransInterviewer ti
-                            WHERE ti.AssessmentGroupId = @AgId
-                              AND ISNULL(ti.IsActive, 0) = 1
-                              AND ISNULL(ti.IsDeleted, 0) = 0
-                            ORDER BY ti.id DESC";
-                return await con.QueryFirstOrDefaultAsync<int?>(sql, new { AgId = assessmentGroupId });
+                return await con.QueryFirstOrDefaultAsync<int?>(
+                    "usp_GetLatestActiveIRFForAssessmentGroup",
+                    new { AssessmentGroupId = assessmentGroupId },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
             }
             catch (Exception ex)
             {
@@ -746,9 +713,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var rows = await con.ExecuteAsync(
-                    "UPDATE NaukriProspectiveInterviewer SET MagName = @MagName, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
-                    new { Id = id, MagName = magName });
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriMagName",
+                    new { Id = id, MagName = magName },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return rows > 0;
             }
             catch (Exception ex)
@@ -763,9 +731,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var rows = await con.ExecuteAsync(
-                    "UPDATE NaukriProspectiveInterviewer SET ParsedEmail = @Email, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
-                    new { Id = id, Email = email });
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriParsedEmail",
+                    new { Id = id, Email = email },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return rows > 0;
             }
             catch (Exception ex)
@@ -780,9 +749,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var rows = await con.ExecuteAsync(
-                    "UPDATE NaukriProspectiveInterviewer SET ParsedPhone = @Phone, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
-                    new { Id = id, Phone = phone });
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriParsedPhone",
+                    new { Id = id, Phone = phone },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return rows > 0;
             }
             catch (Exception ex)
