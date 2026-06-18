@@ -2184,7 +2184,7 @@ namespace Risebird.Web.Controllers
                                 // Credit = InvoiceValue (base amount).
                                 // Passing invoiceId ensures existing wallet row is updated, not duplicated.
                                 await _walletService.AddClientWalletBalance(
-                                    billingType, model.ClientId, (int)model.InvoiceValue,
+                                    billingType, model.ClientId, (int)model.Subtotal,
                                     emailid, DateTime.Now, billingOwnerId,
                                     CashTransactionRef, null, CashTransactionDate, "CashCredit",
                                     invoiceId: invoiceId);
