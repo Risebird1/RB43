@@ -62,6 +62,7 @@ namespace Risebird.Repository.Interface
         // Prospect Onboarding redesign (Phase 2): unified intent + funnel/ticket separation + onboarding type
         Task<bool> SetUnifiedIntentAsync(int id, string intent, string intentSource, DateTime? confirmedAt);
         Task<bool> AdvanceFunnelStageAsync(int id, string funnelStage, string ticketStatus = null);
+        Task<bool> SetFunnelOutcomeAsync(int id, string funnelStage, string ticketStatus = null);
         Task<bool> SetOnboardingTypeAsync(int id, string onboardingType);
 
         // Returns the prospect record awaiting acknowledgement for a given onboarded user id, if any.
