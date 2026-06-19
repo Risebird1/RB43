@@ -5067,8 +5067,48 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Some error occured. Please try again.");
             }
         }
+        // Email-client and corporate security scanners (Microsoft Safe Links, Mimecast, Proofpoint,
+        // Barracuda, Gmail image/link proxy, etc.) automatically FETCH every link in an email to scan
+        // it. The acknowledgement Accept/Drop links were plain GET endpoints with immediate side-effects,
+        // so such a prefetch would silently ACCEPT (activate the account + mark the prospect Onboarded
+        // and CLOSE the ticket) or DROP the interviewer — with no human ever clicking. To stop that, the
+        // GET below only renders a harmless confirmation page; the real state change happens on the POST,
+        // which automated scanners do not issue.
         [HttpGet]
-        public async Task<JsonResult> InterviewerAcknowledgementResponse(int status, string user)//, int irf
+        public IActionResult InterviewerAcknowledgementResponse(int status, string user)
+        {
+            if ((status != 1 && status != 4) || string.IsNullOrWhiteSpace(user))
+                return Content("Invalid request.", "text/html");
+
+            bool isAccept = status == 1;
+            string heading     = isAccept ? "Confirm your onboarding" : "Confirm dropping your profile";
+            string body        = isAccept
+                ? "Please confirm that you want to accept and activate your interviewer profile with Risebird."
+                : "Please confirm that you do not wish to proceed and want to drop your profile.";
+            string buttonLabel = isAccept ? "Yes, activate my profile" : "Yes, drop my profile";
+            string buttonColor = isAccept ? "#2e7d32" : "#c62828";
+            string actionUrl   = Url.Action("InterviewerAcknowledgementResponse", "Interviewer");
+
+            string html = $@"<!DOCTYPE html><html><head><meta charset='utf-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1'>
+                <meta name='robots' content='noindex,nofollow'><title>Risebird</title>
+                <style>body{{font-family:Arial,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f5f7fa;margin:0;}}
+                .card{{background:#fff;border-radius:12px;padding:40px;max-width:480px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.1);}}
+                h2{{color:#2c3e50;margin-top:0;}} p{{color:#555;line-height:1.6;}}
+                button{{background:{buttonColor};color:#fff;border:none;border-radius:8px;padding:14px 28px;font-size:16px;cursor:pointer;margin-top:16px;}}</style></head>
+                <body><div class='card'><h2>{heading}</h2><p>{body}</p>
+                <form method='post' action='{actionUrl}'>
+                    <input type='hidden' name='status' value='{status}' />
+                    <input type='hidden' name='user' value='{System.Net.WebUtility.HtmlEncode(user)}' />
+                    <button type='submit'>{buttonLabel}</button>
+                </form></div></body></html>";
+            return Content(html, "text/html");
+        }
+
+        [HttpPost]
+        [ActionName("InterviewerAcknowledgementResponse")]
+        [IgnoreAntiforgeryToken]
+        public async Task<JsonResult> InterviewerAcknowledgementResponseConfirm(int status, string user)//, int irf
         {
             //check link expiry befire hitting db
 
