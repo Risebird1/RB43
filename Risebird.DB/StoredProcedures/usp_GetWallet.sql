@@ -59,7 +59,7 @@ Select @ClientRoleId=RoleId From ClientUser where UserId=@BillingOwnerId
  LEFT JOIN InterviewComments ic ON ic.InterviewId = w.InterviewId    
  WHERE w.BillingType = @BillingType    
   AND (@ClientId IS NULL OR w.ClientId = @ClientId)    
-  AND (@BillingOwnerId IS NULL OR @ClientRoleId=9 OR w.BillingOwnerId = @BillingOwnerId)    
+  AND (@BillingOwnerId IS NULL OR @BillingOwnerId =0 OR @ClientRoleId=9 OR w.BillingOwnerId = @BillingOwnerId)    
   AND (@Action = 'All'    
    OR (@Action = 'CREDIT' AND w.Credit > 0)    
    OR (@Action = 'DEBIT' AND w.Debit > 0))
@@ -72,5 +72,6 @@ Select @ClientRoleId=RoleId From ClientUser where UserId=@BillingOwnerId
   )
  ORDER BY w.CreatedOn DESC    
 END     
+
 GO
 

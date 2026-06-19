@@ -226,12 +226,15 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<AllClientsWalletVM> GetAllClientsWalletSummary(int month, int year)
+        public async Task<AllClientsWalletVM> GetAllClientsWalletSummary(int fromMonth, int fromYear, int toMonth, int toYear)
         {
-            var vm = await _walletRepository.GetAllClientsWalletSummary(month, year);
+            var vm = await _walletRepository.GetAllClientsWalletSummary(fromMonth, fromYear, toMonth, toYear);
 
             var mfi = new System.Globalization.DateTimeFormatInfo();
-            vm.PeriodLabel = mfi.GetMonthName(month) + " " + year;
+            bool isSingleMonth = fromMonth == toMonth && fromYear == toYear;
+            vm.PeriodLabel = isSingleMonth
+                ? mfi.GetMonthName(fromMonth) + " " + fromYear
+                : mfi.GetMonthName(fromMonth) + " " + fromYear + " – " + mfi.GetMonthName(toMonth) + " " + toYear;
 
             foreach (var row in vm.Clients)
             {

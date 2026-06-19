@@ -1,22 +1,32 @@
 -- ============================================================
 -- usp_GetAllClientsWalletSummary
 -- Returns two result sets for the Wallet Details page:
---   RS1: One row per client — month credit/debit, interview count,
+--   RS1: One row per client — period credit/debit, interview count,
 --        BillingType from Client table.
 --   RS2: Billing-owner-wise interview count, BillingOwner from IRF.
+--
+-- Parameters: @FromMonth/@FromYear (start, inclusive)
+--             @ToMonth/@ToYear     (end,   inclusive)
+-- Both ends are treated as full calendar months.
 --
 -- MeetingStatus rules (from InterviewComments):
 --   ClientId = 177 : count statuses 1,3,4,6,7,8,9
 --   All others     : count statuses 4,6,7,8  (completed only)
 -- ============================================================
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetAllClientsWalletSummary] 
-    @Month  INT,
-    @Year   INT
+    @FromMonth  INT,
+    @FromYear   INT,
+    @ToMonth    INT,
+    @ToYear     INT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- ── Interview counts per client for the target month ──────────────────
+    -- Compute inclusive date boundaries once
+    DECLARE @FromDate DATE = DATEFROMPARTS(@FromYear, @FromMonth, 1);
+    DECLARE @ToDate   DATE = DATEADD(MONTH, 1, DATEFROMPARTS(@ToYear, @ToMonth, 1)); -- exclusive upper bound
+
+    -- ── Interview counts per client for the target period ─────────────────
     ;WITH InterviewCountPerClient AS
     (
         SELECT
@@ -25,8 +35,8 @@ BEGIN
         FROM InterviewMeetings im
         INNER JOIN IRF            irf ON irf.IRFId      = im.IRFId
         LEFT  JOIN InterviewComments ic ON ic.InterviewId = im.id
-        WHERE MONTH(im.interviewDate) = @Month
-          AND YEAR(im.interviewDate)  = @Year
+        WHERE im.interviewDate >= @FromDate
+          AND im.interviewDate <  @ToDate
           AND (
                 (irf.ClientId = 177 AND ic.MeetingStatus IN (1,3,4,6,7,8,9))
              OR (irf.ClientId <> 177 AND ic.MeetingStatus IN (4,6,7,8))
@@ -45,14 +55,14 @@ BEGIN
         ISNULL(c.BillingType, 3)                                   AS BillingType,
         ISNULL(c.BillingCurrency, 'INR')                           AS BillingCurrency,
         ic.MonthInterviewCount,
-        ISNULL(SUM(CASE WHEN MONTH(w.TransactionDate) = @Month
-                         AND YEAR(w.TransactionDate)  = @Year
+        ISNULL(SUM(CASE WHEN w.TransactionDate >= @FromDate
+                         AND w.TransactionDate <  @ToDate
                         THEN w.Credit ELSE 0 END), 0)              AS MonthCredit,
-        ISNULL(SUM(CASE WHEN MONTH(w.TransactionDate) = @Month
-                         AND YEAR(w.TransactionDate)  = @Year
+        ISNULL(SUM(CASE WHEN w.TransactionDate >= @FromDate
+                         AND w.TransactionDate <  @ToDate
                         THEN w.Debit  ELSE 0 END), 0)              AS MonthDebit,
-        COUNT(CASE WHEN MONTH(w.TransactionDate) = @Month
-                    AND YEAR(w.TransactionDate)  = @Year
+        COUNT(CASE WHEN w.TransactionDate >= @FromDate
+                    AND w.TransactionDate <  @ToDate
                    THEN 1 END)                                      AS TransactionCount,
         ISNULL(SUM(w.Credit), 0) - ISNULL(SUM(w.Debit), 0)        AS OverallBalance
     FROM Client c
@@ -67,37 +77,38 @@ BEGIN
         ic.MonthInterviewCount DESC,
         c.Name;
 
-    -- ── RS2: Billing-owner-wise interview count + month credit/debit ─────
+    -- ── RS2: Billing-owner-wise interview count + period credit/debit ─────
     -- Only relevant when BillingType = 1 (User Scope); credit/debit pulled
-    -- from Wallet filtered by BillingOwnerId and month.
-	;WITH WalletSummary AS
-(
-    SELECT
-        ClientId,
-        BillingOwnerId,
-        SUM(Credit) AS MonthCredit,
-        SUM(Debit)  AS MonthDebit
-    FROM Wallet
-    WHERE BillingType = 1
-      AND CreatedOn >= DATEFROMPARTS(@Year,@Month,1)
-      AND CreatedOn < DATEADD(MONTH,1,DATEFROMPARTS(@Year,@Month,1))
-    GROUP BY ClientId, BillingOwnerId
-)
+    -- from Wallet filtered by BillingOwnerId and period.
+    ;WITH WalletSummary AS
+    (
+        SELECT
+            ClientId,
+            BillingOwnerId,
+            SUM(Credit) AS MonthCredit,
+            SUM(Debit)  AS MonthDebit
+        FROM Wallet
+        WHERE BillingType = 1
+          AND CreatedOn >= @FromDate
+          AND CreatedOn <  @ToDate
+        GROUP BY ClientId, BillingOwnerId
+    )
     SELECT
         irf.ClientId,
         ISNULL(irf.BillingOwner, 0)                                             AS BillingOwnerId,
         ISNULL(ul.EmailId, 'Unassigned')                                        AS BillingOwnerEmail,
         ISNULL(RTRIM(LTRIM(ISNULL(ul.FirstName,'') + ' ' + ISNULL(ul.LastName,''))), 'Unassigned') AS BillingOwnerName,
         COUNT(DISTINCT im.id)                                                   AS MonthInterviewCount,
-       ISNULL(ws.MonthCredit,0) AS MonthCredit,
-       ISNULL(ws.MonthDebit,0) AS MonthDebit
+        ISNULL(ws.MonthCredit, 0)                                               AS MonthCredit,
+        ISNULL(ws.MonthDebit,  0)                                               AS MonthDebit
     FROM InterviewMeetings im
     INNER JOIN IRF             irf ON irf.IRFId       = im.IRFId
     LEFT  JOIN InterviewComments ic  ON ic.InterviewId  = im.id
     LEFT  JOIN UserList         ul   ON ul.id            = irf.BillingOwner
-    LEFT JOIN WalletSummary ws ON ws.ClientId = irf.ClientId   AND ws.BillingOwnerId = irf.BillingOwner
-    WHERE MONTH(im.interviewDate) = @Month
-      AND YEAR(im.interviewDate)  = @Year
+    LEFT  JOIN WalletSummary    ws   ON ws.ClientId      = irf.ClientId
+                                    AND ws.BillingOwnerId = irf.BillingOwner
+    WHERE im.interviewDate >= @FromDate
+      AND im.interviewDate <  @ToDate
       AND ISNULL(im.RedoInterview, 0) = 0
       AND (
             (irf.ClientId = 177 AND ic.MeetingStatus IN (1,3,4,6,7,8,9))
@@ -109,11 +120,10 @@ BEGIN
         ul.EmailId,
         ul.FirstName,
         ul.LastName,
-		ws.MonthCredit,
+        ws.MonthCredit,
         ws.MonthDebit
     ORDER BY
         irf.ClientId,
         MonthInterviewCount DESC;
 END
 GO
-

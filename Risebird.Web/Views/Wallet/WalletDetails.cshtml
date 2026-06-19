@@ -110,12 +110,16 @@
                         </label>
                     </div>
                 </div>
-                <div class="pull-right client-ms">
-                    <form method="get" action="/Wallet/WalletDetails" class="month-filter" style="display:inline-flex;align-items:center;gap:6px;">
-                        <select name="month" class="form-control form-control-sm" style="width:120px;" onchange="this.form.submit()">
+                <div class="pull-right client-ms" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+
+                    @* ── Original single-month filter (unchanged behaviour) ── *@
+                    <form id="singleMonthForm" method="get" action="/Wallet/WalletDetails"
+                          style="display:inline-flex;align-items:center;gap:6px;">
+                        <select name="month" id="smMonth" class="form-control form-control-sm" style="width:120px;"
+                                onchange="submitSingleMonth()">
                             @for (int m = 1; m <= 12; m++)
                             {
-                                if (m == Model.SelectedMonth)
+                                if (m == Model.FromMonth)
                                 {
                                     <option value="@m" selected="selected">@months[m - 1]</option>
                                 }
@@ -125,10 +129,11 @@
                                 }
                             }
                         </select>
-                        <select name="year" class="form-control form-control-sm" style="width:85px;" onchange="this.form.submit()">
+                        <select name="year" id="smYear" class="form-control form-control-sm" style="width:85px;"
+                                onchange="submitSingleMonth()">
                             @for (int y = DateTime.Now.Year - 2; y <= DateTime.Now.Year + 1; y++)
                             {
-                                if (y == Model.SelectedYear)
+                                if (y == Model.FromYear)
                                 {
                                     <option value="@y" selected="selected">@y</option>
                                 }
@@ -139,6 +144,72 @@
                             }
                         </select>
                     </form>
+
+                    @* ── Date range filter (new addition) ── *@
+                    @{ bool isRange = !(Model.FromMonth == Model.ToMonth && Model.FromYear == Model.ToYear); }
+                    <form method="get" action="/Wallet/WalletDetails"
+                          style="display:inline-flex;align-items:center;gap:5px;background:@(isRange ? "#fff8e1" : "#f5f5f5");padding:4px 8px;border-radius:6px;border:1px solid @(isRange ? "#ffe082" : "#e0e0e0");">
+                        <small style="color:#888;font-size:11px;">Range:</small>
+                        <select name="fromMonth" class="form-control form-control-sm" style="width:105px;">
+                            @for (int m = 1; m <= 12; m++)
+                            {
+                                if (m == Model.FromMonth)
+                                {
+                                    <option value="@m" selected="selected">@months[m - 1]</option>
+                                }
+                                else
+                                {
+                                    <option value="@m">@months[m - 1]</option>
+                                }
+                            }
+                        </select>
+                        <select name="fromYear" class="form-control form-control-sm" style="width:78px;">
+                            @for (int y = DateTime.Now.Year - 3; y <= DateTime.Now.Year + 1; y++)
+                            {
+                                if (y == Model.FromYear)
+                                {
+                                    <option value="@y" selected="selected">@y</option>
+                                }
+                                else
+                                {
+                                    <option value="@y">@y</option>
+                                }
+                            }
+                        </select>
+                        <small style="color:#888;font-size:11px;">→</small>
+                        <select name="toMonth" class="form-control form-control-sm" style="width:105px;">
+                            @for (int m = 1; m <= 12; m++)
+                            {
+                                if (m == Model.ToMonth)
+                                {
+                                    <option value="@m" selected="selected">@months[m - 1]</option>
+                                }
+                                else
+                                {
+                                    <option value="@m">@months[m - 1]</option>
+                                }
+                            }
+                        </select>
+                        <select name="toYear" class="form-control form-control-sm" style="width:78px;">
+                            @for (int y = DateTime.Now.Year - 3; y <= DateTime.Now.Year + 1; y++)
+                            {
+                                if (y == Model.ToYear)
+                                {
+                                    <option value="@y" selected="selected">@y</option>
+                                }
+                                else
+                                {
+                                    <option value="@y">@y</option>
+                                }
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary" style="padding:3px 10px;">Apply</button>
+                        @if (isRange)
+                        {
+                            <a href="/Wallet/WalletDetails" class="btn btn-sm btn-default" style="padding:3px 8px;" title="Clear range">✕</a>
+                        }
+                    </form>
+
                 </div>
             </div>
         </div>
@@ -157,13 +228,13 @@
                         @foreach (var tot in Model.TotalsByCurrency)
                         {
                             <span class="stat-pill green">
-                                <i class="fa fa-arrow-up"></i> Month Credit (@tot.Currency) <strong>@tot.Symbol@tot.MonthCredit.ToString("N0")</strong>
+                                <i class="fa fa-arrow-up"></i> Period Credit (@tot.Currency) <strong>@tot.Symbol@tot.MonthCredit.ToString("N0")</strong>
                             </span>
                             <span class="stat-pill red">
-                                <i class="fa fa-arrow-down"></i> Month Debit (@tot.Currency) <strong>@tot.Symbol@tot.MonthDebit.ToString("N0")</strong>
+                                <i class="fa fa-arrow-down"></i> Period Debit (@tot.Currency) <strong>@tot.Symbol@tot.MonthDebit.ToString("N0")</strong>
                             </span>
                             <span class="stat-pill @(tot.MonthNet >= 0 ? "green" : "red")">
-                                <i class="fa fa-balance-scale"></i> Month Net (@tot.Currency) <strong>@tot.Symbol@tot.MonthNet.ToString("N0")</strong>
+                                <i class="fa fa-balance-scale"></i> Period Net (@tot.Currency) <strong>@tot.Symbol@tot.MonthNet.ToString("N0")</strong>
                             </span>
                             <span class="stat-pill purple">
                                 <i class="fa fa-database"></i> Overall Balance (@tot.Currency) <strong>@tot.Symbol@tot.OverallBalance.ToString("N0")</strong>
@@ -188,9 +259,9 @@
                                     <th>Billing Model</th>
                                     <th>Rates</th>
                                     <th>Interviews</th>
-                                    <th>Month Credit</th>
-                                    <th>Month Debit</th>
-                                    <th>Month Net</th>
+                                    <th>Period Credit</th>
+                                    <th>Period Debit</th>
+                                    <th>Period Net</th>
                                     <th>Overall Balance</th>
                                     <th>Wallet Txns</th>
                                 </tr>
@@ -273,9 +344,9 @@
                                                                         <th>Interviews — @Model.PeriodLabel</th>
                                                                             @if (cl.BillingType == 1)
                                                                             {
-                                                                                <th>Month Credit (@cl.BillingCurrency)</th>
-                                                                                <th>Month Debit (@cl.BillingCurrency)</th>
-                                                                                <th>Month Net (@cl.BillingCurrency)</th>
+                                                                                <th>Period Credit (@cl.BillingCurrency)</th>
+                                                                                <th>Period Debit (@cl.BillingCurrency)</th>
+                                                                                <th>Period Net (@cl.BillingCurrency)</th>
                                                                             }
                                                         </tr>
                                                     </thead>
@@ -313,6 +384,10 @@
 
 @section Scripts {
 <script>
+    function submitSingleMonth() {
+        document.getElementById('singleMonthForm').submit();
+    }
+
     function toggleOwners(clientId) {
         var row = document.getElementById('owners-' + clientId);
         if (!row) return;
