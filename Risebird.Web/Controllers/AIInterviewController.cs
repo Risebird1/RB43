@@ -26,6 +26,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Services.Proctoring;
+using Risebird.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -2178,90 +2179,119 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")
+                    return Json(new { success = false, message = "Unauthorized." });
+                }
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Trim('"');
+                if (!DeliveryHeadInstructionViewMode.IsOperationalProfile(profileName))
+                {
+                    return Json(new { success = false, message = "You do not have permission to generate AI question videos." });
+                }
+
+                if (id <= 0)
+                {
+                    return Json(new { success = false, message = "Invalid question id." });
+                }
+
+                var questionDetails = await _iRFService.GetDeliveryHeadSampleQuestionById(id);
+                if (questionDetails == null)
+                {
+                    return Json(new { success = false, message = "Question not found." });
+                }
+
+                if (string.IsNullOrWhiteSpace(questionDetails.Comment))
+                {
+                    return Json(new { success = false, message = "Question text is required before generating a video." });
+                }
+
+                var irfVm = await _iRFService.GetEditIRF(questionDetails.IRFId, 0, false);
+                if (irfVm == null || !DmSynthesiaVideoViewMode.UsesSynthesiaVideos(irfVm.IsAIInterview, irfVm.AIInterviewType))
+                {
+                    return Json(new { success = false, message = "AI question videos are only available for Preset AI interview channels." });
+                }
+
+                string videoId;
+                try
+                {
+                    videoId = await _synthesiaTextToVideoService.CreateVideoAsync(questionDetails.Comment, SynthesiaAIAvatarTemplates.Reema);
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    return Json(new { success = false, message = "Could not reach Synthesia API. Check configuration and try again." });
+                }
+
+                if (string.IsNullOrWhiteSpace(videoId))
+                {
+                    return Json(new { success = false, message = "Synthesia did not return a video id." });
+                }
+
+                string synthesiaDownloadUrl = null;
+                const int maxPollAttempts = 20;
+                for (var attempt = 0; attempt < maxPollAttempts; attempt++)
+                {
+                    await Task.Delay(8000);
+                    try
                     {
-                        var questionDetails = await _iRFService.GetDeliveryHeadSampleQuestionById(id);
-
-                        //now call the synthesia api to generate the video
-                        var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(questionDetails.Comment, SynthesiaAIAvatarTemplates.Reema);
-
-                        // Wait/poll until video is ready (Synthesia usually takes 30–60s)
-                        string videoUrl;
-                        do
-                        {
-                            await Task.Delay(8000);
-                            videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
-                        } while (string.IsNullOrWhiteSpace(videoUrl));
-
-
-                        //save the video in our blob/
-                        string uploadedVideoUrl = string.Empty;
-
-                        if (videoUrl != null)
-                        {
-                            HttpClient myWebClient = new HttpClient();
-                            using (Stream myStream = myWebClient.GetStreamAsync(videoUrl).Result)
-                            {
-                                var fileName = $"aiVideo_{id.ToString()}_{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
-                                //long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                                //fileName = fileName + "_" + unixTime.ToString();
-                                try
-                                {
-                                    uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, "botinterviewvideo", null, myStream).Result;
-
-                                }
-                                catch (Exception ex)
-                                {
-                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-
-                                }
-
-                                //generate SAS URL from the uploaded video url
-                                //var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
-
-                                //if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
-                                //{
-                                //    videoSasUrl = uploadedVideoUrl + "?" + sas;
-                                //}
-                            }
-                        }
-
-                        //save the video link in our db against the above id
-
-                        var result = await _iRFService.SaveSampleQuestionAIVideoLink(id, uploadedVideoUrl);
-                        if (result)
-                        {
-                            return Json($"Successfully created an AI Video for the question starting with '{questionDetails.Comment.Substring(0, 25)}'");
-                        }
-                        else
-                        {
-                            return Json($"Failed to create an AI Video for the question starting with '{questionDetails.Comment.Substring(0, 25)}'");
-                        }
+                        synthesiaDownloadUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        return RedirectToAction("SignOut", "Session");
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
 
+                    if (!string.IsNullOrWhiteSpace(synthesiaDownloadUrl))
+                        break;
                 }
-                else
+
+                if (string.IsNullOrWhiteSpace(synthesiaDownloadUrl))
                 {
-                    return RedirectToAction("SignOut", "Session");
+                    return Json(new { success = false, message = "Synthesia video is still processing. Please try again in a minute." });
                 }
+
+                string uploadedVideoUrl = string.Empty;
+                using (var httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(5) })
+                using (var myStream = await httpClient.GetStreamAsync(synthesiaDownloadUrl))
+                {
+                    var fileName = $"aiVideo_{id}_{DateTime.UtcNow:yyyyMMddTHHmmss}";
+                    try
+                    {
+                        uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "botinterviewvideo", null, myStream);
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        return Json(new { success = false, message = "Video was generated but could not be saved to storage." });
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(uploadedVideoUrl))
+                {
+                    return Json(new { success = false, message = "Video upload failed." });
+                }
+
+                var saved = await _iRFService.SaveSampleQuestionAIVideoLink(id, uploadedVideoUrl);
+                if (!saved)
+                {
+                    return Json(new { success = false, message = "Video was created but could not be linked to this question." });
+                }
+
+                var preview = questionDetails.Comment.Length > 25
+                    ? questionDetails.Comment.Substring(0, 25) + "…"
+                    : questionDetails.Comment;
+                return Json(new
+                {
+                    success = true,
+                    videoUrl = uploadedVideoUrl,
+                    message = $"Successfully created an AI video for the question starting with '{preview}'."
+                });
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                //return Json($"Failed to create an AI Video for the question starting with '{questionDetails.Comment.Substring(0, 25)}'");
-
-                return Json(false);
-
+                return Json(new { success = false, message = "Video generation failed: " + ex.Message });
             }
         }
 
