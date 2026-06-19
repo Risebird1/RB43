@@ -359,17 +359,31 @@
         Swal.fire({
             title: 'Trigger Availability Calls?',
             html: 'This will place Plivo calls to all unresponded interviewers in campaign <strong>' + campaignName + '</strong>.<br><br>Do you want to proceed?',
-            icon: 'warning',
+            type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#17a2b8',
             cancelButtonColor: '#6c757d',
             confirmButtonText: 'Yes, call them',
             cancelButtonText: 'Cancel'
         }).then(function (result) {
-            if (!result.isConfirmed) return;
+            if (!result.value) return;
 
             btn.prop('disabled', true).css('opacity', '0.45');
             btn.find('i').removeClass('fa-phone').addClass('fa-spinner fa-spin');
+
+            // The batch call runs synchronously on the server — one Plivo call is placed per
+            // unresponded interviewer with a short gap between each — so the request can take a
+            // while. Show a persistent, non-dismissible progress modal so the operator knows it
+            // is in progress (instead of the dialog just disappearing).
+            Swal.fire({
+                title: 'Placing availability calls…',
+                html: 'Calling unresponded interviewers in campaign <strong>' + campaignName + '</strong>.<br><br>'
+                    + 'This can take a few minutes for large campaigns. Please keep this tab open until it finishes.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                onOpen: function () { Swal.showLoading(); }
+            });
 
             var token = $('input[name="__RequestVerificationToken"]').val();
             if (!token) {
@@ -380,25 +394,37 @@
                 url: '@Url.Action("TriggerCampaignBatchCall", "IRF")',
                 type: 'POST',
                 data: { __RequestVerificationToken: token, campaignId: campaignId },
-                timeout: 300000,
+                timeout: 600000,
                 success: function (res) {
                     btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-phone');
                     if (res.success) {
                         Swal.fire({
                             title: 'Calls Triggered!',
-                            html: '<b>Succeeded:</b> ' + res.succeeded + '<br><b>Failed:</b> ' + res.failed + '<br><b>Skipped:</b> ' + res.skipped,
-                            icon: 'success',
+                            html: (res.message ? res.message + '<br><br>' : '')
+                                + '<b>Succeeded:</b> ' + (res.succeeded || 0) + '<br><b>Failed:</b> ' + (res.failed || 0) + '<br><b>Skipped:</b> ' + (res.skipped || 0),
+                            type: 'success',
+                            allowOutsideClick: false,
                             confirmButtonColor: '#17a2b8'
                         }).then(function () { location.reload(); });
                     } else {
-                        Swal.fire('Error', res.error || 'Failed to trigger batch calls.', 'error');
                         btn.prop('disabled', false).css('opacity', '1');
+                        Swal.fire('Error', res.error || 'Failed to trigger batch calls.', 'error');
                     }
                 },
-                error: function () {
+                error: function (xhr, textStatus) {
                     btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-phone');
-                    Swal.fire('Error', 'Request failed. Please try again.', 'error');
                     btn.prop('disabled', false).css('opacity', '1');
+                    if (textStatus === 'timeout') {
+                        // The server keeps placing the calls even though the browser stopped waiting.
+                        Swal.fire({
+                            title: 'Still in progress',
+                            html: 'The calls are taking longer than expected and are still being placed in the background.<br>Refresh this page in a few minutes to see the final batch-call status.',
+                            type: 'info',
+                            confirmButtonColor: '#17a2b8'
+                        }).then(function () { location.reload(); });
+                    } else {
+                        Swal.fire('Error', 'Request failed. Please try again.', 'error');
+                    }
                 }
             });
         });
