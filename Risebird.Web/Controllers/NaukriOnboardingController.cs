@@ -977,9 +977,52 @@ namespace Risebird.Web.Controllers
 
         // ── Prospect response action (public endpoint — clicked from email) ─────
 
+        // Email-client / security scanners (Microsoft Safe Links, Mimecast, Proofpoint, Gmail, etc.)
+        // auto-fetch every link in an email. The response buttons were plain GET endpoints with
+        // side-effects, so a prefetch of the 'Not Interested' link would terminate & CLOSE the ticket
+        // (and a prefetch of NeedClarity/ManualSupport would kick off auto-onboarding) without the
+        // prospect ever clicking. The GET now only renders a confirmation page; the actual state change
+        // happens on the POST below, which scanners do not issue.
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> ProspectResponseAction(int id, string response)
+        public IActionResult ProspectResponseAction(int id, string response)
+        {
+            var validResponses = new[] { "NeedClarity", "ManualSupport", "NotInterested" };
+            if (id <= 0 || string.IsNullOrWhiteSpace(response) || !validResponses.Contains(response))
+                return Content("Invalid request.", "text/html");
+
+            string prompt = response switch
+            {
+                "NeedClarity"   => "You'd like more details about this opportunity. Confirm to let our team know.",
+                "ManualSupport" => "You'd like our onboarding team to help you register. Confirm to let us know.",
+                "NotInterested" => "You're letting us know you're not interested. Confirm your response.",
+                _               => "Confirm your response."
+            };
+            string buttonLabel = response == "NotInterested" ? "Confirm" : "Confirm";
+            string buttonColor = response == "NotInterested" ? "#c62828" : "#2e7d32";
+            string actionUrl   = Url.Action("ProspectResponseAction", "NaukriOnboarding");
+
+            string confirmHtml = $@"<!DOCTYPE html><html><head><meta charset='utf-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1'>
+                <meta name='robots' content='noindex,nofollow'><title>Risebird</title>
+                <style>body{{font-family:Arial,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f5f7fa;margin:0;}}
+                .card{{background:#fff;border-radius:12px;padding:40px;max-width:480px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.1);}}
+                h2{{color:#2c3e50;margin-top:0;}} p{{color:#555;line-height:1.6;}}
+                button{{background:{buttonColor};color:#fff;border:none;border-radius:8px;padding:14px 28px;font-size:16px;cursor:pointer;margin-top:16px;}}</style></head>
+                <body><div class='card'><h2>One more step</h2><p>{prompt}</p>
+                <form method='post' action='{actionUrl}'>
+                    <input type='hidden' name='id' value='{id}' />
+                    <input type='hidden' name='response' value='{System.Net.WebUtility.HtmlEncode(response)}' />
+                    <button type='submit'>{buttonLabel}</button>
+                </form></div></body></html>";
+            return Content(confirmHtml, "text/html");
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [ActionName("ProspectResponseAction")]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> ProspectResponseActionConfirm(int id, string response)
         {
             try
             {
