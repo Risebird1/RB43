@@ -356,7 +356,7 @@
         var campaignId = btn.data('campaign-id');
         var campaignName = btn.data('campaign-name');
 
-        swal.fire({
+        Swal.fire({
             title: 'Trigger Availability Calls?',
             html: 'This will place Plivo calls to all unresponded interviewers in campaign <strong>' + campaignName + '</strong>.<br><br>Do you want to proceed?',
             icon: 'warning',
@@ -384,20 +384,20 @@
                 success: function (res) {
                     btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-phone');
                     if (res.success) {
-                        swal.fire({
+                        Swal.fire({
                             title: 'Calls Triggered!',
                             html: '<b>Succeeded:</b> ' + res.succeeded + '<br><b>Failed:</b> ' + res.failed + '<br><b>Skipped:</b> ' + res.skipped,
                             icon: 'success',
                             confirmButtonColor: '#17a2b8'
                         }).then(function () { location.reload(); });
                     } else {
-                        swal.fire('Error', res.error || 'Failed to trigger batch calls.', 'error');
+                        Swal.fire('Error', res.error || 'Failed to trigger batch calls.', 'error');
                         btn.prop('disabled', false).css('opacity', '1');
                     }
                 },
                 error: function () {
                     btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-phone');
-                    swal.fire('Error', 'Request failed. Please try again.', 'error');
+                    Swal.fire('Error', 'Request failed. Please try again.', 'error');
                     btn.prop('disabled', false).css('opacity', '1');
                 }
             });
