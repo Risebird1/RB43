@@ -35,25 +35,27 @@ BEGIN
     WHERE ul.EmailId = @EmailId
       AND ul.IsActive = 1;
 
-    IF NOT EXISTS (
-        SELECT 1
-        FROM dbo.UserSessions usn
-        INNER JOIN dbo.UserList us ON us.id = usn.UserId
-        WHERE usn.SessionId = @SessionId
-          AND usn.IsActive = 1
-          AND us.IsActive = 1
-    )
+    IF @userId IS NOT NULL
+       AND NOT EXISTS (
+           SELECT 1
+           FROM dbo.UserSessions usn
+           INNER JOIN dbo.UserList us ON us.id = usn.UserId
+           WHERE usn.SessionId = @SessionId
+             AND usn.IsActive = 1
+             AND us.IsActive = 1
+       )
     BEGIN
         INSERT INTO dbo.UserSessions (UserId, SessionId, IsActive)
-        SELECT id, @SessionId, 1
-        FROM dbo.UserList
-        WHERE EmailId = @EmailId;
+        VALUES (@userId, @SessionId, 1);
     END
 
-    UPDATE dbo.UserList
-    SET LastLogin = @Now,
-        Isonline  = 1
-    WHERE EmailId = @EmailId;
+    IF @userId IS NOT NULL
+    BEGIN
+        UPDATE dbo.UserList
+        SET LastLogin = @Now,
+            Isonline  = 1
+        WHERE id = @userId;
+    END
 	
     IF (@EmailId != 'ExternalUser')
     BEGIN
