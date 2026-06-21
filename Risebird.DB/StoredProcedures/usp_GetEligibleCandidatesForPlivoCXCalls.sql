@@ -32,8 +32,8 @@
 --      If the earliest schedule call to this candidate+IRF is older than 4 days, stop.
 --
 -- Performance (2026-06-17):
---   CandidatePool pre-filters cheap predicates, then CallStats / MeetingBlocks
---   aggregate only rows for that pool (not full log/meeting tables).
+--   CandidatePool pre-filters cheap predicates.
+--   RelevantCallLogs / RelevantMeetings narrow rows before aggregation.
 --   See migration: Migrations/Optimize_GetEligibleCandidatesForPlivoCXCalls.sql
 --
 -- Schema notes:
@@ -62,7 +62,6 @@ BEGIN
     SET NOCOUNT ON;
 
     -- InterviewMeetings.interviewDate is stored in Indian Standard Time (IST).
-    -- @NowIST is supplied by the repository as DateTime.Now so no timezone math is needed here.
     SET @NowIST = ISNULL(@NowIST, GETDATE());
 
     DECLARE @NowUtc        DATETIME = GETUTCDATE();
@@ -90,63 +89,70 @@ BEGIN
         INNER JOIN dbo.CandidatesMaster cm  ON cm.id  = c.CandidateMasterId
         INNER JOIN dbo.UserList         u   ON u.id   = cm.UserId
         WHERE  u.EmailId IS NOT NULL
-          AND  c.Phone IS NOT NULL
-          AND  LEN(LTRIM(RTRIM(c.Phone))) > 0
+          AND  NULLIF(LTRIM(RTRIM(c.Phone)), '') IS NOT NULL
           AND  (c.Status IS NULL OR c.Status <> 9)
           AND  (c.PlivoCXDisposition IS NULL OR c.PlivoCXDisposition <> 'uninterested')
     ),
-    CallStats AS (
+    -- Only log rows that can affect eligibility (completed, schedule-purpose, or active booking)
+    RelevantCallLogs AS (
         SELECT
-            pcl.RecipientEmail,
-            pcl.IRFId,
-            CompletedCallCount = SUM(CASE WHEN pcl.CallStatus = 'completed' THEN 1 ELSE 0 END),
-            ScheduleCallsToday = SUM(CASE
-                WHEN (pcl.CallPurpose = 'schedule' OR pcl.CallPurpose IS NULL)
-                 AND pcl.CreatedAt >= @TodayUtcStart
-                 AND pcl.CreatedAt <  @TomorrowUtc
-                THEN 1 ELSE 0 END),
-            HasRecentScheduleCall = MAX(CASE
-                WHEN (pcl.CallPurpose = 'schedule' OR pcl.CallPurpose IS NULL)
-                 AND pcl.CreatedAt > @CooldownFrom
-                THEN 1 ELSE 0 END),
-            HasExpiredRetryWindow = MAX(CASE
-                WHEN (pcl.CallPurpose = 'schedule' OR pcl.CallPurpose IS NULL)
-                 AND pcl.CreatedAt < @WindowFrom
-                THEN 1 ELSE 0 END),
-            HasFutureBooking = MAX(CASE
-                WHEN (pcl.CallPurpose = 'schedule' OR pcl.CallPurpose IS NULL)
-                 AND pcl.BookingApiSuccess = 1
-                 AND pcl.BookedInterviewDateTime > @NowUtc
-                THEN 1 ELSE 0 END)
+            cp.EmailId,
+            cp.CandidateIrfIntId,
+            pcl.CallStatus,
+            pcl.CallPurpose,
+            pcl.CreatedAt,
+            pcl.BookingApiSuccess,
+            pcl.BookedInterviewDateTime,
+            IsScheduleCall = CASE
+                WHEN ISNULL(pcl.CallPurpose, N'schedule') = N'schedule' THEN 1
+                ELSE 0
+            END
         FROM       dbo.PlivoCXCallLogs pcl
         INNER JOIN CandidatePool       cp
             ON  cp.EmailId           = pcl.RecipientEmail
             AND cp.CandidateIrfIntId = pcl.IRFId
         WHERE  pcl.RecipientEmail IS NOT NULL
           AND  pcl.IRFId IS NOT NULL
-        GROUP BY pcl.RecipientEmail, pcl.IRFId
+          AND  (
+                   pcl.CallStatus = 'completed'
+                OR ISNULL(pcl.CallPurpose, N'schedule') = N'schedule'
+                OR (pcl.BookingApiSuccess = 1 AND pcl.BookedInterviewDateTime > @NowUtc)
+               )
     ),
-    MeetingBlocks AS (
+    CallStats AS (
         SELECT
-            im.candidateEmail,
-            im.IRFId,
-            HasFutureMeeting = MAX(CASE
-                WHEN im.confirmationStatus <> '2'
-                 AND im.interviewDate > @NowIST
+            rcl.EmailId           AS RecipientEmail,
+            rcl.CandidateIrfIntId AS IRFId,
+            CompletedCallCount = SUM(CASE WHEN rcl.CallStatus = 'completed' THEN 1 ELSE 0 END),
+            ScheduleCallsToday = SUM(CASE
+                WHEN rcl.IsScheduleCall = 1
+                 AND rcl.CreatedAt >= @TodayUtcStart
+                 AND rcl.CreatedAt <  @TomorrowUtc
                 THEN 1 ELSE 0 END),
-            HasRecentValidConfirmed = MAX(CASE
-                WHEN im.confirmationStatus = '1'
-                 AND im.interviewDate >= @RecentFromIST
-                 AND (ic.MeetingStatus IS NULL OR ic.MeetingStatus NOT IN (1, 3, 5, 9))
+            HasRecentScheduleCall = MAX(CASE
+                WHEN rcl.IsScheduleCall = 1 AND rcl.CreatedAt > @CooldownFrom
                 THEN 1 ELSE 0 END),
-            NeedsReschedule = MAX(CASE
-                WHEN ISNULL(im.IsDeleted, 0) = 0
-                 AND (
-                        ic.MeetingStatus IN (1, 3, 5, 9)
-                     OR im.confirmationStatus = '2'
-                     OR im.RedoInterview = 1
-                     )
+            HasExpiredRetryWindow = MAX(CASE
+                WHEN rcl.IsScheduleCall = 1 AND rcl.CreatedAt < @WindowFrom
+                THEN 1 ELSE 0 END),
+            HasFutureBooking = MAX(CASE
+                WHEN rcl.IsScheduleCall = 1
+                 AND rcl.BookingApiSuccess = 1
+                 AND rcl.BookedInterviewDateTime > @NowUtc
                 THEN 1 ELSE 0 END)
+        FROM RelevantCallLogs rcl
+        GROUP BY rcl.EmailId, rcl.CandidateIrfIntId
+    ),
+    -- Only meetings that can trigger a block (future, recent, cancelled, redo, or bad status)
+    RelevantMeetings AS (
+        SELECT
+            cp.EmailId,
+            cp.IrfBusinessId,
+            im.confirmationStatus,
+            im.interviewDate,
+            im.IsDeleted,
+            im.RedoInterview,
+            ic.MeetingStatus
         FROM       dbo.InterviewMeetings im
         INNER JOIN CandidatePool         cp
             ON  cp.EmailId       = im.candidateEmail
@@ -154,54 +160,67 @@ BEGIN
         LEFT JOIN  dbo.InterviewComments ic ON ic.InterviewId = im.id
         WHERE  im.candidateEmail IS NOT NULL
           AND  im.IRFId IS NOT NULL
-        GROUP BY im.candidateEmail, im.IRFId
+          AND  (
+                   im.interviewDate > @NowIST
+                OR im.interviewDate >= @RecentFromIST
+                OR im.confirmationStatus = '2'
+                OR im.RedoInterview = 1
+                OR ic.MeetingStatus IN (1, 3, 5, 9)
+               )
+    ),
+    MeetingBlocks AS (
+        SELECT
+            rm.EmailId       AS candidateEmail,
+            rm.IrfBusinessId AS IRFId,
+            HasFutureMeeting = MAX(CASE
+                WHEN rm.confirmationStatus <> '2'
+                 AND rm.interviewDate > @NowIST
+                THEN 1 ELSE 0 END),
+            HasRecentValidConfirmed = MAX(CASE
+                WHEN rm.confirmationStatus = '1'
+                 AND rm.interviewDate >= @RecentFromIST
+                 AND (rm.MeetingStatus IS NULL OR rm.MeetingStatus NOT IN (1, 3, 5, 9))
+                THEN 1 ELSE 0 END),
+            NeedsReschedule = MAX(CASE
+                WHEN ISNULL(rm.IsDeleted, 0) = 0
+                 AND (
+                        rm.MeetingStatus IN (1, 3, 5, 9)
+                     OR rm.confirmationStatus = '2'
+                     OR rm.RedoInterview = 1
+                     )
+                THEN 1 ELSE 0 END)
+        FROM RelevantMeetings rm
+        GROUP BY rm.EmailId, rm.IrfBusinessId
     )
     SELECT TOP (@Count)
         cp.CandidateId,
         cp.CandidateIrfIntId                                           AS IRFId,
-        cp.IrfBusinessId                                             AS IRFName,
-        cp.FirstName                                                 AS CandidateName,
-        cp.EmailId                                                   AS CandidateEmail,
-        cp.Phone                                                     AS CandidatePhone,
+        cp.IrfBusinessId                                               AS IRFName,
+        cp.FirstName                                                   AS CandidateName,
+        cp.EmailId                                                     AS CandidateEmail,
+        cp.Phone                                                       AS CandidatePhone,
         cp.JobTitle,
         cp.ClientName,
-        cp.VapiCallAttempts                                          AS CallAttempts,
+        cp.VapiCallAttempts                                            AS CallAttempts,
         cp.PlivoCXDisposition,
-        ISNULL(cs.CompletedCallCount, 0)                             AS CompletedCallCount
+        ISNULL(cs.CompletedCallCount, 0)                               AS CompletedCallCount
     FROM       CandidatePool cp
     LEFT JOIN  CallStats     cs ON cs.RecipientEmail = cp.EmailId
                                AND cs.IRFId          = cp.CandidateIrfIntId
     LEFT JOIN  MeetingBlocks mb ON mb.candidateEmail = cp.EmailId
                                AND mb.IRFId          = cp.IrfBusinessId
-    WHERE
-        -- 4a. No future non-cancelled interview meeting already exists
-        ISNULL(mb.HasFutureMeeting, 0) = 0
-
-        -- 4b. No prior Plivo call already successfully posted a future booking
-        AND ISNULL(cs.HasFutureBooking, 0) = 0
-
-        -- 4c. No confirmed interview in the last 15 days with valid outcome
-        AND ISNULL(mb.HasRecentValidConfirmed, 0) = 0
-
-        -- 4d. Exclude candidates who already need rescheduling
-        AND ISNULL(mb.NeedsReschedule, 0) = 0
-
-        -- 5. Stop after 2 completed calls unless never conclusively reached
-        AND (
-            cp.PlivoCXDisposition IS NULL
+    WHERE  ISNULL(mb.HasFutureMeeting, 0)          = 0
+      AND  ISNULL(cs.HasFutureBooking, 0)          = 0
+      AND  ISNULL(mb.HasRecentValidConfirmed, 0)     = 0
+      AND  ISNULL(mb.NeedsReschedule, 0)             = 0
+      AND  (
+               cp.PlivoCXDisposition IS NULL
             OR ISNULL(cs.CompletedCallCount, 0) < 2
-        )
-
-        -- 6. Hard daily cap: at most 4 schedule calls per candidate + IRF today (UTC)
-        AND ISNULL(cs.ScheduleCallsToday, 0) < 4
-
-        -- 7. Minimum 2-hour cooldown between consecutive calls
-        AND ISNULL(cs.HasRecentScheduleCall, 0) = 0
-
-        -- 8. Stop retrying after 4 days from the very first call attempt
-        AND ISNULL(cs.HasExpiredRetryWindow, 0) = 0
+           )
+      AND  ISNULL(cs.ScheduleCallsToday, 0)        < 4
+      AND  ISNULL(cs.HasRecentScheduleCall, 0)       = 0
+      AND  ISNULL(cs.HasExpiredRetryWindow, 0)       = 0
     ORDER BY
-        -- Never-reached candidates first (NULL disposition = no conclusive call yet)
         CASE WHEN cp.PlivoCXDisposition IS NULL THEN 0 ELSE 1 END ASC,
         ISNULL(cs.CompletedCallCount, 0) ASC,
         cp.CandidateId DESC
