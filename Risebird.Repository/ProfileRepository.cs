@@ -33,7 +33,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<Profile>(
-                        con, "select * from Profile", null, commandType: Text);
+                        con, "usp_GetProfiles", null, commandType: CommandType.StoredProcedure);
                 }
             }
             catch (SqlException ex)

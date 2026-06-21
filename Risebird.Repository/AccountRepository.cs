@@ -36,7 +36,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     accounts = SqlMapper.Query<Account>(
-                        con, "select Account.*, a.TotalProjects from Account left join (select Count(AccountId) as TotalProjects, AccountId from AccountProjectMapping group by AccountId) a on Account.id=a.AccountId where Account.IsDeleted=0", null, commandType: System.Data.CommandType.Text);
+                        con, "usp_GetAllAccounts", null, commandType: CommandType.StoredProcedure);
                 }
                 return accounts;
             }
@@ -78,36 +78,29 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Name", accountDetails.Name);
+                    parameters.Add("@ClientId", accountDetails.ClientId);
+                    parameters.Add("@EndClient", accountDetails.EndClient);
+                    parameters.Add("@Location", accountDetails.Location);
+                    parameters.Add("@AccountOwnerId", accountDetails.AccountOwnerId);
+                    parameters.Add("@CreatedOn", accountDetails.CreatedOn);
+                    parameters.Add("@IsDeleted", false);
+                    parameters.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
+                    await con.ExecuteAsync("usp_InsertAccount", parameters, commandType: CommandType.StoredProcedure);
+                    var accountId = parameters.Get<int>("@NewId");
 
-                    string sqlInsertReport = "INSERT INTO Account (Name,ClientId, EndClient, Location, AccountOwnerId, IsDeleted, CreatedOn ) Values (@Name,@ClientId,@EndClient, @Location,@AccountOwnerId, @IsDeleted, @CreatedOn);";
-                    var affectedRows = con.Execute(sqlInsertReport, new
-                    {
-                        accountDetails.Name,
-                        accountDetails.ClientId,
-                        accountDetails.EndClient,
-                        accountDetails.Location,
-                        accountDetails.AccountOwnerId,
-                        accountDetails.CreatedOn,
-                        IsDeleted = false
-
-                    });
-                    var accountList = SqlMapper.QueryAsync<Account>(
-                        con, "select * from Account", null, commandType: System.Data.CommandType.Text).Result.AsList();
-                    var accountId = accountList.Where(x => x.Name == accountDetails.Name).Last().id;
                     if (accountDetails.AccountProjectMappings != null)
                     {
-                        //update techskillreport table
                         foreach (var item in accountDetails.AccountProjectMappings)
                         {
-                            string sqlTechReport = "INSERT INTO AccountProjectMapping (AccountId,ProjectId,IsAdded) Values (@AccountId, @ProjectId, @IsAdded);";
-                            var result1 = con.ExecuteAsync(sqlTechReport, new
-                            {
-                                AccountId = accountId,
-                                item.ProjectId,
-                                item.IsAdded
-
-                            }).Result;
+                            var mappingParameters = new DynamicParameters();
+                            mappingParameters.Add("@AccountId", accountId);
+                            mappingParameters.Add("@ProjectId", item.ProjectId);
+                            mappingParameters.Add("@IsAdded", item.IsAdded);
+                            await con.ExecuteAsync("usp_InsertAccountProjectMapping", mappingParameters,
+                                commandType: CommandType.StoredProcedure);
                         }
                     }
 
@@ -157,12 +150,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select * from Account where id=@id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", accountId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<Account>(query, dynamicParameters);
+                    var results = con.Query<Account>("usp_GetAccountById", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return results.FirstOrDefault();
                 }
 
@@ -196,13 +189,12 @@ namespace Risebird.Repository
                     {
                         foreach (var item in accountDetails.AccountProjectMappings)
                         {
-                            string sqlQuery = "INSERT INTO AccountProjectMapping (AccountId, ProjectId, IsAdded) Values (@AccountId, @ProjectId, @IsAdded);";
-                            var affectedRows = con.ExecuteAsync(sqlQuery, new
-                            {
-                                AccountId = accountDetails.id,
-                                item.ProjectId,
-                                item.IsAdded
-                            }).Result;
+                            var mappingParameters = new DynamicParameters();
+                            mappingParameters.Add("@AccountId", accountDetails.id);
+                            mappingParameters.Add("@ProjectId", item.ProjectId);
+                            mappingParameters.Add("@IsAdded", item.IsAdded);
+                            await con.ExecuteAsync("usp_InsertAccountProjectMapping", mappingParameters,
+                                commandType: CommandType.StoredProcedure);
                         }
                     }
 
@@ -228,12 +220,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "update Account set IsDeleted=1 where id=@id";
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<int>(query, parameters);
+                    await con.ExecuteAsync("usp_ArchiveAccount", parameters, commandType: CommandType.StoredProcedure);
                     return true;
                 }
 
@@ -256,13 +247,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "update Account set IsDeleted=0 where id = @id;";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.QueryAsync<int>(query, dynamicParameters);
+                    await con.ExecuteAsync("usp_UnArchiveAccount", dynamicParameters, commandType: CommandType.StoredProcedure);
                     return true;
                 }
 
@@ -303,21 +293,14 @@ namespace Risebird.Repository
         {
             try
             {
-                string query = string.Empty;
-                if (!string.IsNullOrEmpty(projectIdList))
-                {
-                    query = "Select Project.id as ProjectId,Project.[Name]as ProjectName, Client.[Name] as Client, Client.id as ClientId from Project inner join Client on Project.ClientId = Client.id where Project.ClientId=@ClientId and IsDeleted = @IsDeleted and Project.id not in (" + projectIdList + ")";
-                }
-                else
-                {
-                    query = "Select Project.id as ProjectId,Project.[Name]as ProjectName, Client.[Name] as Client, Client.id as ClientId from Project inner join Client on Project.ClientId = Client.id where Project.ClientId=@ClientId and IsDeleted = @IsDeleted";
-                }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsDeleted", 0);
                 dynamicParameters.Add("@ClientId", clientId);
+                dynamicParameters.Add("@ExcludeProjectIds", projectIdList);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<AccountProjectMapping>(query, dynamicParameters);
+                    var results = con.Query<AccountProjectMapping>("usp_GetProjectsByClientId", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return results;
                 }
 
@@ -358,12 +341,12 @@ namespace Risebird.Repository
         {
             try
             {
-                string query = "Select ul.FirstName,Ul.LastName,ul.MobileNumber,ul.WhatsappNumber,up.Name as CurrentRole,ul.ImageURL from Userlist ul join Profile up on ul.idProfile=up.id where Emailid=@Emailid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<InterviewerProfileVM>(query, dynamicParameters);
+                    var results = con.Query<InterviewerProfileVM>("usp_FetchUserProfile", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return (InterviewerProfileVM)results.FirstOrDefault();
                 }
 
@@ -381,9 +364,7 @@ namespace Risebird.Repository
 
                 // In this case, Only passing the required parameters to fil in the tables
 
-                string query = "Update Userlist Set FirstName= @FirstName,LastName= @LastName,MobileNumber=@MobileNumber,WhatsappNumber=@WhatsappNumber,ImageURL=IsNull(@ImageURL,ImageURL) where Emailid=@Emailid";
                 var parameters = new DynamicParameters();
-
                 parameters.Add("@FirstName", userProfile.FirstName);
                 parameters.Add("@LastName", userProfile.LastName);
                 parameters.Add("@Emailid", userProfile.EmailId);
@@ -393,7 +374,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query(query, parameters);
+                    await con.ExecuteAsync("usp_UpdateUserProfile", parameters, commandType: CommandType.StoredProcedure);
                 }
                 return true;
             }

@@ -28,10 +28,10 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from Settings";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<Settings>(query);
+                    var results = await SqlMapper.QueryAsync<Settings>(con, "usp_GetSettings",
+                        commandType: CommandType.StoredProcedure);
                     return results.FirstOrDefault();
                 }
             }
@@ -79,10 +79,10 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select InterviewerUnassignedMinutes from Settings";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<int>(query);
+                    var results = await SqlMapper.QueryAsync<int>(con, "usp_GetInterviewUnassignedMinutes",
+                        commandType: CommandType.StoredProcedure);
                     return results.FirstOrDefault();
                 }
             }

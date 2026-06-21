@@ -32,7 +32,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<GeneralSkillMatrix>(
-                        con, "select * from GeneralSkillMatrix", null, commandType: Text);
+                        con, "usp_GetGeneralSkillMatrix", null, commandType: CommandType.StoredProcedure);
                 }
 
             }

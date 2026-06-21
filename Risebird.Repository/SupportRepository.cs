@@ -83,12 +83,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select * from Support where id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<Support>(query, dynamicParameters);
+                    var result = await SqlMapper.QueryAsync<Support>(con, "usp_GetSupportHRById", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
 
@@ -136,12 +136,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "delete from Support where id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync(query, dynamicParameters);
+                    await SqlMapper.QueryAsync(con, "usp_DeleteSupportHR", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
 
@@ -157,11 +157,10 @@ namespace Risebird.Repository
         {
             try
             {
-                //var query = "Select * from Support";
-                var query = "Select EmailId from support";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<string>(query);
+                    var results = await SqlMapper.QueryAsync<string>(con, "usp_GetSupportHREmails",
+                        commandType: CommandType.StoredProcedure);
                     return results.ToList();
                 }
 

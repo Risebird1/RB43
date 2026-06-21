@@ -118,10 +118,10 @@ namespace Risebird.Repository
                 string connectionString = dbconnectionString;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "Insert into ChatGroupName Values(@GroupName)";
                     var parameters = new DynamicParameters();
                     parameters.Add("@GroupName", GroupName);
-                    var results = con.Query(query, parameters);
+                    SqlMapper.Query(con, "usp_AddChatGroupName", parameters,
+                        commandType: CommandType.StoredProcedure);
                 }
             }
             catch (Exception ex)
@@ -136,8 +136,8 @@ namespace Risebird.Repository
                 string connectionString = dbconnectionString;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "Select id,GroupName from ChatGroupName";
-                    var results = con.Query<GroupDetails>(query);
+                    var results = SqlMapper.Query<GroupDetails>(con, "usp_FetchChatGroups", null,
+                        commandType: CommandType.StoredProcedure);
                     return (List<GroupDetails>)results;
                 }
             }
@@ -154,17 +154,17 @@ namespace Risebird.Repository
                 string connectionString = dbconnectionString;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "Delete from ChatGroupUsers where Groupid=@Id";
                     var parameters = new DynamicParameters();
                     parameters.Add("@Id", GroupId);
-                    var results = con.Query(query, parameters);
+                    SqlMapper.Query(con, "usp_DeleteChatGroupUsersByGroupId", parameters,
+                        commandType: CommandType.StoredProcedure);
                 }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "Delete from ChatGroupName where Id=@Id";
                     var parameters = new DynamicParameters();
                     parameters.Add("@Id", GroupId);
-                    var results = con.Query(query, parameters);
+                    SqlMapper.Query(con, "usp_DeleteChatGroupName", parameters,
+                        commandType: CommandType.StoredProcedure);
                 }
             }
             catch (Exception ex)
@@ -179,11 +179,10 @@ namespace Risebird.Repository
                 string connectionString = dbconnectionString;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "Select cg.id,ul.Emailid from ChatGroupUsers cg join UserList ul on cg.Userid= ul.id where GroupId=@Id";
                     var parameters = new DynamicParameters();
                     parameters.Add("@Id", GroupId);
-                    var results = con.Query<GroupDetails>(query, parameters);
-                    // return result;
+                    var results = SqlMapper.Query<GroupDetails>(con, "usp_FetchChatGroupUsers", parameters,
+                        commandType: CommandType.StoredProcedure);
                     return (List<GroupDetails>)results;
                 }
             }
@@ -202,18 +201,18 @@ namespace Risebird.Repository
                 int count = 0;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "Select Id from UserList where Emailid=@Emailid";
                     var parameters = new DynamicParameters();
                     parameters.Add("@Emailid", Emailid);
-                    id = con.Query<int>(query, parameters).FirstOrDefault();
+                    id = SqlMapper.Query<int>(con, "usp_GetUserIdByEmailId", parameters,
+                        commandType: CommandType.StoredProcedure).FirstOrDefault();
                 }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "Select Count(*) from ChatGroupUsers where Userid=@Id and Groupid=@GroupId";
                     var parameters = new DynamicParameters();
                     parameters.Add("@Id", id);
                     parameters.Add("@GroupId", GroupId);
-                    count = con.Query<int>(query, parameters).FirstOrDefault();
+                    count = SqlMapper.Query<int>(con, "usp_GetChatGroupUserCount", parameters,
+                        commandType: CommandType.StoredProcedure).FirstOrDefault();
                 }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -221,11 +220,11 @@ namespace Risebird.Repository
                     {
                         if (id != 0)
                         {
-                            var query = "Insert into ChatGroupUsers values(@GroupId,@Id)";
                             var parameters = new DynamicParameters();
                             parameters.Add("@Id", id);
                             parameters.Add("@GroupId", GroupId);
-                            var results = con.Query(query, parameters);
+                            SqlMapper.Query(con, "usp_AddChatGroupUser", parameters,
+                                commandType: CommandType.StoredProcedure);
                             return "success";
                         }
                         else
@@ -252,10 +251,10 @@ namespace Risebird.Repository
                 string connectionString = dbconnectionString;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "Delete from ChatGroupUsers where Id=@Id";
                     var parameters = new DynamicParameters();
                     parameters.Add("@Id", Userid);
-                    var results = con.Query(query, parameters);
+                    SqlMapper.Query(con, "usp_DeleteChatGroupUser", parameters,
+                        commandType: CommandType.StoredProcedure);
                 }
             }
             catch (Exception ex)
@@ -270,11 +269,11 @@ namespace Risebird.Repository
                 string connectionString = dbconnectionString;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "Update  UserList SET Usertheme = @Usertheme where EmailId = @id";
                     var parameters = new DynamicParameters();
                     parameters.Add("@id", userid);
                     parameters.Add("@Usertheme", theme);
-                    var results = con.Query(query, parameters);
+                    SqlMapper.Query(con, "usp_UpdateUserTheme", parameters,
+                        commandType: CommandType.StoredProcedure);
                     return "success";
                 }
             }

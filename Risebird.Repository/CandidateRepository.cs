@@ -162,12 +162,13 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select id,candidateEmail,interviewDate,CandidateName from InterviewMeetings where id=@interviewid and interviewdate>dateadd(minute,330,getdate()) and confirmationStatus=1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = (List<CandidateDetailsForWhatsApp>)await con.QueryAsync<CandidateDetailsForWhatsApp>(query, dynamicParameters);
+                    var result = (List<CandidateDetailsForWhatsApp>)await SqlMapper.QueryAsync<CandidateDetailsForWhatsApp>(
+                        con, "usp_FetchInterviewDetailsForWhatsApp", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
             }
@@ -186,13 +187,13 @@ namespace Risebird.Repository
             try
             {
                 int isvalidintervierid = 0;
-                var query = "select id from InterviewMeetings where id=@interviewid and CandidateEmail=@CandidateEmail and confirmationStatus=1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
                 dynamicParameters.Add("@CandidateEmail", CandidateEmail);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<int>(query, dynamicParameters);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_ValidateInterviewForCancel", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     isvalidintervierid = result.FirstOrDefault();
                 }
                 if (isvalidintervierid > 0)
@@ -226,12 +227,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select CASE WHEN ISNULL(uli.IsActive, 0) = 1 THEN im.interviewer ELSE NULL END as interviewer,ul.EmailId,im.interviewDate,Cl.Name as ClientName,IRF.CalendlyLink,IRF.JDTiltle,IRF.IRFId,IRF.id as irfIntId,im.candidateEmail,im.candidateName as CandidateName,im.ZoomMeetingId,im.MeetingPlatForm  from InterviewMeetings im join IRF left join Client cl on IRF.ClientId=cl.id on im.IRFId=irf.IRFId left join Userlist ul on ul.id=irf.RisebirdHr left join UserList uli on uli.EmailId=im.interviewer  where im.id=@interviewid and confirmationStatus=2";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<InterviewUsersDetails>(query, dynamicParameters);
+                    var result = await SqlMapper.QueryAsync<InterviewUsersDetails>(con, "usp_FetchChannelOwnerandInterviewer", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
             }
@@ -249,12 +250,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select im.interviewer,ul.EmailId,im.interviewDate,Cl.Name as ClientName,IRF.CalendlyLink,IRF.JDTiltle,(Isnull(uli.FirstName,'')+Isnull(uli.LastName,'')) as CandidateName from InterviewMeetings im join IRF left join Client cl on IRF.ClientId=cl.id on im.IRFId=irf.IRFId left join Userlist ul on ul.id=irf.RisebirdHr left join Userlist uli on uli.EmailId=im.candidateEmail  where im.id=@interviewid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<InterviewUsersDetails>(query, dynamicParameters);
+                    var result = await SqlMapper.QueryAsync<InterviewUsersDetails>(con, "usp_FetchInterviewerDetailsByInterviewId", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
             }
@@ -639,12 +640,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Update CandidateResume set IsProcessed=1 where id=@id  ";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync(query, dynamicParameters);
+                    await SqlMapper.QueryAsync(con, "usp_ProcessCandidateResume", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
@@ -663,12 +664,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select ResumeLink from  CandidateResume where id=@id  ";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<string>(query, dynamicParameters);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_FetchCandidateResumeLinkById", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
             }
@@ -687,12 +688,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select ul.EmailId From IRF join UserList ul on ul.id=IRF.BillingOwner where IRF.id=@id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<string>(query, dynamicParameters);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_FetchBillingOwnerEmailByIRFId", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
             }
@@ -711,12 +712,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select ClientHrContact as EmailId From InterviewMeetings where im.id=@interviewid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<InterviewUsersDetails>(query, dynamicParameters);
+                    var result = await SqlMapper.QueryAsync<InterviewUsersDetails>(con, "usp_FetchChannelOwnerByInterviewId", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
             }

@@ -14,102 +14,113 @@ Create PROCEDURE [dbo].[sp_GetMenuBasedOnEmailId]
   @SessionId varchar(300)
 AS  
 BEGIN  
+    SET NOCOUNT ON;
 
-IF NOT EXISTS (SELECT 1  FROM  UserSessions usn inner join UserList us on us.id = usn.UserId  WHERE  usn.SessionId = @SessionId and usn.IsActive=1 and us.IsActive=1)      
- BEGIN      
- insert into UserSessions
-	 ([UserId],
-	[SessionId],
-	[IsActive])	
-	select id,@SessionId,1 from [dbo].[UserList] us WHERE EmailId = @EmailId 
+    DECLARE @lastLogin DATETIME;
+    DECLARE @profile   VARCHAR(50);
+    DECLARE @roleId    INT = 0;
+    DECLARE @clientId  INT = 0;
+    DECLARE @userId    INT;
+    DECLARE @Now       DATETIME = GETDATE();
+
+    SELECT
+        @userId    = ul.id,
+        @lastLogin = ul.LastLogin,
+        @profile   = pr.[Name],
+        @roleId    = ISNULL(cu.RoleId, 0),
+        @clientId  = ISNULL(cu.ClientId, 0)
+    FROM dbo.UserList ul
+    INNER JOIN dbo.[Profile] pr ON pr.id = ul.idProfile
+    LEFT JOIN dbo.ClientUser cu ON cu.UserId = ul.id
+    WHERE ul.EmailId = @EmailId
+      AND ul.IsActive = 1;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM dbo.UserSessions usn
+        INNER JOIN dbo.UserList us ON us.id = usn.UserId
+        WHERE usn.SessionId = @SessionId
+          AND usn.IsActive = 1
+          AND us.IsActive = 1
+    )
+    BEGIN
+        INSERT INTO dbo.UserSessions (UserId, SessionId, IsActive)
+        SELECT id, @SessionId, 1
+        FROM dbo.UserList
+        WHERE EmailId = @EmailId;
+    END
+
+    UPDATE dbo.UserList
+    SET LastLogin = @Now,
+        Isonline  = 1
+    WHERE EmailId = @EmailId;
+	
+    IF (@EmailId != 'ExternalUser')
+    BEGIN
+        IF (@profile = 'Interviewer')
+        BEGIN
+            SELECT fn.functionname, fn.description, fn.idparentfunction, fn.sicon, fn.surl, fn.idisplayorder, pl.Name profileName,
+                pf.dAccess, @lastLogin AS NavigationShow, c.LogoLink
+            FROM dbo.[Function] fn
+            JOIN dbo.ProfileFunction pf ON fn.id = pf.idfunction
+            JOIN dbo.[Profile] pl ON pl.id = pf.idprofile
+            JOIN dbo.UserList ul ON pl.id = ul.idprofile
+            LEFT JOIN dbo.ClientUser cu ON cu.UserId = ul.id
+            LEFT JOIN dbo.Client c ON c.id = cu.ClientId
+            WHERE ul.EmailId = @EmailId AND ul.IsActive = 1
+            ORDER BY idisplayorder;
+        END
+        ELSE IF (@profile = 'Client' AND @roleId = 4) -- staffing agency
+        BEGIN
+            SELECT fn.functionname, fn.description, fn.idparentfunction, fn.sicon, fn.surl, fn.idisplayorder, pl.Name profileName,
+                pf.dAccess, @lastLogin AS NavigationShow, c.LogoLink
+            FROM dbo.[Function] fn
+            JOIN dbo.ProfileFunction pf ON fn.id = pf.idfunction
+            JOIN dbo.[Profile] pl ON pl.id = pf.idprofile
+            JOIN dbo.UserList ul ON pl.id = ul.idprofile
+            LEFT JOIN dbo.ClientUser cu ON cu.UserId = ul.id
+            LEFT JOIN dbo.Client c ON c.id = cu.ClientId
+            WHERE ul.EmailId = @EmailId AND ul.IsActive = 1 AND fn.IsStaffingAgencyAccess = 1
+            ORDER BY idisplayorder;
+        END
+        ELSE IF (@profile = 'Client')
+        BEGIN
+            SELECT fn.functionname, fn.description, fn.idparentfunction, fn.sicon, fn.surl, fn.idisplayorder, pl.Name profileName,
+                pf.dAccess, @lastLogin AS NavigationShow, c.LogoLink
+            FROM dbo.[Function] fn
+            JOIN dbo.ProfileFunction pf ON fn.id = pf.idfunction
+            JOIN dbo.[Profile] pl ON pl.id = pf.idprofile
+            JOIN dbo.UserList ul ON pl.id = ul.idprofile
+            LEFT JOIN dbo.ClientUser cu ON cu.UserId = ul.id
+            LEFT JOIN dbo.Client c ON c.id = cu.ClientId
+            WHERE ul.EmailId = @EmailId AND ul.IsActive = 1
+            ORDER BY idisplayorder;
+        END
+        ELSE
+        BEGIN
+            SELECT fn.functionname, fn.description, fn.idparentfunction, fn.sicon, fn.surl, fn.idisplayorder, pl.Name profileName,
+                pf.dAccess, @lastLogin AS NavigationShow, c.LogoLink
+            FROM dbo.[Function] fn
+            JOIN dbo.ProfileFunction pf ON fn.id = pf.idfunction
+            JOIN dbo.[Profile] pl ON pl.id = pf.idprofile
+            JOIN dbo.UserList ul ON pl.id = ul.idprofile
+            LEFT JOIN dbo.ClientUser cu ON cu.UserId = ul.id
+            LEFT JOIN dbo.Client c ON c.id = cu.ClientId
+            WHERE ul.EmailId = @EmailId AND ul.IsActive = 1
+            ORDER BY idisplayorder;
+        END
+    END
+    ELSE
+    BEGIN
+        SELECT DISTINCT fn.functionname, fn.description, fn.idparentfunction, fn.sicon, fn.surl, fn.idisplayorder, pl.Name profileName,
+            pf.dAccess, @lastLogin AS NavigationShow
+        FROM dbo.[Function] fn
+        JOIN dbo.ProfileFunction pf ON fn.id = pf.idfunction
+        JOIN dbo.[Profile] pl ON pl.id = pf.idprofile
+        JOIN dbo.UserList ul ON pl.id = ul.idprofile
+        WHERE pl.Name = 'ExternalUser';
+    END
 END
-
-
-	DECLARE @lastLogin AS varchar(200), @profile varchar(50), @roleId int, @clientId int;    
-	select @lastLogin=LastLogin from [dbo].[UserList] where EmailId = @EmailId  
-	Set @lastLogin=Getdate()
-	set @roleId =0
-	set @clientId =0
-
-	set @profile = (select pr.[Name] from UserList ul join [Profile] pr on pr.id=ul.idProfile where EmailId = @EmailId and ul.IsActive=1)
-	
-
-	if(@profile = 'Client')
-	begin
-		select @roleId=cu.RoleId from UserList ul join ClientUser cu on cu.UserId =ul.id where ul.EmailId=@EmailId
-		select @clientId = cu.ClientId from UserList ul join ClientUser cu on cu.UserId =ul.id where ul.EmailId=@EmailId
-	end
-
-	update [dbo].[UserList] set LastLogin= getdate(),isonline=1 where EmailId = @EmailId    
-	
-		
-	if(@EmailId!='ExternalUser')  
-		begin
-			if(@profile='Interviewer')
-			Begin
-				declare @userId int;
-				set @userId = (select id from UserList where EmailId = @EmailId and IsActive=1)
-						select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    
-						pf.dAccess,@lastLogin as NavigationShow,c.LogoLink from [dbo].[Function] fn      
-						join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction      
-						join [dbo].[Profile] pl on pl.id = pf.idprofile      
-						join [dbo].[UserList] ul on pl.id = ul.idprofile 
-						left join ClientUser cu on cu.UserId=ul.id
-						left join Client c on c.id=cu.ClientId
-						where ul.EmailId = @EmailId AND ul.IsActive=1 order by idisplayorder
-			End
-			else if (@profile = 'Client' and @roleId = 4)--staffing agency
-			begin
-				select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    
-					pf.dAccess,@lastLogin as NavigationShow,c.LogoLink from [dbo].[Function] fn      
-					join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction      
-					join [dbo].[Profile] pl on pl.id = pf.idprofile      
-					join [dbo].[UserList] ul on pl.id = ul.idprofile 
-					left join ClientUser cu on cu.UserId=ul.id
-					left join Client c on c.id=cu.ClientId
-					where ul.EmailId = @EmailId AND ul.IsActive=1 and fn.IsStaffingAgencyAccess=1 --and (@clientId=23 or (@clientId != 23 and fn.FunctionName != 'Templates'))
-					order by idisplayorder
-			end
-			else if(@profile = 'Client')
-				begin
-					select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    
-					pf.dAccess,@lastLogin as NavigationShow,c.LogoLink from [dbo].[Function] fn      
-					join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction      
-					join [dbo].[Profile] pl on pl.id = pf.idprofile      
-					join [dbo].[UserList] ul on pl.id = ul.idprofile 
-					left join ClientUser cu on cu.UserId=ul.id
-					left join Client c on c.id=cu.ClientId 
-					where ul.EmailId = @EmailId AND ul.IsActive=1 --and (@clientId=23 or (@clientId != 23 and fn.FunctionName != 'Templates'))
-					order by idisplayorder
-				end
-			else
-				begin
-					select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    
-					pf.dAccess,@lastLogin as NavigationShow,c.LogoLink from [dbo].[Function] fn      
-					join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction      
-					join [dbo].[Profile] pl on pl.id = pf.idprofile      
-					join [dbo].[UserList] ul on pl.id = ul.idprofile 
-					left join ClientUser cu on cu.UserId=ul.id
-					left join Client c on c.id=cu.ClientId 
-					where ul.EmailId = @EmailId AND ul.IsActive=1 
-					order by idisplayorder
-				end
-			      
-		end  
-	else  
-		begin  
-			select distinct fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    
-			pf.dAccess,@lastLogin as NavigationShow from [dbo].[Function] fn      
-			join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction      
-			join [dbo].[Profile] pl on pl.id = pf.idprofile      
-			join [dbo].[UserList] ul on pl.id = ul.idprofile    
-			where pl.Name='ExternalUser'  
-		end      
-End   
-  
-
 GO
-
-
 
 

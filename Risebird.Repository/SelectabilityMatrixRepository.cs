@@ -32,7 +32,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<SelectabilityMatrix>(
-                        con, "select * from SelectabilityMatrix", null, commandType: Text);
+                        con, "usp_GetSelectabilityMatrix", null, commandType: CommandType.StoredProcedure);
                 }
 
             }

@@ -31,10 +31,10 @@
 --   8. 4-day retry window from the very first call attempt.
 --      If the earliest schedule call to this candidate+IRF is older than 4 days, stop.
 --
--- Attempt tracking:
---   VapiCallAttempts on Candidate is still incremented per attempt (via
---   usp_IncrementCandidateVapiCallAttempts) but is NOT used to gate eligibility here.
---   Completed-call count is derived live from PlivoCXCallLogs.CallStatus = 'completed'.
+-- Performance (2026-06-17):
+--   CandidatePool pre-filters cheap predicates, then CallStats / MeetingBlocks
+--   aggregate only rows for that pool (not full log/meeting tables).
+--   See migration: Migrations/Optimize_GetEligibleCandidatesForPlivoCXCalls.sql
 --
 -- Schema notes:
 --   Candidate.IRFId (INT)       → references IRF.id (INT primary key)
@@ -65,177 +65,146 @@ BEGIN
     -- @NowIST is supplied by the repository as DateTime.Now so no timezone math is needed here.
     SET @NowIST = ISNULL(@NowIST, GETDATE());
 
+    DECLARE @NowUtc        DATETIME = GETUTCDATE();
+    DECLARE @TodayUtcStart DATETIME = CAST(CAST(@NowUtc AS DATE) AS DATETIME);
+    DECLARE @TomorrowUtc   DATETIME = DATEADD(DAY, 1, @TodayUtcStart);
+    DECLARE @CooldownFrom  DATETIME = DATEADD(HOUR, -2, @NowUtc);
+    DECLARE @WindowFrom    DATETIME = DATEADD(DAY, -4, @NowUtc);
+    DECLARE @RecentFromIST DATETIME = DATEADD(DAY, -15, @NowIST);
+
+    ;WITH CandidatePool AS (
+        SELECT
+            c.id              AS CandidateId,
+            c.IRFId           AS CandidateIrfIntId,
+            c.Phone,
+            c.VapiCallAttempts,
+            c.PlivoCXDisposition,
+            u.FirstName,
+            u.EmailId,
+            irf.IRFId         AS IrfBusinessId,
+            irf.JDTiltle      AS JobTitle,
+            cl.Name           AS ClientName
+        FROM       dbo.Candidate        c
+        INNER JOIN dbo.IRF              irf ON irf.id = c.IRFId
+        INNER JOIN dbo.Client           cl  ON cl.id  = irf.ClientId
+        INNER JOIN dbo.CandidatesMaster cm  ON cm.id  = c.CandidateMasterId
+        INNER JOIN dbo.UserList         u   ON u.id   = cm.UserId
+        WHERE  u.EmailId IS NOT NULL
+          AND  c.Phone IS NOT NULL
+          AND  LEN(LTRIM(RTRIM(c.Phone))) > 0
+          AND  (c.Status IS NULL OR c.Status <> 9)
+          AND  (c.PlivoCXDisposition IS NULL OR c.PlivoCXDisposition <> 'uninterested')
+    ),
+    CallStats AS (
+        SELECT
+            pcl.RecipientEmail,
+            pcl.IRFId,
+            CompletedCallCount = SUM(CASE WHEN pcl.CallStatus = 'completed' THEN 1 ELSE 0 END),
+            ScheduleCallsToday = SUM(CASE
+                WHEN (pcl.CallPurpose = 'schedule' OR pcl.CallPurpose IS NULL)
+                 AND pcl.CreatedAt >= @TodayUtcStart
+                 AND pcl.CreatedAt <  @TomorrowUtc
+                THEN 1 ELSE 0 END),
+            HasRecentScheduleCall = MAX(CASE
+                WHEN (pcl.CallPurpose = 'schedule' OR pcl.CallPurpose IS NULL)
+                 AND pcl.CreatedAt > @CooldownFrom
+                THEN 1 ELSE 0 END),
+            HasExpiredRetryWindow = MAX(CASE
+                WHEN (pcl.CallPurpose = 'schedule' OR pcl.CallPurpose IS NULL)
+                 AND pcl.CreatedAt < @WindowFrom
+                THEN 1 ELSE 0 END),
+            HasFutureBooking = MAX(CASE
+                WHEN (pcl.CallPurpose = 'schedule' OR pcl.CallPurpose IS NULL)
+                 AND pcl.BookingApiSuccess = 1
+                 AND pcl.BookedInterviewDateTime > @NowUtc
+                THEN 1 ELSE 0 END)
+        FROM       dbo.PlivoCXCallLogs pcl
+        INNER JOIN CandidatePool       cp
+            ON  cp.EmailId           = pcl.RecipientEmail
+            AND cp.CandidateIrfIntId = pcl.IRFId
+        WHERE  pcl.RecipientEmail IS NOT NULL
+          AND  pcl.IRFId IS NOT NULL
+        GROUP BY pcl.RecipientEmail, pcl.IRFId
+    ),
+    MeetingBlocks AS (
+        SELECT
+            im.candidateEmail,
+            im.IRFId,
+            HasFutureMeeting = MAX(CASE
+                WHEN im.confirmationStatus <> '2'
+                 AND im.interviewDate > @NowIST
+                THEN 1 ELSE 0 END),
+            HasRecentValidConfirmed = MAX(CASE
+                WHEN im.confirmationStatus = '1'
+                 AND im.interviewDate >= @RecentFromIST
+                 AND (ic.MeetingStatus IS NULL OR ic.MeetingStatus NOT IN (1, 3, 5, 9))
+                THEN 1 ELSE 0 END),
+            NeedsReschedule = MAX(CASE
+                WHEN ISNULL(im.IsDeleted, 0) = 0
+                 AND (
+                        ic.MeetingStatus IN (1, 3, 5, 9)
+                     OR im.confirmationStatus = '2'
+                     OR im.RedoInterview = 1
+                     )
+                THEN 1 ELSE 0 END)
+        FROM       dbo.InterviewMeetings im
+        INNER JOIN CandidatePool         cp
+            ON  cp.EmailId       = im.candidateEmail
+            AND cp.IrfBusinessId = im.IRFId
+        LEFT JOIN  dbo.InterviewComments ic ON ic.InterviewId = im.id
+        WHERE  im.candidateEmail IS NOT NULL
+          AND  im.IRFId IS NOT NULL
+        GROUP BY im.candidateEmail, im.IRFId
+    )
     SELECT TOP (@Count)
-        c.id                                                        AS CandidateId,
-        c.IRFId,
-        irf.IRFId                                                   AS IRFName,
-        u.FirstName                                                 AS CandidateName,
-        u.EmailId                                                   AS CandidateEmail,
-        c.Phone                                                     AS CandidatePhone,
-        irf.JDTiltle                                                AS JobTitle,
-        cl.Name                                                     AS ClientName,
-        c.VapiCallAttempts                                          AS CallAttempts,
-        c.PlivoCXDisposition,
-
-        -- Live count of completed Plivo CX calls for this candidate + IRF
-        (
-            SELECT COUNT(*)
-            FROM   PlivoCXCallLogs pcl
-            WHERE  pcl.RecipientEmail = u.EmailId
-              AND  pcl.IRFId          = c.IRFId
-              AND  pcl.CallStatus     = 'completed'
-        )                                                           AS CompletedCallCount
-
-    FROM       Candidate        c
-    INNER JOIN IRF              irf ON irf.id  = c.IRFId
-    INNER JOIN Client           cl  ON cl.id   = irf.ClientId
-    INNER JOIN CandidatesMaster cm  ON cm.id   = c.CandidateMasterId
-    INNER JOIN UserList         u   ON u.id    = cm.UserId
-
+        cp.CandidateId,
+        cp.CandidateIrfIntId                                           AS IRFId,
+        cp.IrfBusinessId                                             AS IRFName,
+        cp.FirstName                                                 AS CandidateName,
+        cp.EmailId                                                   AS CandidateEmail,
+        cp.Phone                                                     AS CandidatePhone,
+        cp.JobTitle,
+        cp.ClientName,
+        cp.VapiCallAttempts                                          AS CallAttempts,
+        cp.PlivoCXDisposition,
+        ISNULL(cs.CompletedCallCount, 0)                             AS CompletedCallCount
+    FROM       CandidatePool cp
+    LEFT JOIN  CallStats     cs ON cs.RecipientEmail = cp.EmailId
+                               AND cs.IRFId          = cp.CandidateIrfIntId
+    LEFT JOIN  MeetingBlocks mb ON mb.candidateEmail = cp.EmailId
+                               AND mb.IRFId          = cp.IrfBusinessId
     WHERE
-        -- 1. Must have valid email and phone
-        u.EmailId IS NOT NULL
-        AND c.Phone IS NOT NULL
-        AND LEN(LTRIM(RTRIM(c.Phone))) > 0
+        -- 4a. No future non-cancelled interview meeting already exists
+        ISNULL(mb.HasFutureMeeting, 0) = 0
 
-        -- 2. Not cold (Status = 9 means cold)
-        AND (c.Status IS NULL OR c.Status <> 9)
+        -- 4b. No prior Plivo call already successfully posted a future booking
+        AND ISNULL(cs.HasFutureBooking, 0) = 0
 
-        -- 3. Disposition is not 'uninterested'
-        AND (c.PlivoCXDisposition IS NULL OR c.PlivoCXDisposition <> 'uninterested')
+        -- 4c. No confirmed interview in the last 15 days with valid outcome
+        AND ISNULL(mb.HasRecentValidConfirmed, 0) = 0
 
-        -- 4a. No future non-cancelled interview meeting already exists.
-        --     confirmationStatus = '2' = Cancelled; everything else (pending, confirmed)
-        --     is enough to block another call.
-        AND NOT EXISTS (
-            SELECT 1
-            FROM   InterviewMeetings im
-            WHERE  im.candidateEmail     = u.EmailId
-              AND  im.IRFId              = irf.IRFId
-              AND  im.confirmationStatus <> '2'
-              AND  im.interviewDate       > @NowIST
-        )
+        -- 4d. Exclude candidates who already need rescheduling
+        AND ISNULL(mb.NeedsReschedule, 0) = 0
 
-        -- 4b. No prior Plivo call already successfully posted a future booking to
-        --     the Schedule API.  Covers the lag before the meeting row appears.
-        AND NOT EXISTS (
-            SELECT 1
-            FROM   PlivoCXCallLogs pcl2
-            WHERE  pcl2.RecipientEmail         = u.EmailId
-              AND  pcl2.IRFId                  = c.IRFId
-              AND  ISNULL(pcl2.CallPurpose, 'schedule') = 'schedule'
-              AND  pcl2.BookingApiSuccess       = 1
-              AND  pcl2.BookedInterviewDateTime > GETDATE()
-        )
-
-        -- 4c. No confirmed interview in the last 15 days whose outcome is still valid
-        --     (i.e., MeetingStatus is NULL = not yet evaluated, or is not one of the
-        --     reschedule-needed statuses: 1=No Show, 3=Candidate Absent, 5=Tech Issue, 9=Redo).
-        --     Blocks re-scheduling a candidate who recently had or is currently scheduled
-        --     for a legitimate interview.
-        AND NOT EXISTS (
-            SELECT 1
-            FROM   InterviewMeetings im
-            JOIN   InterviewComments ic ON ic.InterviewId = im.id
-            WHERE  im.candidateEmail     = u.EmailId
-              AND  im.IRFId              = irf.IRFId
-              AND  im.confirmationStatus = '1'                              -- confirmed (not pending/cancelled)
-              AND  im.interviewDate      >= DATEADD(DAY, -15, @NowIST)       -- within the last 15 days (IST)
-              AND  (
-                       ic.MeetingStatus IS NULL                             -- scheduled / not yet evaluated
-                    OR ic.MeetingStatus NOT IN (1, 3, 5, 9)                 -- not a reschedule-needed status
-                   )
-        )
-
-        -- 4d. Exclude candidates who already need RESCHEDULING.
-        --     If a candidate has any interview meeting flagged as reschedule-needed
-        --     (No Show, Candidate Absent, Tech Issue, Redo, or Cancelled), they belong
-        --     to the reschedule flow — not the initial schedule flow.
-        --     This is the mirror of rule 5 in usp_GetEligibleCandidatesForPlivoCXReschedule,
-        --     ensuring the two SPs are mutually exclusive.
-        AND NOT EXISTS (
-            SELECT 1
-            FROM   InterviewMeetings im
-            JOIN   InterviewComments ic ON ic.InterviewId = im.id
-            WHERE  im.candidateEmail       = u.EmailId
-              AND  im.IRFId               = irf.IRFId
-              AND  ISNULL(im.IsDeleted, 0) = 0
-              AND  (
-                       ic.MeetingStatus IN (1, 3, 5, 9)   -- No Show / Candidate Absent / Tech Issue / Redo
-                    OR im.confirmationStatus = '2'          -- Cancelled
-                    OR im.RedoInterview      = 1            -- Explicit redo flag
-                   )
-        )
-
-        -- 5. Stop after 2 completed calls (unless disposition is NULL, meaning
-        --    we have never had a conclusive conversation with this candidate yet)
+        -- 5. Stop after 2 completed calls unless never conclusively reached
         AND (
-            c.PlivoCXDisposition IS NULL
-            OR (
-                SELECT COUNT(*)
-                FROM   PlivoCXCallLogs pcl
-                WHERE  pcl.RecipientEmail = u.EmailId
-                  AND  pcl.IRFId          = c.IRFId
-                  AND  pcl.CallStatus     = 'completed'
-            ) < 2
+            cp.PlivoCXDisposition IS NULL
+            OR ISNULL(cs.CompletedCallCount, 0) < 2
         )
 
-        -- 6. Hard daily cap: at most 4 schedule calls per candidate + IRF today
-        --    (any call status counts — prevents looping on busy/no-answer)
-        AND (
-            SELECT COUNT(*)
-            FROM   PlivoCXCallLogs pcl
-            WHERE  pcl.RecipientEmail = u.EmailId
-              AND  pcl.IRFId          = c.IRFId
-              AND  ISNULL(pcl.CallPurpose, 'schedule') = 'schedule'
-              AND  CAST(pcl.CreatedAt AS DATE) = CAST(GETUTCDATE() AS DATE)
-        ) < 4
+        -- 6. Hard daily cap: at most 4 schedule calls per candidate + IRF today (UTC)
+        AND ISNULL(cs.ScheduleCallsToday, 0) < 4
 
-        -- 7. Minimum 2-hour cooldown between consecutive calls.
-        --    Block if ANY schedule call to this candidate+IRF was made in the last 2 hours.
-        AND NOT EXISTS (
-            SELECT 1
-            FROM   PlivoCXCallLogs pcl
-            WHERE  pcl.RecipientEmail = u.EmailId
-              AND  pcl.IRFId          = c.IRFId
-              AND  ISNULL(pcl.CallPurpose, 'schedule') = 'schedule'
-              AND  pcl.CreatedAt      > DATEADD(HOUR, -2, GETUTCDATE())
-        )
+        -- 7. Minimum 2-hour cooldown between consecutive calls
+        AND ISNULL(cs.HasRecentScheduleCall, 0) = 0
 
-        -- 8. Stop retrying after 4 days from the very first call attempt.
-        --    Passes if: no call has ever been made (fresh candidate), OR the earliest
-        --    call is within the last 4 days (still inside the retry window).
-        AND (
-            NOT EXISTS (
-                SELECT 1
-                FROM   PlivoCXCallLogs pcl
-                WHERE  pcl.RecipientEmail = u.EmailId
-                  AND  pcl.IRFId          = c.IRFId
-                  AND  ISNULL(pcl.CallPurpose, 'schedule') = 'schedule'
-            )
-            OR (
-                SELECT MIN(pcl.CreatedAt)
-                FROM   PlivoCXCallLogs pcl
-                WHERE  pcl.RecipientEmail = u.EmailId
-                  AND  pcl.IRFId          = c.IRFId
-                  AND  ISNULL(pcl.CallPurpose, 'schedule') = 'schedule'
-            ) >= DATEADD(DAY, -4, GETUTCDATE())
-        )
-
+        -- 8. Stop retrying after 4 days from the very first call attempt
+        AND ISNULL(cs.HasExpiredRetryWindow, 0) = 0
     ORDER BY
         -- Never-reached candidates first (NULL disposition = no conclusive call yet)
-        CASE WHEN c.PlivoCXDisposition IS NULL THEN 0 ELSE 1 END ASC,
-
-        -- Within each group, fewer completed calls go first
-        (
-            SELECT COUNT(*)
-            FROM   PlivoCXCallLogs pcl
-            WHERE  pcl.RecipientEmail = u.EmailId
-              AND  pcl.IRFId          = c.IRFId
-              AND  pcl.CallStatus     = 'completed'
-        ) ASC,
-
-        -- Most recently added candidates take priority within the same bucket
-        c.id DESC;
+        CASE WHEN cp.PlivoCXDisposition IS NULL THEN 0 ELSE 1 END ASC,
+        ISNULL(cs.CompletedCallCount, 0) ASC,
+        cp.CandidateId DESC
+    OPTION (RECOMPILE);
 END
 GO

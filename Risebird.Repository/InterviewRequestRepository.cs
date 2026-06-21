@@ -105,19 +105,18 @@ namespace Risebird.Repository
             {
                 //Set the parameters to be passed to store procedure
                 var model = new InterviewRequestVM();
-                var query = "Select ir.*,ul.EmailId as Assignto,IRF.CalendlyLink,ul.uniqueId from InterviewRequests ir left join UserList ul on ul.id=ir.Assignto left join IRF on IRF.IRFId=ir.IRFID Where ir.id=@id";
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<InterviewRequestVM>(query, parameters);
+                    var result = await SqlMapper.QueryAsync<InterviewRequestVM>(con, "usp_FetchInterviewRequestById", parameters,
+                        commandType: CommandType.StoredProcedure);
                     model = result.FirstOrDefault();
                 }
-                //Fetch Skills
-                var querySkill = "Select IRFId,LevelId,SkillId,ActualLevelId as Weightage from TransInterviewRequestSkills Where IRFID=@id";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<InstaTechSkill>(querySkill, parameters);
+                    var result = await SqlMapper.QueryAsync<InstaTechSkill>(con, "usp_FetchInterviewRequestSkillsById", parameters,
+                        commandType: CommandType.StoredProcedure);
                     model.TechSkill = (List<InstaTechSkill>)result;
                 }
                 return model;
@@ -136,13 +135,13 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Update InterviewRequests set Assignto=@Assignto Where Id=@id";
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 parameters.Add("@Assignto", userid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync(query, parameters);
+                    await SqlMapper.QueryAsync(con, "usp_AssignInterviewRequest", parameters,
+                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
@@ -160,13 +159,13 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Update InterviewRequests set IsIRFCreated=1 , IRFId =@IRFId Where Id=@id";
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 parameters.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync(query, parameters);
+                    await SqlMapper.QueryAsync(con, "usp_SetInterviewRequestIRFCreated", parameters,
+                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
@@ -184,12 +183,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select FirstName from UserList where Emailid=@id";
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<string>(query, parameters);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_FetchInterviewerFirstNameByEmailId", parameters,
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
             }

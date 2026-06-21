@@ -102,7 +102,10 @@ namespace Risebird.Repository
                 var ids = string.Join(",", idList);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await con.QueryAsync("Delete from TransVMTriggerDetails where id in (" + ids + ")");
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@Ids", ids);
+                    await SqlMapper.QueryAsync(con, "usp_DeleteTriggeredVMsByIds", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
 
@@ -219,13 +222,13 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select id from VMProperties where Name = @Name and ResourceGroupName=@ResourceGroupName";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Name", name);
                 dynamicParameters.Add("@ResourceGroupName", rgName);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<int>(query, dynamicParameters);
+                    var result = SqlMapper.Query<int>(con, "usp_GetVMIdByNameAndResourceGroup", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
 
@@ -288,12 +291,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from VMProperties where id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<VMProperties>(query, dynamicParameters);
+                    var result = SqlMapper.Query<VMProperties>(con, "usp_GetVMPropertiesById", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
 

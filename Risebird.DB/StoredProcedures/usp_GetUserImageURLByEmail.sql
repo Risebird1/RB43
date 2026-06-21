@@ -1,0 +1,20 @@
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetUserImageURLByEmail'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetUserImageURLByEmail
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_GetUserImageURLByEmail]
+    @id VARCHAR(255)
+AS
+BEGIN
+    SELECT ImageURL FROM UserList WHERE EmailId = @id
+END
+GO

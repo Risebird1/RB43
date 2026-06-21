@@ -32,7 +32,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<JoinabilityMatrix>(
-                        con, "select * from JoinabilityMatrix", null, commandType: Text);
+                        con, "usp_GetJoinabilityMatrix", null, commandType: CommandType.StoredProcedure);
                 }
 
             }
