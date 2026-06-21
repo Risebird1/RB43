@@ -17,13 +17,13 @@ namespace Risebird.Repository.Interface
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string funnelMode = null);
+            string funnelStage = null, string funnelMode = null, string onboardingType = null);
 
         Task<Dictionary<string, int>> GetFunnelStageCountsAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string funnelMode = null);
+            string funnelStage = null, string funnelMode = null, string onboardingType = null);
 
         Task<NaukriProspectiveInterviewerVM> GetByIdAsync(int id);
 
@@ -62,6 +62,7 @@ namespace Risebird.Repository.Interface
         // Prospect Onboarding redesign (Phase 2): unified intent + funnel/ticket separation + onboarding type
         Task<bool> SetUnifiedIntentAsync(int id, string intent, string intentSource, DateTime? confirmedAt);
         Task<bool> AdvanceFunnelStageAsync(int id, string funnelStage, string ticketStatus = null);
+        Task<bool> SetFunnelOutcomeAsync(int id, string funnelStage, string ticketStatus = null);
         Task<bool> SetOnboardingTypeAsync(int id, string onboardingType);
 
         // Returns the prospect record awaiting acknowledgement for a given onboarded user id, if any.

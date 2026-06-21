@@ -26,7 +26,9 @@ CREATE PROCEDURE usp_SaveGeneratedInvoice
     @TDSAmount         DECIMAL(18,2),
     @NetReceivable     DECIMAL(18,2),
     @Status            INT,
-    @CreatedBy         VARCHAR(200)
+    @CreatedBy         VARCHAR(200),
+    @CashCreditAmount  DECIMAL(18,2) = NULL,
+    @UTRTrxn           VARCHAR(200)  = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -39,7 +41,7 @@ BEGIN
               AND BillingOwnerId = @BillingOwnerId
               AND InvoiceMonth  = @InvoiceMonth
               AND InvoiceYear   = @InvoiceYear
-              AND Status        = 1
+              AND Status        != 0
         )
         BEGIN
             SELECT -1 AS NewId, 'Invoice already generated for this Client, Billing Owner, Month and Year.' AS ErrorMessage
@@ -52,12 +54,14 @@ BEGIN
             (ClientId, BillingOwnerId, InvoiceNumber, InvoiceMonth, InvoiceYear,
              BillingOwnerEmail, CreditPeriod, GSTNumber, TaxScenario, IRN, EInvoiceFileLink,
              Subtotal, GSTAmount, InvoiceValue, TDSAmount, NetReceivable,
-             Status, CreatedOn, CreatedBy)
+             Status, CreatedOn, CreatedBy, CashCreditAmount, UTRTrxn,
+             InvoiceBaseAmount, NetReceivableAmount)
         VALUES
             (@ClientId, @BillingOwnerId, @InvoiceNumber, @InvoiceMonth, @InvoiceYear,
              @BillingOwnerEmail, @CreditPeriod, @GSTNumber, @TaxScenario, @IRN, @EInvoiceFileLink,
              @Subtotal, @GSTAmount, @InvoiceValue, @TDSAmount, @NetReceivable,
-             @Status, GETDATE(), @CreatedBy)
+             @Status, GETDATE(), @CreatedBy, @CashCreditAmount, @UTRTrxn,
+             @Subtotal, @NetReceivable)
 
         SELECT SCOPE_IDENTITY() AS NewId, '' AS ErrorMessage
     END
@@ -75,13 +79,17 @@ BEGIN
             TaxScenario       = @TaxScenario,
             IRN               = @IRN,
             EInvoiceFileLink  = CASE WHEN @EInvoiceFileLink IS NOT NULL AND @EInvoiceFileLink != '' THEN @EInvoiceFileLink ELSE EInvoiceFileLink END,
-            Subtotal          = @Subtotal,
-            GSTAmount         = @GSTAmount,
-            InvoiceValue      = @InvoiceValue,
-            TDSAmount         = @TDSAmount,
-            NetReceivable     = @NetReceivable,
-            Status            = @Status,
-            ModifiedOn        = GETDATE()
+            Subtotal             = @Subtotal,
+            GSTAmount            = @GSTAmount,
+            InvoiceValue         = @InvoiceValue,
+            TDSAmount            = @TDSAmount,
+            NetReceivable        = @NetReceivable,
+            Status               = @Status,
+            CashCreditAmount     = CASE WHEN @CashCreditAmount IS NOT NULL AND @CashCreditAmount > 0 THEN @CashCreditAmount ELSE CashCreditAmount END,
+            UTRTrxn              = CASE WHEN @UTRTrxn IS NOT NULL AND @UTRTrxn != '' THEN @UTRTrxn ELSE UTRTrxn END,
+            InvoiceBaseAmount    = @Subtotal,
+            NetReceivableAmount  = @NetReceivable,
+            ModifiedOn           = GETDATE()
         WHERE id = @id
 
         SELECT @id AS NewId, '' AS ErrorMessage

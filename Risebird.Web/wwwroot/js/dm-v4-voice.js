@@ -66,11 +66,11 @@
     }
 
     function showRubricVoiceResult(rubricRes) {
-        var msg = (rubricRes && rubricRes.message) || 'Score rubric regenerated from voice brief.';
-        var added = rubricRes && rubricRes.addedFromVoice;
-        var reloadRequired = rubricRes && (rubricRes.reloadRequired || added > 0);
-        var icon = added > 0 ? 'success' : 'info';
-        var title = added > 0 ? 'Rubric updated' : 'Rubric unchanged';
+        var msg = (rubricRes && rubricRes.message) || 'Score rubric updated from voice brief.';
+        var changed = rubricRes && rubricRes.changed === true;
+        var reloadRequired = rubricRes && (rubricRes.reloadRequired || changed);
+        var icon = changed ? 'success' : 'info';
+        var title = changed ? 'Rubric revised' : 'Rubric unchanged';
 
         function afterAlert() {
             if (reloadRequired) {
@@ -101,7 +101,6 @@
      */
     function callGenerateRubricFromVoice(irfId, $btn) {
         clearRubricRegenErrors();
-        setTranscriptUiState('is-regenerating');
 
         if ($btn && $btn.length) {
             $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Regenerating rubric…');
@@ -131,8 +130,6 @@
                 responseText: xhr && xhr.responseText
             });
             return $.Deferred().reject({ message: RUBRIC_REGEN_ERROR, xhr: xhr }).promise();
-        }).always(function () {
-            setTranscriptUiState($('#dmV4VoiceTranscriptInput').val().trim() ? '' : 'is-empty');
         });
     }
 
@@ -222,7 +219,7 @@
         return $.ajax({
             type: 'POST',
             url: '/IRF/UpdateVoiceInstructionTranscript',
-            data: { irfId: irfId, transcript: transcript, regenerateRubric: true }
+            data: { irfId: irfId, transcript: transcript, regenerateRubric: false }
         }).then(function (res) {
             if (!res || !res.success) {
                 var msg = (res && res.message) ? res.message : 'Could not save transcript.';
@@ -233,12 +230,8 @@
             applyTranscriptToHero(res.transcript, res.transcriptUpdatedOn);
             applyTranscriptToModal(res.transcript);
 
-            if (res.regenerateRubric === false) {
-                if (typeof swal !== 'undefined') swal.fire('Saved', 'Voice brief transcript saved.', 'success');
-                return null;
-            }
-
-            return callGenerateRubricFromVoice(irfId, $btn);
+            if (typeof swal !== 'undefined') swal.fire('Saved', 'Voice brief transcript saved.', 'success');
+            return null;
         }, function () {
             if (typeof swal !== 'undefined') swal.fire('Save failed', 'Server error while saving transcript.', 'error');
             return $.Deferred().reject().promise();

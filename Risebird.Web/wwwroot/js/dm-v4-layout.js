@@ -72,6 +72,113 @@
         );
     }
 
+    function getEtiquettePanelEl() {
+        return $('#dmV4AdvancedPanel');
+    }
+
+    function getEtiquetteIrfId() {
+        var $panel = getEtiquettePanelEl();
+        var id = $panel.data('irf-id') || $panel.attr('data-irf-id') || $('#id').val();
+        return id ? parseInt(id, 10) : 0;
+    }
+
+    function getEtiquetteRequestData(extra) {
+        var data = $.extend({ irfId: getEtiquetteIrfId() }, extra || {});
+        if (window.dmV4ClientShareView === true) {
+            data.Type = getClientShareTypeParam();
+        }
+        return data;
+    }
+
+    function normalizeEtiquetteState(raw) {
+        if (!raw) return null;
+        var dress = (raw.dressCode || raw.DressCode || 'formal').toString().toLowerCase();
+        var camera = raw.cameraRequired != null ? raw.cameraRequired : raw.CameraRequired;
+        var noEating = raw.noEatingRule != null ? raw.noEatingRule : raw.NoEatingRule;
+        return {
+            dressCode: dress === 'match' ? 'match' : 'formal',
+            cameraRequired: camera === true || camera === 'true' || camera === 1 || camera === '1',
+            noEatingRule: !(noEating === false || noEating === 'false' || noEating === 0 || noEating === '0')
+        };
+    }
+
+    function readEtiquetteFromPanelData() {
+        var $panel = getEtiquettePanelEl();
+        return normalizeEtiquetteState({
+            dressCode: $panel.attr('data-etiquette-dress'),
+            cameraRequired: $panel.attr('data-etiquette-camera'),
+            noEatingRule: $panel.attr('data-etiquette-no-eating')
+        });
+    }
+
+    function syncEtiquettePanelDataAttrs(state) {
+        var normalized = normalizeEtiquetteState(state);
+        if (!normalized) return;
+        var $panel = getEtiquettePanelEl();
+        $panel.attr('data-etiquette-dress', normalized.dressCode);
+        $panel.attr('data-etiquette-camera', normalized.cameraRequired ? '1' : '0');
+        $panel.attr('data-etiquette-no-eating', normalized.noEatingRule ? '1' : '0');
+    }
+
+    function applyEtiquettePanelState(state) {
+        var normalized = normalizeEtiquetteState(state);
+        if (!normalized) return;
+        var $card = $('.dm-v4-advanced-card--etiquette');
+        if (!$card.length) return;
+        $card.find('.dm-v4-etiquette-option[data-etiquette="dress"]').each(function () {
+            var value = ($(this).attr('data-dress-value') || 'formal').toLowerCase();
+            $(this).toggleClass('is-on', value === normalized.dressCode);
+        });
+        var $camera = $card.find('.dm-v4-etiquette-list li[data-rule="camera"] .dm-v4-dm-toggle--btn').first();
+        var $noEating = $card.find('.dm-v4-etiquette-list li[data-rule="no-eating"] .dm-v4-dm-toggle--btn').first();
+        if ($camera.length) {
+            $camera.toggleClass('is-on', normalized.cameraRequired).attr('aria-checked', normalized.cameraRequired ? 'true' : 'false');
+        }
+        if ($noEating.length) {
+            $noEating.toggleClass('is-on', normalized.noEatingRule).attr('aria-checked', normalized.noEatingRule ? 'true' : 'false');
+        }
+        syncEtiquettePanelDataAttrs(normalized);
+    }
+
+    function readEtiquetteFromDom() {
+        var $card = $('.dm-v4-advanced-card--etiquette');
+        var dressCode = 'formal';
+        $card.find('.dm-v4-etiquette-option[data-etiquette="dress"].is-on').each(function () {
+            dressCode = ($(this).attr('data-dress-value') || 'formal').toLowerCase() === 'match' ? 'match' : 'formal';
+        });
+        var $camera = $card.find('.dm-v4-etiquette-list li[data-rule="camera"] .dm-v4-dm-toggle--btn').first();
+        var $noEating = $card.find('.dm-v4-etiquette-list li[data-rule="no-eating"] .dm-v4-dm-toggle--btn').first();
+        return {
+            dressCode: dressCode,
+            cameraRequired: $camera.hasClass('is-on'),
+            noEatingRule: $noEating.hasClass('is-on')
+        };
+    }
+
+    function saveEtiquetteToServer(state) {
+        var normalized = normalizeEtiquetteState(state);
+        if (!normalized || !getEtiquetteIrfId()) return $.Deferred().resolve({ success: false }).promise();
+        return $.post('/IRF/UpdateDmInterviewerEtiquette', getEtiquetteRequestData({
+            dressCode: normalized.dressCode,
+            cameraRequired: normalized.cameraRequired,
+            noEatingRule: normalized.noEatingRule
+        })).then(function (res) {
+            if (res && res.success) {
+                syncEtiquettePanelDataAttrs(normalized);
+            }
+            return res;
+        });
+    }
+
+    function loadEtiquetteFromServer() {
+        if (!getEtiquetteIrfId()) return $.Deferred().resolve().promise();
+        return $.post('/IRF/GetDmInterviewerEtiquetteJson', getEtiquetteRequestData()).then(function (res) {
+            if (res && res.success && res.etiquette) {
+                applyEtiquettePanelState(res.etiquette);
+            }
+        });
+    }
+
     function buildAdvancedNested() {
         var $target = $('#dm-v4-advanced-nested');
         if (!$target.length) return;
@@ -119,22 +226,28 @@
         $checksCard.append($checksInner);
         $target.append($checksCard);
 
+        var etiquetteState = readEtiquetteFromPanelData() || {
+            dressCode: 'formal',
+            cameraRequired: true,
+            noEatingRule: true
+        };
+
         var $etiquetteCard = $(
             '<div class="dm-v4-advanced-card dm-v4-advanced-card--etiquette">' +
             '<div class="dm-v4-advanced-card__head"><span class="dm-v4-advanced-card__title">Interviewer etiquette</span>' +
             '<span class="dm-v4-badge dm-v4-badge--green dm-v4-badge--xs">DEFAULTS ON</span></div>' +
             '<div class="dm-v4-advanced-card__body">' +
             '<div class="dm-v4-etiquette-label">Dress code</div>' +
-            '<label class="dm-v4-etiquette-option is-on" data-etiquette="dress"><span class="dm-v4-etiquette-radio"></span><span><strong>Strict formal</strong><span class="dm-v4-etiquette-sub">Business attire · neutral background</span></span></label>' +
-            '<label class="dm-v4-etiquette-option" data-etiquette="dress"><span class="dm-v4-etiquette-radio"></span><span><strong>Interviewer\'s choice — match candidate</strong><span class="dm-v4-etiquette-sub">Mirror role\'s expected level</span></span></label>' +
+            '<label class="dm-v4-etiquette-option' + (etiquetteState.dressCode === 'formal' ? ' is-on' : '') + '" data-etiquette="dress" data-dress-value="formal"><span class="dm-v4-etiquette-radio"></span><span><strong>Strict formal</strong><span class="dm-v4-etiquette-sub">Business attire · neutral background</span></span></label>' +
+            '<label class="dm-v4-etiquette-option' + (etiquetteState.dressCode === 'match' ? ' is-on' : '') + '" data-etiquette="dress" data-dress-value="match"><span class="dm-v4-etiquette-radio"></span><span><strong>Interviewer\'s choice — match candidate</strong><span class="dm-v4-etiquette-sub">Mirror role\'s expected level</span></span></label>' +
             '<ul class="dm-v4-etiquette-list"></ul></div></div>'
         );
         var $etiquetteList = $etiquetteCard.find('.dm-v4-etiquette-list');
         $etiquetteList.append(
-            $('<li data-etiquette="rule"></li>').append('<span>Camera-on with neutral background required</span>').append(buildDmToggleButton(true))
+            $('<li data-etiquette="rule" data-rule="camera"></li>').append('<span>Camera-on with neutral background required</span>').append(buildDmToggleButton(etiquetteState.cameraRequired))
         );
         $etiquetteList.append(
-            $('<li data-etiquette="rule"></li>').append('<span>No eating, walking or smoking during interview</span>').append(buildDmToggleButton(true))
+            $('<li data-etiquette="rule" data-rule="no-eating"></li>').append('<span>No eating, walking or smoking during interview</span>').append(buildDmToggleButton(etiquetteState.noEatingRule))
         );
         $target.append($etiquetteCard);
 
@@ -192,12 +305,18 @@
         });
         $(document).off('click.dmV4EtiquetteDress', '.dm-v4-etiquette-option[data-etiquette="dress"]').on('click.dmV4EtiquetteDress', '.dm-v4-etiquette-option[data-etiquette="dress"]', function () {
             var $card = $(this).closest('.dm-v4-advanced-card--etiquette');
+            var previous = readEtiquetteFromDom();
             $card.find('.dm-v4-etiquette-option[data-etiquette="dress"]').removeClass('is-on');
             $(this).addClass('is-on');
+            var next = readEtiquetteFromDom();
+            if (next.dressCode !== previous.dressCode) {
+                saveEtiquetteToServer(next);
+            }
         });
         $(document).off('click.dmV4EtiquetteRule', '.dm-v4-etiquette-list .dm-v4-dm-toggle--btn').on('click.dmV4EtiquetteRule', '.dm-v4-etiquette-list .dm-v4-dm-toggle--btn', function () {
             var on = !$(this).hasClass('is-on');
             $(this).toggleClass('is-on', on).attr('aria-checked', on ? 'true' : 'false');
+            saveEtiquetteToServer(readEtiquetteFromDom());
         });
     }
 
@@ -210,6 +329,9 @@
             $(this).attr('aria-expanded', open ? 'true' : 'false');
             if (open) {
                 $panel.prop('hidden', false).slideDown(180);
+                if ($collapse.attr('id') === 'dmV4AdvancedCollapse') {
+                    loadEtiquetteFromServer();
+                }
             } else {
                 $panel.slideUp(180, function () { $panel.prop('hidden', true); });
             }
@@ -983,6 +1105,7 @@
     }
 
     function readRbVetFromRow($row) {
+        if (!readRowDbActive($row)) return false;
         var raw = $row.attr('data-rb-vet');
         if (raw === '1') return true;
         if (raw === '0' && isFreeChannelPanel()
@@ -994,6 +1117,7 @@
     }
 
     function readClientVetFromRow($row) {
+        if (!readRowDbActive($row)) return false;
         var raw = $row.attr('data-client-vet');
         if (raw === '1') return true;
         var action = ($row.attr('data-client-action') || '').toLowerCase();
@@ -1013,6 +1137,7 @@
         var panel = 0;
         $rows.each(function () {
             var $row = $(this);
+            if (!readRowDbActive($row)) return;
             var rbOn = readRbVetFromRow($row);
             var clientOn = readClientVetFromRow($row);
             if (rbOn) rb += 1;
@@ -1126,10 +1251,58 @@
         }
         if (typeof opts.active !== 'undefined') {
             $row.attr('data-is-active', opts.active ? '1' : '0');
+            if (opts.active) {
+                $row.attr('data-ever-activated', '1');
+            }
         }
         if (typeof opts.available !== 'undefined') {
             $row.attr('data-is-available', opts.available ? '1' : '0');
         }
+    }
+
+    function readRowEverActivated($row) {
+        return ($row.attr('data-ever-activated') || '0') === '1';
+    }
+
+    function inferInactiveReasonFromRow($row) {
+        if (readRowDbActive($row)) return null;
+        var channelLocked = isPolicyLockOn(getPolicyBar());
+        var available = ($row.attr('data-is-available') || '0') === '1';
+        var action = ($row.attr('data-client-action') || '').toLowerCase();
+        var rejected = action === 'rejected';
+        var rbStored = $row.attr('data-rb-vet');
+        var rbVetYes = rbStored === '1';
+        var rbVetExplicitNo = rbStored === '0';
+        var everActivated = readRowEverActivated($row);
+
+        if (!everActivated && channelLocked && available && !rejected && !rbVetYes && rbStored !== '0') {
+            return { label: 'Pending RB Review', tone: 'info' };
+        }
+        if (!everActivated && channelLocked && available && !rejected && !rbVetYes) {
+            return { label: 'Pending RB Review', tone: 'info' };
+        }
+        if (everActivated && rejected && rbVetYes) {
+            return { label: 'Removed by Client', tone: 'warning' };
+        }
+        if (everActivated && (rbVetExplicitNo || (rejected && !rbVetYes))) {
+            return { label: 'Removed by RB', tone: 'warning' };
+        }
+        return { label: 'Inactive — reason unknown', tone: 'unknown' };
+    }
+
+    function syncInactiveReasonBadge($row) {
+        var $badge = $row.find('.dm-v4-iv-inactive-reason');
+        if (!$badge.length) return;
+        var reason = inferInactiveReasonFromRow($row);
+        if (!reason) {
+            $badge.text('').attr('title', '');
+            return;
+        }
+        $badge
+            .removeClass('dm-v4-iv-inactive-reason--info dm-v4-iv-inactive-reason--warning dm-v4-iv-inactive-reason--unknown')
+            .addClass('dm-v4-iv-inactive-reason--' + reason.tone)
+            .text(reason.label)
+            .attr('title', reason.label);
     }
 
     function syncVetButtons($row) {
@@ -1148,17 +1321,34 @@
                     ? 'Awaiting Risebird review'
                     : (clientOn ? 'Approved for your panel' : 'Awaiting your approval')
             );
+            syncInactiveReasonBadge($row);
             return;
         }
         var rbOn = readRbVetFromRow($row);
         var clientOn = readClientVetFromRow($row);
+        var isActive = readRowDbActive($row);
+        var status = ivStatusBadgeFromRow($row);
         $row.find('[data-vet="rb"] .dm-v4-vet-btn').removeClass('is-on');
         $row.find('[data-vet="rb"] .dm-v4-vet-btn[data-vet-value="' + (rbOn ? '1' : '0') + '"]').addClass('is-on');
         $row.find('[data-vet="client"] .dm-v4-vet-btn').removeClass('is-on');
         $row.find('[data-vet="client"] .dm-v4-vet-btn[data-vet-value="' + (clientOn ? '1' : '0') + '"]').addClass('is-on');
+        var $rbSub = $row.find('.dm-v4-iv-cell--rb-vet .dm-v4-iv-vet-sub');
+        if ($rbSub.length) {
+            if (!isActive) {
+                $rbSub.text(status.tone === 'available' ? 'Awaiting RB review' : 'Inactive on panel');
+            } else {
+                $rbSub.text(rbOn ? 'Risebird verified' : 'Awaiting RB review');
+            }
+        }
         var $clientBtns = $row.find('[data-vet="client"] .dm-v4-vet-btn');
         var $clientToggle = $row.find('[data-vet="client"]');
-        if (!rbOn) {
+        if (!isActive) {
+            $clientBtns.prop('disabled', true);
+            $clientToggle.attr('title', status.tone === 'available' ? 'Needs RB Vet first.' : 'Inactive on panel');
+            $row.find('.dm-v4-iv-vet-sub--client').text(
+                status.tone === 'inactive' ? 'Inactive on panel' : 'Blocked — needs RB Vet first'
+            );
+        } else if (!rbOn) {
             $clientBtns.prop('disabled', true);
             $clientToggle.attr('title', 'Needs RB Vet first.');
             $row.find('.dm-v4-iv-vet-sub--client').text('Blocked — needs RB Vet first');
@@ -1172,6 +1362,7 @@
             $row.find('.dm-v4-iv-vet-sub--client').text(clientOn ? 'Signed off by client' : 'Awaiting client sign-off');
         }
         updateIvRowStatus($row);
+        syncInactiveReasonBadge($row);
     }
 
     function getRubricSkillNames() {
@@ -1973,7 +2164,34 @@
         }
     }
 
+    function dmV4RenderClientCvCell($row, state) {
+        if (!isClientShareView()) return;
+        var $cell = $row.find('.dm-v4-iv-cell--cv').first();
+        if (!$cell.length) return;
+
+        var codedCvLink = (state && state.codedCvLink != null ? state.codedCvLink : $row.attr('data-coded-cv') || '').toString().trim();
+        var cvCode = (state && state.cvCode != null ? state.cvCode : $row.attr('data-cv-code') || '').toString().trim();
+        var hasCoded = dmV4IsSummaryCodedCvLink(codedCvLink);
+
+        $row.attr('data-coded-cv', hasCoded ? codedCvLink : '');
+        $row.attr('data-cv-code', hasCoded ? (cvCode || 'CV') : '');
+
+        if (hasCoded) {
+            $cell.html(
+                '<button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view" data-coded-cv="' +
+                $('<span/>').text(codedCvLink).html() + '" data-cv-label="' + $('<span/>').text(cvCode || 'CV').html() +
+                '" title="View coded resume summary">' + $('<span/>').text(cvCode || 'CV').html() + ' ↗</button>'
+            );
+        } else {
+            $cell.html('<span class="dm-v4-muted">Not available</span>');
+        }
+    }
+
     function dmV4RenderCvStack($row, state, opts) {
+        if (isClientShareView()) {
+            dmV4RenderClientCvCell($row, state);
+            return;
+        }
         opts = opts || {};
         var canEdit = getIvCanEdit();
         var canUpload = getIvCanUploadResume();
@@ -1998,19 +2216,28 @@
 
         var html = '';
         if (canUpload && !hasResume) {
-            html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--upload" title="Upload interviewer resume (PDF)">' +
+            html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--upload" title="Upload interviewer resume (PDF, DOC, or DOCX)">' +
                 '<i class="fa fa-upload" aria-hidden="true"></i> Upload Resume</button>';
+        } else if (hasResume) {
+            html += '<a class="dm-v4-iv-cv-link dm-v4-iv-cv-link--resume" target="_blank" rel="noopener" href="' +
+                $('<span/>').text(resumeLink).html().replace(/ /g, '%20') +
+                '" title="Open interviewer resume">Resume ↗</a>';
+            if (hasCoded) {
+                html += '<button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view" data-coded-cv="' +
+                    $('<span/>').text(codedCvLink).html() + '" data-resume-link="' + $('<span/>').text(resumeLink).html() +
+                    '" data-cv-label="' + $('<span/>').text(cvCode).html() + '" title="View AI resume summary">Summary ↗</button>';
+            } else if (canEdit) {
+                html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--summary" data-resume-link="' +
+                    $('<span/>').text(resumeLink).html() + '" title="Generate AI resume summary and save as coded CV">' +
+                    '<span class="dm-v4-iv-cv-btn__icon" aria-hidden="true"><i class="fa fa-magic"></i></span>' +
+                    '<span class="dm-v4-iv-cv-btn__text"><span class="dm-v4-iv-cv-btn__title">Generate</span>' +
+                    '<span class="dm-v4-iv-cv-btn__sub">Resume Summary</span></span></button>';
+            }
         } else if (hasCoded) {
             html += '<button type="button" class="dm-v4-iv-cv-link dm-v4-iv-cv-link--view" data-coded-cv="' +
                 $('<span/>').text(codedCvLink).html() + '" data-resume-link="' + $('<span/>').text(resumeLink).html() +
                 '" data-cv-label="' + $('<span/>').text(cvCode).html() + '" title="View AI resume summary">' +
                 $('<span/>').text(cvCode).html() + ' ↗</button>';
-        } else if (canEdit && hasResume && !hasCoded) {
-            html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--summary" data-resume-link="' +
-                $('<span/>').text(resumeLink).html() + '" title="Generate AI resume summary and save as coded CV">' +
-                '<span class="dm-v4-iv-cv-btn__icon" aria-hidden="true"><i class="fa fa-magic"></i></span>' +
-                '<span class="dm-v4-iv-cv-btn__text"><span class="dm-v4-iv-cv-btn__title">Generate</span>' +
-                '<span class="dm-v4-iv-cv-btn__sub">Resume Summary</span></span></button>';
         } else if (redactAttempted && !hasCoded) {
             html += '<span class="dm-v4-muted">—</span>';
         } else if (!hasCoded) {
@@ -2061,8 +2288,16 @@
         var irfId = dmV4ResolveRowIrfId($row);
         var userId = parseInt($row.attr('data-user-id'), 10);
         if (!irfId || !userId) return $.Deferred().reject().promise();
-        return $.getJSON(cfg.cvStateUrl, { irfId: irfId, userId: userId }).done(function (state) {
+        var requestData = { irfId: irfId, userId: userId };
+        if (isClientShareView()) {
+            requestData.Type = getClientShareTypeParam();
+        }
+        return $.getJSON(cfg.cvStateUrl, requestData).done(function (state) {
             if (state && state.ok) {
+                if (isClientShareView()) {
+                    dmV4RenderClientCvCell($row, state);
+                    return;
+                }
                 var rowCoded = ($row.attr('data-coded-cv') || '').toString().trim();
                 if (!state.codedCvLink && rowCoded && dmV4IsSummaryCodedCvLink(rowCoded)) {
                     state.codedCvLink = rowCoded;
@@ -2106,10 +2341,15 @@
             var formData = new FormData();
             var filesInput = document.getElementsByName('ResumeFiles')[0];
             if (!filesInput || !filesInput.files.length) {
-                if (typeof swal !== 'undefined') swal.fire('Please select a PDF resume to upload.');
+                if (typeof swal !== 'undefined') swal.fire('Please select a PDF, DOC, or DOCX resume to upload.');
                 return;
             }
             for (var i = 0; i < filesInput.files.length; i++) {
+                var fileName = (filesInput.files[i].name || '').toLowerCase();
+                if (!/\.(pdf|doc|docx)$/.test(fileName)) {
+                    if (typeof swal !== 'undefined') swal.fire('Please select a PDF, DOC, or DOCX resume to upload.');
+                    return;
+                }
                 formData.append('ResumeFiles', filesInput.files[i]);
             }
             formData.append('UserId', typeof interviewerUserId !== 'undefined' ? interviewerUserId : '');
@@ -2192,6 +2432,42 @@
         $('#dmV4IvPanel').attr('data-lock', val);
     }
 
+    function setAssignmentPolicy($bar, policy) {
+        $bar = $bar && $bar.length ? $bar : getPolicyBar();
+        if (!$bar.length) return;
+        var val = String(policy || '').toLowerCase() === 'limited' ? 'limited' : 'free';
+        $bar.attr('data-policy', val).data('policy', val);
+    }
+
+    function getAssignmentPolicy() {
+        var $bar = getPolicyBar();
+        if (!$bar.length) return 'free';
+        var attrVal = ($bar.attr('data-policy') || '').toString().toLowerCase();
+        if (attrVal === 'limited' || attrVal === 'free') return attrVal;
+        var dataVal = ($bar.data('policy') || '').toString().toLowerCase();
+        return dataVal === 'limited' ? 'limited' : 'free';
+    }
+
+    function readRowAssignedCount($row) {
+        var assigned = parseInt($row.attr('data-future-assigned'), 10);
+        if (isNaN(assigned)) assigned = parseInt($row.attr('data-assigned'), 10);
+        if (isNaN(assigned)) {
+            assigned = parseInt($row.find('.dm-v4-iv-capacity').attr('data-assigned'), 10);
+        }
+        return isNaN(assigned) ? 0 : assigned;
+    }
+
+    /** Re-render every Interview Limit cell from current policy + row cap attrs (Free↔Limit). */
+    function refreshInterviewLimitCellsForPolicy() {
+        $('.dm-v4-iv-row').each(function () {
+            var $row = $(this);
+            var $wrap = $row.find('.dm-v4-iv-capacity');
+            if (!$wrap.length) return;
+            renderCapacityCell($wrap, null, readRowAssignedCount($row), isRowCapExplicit($row));
+            updateIvRowStatus($row);
+        });
+    }
+
     function getIvCanEdit() {
         var $panel = $('#dmV4IvPanel');
         if ($panel.data('can-edit') === 1 || $panel.data('can-edit') === '1') return true;
@@ -2231,7 +2507,7 @@
         $.post('/IRF/SaveDmIvPolicy', {
             irfId: parseInt($bar.data('irf-id'), 10),
             dmIvLockNew: isPolicyLockOn($bar),
-            dmAssignmentPolicy: $bar.data('policy') || 'free',
+            dmAssignmentPolicy: getAssignmentPolicy(),
             dmDefaultInterviewCap: getDefaultCap()
         }).fail(function () {
             if (typeof swal !== 'undefined') swal.fire('Failed to save policy settings.', '', 'error');
@@ -2242,7 +2518,7 @@
         var $bar = getPolicyBar();
         if (!$bar.length) return;
         var lock = isPolicyLockOn($bar);
-        var policy = $bar.data('policy') === 'limited' ? 'limited' : 'free';
+        var policy = getAssignmentPolicy();
         var limited = policy === 'limited';
         var canEdit = $bar.data('can-edit') === '1' || $bar.data('can-edit') === 1;
         var cap = parseInt($bar.data('default-cap'), 10);
@@ -2261,7 +2537,7 @@
         var $bar = getPolicyBar();
         if (!$bar.length) return;
         var lock = isPolicyLockOn($bar);
-        var limited = $bar.data('policy') === 'limited';
+        var limited = getAssignmentPolicy() === 'limited';
         $('#dmV4IvLockSub').text(lock
             ? 'New interviewers join as RB Vet pending. Client Vet auto-cascades to pending until Risebird clears them.'
             : 'New interviewers are auto-RB-vetted and auto-Client-approved. Override per row if needed.');
@@ -2270,13 +2546,7 @@
             : 'Active interviewers can be assigned to any interview without further review.');
         $('#dmV4IvPanel').attr('data-cap-enforced', limited ? '1' : '0');
         syncPolicyBarControls();
-        $('.dm-v4-iv-row').each(function () {
-            var $row = $(this);
-            var $wrap = $row.find('.dm-v4-iv-capacity');
-            var assigned = parseInt($row.attr('data-assigned'), 10) || parseInt($wrap.attr('data-assigned'), 10) || 0;
-            syncCapacityCellUi($wrap, readRowDisplayCapacity($row), assigned, isRowCapExplicit($row));
-            updateIvRowStatus($row);
-        });
+        refreshInterviewLimitCellsForPolicy();
         applyIvTabFilter();
         refreshIvTabCounts();
     }
@@ -2363,11 +2633,6 @@
         };
     }
 
-    function getAssignmentPolicy() {
-        var $bar = getPolicyBar();
-        return $bar.length && $bar.data('policy') === 'limited' ? 'limited' : 'free';
-    }
-
     function getCapStateForRowFromRow($row) {
         var assigned = parseInt($row.attr('data-assigned'), 10) || 0;
         return getCapStateForRow(
@@ -2401,6 +2666,7 @@
     }
 
     /* Reference dm-shared.jsx I.edit / I.plus */
+    var DM_V4_SURCHARGE_MAX = 500;
     var DM_V4_EDIT_ICON = '<span class="dm-v4-money-edit-icon" aria-hidden="true">' +
         '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" width="9" height="9">' +
         '<path d="M3 13l.7-3 6.6-6.6a1 1 0 011.4 0l1 1a1 1 0 010 1.4L6.1 12.3 3 13z" stroke-linejoin="round"/></svg></span>';
@@ -2425,21 +2691,30 @@
         return String(v);
     }
 
-    function getSurchargeMax($row) {
-        return Math.max(0, parseInt($row.data('rate'), 10) || 0);
+    function getSurchargeMax() {
+        return DM_V4_SURCHARGE_MAX;
     }
 
-    function validateSurchargeAmount(surcharge, maxRate) {
+    function validateSurchargeAmount(surcharge) {
         if (surcharge < 0) {
             return 'Surcharge cannot be negative.';
         }
-        if (maxRate <= 0 && surcharge > 0) {
-            return 'Set a per-interview rate before applying a surcharge.';
-        }
-        if (surcharge > maxRate) {
-            return 'Surcharge cannot exceed 100% of the interview cost (max ₹' + maxRate.toLocaleString('en-IN') + ').';
+        if (surcharge > DM_V4_SURCHARGE_MAX) {
+            return 'Maximum surcharge is ₹500';
         }
         return null;
+    }
+
+    function clearSurchargeInlineError($row) {
+        $row.find('.dm-v4-iv-cell--surcharge .dm-v4-surcharge-error').remove();
+    }
+
+    function showSurchargeInlineError($row, message) {
+        var $cell = $row.find('.dm-v4-iv-cell--surcharge');
+        clearSurchargeInlineError($row);
+        $('<p class="dm-v4-surcharge-error" role="alert"></p>')
+            .text(message || 'Maximum surcharge is ₹500')
+            .appendTo($cell);
     }
 
     function buildMoneyPillHtml(value, kind, attrs) {
@@ -2452,7 +2727,7 @@
             : '<span class="dm-v4-money-val">' + display + '</span><span class="dm-v4-money-unit">%</span>';
         var title = kind === 'rate'
             ? 'Per-interview rate (INR)'
-            : 'Surcharge amount in INR (max = base interview rate)';
+            : 'Surcharge amount in INR (max ₹500)';
         var data = ' data-value="' + v + '"';
         if (attrs.userId != null) data += ' data-user-id="' + attrs.userId + '"';
         if (attrs.irfId != null) data += ' data-irf-id="' + attrs.irfId + '"';
@@ -2464,10 +2739,12 @@
      */
     function startMoneyPillEdit($pill) {
         if (!$pill.length || $pill.data('dm-v4-editing')) return;
+        if ($pill.hasClass('dm-v4-rate-pill')) return;
         $pill.data('dm-v4-editing', true);
 
-        var kind = $pill.hasClass('dm-v4-rate-pill') ? 'rate' : 'surcharge';
+        var kind = 'surcharge';
         var $row = $pill.closest('.dm-v4-iv-row');
+        clearSurchargeInlineError($row);
         var orig = parseInt($pill.attr('data-value'), 10);
         if (isNaN(orig)) orig = 0;
         var meta = {
@@ -2475,13 +2752,7 @@
             irfId: $pill.data('irfId') || $pill.data('irf-id')
         };
 
-        var $input = $('<input type="number" class="dm-v4-inline-edit-input" min="0" />').val(orig);
-        if (kind === 'surcharge') {
-            var maxSurcharge = getSurchargeMax($row);
-            if (maxSurcharge > 0) {
-                $input.attr('max', maxSurcharge);
-            }
-        }
+        var $input = $('<input type="number" class="dm-v4-inline-edit-input" min="0" max="' + DM_V4_SURCHARGE_MAX + '" />').val(orig);
 
         $pill.replaceWith($input);
         $input.focus().select();
@@ -2491,32 +2762,23 @@
             if (finished) return;
             finished = true;
             var n = doCommit ? Math.max(0, parseInt($input.val(), 10) || 0) : orig;
-            if (kind === 'surcharge' && doCommit) {
-                var maxRate = getSurchargeMax($row);
-                var validationError = validateSurchargeAmount(n, maxRate);
+            if (doCommit) {
+                var validationError = validateSurchargeAmount(n);
                 if (validationError) {
-                    if (typeof swal !== 'undefined') {
-                        swal.fire('Invalid surcharge', validationError, 'error');
-                    } else {
-                        alert(validationError);
-                    }
+                    showSurchargeInlineError($row, validationError);
                     doCommit = false;
                     n = orig;
+                } else {
+                    clearSurchargeInlineError($row);
                 }
             }
-            var attrs = kind === 'surcharge' ? { userId: meta.userId, irfId: meta.irfId } : {};
+            var attrs = { userId: meta.userId, irfId: meta.irfId };
             $input.replaceWith(buildMoneyPillHtml(n, kind, attrs));
 
             if (!doCommit) return;
 
-            if (kind === 'rate') {
-                $row.attr('data-rate', n);
-                $row.find('input[name*="PerSuccessRate"]').val(n);
-                saveRate($row, n);
-            } else {
-                $row.find('input[name*="Surcharge"]').val(n);
-                saveSurcharge($row, n);
-            }
+            $row.find('input[name*="Surcharge"]').val(n);
+            saveSurcharge($row, n);
         };
 
         $input.on('blur.dmV4MoneyEdit', function () {
@@ -2764,31 +3026,11 @@
         });
     }
 
-    function saveRate($row, rate) {
-        $.post('/IRF/UpdateInterviewerPerSuccessRate', {
-            transInterviewerId: parseInt($row.data('trans-id'), 10),
-            perSuccessRate: rate
-        }, function (res) {
-            if (res && res.success) {
-                $row.attr('data-rate', res.perSuccessRate);
-                var $pill = $row.find('.dm-v4-rate-pill');
-                if ($pill.length) {
-                    $pill.attr('data-value', res.perSuccessRate);
-                    $pill.find('.dm-v4-money-val').text(moneyDisplayValue(res.perSuccessRate, 'rate'));
-                }
-                var $surchargePill = $row.find('.dm-v4-surcharge-pill');
-                if ($surchargePill.length) {
-                    $surchargePill.attr('title', 'Surcharge amount in INR (max ₹' + moneyDisplayValue(res.perSuccessRate, 'rate') + ')');
-                }
-                updateSurchargeExtra($row);
-            }
-        });
-    }
-
     function saveSurcharge($row, surcharge) {
         var $pill = $row.find('.dm-v4-surcharge-pill');
         var userId = $pill.data('userId') || $pill.data('user-id') || $row.data('user-id');
         var irfId = $pill.data('irfId') || $pill.data('irf-id') || $row.data('irf-id');
+        clearSurchargeInlineError($row);
         $.post('/IRF/SaveSurcharge', {
             userId: userId,
             surcharge: surcharge,
@@ -2797,13 +3039,10 @@
             var ok = res && (res.success === true || res.success === 'true');
             if (!ok) {
                 var msg = (res && res.message) ? res.message : 'Failed to save surcharge.';
-                if (typeof swal !== 'undefined') {
-                    swal.fire('Surcharge not saved', msg, 'error');
-                } else {
-                    alert(msg);
-                }
+                showSurchargeInlineError($row, msg);
                 return;
             }
+            clearSurchargeInlineError($row);
             var saved = res.surcharge != null ? res.surcharge : surcharge;
             $pill = $row.find('.dm-v4-surcharge-pill');
             if ($pill.length) {
@@ -2868,10 +3107,8 @@
             if ($surchargePill.length && !$surchargePill.find('.dm-v4-money-edit-icon').length) {
                 $surchargePill.append(DM_V4_EDIT_ICON);
             }
-            var $rateBtn = $row.find('.dm-v4-rate-pill');
-            if ($rateBtn.length && !$rateBtn.find('.dm-v4-money-edit-icon').length) {
-                var rv = parseInt($rateBtn.data('value'), 10) || 0;
-                $rateBtn.replaceWith(buildMoneyPillHtml(rv, 'rate', {}));
+            if ($surchargePill.length) {
+                $surchargePill.attr('title', 'Surcharge amount in INR (max ₹500)');
             }
             var $capPill = $row.find('.dm-v4-cap-pill');
             if ($capPill.length && !$capPill.find('.dm-v4-money-edit-icon').length) {
@@ -2997,6 +3234,7 @@
 
         $(document).off('click.dmV4IvInsightsGlobal', '.dm-v4-iv-insights-btn--global').on('click.dmV4IvInsightsGlobal', '.dm-v4-iv-insights-btn--global', function (e) {
             e.preventDefault();
+            if (isSmeView()) return;
             var $btn = $(this);
             var $row = $btn.closest('.dm-v4-iv-row');
             if (isPanelCompactView()) {
@@ -3025,6 +3263,7 @@
 
         $(document).off('click.dmV4IvChannelInsights', '.dm-v4-iv-channel-insights-btn').on('click.dmV4IvChannelInsights', '.dm-v4-iv-channel-insights-btn', function (e) {
             e.preventDefault();
+            if (isSmeView()) return;
             var $btn = $(this);
             var $row = $btn.closest('.dm-v4-iv-row');
             if (isPanelCompactView()) {
@@ -3068,6 +3307,7 @@
 
         $(document).off('click.dmV4IvCvUpload', '.dm-v4-iv-cv-btn--upload').on('click.dmV4IvCvUpload', '.dm-v4-iv-cv-btn--upload', function (e) {
             e.preventDefault();
+            if (isClientShareView()) return;
             var $row = $(this).closest('.dm-v4-iv-row');
             window.dmV4PendingUploadRow = $row;
             var userId = parseInt($row.data('user-id'), 10);
@@ -3079,6 +3319,7 @@
 
         $(document).off('click.dmV4IvCvSummary', '.dm-v4-iv-cv-btn--summary').on('click.dmV4IvCvSummary', '.dm-v4-iv-cv-btn--summary', function (e) {
             e.preventDefault();
+            if (isClientShareView()) return;
             var $btn = $(this);
             if ($btn.prop('disabled')) return;
             var $row = $btn.closest('.dm-v4-iv-row');
@@ -3250,7 +3491,7 @@
             if ($seg.data('segment') === 'lock') {
                 setPolicyLockOn($bar, $btn.data('value') === 'on');
             } else if ($seg.data('segment') === 'assign') {
-                $bar.data('policy', $btn.data('value'));
+                setAssignmentPolicy($bar, $btn.attr('data-value') || $btn.data('value'));
             }
             updatePolicySubtext();
             saveDmIvPolicy();
@@ -3337,14 +3578,7 @@
             startCapInlineEdit($(this).closest('.dm-v4-iv-row'), orig);
         });
 
-        /* Rate & surcharge — reference V4MoneyPill: whole pill click opens inline edit */
-        $(document).off('click.dmV4MoneyPill', '#dmV4IvPanel .dm-v4-rate-pill').on('click.dmV4MoneyPill', '#dmV4IvPanel .dm-v4-rate-pill', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (!getIvCanEdit()) return;
-            startMoneyPillEdit($(this));
-        });
-
+        /* Surcharge — inline edit on pill click (Per-IV rate is read-only on DM Approval) */
         $(document).off('click.dmV4SurchargePill', '#dmV4IvPanel .dm-v4-surcharge-pill').on('click.dmV4SurchargePill', '#dmV4IvPanel .dm-v4-surcharge-pill', function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -3512,6 +3746,7 @@
 
     };
 
+    window.dmV4RefreshEtiquette = loadEtiquetteFromServer;
     window.dmV4InitIvEditable = initIvEditableFields;
 
 })(jQuery);

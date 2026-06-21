@@ -184,14 +184,32 @@ namespace Risebird.AzureTimerFunctions
                 _log.LogInformation($"[OnboardAuto] #{p.Id} — resume already parsed, skipping Step 1.");
             }
 
+            // ── Step 1 (gate): Duplicate check — the FIRST funnel stage ───────────
+            // An email can exist only once in UserList (unique constraint), as ANY profile
+            // (interviewer, candidate, etc.). If the prospect's email already exists in the
+            // system they cannot be onboarded again, so they exit the funnel at 'Duplicate'.
+            // The operator still reviews these (AutomationStatus = ManualRequired).
             if (p.IsExistingInterviewer == true)
             {
-                _log.LogInformation($"[OnboardAuto] #{p.Id} — duplicate email, needs manual edit.");
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — duplicate email, exits funnel at 'Duplicate'.");
+                await _repository.SetFunnelOutcomeAsync(p.Id, "Duplicate", "InProgress");
                 await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
-                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                    $"Automation: duplicate email ({p.ParsedEmail}) — operator must edit.", "AutomationJob");
+                await _repository.InsertHistoryAsync(p.Id, "DuplicateDetected", "—",
+                    $"Automation: email ({p.ParsedEmail}) already exists in the system — exits at Duplicate. Operator review required.", "AutomationJob");
                 return;
             }
+
+            // ── Step 1.5: Detect self-registration via the MAG link ───────────────
+            // If the prospect completed the MAG application form themselves, an active
+            // UserList entry now exists for their email. This must be reflected in the
+            // funnel as 'Onboarded' (mirrors NaukriOnboardingController.CheckSelfRegistration,
+            // which previously only ran when an operator opened the record). Detecting it
+            // here also prevents the pipeline from calling them again or auto-creating a
+            // duplicate profile.
+            //   • OnboardedUserId == null  → the system has NOT auto-created a profile, so a
+            //     user found by email means the prospect registered themselves.
+            if (await TryReflectSelfRegistrationAsync(p))
+                return;
 
             // ── Step 2: Resolve MAG & generate application link ───────────────────
             if (string.IsNullOrWhiteSpace(p.ApplicationLink))
@@ -247,7 +265,7 @@ namespace Risebird.AzureTimerFunctions
                 if (emailOk)
                 {
                     await _repository.UpdateAutomationStatusAsync(p.Id, "EmailSent");
-                    await _repository.AdvanceFunnelStageAsync(p.Id, "IntentCollection", "InProgress");
+                    await _repository.AdvanceFunnelStageAsync(p.Id, "InvitationSent", "InProgress");
                     await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
                         $"Automation: invitation email sent to {p.ParsedEmail}. Call will be deferred for {EmailToCallGracePeriod.TotalMinutes:0} min to allow prospect to respond.", "AutomationJob");
                 }
@@ -279,6 +297,20 @@ namespace Risebird.AzureTimerFunctions
             {
                 _log.LogInformation($"[OnboardAuto] #{p.Id} — prospect responded to email (response={p.ProspectResponse}, selfReg={p.SelfRegistrationCompleted}). Skipping call.");
                 return;
+            }
+
+            // Invited, no positive intent yet, no response yet, and not yet cold → 'Awaiting Response'.
+            // Only fire while the prospect is genuinely still waiting: never bump a call that already
+            // concluded (handled below) or a prospect that already landed on a terminal outcome
+            // (Duplicate/NotInterested/Unsubscribe/Cold/Onboarded) back into the active funnel — those
+            // stages rank 0, so the forward-only guard alone would happily re-advance them.
+            bool callConcluded = string.Equals(p.PlivoCallStatus, "completed", StringComparison.OrdinalIgnoreCase)
+                              || string.Equals(p.PlivoCallStatus, "answered", StringComparison.OrdinalIgnoreCase);
+            if (!callConcluded
+                && !IsTerminalFunnelStage(p.FunnelStage)
+                && !string.Equals(p.FunnelStage, "AwaitingResponse", StringComparison.OrdinalIgnoreCase))
+            {
+                await _repository.AdvanceFunnelStageAsync(p.Id, "AwaitingResponse", "InProgress");
             }
 
             // Enforce grace period: wait at least 1 hour after email was sent
@@ -324,12 +356,26 @@ namespace Risebird.AzureTimerFunctions
                 {
                     _log.LogInformation($"[OnboardAuto] #{p.Id} — call completed with disposition '{disp}'.");
 
-                    bool isNegative = string.Equals(disp, "unsubscribe", StringComparison.OrdinalIgnoreCase)
-                                   || string.Equals(disp, "not_interested", StringComparison.OrdinalIgnoreCase);
-                    string status = isNegative ? "Cold" : "ManualRequired";
-                    await _repository.UpdateAutomationStatusAsync(p.Id, status);
-                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        $"Automation: call completed — disposition: {disp}. Marked {status}.", "AutomationJob");
+                    bool isUnsubscribe   = string.Equals(disp, "unsubscribe", StringComparison.OrdinalIgnoreCase);
+                    bool isNotInterested = string.Equals(disp, "not_interested", StringComparison.OrdinalIgnoreCase);
+
+                    if (isUnsubscribe || isNotInterested)
+                    {
+                        // Explicit negative intent on the call → terminal funnel outcome + ticket Closed.
+                        string outcomeStage = isUnsubscribe ? "Unsubscribe" : "NotInterested";
+                        await _repository.SetUnifiedIntentAsync(p.Id, outcomeStage, "Call", DateTime.UtcNow);
+                        await _repository.SetFunnelOutcomeAsync(p.Id, outcomeStage, "Closed");
+                        await _repository.UpdateAutomationStatusAsync(p.Id, "Completed");
+                        await _repository.InsertHistoryAsync(p.Id, "IntentConfirmed", "—",
+                            $"Automation: call completed — disposition '{disp}'. Funnel → {outcomeStage}.", "AutomationJob");
+                    }
+                    else
+                    {
+                        // Ambiguous/other disposition → needs a human to look at it.
+                        await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
+                        await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                            $"Automation: call completed — disposition: {disp}. Marked ManualRequired.", "AutomationJob");
+                    }
                 }
                 return;
             }
@@ -348,10 +394,12 @@ namespace Risebird.AzureTimerFunctions
 
             if (totalAttempts >= MaxCallsTotal)
             {
-                _log.LogInformation($"[OnboardAuto] #{p.Id} — max total attempts ({MaxCallsTotal}) reached. Marking cold.");
+                // Outreach exhausted (1 invitation email + up to 5 calls) with no response → terminal 'Cold'.
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — max total attempts ({MaxCallsTotal}) reached. Marking Cold.");
                 await _repository.UpdateAutomationStatusAsync(p.Id, "Cold");
-                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                    $"Automation: {totalAttempts} call attempt(s) exhausted with no completed call. Marked Cold.", "AutomationJob");
+                await _repository.SetFunnelOutcomeAsync(p.Id, "Cold", "Closed");
+                await _repository.InsertHistoryAsync(p.Id, "MarkedCold", "—",
+                    $"Automation: {totalAttempts} call attempt(s) + invitation email exhausted with no response. Funnel → Cold.", "AutomationJob");
                 return;
             }
 
@@ -388,6 +436,38 @@ namespace Risebird.AzureTimerFunctions
         /// email — self-registration, clicking a response link, or completing onboarding.
         /// When true, the Plivo call is unnecessary.
         /// </summary>
+        /// <summary>
+        /// Detects whether the prospect has self-registered via the MAG application link and,
+        /// if so, reflects it in the funnel (stage → 'Onboarded', ticket → 'Closed') and stops
+        /// further automation. Returns true when self-registration was detected and finalized.
+        ///
+        /// "Self-registered" mirrors the operator-facing CheckSelfRegistration definition:
+        /// an active UserList entry exists for the prospect's email that the system did NOT
+        /// auto-create (OnboardedUserId is still null).
+        /// </summary>
+        private async Task<bool> TryReflectSelfRegistrationAsync(NaukriProspectiveInterviewerVM p)
+        {
+            if (p.SelfRegistrationCompleted == true
+                || p.OnboardingCompleted == true
+                || p.OnboardedUserId.HasValue
+                || string.IsNullOrWhiteSpace(p.ParsedEmail))
+                return false;
+
+            var (userId, profileId) = await _repository.FindUserByEmailAsync(p.ParsedEmail);
+            if (!userId.HasValue || userId.Value <= 0)
+                return false;
+
+            await _repository.UpdateSelfRegistrationAsync(p.Id, true, userId.Value, profileId);
+            await _repository.SetOnboardingTypeAsync(p.Id, "SelfOnboarded");
+            await _repository.AdvanceFunnelStageAsync(p.Id, "Onboarded", "Closed");
+            await _repository.UpdateAutomationStatusAsync(p.Id, "Completed");
+            await _repository.InsertHistoryAsync(p.Id, "SelfRegistered", "—",
+                $"Prospect self-registered via MAG link (UserId: {userId.Value}). Funnel advanced to Onboarded.", "AutomationJob");
+
+            _log.LogInformation($"[OnboardAuto] #{p.Id} — detected self-registration (UserId {userId.Value}). Marked Onboarded.");
+            return true;
+        }
+
         private static bool HasProspectRespondedToEmail(Entities.ViewModel.NaukriProspectiveInterviewerVM p)
         {
             if (p.SelfRegistrationCompleted == true)
@@ -398,6 +478,15 @@ namespace Risebird.AzureTimerFunctions
 
             return true;
         }
+
+        // Terminal funnel exits — once a prospect lands on one of these the automation must never
+        // pull them back into the active pipeline (e.g. bumping them to 'AwaitingResponse').
+        private static readonly string[] TerminalFunnelStages =
+            { "Duplicate", "NotInterested", "Unsubscribe", "Cold", "Onboarded" };
+
+        private static bool IsTerminalFunnelStage(string funnelStage)
+            => !string.IsNullOrWhiteSpace(funnelStage)
+               && TerminalFunnelStages.Contains(funnelStage, StringComparer.OrdinalIgnoreCase);
 
         // ── Auto-continue: positive intent → EV → AI fitment → onboarding → acknowledgement ──
 
@@ -444,6 +533,10 @@ namespace Risebird.AzureTimerFunctions
                 await MarkManualAsync(rec.Id, "Auto-onboard halted: no parsed email available.");
                 return;
             }
+
+            // Record the positive 'IntentConfirmed' funnel stage before progressing the pipeline
+            // (forward-only; a no-op if already past it).
+            await _repository.AdvanceFunnelStageAsync(rec.Id, "IntentConfirmed", "InProgress");
 
             // A resolved assessment group is required to onboard. Try one more MAG resolution if missing.
             int? agId = rec.ResolvedAssessmentGroupId;

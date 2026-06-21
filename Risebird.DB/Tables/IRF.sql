@@ -758,6 +758,26 @@ END
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
+    WHERE Name IN (N'DmEtiquetteDressCode')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD DmEtiquetteDressCode varchar(20) NOT NULL CONSTRAINT DF_IRF_DmEtiquetteDressCode DEFAULT 'formal'
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'DmEtiquetteNoEatingRule')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD DmEtiquetteNoEatingRule bit NOT NULL CONSTRAINT DF_IRF_DmEtiquetteNoEatingRule DEFAULT 1
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
     WHERE Name IN (N'VoiceInstructionTranscriptUpdatedBy')
       AND Object_ID = Object_ID(N'IRF'))
 BEGIN

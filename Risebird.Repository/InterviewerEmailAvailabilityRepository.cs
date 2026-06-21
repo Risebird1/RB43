@@ -474,6 +474,20 @@ namespace Risebird.Repository
                 commandType: CommandType.StoredProcedure, commandTimeout: 15);
         }
 
+        public async Task<bool> SetUnifiedIntentAsync(int id, string intent, string intentSource, DateTime? confirmedAt)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(
+                    "usp_SetIAUnifiedIntent",
+                    new { Id = id, Intent = intent, IntentSource = intentSource, ConfirmedAt = confirmedAt },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
         public async Task<bool> MarkAutoClosedAsync(int id, string autoClosedBy)
         {
             using var con = new SqlConnection(_connectionString);

@@ -2096,6 +2096,17 @@
     font-family: 'IBM Plex Mono', Consolas, monospace;
 }
 
+.dm-v4-iv-phone {
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--dm-text-dim);
+    font-family: 'IBM Plex Mono', Consolas, monospace;
+}
+
+.dm-v4-iv-cv-link--resume {
+    text-decoration: none;
+}
+
 .dm-v4-iv-skills {
     font-size: 13px;
     color: var(--dm-text-mid);
@@ -2570,6 +2581,20 @@ button.dm-v4-iv-cv-link {
     z-index: 10060 !important;
 }
 
+/* Compact toast text (Sample Questions — AI video generate/regenerate) */
+.swal2-popup.dm-v4-toast-popup {
+    padding: 0.55em 0.85em;
+    min-height: auto;
+}
+
+.swal2-popup.dm-v4-toast-popup .swal2-title,
+.swal2-title.dm-v4-toast-title {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    margin: 0;
+}
+
 @media (max-width: 900px) {
     .dm-v4-iv-policy-bar {
         display: flex;
@@ -2813,6 +2838,41 @@ button.dm-v4-iv-cv-link {
 .dm-v4-iv-status--inactive {
     background: #f1f5f9;
     color: #64748b;
+}
+
+/* Inactive tab: reason badge (Pending RB / Removed by RB|Client / Unknown) */
+.dm-v4-iv-inactive-reason {
+    display: none;
+    align-items: center;
+    margin-top: 6px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+    max-width: 100%;
+    white-space: normal;
+    text-align: left;
+}
+
+#dmV4IvPanel[data-iv-tab="inactive"] .dm-v4-iv-row[data-is-active="0"] .dm-v4-iv-inactive-reason {
+    display: inline-flex;
+}
+
+.dm-v4-iv-inactive-reason--info {
+    background: var(--dm-accent-soft);
+    color: var(--dm-accent);
+}
+
+.dm-v4-iv-inactive-reason--warning {
+    background: var(--dm-amber-soft);
+    color: var(--dm-amber);
+}
+
+.dm-v4-iv-inactive-reason--unknown {
+    background: var(--dm-raised);
+    color: var(--dm-text-mid);
 }
 
 .dm-v4-iv-row {
@@ -3420,6 +3480,19 @@ button.dm-v4-money-pill {
     font-size: 9px;
     color: var(--dm-accent);
     margin-left: 1px;
+}
+
+.dm-v4-rate-readonly {
+    cursor: default;
+    pointer-events: none;
+}
+
+.dm-v4-surcharge-error {
+    margin: 6px 0 0;
+    font-size: 11px;
+    line-height: 1.35;
+    color: #b45309;
+    font-weight: 600;
 }
 
 .dm-v4-rate-pill,
@@ -4696,6 +4769,39 @@ button.dm-v4-money-pill {
     align-items: center;
 }
 
+.dm-v4-regen-ai-video-btn {
+    font-size: 11px;
+    color: var(--dm-text-mid);
+    border-color: var(--dm-border);
+}
+
+.dm-v4-regen-ai-video-btn:hover:not(:disabled) {
+    color: var(--dm-accent);
+    border-color: #c7d2fe;
+    background: #f8faff;
+}
+
+.dm-v4-regen-ai-video-btn.is-success {
+    color: var(--dm-green);
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+}
+
+.dm-v4-regen-ai-video-btn.is-error {
+    color: #b91c1c;
+}
+
+.dm-v4-question-link {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--dm-accent);
+    text-decoration: none;
+}
+
+.dm-v4-question-link:hover {
+    text-decoration: underline;
+}
+
 .dm-v4-question-flag {
     font-size: 11px;
     color: var(--dm-text-mid);
@@ -5240,6 +5346,32 @@ button.dm-v4-money-pill {
 
 .dm-v4-page--client-share .dm-v4-iv-grid.dm-v4-iv-grid--client-minimal .dm-v4-iv-verdict-stack--client {
     width: 100%;
+}
+
+/* Client share: Coded CV column is read-only — link or empty state only */
+.dm-v4-page--client-share .dm-v4-iv-cell--cv .dm-v4-iv-cv-btn,
+.dm-v4-page--client-share .dm-v4-iv-cell--cv .dm-v4-iv-cv-stack {
+    display: none !important;
+}
+
+.dm-v4-page--client-share .dm-v4-iv-cell--cv .dm-v4-iv-cv-link--view {
+    display: inline-flex;
+}
+
+/* Interviewer (SME) DM page: hide company column and peer insights */
+.dm-v4-page--sme .dm-v4-iv-cell--company,
+.dm-v4-page--sme .dm-v4-iv-insights-btn {
+    display: none !important;
+}
+
+.dm-v4-page--sme .dm-v4-iv-grid.dm-v4-iv-grid--client {
+    grid-template-columns:
+        minmax(240px, 1.4fr)
+        minmax(0, 0.9fr)
+        minmax(0, 1.1fr)
+        minmax(0, 0.78fr)
+        minmax(0, 0.78fr)
+        minmax(0, 0.95fr);
 }
 
 .dm-v4-iv-coded-label {

@@ -7379,7 +7379,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UpdateVoiceInstructionTranscript(int irfId, string transcript, bool regenerateRubric = true)
+        public async Task<JsonResult> UpdateVoiceInstructionTranscript(int irfId, string transcript, bool regenerateRubric = false)
         {
             try
             {
@@ -7430,92 +7430,52 @@ namespace Risebird.Web.Controllers
                 if (irfVm == null)
                     return Json(new { success = false, message = "Skill channel not found." });
 
-                var prompt = $"Hiring manager voice brief for role {irfVm.IRFId}:\n\n{brief.Transcript.Trim()}";
-                var result = await _assistantServiceHelper.GenerateTechRubric(prompt);
+                var currentSkills = DmVoiceRubricRevisionHelper.GetScoreRubricSkills(irfVm.SkillCollection).ToList();
+                AssignmentVM magDetails = null;
+                if (int.TryParse(irfVm.AssessmentGroupId, out var assessmentGroupId) && assessmentGroupId > 0)
+                    magDetails = await _irfRepository.GetAssessmentGroupDetails(assessmentGroupId);
+
+                var revisionPrompt = DmVoiceRubricRevisionHelper.BuildRevisionUserMessage(
+                    irfVm, currentSkills, magDetails, brief.Transcript.Trim());
+
+                var result = await _assistantServiceHelper.GenerateTechRubricRevision(revisionPrompt);
                 if (result == null)
-                    return Json(new { success = false, message = "Rubric generation returned no result." });
+                    return Json(new { success = false, message = "Rubric revision returned no result." });
 
                 var rawJson = result.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
                 if (string.IsNullOrWhiteSpace(rawJson))
-                    return Json(new { success = false, message = "Rubric generation returned empty content." });
+                    return Json(new { success = false, message = "Rubric revision returned empty content." });
 
-                rawJson = rawJson.Replace("```json", "", StringComparison.OrdinalIgnoreCase)
-                    .Replace("```", "")
-                    .Trim();
-                var jsonStart = rawJson.IndexOf('{');
-                var jsonEnd = rawJson.LastIndexOf('}');
-                if (jsonStart >= 0 && jsonEnd > jsonStart)
-                    rawJson = rawJson.Substring(jsonStart, jsonEnd + 1 - jsonStart);
+                rawJson = DmVoiceRubricRevisionHelper.ExtractJsonFromAssistantText(rawJson);
+                var model = DmVoiceRubricRevisionHelper.DeserializeRubricSchema(rawJson);
+                var revisedSkills = DmVoiceRubricRevisionHelper.ToTransSkills(model, irfId);
 
-                var model = JsonConvert.DeserializeObject<RubricSchema>(rawJson);
-                var techSkills = new List<TransSkill>();
-                if (model?.Rubric != null)
+                if (!revisedSkills.Any() && currentSkills.Any())
+                    return Json(new { success = false, message = "No rubric skills could be parsed from the assistant response." });
+
+                var magSkillNames = DmVoiceRubricRevisionHelper.BuildMagSkillNameSet(magDetails);
+                var diff = DmVoiceRubricRevisionHelper.CompareRubrics(currentSkills, revisedSkills, magSkillNames);
+                var outcome = DmVoiceRubricRevisionHelper.BuildOutcome(
+                    currentSkills, revisedSkills, diff, brief.Transcript.Trim());
+
+                if (outcome.Changed)
                 {
-                    foreach (var skill in model.Rubric)
-                    {
-                        if (string.IsNullOrWhiteSpace(skill?.Skill)) continue;
-                        var techSkill = new TransSkill();
-                        var levelDesc = skill.ProficiencyLevel;
-                        if (Enum.TryParse(typeof(LevelTechEnum), levelDesc, true, out var parsedLevel))
-                            techSkill.LevelId = (int)parsedLevel;
-                        techSkill.SkillName = skill.Skill.Trim();
-                        techSkill.Weightage = skill.Weight > 0 ? skill.Weight : 10;
-                        if (skill.CoreConcepts != null)
-                            techSkill.Concepts = string.Join(",", skill.CoreConcepts);
-                        techSkill.Natureofquestion = skill.KeyExpectations;
-                        techSkill.Timelimit = skill.EvaluationTime > 0 ? Convert.ToInt16(skill.EvaluationTime) : (short)10;
-                        techSkill.isEliminationskill = skill.Mandatory != null && skill.Mandatory.Equals("yes", StringComparison.OrdinalIgnoreCase);
-                        techSkill.IRFId = irfId;
-                        techSkill.SkillSet = 1; // DM Approval table only shows SkillSet == 1 (see checkSkillSetandSeperate)
-                        techSkills.Add(techSkill);
-                    }
+                    var updated = await _irfService.UpdateTechSkills(outcome.RevisedSkills);
+                    if (!updated)
+                        return Json(new { success = false, message = "Revised rubric could not be saved." });
                 }
 
-                if (!techSkills.Any())
-                    return Json(new { success = false, message = "No rubric skills could be parsed from the voice brief." });
-
-                // usp_TechSkillBulkInsert deletes all TransTechSkill rows for the IRF then re-inserts the list passed in.
-                // Merge with existing rubric so we never wipe skills the HM already configured on the form.
-                var mergedSkills = new List<TransSkill>();
-                if (irfVm.SkillCollection != null)
-                {
-                    foreach (var existing in irfVm.SkillCollection)
-                    {
-                        if (existing == null || string.IsNullOrWhiteSpace(existing.SkillName)) continue;
-                        existing.IRFId = irfId;
-                        if (existing.SkillSet == 0)
-                            existing.SkillSet = 1;
-                        mergedSkills.Add(existing);
-                    }
-                }
-                var addedFromVoice = 0;
-                foreach (var generated in techSkills)
-                {
-                    var duplicate = mergedSkills.FirstOrDefault(s =>
-                        string.Equals(s.SkillName?.Trim(), generated.SkillName?.Trim(), StringComparison.OrdinalIgnoreCase));
-                    if (duplicate != null)
-                        continue;
-                    mergedSkills.Add(generated);
-                    addedFromVoice++;
-                }
-
-                if (!mergedSkills.Any())
-                    return Json(new { success = false, message = "No rubric skills to save." });
-
-                var updated = await _irfService.UpdateTechSkills(mergedSkills);
-                if (!updated)
-                    return Json(new { success = false, message = "Generated rubric could not be saved." });
-
-                var message = addedFromVoice > 0
-                    ? $"{addedFromVoice} new skill(s) added from voice brief. Existing rubric skills were kept."
-                    : "No new skills were added (names already exist on the rubric). Existing rubric was not changed.";
                 return Json(new
                 {
                     success = true,
-                    skillCount = mergedSkills.Count,
-                    addedFromVoice,
-                    message,
-                    reloadRequired = addedFromVoice > 0
+                    skillCount = outcome.RevisedSkills.Count,
+                    changed = outcome.Changed,
+                    removed = diff.Removed,
+                    added = diff.Added,
+                    modified = diff.Modified,
+                    magWarnings = diff.MagWarnings,
+                    message = outcome.Message,
+                    reloadRequired = outcome.Changed
                 });
             }
             catch (Exception ex)
@@ -9212,61 +9172,12 @@ namespace Risebird.Web.Controllers
             var isClientShare = IsClientShareRequest(irfId, Type);
             var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
 
-            if (isClientShare)
+            if (isClientShare || isSmeView)
             {
                 return StatusCode(403);
             }
 
-            if (!isSmeView)
-            {
-                return Unauthorized();
-            }
-
-            if (isSmeView)
-            {
-                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                if (!await _interviewerService.IsSmeAssignedToIrfAsync(emailid, irfId))
-                {
-                    return Unauthorized();
-                }
-            }
-
-            try
-            {
-                var model = await _irfService.GetEditIRF(irfId, 0, false);
-                var iv = model?.InterviewerCollection?
-                    .FirstOrDefault(x => x.UserId == userId && x.IsActive);
-                if (iv == null || string.IsNullOrWhiteSpace(iv.EmailId))
-                {
-                    return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", new InterviewerInsightsVM());
-                }
-
-                var result = await _interviewerService.GetInterviewerInsights(iv.EmailId, model.IRFId);
-                if (result == null)
-                {
-                    result = new InterviewerInsightsVM();
-                }
-
-                if (isSmeView)
-                {
-                    DeliveryHeadInstructionViewMode.StripInterviewerInsightsForSmeView(result);
-                    ViewBag.type = "SME";
-                }
-                else
-                {
-                    DeliveryHeadInstructionViewMode.StripInterviewerInsightsForClientView(result);
-                    ViewBag.type = "Client";
-                }
-
-                result.IRFId = model.IRFId;
-                ViewBag.RegularAccess = "";
-                return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", result);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", new InterviewerInsightsVM());
-            }
+            return Unauthorized();
         }
 
         [HttpGet]
@@ -9622,7 +9533,45 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetDeliveryHeadSampleQuestionsJson(int irfId)
+        public async Task<JsonResult> GetDmInterviewerEtiquetteJson(int irfId, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false });
+                var etiquette = await _irfService.GetDmInterviewerEtiquette(irfId);
+                return Json(new { success = etiquette != null, etiquette });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateDmInterviewerEtiquette(int irfId, string dressCode, bool cameraRequired, bool noEatingRule, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false });
+                var result = await _irfService.UpdateDmInterviewerEtiquette(irfId, dressCode, cameraRequired, noEatingRule);
+                return Json(new { success = result });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetDeliveryHeadSampleQuestionsJson(int irfId, string Type = null)
         {
             try
             {
@@ -9630,8 +9579,13 @@ namespace Risebird.Web.Controllers
                 {
                     return Json(new { success = false, questions = new List<SkillComment>() });
                 }
-                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                var questions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfId, emailid);
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                {
+                    return Json(new { success = false, questions = new List<SkillComment>() });
+                }
+                // DHI sample questions are a shared IRF pool for internal DM and client share (ublc).
+                // Do not filter by CreatedBy — otherwise AI/manual questions from one side are hidden on the other.
+                var questions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfId, emailId: null);
                 return Json(new { success = true, questions = questions ?? new List<SkillComment>() });
             }
             catch (Exception ex)
@@ -9642,13 +9596,13 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GenerateQuestionsFromRubric(int irfId, bool useVoiceTranscript = false)
+        public async Task<JsonResult> GenerateQuestionsFromRubric(int irfId, bool useVoiceTranscript = false, string Type = null)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") == null)
                     return Json(new { success = false, message = "Unauthorized" });
-                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
                     return Json(new { success = false, message = "Forbidden" });
 
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
@@ -12051,35 +12005,41 @@ namespace Risebird.Web.Controllers
                             {
                                 var fileName = file.FileName.Replace(" ", "_");
                                 FileInfo fi = new FileInfo(fileName);
-                                if (fi.Extension.ToLower() == ".pdf")
+                                var ext = fi.Extension.ToLowerInvariant();
+                                if (ext != ".pdf" && ext != ".doc" && ext != ".docx")
                                 {
-                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
-                                    if (fileMimeType == "application/pdf")
-                                    {
-                                        await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
-                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                        var blob = containerRef.GetBlockBlobReference(fileName);
-                                        string uploadedaudioFileURL = blob.Uri.ToString();
+                                    return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                                }
 
-                                        if (uploadedaudioFileURL == null)
-                                        {
-                                            return Json("Resume upload has failed.");
-                                        }
-                                        else
-                                        {
-                                            var sas = _sasUrlHelper.CreateSasUrl("resumes");
-                                            sasUrl = uploadedaudioFileURL + "?" + sas;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        return Json("Please select valid file for import(.pdf)!");
-                                    }
-                                }
-                                else
+                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                                if (ext == ".pdf")
                                 {
-                                    return Json("Please select valid file for import(.pdf)!");
+                                    if (fileMimeType != "application/pdf")
+                                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
                                 }
+                                else if (ext == ".doc")
+                                {
+                                    if (fileMimeType != "application/msword")
+                                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                                }
+                                else if (ext == ".docx")
+                                {
+                                    if (fileMimeType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                                }
+
+                                await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    return Json("Resume upload has failed.");
+                                }
+
+                                var sas = _sasUrlHelper.CreateSasUrl("resumes");
+                                sasUrl = uploadedaudioFileURL + "?" + sas;
                             }
                             var result = await _interviewerService.UpdateInterviewerResume(userId, sasUrl, emailId);
                             if (result)
@@ -12099,7 +12059,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return Json("Please select valid file for import(.pdf)!");
+                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
                     }
                 }
                 else
@@ -12655,15 +12615,17 @@ namespace Risebird.Web.Controllers
                 {
                     return Json(new { success = false, message = "Forbidden" });
                 }
-                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                var rate = Math.Max(0, perSuccessRate);
-                var ok = await _irfService.UpdateTransInterviewerPerSuccessRate(transInterviewerId, rate, emailid);
-                return Json(new { success = ok, perSuccessRate = rate });
+
+                return Json(new
+                {
+                    success = false,
+                    message = "Per-interview rate cannot be changed from DM Approval."
+                });
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false });
+                return Json(new { success = false, message = "Per-interview rate cannot be changed from DM Approval." });
             }
         }
 
@@ -12721,7 +12683,7 @@ namespace Risebird.Web.Controllers
                             return Json(new { success = false, message = "Interviewer not found on this channel." });
                         }
 
-                        if (!DmIvSurchargeHelper.TryValidate(surcharge, ti.PerSuccessRate, out var validationError))
+                        if (!DmIvSurchargeHelper.TryValidate(surcharge, out var validationError))
                         {
                             return Json(new { success = false, message = validationError });
                         }

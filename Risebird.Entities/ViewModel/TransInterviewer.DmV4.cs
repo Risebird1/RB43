@@ -26,7 +26,14 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>Rejected outcomes on this skill channel.</summary>
         public int TotalRejected { get; set; }
+        /// <summary>Most recent activation on this skill channel (null = never activated).</summary>
+        public DateTime? ActivatedAt { get; set; }
+
+        /// <summary>UserList.MobileNumber — ops-only on DM Approval.</summary>
+        public string MobileNumber { get; set; }
+
+        /// <summary>When the row was added to this skill channel.</summary>
+        public DateTime? AddedAt { get; set; }
     }
 
 }
-

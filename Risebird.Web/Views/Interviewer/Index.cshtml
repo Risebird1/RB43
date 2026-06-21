@@ -309,9 +309,9 @@
                                                     <div class="col-md-6 col-sm-6 border-rv">
 
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IsActive">Is Active Interviewer</label>
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IsInterviewerAccess">Interviewer Access</label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="IsActive" name="IsActive" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
+                                                                <select id="IsInterviewerAccess" name="IsInterviewerAccess" data-placeholder="None Selected" class="form-control multiselect" multiple="multiple" style="display: none;">
                                                                     <option value="true">True</option>
                                                                     <option value="false">False</option>
                                                                 </select>
@@ -434,7 +434,7 @@
                                                             }
                                                         </td>
                                                         <td><span class="status-badge status-@(item.AvailabilityStatusValue?.ToLower().Replace(" ", "-") ?? "na")">@(item.AvailabilityStatusValue ?? "—")</span></td>
-                                                        <td><span class="status-badge @(item.IsActive ? "status-active" : "status-inactive")">@(item.IsActive ? "Active" : "Inactive")</span></td>
+                                                        <td><span class="status-badge @(item.IsInterviewerAccess ? "status-active" : "status-inactive")">@(item.IsInterviewerAccess ? "Active" : "Inactive")</span></td>
                                                         <td>
                                                             @if (item.VideoConfirmation == 1) { <span class="status-badge status-yes">Yes</span> }
                                                             else if (item.VideoConfirmation == 2) { <span class="status-badge status-no">No</span> }
@@ -1248,7 +1248,7 @@
             } else { html += '<td><span class="text-muted">—</span></td>'; }
             var availVal = (data[i].availabilityStatusValue || '—').toString().toLowerCase().replace(/\s/g, '-');
             html += '<td><span class="status-badge status-' + availVal + '">' + (data[i].availabilityStatusValue || '—') + '</span></td>';
-            html += '<td><span class="status-badge ' + (data[i].isActive ? 'status-active' : 'status-inactive') + '">' + (data[i].isActive ? 'Active' : 'Inactive') + '</span></td>';
+            html += '<td><span class="status-badge ' + (data[i].isInterviewerAccess ? 'status-active' : 'status-inactive') + '">' + (data[i].isInterviewerAccess ? 'Active' : 'Inactive') + '</span></td>';
             if (data[i].videoConfirmation == 1) html += '<td><span class="status-badge status-yes">Yes</span></td>';
             else if (data[i].videoConfirmation == 2) html += '<td><span class="status-badge status-no">No</span></td>';
             else html += '<td><span>—</span></td>';

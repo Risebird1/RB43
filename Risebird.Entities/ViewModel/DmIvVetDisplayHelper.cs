@@ -60,10 +60,11 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>
         /// Stored RB vet for row data attributes and vet-toggle baseline (not display-only derivation).
+        /// Inactive rows always store No — historical IsSMEVerified in DB does not apply off the active panel.
         /// </summary>
         public static bool ResolveRbVetStored(TransInterviewer iv)
         {
-            if (iv == null) return false;
+            if (iv == null || !iv.IsActive) return false;
             if (iv.IsSMEVerifiedStored == false) return false;
             if (iv.IsSMEVerifiedStored == true || iv.IsSMEVerified) return true;
             if (iv.IsActive && iv.IsAvailable
@@ -75,10 +76,11 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>
         /// Stored Client vet for row data attributes and vet-toggle baseline.
+        /// Inactive rows always store No.
         /// </summary>
         public static bool ResolveClientVetStored(TransInterviewer iv, bool rbVetStored)
         {
-            if (iv == null) return false;
+            if (iv == null || !iv.IsActive) return false;
             if (string.Equals(iv.ClientAction, "Rejected", StringComparison.OrdinalIgnoreCase)) return false;
             if (DmIvActiveHelper.IsClientVetYes(iv.ClientAction)) return true;
             if (iv.IsActive && rbVetStored && iv.IsAvailable) return true;

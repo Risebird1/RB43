@@ -4778,6 +4778,33 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<DmInterviewerEtiquetteVm> GetDmInterviewerEtiquette(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetDmInterviewerEtiquette(irfId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateDmInterviewerEtiquette(int irfId, string dressCode, bool cameraRequired, bool noEatingRule)
+        {
+            try
+            {
+                return await _irfRepository.UpdateDmInterviewerEtiquette(irfId, dressCode, cameraRequired, noEatingRule);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<bool> UpdateNewPriority(int irfid, int PriorityLevel)
         {
             try

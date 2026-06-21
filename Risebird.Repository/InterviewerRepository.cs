@@ -442,6 +442,7 @@ namespace Risebird.Repository
             parameters.Add("@LinkedinLink", entity.LinkedinLink);
             parameters.Add("@Blog", entity.Blog);
             parameters.Add("@IsActive", entity.IsActive);
+            parameters.Add("@IsInterviewerAccess", entity.IsInterviewerAccess);
             parameters.Add("@IsApproved", entity.IsApproved);
             parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
             if (entity.AssessmentGroupArray != null)
@@ -3143,7 +3144,7 @@ SELECT CAST(CASE WHEN EXISTS (
                 return null;
             }
         }
-        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive, bool? IsBlocked)
+        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked)
         {
             try
             {
@@ -3151,13 +3152,13 @@ SELECT CAST(CASE WHEN EXISTS (
                 {
                     if (IsBlocked == true)
                     {
-                        IsActive = false;
+                        IsInterviewerAccess = false;
                     }
                     var parameters = new DynamicParameters();
                     parameters.Add("@Emailid", Emailid);
                     parameters.Add("@LeadInterviewer", LeadInterviewer);
                     parameters.Add("@IsApproved", IsApproved);
-                    parameters.Add("@IsActive", IsActive);
+                    parameters.Add("@IsInterviewerAccess", IsInterviewerAccess);
                     parameters.Add("@IsBlocked", IsBlocked);
                     var results = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerFlags", parameters,
                            commandType: CommandType.StoredProcedure);
@@ -4337,7 +4338,7 @@ SELECT CAST(CASE WHEN EXISTS (
                 return null;
             }
         }
-        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer)
+        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer, string inactivationType = null)
         {
             try
             {
@@ -4347,6 +4348,7 @@ SELECT CAST(CASE WHEN EXISTS (
                 dynamicParameters.Add("@modifiedOn", DateTime.Now);
                 dynamicParameters.Add("@comment", comment);
                 dynamicParameters.Add("@blockinterviewer", blockinterviewer);
+                dynamicParameters.Add("@InactivationType", string.IsNullOrWhiteSpace(inactivationType) ? null : inactivationType);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "usp_InactivateInterviewer", dynamicParameters, commandType: CommandType.StoredProcedure);

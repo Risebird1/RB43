@@ -80,6 +80,7 @@ namespace Risebird.Web.Controllers
             string disposition       = null,
             string funnelStage       = null,
             string funnelMode        = null,
+            string onboardingType    = null,
             string dateFrom          = null,
             string dateTo            = null,
             int    page              = 1,
@@ -98,9 +99,9 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pTo)) dtTo = pTo;
 
-                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition, funnelStage, funnelMode);
+                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition, funnelStage, funnelMode, onboardingType);
 
-                var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, funnelMode);
+                var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, funnelMode, onboardingType);
 
                 var first = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -119,6 +120,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
                 ViewBag.FunnelMode = funnelMode ?? "at";
+                ViewBag.OnboardingType = onboardingType ?? string.Empty;
                 ViewBag.FunnelCounts = funnelCounts;
                 // Global status breakdown (Open + InProgress + Closed + Onboarded = Total).
                 ViewBag.OpenCount = first?.OpenCount ?? 0;
@@ -142,6 +144,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
                 ViewBag.FunnelMode = funnelMode ?? "at";
+                ViewBag.OnboardingType = onboardingType ?? string.Empty;
                 ViewBag.FunnelCounts = new Dictionary<string, int>();
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
@@ -741,9 +744,11 @@ namespace Risebird.Web.Controllers
 
                 await _repository.UpdateOnboardingResultAsync(id, userId, profileId, agId, ackSent);
 
-                // Onboarding type for reporting: Self / Intent+Auto / Manual.
+                // Onboarding type for reporting. This action is operator-initiated, so the canonical
+                // type is 'ManuallyOnboarded' — even if automation had touched the record earlier
+                // (the fully-automated path is tagged 'IntentAutoProcessed' by the automation job itself).
+                // A self-registered prospect (rare here) is still attributed to 'SelfOnboarded'.
                 string onboardingType = record.SelfRegistrationCompleted == true ? "SelfOnboarded"
-                    : !string.IsNullOrWhiteSpace(record.AutomationStatus) ? "IntentAutoProcessed"
                     : "ManuallyOnboarded";
                 await _repository.SetOnboardingTypeAsync(id, onboardingType);
 
@@ -827,7 +832,6 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(record.OnboardingType))
                 {
                     string onboardingType = record.SelfRegistrationCompleted == true ? "SelfOnboarded"
-                        : !string.IsNullOrWhiteSpace(record.AutomationStatus) ? "IntentAutoProcessed"
                         : "ManuallyOnboarded";
                     await _repository.SetOnboardingTypeAsync(id, onboardingType);
                 }
@@ -959,8 +963,8 @@ namespace Risebird.Web.Controllers
                 await _repository.InsertHistoryAsync(id, "InvitationEmailSent", "\u2014",
                     $"Sent to: {email}, MAG: {magName} (AG: {agId}), Link: {appLink}", user);
 
-                // Invitation sent → entering Intent Collection (awaiting email reply or AI Plivo call).
-                await _repository.AdvanceFunnelStageAsync(id, "IntentCollection", "InProgress");
+                // Invitation sent → 'Invitation Sent' (awaiting email reply or AI Plivo call).
+                await _repository.AdvanceFunnelStageAsync(id, "InvitationSent", "InProgress");
 
                 return Json(new { success = true, message = "Invitation email sent to " + email + ".", applicationLink = appLink });
             }
@@ -973,9 +977,52 @@ namespace Risebird.Web.Controllers
 
         // ── Prospect response action (public endpoint — clicked from email) ─────
 
+        // Email-client / security scanners (Microsoft Safe Links, Mimecast, Proofpoint, Gmail, etc.)
+        // auto-fetch every link in an email. The response buttons were plain GET endpoints with
+        // side-effects, so a prefetch of the 'Not Interested' link would terminate & CLOSE the ticket
+        // (and a prefetch of NeedClarity/ManualSupport would kick off auto-onboarding) without the
+        // prospect ever clicking. The GET now only renders a confirmation page; the actual state change
+        // happens on the POST below, which scanners do not issue.
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> ProspectResponseAction(int id, string response)
+        public IActionResult ProspectResponseAction(int id, string response)
+        {
+            var validResponses = new[] { "NeedClarity", "ManualSupport", "NotInterested" };
+            if (id <= 0 || string.IsNullOrWhiteSpace(response) || !validResponses.Contains(response))
+                return Content("Invalid request.", "text/html");
+
+            string prompt = response switch
+            {
+                "NeedClarity"   => "You'd like more details about this opportunity. Confirm to let our team know.",
+                "ManualSupport" => "You'd like our onboarding team to help you register. Confirm to let us know.",
+                "NotInterested" => "You're letting us know you're not interested. Confirm your response.",
+                _               => "Confirm your response."
+            };
+            string buttonLabel = response == "NotInterested" ? "Confirm" : "Confirm";
+            string buttonColor = response == "NotInterested" ? "#c62828" : "#2e7d32";
+            string actionUrl   = Url.Action("ProspectResponseAction", "NaukriOnboarding");
+
+            string confirmHtml = $@"<!DOCTYPE html><html><head><meta charset='utf-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1'>
+                <meta name='robots' content='noindex,nofollow'><title>Risebird</title>
+                <style>body{{font-family:Arial,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f5f7fa;margin:0;}}
+                .card{{background:#fff;border-radius:12px;padding:40px;max-width:480px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.1);}}
+                h2{{color:#2c3e50;margin-top:0;}} p{{color:#555;line-height:1.6;}}
+                button{{background:{buttonColor};color:#fff;border:none;border-radius:8px;padding:14px 28px;font-size:16px;cursor:pointer;margin-top:16px;}}</style></head>
+                <body><div class='card'><h2>One more step</h2><p>{prompt}</p>
+                <form method='post' action='{actionUrl}'>
+                    <input type='hidden' name='id' value='{id}' />
+                    <input type='hidden' name='response' value='{System.Net.WebUtility.HtmlEncode(response)}' />
+                    <button type='submit'>{buttonLabel}</button>
+                </form></div></body></html>";
+            return Content(confirmHtml, "text/html");
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [ActionName("ProspectResponseAction")]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> ProspectResponseActionConfirm(int id, string response)
         {
             try
             {
@@ -995,10 +1042,7 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrEmpty(emailIntent))
                 {
                     await _repository.SetUnifiedIntentAsync(id, emailIntent, "Email", DateTime.UtcNow);
-                    string ticket = (emailIntent == "NotInterested" || emailIntent == "Unsubscribe") ? "Closed" : "InProgress";
-                    await _repository.AdvanceFunnelStageAsync(id, "IntentConfirmed", ticket);
-                    await _repository.InsertHistoryAsync(id, "IntentConfirmed", "\u2014",
-                        $"Unified Intent set to '{emailIntent}' (source: Email)", "Prospect");
+                    await ApplyIntentToFunnelAsync(id, emailIntent, "Email");
                 }
 
                 string message = response switch
@@ -1520,8 +1564,8 @@ namespace Risebird.Web.Controllers
                 await _repository.InsertHistoryAsync(id, "PlivoCallInitiated", "—",
                     $"Call triggered to {phone}. ConversationId: {conversationId ?? "N/A"}", calledBy);
 
-                // Call placed → prospect is in Intent Collection (awaiting call disposition).
-                await _repository.AdvanceFunnelStageAsync(id, "IntentCollection", "InProgress");
+                // Call placed → prospect is awaiting response (awaiting call disposition).
+                await _repository.AdvanceFunnelStageAsync(id, "AwaitingResponse", "InProgress");
 
                 return Json(new
                 {
@@ -1747,10 +1791,7 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrEmpty(callIntent))
                 {
                     await _repository.SetUnifiedIntentAsync(recordId.Value, callIntent, "Call", DateTime.UtcNow);
-                    string ticket = (callIntent == "NotInterested" || callIntent == "Unsubscribe") ? "Closed" : "InProgress";
-                    await _repository.AdvanceFunnelStageAsync(recordId.Value, "IntentConfirmed", ticket);
-                    await _repository.InsertHistoryAsync(recordId.Value, "IntentConfirmed", "—",
-                        $"Unified Intent set to '{callIntent}' (source: Call)", "PlivoCX Webhook");
+                    await ApplyIntentToFunnelAsync(recordId.Value, callIntent, "Call");
                     await SaveOnbCp("ob_hangup_intent_set",
                         $"Unified intent '{callIntent}' set for record #{recordId} from call", callLogId: recordId);
                 }
@@ -1827,6 +1868,33 @@ namespace Risebird.Web.Controllers
         }
 
         // ── Prospect Onboarding redesign (Phase 2): unified-intent mapping helpers ──
+
+        // Maps a confirmed unified intent onto the funnel:
+        //   • Interested              → 'IntentConfirmed' (positive; pipeline continues, ticket InProgress)
+        //   • NotInterested           → terminal 'NotInterested' (ticket Closed)
+        //   • Unsubscribe/Drop profile→ terminal 'Unsubscribe'  (ticket Closed)
+        // Terminal outcomes are set unconditionally (they are exits off the happy path).
+        private async Task ApplyIntentToFunnelAsync(int id, string intent, string source)
+        {
+            switch ((intent ?? "").Trim())
+            {
+                case "Interested":
+                    await _repository.AdvanceFunnelStageAsync(id, "IntentConfirmed", "InProgress");
+                    await _repository.InsertHistoryAsync(id, "IntentConfirmed", "\u2014",
+                        $"Unified Intent set to 'Interested' (source: {source}). Funnel \u2192 Intent Confirmed.", source == "Call" ? "PlivoCX Webhook" : "Prospect");
+                    break;
+                case "NotInterested":
+                    await _repository.SetFunnelOutcomeAsync(id, "NotInterested", "Closed");
+                    await _repository.InsertHistoryAsync(id, "IntentConfirmed", "\u2014",
+                        $"Unified Intent set to 'NotInterested' (source: {source}). Funnel \u2192 Not Interested.", source == "Call" ? "PlivoCX Webhook" : "Prospect");
+                    break;
+                case "Unsubscribe":
+                    await _repository.SetFunnelOutcomeAsync(id, "Unsubscribe", "Closed");
+                    await _repository.InsertHistoryAsync(id, "IntentConfirmed", "\u2014",
+                        $"Unified Intent set to 'Unsubscribe / Drop profile' (source: {source}). Funnel \u2192 Drop / Unsubscribe.", source == "Call" ? "PlivoCX Webhook" : "Prospect");
+                    break;
+            }
+        }
 
         // Maps an email-button response to the canonical unified intent.
         private static string MapEmailResponseToIntent(string response)

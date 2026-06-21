@@ -82,6 +82,13 @@
                     <input type="text" class="form-control auto-field"
                            value="@Model.CreatedOn?.ToString("dd MMM yyyy")" readonly />
                 </div>
+                @if (Model.BillingModel != (int)Risebird.Entities.Enum.BillingModelEnum.M1 && Model.BillingModel != 0 && !string.IsNullOrEmpty(Model.UTRTrxn))
+                {
+                    <div class="col-md-4 mt-3">
+                        <label class="vi-label">UTR / Trxn No.</label>
+                        <input type="text" class="form-control auto-field" value="@Model.UTRTrxn" readonly />
+                    </div>
+                }
             </div>
         </div>
 
@@ -123,12 +130,19 @@
                     </div>
                 </div>
                 <div class="col-md-4 mt-3">
+                    <label class="vi-label">Latest Remark <span class="tag-edit">(editable)</span></label>
+                    <input type="text" id="editLatestRemark" class="form-control editable-field"
+                           value="@Model.LatestRemark" placeholder="Add remark" maxlength="500" />
+                </div>
+                <div class="col-md-4 mt-3">
                     <label class="vi-label">Status <span class="tag-edit">(editable)</span></label>
                     <select id="editStatus" class="form-control editable-field">
                         @if (Model.Status == 0) { <option value="0" selected="selected">Draft</option> } else { <option value="0">Draft</option> }
                         @if (Model.Status == 1) { <option value="1" selected="selected">Generated</option> } else { <option value="1">Generated</option> }
                         @if (Model.Status == 2) { <option value="2" selected="selected">PO Pending</option> } else { <option value="2">PO Pending</option> }
-                        @if (Model.Status == 3) { <option value="3" selected="selected">Paid</option> } else { <option value="3">Paid</option> }
+                        @if (Model.Status == 3) { <option value="3" selected="selected">Approval Pending</option> } else { <option value="3">Approval Pending</option> }
+                        @if (Model.Status == 4) { <option value="4" selected="selected">Invoice Realisation Pending</option> } else { <option value="4">Invoice Realisation Pending</option> }
+                        @if (Model.Status == 5) { <option value="5" selected="selected">Paid</option> } else { <option value="5">Paid</option> }
                     </select>
                 </div>
             </div>
@@ -137,23 +151,44 @@
         <!-- ── Section 2b: Cash Credit Info (non-M1, visible only when Paid) ── -->
         @if (Model.BillingModel != (int)Risebird.Entities.Enum.BillingModelEnum.M1 && Model.BillingModel != 0)
         {
-            <div class="vi-card" id="cashCreditSection" style="display:@(Model.Status == 3 ? "block" : "none"); border-left:4px solid #43a047;">
+            <div class="vi-card" id="cashCreditSection" style="display:@(Model.Status == 5 ? "block" : "none"); border-left:4px solid #43a047;">
                 <div class="vi-section-title" style="color:#2e7d32;">Cash Credit Information</div>
-                <p class="text-muted" style="font-size:12px;margin-top:-8px;margin-bottom:14px;">
-                    This invoice will be marked <strong>Paid</strong>. Enter the cash credit details to post the received amount into the client wallet.
-                </p>
+                @if (Model.Status == 5)
+                {
+                    <div class="alert alert-success" style="font-size:12px;padding:8px 12px;margin-top:-8px;margin-bottom:14px;">
+                        <strong>Payment already recorded.</strong> The transaction reference below was saved when this invoice was marked Paid.
+                        You may update the details and re-save if needed (entering an amount will add a new wallet credit entry).
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted" style="font-size:12px;margin-top:-8px;margin-bottom:14px;">
+                        This invoice will be marked <strong>Paid</strong>. Enter the cash credit details to post the received amount into the client wallet.
+                    </p>
+                }
                 <div class="row">
                     <div class="col-md-4">
-                        <label class="vi-label">Credit Amount (&#8377;) <span style="color:red;">*</span></label>
-                        <input type="number" id="cashCreditAmount" class="form-control editable-field"
-                               min="1" placeholder="Enter amount received" />
+                        <label class="vi-label">Invoice Base Amount (&#8377;)</label>
+                        <input type="text" class="form-control auto-field"
+                               value="@((Model.InvoiceBaseAmount > 0 ? Model.InvoiceBaseAmount : Model.Subtotal).ToString("N2", System.Globalization.CultureInfo.InvariantCulture))" readonly />
                     </div>
                     <div class="col-md-4">
+                        <label class="vi-label">Net Receivable Amount (&#8377;)</label>
+                        <input type="text" class="form-control auto-field"
+                               value="@((Model.NetReceivableAmount > 0 ? Model.NetReceivableAmount : Model.NetReceivable).ToString("N2", System.Globalization.CultureInfo.InvariantCulture))" readonly />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="vi-label">Credit Amount (&#8377;) <span class="tag-edit">(reference)</span></label>
+                        <input type="number" id="cashCreditAmount" class="form-control editable-field"
+                               min="0" placeholder="Actual amount received (optional)"
+                               value="@(Model.CashCreditAmount > 0 ? Model.CashCreditAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) : "")" />
+                    </div>
+                    <div class="col-md-4 mt-3">
                         <label class="vi-label">Transaction / Reference No.</label>
                         <input type="text" id="cashTransactionRef" class="form-control editable-field"
-                               placeholder="UTR / Ref number" />
+                               value="@Model.UTRTrxn" placeholder="UTR / Ref number" />
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-3">
                         <label class="vi-label">Payment Date</label>
                         <input type="date" id="cashTransactionDate" class="form-control editable-field"
                                value="@DateTime.Now.ToString("yyyy-MM-dd")" />
@@ -187,7 +222,7 @@
                                     <td class="text-right">@li.Qty</td>
                                     <td class="text-center">
                                         <input type="number" class="form-control form-control-sm unit-rate-input text-right"
-                                               value="@li.UnitRate.ToString("N2", CultureInfo.InvariantCulture)"
+                                               value="@li.UnitRate.ToString("F2", CultureInfo.InvariantCulture)"
                                                min="0" step="0.01" style="width:120px;" />
                                     </td>
                                     <td class="text-right line-total-cell">@li.LineTotal.ToString("N2")</td>
@@ -251,12 +286,14 @@
 <input type="hidden" id="hidBillingModel" value="@Model.BillingModel" />
 
 <script>
-    var _billingModel = parseInt($('#hidBillingModel').val() || 0);
-    var _M1 = 1;
+    var _billingModel  = parseInt($('#hidBillingModel').val() || 0);
+    var _M1            = 1;
+    var _alreadyPaid   = @(Model.Status == 5 ? "true" : "false");
+    var _existingUTR   = '@Html.Raw((Model.UTRTrxn ?? "").Replace("'", "\\'"))';
 
     // Show/hide cash credit section when status changes
     $('#editStatus').on('change', function () {
-        var isPaid = parseInt($(this).val()) === 3;
+        var isPaid = parseInt($(this).val()) === 5;
         var isNonM1 = _billingModel !== _M1 && _billingModel !== 0;
         if (isPaid && isNonM1) {
             $('#cashCreditSection').slideDown(200);
@@ -296,19 +333,11 @@
     function saveChanges() {
         var taxScenario  = parseInt($('#hidTaxScenario').val() || 0);
         var selectedStatus = parseInt($('#editStatus').val());
-        var isPaid       = selectedStatus === 3;
+        var isPaid       = selectedStatus === 5;
         var isNonM1      = _billingModel !== _M1 && _billingModel !== 0;
 
-        // Validate: cash credit amount is required when marking Paid for non-M1
-        if (isPaid && isNonM1) {
-            var cashAmt = parseInt($('#cashCreditAmount').val() || 0);
-            if (!cashAmt || cashAmt <= 0) {
-                $('#divSaveMsg').attr('class', 'alert alert-danger')
-                    .html('Credit Amount is required when marking the invoice as Paid.').show();
-                $('html, body').animate({ scrollTop: $('#cashCreditSection').offset().top - 80 }, 400);
-                return;
-            }
-        }
+        // Wallet credit uses InvoiceValue (base amount) — cashCreditAmount is stored as reference only.
+        // No mandatory validation needed; section is informational when status = Paid.
 
         // Collect line items
         var lineItems = [];
@@ -337,11 +366,12 @@
             invoiceValue:     invoiceValue.toFixed(2),
             tdsAmount:        tdsAmount.toFixed(2),
             netReceivable:    netReceivable.toFixed(2),
-            lineItemsJson:    JSON.stringify(lineItems)
+            lineItemsJson:    JSON.stringify(lineItems),
+            latestRemark:     $('#editLatestRemark').val().trim()
         };
 
         if (isPaid && isNonM1) {
-            payload.cashCreditAmount    = parseInt($('#cashCreditAmount').val() || 0);
+            payload.cashCreditAmount    = parseFloat($('#cashCreditAmount').val() || 0);
             payload.cashTransactionRef  = $('#cashTransactionRef').val().trim();
             payload.cashTransactionDate = $('#cashTransactionDate').val();
         }

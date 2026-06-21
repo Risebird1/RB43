@@ -43,6 +43,7 @@ BEGIN
         c.PerInterviewRate,
         c.AIPerInterviewRate,
         ISNULL(c.BillingType, 3)                                   AS BillingType,
+        ISNULL(c.BillingCurrency, 'INR')                           AS BillingCurrency,
         ic.MonthInterviewCount,
         ISNULL(SUM(CASE WHEN MONTH(w.TransactionDate) = @Month
                          AND YEAR(w.TransactionDate)  = @Year
@@ -58,7 +59,7 @@ BEGIN
     INNER JOIN InterviewCountPerClient ic ON ic.ClientId = c.id
     LEFT  JOIN Wallet w ON w.ClientId = c.id
     GROUP BY
-        c.id, c.Name, c.BillingModel, c.BillingType,
+        c.id, c.Name, c.BillingModel, c.BillingType, c.BillingCurrency,
         c.PerInterviewRate, c.AIPerInterviewRate,
         ic.MonthInterviewCount
     HAVING ic.MonthInterviewCount > 0

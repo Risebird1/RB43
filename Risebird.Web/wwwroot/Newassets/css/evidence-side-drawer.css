@@ -1,0 +1,128 @@
+/* Evidence side drawer — Completed Interviews page */
+.iv-evidence-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    z-index: 1040;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.iv-evidence-drawer-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.iv-evidence-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 40vw;
+    min-width: 320px;
+    max-width: 720px;
+    background: #fff;
+    box-shadow: -8px 0 32px rgba(15, 23, 42, 0.18);
+    z-index: 1041;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+}
+
+.iv-evidence-drawer.is-open {
+    transform: translateX(0);
+}
+
+.iv-evidence-drawer__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+    flex-shrink: 0;
+}
+
+.iv-evidence-drawer__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.iv-evidence-drawer__subtitle {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.iv-evidence-drawer__close {
+    border: 0;
+    background: transparent;
+    font-size: 24px;
+    line-height: 1;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.iv-evidence-drawer__close:hover {
+    color: #0f172a;
+}
+
+.iv-evidence-drawer__frame-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    position: relative;
+}
+
+.iv-evidence-drawer__iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.iv-evidence-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.iv-evidence-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #fff;
+    color: #334155;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.iv-evidence-btn:hover {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+    color: #4338ca;
+}
+
+.iv-evidence-btn .ti {
+    font-size: 15px;
+    line-height: 1;
+}
+
+@media (max-width: 899px) {
+    .iv-evidence-drawer {
+        width: 100vw;
+        max-width: none;
+    }
+}

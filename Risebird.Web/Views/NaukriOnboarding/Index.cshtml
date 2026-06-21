@@ -17,6 +17,7 @@
     string selFunnelStage = ViewBag.FunnelStage as string ?? string.Empty;
     string selFunnelMode = ViewBag.FunnelMode as string ?? "at";
     if (selFunnelMode != "reached" && selFunnelMode != "not") selFunnelMode = "at";
+    string selOnboardingType = ViewBag.OnboardingType as string ?? string.Empty;
     string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
@@ -25,13 +26,19 @@
 
     var funnelCounts = ViewBag.FunnelCounts as Dictionary<string, int> ?? new Dictionary<string, int>();
     // Ordered funnel stages: (value, display label). "_none_" maps to records with no stage yet.
+    // 'Duplicate' is the first-step screening outcome (email already in system). The negative
+    // outcomes (Not Interested / Drop / Cold) are terminal exits shown alongside the pipeline.
     var funnelStages = new (string Value, string Key, string Label)[] {
+        ("Duplicate",          "Duplicate",          "Duplicate"),
         ("_none_",             "New",                "New"),
         ("Parsed",             "Parsed",             "Parsed"),
         ("MAGMapped",          "MAGMapped",          "MAG Mapped"),
         ("InvitationSent",     "InvitationSent",     "Invitation Sent"),
-        ("IntentCollection",   "IntentCollection",   "Intent Collection"),
+        ("AwaitingResponse",   "AwaitingResponse",   "Awaiting Response"),
         ("IntentConfirmed",    "IntentConfirmed",    "Intent Confirmed"),
+        ("NotInterested",      "NotInterested",      "Not Interested"),
+        ("Unsubscribe",        "Unsubscribe",        "Drop / Unsubscribe"),
+        ("Cold",               "Cold",               "Cold"),
         ("EmploymentVerified", "EmploymentVerified", "Employment Verified"),
         ("ResumeFitment",      "ResumeFitment",      "Resume Fitment"),
         ("AcknowledgementSent","AcknowledgementSent","Acknowledgement Sent"),
@@ -43,6 +50,7 @@
                    || !string.IsNullOrEmpty(selAutoStatus)
                    || !string.IsNullOrEmpty(selCallStatus) || !string.IsNullOrEmpty(selDisposition)
                    || !string.IsNullOrEmpty(selFunnelStage)
+                   || !string.IsNullOrEmpty(selOnboardingType)
                    || !string.IsNullOrEmpty(selDateFrom) || !string.IsNullOrEmpty(selDateTo);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
@@ -60,6 +68,7 @@
         if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
         if (!string.IsNullOrEmpty(selFunnelStage)) q += $"&funnelStage={Uri.EscapeDataString(selFunnelStage)}";
         if (!string.IsNullOrEmpty(selFunnelStage) && selFunnelMode != "at") q += $"&funnelMode={selFunnelMode}";
+        if (!string.IsNullOrEmpty(selOnboardingType)) q += $"&onboardingType={Uri.EscapeDataString(selOnboardingType)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return Url.Action("Index", "NaukriOnboarding") + q;
@@ -76,6 +85,7 @@
         if (!string.IsNullOrEmpty(selAutoStatus)) q += $"&automationStatus={Uri.EscapeDataString(selAutoStatus)}";
         if (!string.IsNullOrEmpty(selCallStatus)) q += $"&callStatus={Uri.EscapeDataString(selCallStatus)}";
         if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
+        if (!string.IsNullOrEmpty(selOnboardingType)) q += $"&onboardingType={Uri.EscapeDataString(selOnboardingType)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return q;
@@ -108,8 +118,10 @@
     {
         if (string.IsNullOrWhiteSpace(stage)) return "New";
         foreach (var fs in new (string Key, string Label)[] {
-            ("New","New"), ("Parsed","Parsed"), ("MAGMapped","MAG Mapped"), ("InvitationSent","Invitation Sent"),
-            ("IntentCollection","Intent Collection"), ("IntentConfirmed","Intent Confirmed"),
+            ("New","New"), ("Duplicate","Duplicate"), ("Parsed","Parsed"), ("MAGMapped","MAG Mapped"),
+            ("InvitationSent","Invitation Sent"), ("AwaitingResponse","Awaiting Response"),
+            ("IntentConfirmed","Intent Confirmed"), ("NotInterested","Not Interested"),
+            ("Unsubscribe","Drop / Unsubscribe"), ("Cold","Cold"),
             ("EmploymentVerified","Employment Verified"), ("ResumeFitment","Resume Fitment"),
             ("AcknowledgementSent","Acknowledgement Sent"), ("Onboarded","Onboarded") })
         {
@@ -439,6 +451,19 @@
                                         if (selFunnelStage == fs.Value) { <option value="@fs.Value" selected>@fs.Label</option> } else { <option value="@fs.Value">@fs.Label</option> }
                                     }
                                 </select>
+                                <select name="onboardingType" class="form-select nk-filter-control" style="flex:1 1 0;min-width:140px;max-width:175px;" onchange="document.getElementById('filterForm').submit()" title="How the interviewer was onboarded">
+                                    <option value="">All onboarding types</option>
+                                    @{ var onbTypeOpts = new[] {
+                                        ("SelfOnboarded",      "Self-Onboarded"),
+                                        ("IntentAutoProcessed","Intent + Auto Processed"),
+                                        ("ManuallyOnboarded",  "Manually Onboarded"),
+                                        ("_none_",             "Not onboarded yet")
+                                    };}
+                                    @foreach (var (val, label) in onbTypeOpts)
+                                    {
+                                        if (selOnboardingType == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
+                                    }
+                                </select>
                                 <input type="date" name="dateFrom" class="form-control nk-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
                                 <span class="text-muted flex-shrink-0" style="font-size:11px;">\u2013</span>
                                 <input type="date" name="dateTo" class="form-control nk-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateTo" onchange="document.getElementById('filterForm').submit()" />
@@ -599,14 +624,40 @@
                                                             "ResumeFitment"       => "background:#fde6d3;color:#9c4221;border:1px solid #ed8936;",
                                                             "EmploymentVerified"  => "background:#d1f0e0;color:#1c6b47;border:1px solid #28a745;",
                                                             "IntentConfirmed"     => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
-                                                            "IntentCollection"    => "background:#e0ecff;color:#1e40af;border:1px solid #3b82f6;",
+                                                            "AwaitingResponse"    => "background:#e0ecff;color:#1e40af;border:1px solid #3b82f6;",
                                                             "InvitationSent"      => "background:#e2e3ff;color:#3730a3;border:1px solid #6366f1;",
                                                             "MAGMapped"           => "background:#fde9c8;color:#92660e;border:1px solid #e6a817;",
                                                             "Parsed"              => "background:#d0f0f5;color:#0c5460;border:1px solid #17a2b8;",
+                                                            "Duplicate"           => "background:#fde2e1;color:#842029;border:1px solid #dc3545;",
+                                                            "NotInterested"       => "background:#f8d7da;color:#842029;border:1px solid #e35d6a;",
+                                                            "Unsubscribe"         => "background:#f5d0c5;color:#7a2e0e;border:1px solid #d9480f;",
+                                                            "Cold"                => "background:#e2e3e5;color:#41464b;border:1px solid #adb5bd;",
                                                             _                      => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
                                                         };
                                                     }
                                                     <span class="intent-badge" style="@fCss font-size:10px;white-space:nowrap;">@funnelLabel(fStage)</span>
+                                                    @if (!string.IsNullOrWhiteSpace(r.OnboardingType))
+                                                    {
+                                                        string obLabel = r.OnboardingType switch {
+                                                            "SelfOnboarded"       => "Self",
+                                                            "IntentAutoProcessed" => "Auto",
+                                                            "ManuallyOnboarded"   => "Manual",
+                                                            _                      => r.OnboardingType
+                                                        };
+                                                        string obTitle = r.OnboardingType switch {
+                                                            "SelfOnboarded"       => "Self-Onboarded (via MAG link)",
+                                                            "IntentAutoProcessed" => "Intent + Auto Processed",
+                                                            "ManuallyOnboarded"   => "Manually Onboarded",
+                                                            _                      => r.OnboardingType
+                                                        };
+                                                        string obCss = r.OnboardingType switch {
+                                                            "SelfOnboarded"       => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
+                                                            "IntentAutoProcessed" => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
+                                                            "ManuallyOnboarded"   => "background:#fff3cd;color:#664d03;border:1px solid #ffc107;",
+                                                            _                      => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
+                                                        };
+                                                        <div class="mt-1"><span class="intent-badge" style="@obCss font-size:9px;white-space:nowrap;" title="@obTitle"><i class="fas fa-user-check me-1"></i>@obLabel</span></div>
+                                                    }
                                                 </td>
                                                 <td class="col-status">
                                                     <span class="intent-badge @statusCss" style="font-size:12px;white-space:break-spaces;">@(string.Equals(rTicket, "InProgress", StringComparison.OrdinalIgnoreCase) ? "In Progress" : rTicket)</span>

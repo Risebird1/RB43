@@ -28,6 +28,7 @@ BEGIN
             ea.JobTitle, ea.InterviewerName, ea.Phone, ea.MagName, ea.IRFReference,
             ea.HasLoginCredentials, ea.SlotsPerDay, ea.TimeFrame,
             ea.AvailabilityIntent, ea.MailBodyIntent, ea.ConcernsOrNotInterested,
+            ea.Intent, ea.IntentSource, ea.IntentConfirmedAt, ea.PlivoIntent,
             ea.ResumeFitment, ea.ResumeLink, ea.HasAttachment,
             ea.Status,
             ea.EmploymentVerified, ea.ResumeAIAnalysisCompleted, ea.ResumeAIAnalysisResult,
@@ -42,7 +43,7 @@ BEGIN
             ip.CompanyName,
             ip.ResumeLink         AS ProfileResumeLink,
             ul.MobileNumber       AS UserMobileNumber,
-            ISNULL(ul.IsActive, 1) AS IsInterviewerActive,
+            ISNULL(ul.IsInterviewerAccess, 1) AS IsInterviewerActive,
             ul.InactivationType,
             COUNT(*) OVER()       AS TotalCount,
             -- Operational status buckets: Open / InProgress / Closed always sum to the total.
@@ -81,7 +82,7 @@ BEGIN
                               AND dbo.fn_IsFavorableAvailabilityIntent(ea.AvailabilityIntent, ea.MailBodyIntent, ea.ConcernsOrNotInterested) = 1)))
             AND (@DateFrom IS NULL OR ea.ReceivedAt >= @DateFrom)
             AND (@DateTo IS NULL OR ea.ReceivedAt < DATEADD(DAY, 1, @DateTo))
-            AND (@IsInterviewerActive IS NULL OR ISNULL(ul.IsActive, 1) = @IsInterviewerActive)
+            AND (@IsInterviewerActive IS NULL OR ISNULL(ul.IsInterviewerAccess, 1) = @IsInterviewerActive)
     )
     SELECT
         bd.*,
