@@ -208,11 +208,26 @@
                                                          new { id = "drp_IsInterviewerAccess", @class = "select-css form-control text-box single-line" })
                                                 @Html.ValidationMessageFor(model => model.IsInterviewerAccess, "", new { @class = "text-danger" })
                                             </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.IsHoldPayment, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.DropDownListFor(model => model.IsHoldPayment, new[]
+                                                         {   new SelectListItem { Text = "No", Value = "false" },
+                                    new SelectListItem { Text = "Yes", Value = "true"} },
+                                                         new { id = "drp_IsHoldPayment", @class = "select-css form-control text-box single-line", onchange = "toggleHoldPaymentReason(this.value)" })
+                                                @Html.ValidationMessageFor(model => model.IsHoldPayment, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group" id="holdPaymentReasonDiv" style="display:@(Model.IsHoldPayment ? "block" : "none")">
+                                                @Html.LabelFor(model => model.HoldPaymentReason, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextAreaFor(model => model.HoldPaymentReason, new { @class = "form-control", rows = "3", placeholder = "Enter reason for holding payment..." })
+                                                @Html.ValidationMessageFor(model => model.HoldPaymentReason, "", new { @class = "text-danger" })
+                                            </div>
                                         }
                                         else
                                         {
                                             @Html.HiddenFor(model => model.IsActive)
                                             @Html.HiddenFor(model => model.IsInterviewerAccess)
+                                            @Html.HiddenFor(model => model.IsHoldPayment)
+                                            @Html.HiddenFor(model => model.HoldPaymentReason)
                                         }
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -927,6 +942,16 @@
 
         }
     }
+    function toggleHoldPaymentReason(val) {
+        var reasonDiv = document.getElementById("holdPaymentReasonDiv");
+        if (val === "true") {
+            reasonDiv.style.display = "block";
+        } else {
+            reasonDiv.style.display = "none";
+            document.getElementById("HoldPaymentReason").value = "";
+        }
+    }
+
     function RadioChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDiv").style.display = "block";

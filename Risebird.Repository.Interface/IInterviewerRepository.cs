@@ -154,5 +154,6 @@ namespace Risebird.Repository.Interface
 
         Task<int> SaveInterviewerTrainingChecklist(Risebird.Entities.Data.InterviewerTrainingChecklist model);
         Task<IEnumerable<Risebird.Entities.Data.InterviewerTrainingChecklist>> GetInterviewerTrainingChecklist(string interviewerEmail, string trainingModuleCode);
+        Task<IEnumerable<InterviewerProfileVM>> GetHoldPaymentInterviewers();
     }
 }
