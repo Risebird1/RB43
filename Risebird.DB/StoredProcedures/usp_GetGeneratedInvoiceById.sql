@@ -44,7 +44,8 @@ BEGIN
         ISNULL(gi.InvoiceBaseAmount, 0)                       AS InvoiceBaseAmount,
         ISNULL(gi.NetReceivableAmount, 0)                     AS NetReceivableAmount,
         ISNULL(c.BillingType, 0)                              AS BillingType,
-        ISNULL(c.BillingModel, 0)                             AS BillingModel
+        ISNULL(c.BillingModel, 0)                             AS BillingModel,
+        ISNULL(gi.BillingCurrency, ISNULL(c.BillingCurrency, 'INR')) AS BillingCurrency
     FROM GeneratedInvoices gi
     LEFT JOIN Client   c  ON c.id  = gi.ClientId
     LEFT JOIN UserList ul ON ul.id = gi.BillingOwnerId

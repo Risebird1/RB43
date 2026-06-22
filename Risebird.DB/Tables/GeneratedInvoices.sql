@@ -65,6 +65,12 @@ BEGIN
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'BillingCurrency' AND Object_ID = Object_ID(N'GeneratedInvoices'))
+BEGIN
+    ALTER TABLE GeneratedInvoices ADD [BillingCurrency] [varchar](10) NULL DEFAULT 'INR'
+END
+GO
+
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'GeneratedInvoiceLineItems')
 BEGIN
 CREATE TABLE [dbo].[GeneratedInvoiceLineItems](
