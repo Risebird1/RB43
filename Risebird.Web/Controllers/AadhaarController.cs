@@ -614,7 +614,8 @@ namespace Risebird.Web.Controllers
         public async Task EmployementVerification(string mobile, string candidateEmail)
         {
             SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
-            mobiledata.mobileNumber = mobile;
+            // Signzy's EV API rejects numbers carrying a country code (e.g. "+91"), so strip it.
+            mobiledata.mobileNumber = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(mobile);
             mobiledata.CandidateEmail = candidateEmail;
             mobiledata.panNumber = "";
             var path = $"https://risebirdazuretimerfunctions.azurewebsites.net/api/SignzyEmploymentVerification";
@@ -936,7 +937,8 @@ namespace Risebird.Web.Controllers
         public async Task<SignzyEmployeeResponse> EmployementVerificationDetails(string candidateemail, string mobilenumber)
         {
             SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
-            mobiledata.mobileNumber = mobilenumber;
+            // Signzy's EV API rejects numbers carrying a country code (e.g. "+91"), so strip it.
+            mobiledata.mobileNumber = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(mobilenumber);
             mobiledata.CandidateEmail = candidateemail;
             mobiledata.panNumber = "";
             Dictionary<string, string> headers = new Dictionary<string, string>
@@ -1054,7 +1056,8 @@ namespace Risebird.Web.Controllers
             try
             {
                 SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
-                mobiledata.mobileNumber = mobilenumber;
+                // Signzy's EV API rejects numbers carrying a country code (e.g. "+91"), so strip it.
+                mobiledata.mobileNumber = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(mobilenumber);
                 mobiledata.CandidateEmail = candidateemail;
                 mobiledata.panNumber = "";
                 Dictionary<string, string> headers = new Dictionary<string, string>

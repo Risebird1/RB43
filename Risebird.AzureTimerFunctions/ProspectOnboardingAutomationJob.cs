@@ -761,6 +761,10 @@ namespace Risebird.AzureTimerFunctions
             if (string.IsNullOrWhiteSpace(mobile))
                 return (false, null, false, "No phone number available for employment verification.");
 
+            // Signzy's EV API rejects numbers carrying a country code (e.g. "+91"), so strip it
+            // up front — this also keeps the cache lookup consistent with the bare number.
+            mobile = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(mobile);
+
             try
             {
                 // 1) Reuse a cached EV result if present for this number.
