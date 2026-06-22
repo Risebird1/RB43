@@ -15,12 +15,36 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Revenue</h4></div>
-                    <div style="font-size:11px;line-height:1.8;">
-                        <label id="txtAmount" style="padding:0;">Total Revenue: @ViewBag.TotalRevenue</label> |
-                        <label id="txtTdsdeducted" style="padding:0;">Total Pending Invoice Amount: @ViewBag.PendingInvoiceAmount</label> |
-                        <label id="txtPayableAmount" style="padding:0;">Total Invoice Raised Amount: @ViewBag.InvoiceAmount</label> |
-                        <label id="txtSystemInvoice" style="padding:0;">Total System Invoice Amount: @ViewBag.TotalSystemInvoiceAmount</label> |
-                        <label id="txtPendingAmount" style="padding:0;">Pending Amount: @ViewBag.PendingAmount</label>
+                    @{
+                        Func<string, string> currSym = code => code switch {
+                            "USD" => "$", "EUR" => "€", "GBP" => "£",
+                            "AED" => "AED ", "SGD" => "S$", "AUD" => "A$",
+                            _ => "₹"
+                        };
+                        Func<string, string> currBg = code => code == "INR" ? "#1565c0" : "#2e7d32";
+                    }
+                    <div style="font-size:11px;line-height:2;">
+                        @if (ViewBag.RevenueByCurrency != null)
+                        {
+                            foreach (dynamic grp in ViewBag.RevenueByCurrency)
+                            {
+                                string cur  = grp.Currency;
+                                string sym  = currSym(cur);
+                                string bg   = currBg(cur);
+                                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;">
+                                    <span style="padding:1px 7px;border-radius:3px;font-size:11px;font-weight:700;color:#fff;background:@bg;min-width:36px;text-align:center;">@cur</span>
+                                    <span><strong>Revenue:</strong> @sym@(((decimal)grp.TotalRevenue).ToString("N2"))</span>
+                                    <span style="color:#9ca3af;">|</span>
+                                    <span><strong>System Invoice:</strong> @sym@(((decimal)grp.SystemInvoiceAmount).ToString("N2"))</span>
+                                    <span style="color:#9ca3af;">|</span>
+                                    <span><strong>Invoice Raised:</strong> @sym@(((decimal)grp.InvoiceAmount).ToString("N2"))</span>
+                                    <span style="color:#9ca3af;">|</span>
+                                    <span><strong>Pending Invoice:</strong> @sym@(((decimal)grp.PendingInvoiceAmount).ToString("N2"))</span>
+                                    <span style="color:#9ca3af;">|</span>
+                                    <span><strong>Pending Amount:</strong> @sym@(((decimal)grp.PendingAmount).ToString("N2"))</span>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
                 <input type="hidden" value="@ViewBag.RevenueMonth" id="hiddrevenuemonth" />
@@ -207,12 +231,27 @@
                                                         {
 
                                                             <tr>
-                                                                <td>@item.Name<input type="hidden" id="hidclient_@item.id" value="@item.Name" /></td>
+                                                                <td>
+                                                                    @item.Name
+                                                                    @{
+                                                                        var currBadgeColor = (item.BillingCurrency ?? "INR") == "INR" ? "#1565c0" : "#2e7d32";
+                                                                        var billingTypeLabel = item.InterviewerBillingType == 2 ? "SC" : item.InterviewerBillingType == 3 ? "IV" : "";
+                                                                    }
+                                                                    <span style="margin-left:4px;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600;color:#fff;background:@currBadgeColor;" title="Billing Currency">@(item.BillingCurrency ?? "INR")</span>
+                                                                    @if (!string.IsNullOrEmpty(billingTypeLabel))
+                                                                    {
+                                                                        <span style="margin-left:3px;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600;color:#fff;background:#6a1b9a;" title="@(item.InterviewerBillingType == 2 ? "Skill Channel Billing" : "Interviewer Billing")">@billingTypeLabel</span>
+                                                                    }
+                                                                    <input type="hidden" id="hidclient_@item.id" value="@item.Name" />
+                                                                </td>
                                                                 <td>@item.NonAIInterviewCount<input type="hidden" id="hidnonaicnt_@item.id" value="@item.NonAIInterviewCount" /></td>
                                                                 <td>@item.PerInterviewRate<input type="hidden" id="hidrate_@item.id" value="@item.PerInterviewRate" /></td>
                                                                 <td>@item.AIInterviewCount<input type="hidden" id="hidaicnt_@item.id" value="@item.AIInterviewCount" /></td>
                                                                 <td>@item.AIPerInterviewRate<input type="hidden" id="hidairate_@item.id" value="@item.AIPerInterviewRate" /></td>
-                                                                <td>@((item.NonAIInterviewCount * item.PerInterviewRate) + (item.AIInterviewCount * item.AIPerInterviewRate))<input type="hidden" id="hidinterviewcount_@item.id" value="@item.TotalCount" /></td>
+                                                                <td>
+                                                                    @item.BaseAmount.ToString("N2")
+                                                                    <input type="hidden" id="hidinterviewcount_@item.id" value="@item.TotalCount" />
+                                                                </td>
                                                                 <td>@item.GST</td>
                                                                 <td>@item.GSTAmount</td>
                                                                 <td>@item.SystemInvoiceAmount</td>
