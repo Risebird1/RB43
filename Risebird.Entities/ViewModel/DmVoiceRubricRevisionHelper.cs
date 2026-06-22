@@ -35,6 +35,14 @@ namespace Risebird.Entities.ViewModel
             public RubricRevisionDiff Diff { get; set; } = new RubricRevisionDiff();
             public string Message { get; set; }
             public bool Changed { get; set; }
+            public bool WeightsAdjusted { get; set; }
+        }
+
+        public sealed class WeightNormalizationResult
+        {
+            public List<TransSkill> Skills { get; set; } = new List<TransSkill>();
+            public bool Adjusted { get; set; }
+            public int TotalBefore { get; set; }
         }
 
         public static IEnumerable<TransSkill> GetScoreRubricSkills(IEnumerable<TransSkill> skills) =>
@@ -65,6 +73,7 @@ namespace Risebird.Entities.ViewModel
             sb.AppendLine("Treat the voice instruction as modification commands (remove, add, rebalance, replace, change levels/weights/elimination flags) — not as raw skill names to append.");
             sb.AppendLine("If the instruction is ambiguous, prefer minimal change over speculative additions.");
             sb.AppendLine("New skills should align to the MAG competency framework when possible.");
+            sb.AppendLine("Skill weights must sum to exactly 100 across the rubric.");
             sb.AppendLine("Return ONLY a JSON object in the schema below — no markdown fences, no commentary.");
             sb.AppendLine();
             sb.AppendLine($"Role / skill channel: {roleLabel}");
@@ -201,17 +210,64 @@ namespace Risebird.Entities.ViewModel
             return diff;
         }
 
+        public static WeightNormalizationResult NormalizeWeightageTo100(List<TransSkill> skills)
+        {
+            var list = GetScoreRubricSkills(skills).ToList();
+            var result = new WeightNormalizationResult { Skills = list };
+            if (!list.Any())
+                return result;
+
+            result.TotalBefore = list.Sum(s => Math.Max(0, s.Weightage));
+            if (result.TotalBefore == 100)
+                return result;
+
+            if (result.TotalBefore <= 0)
+            {
+                DistributeEvenWeights(list);
+                result.Adjusted = true;
+                return result;
+            }
+
+            var scaled = list
+                .Select(s => Math.Max(1, (int)Math.Round(s.Weightage * 100.0 / result.TotalBefore)))
+                .ToList();
+            FixWeightRounding(scaled);
+
+            for (var i = 0; i < list.Count; i++)
+                list[i].Weightage = scaled[i];
+
+            result.Adjusted = true;
+            return result;
+        }
+
+        public static object[] ToClientSkillPayload(IEnumerable<TransSkill> skills) =>
+            GetScoreRubricSkills(skills)
+                .Select(s => new
+                {
+                    skillName = s.SkillName,
+                    levelId = s.LevelId,
+                    levelName = ResolveLevelName(s),
+                    weightage = s.Weightage,
+                    timelimit = s.Timelimit > 0 ? s.Timelimit : 10,
+                    isEliminationskill = s.isEliminationskill,
+                    concepts = s.Concepts ?? string.Empty,
+                    natureofquestion = s.Natureofquestion ?? string.Empty
+                })
+                .ToArray();
+
         public static VoiceRubricRevisionOutcome BuildOutcome(
             IEnumerable<TransSkill> currentSkills,
             List<TransSkill> revisedSkills,
             RubricRevisionDiff diff,
-            string voiceTranscript)
+            string voiceTranscript,
+            WeightNormalizationResult weightNormalization = null)
         {
             var outcome = new VoiceRubricRevisionOutcome
             {
                 RevisedSkills = revisedSkills ?? new List<TransSkill>(),
                 Diff = diff ?? new RubricRevisionDiff(),
-                Changed = diff != null && diff.HasChanges
+                Changed = diff != null && diff.HasChanges,
+                WeightsAdjusted = weightNormalization?.Adjusted == true
             };
 
             if (!outcome.Changed)
@@ -226,7 +282,7 @@ namespace Risebird.Entities.ViewModel
                 return outcome;
             }
 
-            outcome.Message = BuildChangedMessage(diff);
+            outcome.Message = BuildChangedMessage(diff, outcome.WeightsAdjusted, weightNormalization?.TotalBefore ?? 0);
             return outcome;
         }
 
@@ -242,7 +298,10 @@ namespace Risebird.Entities.ViewModel
             return "No changes applied. Try being more specific in the voice instruction.";
         }
 
-        public static string BuildChangedMessage(RubricRevisionDiff diff)
+        public static string BuildChangedMessage(
+            RubricRevisionDiff diff,
+            bool weightsAdjusted = false,
+            int totalWeightBefore = 0)
         {
             var parts = new List<string> { "Rubric revised." };
 
@@ -255,8 +314,17 @@ namespace Risebird.Entities.ViewModel
             foreach (var mod in diff.Modified)
                 parts.Add(mod.EndsWith(".", StringComparison.Ordinal) ? mod : mod + ".");
 
+            if (weightsAdjusted && totalWeightBefore != 100)
+            {
+                parts.Add(totalWeightBefore > 100
+                    ? $"Weights totaled {totalWeightBefore}% and were adjusted to 100%."
+                    : "Weights were adjusted to total 100%.");
+            }
+
             if (diff.MagWarnings.Count > 0)
                 parts.AddRange(diff.MagWarnings);
+
+            parts.Add("Click Save score rubric to persist changes.");
 
             return string.Join(" ", parts);
         }
@@ -368,6 +436,36 @@ namespace Risebird.Entities.ViewModel
                     return true;
             }
             return false;
+        }
+
+        private static void DistributeEvenWeights(List<TransSkill> skills)
+        {
+            if (skills == null || skills.Count == 0) return;
+            var baseWeight = 100 / skills.Count;
+            var remainder = 100 - (baseWeight * skills.Count);
+            for (var i = 0; i < skills.Count; i++)
+                skills[i].Weightage = baseWeight + (i < remainder ? 1 : 0);
+        }
+
+        private static void FixWeightRounding(List<int> weights)
+        {
+            if (weights == null || weights.Count == 0) return;
+            var delta = 100 - weights.Sum();
+            if (delta == 0) return;
+
+            var index = 0;
+            for (var i = 1; i < weights.Count; i++)
+            {
+                if (weights[i] > weights[index])
+                    index = i;
+            }
+
+            weights[index] = Math.Max(1, weights[index] + delta);
+            if (weights.Sum() != 100 && weights.Count > 1)
+            {
+                var secondPass = 100 - weights.Sum();
+                weights[0] = Math.Max(1, weights[0] + secondPass);
+            }
         }
 
         private static string DescribeSkillChanges(TransSkill prev, TransSkill next)
