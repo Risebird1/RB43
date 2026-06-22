@@ -6794,18 +6794,19 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             }
             return null;
         }
-        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, string year, int month)
+        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, int fromYear, int fromMonth, int toYear, int toMonth)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var currentyear = Convert.ToInt32(year);
                     var parameters = new DynamicParameters();
                     parameters.Add("@StartDate", stdate);
                     parameters.Add("@EndDate", endate);
-                    parameters.Add("@year", currentyear);
-                    parameters.Add("@month", month);
+                    parameters.Add("@FromYear", fromYear);
+                    parameters.Add("@FromMonth", fromMonth);
+                    parameters.Add("@ToYear", toYear);
+                    parameters.Add("@ToMonth", toMonth);
                     var result = await SqlMapper.QueryAsync<FnRevenueVM>(con, "usp_GetRevenueDetailsByDate", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
                     return (List<FnRevenueVM>)result;

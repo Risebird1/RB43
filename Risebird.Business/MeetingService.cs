@@ -4083,11 +4083,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, string year, int month)
+        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, int fromYear, int fromMonth, int toYear, int toMonth)
         {
             try
             {
-                var result = _meetingRespository.FetchRevenueDetails(stdate, endate, year, month);
+                var result = _meetingRespository.FetchRevenueDetails(stdate, endate, fromYear, fromMonth, toYear, toMonth);
                 return result.Result;
             }
             catch (Exception e)
