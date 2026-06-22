@@ -1355,6 +1355,11 @@
     color: var(--dm-amber);
 }
 
+.dm-v4-weight-pill--pending {
+    background: var(--dm-blue-soft, #e8f0fe);
+    color: var(--dm-blue, #1a56db);
+}
+
 /* ── Score rubric panel ── */
 .dm-v4-rubric-panel {
     background: var(--dm-surface);
@@ -2315,6 +2320,17 @@ button.dm-v4-iv-cv-link {
     font-style: italic;
 }
 
+.dm-v4-iv-policy-col--cap-free .dm-v4-iv-policy-sub {
+    font-style: italic;
+}
+
+.dm-v4-default-cap-unlimited {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dm-text-mid);
+    letter-spacing: 0.01em;
+}
+
 .dm-v4-iv-policy-icon {
     width: 28px;
     height: 28px;
@@ -2873,6 +2889,11 @@ button.dm-v4-iv-cv-link {
 .dm-v4-iv-inactive-reason--unknown {
     background: var(--dm-raised);
     color: var(--dm-text-mid);
+}
+
+.dm-v4-iv-inactive-reason--muted {
+    background: var(--dm-slate-soft, #eef2f6);
+    color: var(--dm-slate, #64748b);
 }
 
 .dm-v4-iv-row {
@@ -4354,6 +4375,7 @@ button.dm-v4-money-pill {
 
 .dm-v4-drawer__body {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     padding: 18px 22px;
 }
@@ -4364,6 +4386,32 @@ button.dm-v4-money-pill {
     display: flex;
     justify-content: flex-end;
     gap: 8px;
+    flex-shrink: 0;
+}
+
+.dm-v4-drawer__foot--rubric {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    background: var(--dm-raised, #f8fafc);
+}
+
+.dm-v4-drawer__foot-hint {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--dm-text-mid, #64748b);
+}
+
+.dm-v4-drawer__foot-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+#dmV4RubricDrawer .dm-v4-drawer__foot-actions .dm-v4-btn--primary {
+    min-width: 132px;
 }
 
 .dm-v4-drawer label.dm-v4-field-label {
