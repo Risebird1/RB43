@@ -529,6 +529,8 @@ namespace Risebird.Entities.ViewModel
         public int GeneratedInvoiceCount { get; set; }
         public int TotalBillingOwnerCount { get; set; }
         public string InvoiceRatio { get; set; }
+        public decimal ReceivedAmount { get; set; }
+        public int InvoiceStatus { get; set; }
     }
 
     public class InvoiceListVM

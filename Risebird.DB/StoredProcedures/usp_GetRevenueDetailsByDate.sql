@@ -23,7 +23,8 @@ Select distinct cl.id, cl.Name,
     Po.POPendingAmount, Inv.InvoiceAmount, cl.GSTApplicable, cl.PaymentTerm,
     ISNULL(GI.GenInvoiceAmount, 0)  AS GeneratedInvoiceAmount,
     ISNULL(GI.GenInvoiceCount, 0)   AS GeneratedInvoiceCount,
-    ISNULL(BOC.TotalBillingOwnerCount, 1) AS TotalBillingOwnerCount
+    ISNULL(BOC.TotalBillingOwnerCount, 1) AS TotalBillingOwnerCount,
+    ISNULL(PI.PaidInvoiceAmount, 0) AS ReceivedAmount
 From InterviewMeetings im
 join IRF on IRF.IRFId = im.IRFId         
 join InterviewComments ic on ic.InterviewId = im.id
@@ -58,12 +59,21 @@ outer Apply (
       and (ic2.MeetingStatus = 4 or ic2.MeetingStatus = 6 or ic2.MeetingStatus = 7 or ic2.MeetingStatus = 8)
       and ISNULL(im2.RedoInterview, 0) = 0
 ) BOC
+outer Apply (
+    Select ISNULL(Sum(gi2.InvoiceValue), 0) as PaidInvoiceAmount
+    from GeneratedInvoices gi2
+    where gi2.ClientId = cl.id
+      and gi2.InvoiceMonth = @month
+      and gi2.InvoiceYear  = @year
+      and gi2.Status = 5
+) PI
 where im.interviewDate >= @StartDate and im.interviewDate < @EndDate         
 and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6 or ic.MeetingStatus = 7 or ic.MeetingStatus = 8)
 and IsNull(im.RedoInterview, 0) = 0                  
 group by cl.id, cl.Name, cl.PerInterviewRate, cl.AIPerInterviewRate, cl.BillingType,
     Po.POPendingAmount, Inv.InvoiceAmount, cl.GSTApplicable, cl.PaymentTerm,
-    GI.GenInvoiceAmount, GI.GenInvoiceCount, BOC.TotalBillingOwnerCount
+    GI.GenInvoiceAmount, GI.GenInvoiceCount, BOC.TotalBillingOwnerCount,
+    PI.PaidInvoiceAmount
 END    
      
 

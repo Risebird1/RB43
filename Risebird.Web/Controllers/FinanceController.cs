@@ -2772,14 +2772,14 @@ namespace Risebird.Web.Controllers
                         }
                         item.SystemInvoiceAmount = item.GSTAmount + baseAmount;
                         item.TDSAmount = (baseAmount * 10) / 100;
-                        if (item.invoicerealization == 1)
-                        {
-                            item.PaymentStatus = "Received";
-                        }
-                        else
-                        {
-                            item.PaymentStatus = "Pending";
-                        }
+                        //if (item.ReceivedAmount > 0)
+                        //{
+                        //    item.PaymentStatus = "Received";
+                        //}
+                        //else
+                        //{
+                        //    item.PaymentStatus = "Pending";
+                        //}
                             var denominator = item.BillingType == 1
                             ? (item.TotalBillingOwnerCount > 0 ? item.TotalBillingOwnerCount : 1)
                             : 1;
@@ -2788,12 +2788,12 @@ namespace Risebird.Web.Controllers
                     ViewBag.TotalRevenue = totalamount;
                     if (model != null)
                     {
-                        ViewBag.PendingPOAmount = model.Sum(x => x.POPendingAmount);
+                        ViewBag.PendingInvoiceAmount = model.Sum(x => x.GeneratedInvoiceAmount) - model.Sum(x => x.ReceivedAmount);
                         ViewBag.InvoiceAmount = model.Sum(x => x.GeneratedInvoiceAmount);
                     }
                     else
                     {
-                        ViewBag.PendingPOAmount = 0;
+                        ViewBag.PendingInvoiceAmount = 0;
                         ViewBag.InvoiceAmount = 0;
                     }
                     if (TempData["RevenueMessage"] != null)
@@ -2917,7 +2917,15 @@ namespace Risebird.Web.Controllers
                     model = await _meetingService.FetchRevenueDetailsByClient(id, stdate, endate, billingType, year, month);
                     model = model.Select(x =>
                     {
-                        x.CurrentStatusDesc = x.CurrentStatus != 0 ? ((Revenueenum)Convert.ToInt32(x.CurrentStatus)).GetDescription() : string.Empty;
+                        x.CurrentStatusDesc = x.InvoiceStatus switch
+                        {
+                            1 => "Generated",
+                            2 => "PO Pending",
+                            3 => "Approval Pending",
+                            4 => "Invoice Realisation Pending",
+                            5 => "Paid",
+                            _ => string.Empty
+                        };
                         return x;
                     }).ToList();
                     ViewBag.BillingType = billingType;
