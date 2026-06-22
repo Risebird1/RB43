@@ -41,9 +41,19 @@
     function initLevelFormatV4() {
         if (!$('#dm-v4-level-format-grid').length) return;
         syncLevelFormatCheckboxes();
+        syncSenioritySelectDefault();
         $(document).off('change.dmV4FormatCb', '.dm-v4-lf-format-cb').on('change.dmV4FormatCb', '.dm-v4-lf-format-cb', function () {
             syncLevelFormatCheckboxes();
         });
+    }
+
+    function syncSenioritySelectDefault() {
+        var $job = $('#dmV4JobLevel');
+        if (!$job.length) return;
+        var val = ($job.val() || '').toString();
+        if (val === '' || val === '0') {
+            $job.val('');
+        }
     }
 
     function moveLevelFormat() {
@@ -402,9 +412,15 @@
 
             $pill.text('Total weightage ' + weight + '/100');
 
-            $pill.toggleClass('dm-v4-weight-pill--ok', weight === 100);
+            var hasPending = $pill.hasClass('dm-v4-weight-pill--pending');
+
+            $pill.toggleClass('dm-v4-weight-pill--ok', weight === 100 && !hasPending);
 
             $pill.toggleClass('dm-v4-weight-pill--warn', weight !== 100);
+
+            if (weight !== 100) {
+                $pill.removeClass('dm-v4-weight-pill--pending');
+            }
 
         }
 
@@ -547,6 +563,36 @@
         $('#dmV4RubricOverlay, #dmV4RubricDrawer').removeClass('is-open').attr('aria-hidden', 'true');
 
     }
+
+
+
+    function dmV4SaveRubricDrawerAndSubmit() {
+
+        closeDrawer(true);
+
+        var form = document.getElementById('irfForm');
+
+        if (!form) return;
+
+        if (typeof dmV4OnRubricFormSubmit === 'function') {
+
+            if (dmV4OnRubricFormSubmit()) {
+
+                form.submit();
+
+            }
+
+            return;
+
+        }
+
+        form.submit();
+
+    }
+
+
+
+    window.dmV4SaveRubricDrawerAndSubmit = dmV4SaveRubricDrawerAndSubmit;
 
 
 
@@ -1025,15 +1071,15 @@
 
 
 
-        $('#dmV4DrawerClose, #dmV4RubricOverlay').off('click.dmV4Drawer').on('click.dmV4Drawer', function () {
+        $('#dmV4DrawerClose, #dmV4DrawerHeadClose, #dmV4RubricOverlay').off('click.dmV4Drawer').on('click.dmV4Drawer', function () {
 
             closeDrawer(false);
 
         });
 
-        $('#dmV4DrawerDone').off('click.dmV4Drawer').on('click.dmV4Drawer', function () {
+        $('#dmV4DrawerSave').off('click.dmV4Drawer').on('click.dmV4Drawer', function () {
 
-            closeDrawer(true);
+            dmV4SaveRubricDrawerAndSubmit();
 
         });
 
@@ -1240,19 +1286,24 @@
     }
 
     function applyVetCascadeRowAttrs($row, opts) {
+        if (typeof opts.rbVet !== 'undefined') {
+            $row.attr('data-rb-vet', opts.rbVet ? '1' : '0');
+            $row.attr('data-rb-vet-db', opts.rbVet ? '1' : '0');
+            $row.attr('data-rb-approved', opts.rbVet ? '1' : '0');
+        }
         if (typeof opts.clientVet !== 'undefined') {
             $row.attr('data-client-vet', opts.clientVet ? '1' : '0');
+            $row.attr('data-client-approved', opts.clientVet ? '1' : '0');
         }
         if (typeof opts.clientAction !== 'undefined') {
             $row.attr('data-client-action', opts.clientAction);
-        }
-        if (typeof opts.rbVet !== 'undefined') {
-            $row.attr('data-rb-vet', opts.rbVet ? '1' : '0');
+            $row.attr('data-client-approved', opts.clientAction === 'Shortlisted' ? '1' : '0');
         }
         if (typeof opts.active !== 'undefined') {
             $row.attr('data-is-active', opts.active ? '1' : '0');
             if (opts.active) {
                 $row.attr('data-ever-activated', '1');
+                $row.attr('data-on-panel', '1');
             }
         }
         if (typeof opts.available !== 'undefined') {
@@ -1264,30 +1315,78 @@
         return ($row.attr('data-ever-activated') || '0') === '1';
     }
 
+    function readHistoricalRbVetFromRow($row) {
+        var token = ($row.attr('data-rb-vet-db') || '').toLowerCase();
+        if (token === '1') return { yes: true, explicitNo: false, unset: false };
+        if (token === '0') return { yes: false, explicitNo: true, unset: false };
+        return { yes: false, explicitNo: false, unset: true };
+    }
+
+    function inactiveReasonFromCategory(category) {
+        switch ((category || '').toString()) {
+            case 'PendingRbReview':
+                return { label: 'Pending RB Review', tone: 'info', category: 'PendingRbReview' };
+            case 'AwaitingClientApproval':
+                return { label: 'Awaiting client approval', tone: 'info', category: 'AwaitingClientApproval' };
+            case 'RemovedByRb':
+                return { label: 'Removed by RB', tone: 'warning', category: 'RemovedByRb' };
+            case 'RemovedByClient':
+                return { label: 'Removed by Client', tone: 'warning', category: 'RemovedByClient' };
+            case 'Unavailable':
+                return { label: 'Not available on channel', tone: 'muted', category: 'Unavailable' };
+            case 'Unknown':
+                return { label: 'Inactive — reason unknown', tone: 'unknown', category: 'Unknown' };
+            default:
+                return null;
+        }
+    }
+
+    function readRowOnPanel($row) {
+        return ($row.attr('data-on-panel') || '0') === '1';
+    }
+
     function inferInactiveReasonFromRow($row) {
         if (readRowDbActive($row)) return null;
+
         var channelLocked = isPolicyLockOn(getPolicyBar());
         var available = ($row.attr('data-is-available') || '0') === '1';
         var action = ($row.attr('data-client-action') || '').toLowerCase();
         var rejected = action === 'rejected';
-        var rbStored = $row.attr('data-rb-vet');
-        var rbVetYes = rbStored === '1';
-        var rbVetExplicitNo = rbStored === '0';
-        var everActivated = readRowEverActivated($row);
+        var rb = readHistoricalRbVetFromRow($row);
+        var rbVetYes = rb.yes || ($row.attr('data-rb-approved') || '0') === '1';
+        var rbVetExplicitNo = rb.explicitNo;
+        var rbVetUnset = rb.unset;
+        var clientApproved = ($row.attr('data-client-approved') || '0') === '1' || action === 'shortlisted';
+        var onPanel = readRowOnPanel($row);
 
-        if (!everActivated && channelLocked && available && !rejected && !rbVetYes && rbStored !== '0') {
-            return { label: 'Pending RB Review', tone: 'info' };
+        if (!rbVetYes && !rbVetExplicitNo && channelLocked && available && !rejected && !onPanel) {
+            return inactiveReasonFromCategory('PendingRbReview');
         }
-        if (!everActivated && channelLocked && available && !rejected && !rbVetYes) {
-            return { label: 'Pending RB Review', tone: 'info' };
+        if (rbVetYes && !clientApproved && !rejected && !onPanel) {
+            return inactiveReasonFromCategory('AwaitingClientApproval');
         }
-        if (everActivated && rejected && rbVetYes) {
-            return { label: 'Removed by Client', tone: 'warning' };
+        if (onPanel && rejected && rbVetYes) {
+            return inactiveReasonFromCategory('RemovedByClient');
         }
-        if (everActivated && (rbVetExplicitNo || (rejected && !rbVetYes))) {
-            return { label: 'Removed by RB', tone: 'warning' };
+        if (rejected && rbVetYes && !onPanel && clientApproved) {
+            return inactiveReasonFromCategory('RemovedByClient');
         }
-        return { label: 'Inactive — reason unknown', tone: 'unknown' };
+        if (rbVetExplicitNo || (rejected && !rbVetYes)) {
+            return inactiveReasonFromCategory('RemovedByRb');
+        }
+        if (onPanel && rejected && rbVetUnset) {
+            return inactiveReasonFromCategory('RemovedByRb');
+        }
+        if (onPanel && !rejected) {
+            return inactiveReasonFromCategory('RemovedByRb');
+        }
+        if (rbVetYes && clientApproved && !rejected) {
+            return inactiveReasonFromCategory('RemovedByRb');
+        }
+        if (!rbVetYes && !clientApproved && !onPanel && !available && !rejected) {
+            return inactiveReasonFromCategory('Unavailable');
+        }
+        return inactiveReasonFromCategory('Unknown');
     }
 
     function syncInactiveReasonBadge($row) {
@@ -1296,10 +1395,14 @@
         var reason = inferInactiveReasonFromRow($row);
         if (!reason) {
             $badge.text('').attr('title', '');
+            $row.removeAttr('data-inactive-reason-category');
             return;
         }
+        if (reason.category) {
+            $row.attr('data-inactive-reason-category', reason.category);
+        }
         $badge
-            .removeClass('dm-v4-iv-inactive-reason--info dm-v4-iv-inactive-reason--warning dm-v4-iv-inactive-reason--unknown')
+            .removeClass('dm-v4-iv-inactive-reason--info dm-v4-iv-inactive-reason--warning dm-v4-iv-inactive-reason--unknown dm-v4-iv-inactive-reason--muted')
             .addClass('dm-v4-iv-inactive-reason--' + reason.tone)
             .text(reason.label)
             .attr('title', reason.label);
@@ -2528,9 +2631,15 @@
         $bar.find('[data-segment="assign"] .dm-v4-segment-btn').removeClass('is-on')
             .filter('[data-value="' + policy + '"]').addClass('is-on');
         $('#dmV4DefaultCapVal').text(cap);
+        $('#dmV4DefaultCapStepper').prop('hidden', !limited);
+        $('#dmV4DefaultCapHint').prop('hidden', !limited);
+        $('#dmV4ApplyCapAllBtn').prop('hidden', !limited);
+        $('#dmV4DefaultCapUnlimited').prop('hidden', limited);
         $('#dmV4DefaultCapStepper .dm-v4-stepper-btn').prop('disabled', !canEdit || !limited);
         $('#dmV4ApplyCapAllBtn').prop('disabled', !canEdit || !limited);
-        $('#dmV4DefaultCapCol').toggleClass('dm-v4-iv-policy-col--cap-disabled', !limited);
+        $('#dmV4DefaultCapCol')
+            .toggleClass('dm-v4-iv-policy-col--cap-disabled', false)
+            .toggleClass('dm-v4-iv-policy-col--cap-free', !limited);
     }
 
     function updatePolicySubtext() {
@@ -2544,6 +2653,9 @@
         $('#dmV4IvPolicySub').text(limited
             ? 'Enforce per-interviewer caps. Edit each interviewer’s limit inline in the table.'
             : 'Active interviewers can be assigned to any interview without further review.');
+        $('#dmV4DefaultCapSub').text(limited
+            ? 'Used for newly added interviewers. Existing caps stay until you bulk-apply.'
+            : 'Not used while assignment policy is Free.');
         $('#dmV4IvPanel').attr('data-cap-enforced', limited ? '1' : '0');
         syncPolicyBarControls();
         refreshInterviewLimitCellsForPolicy();
@@ -3652,6 +3764,74 @@
 
     };
 
+    /**
+     * Applies voice-revised rubric skills to the score rubric form without saving.
+     * User must click Save score rubric to persist.
+     */
+    window.dmV4ApplyVoiceRevisedRubric = function (skills) {
+        var $tbody = $('#SkillTable tbody');
+        if (!$tbody.length) return false;
+
+        var $templateRow = $tbody.find('tr.dm-v4-rubric-row').first();
+        if (!$templateRow.length) return false;
+
+        var templateHtml = $templateRow.prop('outerHTML');
+        var rows = Array.isArray(skills) ? skills : [];
+        $tbody.empty();
+
+        if (!rows.length) {
+            rows = [{
+                skillName: '',
+                levelId: 0,
+                weightage: 100,
+                timelimit: 10,
+                isEliminationskill: false,
+                concepts: '',
+                natureofquestion: ''
+            }];
+        }
+
+        rows.forEach(function (skill) {
+            var $row = $(templateHtml);
+            var levelId = skill.levelId || skill.LevelId || '';
+            var skillName = skill.skillName || skill.SkillName || '';
+            var weightage = skill.weightage != null ? skill.weightage : (skill.Weightage != null ? skill.Weightage : 10);
+            var timelimit = skill.timelimit != null ? skill.timelimit : (skill.Timelimit != null ? skill.Timelimit : 10);
+            var concepts = skill.concepts != null ? skill.concepts : (skill.Concepts || '');
+            var expectations = skill.natureofquestion != null ? skill.natureofquestion : (skill.Natureofquestion || '');
+            var elim = !!(skill.isEliminationskill || skill.IsEliminationskill);
+
+            $row.find('.dm-v4-level-select').val(levelId ? String(levelId) : '');
+            $row.find('[id$="__SkillName"]').val(skillName);
+            $row.find('[id$="__Weightage"]').val(weightage);
+            $row.find('[id$="__Timelimit"]').val(timelimit);
+            $row.find('[id$="__Concepts"]').val(concepts);
+            $row.find('[id$="__Natureofquestion"]').val(expectations);
+            $row.find('.dm-v4-elim-input').prop('checked', elim);
+
+            $tbody.append($row);
+        });
+
+        window.dmV4RefreshRubric();
+
+        var skillNames = rows
+            .map(function (s) { return (s.skillName || s.SkillName || '').trim(); })
+            .filter(function (n) { return n.length > 0; });
+        var $skillsJson = $('#dmV4RubricSkillsJson');
+        if ($skillsJson.length) {
+            $skillsJson.text(JSON.stringify(skillNames));
+        }
+
+        var $pill = $('#dmV4WeightPill');
+        if ($pill.length) {
+            $pill.addClass('dm-v4-weight-pill--pending');
+        }
+
+        $('#SkillCollection_WeightageError, #SkillCollection_WeightageErrorDown').text('');
+
+        return true;
+    };
+
 
 
     function formatVoiceTime(seconds) {
@@ -3666,15 +3846,15 @@
         var $playBtn = $('#dmV4VoicePlayBtn');
         var $time = $('#dmV4VoiceTime');
         var $wave = $('#dmV4VoiceWaveform');
-        if (!audio || !$playBtn.length) return;
+        if (!audio || !$playBtn.length || !audio.getAttribute('src')) return;
 
         var $bars = $wave.find('.dm-v4-voice-waveform__bar');
-        var playedCount = 0;
+        var $audio = $(audio);
 
         function syncWaveProgress() {
             if (!audio.duration) return;
             var ratio = audio.currentTime / audio.duration;
-            playedCount = Math.floor(ratio * $bars.length);
+            var playedCount = Math.floor(ratio * $bars.length);
             $bars.each(function (i) {
                 $(this).toggleClass('is-played', i < playedCount);
             });
@@ -3690,22 +3870,24 @@
             }
         }
 
-        audio.addEventListener('loadedmetadata', function () {
+        $audio.off('.dmV4VoiceHero');
+        $playBtn.off('click.dmV4VoiceHero');
+
+        $audio.on('loadedmetadata.dmV4VoiceHero', function () {
             updateTimeLabel();
             syncWaveProgress();
         });
-        audio.addEventListener('timeupdate', function () {
+        $audio.on('timeupdate.dmV4VoiceHero', function () {
             updateTimeLabel();
             syncWaveProgress();
         });
-        audio.addEventListener('ended', function () {
+        $audio.on('ended.dmV4VoiceHero', function () {
             $playBtn.removeClass('is-playing');
-            playedCount = 0;
             $bars.removeClass('is-played');
             updateTimeLabel();
         });
 
-        $playBtn.on('click', function () {
+        $playBtn.on('click.dmV4VoiceHero', function () {
             if (audio.paused) {
                 audio.play();
                 $playBtn.addClass('is-playing');
@@ -3717,6 +3899,8 @@
 
         updateTimeLabel();
     }
+
+    window.dmV4InitVoiceHero = initDmV4VoiceHero;
 
     window.applyDmV4Layout = function applyDmV4Layout() {
 
