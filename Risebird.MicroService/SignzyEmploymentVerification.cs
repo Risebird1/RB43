@@ -58,6 +58,9 @@ namespace Risebird.MicroService
             log.LogInformation($"SignzyEmploymentVerification : Event data recieved with request body :  {requestBody}");
             var mobiledata = JsonConvert.DeserializeObject<SignzyEmployeeRequest>(requestBody);
             log.LogInformation($"SignzyEmploymentVerification : Event data recieved with request body :  {mobiledata}");
+            // Signzy's EV API rejects numbers carrying a country code (e.g. "+91"), so strip it.
+            mobiledata.mobileNumber = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(mobiledata.mobileNumber);
+            mobiledata.mobile = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(mobiledata.mobile);
             Dictionary<string, string> headers = new Dictionary<string, string>
                 {
                     { "Content-Type", "application/json" },
