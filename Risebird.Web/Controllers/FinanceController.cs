@@ -1972,10 +1972,12 @@ namespace Risebird.Web.Controllers
                     creditPeriod       = data.PaymentTerm > 0 ? data.PaymentTerm + " Days" : string.Empty,
                     gstNumber          = data.GSTNumber,
                     gstApplicable      = data.GSTApplicable,
-                    billingType        = data.BillingType,
-                    perInterviewRate   = data.PerInterviewRate,
-                    aiPerInterviewRate = data.AIPerInterviewRate,
-                    lineItems          = data.LineItems,
+                    billingType              = data.BillingType,
+                    interviewerBillingType   = data.InterviewerBillingType,
+                    billingCurrency          = string.IsNullOrEmpty(data.BillingCurrency) ? "INR" : data.BillingCurrency,
+                    perInterviewRate         = data.PerInterviewRate,
+                    aiPerInterviewRate       = data.AIPerInterviewRate,
+                    lineItems                = data.LineItems,
                     subtotal           = subtotal,
                     gstAmount          = gstAmount,
                     invoiceValue       = invoiceValue,
@@ -2062,7 +2064,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod,
             string irn, string eInvoiceFileLink, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
-            decimal tdsAmount, decimal netReceivable, string lineItemsJson,
+            decimal tdsAmount, decimal netReceivable, string lineItemsJson, int taxScenario = 0,
             decimal? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null,
             string latestRemark = null)
         {
@@ -2101,7 +2103,7 @@ namespace Risebird.Web.Controllers
                 decimal? savedCashAmount = (cashCreditAmount.HasValue && cashCreditAmount.Value > 0)
                     ? (decimal?)cashCreditAmount.Value : null;
                 var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
-                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems, latestRemark, cashTransactionRef, savedCashAmount);
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems, latestRemark, cashTransactionRef, savedCashAmount, taxScenario);
                 return Json(new
                 {
                     success,
