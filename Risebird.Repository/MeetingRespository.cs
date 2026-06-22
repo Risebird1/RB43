@@ -5505,6 +5505,7 @@ namespace Risebird.Repository
                     parameters.Add("@CreatedBy",         model.CreatedBy);
                     parameters.Add("@CashCreditAmount",  model.CashCreditAmount);
                     parameters.Add("@UTRTrxn",           model.UTRTrxn);
+                    parameters.Add("@BillingCurrency",   string.IsNullOrEmpty(model.BillingCurrency) ? "INR" : model.BillingCurrency);
                     var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_SaveGeneratedInvoice", parameters, commandType: CommandType.StoredProcedure);
                     return (int)(result.FirstOrDefault()?.NewId ?? 0);
                 }
