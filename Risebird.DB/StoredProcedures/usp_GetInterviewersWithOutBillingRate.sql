@@ -28,7 +28,7 @@ Begin
   left join AGCampaigns agc on agc.id = ti.CampaignId  
   left join InterviewerBillingRate ibr on ibr.IRFId=ti.IRFId and ibr.Userid=ti.UserId  
   where ISNULL(Client.InterviewerBillingType,1) = 3
-    and (@Clientid IS NULL OR IRF.Clientid = @Clientid)
+    and (@Clientid IS NULL OR @Clientid=0 OR IRF.Clientid = @Clientid)
     and Isnull(ibr.BillingRate,0)=0 and DateAdd(MONTH,-1,Getdate())<IRF.EndDate
   group by ti.IRFId, ul.EmailId, ipr.ResumeLink, ipr.UserId, irf.IRFId, ti.AIVerdict, ipr.ResumeLink, ul.MobileNumber, IRF.IRFId,ul.uniqueid,ul.FirstName+' '+ul.LastName,Case when ti.IsActive=1 and ul.isactive=1 then 1 else 0 end,ti.IsAvailable,  
   IRF.SendIntervieweravailbilityOn,ipr.isVerified,ipr.IsEmployed,ipr.CompanyName,ipr.EmploymentComment,ipr.AvailabilityResponseDate,  

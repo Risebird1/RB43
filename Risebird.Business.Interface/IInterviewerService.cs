@@ -137,5 +137,6 @@ namespace Risebird.Business.Interface
         Task<bool> ReactivateInterviewer(int userId, string reactivatedBy);
         Task<bool> SaveApplicantErrorMessage(int id, string errorMessage);
         Task<bool> SaveExternalApplicantResume(int id, string resumeLink = null);
+        Task<IEnumerable<InterviewerProfileVM>> GetHoldPaymentInterviewers();
     }
 }

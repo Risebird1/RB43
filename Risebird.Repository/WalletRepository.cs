@@ -233,15 +233,23 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<AllClientsWalletVM> GetAllClientsWalletSummary(int month, int year)
+        public async Task<AllClientsWalletVM> GetAllClientsWalletSummary(int fromMonth, int fromYear, int toMonth, int toYear)
         {
-            var vm = new AllClientsWalletVM { SelectedMonth = month, SelectedYear = year };
+            var vm = new AllClientsWalletVM
+            {
+                FromMonth = fromMonth,
+                FromYear  = fromYear,
+                ToMonth   = toMonth,
+                ToYear    = toYear
+            };
             try
             {
                 using var con = new SqlConnection(connectionString);
                 var parameters = new DynamicParameters();
-                parameters.Add("@Month", month);
-                parameters.Add("@Year",  year);
+                parameters.Add("@FromMonth", fromMonth);
+                parameters.Add("@FromYear",  fromYear);
+                parameters.Add("@ToMonth",   toMonth);
+                parameters.Add("@ToYear",    toYear);
 
                 using var multi = await con.QueryMultipleAsync(
                     "usp_GetAllClientsWalletSummary",

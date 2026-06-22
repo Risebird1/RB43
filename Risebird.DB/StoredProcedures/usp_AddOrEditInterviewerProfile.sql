@@ -59,7 +59,9 @@ Create PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @TargetIrfId int,
 @outputUserId int out,
 @uniqueid varchar(50) out,
-@IsInsertOperation bit out
+@IsInsertOperation bit out,
+@IsHoldPayment bit = null,
+@HoldPaymentReason varchar(500) = null
 AS              
 Begin
 
@@ -132,6 +134,8 @@ Begin
     [IsApproved] = @IsApproved,              
     [AssessmentGroupId]=@AssessmentGroupId,    
     [Isinstaavailable]=@Isinstaavailable,  
+    [IsHoldPayment] = ISNULL(@IsHoldPayment, [IsHoldPayment]),
+    [HoldPaymentReason] = @HoldPaymentReason,
     [ModifiedBy] = @loggedInUser,  
     [ModifiedOn] = dateadd(MINUTE, 330, getdate())  
     --[IsServiceDomain] =@IsServiceDomain,    
@@ -246,7 +250,9 @@ Declare @v_User_Id int;
    [isVerified],  
    [CompanyName],  
    [IsEmployed],
-   [PrimarySpecializationForAcknowledgement])    
+   [PrimarySpecializationForAcknowledgement],
+   [IsHoldPayment],
+   [HoldPaymentReason])    
    --[IsServiceDomain],    
    --[IsProductDomain],    
    --[IndiaServiceRate],    
@@ -281,7 +287,9 @@ Declare @v_User_Id int;
    @isVerified,  
    @CompanyName,  
    @IsEmployed,
-   @PrimarySpecializationForAcknowledgement)    
+   @PrimarySpecializationForAcknowledgement,
+   ISNULL(@IsHoldPayment, 0),
+   @HoldPaymentReason)    
    --@IsServiceDomain,    
    --@IsProductDomain,    
    --@IndiaServiceRate,    

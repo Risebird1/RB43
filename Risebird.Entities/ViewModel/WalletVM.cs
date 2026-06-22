@@ -48,8 +48,15 @@ namespace Risebird.Entities.ViewModel
 
     public class AllClientsWalletVM
     {
-        public int    SelectedMonth      { get; set; }
-        public int    SelectedYear       { get; set; }
+        public int    FromMonth          { get; set; }
+        public int    FromYear           { get; set; }
+        public int    ToMonth            { get; set; }
+        public int    ToYear             { get; set; }
+
+        // Legacy aliases — point to the "From" side so existing code keeps compiling
+        public int    SelectedMonth      { get => FromMonth; set => FromMonth = value; }
+        public int    SelectedYear       { get => FromYear;  set => FromYear  = value; }
+
         public string PeriodLabel        { get; set; }
         public List<ClientWalletSummaryRowVM>     Clients            { get; set; } = new List<ClientWalletSummaryRowVM>();
         public List<BillingOwnerInterviewCountVM> BillingOwnerCounts { get; set; } = new List<BillingOwnerInterviewCountVM>();

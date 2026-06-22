@@ -2085,5 +2085,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<IEnumerable<InterviewerProfileVM>> GetHoldPaymentInterviewers()
+        {
+            try
+            {
+                return await _interviewerRepository.GetHoldPaymentInterviewers();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
