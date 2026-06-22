@@ -68,21 +68,20 @@
     function showRubricVoiceResult(rubricRes) {
         var msg = (rubricRes && rubricRes.message) || 'Score rubric updated from voice brief.';
         var changed = rubricRes && rubricRes.changed === true;
-        var reloadRequired = rubricRes && (rubricRes.reloadRequired || changed);
         var icon = changed ? 'success' : 'info';
         var title = changed ? 'Rubric revised' : 'Rubric unchanged';
 
-        function afterAlert() {
-            if (reloadRequired) {
-                window.location.reload();
+        if (changed && rubricRes.revisedSkills && typeof window.dmV4ApplyVoiceRevisedRubric === 'function') {
+            var applied = window.dmV4ApplyVoiceRevisedRubric(rubricRes.revisedSkills);
+            if (!applied) {
+                msg += ' Review the score rubric table and save manually if needed.';
             }
         }
 
         if (typeof swal !== 'undefined') {
-            swal.fire(title, msg, icon).then(afterAlert);
+            swal.fire(title, msg, icon);
         } else {
             alert(title + ': ' + msg);
-            afterAlert();
         }
     }
 
@@ -94,6 +93,53 @@
         $ta.val(hasText ? transcript : '');
         $wrap.toggle(hasText || $('#playUploadedAudioTwo').not('.dm-v4-voice-modal__saved--empty').length > 0);
     }
+
+    function buildWaveformBarsHtml(count) {
+        var html = '';
+        for (var i = 0; i < count; i++) {
+            var h = 6 + Math.floor(Math.abs(Math.sin(i * 0.5) * Math.sin(i * 0.18)) * 28) + (i % 3 === 0 ? 4 : 0);
+            html += '<span class="dm-v4-voice-waveform__bar" style="height:' + h + 'px" data-bar="' + i + '"></span>';
+        }
+        return html;
+    }
+
+    function ensureVoiceWaveformBars() {
+        var $wave = $('#dmV4VoiceWaveform');
+        if (!$wave.length || $wave.find('.dm-v4-voice-waveform__bar').length) return;
+        $wave.html(buildWaveformBarsHtml(64));
+    }
+
+    /** Show hero waveform player immediately after upload (new channels have no server-rendered audio UI). */
+    function applyVoiceRecordingToHero(audioUrl) {
+        if (!audioUrl || !String(audioUrl).trim()) return;
+        if (!$('#dmV4VoiceHero').length) return;
+
+        audioUrl = String(audioUrl).trim();
+        var audio = document.getElementById('dmV4VoiceAudio');
+        if (!audio) return;
+
+        if (audio.getAttribute('src') !== audioUrl) {
+            audio.setAttribute('src', audioUrl);
+            try { audio.load(); } catch (e) { /* ignore */ }
+        }
+
+        ensureVoiceWaveformBars();
+        $('#dmV4VoiceRecordingEmpty').prop('hidden', true);
+        $('#dmV4VoiceWaveRow').prop('hidden', false);
+        $('#dmV4VoiceTime').prop('hidden', false).text('0:00 / —');
+        $('#dmV4VoiceRecordedBadge').prop('hidden', false).text('RECORDED');
+        $('#dmV4RetranscribeBtn').prop('hidden', false);
+        $('#dmV4VoiceRecordBtn').prop('hidden', true);
+        $('#dmV4VoiceRerecordBtn').prop('hidden', false);
+        $('#dmV4VoiceActionsSpacer').prop('hidden', false);
+        $('.dm-v4-voice-preview-grid').removeClass('dm-v4-voice-preview-grid--empty');
+
+        if (typeof window.dmV4InitVoiceHero === 'function') {
+            window.dmV4InitVoiceHero();
+        }
+    }
+
+    window.dmV4ApplyVoiceRecordingToHero = applyVoiceRecordingToHero;
 
     /**
      * Calls /IRF/GenerateRubricFromVoice (reads saved transcript from DB by irfId).
@@ -147,12 +193,7 @@
                 if (typeof dmV4SetVoiceModalSavedLink === 'function') {
                     dmV4SetVoiceModalSavedLink(res.audioUrl);
                 }
-                var $audio = $('#dmV4VoiceAudio');
-                if ($audio.length) {
-                    $audio.attr('src', res.audioUrl);
-                }
-                $('#dmV4VoiceRecordedBadge').show();
-                $('.dm-v4-voice-preview-grid').removeClass('dm-v4-voice-preview-grid--empty');
+                applyVoiceRecordingToHero(res.audioUrl);
             }
             applyTranscriptToHero(res.transcript, res.transcriptUpdatedOn);
             applyTranscriptToModal(res.transcript);

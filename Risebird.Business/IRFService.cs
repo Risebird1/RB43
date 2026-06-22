@@ -80,7 +80,7 @@ namespace Risebird.Business
                 irfDetails.NoOfPosition = 0;
                 irfDetails.Type = "B2B";
                 irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
-                irfDetails.JobLevel = Convert.ToInt16(JobLevels.SE);
+                irfDetails.JobLevel = null;
                 int irfId = 0;
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
