@@ -472,6 +472,8 @@ namespace Risebird.Repository
             parameters.Add("@outputUserId", dbType: DbType.Int32, direction: ParameterDirection.Output, size: 5215585);
             parameters.Add("@uniqueid", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
             parameters.Add("@IsInsertOperation", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+            parameters.Add("@IsHoldPayment", entity.IsHoldPayment);
+            parameters.Add("@HoldPaymentReason", entity.HoldPaymentReason);
 
             return parameters;
         }
@@ -4489,6 +4491,28 @@ SELECT CAST(CASE WHEN EXISTS (
                 {
                     return await SqlMapper.QueryAsync<Risebird.Entities.Data.InterviewerTrainingChecklist>(
                         con, "usp_GetInterviewerTrainingChecklist", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<InterviewerProfileVM>> GetHoldPaymentInterviewers()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<InterviewerProfileVM>(
+                        con, "usp_GetHoldPaymentInterviewers", null, commandType: CommandType.StoredProcedure);
                 }
             }
             catch (SqlException ex)

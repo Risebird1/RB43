@@ -663,14 +663,37 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> WalletDetails(int? month = null, int? year = null)
+        public async Task<IActionResult> WalletDetails(
+            int? month = null, int? year = null,
+            int? fromMonth = null, int? fromYear = null,
+            int? toMonth = null, int? toYear = null)
         {
             if (!IsFinanceOrAdmin()) return RedirectToAction("SignOut", "Session");
 
-            var selectedMonth = month ?? DateTime.Now.Month;
-            var selectedYear  = year  ?? DateTime.Now.Year;
+            int fm, fy, tm, ty;
 
-            var model = await _walletService.GetAllClientsWalletSummary(selectedMonth, selectedYear);
+            if (fromMonth.HasValue || fromYear.HasValue || toMonth.HasValue || toYear.HasValue)
+            {
+                // Range filter submitted
+                fm = fromMonth ?? DateTime.Now.Month;
+                fy = fromYear  ?? DateTime.Now.Year;
+                tm = toMonth   ?? fm;
+                ty = toYear    ?? fy;
+            }
+            else
+            {
+                // Legacy single-month filter (or default)
+                fm = month ?? DateTime.Now.Month;
+                fy = year  ?? DateTime.Now.Year;
+                tm = fm;
+                ty = fy;
+            }
+
+            // Ensure from <= to (swap if inverted)
+            if (new DateTime(fy, fm, 1) > new DateTime(ty, tm, 1))
+                (fm, fy, tm, ty) = (tm, ty, fm, fy);
+
+            var model = await _walletService.GetAllClientsWalletSummary(fm, fy, tm, ty);
             return View(model);
         }
 
