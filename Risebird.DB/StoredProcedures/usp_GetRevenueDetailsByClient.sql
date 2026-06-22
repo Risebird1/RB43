@@ -18,7 +18,8 @@ AS
 BEGIN  
 Select cl.id, cl.Name, Count(im.id) as TotalCount, IRF.IRFId, rd.CurrentStatus,
     ISNULL(GI.GenInvoiceAmount, 0) AS GeneratedInvoiceAmount,
-    ISNULL(GI.GenInvoiceCount,  0) AS GeneratedInvoiceCount
+    ISNULL(GI.GenInvoiceCount,  0) AS GeneratedInvoiceCount,
+    ISNULL(GI.InvoiceStatus, 0)    AS InvoiceStatus
 From InterviewMeetings im
 join IRF on IRF.IRFId = im.IRFId   
 join InterviewComments ic on ic.InterviewId = im.id
@@ -26,7 +27,8 @@ join Client cl on IRF.ClientId = cl.id
 left join Revenuedetails rd on rd.Clientid = IRF.ClientId and rd.Months = @month and rd.Years = @year and rd.IRFId = IRF.IRFId
 outer apply (
     Select ISNULL(Sum(gi.InvoiceValue), 0) as GenInvoiceAmount,
-           COUNT(gi.id)                    as GenInvoiceCount
+           COUNT(gi.id)                    as GenInvoiceCount,
+           ISNULL(MAX(gi.Status), 0)       as InvoiceStatus
     from GeneratedInvoices gi
     where gi.ClientId     = cl.id
       and gi.InvoiceMonth = @month
@@ -35,7 +37,7 @@ outer apply (
 ) GI
 where im.interviewDate >= @StartDate and im.interviewDate < @EndDate and cl.id = @Clientid  
 and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6 or ic.MeetingStatus = 7 or ic.MeetingStatus = 8)    
-group by cl.id, cl.Name, IRF.IRFId, rd.CurrentStatus, GI.GenInvoiceAmount, GI.GenInvoiceCount
+group by cl.id, cl.Name, IRF.IRFId, rd.CurrentStatus, GI.GenInvoiceAmount, GI.GenInvoiceCount, GI.InvoiceStatus
 order by IRF.IRFId
 END  
 GO
