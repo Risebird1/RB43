@@ -7413,7 +7413,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GenerateRubricFromVoice(int irfId)
+        public async Task<JsonResult> GenerateRubricFromVoice(int irfId, string transcript = null)
         {
             try
             {
@@ -7423,8 +7423,18 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Forbidden" });
 
                 var brief = _irfService.FetchVoiceInstructionBrief(irfId);
-                if (string.IsNullOrWhiteSpace(brief?.Transcript))
+                var voiceText = !string.IsNullOrWhiteSpace(transcript)
+                    ? transcript.Trim()
+                    : brief?.Transcript?.Trim();
+                if (string.IsNullOrWhiteSpace(voiceText))
                     return Json(new { success = false, message = "Save a voice transcript first (record audio and transcribe, or enter text manually)." });
+
+                if (!string.IsNullOrWhiteSpace(transcript)
+                    && !string.Equals(transcript.Trim(), brief?.Transcript?.Trim(), StringComparison.Ordinal))
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                    _irfService.SaveVoiceInstructionTranscript(irfId, transcript.Trim(), emailid);
+                }
 
                 var irfVm = await _irfService.GetEditIRF(irfId, 0, false);
                 if (irfVm == null)
@@ -7436,7 +7446,7 @@ namespace Risebird.Web.Controllers
                     magDetails = await _irfRepository.GetAssessmentGroupDetails(assessmentGroupId);
 
                 var revisionPrompt = DmVoiceRubricRevisionHelper.BuildRevisionUserMessage(
-                    irfVm, currentSkills, magDetails, brief.Transcript.Trim());
+                    irfVm, currentSkills, magDetails, voiceText);
 
                 var result = await _assistantServiceHelper.GenerateTechRubricRevision(revisionPrompt);
                 if (result == null)
@@ -7454,11 +7464,11 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "No rubric skills could be parsed from the assistant response." });
 
                 var magSkillNames = DmVoiceRubricRevisionHelper.BuildMagSkillNameSet(magDetails);
-                var diff = DmVoiceRubricRevisionHelper.CompareRubrics(currentSkills, revisedSkills, magSkillNames);
                 var weightNormalization = DmVoiceRubricRevisionHelper.NormalizeWeightageTo100(revisedSkills);
                 revisedSkills = weightNormalization.Skills;
+                var diff = DmVoiceRubricRevisionHelper.CompareRubrics(currentSkills, revisedSkills, magSkillNames);
                 var outcome = DmVoiceRubricRevisionHelper.BuildOutcome(
-                    currentSkills, revisedSkills, diff, brief.Transcript.Trim(), weightNormalization);
+                    currentSkills, revisedSkills, diff, voiceText, weightNormalization);
 
                 return Json(new
                 {
@@ -12002,30 +12012,13 @@ namespace Risebird.Web.Controllers
                         {
                             foreach (var file in Request.Form.Files)
                             {
-                                var fileName = file.FileName.Replace(" ", "_");
-                                FileInfo fi = new FileInfo(fileName);
-                                var ext = fi.Extension.ToLowerInvariant();
-                                if (ext != ".pdf" && ext != ".doc" && ext != ".docx")
+                                if (!ResumeUploadValidator.IsAllowedResumeUpload(file, _fileMimeTypeHelper, out var resumeValidationError))
                                 {
-                                    return Json("Please select valid file for import(.pdf, .doc, .docx)!");
+                                    return Json(resumeValidationError);
                                 }
 
-                                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
-                                if (ext == ".pdf")
-                                {
-                                    if (fileMimeType != "application/pdf")
-                                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
-                                }
-                                else if (ext == ".doc")
-                                {
-                                    if (fileMimeType != "application/msword")
-                                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
-                                }
-                                else if (ext == ".docx")
-                                {
-                                    if (fileMimeType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-                                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
-                                }
+                                var fileName = file.FileName.Replace(" ", "_");
+                                FileInfo fi = new FileInfo(fileName);
 
                                 await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");

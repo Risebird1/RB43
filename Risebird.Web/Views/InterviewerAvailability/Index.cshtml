@@ -76,12 +76,22 @@
     .ia-stat .stat-value { font-size:1.5rem; font-weight:700; }
     .ia-stat .stat-label { font-size:13px; font-weight:500; color:#495057; }
 
-    #iaTable { table-layout:auto; width:100%; min-width:1350px; font-size:12px; }
-    #iaTable.table-sm > thead > tr > th, #iaTable.table-sm > tbody > tr > td { padding:0.3rem 0.45rem; vertical-align:top; }
-    #iaTable thead th { font-size:12px; font-weight:600; vertical-align:middle; white-space:nowrap; }
+    #iaTable { table-layout:fixed; width:100%; min-width:1447px; font-size:12px; border-collapse:separate; border-spacing:0; }
+    #iaTable.table-sm > thead > tr > th, #iaTable.table-sm > tbody > tr > td { padding:0.45rem 0.55rem; vertical-align:top; }
+    #iaTable thead th { font-size:12px; font-weight:600; vertical-align:middle; white-space:nowrap; position:sticky; top:0; z-index:2; background:#f8f9fa; }
+    #iaTable tbody td { overflow:visible; }
 
-    .ia-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%; min-width:0; }
+    .ia-scroll { overflow-x:auto; overflow-y:visible; -webkit-overflow-scrolling:touch; max-width:100%; min-width:0; }
     .ia-email-ellipsis { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:170px; font-size:12px; }
+
+    .ia-filter-card .card-body { overflow:visible; }
+    .ia-filter-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); gap:8px; align-items:center; width:100%; }
+    .ia-filter-grid .ia-filter-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; grid-column:1 / -1; }
+    @@media (min-width:992px) {
+        .ia-filter-grid { grid-template-columns:repeat(6,minmax(120px,1fr)) auto auto; }
+        .ia-filter-grid .ia-filter-field--wide { grid-column:span 2; }
+        .ia-filter-grid .ia-filter-actions { grid-column:auto; justify-content:flex-end; }
+    }
 
     .status-open { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
     .status-closed { background:#d1e7dd; color:#0a3622; border:1px solid #198754; }
@@ -93,40 +103,76 @@
     .ia-recent-badge { background:#d1e7dd; color:#0a3622; border:1px solid #198754; font-size:9px; margin-left:4px; }
     .status-verified { background:#d1e7dd; color:#0a3622; border:1px solid #198754; }
 
-    .intent-badge { display:inline-block; font-size:10.5px; padding:0.22em 0.5em; border-radius:3px; font-weight:500; white-space:normal; line-height:1.3; max-width:100%; word-break:break-word; }
-    .mail-preview-text { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; color:#555; font-size:11.5px; line-height:1.35; word-break:break-word; }
+    .intent-badge { display:inline-flex; align-items:center; gap:3px; font-size:10.5px; padding:0.28em 0.55em; border-radius:4px; font-weight:600; white-space:nowrap; line-height:1.3; max-width:100%; }
+    .mail-preview-text { display:block; color:#475569; font-size:11px; line-height:1.45; word-break:break-word; overflow-wrap:anywhere; white-space:normal; }
+    .ia-intent-stack { display:flex; flex-direction:column; align-items:flex-start; gap:6px; min-width:0; width:100%; }
+    .ia-intent-stack__summary { display:flex; flex-direction:column; gap:4px; width:100%; min-width:0; }
+    .ia-intent-stack__badges { display:flex; flex-wrap:wrap; gap:4px; align-items:center; width:100%; }
+    .ia-intent-mail-tag { display:inline-block; font-size:10px; padding:0.2em 0.45em; border-radius:4px; background:#f8fafc; border:1px solid #e2e8f0; color:#475569; word-break:break-word; overflow-wrap:anywhere; line-height:1.35; max-width:100%; }
 
-    .action-btns { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; align-items:center; }
-    /* Table action buttons only — do not shrink modal/footer buttons */
-    #iaTable .action-btns .btn { font-size:9px !important; line-height:1.35; padding:0.28rem 0.5rem; border-radius:2px; font-weight:500; }
-    #iaTable .action-btns .btn-manage-record { background:linear-gradient(135deg,#0d6efd 0%,#0a58ca 100%) !important; border:0; color:#fff !important; box-shadow:0 1px 3px rgba(13,110,253,.35); }
-    #iaTable .action-btns .btn-manage-record:hover { filter:brightness(1.05); color:#fff !important; }
-    #iaTable .action-btns .btn-drop-profile { background:linear-gradient(180deg,#fff8e6 0%,#ffe8a3 100%) !important; border:1px solid #e6c200; color:#664d03 !important; min-width:10px; padding:0.28rem 0.45rem; }
-    #iaTable .action-btns .btn-drop-profile:hover { background:#fff3cd !important; border-color:#d4a017; color:#523e02 !important; }
-    #iaTable .action-btns .btn-delete-record { background:linear-gradient(180deg,#f8d7da 0%,#f1aeb5 100%) !important; border:1px solid #dc3545; color:#842029 !important; min-width:10px; padding:0.28rem 0.45rem; }
-    #iaTable .action-btns .btn-delete-record:hover { background:#f5c2c7 !important; color:#58151c !important; }
-    .status-change-btn { font-size:11px; padding:2px 6px; line-height:1.4; flex-shrink:0; }
+    .col-actions { width:88px; min-width:88px; white-space:normal; }
 
-    #main-panel .content.client .container-fluid { min-width:0; }
+    .ia-action-toolbar { display:flex; flex-direction:column; align-items:stretch; gap:2px; width:100%; }
+    .ia-action-btn-row { display:flex; flex-wrap:wrap; gap:2px; align-items:center; }
+    .ia-action-btn {
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap:2px;
+        min-height:18px;
+        padding:0 4px;
+        border-radius:3px;
+        border:1px solid transparent;
+        font-size:8px;
+        font-weight:600;
+        line-height:1;
+        white-space:nowrap;
+        transition:background .15s ease,border-color .15s ease,box-shadow .15s ease;
+        box-shadow:0 1px 1px rgba(15,23,42,.04);
+    }
+    .ia-action-btn:hover { box-shadow:0 1px 3px rgba(15,23,42,.07); }
+    .ia-action-btn:active { box-shadow:none; }
+    .ia-action-btn:disabled { opacity:.65; cursor:not-allowed; box-shadow:none; }
+    .ia-action-btn--manage {
+        width:100%;
+        background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);
+        border-color:#1d4ed8;
+        color:#fff !important;
+    }
+    .ia-action-btn--manage i { font-size:7px; }
+    .ia-action-btn--manage:hover { background:linear-gradient(135deg,#1d4ed8 0%,#1e40af 100%); color:#fff !important; }
+    .ia-action-btn--icon { width:18px; height:18px; min-height:18px; padding:0; flex:0 0 18px; font-size:8px; }
+    .ia-action-btn--drop { background:#fffbeb; border-color:#fbbf24; color:#92400e !important; }
+    .ia-action-btn--drop:hover { background:#fef3c7; border-color:#f59e0b; color:#78350f !important; }
+    .ia-action-btn--inactivate { background:#fef2f2; border-color:#f87171; color:#b91c1c !important; }
+    .ia-action-btn--inactivate:hover { background:#fee2e2; border-color:#ef4444; color:#991b1b !important; }
+    .ia-action-btn--reactivate { background:#ecfdf5; border-color:#34d399; color:#047857 !important; }
+    .ia-action-btn--reactivate:hover { background:#d1fae5; border-color:#10b981; color:#065f46 !important; }
+    .ia-action-btn--delete { background:#fff1f2; border-color:#fb7185; color:#be123c !important; }
+    .ia-action-btn--delete:hover { background:#ffe4e6; border-color:#f43f5e; color:#9f1239 !important; }
+    .ia-badge-dropped { display:inline-flex; align-items:center; justify-content:center; min-height:18px; width:100%; font-size:7px !important; font-weight:600; padding:0.15em 0.3em !important; border-radius:3px; }
 
-    .col-num { width:34px; } .col-date { width:108px; white-space:nowrap; } .col-email { width:170px; max-width:200px; }
-    .col-name { max-width:140px; } .col-job { min-width:100px; max-width:160px; }
-    .col-phone { width:110px; white-space:nowrap; }
-    .col-intent-summary { min-width:120px; max-width:220px; } .col-status { width:100px; white-space:nowrap; }
-    .col-actions { width:100px; white-space:nowrap; }
-    .col-employed { width:80px; white-space:nowrap; }
+    .ia-table-card, .ia-table-card .card-body { overflow:visible; }
+
+    #main-panel .content.client .container-fluid { min-width:0; overflow:visible; }
+
+    .col-num { width:42px; } .col-date { width:112px; white-space:nowrap; } .col-email { width:168px; }
+    .col-name { width:148px; } .col-job { width:132px; }
+    .col-phone { width:108px; white-space:nowrap; }
+    .col-intent-summary { width:210px; min-width:210px; }
+    .col-source { width:96px; min-width:96px; white-space:normal; }
+    .ia-source-stack { display:flex; flex-direction:column; align-items:flex-start; gap:4px; line-height:1.35; }
+    .col-status { width:108px; white-space:normal; }
+    .col-employed { width:72px; white-space:nowrap; }
+    .col-active { width:64px; white-space:nowrap; text-align:center; }
 
     .col-company {
-        min-width: 100px;
-        max-width: 180px;
+        width:120px;
+        min-width:120px;
         word-break: break-word;
         overflow-wrap: anywhere;
         line-height: 1.35;
-        hyphens: auto;
-        width: 16px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        white-space: normal;
     }
 
     .mgm-header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); color:#fff; border:0; padding:1rem 1.25rem; flex-wrap:wrap; gap:0.75rem; align-items:flex-start; }
@@ -136,8 +182,9 @@
     .mgm-header .mgm-record-pill { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:8px; padding:0.35rem 0.75rem; text-align:right; }
     .mgm-header .mgm-record-pill .lbl { font-size:11px; opacity:.75; letter-spacing:.02em; }
     .mgm-header .mgm-record-pill .num { font-size:13px; font-weight:700; }
-    #manageModal .modal-content { border:none; border-radius:12px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,.18),0 0 1px rgba(0,0,0,.08); }
-    #manageModal .modal-body { font-size:12.5px; background:#fafbfc; }
+    #manageModal .modal-content { border:none; border-radius:12px; overflow:visible; box-shadow:0 12px 40px rgba(0,0,0,.18),0 0 1px rgba(0,0,0,.08); }
+    #manageModal .modal-dialog { overflow:visible; }
+    #manageModal .modal-body { font-size:12.5px; background:#fafbfc; overflow:visible; }
     .mgm-meta { font-size:12.5px; color:#6c757d; }
     .mgm-meta strong { color:#212529; }
     .mgm-section-title { font-size:12px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
@@ -164,7 +211,6 @@
     .mgm-footer .btn-refresh-manage:hover { background:#f8f9fa; border-color:#adb5bd; color:#212529; }
     .ia-page-refresh { font-size:12px !important; font-weight:600; padding:0.4rem 0.9rem !important; border-radius:8px !important; border:1px solid #9fd89f !important; background:linear-gradient(180deg,#e8f8e8 0%,#d4edda 100%) !important; color:#0f5132 !important; box-shadow:0 1px 3px rgba(25,135,84,.12); }
     .ia-page-refresh:hover { background:#d1e7dd !important; border-color:#75b879 !important; color:#0a3622 !important; }
-    .ia-badge-dropped { font-size:11px !important; font-weight:600; padding:0.35em 0.55em !important; border-radius:6px; }
     .mgm-action-btn:disabled { opacity:.88; cursor:not-allowed; }
     .mgm-result-block { font-size:12px; margin-top:8px; padding:8px 12px; border-radius:6px; background:#f8f9fa; border:1px solid #e9ecef; max-height:200px; overflow-y:auto; }
     .mgm-footer { border-top:1px solid #e9ecef; background:#fafbfc; }
@@ -208,10 +254,10 @@
     #historyModal .hm-footer-btn { font-size:12px; font-weight:600; padding:5px 14px; border-radius:6px; color:#475569; background:#fff; border:1px solid #cbd5e1; }
     #historyModal .hm-footer-btn:hover { background:#f1f5f9; border-color:#94a3b8; color:#1e293b; }
 
-    .mag-edit-wrap { display:inline-flex; align-items:center; gap:4px; position:relative; }
+    .mag-edit-wrap { display:inline-flex; align-items:center; gap:4px; position:relative; max-width:100%; flex-wrap:wrap; }
     .mag-edit-btn { background:none; border:none; color:#6c757d; cursor:pointer; padding:2px 4px; font-size:12px; }
     .mag-edit-btn:hover { color:#0d6efd; }
-    .mag-dropdown-container { position:absolute; top:100%; left:0; z-index:1060; width:350px; background:#fff; border:1px solid #dee2e6; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.12); display:none; }
+    .mag-dropdown-container { position:absolute; top:calc(100% + 4px); left:0; z-index:1090; width:min(350px,calc(100vw - 2rem)); background:#fff; border:1px solid #dee2e6; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.16); display:none; }
     .mag-dropdown-container.open { display:block; }
     .mag-dropdown-search { width:100%; border:none; border-bottom:1px solid #dee2e6; padding:8px 12px; font-size:12px; outline:none; border-radius:8px 8px 0 0; }
     .mag-dropdown-list { max-height:200px; overflow-y:auto; margin:0; padding:4px 0; list-style:none; }
@@ -269,56 +315,57 @@
                 <form asp-action="Index" asp-controller="InterviewerAvailability" method="get" id="filterForm">
                     <input type="hidden" name="page" value="1" />
                     <input type="hidden" name="pageSize" value="@pageSize" />
-                    <div class="card border-0 shadow-sm mb-3">
+                    <div class="card border-0 shadow-sm mb-3 ia-filter-card">
                         <div class="card-body py-2 px-3">
-                            <div class="d-flex align-items-center gap-2" style="flex-wrap:wrap;width:100%;">
-                                <select name="status" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                            <div class="ia-filter-grid">
+                                <select name="status" class="form-select ia-filter-control" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All statuses</option>
                                     @if (selStatus == "Open") { <option value="Open" selected>Open</option> } else { <option value="Open">Open</option> }
                                     @if (selStatus == "InProgress") { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option> }
                                     @if (selStatus == "Closed") { <option value="Closed" selected>Closed</option> } else { <option value="Closed">Closed</option> }
                                 </select>
-                                <select name="resumeFitment" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                <select name="resumeFitment" class="form-select ia-filter-control" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All fitment</option>
                                     @if (selFitment == "Strong Fit") { <option value="Strong Fit" selected>Strong Fit</option> } else { <option value="Strong Fit">Strong Fit</option> }
                                     @if (selFitment == "Moderate Fit") { <option value="Moderate Fit" selected>Moderate Fit</option> } else { <option value="Moderate Fit">Moderate Fit</option> }
                                     @if (selFitment == "Weak Fit") { <option value="Weak Fit" selected>Weak Fit</option> } else { <option value="Weak Fit">Weak Fit</option> }
                                     @if (selFitment == "N/A") { <option value="N/A" selected>N/A</option> } else { <option value="N/A">N/A</option> }
                                 </select>
-                                <select name="source" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                <select name="source" class="form-select ia-filter-control" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All sources</option>
                                     @if (selSource == "Relay") { <option value="Relay" selected>Relay</option> } else { <option value="Relay">Relay</option> }
                                     @if (selSource == "BatchCall") { <option value="BatchCall" selected>Batch Call</option> } else { <option value="BatchCall">Batch Call</option> }
                                     @if (selSource == "IRFAutoCall") { <option value="IRFAutoCall" selected>IRF Auto-Call</option> } else { <option value="IRFAutoCall">IRF Auto-Call</option> }
                                     @if (selSource == "Campaign") { <option value="Campaign" selected>Campaign</option> } else { <option value="Campaign">Campaign</option> }
                                 </select>
-                                <select name="autoClosed" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                <select name="autoClosed" class="form-select ia-filter-control" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">Auto-closed?</option>
                                     @if (selAutoClosed == "yes") { <option value="yes" selected>Yes</option> } else { <option value="yes">Yes</option> }
                                     @if (selAutoClosed == "no") { <option value="no" selected>No</option> } else { <option value="no">No</option> }
                                 </select>
-                                <select name="activeStatus" class="form-select ia-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                <select name="activeStatus" class="form-select ia-filter-control" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All interviewers</option>
                                     @if (selActiveStatus == "active") { <option value="active" selected>Active</option> } else { <option value="active">Active</option> }
                                     @if (selActiveStatus == "inactive") { <option value="inactive" selected>Inactive</option> } else { <option value="inactive">Inactive</option> }
                                 </select>
-                                <select name="recentlyAvailable" class="form-select ia-filter-control" style="flex:1 1 0;min-width:130px;max-width:160px;" onchange="document.getElementById('filterForm').submit()">
+                                <select name="recentlyAvailable" class="form-select ia-filter-control" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">Availability (48h)</option>
                                     @if (selRecentlyAvailable == "yes") { <option value="yes" selected>Recently available</option> } else { <option value="yes">Recently available</option> }
                                     @if (selRecentlyAvailable == "no") { <option value="no" selected>Not recently available</option> } else { <option value="no">Not recently available</option> }
                                 </select>
-                                <input type="text" name="senderEmail" class="form-control ia-filter-control" placeholder="Sender email..." style="flex:1 1 0;min-width:130px;" value="@selEmail" />
-                                <input type="date" name="dateFrom" class="form-control ia-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
-                                <span class="text-muted flex-shrink-0" style="font-size:11px;">–</span>
-                                <input type="date" name="dateTo" class="form-control ia-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateTo" onchange="document.getElementById('filterForm').submit()" />
-                                <button style="background:#07363c4f !important;border:0px;padding:7px 10px;" type="submit" class="btn btn-primary btn-sm flex-shrink-0"><i class="fas fa-filter me-1"></i>Apply</button>
-                                <a style="padding:7px 10px!important;border:0px;background:#da7c7c !important;color:#fff" asp-action="Index" asp-controller="InterviewerAvailability" class="btn btn-sm btn-outline-secondary flex-shrink-0"><i class="fas fa-times me-1"></i>Clear</a>
+                                <input type="text" name="senderEmail" class="form-control ia-filter-control ia-filter-field--wide" placeholder="Sender email..." value="@selEmail" />
+                                <input type="date" name="dateFrom" class="form-control ia-filter-control" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
+                                <input type="date" name="dateTo" class="form-control ia-filter-control" value="@selDateTo" onchange="document.getElementById('filterForm').submit()" />
+                                <div class="ia-filter-actions">
+                                    <button style="background:#07363c4f !important;border:0px;padding:7px 10px;" type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter me-1"></i>Apply</button>
+                                    <a style="padding:7px 10px!important;border:0px;background:#da7c7c !important;color:#fff" asp-action="Index" asp-controller="InterviewerAvailability" class="btn btn-sm btn-outline-secondary"><i class="fas fa-times me-1"></i>Clear</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </form>
 
-                <div class="card shadow-sm border-0">
+                <div class="card shadow-sm border-0 ia-table-card">
                     <div class="card-body p-0">
                         @if (!Model.Any())
                         {
@@ -336,7 +383,7 @@
                                             <th class="col-num">#</th><th class="col-date">Received</th><th class="col-email">Email</th>
                                             <th class="col-name">Name</th><th class="col-phone">Phone</th><th class="col-job">Job Title</th>
                                             <th class="col-employed">Employed</th><th class="col-company">Company</th>
-                                            <th class="col-intent-summary">Intent</th><th class="col-source" style="min-width:75px;">Source</th><th style="width:70px;white-space:nowrap;">Active</th><th class="col-status">Status</th><th class="col-actions">Actions</th>
+                                            <th class="col-intent-summary">Intent</th><th class="col-source">Source</th><th class="col-active">Active</th><th class="col-status">Status</th><th class="col-actions">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -394,18 +441,38 @@
                                                             _ => uIntent
                                                         };
                                                         string uSrcIcon = (r.IntentSource ?? "") switch {
-                                                            "Call"  => "<i class='fas fa-phone-alt' title='From voice call' style='font-size:8px;margin-left:3px;opacity:.7;'></i>",
-                                                            "Email" => "<i class='fas fa-envelope' title='From email reply' style='font-size:8px;margin-left:3px;opacity:.7;'></i>",
+                                                            "Call"  => "<i class='fas fa-phone-alt' title='From voice call' style='font-size:8px;opacity:.75;'></i>",
+                                                            "Email" => "<i class='fas fa-envelope' title='From email reply' style='font-size:8px;opacity:.75;'></i>",
                                                             _ => ""
                                                         };
+                                                        bool hasIntentSummary = !string.IsNullOrWhiteSpace(r.AvailabilityIntent) || !string.IsNullOrWhiteSpace(r.MailBodyIntent);
+                                                        bool hasIntentBadge = !string.IsNullOrWhiteSpace(uIntent);
                                                     }
-                                                    @if (!string.IsNullOrWhiteSpace(uIntent))
+                                                    @if (hasIntentSummary || hasIntentBadge)
                                                     {
-                                                        <span class="intent-badge" style="@uIntentCss font-weight:600;">@uIntentLabel@Html.Raw(uSrcIcon)</span>
+                                                        <div class="ia-intent-stack">
+                                                            @if (hasIntentSummary)
+                                                            {
+                                                                <div class="ia-intent-stack__summary">
+                                                                    @if (!string.IsNullOrWhiteSpace(r.AvailabilityIntent))
+                                                                    {
+                                                                        <span class="mail-preview-text">@r.AvailabilityIntent</span>
+                                                                    }
+                                                                    @if (!string.IsNullOrWhiteSpace(r.MailBodyIntent))
+                                                                    {
+                                                                        <span class="ia-intent-mail-tag">@r.MailBodyIntent</span>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                            @if (hasIntentBadge)
+                                                            {
+                                                                <div class="ia-intent-stack__badges">
+                                                                    <span class="intent-badge" style="@uIntentCss">@uIntentLabel@Html.Raw(uSrcIcon)</span>
+                                                                </div>
+                                                            }
+                                                        </div>
                                                     }
-                                                    @if (!string.IsNullOrWhiteSpace(r.MailBodyIntent)) { <span class="intent-badge bg-light border mt-1" style="font-size:10px;">@r.MailBodyIntent</span> }
-                                                    @if (!string.IsNullOrWhiteSpace(r.AvailabilityIntent)) { <div class="mail-preview-text mt-1" style="-webkit-line-clamp:2;">@r.AvailabilityIntent</div> }
-                                                    @if (string.IsNullOrWhiteSpace(uIntent) && string.IsNullOrWhiteSpace(r.MailBodyIntent) && string.IsNullOrWhiteSpace(r.AvailabilityIntent))
+                                                    else
                                                     {
                                                         <span class="text-muted">—</span>
                                                     }
@@ -427,13 +494,15 @@
                                                             _ => string.IsNullOrEmpty(srcVal) ? "—" : srcVal
                                                         };
                                                     }
-                                                    <span style="@srcBadge font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;white-space:nowrap;">@srcLabel</span>
+                                                    <div class="ia-source-stack">
+                                                    <span style="@srcBadge font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;white-space:nowrap;display:inline-block;">@srcLabel</span>
                                                     @if (r.IsAutoClosed == true)
                                                     {
-                                                        <br /><span style="font-size:9px;color:#059669;font-weight:600;" title="Auto-closed by @(r.AutoClosedBy ?? "System")@(r.AutoClosedAt.HasValue ? " at " + r.AutoClosedAt.Value.ToString("dd MMM yy, HH:mm") : "")"><i class="fas fa-bolt"></i> Auto-closed</span>
+                                                        <span style="font-size:9px;color:#059669;font-weight:600;" title="Auto-closed by @(r.AutoClosedBy ?? "System")@(r.AutoClosedAt.HasValue ? " at " + r.AutoClosedAt.Value.ToString("dd MMM yy, HH:mm") : "")"><i class="fas fa-bolt"></i> Auto-closed</span>
                                                     }
+                                                    </div>
                                                 </td>
-                                                <td style="font-size:11px;text-align:center;">
+                                                <td class="col-active" style="font-size:11px;">
                                                     @if (r.IsInterviewerActive)
                                                     {
                                                         <span style="color:#059669;font-weight:600;" title="Interviewer is active"><i class="fas fa-check-circle"></i> Yes</span>
@@ -472,51 +541,62 @@
                                                     @if (r.AssessmentGroupId.HasValue) { <span style="font-size:9px;" class="text-primary"><i class="fas fa-users"></i> AG</span> }
                                                 </td>
                                                 <td class="col-actions">
-                                                    <div class="action-btns d-flex align-items-center flex-wrap gap-1">
+                                                    <div class="ia-action-toolbar">
                                                         <button type="button" title="Manage — review, verify &amp; assign"
-                                                                class="btn btn-primary btn-manage-record"
+                                                                class="ia-action-btn ia-action-btn--manage btn-manage-record"
                                                                 data-record-id="@r.Id">
-                                                            <i class="fas fa-bars me-1"></i>Manage
+                                                            <i class="fas fa-clipboard-list" aria-hidden="true"></i><span>Manage</span>
                                                         </button>
-                                                        @if (r.InterviewerProfileId.HasValue && canDrop)
-                                                        {
-                                                            <button type="button" title="Drop profile — mark interviewer unavailable"
-                                                                    class="btn btn-warning btn-sm btn-drop-profile"
-                                                                    data-record-id="@r.Id"
-                                                                    aria-label="Drop profile">
-                                                                <i class="fas fa-user-slash"></i>
-                                                            </button>
+                                                        @{
+                                                            var iaHasSecondaryActions = (r.InterviewerProfileId.HasValue && canDrop)
+                                                                || (r.UserId.HasValue && canDrop)
+                                                                || canDelete;
                                                         }
-                                                        @if (r.UserId.HasValue && canDrop)
+                                                        @if (iaHasSecondaryActions)
                                                         {
-                                                            @if (r.IsInterviewerActive)
-                                                            {
-                                                                <button type="button" title="Inactivate interviewer"
-                                                                        class="btn btn-sm btn-inactivate-interviewer"
-                                                                        style="background:#dc3545;color:#fff;border:none;padding:2px 6px;"
-                                                                        data-record-id="@r.Id"
-                                                                        data-interviewer-name="@(r.InterviewerName ?? r.InterviewerNickName ?? r.SenderEmail)">
-                                                                    <i class="fas fa-user-times" style="font-size:11px;"></i>
-                                                                </button>
-                                                            }
-                                                            else if (canReactivate)
-                                                            {
-                                                                <button type="button" title="Reactivate interviewer"
-                                                                        class="btn btn-sm btn-reactivate-interviewer"
-                                                                        style="background:#28a745;color:#fff;border:none;padding:2px 6px;"
-                                                                        data-record-id="@r.Id"
-                                                                        data-interviewer-name="@(r.InterviewerName ?? r.InterviewerNickName ?? r.SenderEmail)">
-                                                                    <i class="fas fa-user-check" style="font-size:11px;"></i>
-                                                                </button>
-                                                            }
-                                                        }
-                                                        @if (canDelete)
-                                                        {
-                                                            <button type="button" title="Delete this record"
-                                                                    class="btn btn-danger btn-sm btn-delete-record"
-                                                                    data-record-id="@r.Id">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
+                                                            <div class="ia-action-btn-row">
+                                                                @if (r.InterviewerProfileId.HasValue && canDrop)
+                                                                {
+                                                                    <button type="button" title="Drop profile — mark interviewer unavailable"
+                                                                            class="ia-action-btn ia-action-btn--icon ia-action-btn--drop btn-drop-profile"
+                                                                            data-record-id="@r.Id"
+                                                                            aria-label="Drop profile">
+                                                                        <i class="fas fa-user-slash" aria-hidden="true"></i>
+                                                                    </button>
+                                                                }
+                                                                @if (r.UserId.HasValue && canDrop)
+                                                                {
+                                                                    @if (r.IsInterviewerActive)
+                                                                    {
+                                                                        <button type="button" title="Inactivate interviewer"
+                                                                                class="ia-action-btn ia-action-btn--icon ia-action-btn--inactivate btn-inactivate-interviewer"
+                                                                                data-record-id="@r.Id"
+                                                                                data-interviewer-name="@(r.InterviewerName ?? r.InterviewerNickName ?? r.SenderEmail)"
+                                                                                aria-label="Inactivate interviewer">
+                                                                            <i class="fas fa-user-times" aria-hidden="true"></i>
+                                                                        </button>
+                                                                    }
+                                                                    else if (canReactivate)
+                                                                    {
+                                                                        <button type="button" title="Reactivate interviewer"
+                                                                                class="ia-action-btn ia-action-btn--icon ia-action-btn--reactivate btn-reactivate-interviewer"
+                                                                                data-record-id="@r.Id"
+                                                                                data-interviewer-name="@(r.InterviewerName ?? r.InterviewerNickName ?? r.SenderEmail)"
+                                                                                aria-label="Reactivate interviewer">
+                                                                            <i class="fas fa-user-check" aria-hidden="true"></i>
+                                                                        </button>
+                                                                    }
+                                                                }
+                                                                @if (canDelete)
+                                                                {
+                                                                    <button type="button" title="Delete this record"
+                                                                            class="ia-action-btn ia-action-btn--icon ia-action-btn--delete btn-delete-record"
+                                                                            data-record-id="@r.Id"
+                                                                            aria-label="Delete record">
+                                                                        <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                                                                    </button>
+                                                                }
+                                                            </div>
                                                         }
                                                     </div>
                                                 </td>
@@ -1118,16 +1198,24 @@
     $('#btnEditMag').on('click', function (e) {
         e.stopPropagation();
         var $dd = $('#magDropdownContainer');
-        if ($dd.hasClass('open')) { $dd.removeClass('open'); return; }
+        if ($dd.hasClass('open')) { $dd.removeClass('open').css({ top: '', bottom: '', maxHeight: '' }); return; }
         loadMags(function () {
             renderMagList('');
-            $dd.addClass('open');
+            $dd.addClass('open').css({ top: 'calc(100% + 4px)', bottom: 'auto', maxHeight: '' });
+            var rect = $dd[0].getBoundingClientRect();
+            var listMax = Math.min(240, window.innerHeight - rect.top - 16);
+            if (listMax < 120) {
+                $dd.css({ top: 'auto', bottom: 'calc(100% + 4px)' });
+                rect = $dd[0].getBoundingClientRect();
+                listMax = Math.min(240, rect.top - 16);
+            }
+            $('#magDropdownList').css('max-height', Math.max(120, listMax) + 'px');
             $('#magSearchInput').val('').focus();
         });
     });
 
     $(document).on('click', function (e) {
-        if (!$(e.target).closest('.mag-edit-wrap').length) $('#magDropdownContainer').removeClass('open');
+        if (!$(e.target).closest('.mag-edit-wrap').length) $('#magDropdownContainer').removeClass('open').css({ top: '', bottom: '', maxHeight: '' });
     });
 
     $('#magSearchInput').on('input', function () { renderMagList($(this).val()); });
