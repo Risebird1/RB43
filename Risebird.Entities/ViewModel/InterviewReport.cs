@@ -509,6 +509,12 @@ namespace Risebird.Entities.ViewModel
         public string IRFId { get; set; }
         public string BillingOwner { get; set; }
         public int BillingType { get; set; }
+        /// <summary>1=Client, 2=Skill Channel, 3=Interviewer</summary>
+        public int InterviewerBillingType { get; set; }
+        /// <summary>e.g. INR, USD — defaults to INR if not set on client</summary>
+        public string BillingCurrency { get; set; }
+        /// <summary>Pre-computed amount from SQL using the correct rate source and Turing 30% rule</summary>
+        public decimal BaseAmount { get; set; }
         public int CurrentStatus { get; set; }
         public int POPendingAmount { get; set; }
         public int InvoiceAmount { get; set; }
