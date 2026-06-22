@@ -715,6 +715,42 @@ namespace Risebird.Web.Controllers
 
 
         [HttpGet]
+        public async Task<IActionResult> HoldPayment()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SupportAdmin")
+                    {
+                        if (TempData["MessageInterviewer"] != null)
+                        {
+                            ViewBag.Message = TempData["MessageInterviewer"].ToString();
+                            TempData.Remove("MessageInterviewer");
+                        }
+                        var model = await _interviewerService.GetHoldPaymentInterviewers();
+                        return View("HoldPayment", model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> EditApplicant(int applicantId, bool showAddToSkillChannelOption)
         {
             try
