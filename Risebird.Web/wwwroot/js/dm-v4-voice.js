@@ -141,12 +141,22 @@
 
     window.dmV4ApplyVoiceRecordingToHero = applyVoiceRecordingToHero;
 
+    function getVoiceTranscriptForRubric() {
+        return ($('#dmV4VoiceTranscriptInput').val() || $('#dmV4ModalTranscriptInput').val() || '').trim();
+    }
+
     /**
-     * Calls /IRF/GenerateRubricFromVoice (reads saved transcript from DB by irfId).
+     * Calls /IRF/GenerateRubricFromVoice (uses transcript from the page; server auto-saves it).
      * Returns a jQuery promise.
      */
     function callGenerateRubricFromVoice(irfId, $btn) {
         clearRubricRegenErrors();
+
+        var transcript = getVoiceTranscriptForRubric();
+        if (!transcript) {
+            showRubricRegenError('Save a voice transcript first (record audio and transcribe, or enter text manually).');
+            return $.Deferred().reject({ message: 'Missing transcript' }).promise();
+        }
 
         if ($btn && $btn.length) {
             $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Regenerating rubric…');
@@ -155,7 +165,7 @@
         return $.ajax({
             type: 'POST',
             url: '/IRF/GenerateRubricFromVoice',
-            data: { irfId: irfId },
+            data: { irfId: irfId, transcript: transcript },
             timeout: 300000
         }).then(function (rubricRes) {
             if (rubricRes && rubricRes.success) {

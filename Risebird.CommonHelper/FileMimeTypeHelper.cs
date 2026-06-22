@@ -1,4 +1,4 @@
-﻿using FileTypeInterrogator;
+using FileTypeInterrogator;
 using Microsoft.AspNetCore.Http;
 using Risebird.CommonHelper.Interface;
 using System;
@@ -23,7 +23,7 @@ namespace Risebird.CommonHelper
             }
 
             FileTypeInfo fileTypeInfo = interrogator.DetectType(fileBytes);
-            return fileTypeInfo.MimeType.ToLower();
+            return fileTypeInfo?.MimeType?.ToLower() ?? string.Empty;
         }
 
         public string GetFileMimeTypeFromByteArray(byte[] fileBytes)
@@ -34,7 +34,7 @@ namespace Risebird.CommonHelper
             IFileTypeInterrogator interrogator = new FileTypeInterrogator.FileTypeInterrogator();
             FileTypeInfo fileTypeInfo = interrogator.DetectType(fileBytes);
 
-            return fileTypeInfo.MimeType.ToLower();
+            return fileTypeInfo?.MimeType?.ToLower() ?? string.Empty;
         }
     }
 }
