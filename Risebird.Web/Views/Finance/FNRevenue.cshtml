@@ -15,10 +15,12 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Revenue</h4></div>
-                    <div>
-                        <label id="txtAmount" style="padding:0 0 0 0">Total Revenue: @ViewBag.TotalRevenue </label> |
-                        <label id="txtTdsdeducted" style="padding:0 0 0 0">Total Pending Invoice Amount: @ViewBag.PendingInvoiceAmount</label> |
-                        <label id="txtPayableAmount" style="padding:0 0 0 0">Total Invoice Raised Amount: @ViewBag.InvoiceAmount</label>
+                    <div style="font-size:11px;line-height:1.8;">
+                        <label id="txtAmount" style="padding:0;">Total Revenue: @ViewBag.TotalRevenue</label> |
+                        <label id="txtTdsdeducted" style="padding:0;">Total Pending Invoice Amount: @ViewBag.PendingInvoiceAmount</label> |
+                        <label id="txtPayableAmount" style="padding:0;">Total Invoice Raised Amount: @ViewBag.InvoiceAmount</label> |
+                        <label id="txtSystemInvoice" style="padding:0;">Total System Invoice Amount: @ViewBag.TotalSystemInvoiceAmount</label> |
+                        <label id="txtPendingAmount" style="padding:0;">Pending Amount: @ViewBag.PendingAmount</label>
                     </div>
                 </div>
                 <input type="hidden" value="@ViewBag.RevenueMonth" id="hiddrevenuemonth" />
@@ -26,7 +28,7 @@
                 <input type="hidden" value="@ViewBag.FromYear"    id="hidFromYear" />
                 <input type="hidden" value="@ViewBag.ToMonth"     id="hidToMonth" />
                 <input type="hidden" value="@ViewBag.ToYear"      id="hidToYear" />
-                <div class="pull-right client-ms">
+                <div class="pull-right client-ms" style="padding-top:10px">
                     <!-- Range toggle -->
                     <label style="font-size:12px;margin-right:4px;vertical-align:middle;">Range</label>
                     <input type="checkbox" id="chkRange" style="vertical-align:middle;margin-right:8px;" @(ViewBag.IsRangeMode == true ? "checked" : "") onchange="ToggleRangeMode()" />

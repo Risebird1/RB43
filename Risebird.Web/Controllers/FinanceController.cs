@@ -2809,13 +2809,17 @@ namespace Risebird.Web.Controllers
                     ViewBag.TotalRevenue = totalamount;
                     if (model != null)
                     {
-                        ViewBag.PendingInvoiceAmount = model.Sum(x => x.GeneratedInvoiceAmount) - model.Sum(x => x.ReceivedAmount);
-                        ViewBag.InvoiceAmount = model.Sum(x => x.GeneratedInvoiceAmount);
+                        ViewBag.PendingInvoiceAmount       = model.Sum(x => x.GeneratedInvoiceAmount) - model.Sum(x => x.ReceivedAmount);
+                        ViewBag.InvoiceAmount              = model.Sum(x => x.GeneratedInvoiceAmount);
+                        ViewBag.TotalSystemInvoiceAmount   = model.Sum(x => x.SystemInvoiceAmount);
+                        ViewBag.PendingAmount              = model.Sum(x => x.SystemInvoiceAmount) - model.Sum(x => x.ReceivedAmount);
                     }
                     else
                     {
-                        ViewBag.PendingInvoiceAmount = 0;
-                        ViewBag.InvoiceAmount = 0;
+                        ViewBag.PendingInvoiceAmount       = 0;
+                        ViewBag.InvoiceAmount              = 0;
+                        ViewBag.TotalSystemInvoiceAmount   = 0;
+                        ViewBag.PendingAmount              = 0;
                     }
                     if (TempData["RevenueMessage"] != null)
                     {
