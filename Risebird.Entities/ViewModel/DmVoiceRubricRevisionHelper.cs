@@ -120,8 +120,30 @@ namespace Risebird.Entities.ViewModel
             return rawJson;
         }
 
-        public static RubricSchema DeserializeRubricSchema(string rawJson) =>
-            string.IsNullOrWhiteSpace(rawJson) ? null : JsonConvert.DeserializeObject<RubricSchema>(rawJson);
+        public static RubricSchema DeserializeRubricSchema(string rawJson)
+        {
+            if (string.IsNullOrWhiteSpace(rawJson)) return null;
+
+            var model = JsonConvert.DeserializeObject<RubricSchema>(rawJson);
+            if (model?.Rubric != null && model.Rubric.Count > 0)
+                return model;
+
+            try
+            {
+                var root = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(rawJson);
+                var rubricToken = root?["Rubric"] ?? root?["rubric"];
+                if (rubricToken == null) return model;
+
+                var skills = rubricToken.ToObject<List<RubricSkill>>();
+                if (skills == null || skills.Count == 0) return model;
+
+                return new RubricSchema { Rubric = skills };
+            }
+            catch
+            {
+                return model;
+            }
+        }
 
         public static List<TransSkill> ToTransSkills(RubricSchema model, int irfId)
         {
@@ -262,18 +284,28 @@ namespace Risebird.Entities.ViewModel
             string voiceTranscript,
             WeightNormalizationResult weightNormalization = null)
         {
+            var current = GetScoreRubricSkills(currentSkills).ToList();
+            var revised = GetScoreRubricSkills(revisedSkills).ToList();
+            diff ??= new RubricRevisionDiff();
+
+            var structurallyEqual = AreRubricsSemanticallyEqual(current, revised);
+            var changed = diff.HasChanges || !structurallyEqual;
+
+            if (changed && !diff.HasChanges)
+                diff.Modified.Add("Rubric details updated from voice instruction.");
+
             var outcome = new VoiceRubricRevisionOutcome
             {
                 RevisedSkills = revisedSkills ?? new List<TransSkill>(),
-                Diff = diff ?? new RubricRevisionDiff(),
-                Changed = diff != null && diff.HasChanges,
+                Diff = diff,
+                Changed = changed,
                 WeightsAdjusted = weightNormalization?.Adjusted == true
             };
 
             if (!outcome.Changed)
             {
                 outcome.Message = BuildNoChangeMessage(voiceTranscript);
-                outcome.RevisedSkills = GetScoreRubricSkills(currentSkills).ToList();
+                outcome.RevisedSkills = current;
                 foreach (var s in outcome.RevisedSkills)
                 {
                     s.IRFId = revisedSkills?.FirstOrDefault()?.IRFId ?? s.IRFId;
@@ -286,6 +318,16 @@ namespace Risebird.Entities.ViewModel
             return outcome;
         }
 
+        public static bool AreRubricsSemanticallyEqual(
+            IEnumerable<TransSkill> before,
+            IEnumerable<TransSkill> after)
+        {
+            return string.Equals(
+                BuildRubricFingerprint(before),
+                BuildRubricFingerprint(after),
+                StringComparison.Ordinal);
+        }
+
         public static string BuildNoChangeMessage(string voiceTranscript)
         {
             var t = (voiceTranscript ?? string.Empty).Trim();
@@ -295,7 +337,7 @@ namespace Risebird.Entities.ViewModel
             if (!LooksLikeRubricInstruction(t))
                 return "No rubric-relevant instructions detected in the voice brief.";
 
-            return "No changes applied. Try being more specific in the voice instruction.";
+            return "No changes were needed — the rubric already matches your voice instruction.";
         }
 
         public static string BuildChangedMessage(
@@ -471,15 +513,75 @@ namespace Risebird.Entities.ViewModel
         private static string DescribeSkillChanges(TransSkill prev, TransSkill next)
         {
             var parts = new List<string>();
-            var prevLevel = ResolveLevelName(prev);
-            var nextLevel = ResolveLevelName(next);
+            var prevLevel = ResolveLevelKey(prev);
+            var nextLevel = ResolveLevelKey(next);
             if (!string.Equals(prevLevel, nextLevel, StringComparison.OrdinalIgnoreCase))
-                parts.Add($"level {prevLevel} → {nextLevel}");
+            {
+                if (string.IsNullOrEmpty(prevLevel))
+                    parts.Add($"level set to {nextLevel}");
+                else if (string.IsNullOrEmpty(nextLevel))
+                    parts.Add($"level cleared from {prevLevel}");
+                else
+                    parts.Add($"level {prevLevel} → {nextLevel}");
+            }
+
             if (prev.Weightage != next.Weightage)
                 parts.Add($"weight {prev.Weightage}% → {next.Weightage}%");
             if (prev.isEliminationskill != next.isEliminationskill)
                 parts.Add(next.isEliminationskill ? "marked elimination" : "elimination removed");
+            if (EffectiveTimelimit(prev) != EffectiveTimelimit(next))
+                parts.Add($"time {EffectiveTimelimit(prev)}m → {EffectiveTimelimit(next)}m");
+            if (!string.Equals(NormalizeConcepts(prev.Concepts), NormalizeConcepts(next.Concepts), StringComparison.Ordinal))
+                parts.Add("concepts updated");
+            if (!string.Equals(NormalizeFreeText(prev.Natureofquestion), NormalizeFreeText(next.Natureofquestion), StringComparison.Ordinal))
+                parts.Add("expectations updated");
             return string.Join(", ", parts);
+        }
+
+        private static string ResolveLevelKey(TransSkill skill)
+        {
+            if (skill != null && skill.LevelId > 0 && System.Enum.IsDefined(typeof(LevelTechEnum), skill.LevelId))
+                return System.Enum.GetName(typeof(LevelTechEnum), skill.LevelId);
+            if (!string.IsNullOrWhiteSpace(skill?.LevelName))
+                return skill.LevelName.Trim();
+            return string.Empty;
+        }
+
+        private static int EffectiveTimelimit(TransSkill skill) =>
+            skill != null && skill.Timelimit > 0 ? skill.Timelimit : 10;
+
+        private static string NormalizeConcepts(string concepts)
+        {
+            if (string.IsNullOrWhiteSpace(concepts)) return string.Empty;
+            return string.Join("|", SplitConcepts(concepts)
+                .Select(c => c.ToLowerInvariant())
+                .OrderBy(c => c, StringComparer.Ordinal));
+        }
+
+        private static string NormalizeFreeText(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return string.Empty;
+            return string.Join(" ", text.Trim()
+                    .Split((char[])null, StringSplitOptions.RemoveEmptyEntries))
+                .ToLowerInvariant();
+        }
+
+        private static string BuildRubricFingerprint(IEnumerable<TransSkill> skills)
+        {
+            var payload = GetScoreRubricSkills(skills)
+                .OrderBy(s => s.SkillName?.Trim() ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+                .Select(s => new
+                {
+                    name = (s.SkillName ?? string.Empty).Trim().ToLowerInvariant(),
+                    level = ResolveLevelKey(s).ToLowerInvariant(),
+                    weight = s.Weightage,
+                    elim = s.isEliminationskill,
+                    time = EffectiveTimelimit(s),
+                    concepts = NormalizeConcepts(s.Concepts),
+                    expectations = NormalizeFreeText(s.Natureofquestion)
+                });
+
+            return JsonConvert.SerializeObject(payload);
         }
     }
 }

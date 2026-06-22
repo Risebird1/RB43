@@ -2332,7 +2332,7 @@
             } else if (canEdit) {
                 html += '<button type="button" class="dm-v4-iv-cv-btn dm-v4-iv-cv-btn--summary" data-resume-link="' +
                     $('<span/>').text(resumeLink).html() + '" title="Generate AI resume summary and save as coded CV">' +
-                    '<span class="dm-v4-iv-cv-btn__icon" aria-hidden="true"><i class="fa fa-magic"></i></span>' +
+            
                     '<span class="dm-v4-iv-cv-btn__text"><span class="dm-v4-iv-cv-btn__title">Generate</span>' +
                     '<span class="dm-v4-iv-cv-btn__sub">Resume Summary</span></span></button>';
             }
