@@ -7455,15 +7455,10 @@ namespace Risebird.Web.Controllers
 
                 var magSkillNames = DmVoiceRubricRevisionHelper.BuildMagSkillNameSet(magDetails);
                 var diff = DmVoiceRubricRevisionHelper.CompareRubrics(currentSkills, revisedSkills, magSkillNames);
+                var weightNormalization = DmVoiceRubricRevisionHelper.NormalizeWeightageTo100(revisedSkills);
+                revisedSkills = weightNormalization.Skills;
                 var outcome = DmVoiceRubricRevisionHelper.BuildOutcome(
-                    currentSkills, revisedSkills, diff, brief.Transcript.Trim());
-
-                if (outcome.Changed)
-                {
-                    var updated = await _irfService.UpdateTechSkills(outcome.RevisedSkills);
-                    if (!updated)
-                        return Json(new { success = false, message = "Revised rubric could not be saved." });
-                }
+                    currentSkills, revisedSkills, diff, brief.Transcript.Trim(), weightNormalization);
 
                 return Json(new
                 {
@@ -7475,7 +7470,11 @@ namespace Risebird.Web.Controllers
                     modified = diff.Modified,
                     magWarnings = diff.MagWarnings,
                     message = outcome.Message,
-                    reloadRequired = outcome.Changed
+                    weightsAdjusted = outcome.WeightsAdjusted,
+                    totalWeightBefore = weightNormalization.TotalBefore,
+                    pendingSave = outcome.Changed,
+                    reloadRequired = false,
+                    revisedSkills = DmVoiceRubricRevisionHelper.ToClientSkillPayload(outcome.RevisedSkills)
                 });
             }
             catch (Exception ex)

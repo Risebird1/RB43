@@ -1510,7 +1510,7 @@ namespace Risebird.Repository
                     cmdCreateIRF.Parameters["@PerMintuteRate"].Value = irfDetails.PerMintuteRate;
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@JobLevel", SqlDbType.Int));
-                    cmdCreateIRF.Parameters["@JobLevel"].Value = irfDetails.JobLevel;
+                    cmdCreateIRF.Parameters["@JobLevel"].Value = irfDetails.JobLevel.HasValue ? (object)irfDetails.JobLevel.Value : DBNull.Value;
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@CalendlyLink", SqlDbType.VarChar));
                     cmdCreateIRF.Parameters["@CalendlyLink"].Value = irfDetails.CalendlyLink;
