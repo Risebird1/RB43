@@ -5360,7 +5360,7 @@ namespace Risebird.Repository
 
         public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
-            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null)
+            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0)
         {
             try
             {
@@ -5381,6 +5381,7 @@ namespace Risebird.Repository
                     parameters.Add("@LatestRemark",      latestRemark);
                     parameters.Add("@UTRTrxn",           utrTrxn);
                     parameters.Add("@CashCreditAmount",  cashCreditAmount);
+                    parameters.Add("@TaxScenario",       taxScenario);
                     var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_UpdateInvoiceDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return (result.FirstOrDefault()?.UpdatedRows ?? 0) > 0;
