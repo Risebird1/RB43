@@ -210,7 +210,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> QCReportDetailsByInterviewer(string emailId);
         Task<bool> UpdateQCReportRedFlagsResolved(int interviewid);
         Task<List<MeetingVM>> GetReslovedRedFlagsInterviewList();
-        Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, string year, int month);
+        Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, int fromYear, int fromMonth, int toYear, int toMonth);
         Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate, int billingType, string year, int month);
         Task<List<FnRevenueVM>> FetchAllRevenueDetails(DateTime stdate, DateTime endate);
         Task<MeetingVM> GetInterviewMeetingById(int id);

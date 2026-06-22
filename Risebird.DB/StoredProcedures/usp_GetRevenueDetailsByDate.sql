@@ -9,10 +9,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 Create PROCEDURE usp_GetRevenueDetailsByDate       
-@StartDate datetime,        
-@EndDate datetime,    
-@year int,    
-@month int    
+@StartDate  datetime,        
+@EndDate    datetime,    
+@FromYear   int,    
+@FromMonth  int,
+@ToYear     int,
+@ToMonth    int
 AS        
 BEGIN        
 Select distinct cl.id, cl.Name,
@@ -32,20 +34,21 @@ join Client cl on IRF.ClientId = cl.id
 outer Apply (
     Select Sum(POPendingAmount) as POPendingAmount
     from Revenuedetails
-    where Clientid = IRF.ClientId and Months = @month and Years = @year
+    where Clientid = IRF.ClientId
+      and (Years * 100 + Months) BETWEEN (@FromYear * 100 + @FromMonth) AND (@ToYear * 100 + @ToMonth)
 ) Po    
 outer Apply (
     Select Sum(InvoiceAmount) as InvoiceAmount
     from Revenuedetails
-    where Clientid = IRF.ClientId and Months = @month and Years = @year
+    where Clientid = IRF.ClientId
+      and (Years * 100 + Months) BETWEEN (@FromYear * 100 + @FromMonth) AND (@ToYear * 100 + @ToMonth)
 ) Inv
 outer Apply (
     Select ISNULL(Sum(gi.InvoiceValue), 0) as GenInvoiceAmount,
            COUNT(gi.id)                    as GenInvoiceCount
     from GeneratedInvoices gi
     where gi.ClientId = cl.id
-      and gi.InvoiceMonth = @month
-      and gi.InvoiceYear  = @year
+      and (gi.InvoiceYear * 100 + gi.InvoiceMonth) BETWEEN (@FromYear * 100 + @FromMonth) AND (@ToYear * 100 + @ToMonth)
       and gi.Status > 0
 ) GI
 outer Apply (
@@ -63,8 +66,7 @@ outer Apply (
     Select ISNULL(Sum(gi2.InvoiceValue), 0) as PaidInvoiceAmount
     from GeneratedInvoices gi2
     where gi2.ClientId = cl.id
-      and gi2.InvoiceMonth = @month
-      and gi2.InvoiceYear  = @year
+      and (gi2.InvoiceYear * 100 + gi2.InvoiceMonth) BETWEEN (@FromYear * 100 + @FromMonth) AND (@ToYear * 100 + @ToMonth)
       and gi2.Status = 5
 ) PI
 where im.interviewDate >= @StartDate and im.interviewDate < @EndDate         

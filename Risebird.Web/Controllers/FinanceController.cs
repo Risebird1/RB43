@@ -2710,7 +2710,7 @@ namespace Risebird.Web.Controllers
         //}
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> FNRevenue(string year, int month)
+        public async Task<IActionResult> FNRevenue(string year, int month, string fromYear = null, int fromMonth = 0, string toYear = null, int toMonth = 0)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2720,7 +2720,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "Finance")
                 {
-                    //Start:Year
+                    //Start:Year list
                     List<string> _listyear = new List<string>();
                     var currentyear = DateTime.Now.Year;
                     var counter = currentyear - 2020;
@@ -2744,16 +2744,37 @@ namespace Risebird.Web.Controllers
                         selectListforsize.Add(selectItem);
                     }
                     ViewBag.RevenueYears = selectListforsize;
-                    //End:Year
-                    if (month == 0)
+                    //End:Year list
+
+                    // Determine if range mode or single month mode
+                    bool isRangeMode = fromMonth > 0 && toMonth > 0 && !string.IsNullOrEmpty(fromYear) && !string.IsNullOrEmpty(toYear);
+
+                    int resolvedFromMonth, resolvedFromYear, resolvedToMonth, resolvedToYear;
+                    if (isRangeMode)
                     {
-                        month = DateTime.Now.Month;
+                        resolvedFromMonth = fromMonth;
+                        resolvedFromYear  = Convert.ToInt32(fromYear);
+                        resolvedToMonth   = toMonth;
+                        resolvedToYear    = Convert.ToInt32(toYear);
                     }
-                    ViewBag.RevenueMonth = month;
-                    int curyear = Convert.ToInt32(year);
-                    DateTime stdate = new DateTime(curyear, month, 1);
-                    DateTime endate = stdate.AddMonths(1);
-                    var model = await _meetingService.FetchRevenueDetails(stdate, endate, year, month);
+                    else
+                    {
+                        if (month == 0) month = DateTime.Now.Month;
+                        resolvedFromMonth = resolvedToMonth = month;
+                        resolvedFromYear  = resolvedToYear  = Convert.ToInt32(year);
+                    }
+
+                    ViewBag.RevenueMonth    = isRangeMode ? fromMonth  : (month == 0 ? DateTime.Now.Month : month);
+                    ViewBag.IsRangeMode     = isRangeMode;
+                    ViewBag.FromMonth       = resolvedFromMonth;
+                    ViewBag.FromYear        = resolvedFromYear.ToString();
+                    ViewBag.ToMonth         = resolvedToMonth;
+                    ViewBag.ToYear          = resolvedToYear.ToString();
+
+                    DateTime stdate = new DateTime(resolvedFromYear, resolvedFromMonth, 1);
+                    DateTime endate = new DateTime(resolvedToYear, resolvedToMonth, 1).AddMonths(1);
+
+                    var model = await _meetingService.FetchRevenueDetails(stdate, endate, resolvedFromYear, resolvedFromMonth, resolvedToYear, resolvedToMonth);
                     int totalamount = 0;
                     foreach (var item in model)
                     {
