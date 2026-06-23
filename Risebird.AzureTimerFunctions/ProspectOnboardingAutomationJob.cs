@@ -175,13 +175,23 @@ namespace Risebird.AzureTimerFunctions
                     p.IsExistingInterviewer = refreshed.IsExistingInterviewer;
                     p.ResumeParseCompleted = refreshed.ResumeParseCompleted;
                     p.ResolvedAssessmentGroupId = refreshed.ResolvedAssessmentGroupId;
-
-                    await _repository.AdvanceFunnelStageAsync(p.Id, "Parsed", "InProgress");
                 }
             }
             else
             {
                 _log.LogInformation($"[OnboardAuto] #{p.Id} — resume already parsed, skipping Step 1.");
+            }
+
+            // ── Funnel: EmailParsed -> PhoneParsed ────────────────────────────────
+            // Only advance when this genuinely moves the prospect forward — the advance SP
+            // unconditionally re-stamps TicketStatus/UpdatedAt, so a blind call each pass would
+            // churn the row (and re-open status) for prospects already deeper in the funnel.
+            if (p.ResumeParseCompleted == true && !string.IsNullOrWhiteSpace(p.ParsedEmail)
+                && !IsTerminalFunnelStage(p.FunnelStage))
+            {
+                string parseTarget = string.IsNullOrWhiteSpace(p.ParsedPhone) ? "EmailParsed" : "PhoneParsed";
+                if (FunnelRank(parseTarget) > FunnelRank(p.FunnelStage))
+                    await _repository.AdvanceFunnelStageAsync(p.Id, parseTarget, "InProgress");
             }
 
             // ── Step 1 (gate): Duplicate check — the FIRST funnel stage ───────────
@@ -211,6 +221,14 @@ namespace Risebird.AzureTimerFunctions
             if (await TryReflectSelfRegistrationAsync(p))
                 return;
 
+            // Passed the duplicate screen → advance to 'DuplicateChecked' (only when moving forward).
+            if (p.ResumeParseCompleted == true && !string.IsNullOrWhiteSpace(p.ParsedEmail)
+                && !IsTerminalFunnelStage(p.FunnelStage)
+                && FunnelRank("DuplicateChecked") > FunnelRank(p.FunnelStage))
+            {
+                await _repository.AdvanceFunnelStageAsync(p.Id, "DuplicateChecked", "InProgress");
+            }
+
             // ── Step 2: Resolve MAG & generate application link ───────────────────
             if (string.IsNullOrWhiteSpace(p.ApplicationLink))
             {
@@ -229,7 +247,7 @@ namespace Risebird.AzureTimerFunctions
                 p.ApplicationLink = refreshed.ApplicationLink;
                 p.ResolvedAssessmentGroupId = refreshed.ResolvedAssessmentGroupId;
 
-                await _repository.AdvanceFunnelStageAsync(p.Id, "MAGMapped", "InProgress");
+                await _repository.AdvanceFunnelStageAsync(p.Id, "MAGConfirmed", "InProgress");
             }
 
             // ── Step 3: Send Invitation Email ─────────────────────────────────────
@@ -265,7 +283,7 @@ namespace Risebird.AzureTimerFunctions
                 if (emailOk)
                 {
                     await _repository.UpdateAutomationStatusAsync(p.Id, "EmailSent");
-                    await _repository.AdvanceFunnelStageAsync(p.Id, "InvitationSent", "InProgress");
+                    await _repository.AdvanceFunnelStageAsync(p.Id, "InterestCollection", "InProgress");
                     await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
                         $"Automation: invitation email sent to {p.ParsedEmail}. Call will be deferred for {EmailToCallGracePeriod.TotalMinutes:0} min to allow prospect to respond.", "AutomationJob");
                 }
@@ -308,9 +326,9 @@ namespace Risebird.AzureTimerFunctions
                               || string.Equals(p.PlivoCallStatus, "answered", StringComparison.OrdinalIgnoreCase);
             if (!callConcluded
                 && !IsTerminalFunnelStage(p.FunnelStage)
-                && !string.Equals(p.FunnelStage, "AwaitingResponse", StringComparison.OrdinalIgnoreCase))
+                && !string.Equals(p.FunnelStage, "InterestCollection", StringComparison.OrdinalIgnoreCase))
             {
-                await _repository.AdvanceFunnelStageAsync(p.Id, "AwaitingResponse", "InProgress");
+                await _repository.AdvanceFunnelStageAsync(p.Id, "InterestCollection", "InProgress");
             }
 
             // Enforce grace period: wait at least 1 hour after email was sent
@@ -362,12 +380,14 @@ namespace Risebird.AzureTimerFunctions
                     if (isUnsubscribe || isNotInterested)
                     {
                         // Explicit negative intent on the call → terminal funnel outcome + ticket Closed.
-                        string outcomeStage = isUnsubscribe ? "Unsubscribe" : "NotInterested";
-                        await _repository.SetUnifiedIntentAsync(p.Id, outcomeStage, "Call", DateTime.UtcNow);
-                        await _repository.SetFunnelOutcomeAsync(p.Id, outcomeStage, "Closed");
+                        // Drop/Unsubscribe folds into 'NotInterested' for the funnel, but the unified
+                        // Intent keeps 'Unsubscribe' so the profile-deactivation logic still fires.
+                        string intentVal = isUnsubscribe ? "Unsubscribe" : "NotInterested";
+                        await _repository.SetUnifiedIntentAsync(p.Id, intentVal, "Call", DateTime.UtcNow);
+                        await _repository.SetFunnelOutcomeAsync(p.Id, "NotInterested", "Closed");
                         await _repository.UpdateAutomationStatusAsync(p.Id, "Completed");
                         await _repository.InsertHistoryAsync(p.Id, "IntentConfirmed", "—",
-                            $"Automation: call completed — disposition '{disp}'. Funnel → {outcomeStage}.", "AutomationJob");
+                            $"Automation: call completed — disposition '{disp}'. Funnel → Not Interested.", "AutomationJob");
                     }
                     else
                     {
@@ -482,11 +502,27 @@ namespace Risebird.AzureTimerFunctions
         // Terminal funnel exits — once a prospect lands on one of these the automation must never
         // pull them back into the active pipeline (e.g. bumping them to 'AwaitingResponse').
         private static readonly string[] TerminalFunnelStages =
-            { "Duplicate", "NotInterested", "Unsubscribe", "Cold", "Onboarded" };
+            { "Duplicate", "NotInterested", "Unsubscribe", "Cold", "NotQualified", "Onboarded" };
 
         private static bool IsTerminalFunnelStage(string funnelStage)
             => !string.IsNullOrWhiteSpace(funnelStage)
                && TerminalFunnelStages.Contains(funnelStage, StringComparer.OrdinalIgnoreCase);
+
+        // Ordinal rank of the linear happy-path stages — mirrors dbo.fn_NaukriFunnelStageRank.
+        // Terminal exits and New/blank rank 0. Used to keep forward-only advances from re-stamping
+        // the row (and TicketStatus) on every pass for prospects already deeper in the funnel.
+        private static readonly string[] FunnelOrder =
+        {
+            "EmailParsed", "PhoneParsed", "DuplicateChecked", "MAGConfirmed", "InterestCollection",
+            "IntentConfirmed", "EmploymentVerified", "ResumeFitment", "AcknowledgementSent", "Onboarded"
+        };
+
+        private static int FunnelRank(string stage)
+        {
+            if (string.IsNullOrWhiteSpace(stage)) return 0;
+            int idx = Array.FindIndex(FunnelOrder, s => string.Equals(s, stage, StringComparison.OrdinalIgnoreCase));
+            return idx < 0 ? 0 : idx + 1;
+        }
 
         // ── Auto-continue: positive intent → EV → AI fitment → onboarding → acknowledgement ──
 
@@ -568,7 +604,12 @@ namespace Risebird.AzureTimerFunctions
 
                 if (!ev.passed)
                 {
-                    await MarkManualAsync(rec.Id, $"Auto-onboard halted: Employment Verification did not pass ({ev.message}). Operator must review.");
+                    // Employment Verification failed → terminal 'Not Qualified' funnel outcome (ticket Closed).
+                    await _repository.SetFunnelOutcomeAsync(rec.Id, "NotQualified", "Closed");
+                    await _repository.UpdateAutomationStatusAsync(rec.Id, "Completed");
+                    await _repository.InsertHistoryAsync(rec.Id, "NotQualified", "—",
+                        $"Automation: Employment Verification did not pass ({ev.message}). Funnel → Not Qualified.", "AutomationJob");
+                    _log.LogInformation($"[OnboardAuto] #{rec.Id} — EV failed ({ev.message}). Funnel → Not Qualified.");
                     return;
                 }
 
@@ -752,8 +793,11 @@ namespace Risebird.AzureTimerFunctions
 
         /// <summary>
         /// Performs Employment Verification server-side: first reuses any cached result for the mobile
-        /// number, otherwise calls Signzy. EV PASSES when a non-blacklisted employer/company is found
-        /// (consistent with the manual flow's pass condition — company presence, regardless of employed flag).
+        /// number, otherwise calls Signzy. EV PASSES only when a non-blacklisted employer/company is found
+        /// AND the prospect is currently employed there. Every other outcome — verification could not run
+        /// (no phone / not configured / API error / no records), blacklisted company, or isEmployed = false
+        /// (exit marked) — returns passed = false, which routes the prospect to the terminal 'Not Qualified'
+        /// funnel stage.
         /// </summary>
         private async Task<(bool passed, string companyName, bool isEmployed, string message)>
             RunEmploymentVerificationAsync(string email, string mobile)
@@ -774,10 +818,14 @@ namespace Risebird.AzureTimerFunctions
                     string company = cached.CompanyName;
                     bool blacklisted = !string.IsNullOrWhiteSpace(company)
                                        && (await _aadhaarService.CheckCompanyStatus(company)) != null;
-                    bool passed = !string.IsNullOrWhiteSpace(company) && !blacklisted;
-                    string msg = blacklisted ? "Company is blacklisted in our system."
-                               : passed ? "Verified (cached employment record)."
-                               : (cached.message ?? "No employment records found.");
+                    bool hasEmployer = !string.IsNullOrWhiteSpace(company) && !blacklisted;
+                    // EV qualifies ONLY when a non-blacklisted employer is found AND the prospect is
+                    // currently employed there. Otherwise → Not Qualified.
+                    bool passed = hasEmployer && cached.Isemployed;
+                    string msg = blacklisted     ? "Company is blacklisted in our system."
+                               : !hasEmployer    ? (cached.message ?? "No employment records found.")
+                               : !cached.Isemployed ? "Prospect is not currently employed (exit marked)."
+                               :                    "Verified (cached employment record).";
                     return (passed, company, cached.Isemployed, msg);
                 }
 
@@ -811,6 +859,10 @@ namespace Risebird.AzureTimerFunctions
                 bool isBlacklisted = (await _aadhaarService.CheckCompanyStatus(companyName)) != null;
                 if (isBlacklisted)
                     return (false, companyName, isEmployed, "Company is blacklisted in our system.");
+
+                // A company was found, but if the prospect has exited (not currently employed) → Not Qualified.
+                if (!isEmployed)
+                    return (false, companyName, isEmployed, "Prospect is not currently employed (exit marked).");
 
                 return (true, companyName, isEmployed, "Verified via Signzy.");
             }

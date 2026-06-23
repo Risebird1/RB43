@@ -71,7 +71,7 @@ BEGIN
           -- Don't reprocess prospects who have landed on a TERMINAL funnel outcome. These exits
           -- rank 0, so without this guard the forward-only advance (e.g. → 'AwaitingResponse')
           -- could resurrect a NotInterested/Unsubscribe/Cold/Duplicate prospect into the pipeline.
-          AND ISNULL(np.FunnelStage, '') NOT IN ('Duplicate', 'NotInterested', 'Unsubscribe', 'Cold')
+          AND ISNULL(np.FunnelStage, '') NOT IN ('Duplicate', 'NotInterested', 'Unsubscribe', 'Cold', 'NotQualified')
           -- Exclude prospects who already responded to email (no call needed) — EXCEPT
           -- those whose confirmed intent is 'Interested', which must be auto-continued through
           -- EV → AI fitment → onboarding → acknowledgement email.
