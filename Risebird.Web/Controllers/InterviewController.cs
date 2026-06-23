@@ -9406,7 +9406,7 @@ namespace Risebird.Web.Controllers
                         return new OkResult();
                     }
                     ViewBag.CandidateEmail = model.CandidateEmail;
-                    ViewBag.Interviewer = model.Interviewer;
+                    ViewBag.InterviewerCodedName = model.NickName;
                     ViewBag.InterviewDate = model.interviewDate;
                     ViewBag.IRFName = model.IRFName;
                     ViewBag.JdTitle = model.JDTiltle;
@@ -9417,6 +9417,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
+                    ViewBag.InterviewerCodedName = model.NickName;
                     return View(model);
                 }
             }

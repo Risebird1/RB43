@@ -16,6 +16,11 @@
 
     bool? isClient = ViewBag.IsClient as bool?;
     bool? isClientSelected = ViewBag.IsClientSelected as bool?;
+    var interviewerCodedName = Model.NickName;
+    if (string.IsNullOrWhiteSpace(interviewerCodedName) || interviewerCodedName.Contains("@"))
+    {
+        interviewerCodedName = ViewBag.InterviewerCodedName as string;
+    }
 }
 
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
@@ -387,9 +392,10 @@
                                                         <a class="infos" href="#" style="right: -25px;"><span class="time"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @Model.FirstJoinedon</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @Model.Joinedon</p></span></a>
                                                     }
                                                 </div>
-                                                <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
-@*<c style="color:red;text-decoration:underline;cursor:pointer;font-size: 18px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>*@
-                                                <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 18px;line-height:40px;">( @Model.NickName )</c>
+                                                <span class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;display:inline-block;">
+                                                    <span>Interviewer Coded Name:</span>
+                                                    <span style="color:red;text-decoration:underline;cursor:pointer;font-size: 18px;margin-left: 4px;">@interviewerCodedName</span>
+                                                </span>
 
 
                                                 <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">

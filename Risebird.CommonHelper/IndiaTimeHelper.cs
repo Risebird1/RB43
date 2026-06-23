@@ -39,5 +39,12 @@ namespace Risebird.CommonHelper
         {
             return UtcToIndiaWallClock(createdAtUtc).ToString(format, CultureInfo.InvariantCulture);
         }
+
+        /// <summary>UTC instant as ISO-8601 with Z suffix for client-side parsing.</summary>
+        public static string ToUtcIso8601(DateTime? utc)
+        {
+            if (!utc.HasValue) return string.Empty;
+            return DateTime.SpecifyKind(utc.Value, DateTimeKind.Utc).ToString("o", CultureInfo.InvariantCulture);
+        }
     }
 }
