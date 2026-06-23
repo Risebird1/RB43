@@ -28,7 +28,8 @@ CREATE PROCEDURE usp_SaveGeneratedInvoice
     @Status            INT,
     @CreatedBy         VARCHAR(200),
     @CashCreditAmount  DECIMAL(18,2) = NULL,
-    @UTRTrxn           VARCHAR(200)  = NULL
+    @UTRTrxn           VARCHAR(200)  = NULL,
+    @BillingCurrency   VARCHAR(10)   = 'INR'
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -55,13 +56,13 @@ BEGIN
              BillingOwnerEmail, CreditPeriod, GSTNumber, TaxScenario, IRN, EInvoiceFileLink,
              Subtotal, GSTAmount, InvoiceValue, TDSAmount, NetReceivable,
              Status, CreatedOn, CreatedBy, CashCreditAmount, UTRTrxn,
-             InvoiceBaseAmount, NetReceivableAmount)
+             InvoiceBaseAmount, NetReceivableAmount, BillingCurrency)
         VALUES
             (@ClientId, @BillingOwnerId, @InvoiceNumber, @InvoiceMonth, @InvoiceYear,
              @BillingOwnerEmail, @CreditPeriod, @GSTNumber, @TaxScenario, @IRN, @EInvoiceFileLink,
              @Subtotal, @GSTAmount, @InvoiceValue, @TDSAmount, @NetReceivable,
              @Status, GETDATE(), @CreatedBy, @CashCreditAmount, @UTRTrxn,
-             @Subtotal, @NetReceivable)
+             @Subtotal, @NetReceivable, ISNULL(@BillingCurrency, 'INR'))
 
         SELECT SCOPE_IDENTITY() AS NewId, '' AS ErrorMessage
     END
@@ -89,6 +90,7 @@ BEGIN
             UTRTrxn              = CASE WHEN @UTRTrxn IS NOT NULL AND @UTRTrxn != '' THEN @UTRTrxn ELSE UTRTrxn END,
             InvoiceBaseAmount    = @Subtotal,
             NetReceivableAmount  = @NetReceivable,
+            BillingCurrency      = ISNULL(@BillingCurrency, BillingCurrency),
             ModifiedOn           = GETDATE()
         WHERE id = @id
 

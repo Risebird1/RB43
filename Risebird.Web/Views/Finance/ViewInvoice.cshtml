@@ -135,6 +135,13 @@
                            value="@Model.LatestRemark" placeholder="Add remark" maxlength="500" />
                 </div>
                 <div class="col-md-4 mt-3">
+                    <label class="vi-label">Tax Scenario <span class="tag-edit">(editable)</span></label>
+                    <select id="editTaxScenario" class="form-control editable-field">
+                        @if (Model.TaxScenario == 0) { <option value="0" selected="selected">Non-GST (0%)</option> } else { <option value="0">Non-GST (0%)</option> }
+                        @if (Model.TaxScenario == 1) { <option value="1" selected="selected">GST 18%</option> } else { <option value="1">GST 18%</option> }
+                    </select>
+                </div>
+                <div class="col-md-4 mt-3">
                     <label class="vi-label">Status <span class="tag-edit">(editable)</span></label>
                     <select id="editStatus" class="form-control editable-field">
                         @if (Model.Status == 0) { <option value="0" selected="selected">Draft</option> } else { <option value="0">Draft</option> }
@@ -247,7 +254,7 @@
                     <td class="val-col">&#8377; <span id="spnSubtotal">@Model.Subtotal.ToString("N2")</span></td>
                 </tr>
                 <tr>
-                    <td class="label-col">GST (@Html.Raw(Model.TaxScenario == 1 ? "18%" : "0%"))</td>
+                    <td class="label-col">GST (<span id="spnGSTLabel">@Html.Raw(Model.TaxScenario == 1 ? "18%" : "0%")</span>)</td>
                     <td class="val-col">&#8377; <span id="spnGSTAmount">@Model.GSTAmount.ToString("N2")</span></td>
                 </tr>
                 <tr class="invoice-value-row">
@@ -282,7 +289,6 @@
 </div>
 
 <input type="hidden" id="hidInvoiceId"    value="@Model.id" />
-<input type="hidden" id="hidTaxScenario"  value="@Model.TaxScenario" />
 <input type="hidden" id="hidBillingModel" value="@Model.BillingModel" />
 
 <script>
@@ -302,6 +308,13 @@
         }
     });
 
+    // Recalculate and update GST label when Tax Scenario changes
+    $('#editTaxScenario').on('change', function () {
+        var ts = parseInt($(this).val());
+        $('#spnGSTLabel').text(ts === 1 ? '18%' : '0%');
+        refreshTotals();
+    });
+
     // Live recalculate when unit rate changes
     $('#tblLineItemsBody').on('input', '.unit-rate-input', function () {
         var row   = $(this).closest('tr');
@@ -312,7 +325,7 @@
     });
 
     function refreshTotals() {
-        var taxScenario = parseInt($('#hidTaxScenario').val() || 0);
+        var taxScenario = parseInt($('#editTaxScenario').val() || 0);
         var subtotal = 0;
         $('#tblLineItemsBody .line-total-cell').each(function () {
             subtotal += parseFloat($(this).text().replace(/,/g, '') || 0);
@@ -331,7 +344,7 @@
     }
 
     function saveChanges() {
-        var taxScenario  = parseInt($('#hidTaxScenario').val() || 0);
+        var taxScenario  = parseInt($('#editTaxScenario').val() || 0);
         var selectedStatus = parseInt($('#editStatus').val());
         var isPaid       = selectedStatus === 5;
         var isNonM1      = _billingModel !== _M1 && _billingModel !== 0;
@@ -356,6 +369,7 @@
 
         var payload = {
             invoiceId:        $('#hidInvoiceId').val(),
+            taxScenario:      taxScenario,
             gstNumber:        $('#editGSTNumber').val().trim(),
             creditPeriod:     $('#editCreditPeriod').val().trim(),
             irn:              $('#editIRN').val().trim(),
