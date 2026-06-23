@@ -10,8 +10,7 @@ CREATE PROCEDURE [dbo].[usp_GetNaukriProspectiveInterviewers]
     @AutomationStatus   VARCHAR(50)  = NULL,
     @CallStatus         VARCHAR(50)  = NULL,
     @Disposition        VARCHAR(50)  = NULL,
-    @FunnelStage        VARCHAR(50)  = NULL,
-    @FunnelMode         VARCHAR(10)  = 'at',   -- at | reached | not  (how @FunnelStage is matched)
+    @FunnelStage        VARCHAR(50)  = NULL,   -- exact stage value, or '_none_' for unstarted (New)
     @OnboardingType     VARCHAR(50)  = NULL,   -- SelfOnboarded | IntentAutoProcessed | ManuallyOnboarded | _none_
     @DateFrom           DATETIME     = NULL,
     @DateTo             DATETIME     = NULL,
@@ -56,16 +55,8 @@ BEGIN
             AND (@Disposition IS NULL OR LOWER(ISNULL(np.PlivoProspectDisposition, '')) = LOWER(@Disposition))
             AND (
                 @FunnelStage IS NULL
-                -- 'at'      : prospect is currently sitting at the selected stage (exact match).
-                OR (ISNULL(@FunnelMode, 'at') = 'at' AND (
-                        (@FunnelStage = '_none_' AND ISNULL(np.FunnelStage, '') = '')
-                        OR np.FunnelStage = @FunnelStage))
-                -- 'reached' : prospect has reached the selected milestone or moved beyond it.
-                OR (@FunnelMode = 'reached'
-                        AND dbo.fn_NaukriFunnelStageRank(np.FunnelStage) >= dbo.fn_NaukriFunnelStageRank(@FunnelStage))
-                -- 'not'     : prospect has NOT yet reached the selected milestone (the complement).
-                OR (@FunnelMode = 'not'
-                        AND dbo.fn_NaukriFunnelStageRank(np.FunnelStage) <  dbo.fn_NaukriFunnelStageRank(@FunnelStage))
+                OR (@FunnelStage = '_none_' AND ISNULL(np.FunnelStage, '') = '')
+                OR np.FunnelStage = @FunnelStage
             )
             AND (
                 @OnboardingType IS NULL
