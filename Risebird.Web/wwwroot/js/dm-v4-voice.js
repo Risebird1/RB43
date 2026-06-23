@@ -17,9 +17,19 @@
     function formatTranscriptDate(iso) {
         if (!iso) return '';
         try {
-            var d = new Date(iso);
+            var raw = String(iso).trim();
+            if (!raw) return '';
+            // DB stores UTC; values without a timezone suffix must be parsed as UTC.
+            if (raw.indexOf('T') !== -1 && !/[zZ]|[+-]\d{2}:\d{2}$/.test(raw)) {
+                raw += 'Z';
+            }
+            var d = new Date(raw);
             if (isNaN(d.getTime())) return '';
-            return d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+            return d.toLocaleString('en-IN', {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+                timeZone: 'Asia/Kolkata'
+            }) + ' IST';
         } catch (e) {
             return '';
         }
