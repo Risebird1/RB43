@@ -15,8 +15,6 @@
     string selCallStatus = ViewBag.CallStatus as string ?? string.Empty;
     string selDisposition = ViewBag.Disposition as string ?? string.Empty;
     string selFunnelStage = ViewBag.FunnelStage as string ?? string.Empty;
-    string selFunnelMode = ViewBag.FunnelMode as string ?? "at";
-    if (selFunnelMode != "reached" && selFunnelMode != "not") selFunnelMode = "at";
     string selOnboardingType = ViewBag.OnboardingType as string ?? string.Empty;
     string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
@@ -26,23 +24,23 @@
 
     var funnelCounts = ViewBag.FunnelCounts as Dictionary<string, int> ?? new Dictionary<string, int>();
     // Ordered funnel stages: (value, display label). "_none_" maps to records with no stage yet.
-    // 'Duplicate' is the first-step screening outcome (email already in system). The negative
-    // outcomes (Not Interested / Drop / Cold) are terminal exits shown alongside the pipeline.
+    // Linear happy path first, then the terminal exits (Duplicate / Not Interested / Cold / Not Qualified).
     var funnelStages = new (string Value, string Key, string Label)[] {
-        ("Duplicate",          "Duplicate",          "Duplicate"),
         ("_none_",             "New",                "New"),
-        ("Parsed",             "Parsed",             "Parsed"),
-        ("MAGMapped",          "MAGMapped",          "MAG Mapped"),
-        ("InvitationSent",     "InvitationSent",     "Invitation Sent"),
-        ("AwaitingResponse",   "AwaitingResponse",   "Awaiting Response"),
+        ("EmailParsed",        "EmailParsed",        "Email Parsed"),
+        ("PhoneParsed",        "PhoneParsed",        "Phone Parsed"),
+        ("DuplicateChecked",   "DuplicateChecked",   "Duplicate Checked"),
+        ("MAGConfirmed",       "MAGConfirmed",       "MAG Confirmed"),
+        ("InterestCollection", "InterestCollection", "Interest Collection"),
         ("IntentConfirmed",    "IntentConfirmed",    "Intent Confirmed"),
-        ("NotInterested",      "NotInterested",      "Not Interested"),
-        ("Unsubscribe",        "Unsubscribe",        "Drop / Unsubscribe"),
-        ("Cold",               "Cold",               "Cold"),
         ("EmploymentVerified", "EmploymentVerified", "Employment Verified"),
-        ("ResumeFitment",      "ResumeFitment",      "Resume Fitment"),
+        ("ResumeFitment",      "ResumeFitment",      "AI Resume Fitment"),
         ("AcknowledgementSent","AcknowledgementSent","Acknowledgement Sent"),
-        ("Onboarded",          "Onboarded",          "Onboarded")
+        ("Onboarded",          "Onboarded",          "Onboarded"),
+        ("Duplicate",          "Duplicate",          "Duplicate"),
+        ("NotInterested",      "NotInterested",      "Not Interested"),
+        ("Cold",               "Cold",               "Cold"),
+        ("NotQualified",       "NotQualified",       "Not Qualified")
     };
 
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selName)
@@ -67,7 +65,6 @@
         if (!string.IsNullOrEmpty(selCallStatus)) q += $"&callStatus={Uri.EscapeDataString(selCallStatus)}";
         if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
         if (!string.IsNullOrEmpty(selFunnelStage)) q += $"&funnelStage={Uri.EscapeDataString(selFunnelStage)}";
-        if (!string.IsNullOrEmpty(selFunnelStage) && selFunnelMode != "at") q += $"&funnelMode={selFunnelMode}";
         if (!string.IsNullOrEmpty(selOnboardingType)) q += $"&onboardingType={Uri.EscapeDataString(selOnboardingType)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
@@ -91,26 +88,14 @@
         return q;
     }
 
-    // Build a URL that toggles the funnel-stage filter (preserving the active match mode).
+    // Build a URL that toggles the funnel-stage filter (exact-match).
     string funnelUrl(string stageValue)
     {
         var q = funnelBaseQuery();
-        // Toggle: clicking the active stage (in the same mode) clears the filter.
+        // Toggle: clicking the active stage clears the filter.
         bool clearing = stageValue == selFunnelStage;
         if (!string.IsNullOrEmpty(stageValue) && !clearing)
-        {
             q += $"&funnelStage={Uri.EscapeDataString(stageValue)}";
-            if (selFunnelMode != "at") q += $"&funnelMode={selFunnelMode}";
-        }
-        return Url.Action("Index", "NaukriOnboarding") + q;
-    }
-
-    // Build a URL that switches the funnel match mode (at | reached | not), keeping the selected stage.
-    string funnelModeUrl(string mode)
-    {
-        var q = funnelBaseQuery();
-        if (!string.IsNullOrEmpty(selFunnelStage)) q += $"&funnelStage={Uri.EscapeDataString(selFunnelStage)}";
-        if (mode != "at") q += $"&funnelMode={mode}";
         return Url.Action("Index", "NaukriOnboarding") + q;
     }
 
@@ -118,12 +103,18 @@
     {
         if (string.IsNullOrWhiteSpace(stage)) return "New";
         foreach (var fs in new (string Key, string Label)[] {
-            ("New","New"), ("Duplicate","Duplicate"), ("Parsed","Parsed"), ("MAGMapped","MAG Mapped"),
-            ("InvitationSent","Invitation Sent"), ("AwaitingResponse","Awaiting Response"),
-            ("IntentConfirmed","Intent Confirmed"), ("NotInterested","Not Interested"),
-            ("Unsubscribe","Drop / Unsubscribe"), ("Cold","Cold"),
-            ("EmploymentVerified","Employment Verified"), ("ResumeFitment","Resume Fitment"),
-            ("AcknowledgementSent","Acknowledgement Sent"), ("Onboarded","Onboarded") })
+            ("New","New"),
+            ("EmailParsed","Email Parsed"), ("PhoneParsed","Phone Parsed"),
+            ("DuplicateChecked","Duplicate Checked"), ("MAGConfirmed","MAG Confirmed"),
+            ("InterestCollection","Interest Collection"), ("IntentConfirmed","Intent Confirmed"),
+            ("EmploymentVerified","Employment Verified"), ("ResumeFitment","AI Resume Fitment"),
+            ("AcknowledgementSent","Acknowledgement Sent"), ("Onboarded","Onboarded"),
+            ("Duplicate","Duplicate"), ("NotInterested","Not Interested"),
+            ("Cold","Cold"), ("NotQualified","Not Qualified"),
+            // Legacy values (pre-revamp rows that may not have been migrated yet)
+            ("Parsed","Email Parsed"), ("MAGMapped","MAG Confirmed"),
+            ("InvitationSent","Interest Collection"), ("AwaitingResponse","Interest Collection"),
+            ("Unsubscribe","Not Interested") })
         {
             if (string.Equals(fs.Key, stage, StringComparison.OrdinalIgnoreCase)) return fs.Label;
         }
@@ -501,52 +492,26 @@
                             <span class="nk-funnel-title"><i class="fas fa-filter me-1"></i>Funnel Stages</span>
                             <span class="nk-funnel-total" title="Sum across all stages equals the @(hasFilters ? "matched" : "total") records">@totalCount total</span>
                             <span class="nk-funnel-divider"></span>
-                            @{
-                                var modeOpts = new (string Val, string Label, string Tip)[] {
-                                    ("at",      "At stage",     "Prospects currently sitting at the selected stage"),
-                                    ("reached", "Reached \u002B","Prospects that have reached the selected milestone or moved beyond it"),
-                                    ("not",     "Not reached",  "Prospects that have NOT yet reached the selected milestone (the complement)")
-                                };
-                            }
-                            <span class="nk-funnel-mode" role="group" aria-label="Funnel match mode">
-                                @foreach (var m in modeOpts)
-                                {
-                                    <a href="@funnelModeUrl(m.Val)" class="nk-mode-btn nk-mode-@m.Val @(selFunnelMode == m.Val ? "active" : "")" title="@m.Tip">@m.Label</a>
-                                }
-                            </span>
-                        </div>
-                        <div class="nk-funnel-pills-track">
                             @foreach (var fs in funnelStages)
                             {
                                 int c = funnelCounts.TryGetValue(fs.Key, out var cv) ? cv : 0;
                                 bool active = string.Equals(selFunnelStage, fs.Value, StringComparison.OrdinalIgnoreCase);
-                                string pillTip = selFunnelMode == "reached" ? $"Reached \u201C{fs.Label}\u201D or beyond"
-                                               : selFunnelMode == "not"     ? $"Has NOT yet reached \u201C{fs.Label}\u201D"
-                                               :                              $"Currently at \u201C{fs.Label}\u201D";
-                                string modeCls = active ? (selFunnelMode == "reached" ? "active mode-reached" : selFunnelMode == "not" ? "active mode-not" : "active") : "";
-                                <a href="@funnelUrl(fs.Value)" class="nk-funnel-pill @modeCls" title="@pillTip">
-                                    @if (active && selFunnelMode == "reached") { <i class="fas fa-angle-double-right nk-pill-glyph"></i> }
-                                    else if (active && selFunnelMode == "not") { <i class="fas fa-ban nk-pill-glyph"></i> }
+                                <a href="@funnelUrl(fs.Value)" class="nk-funnel-pill @(active ? "active" : "")" title="Currently at &ldquo;@fs.Label&rdquo;">
                                     <span class="nk-funnel-pill-label">@fs.Label</span>
                                     <span class="nk-funnel-pill-count">@c</span>
                                 </a>
                             }
                         </div>
-                        @if (selFunnelMode != "at")
-                        {
-                            <div class="nk-funnel-hint"><i class="fas fa-info-circle me-1"></i>Counts show the live stage distribution; the active <b>@(selFunnelMode == "reached" ? "Reached" : "Not reached")</b> mode filters the table by milestone.</div>
-                        }
                     </div>
                 </div>
 
                 <form asp-action="Index" asp-controller="NaukriOnboarding" method="get" id="filterForm">
                     <input type="hidden" name="page" value="1" />
                     <input type="hidden" name="pageSize" value="@pageSize" />
-                    <input type="hidden" name="funnelMode" value="@selFunnelMode" />
-                    <div class="card border-0 shadow-sm mb-3 nk-filter-card">
-                        <div class="card-body py-3 px-3">
-                            <div class="nk-filter-grid">
-                                <select name="status" class="form-select nk-filter-control" onchange="document.getElementById('filterForm').submit()" title="Operational ticket status">
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body py-2 px-3">
+                            <div class="d-flex align-items-center gap-2" style="flex-wrap:nowrap;width:100%;">
+                                <select name="status" class="form-select nk-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()" title="Operational ticket status">
                                     <option value="">All statuses</option>
                                     @if (selStatus == "Open") { <option value="Open" selected>Open</option> } else { <option value="Open">Open</option> }
                                     @if (selStatus == "InProgress") { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option> }
@@ -780,14 +745,21 @@
                                                             "ResumeFitment"       => "background:#fde6d3;color:#9c4221;border:1px solid #ed8936;",
                                                             "EmploymentVerified"  => "background:#d1f0e0;color:#1c6b47;border:1px solid #28a745;",
                                                             "IntentConfirmed"     => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
+                                                            "InterestCollection"  => "background:#e0ecff;color:#1e40af;border:1px solid #3b82f6;",
+                                                            "MAGConfirmed"        => "background:#fde9c8;color:#92660e;border:1px solid #e6a817;",
+                                                            "DuplicateChecked"    => "background:#d9f2e6;color:#0c5d3c;border:1px solid #34c38f;",
+                                                            "PhoneParsed"         => "background:#d6eef2;color:#0c5460;border:1px solid #20a8bd;",
+                                                            "EmailParsed"         => "background:#d0f0f5;color:#0c5460;border:1px solid #17a2b8;",
+                                                            "Duplicate"           => "background:#fde2e1;color:#842029;border:1px solid #dc3545;",
+                                                            "NotInterested"       => "background:#f8d7da;color:#842029;border:1px solid #e35d6a;",
+                                                            "Cold"                => "background:#e2e3e5;color:#41464b;border:1px solid #adb5bd;",
+                                                            "NotQualified"        => "background:#f5d0c5;color:#7a2e0e;border:1px solid #d9480f;",
+                                                            // legacy
                                                             "AwaitingResponse"    => "background:#e0ecff;color:#1e40af;border:1px solid #3b82f6;",
                                                             "InvitationSent"      => "background:#e2e3ff;color:#3730a3;border:1px solid #6366f1;",
                                                             "MAGMapped"           => "background:#fde9c8;color:#92660e;border:1px solid #e6a817;",
                                                             "Parsed"              => "background:#d0f0f5;color:#0c5460;border:1px solid #17a2b8;",
-                                                            "Duplicate"           => "background:#fde2e1;color:#842029;border:1px solid #dc3545;",
-                                                            "NotInterested"       => "background:#f8d7da;color:#842029;border:1px solid #e35d6a;",
-                                                            "Unsubscribe"         => "background:#f5d0c5;color:#7a2e0e;border:1px solid #d9480f;",
-                                                            "Cold"                => "background:#e2e3e5;color:#41464b;border:1px solid #adb5bd;",
+                                                            "Unsubscribe"         => "background:#f8d7da;color:#842029;border:1px solid #e35d6a;",
                                                             _                      => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
                                                         };
                                                     }
@@ -955,6 +927,7 @@
                                 <span><i class="fas fa-envelope me-1"></i>Parsed Email:</span>
                                 <span class="value" id="mgmParsedEmail">\u2014</span>
                             </div>
+                            <div id="mgmInviteEmailStatus" style="font-size:11px;margin-top:2px;"></div>
                         </div>
                         <div class="col-md-6">
                             <div class="mgm-info-row">
@@ -1338,6 +1311,46 @@
         syncAutomationBadge(r);
         syncPlivoCallUI(r);
         syncPipeline(r);
+        loadInvitationEmailStatus();
+    }
+
+    // Fetches & renders the SendGrid delivery status of the invitation email for the EmailParsed step.
+    // Until the invitation has been sent there is nothing to show against the parsed email.
+    function loadInvitationEmailStatus() {
+        var $el = $('#mgmInviteEmailStatus');
+        $el.empty();
+        if (!currentRecordId) return;
+        $.ajax({
+            url: '@Url.Action("GetInvitationEmailStatus", "NaukriOnboarding")', type: 'GET',
+            data: { id: currentRecordId },
+            success: function (res) {
+                if (!res || !res.success || !res.hasEmail) return;
+                if (!res.sent) {
+                    $el.html('<span style="color:#6c757d;"><i class="fas fa-clock me-1"></i>Invitation not sent yet</span>');
+                    return;
+                }
+                var ev = (res.deliveryEvent || '').toLowerCase();
+                var style, icon, label;
+                if (res.hasBounced || ev === 'bounce' || ev === 'dropped') {
+                    style = 'color:#842029;font-weight:600;'; icon = 'fa-exclamation-triangle';
+                    label = (ev === 'dropped' ? 'Dropped' : 'Bounced') + (res.deliveryReason ? ' \u2014 ' + res.deliveryReason : '');
+                    label += ' \u00b7 try a different email';
+                } else if (ev === 'delivered') {
+                    style = 'color:#0f5132;font-weight:600;'; icon = 'fa-check-circle'; label = 'Delivered';
+                } else if (ev === 'deferred') {
+                    style = 'color:#92660e;font-weight:600;'; icon = 'fa-hourglass-half'; label = 'Deferred';
+                } else if (ev === 'processed') {
+                    style = 'color:#1e40af;font-weight:600;'; icon = 'fa-paper-plane'; label = 'Sent (processing)';
+                } else {
+                    style = 'color:#495057;'; icon = 'fa-envelope'; label = 'Sent';
+                }
+                var html = '<span style="' + style + '"><i class="fas ' + icon + ' me-1"></i>Invitation: ' + $('<span>').text(label).html() + '</span>';
+                if (res.opened) html += ' <span style="color:#0a3278;" title="Opened the invitation email"><i class="fas fa-envelope-open me-1"></i>Opened</span>';
+                if (res.clicked) html += ' <span style="color:#0a3278;" title="Clicked a link in the invitation"><i class="fas fa-mouse-pointer me-1"></i>Clicked</span>';
+                if (res.sentAt) html += ' <span style="color:#9aa0a6;">(' + res.sentAt + ')</span>';
+                $el.html(html);
+            }
+        });
     }
 
     function syncAutomationBadge(r) {
@@ -1535,14 +1548,36 @@
     $('#btnConfirmMag').on('click', function () {
         if (!currentRecordId) return;
         var r = currentRecord;
-        var agId = r ? r.resolvedAssessmentGroupId : 0;
-        var magName = r ? r.magName : '';
-        if (!agId || agId <= 0) {
-            alert('No MAG resolved. Please select a MAG first.');
+        var agId = r ? (r.resolvedAssessmentGroupId || 0) : 0;
+        var magName = r ? (r.magName || '') : '';
+        if (!magName) {
+            alert('No MAG selected. Please pick a MAG first.');
             return;
         }
-        markStep(2, 'completed', '<i class="fas fa-check-circle text-success me-1"></i>MAG confirmed: <strong>' + $('<span>').text(magName).html() + '</strong> (AG #' + agId + ')');
-        showManualSectionIfReady();
+        var $btn = $(this);
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Saving...');
+        $.ajax({
+            url: '@Url.Action("ConfirmMag", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, magName: magName, assessmentGroupId: agId },
+            success: function (res) {
+                if (res && res.success) {
+                    if (currentRecord) {
+                        currentRecord.resolvedAssessmentGroupId = res.assessmentGroupId;
+                        currentRecord.applicationLink = res.applicationLink;
+                        currentRecord.funnelStage = 'MAGConfirmed';
+                    }
+                    markStep(2, 'completed', '<i class="fas fa-check-circle text-success me-1"></i>MAG confirmed: <strong>' + $('<span>').text(magName).html() + '</strong> (AG #' + res.assessmentGroupId + ')');
+                    showManualSectionIfReady();
+                } else {
+                    alert((res && res.error) || 'Failed to confirm MAG.');
+                    $btn.prop('disabled', false).html('<i class="fas fa-check me-1"></i>Confirm MAG');
+                }
+            },
+            error: function () {
+                alert('Request failed. Please try again.');
+                $btn.prop('disabled', false).html('<i class="fas fa-check me-1"></i>Confirm MAG');
+            }
+        });
     });
 
     function syncPipeline(r) {

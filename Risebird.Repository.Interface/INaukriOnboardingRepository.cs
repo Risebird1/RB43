@@ -17,13 +17,16 @@ namespace Risebird.Repository.Interface
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string funnelMode = null, string onboardingType = null);
+            string funnelStage = null, string onboardingType = null);
 
         Task<Dictionary<string, int>> GetFunnelStageCountsAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string funnelMode = null, string onboardingType = null);
+            string funnelStage = null, string onboardingType = null);
+
+        // SendGrid delivery status of the invitation email for a recipient (null if none sent yet).
+        Task<NaukriInvitationEmailStatus> GetInvitationEmailStatusAsync(string email);
 
         Task<NaukriProspectiveInterviewerVM> GetByIdAsync(int id);
 
@@ -131,6 +134,20 @@ namespace Risebird.Repository.Interface
         public string IRFId { get; set; }
         public string AssessmentGroupId { get; set; }
         public string ClientName { get; set; }
+    }
+
+    public class NaukriInvitationEmailStatus
+    {
+        public string Email { get; set; }
+        public DateTime? SentAt { get; set; }
+        public string MailSubject { get; set; }
+        public string DeliveryEvent { get; set; }   // processed | delivered | deferred | bounce | dropped
+        public string DeliveryReason { get; set; }
+        public string DeliveryStatus { get; set; }
+        public string DeliveryResponse { get; set; }
+        public bool HasBounced { get; set; }
+        public bool Opened { get; set; }
+        public bool Clicked { get; set; }
     }
 
     public class MagDropdownItem
