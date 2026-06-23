@@ -1,5 +1,6 @@
 @model Risebird.Entities.ViewModel.IRFVm
 @using Risebird.Web.Helpers
+@using Risebird.CommonHelper
 @using Risebird.Entities.ViewModel
 @using Risebird.Entities.Data
 @using Risebird.Entities.Enum
@@ -423,10 +424,10 @@
                                                                 </div>
                                                                 <p class="dm-v4-voice-transcript__empty" id="dmV4VoiceTranscriptEmpty" @(dmV4HasTranscript ? "hidden" : "")>Record voice instructions to transcribe automatically, or type a brief below.</p>
                                                                 <textarea class="dm-v4-voice-transcript__input" id="dmV4VoiceTranscriptInput" rows="5" placeholder="Transcript appears here after recording. Edit and save — this text seeds rubric and sample questions.">@(Model.VoiceInstructionTranscript ?? "")</textarea>
-                                                                <p class="dm-v4-voice-transcript__meta" id="dmV4VoiceTranscriptMeta" data-updated-on="@(Model.VoiceInstructionTranscriptUpdatedOn?.ToString("o") ?? "")" @(dmV4HasTranscript ? "" : "style=\"display:none\"")>
+                                                                <p class="dm-v4-voice-transcript__meta" id="dmV4VoiceTranscriptMeta" data-updated-on="@IndiaTimeHelper.ToUtcIso8601(Model.VoiceInstructionTranscriptUpdatedOn)" @(dmV4HasTranscript ? "" : "style=\"display:none\"")>
                                                                     @if (dmV4HasTranscript && Model.VoiceInstructionTranscriptUpdatedOn.HasValue)
                                                                     {
-                                                                        <text>Last saved @Model.VoiceInstructionTranscriptUpdatedOn.Value.ToLocalTime().ToString("g")</text>
+                                                                        <text>Last saved @IndiaTimeHelper.FormatIstForDisplay(Model.VoiceInstructionTranscriptUpdatedOn.Value)</text>
                                                                     }
                                                                     else if (dmV4HasTranscript)
                                                                     {
@@ -3605,7 +3606,7 @@ else
     }
 </style>
 <script src="~/js/dm-v4-layout.js?v=20250609rubricsave2"></script>
-<script src="~/js/dm-v4-voice.js?v=20250609rubricfix1"></script>
+<script src="~/js/dm-v4-voice.js?v=20250609istmeta1"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 <script src="~/js/dm-v4-questions.js?v=20250609synthesia2"></script>
 

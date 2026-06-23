@@ -7343,7 +7343,7 @@ namespace Risebird.Web.Controllers
                     success = true,
                     transcript,
                     audioUrl = brief?.AudioUrl,
-                    transcriptUpdatedOn = brief?.TranscriptUpdatedOn
+                    transcriptUpdatedOn = IndiaTimeHelper.ToUtcIso8601(brief?.TranscriptUpdatedOn)
                 });
             }
             catch (Exception ex)
@@ -7367,7 +7367,7 @@ namespace Risebird.Web.Controllers
                     success = true,
                     audioUrl = brief?.AudioUrl,
                     transcript = brief?.Transcript,
-                    transcriptUpdatedOn = brief?.TranscriptUpdatedOn,
+                    transcriptUpdatedOn = IndiaTimeHelper.ToUtcIso8601(brief?.TranscriptUpdatedOn),
                     transcriptUpdatedBy = brief?.TranscriptUpdatedBy
                 });
             }
@@ -7401,7 +7401,7 @@ namespace Risebird.Web.Controllers
                 {
                     success = true,
                     transcript = brief?.Transcript,
-                    transcriptUpdatedOn = brief?.TranscriptUpdatedOn,
+                    transcriptUpdatedOn = IndiaTimeHelper.ToUtcIso8601(brief?.TranscriptUpdatedOn),
                     regenerateRubric
                 });
             }
