@@ -1272,7 +1272,6 @@ namespace Risebird.Business
                 reportModel.IsJoinabilitySelectabilityRequired = interviewDetails.IsJoinabilitySelectabilityRequired;
                 reportModel.ProctorReport = interviewDetails.ProctorReport;
                 reportModel.IsProctor = interviewDetails.IsProctor;
-                reportModel.NickName = interviewDetails.NickName;
                 reportModel.ClientAction = interviewDetails.ClientAction;
                 if (reportModel.IsEdited)
                 {
@@ -1284,6 +1283,16 @@ namespace Risebird.Business
                 reportModel.HasDistinctParticipants = interviewDetails.HasDistinctParticipants;
                 reportModel.AadhaarVerified = interviewDetails.AadhaarVerified;
                 reportModel.Interviewer = interviewDetails.interviewer;
+                reportModel.NickName = interviewDetails.NickName;
+                if (string.IsNullOrWhiteSpace(reportModel.NickName) || reportModel.NickName.Contains("@"))
+                {
+                    if (!string.IsNullOrWhiteSpace(reportModel.Interviewer))
+                    {
+                        var codedName = await FetchInterviewerCodedName(reportModel.Interviewer);
+                        if (!string.IsNullOrWhiteSpace(codedName?.NickName))
+                            reportModel.NickName = codedName.NickName;
+                    }
+                }
                 reportModel.JDTiltle = interviewDetails.JDTiltle;
                 reportModel.LogoUrl = interviewDetails.LogoUrl;
                 reportModel.AudioTranscriptFileLink = interviewDetails.AudioTranscriptFileLink;

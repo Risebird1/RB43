@@ -89,5 +89,6 @@ left join @AdvancedPoints ap on sp.id = ap.id
 left join UserList ul on ul.id = sp.id
 left join InterviewerProfile irp on irp.UserId = sp.id
 left join TransInterviewerAccDetails tic on tic.InterviewerProfileId = irp.id
+where ISNULL(irp.IsHoldPayment, 0) = 0
 END
 GO

@@ -1376,7 +1376,7 @@ namespace Risebird.Web.Controllers
 
                 var report = await _meetingService.GetInteviewReport(interviewId, irfId);
 
-                ViewBag.InterviewerEmail = report?.Interviewer;
+                ViewBag.InterviewerCodedName = report?.NickName;
                 ViewBag.CandidateEmail = report?.CandidateEmail;
                 ViewBag.IRFName = report?.IRFName;
                 ViewBag.InterviewDate = report?.interviewDate;
