@@ -1181,7 +1181,7 @@ namespace Risebird.Business
                     model.encodedresumeLink = interviewDetails.encodedresumeLink;
                     model.IRFId = irfId;
 
-                    model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
+                    //model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
                     model.currentEmployerName = interviewDetails.currentEmployerName;
                     model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
                     model.PreferredLocation = interviewDetails.preferredLocation;
@@ -2233,7 +2233,7 @@ namespace Risebird.Business
 
                     model.IRFId = irfId;
 
-                    model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
+                    //model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
                     model.currentEmployerName = interviewDetails.currentEmployerName;
                     model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
                     model.PreferredLocation = interviewDetails.preferredLocation;
