@@ -1972,10 +1972,12 @@ namespace Risebird.Web.Controllers
                     creditPeriod       = data.PaymentTerm > 0 ? data.PaymentTerm + " Days" : string.Empty,
                     gstNumber          = data.GSTNumber,
                     gstApplicable      = data.GSTApplicable,
-                    billingType        = data.BillingType,
-                    perInterviewRate   = data.PerInterviewRate,
-                    aiPerInterviewRate = data.AIPerInterviewRate,
-                    lineItems          = data.LineItems,
+                    billingType              = data.BillingType,
+                    interviewerBillingType   = data.InterviewerBillingType,
+                    billingCurrency          = string.IsNullOrEmpty(data.BillingCurrency) ? "INR" : data.BillingCurrency,
+                    perInterviewRate         = data.PerInterviewRate,
+                    aiPerInterviewRate       = data.AIPerInterviewRate,
+                    lineItems                = data.LineItems,
                     subtotal           = subtotal,
                     gstAmount          = gstAmount,
                     invoiceValue       = invoiceValue,
@@ -2062,7 +2064,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod,
             string irn, string eInvoiceFileLink, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
-            decimal tdsAmount, decimal netReceivable, string lineItemsJson,
+            decimal tdsAmount, decimal netReceivable, string lineItemsJson, int taxScenario = 0,
             decimal? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null,
             string latestRemark = null)
         {
@@ -2101,7 +2103,7 @@ namespace Risebird.Web.Controllers
                 decimal? savedCashAmount = (cashCreditAmount.HasValue && cashCreditAmount.Value > 0)
                     ? (decimal?)cashCreditAmount.Value : null;
                 var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
-                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems, latestRemark, cashTransactionRef, savedCashAmount);
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems, latestRemark, cashTransactionRef, savedCashAmount, taxScenario);
                 return Json(new
                 {
                     success,
@@ -2775,12 +2777,14 @@ namespace Risebird.Web.Controllers
                     DateTime endate = new DateTime(resolvedToYear, resolvedToMonth, 1).AddMonths(1);
 
                     var model = await _meetingService.FetchRevenueDetails(stdate, endate, resolvedFromYear, resolvedFromMonth, resolvedToYear, resolvedToMonth);
-                    int totalamount = 0;
+                    decimal totalamount = 0;
                     foreach (var item in model)
                     {
-                        var baseAmount = (item.NonAIInterviewCount * item.PerInterviewRate)
-                                       + (item.AIInterviewCount  * item.AIPerInterviewRate);
-                        totalamount = totalamount + baseAmount;
+                        // Use the SQL-computed BaseAmount which respects InterviewerBillingType
+                        // (Skill Channel rate / Interviewer rate / Client rate) and the
+                        // Turing 30% partial-billing rule for MeetingStatus 1/3/9.
+                        var baseAmount = (int)Math.Round(item.BaseAmount);
+                        totalamount = totalamount + item.BaseAmount;
                         if (item.GSTApplicable)
                         {
                             item.GST = "Yes";
@@ -2806,13 +2810,31 @@ namespace Risebird.Web.Controllers
                             : 1;
                         item.InvoiceRatio = $"{item.GeneratedInvoiceCount}/{denominator}";
                     }
-                    ViewBag.TotalRevenue = totalamount;
+                    ViewBag.TotalRevenue = Math.Round(totalamount, 2);
                     if (model != null)
                     {
                         ViewBag.PendingInvoiceAmount       = model.Sum(x => x.GeneratedInvoiceAmount) - model.Sum(x => x.ReceivedAmount);
                         ViewBag.InvoiceAmount              = model.Sum(x => x.GeneratedInvoiceAmount);
                         ViewBag.TotalSystemInvoiceAmount   = model.Sum(x => x.SystemInvoiceAmount);
                         ViewBag.PendingAmount              = model.Sum(x => x.SystemInvoiceAmount) - model.Sum(x => x.ReceivedAmount);
+
+                        // Per-currency breakdown for the header summary.
+                        // ExpandoObject is used (not anonymous type) so dynamic access works in Razor views.
+                        ViewBag.RevenueByCurrency = model
+                            .GroupBy(x => string.IsNullOrEmpty(x.BillingCurrency) ? "INR" : x.BillingCurrency)
+                            .OrderBy(g => g.Key)
+                            .Select(g =>
+                            {
+                                dynamic row          = new System.Dynamic.ExpandoObject();
+                                row.Currency         = g.Key;
+                                row.TotalRevenue     = Math.Round(g.Sum(x => x.BaseAmount), 2);
+                                row.SystemInvoiceAmount  = (decimal)g.Sum(x => x.SystemInvoiceAmount);
+                                row.InvoiceAmount        = g.Sum(x => x.GeneratedInvoiceAmount);
+                                row.PendingInvoiceAmount = g.Sum(x => x.GeneratedInvoiceAmount) - g.Sum(x => x.ReceivedAmount);
+                                row.PendingAmount        = (decimal)g.Sum(x => x.SystemInvoiceAmount) - g.Sum(x => x.ReceivedAmount);
+                                return row;
+                            })
+                            .ToList();
                     }
                     else
                     {
@@ -2820,6 +2842,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.InvoiceAmount              = 0;
                         ViewBag.TotalSystemInvoiceAmount   = 0;
                         ViewBag.PendingAmount              = 0;
+                        ViewBag.RevenueByCurrency          = new List<object>();
                     }
                     if (TempData["RevenueMessage"] != null)
                     {
@@ -2893,7 +2916,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 2].Value = item.Name;
                                 Sheet.Cells[i, 3].Value = item.PerInterviewRate;
                                 Sheet.Cells[i, 4].Value = item.TotalCount;
-                                Sheet.Cells[i, 5].Value = item.PerInterviewRate * item.TotalCount;
+                                Sheet.Cells[i, 5].Value = item.BaseAmount;
                                 Sheet.Cells[i, 6].Value = item.BillingOwner;
                                 i++;
                             }

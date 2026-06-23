@@ -208,6 +208,14 @@
                                                          new { id = "drp_IsInterviewerAccess", @class = "select-css form-control text-box single-line" })
                                                 @Html.ValidationMessageFor(model => model.IsInterviewerAccess, "", new { @class = "text-danger" })
                                             </div>
+                                        }
+                                        else
+                                        {
+                                            @Html.HiddenFor(model => model.IsActive)
+                                            @Html.HiddenFor(model => model.IsInterviewerAccess)
+                                        }
+                                         @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "Finance")
+                                        {
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.IsHoldPayment, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                 @Html.DropDownListFor(model => model.IsHoldPayment, new[]
@@ -224,14 +232,13 @@
                                         }
                                         else
                                         {
-                                            @Html.HiddenFor(model => model.IsActive)
-                                            @Html.HiddenFor(model => model.IsInterviewerAccess)
                                             @Html.HiddenFor(model => model.IsHoldPayment)
                                             @Html.HiddenFor(model => model.HoldPaymentReason)
                                         }
+
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Ex: 999999999", @style = "margin-top: 10px!important;" })
+                                            @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Ex: 999999999" })
                                         </div>
 
                                         @*<div class="form-group">
@@ -280,7 +287,15 @@
                                             @Html.EditorFor(model => model.City, new { htmlAttributes = new { id = "txt_City", @class = "form-control text-box single-line", @type = "text" } })
                                             @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="form-group" style="margin-top: -10px;">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.DropDownListFor(model => model.Isinstaavailable, new[]
+                                                     {   new SelectListItem { Text = "No", Value = "false" },
+                                    new SelectListItem { Text = "Yes", Value = "true"} },
+                                                     new { id = "drp_Isinstaavailable", @class = "select-css form-control text-box single-line" })
+                                            @Html.ValidationMessageFor(model => model.Isinstaavailable, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
                                             <span class="desp-label control-label">
                                                 Upload Resume
                                             </span>
@@ -294,7 +309,6 @@
                                                     <div class="mdc-radio__ripple"></div>
                                                 </div>
                                             </div>
-                                            <!-- <input id="Resume" name="Resume" value="Upload" type="radio" checked="checked" onclick="RadioChanged(this.value)">-->
                                             | <span class="desp-label control-label">
                                                 Coded Resume
                                             </span>
@@ -308,38 +322,27 @@
                                                     <div class="mdc-radio__ripple"></div>
                                                 </div>
                                             </div>
-                                            <!-- <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
                                         </div>
                                         <div style="display:none" id="linkDiv">
                                             @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
                                             @Html.TextBoxFor(model => model.CodedResumeFile, new { id = "txt_CodedResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
                                         </div>
-                                        <div class="" id="uploadDiv">
-
+                                        <div class="form-group" id="uploadDiv">
                                             @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
                                         </div>
-                                        <div>
+                                        <div class="form-group">
                                             @if (Model.ResumeLink != null)
                                             {
-                                                <div class="upload" style=" float: left;">  <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink.Replace(" ","%20")>Uploaded Resume  </a></div>
-                                            }
-                                        </div>
-                                        <div>
-                                            @if (Model.CodedResumeLink != null)
-                                            {
-                                                <div class="upload" style=" float: left;margin-left:5px">
-                                                    <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink.Replace(" ","%20")>Coded Resume</a>
+                                                <div class="upload" style="float: left;">
+                                                    <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded col-lg-12" id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink.Replace(" ","%20")>Uploaded Resume</a>
                                                 </div>
                                             }
-                                        </div>
-                                        <div>
-                                            @Html.LabelFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.DropDownListFor(model => model.Isinstaavailable, new[]
-                                                     {   new SelectListItem { Text = "No", Value = "false" },
-                                    new SelectListItem { Text = "Yes", Value = "true"} },
-                                                     new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
-                                            @Html.ValidationMessageFor(model => model.Isinstaavailable, "", new { @class = "text-danger" })
+                                            @if (Model.CodedResumeLink != null)
+                                            {
+                                                <div class="upload" style="float: left; margin-left: 5px;">
+                                                    <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink.Replace(" ","%20")>Coded Resume</a>
+                                                </div>
+                                            }
                                         </div>
 
                                         @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })

@@ -551,13 +551,13 @@
                                                         <span class="pp-email"><i class="fas fa-phone-alt" style="font-size:8px;"></i> @r.ParsedPhone</span>
                                                     }
                                                 </td>
-                                                <td style="font-size:11px;">
+                                                <td style="font-size:11px;white-space: normal;">
                                                     @(r.MagName ?? "\u2014")
                                                     @if (!string.IsNullOrEmpty(r.AssessmentGroupName))
                                                     {
                                                         <br />
 
-                                                        <span style="font-size:10px;color:#6c757d;">@r.AssessmentGroupName</span>
+                                                        <span style="font-size:10px;color:#6c757d;white-space: normal;">@r.AssessmentGroupName</span>
                                                     }
                                                 </td>
 
@@ -666,7 +666,7 @@
                                                     }
                                                     else if (invited)
                                                     {
-                                                        <span class="pp-response text-warning"><i class="fas fa-clock me-1"></i>Awaiting</span>
+                                                        <span class="pp-response text-warning">Awaiting</span>
                                                         @if (r.InvitationEmailSentAt.HasValue)
                                                         {
                                                             <br />

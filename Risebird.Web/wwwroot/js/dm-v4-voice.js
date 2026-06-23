@@ -17,9 +17,19 @@
     function formatTranscriptDate(iso) {
         if (!iso) return '';
         try {
-            var d = new Date(iso);
+            var raw = String(iso).trim();
+            if (!raw) return '';
+            // DB stores UTC; values without a timezone suffix must be parsed as UTC.
+            if (raw.indexOf('T') !== -1 && !/[zZ]|[+-]\d{2}:\d{2}$/.test(raw)) {
+                raw += 'Z';
+            }
+            var d = new Date(raw);
             if (isNaN(d.getTime())) return '';
-            return d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+            return d.toLocaleString('en-IN', {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+                timeZone: 'Asia/Kolkata'
+            }) + ' IST';
         } catch (e) {
             return '';
         }
@@ -141,12 +151,22 @@
 
     window.dmV4ApplyVoiceRecordingToHero = applyVoiceRecordingToHero;
 
+    function getVoiceTranscriptForRubric() {
+        return ($('#dmV4VoiceTranscriptInput').val() || $('#dmV4ModalTranscriptInput').val() || '').trim();
+    }
+
     /**
-     * Calls /IRF/GenerateRubricFromVoice (reads saved transcript from DB by irfId).
+     * Calls /IRF/GenerateRubricFromVoice (uses transcript from the page; server auto-saves it).
      * Returns a jQuery promise.
      */
     function callGenerateRubricFromVoice(irfId, $btn) {
         clearRubricRegenErrors();
+
+        var transcript = getVoiceTranscriptForRubric();
+        if (!transcript) {
+            showRubricRegenError('Save a voice transcript first (record audio and transcribe, or enter text manually).');
+            return $.Deferred().reject({ message: 'Missing transcript' }).promise();
+        }
 
         if ($btn && $btn.length) {
             $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Regenerating rubric…');
@@ -155,7 +175,7 @@
         return $.ajax({
             type: 'POST',
             url: '/IRF/GenerateRubricFromVoice',
-            data: { irfId: irfId },
+            data: { irfId: irfId, transcript: transcript },
             timeout: 300000
         }).then(function (rubricRes) {
             if (rubricRes && rubricRes.success) {

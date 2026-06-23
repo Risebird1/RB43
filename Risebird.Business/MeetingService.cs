@@ -1272,7 +1272,6 @@ namespace Risebird.Business
                 reportModel.IsJoinabilitySelectabilityRequired = interviewDetails.IsJoinabilitySelectabilityRequired;
                 reportModel.ProctorReport = interviewDetails.ProctorReport;
                 reportModel.IsProctor = interviewDetails.IsProctor;
-                reportModel.NickName = interviewDetails.NickName;
                 reportModel.ClientAction = interviewDetails.ClientAction;
                 if (reportModel.IsEdited)
                 {
@@ -1284,6 +1283,16 @@ namespace Risebird.Business
                 reportModel.HasDistinctParticipants = interviewDetails.HasDistinctParticipants;
                 reportModel.AadhaarVerified = interviewDetails.AadhaarVerified;
                 reportModel.Interviewer = interviewDetails.interviewer;
+                reportModel.NickName = interviewDetails.NickName;
+                if (string.IsNullOrWhiteSpace(reportModel.NickName) || reportModel.NickName.Contains("@"))
+                {
+                    if (!string.IsNullOrWhiteSpace(reportModel.Interviewer))
+                    {
+                        var codedName = await FetchInterviewerCodedName(reportModel.Interviewer);
+                        if (!string.IsNullOrWhiteSpace(codedName?.NickName))
+                            reportModel.NickName = codedName.NickName;
+                    }
+                }
                 reportModel.JDTiltle = interviewDetails.JDTiltle;
                 reportModel.LogoUrl = interviewDetails.LogoUrl;
                 reportModel.AudioTranscriptFileLink = interviewDetails.AudioTranscriptFileLink;
@@ -3199,7 +3208,7 @@ namespace Risebird.Business
 
         public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
-            List<InvoiceLineItemVM> lineItems, string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null)
+            List<InvoiceLineItemVM> lineItems, string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0)
         {
             try
             {
@@ -3210,7 +3219,7 @@ namespace Risebird.Business
                     await Task.WhenAll(tasks);
                 }
                 return await _meetingRespository.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
-                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, latestRemark, utrTrxn, cashCreditAmount);
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, latestRemark, utrTrxn, cashCreditAmount, taxScenario);
             }
             catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return false; }
         }

@@ -563,8 +563,8 @@
                                 <th>Product</th>
                                 <th>Description</th>
                                 <th class="col-num" style="width:10%">Qty</th>
-                                <th class="col-num" style="width:12%">Unit (&#8377;)</th>
-                                <th class="col-num" style="width:14%">Line Total (&#8377;)</th>
+                                <th class="col-num" style="width:12%" id="thUnitHeader">Unit (&#8377;)</th>
+                                <th class="col-num" style="width:14%" id="thLineTotalHeader">Line Total (&#8377;)</th>
                                 <th style="width:10%">Basis</th>
                             </tr>
                         </thead>
@@ -621,6 +621,7 @@
                         <input type="hidden" name="InvoiceBaseAmount"    id="hidInvoiceBaseAmount"    value="0" />
                         <input type="hidden" name="NetReceivableAmount"  id="hidNetReceivableAmount"  value="0" />
                         <input type="hidden" name="BillingType"          id="hidBillingType"          value="0" />
+                        <input type="hidden" name="BillingCurrency"      id="hidBillingCurrency"      value="INR" />
                     </div>
                 </div>
             </div>
@@ -634,19 +635,19 @@
                 <div class="row g-3 gen-inv-row">
                     <div class="col-md-4">
                         <div class="gen-inv-field">
-                            <label class="gen-inv-label">Invoice Base Amount (&#8377;)</label>
+                            <label class="gen-inv-label" id="lblInvoiceBaseAmt">Invoice Base Amount (&#8377;)</label>
                             <input type="text" id="txtInvoiceBaseAmt" class="form-control auto-field" readonly placeholder="—" />
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="gen-inv-field">
-                            <label class="gen-inv-label">Net Receivable (&#8377;)</label>
+                            <label class="gen-inv-label" id="lblNetReceivableAmt">Net Receivable (&#8377;)</label>
                             <input type="text" id="txtNetReceivableAmt" class="form-control auto-field" readonly placeholder="—" />
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="gen-inv-field">
-                            <label class="gen-inv-label" for="txtPaidCreditAmount">Credit Amount (&#8377;) <span style="font-size:10px;color:#9ca3af;font-style:italic;">(reference)</span></label>
+                            <label class="gen-inv-label" for="txtPaidCreditAmount" id="lblCreditAmt">Credit Amount (&#8377;) <span style="font-size:10px;color:#9ca3af;font-style:italic;">(reference)</span></label>
                             <input type="number" id="txtPaidCreditAmount" class="form-control" min="0" placeholder="Actual amount received (optional)" />
                         </div>
                     </div>
@@ -697,9 +698,26 @@
 </div>
 
 <script>
-    var invoiceData         = null;
-    var BILLING_TYPE_OWNER  = 1;
+    var invoiceData           = null;
+    var BILLING_TYPE_OWNER    = 1;
     var preFillBillingOwnerId = @(ViewBag.PreFillBillingOwnerId ?? 0);
+    var billingCurrency       = 'INR';
+
+    function getCurrencySymbol(code) {
+        var map = { 'INR': '₹', 'USD': '$', 'EUR': '€', 'GBP': '£', 'AED': 'AED', 'SGD': 'S$', 'AUD': 'A$' };
+        return map[code] || code;
+    }
+
+    function applyCurrencyToUI(code) {
+        billingCurrency = code || 'INR';
+        var sym = getCurrencySymbol(billingCurrency);
+        $('#hidBillingCurrency').val(billingCurrency);
+        $('#thUnitHeader').text('Unit (' + sym + ')');
+        $('#thLineTotalHeader').text('Line Total (' + sym + ')');
+        $('#lblInvoiceBaseAmt').html('Invoice Base Amount (' + sym + ')');
+        $('#lblNetReceivableAmt').html('Net Receivable (' + sym + ')');
+        $('#lblCreditAmt').html('Credit Amount (' + sym + ') <span style="font-size:10px;color:#9ca3af;font-style:italic;">(reference)</span>');
+    }
 
     $(document).ready(function () {
         $('#ddlClient').change(onClientOrPeriodChange);
@@ -820,6 +838,7 @@
         $('#txtCreditPeriod').val(data.creditPeriod || '');
         $('#txtGSTNumber').val(data.gstNumber || '');
         $('#hidBillingType').val(data.billingType || 0);
+        applyCurrencyToUI(data.billingCurrency);
 
         var taxScenario = data.gstApplicable ? 1 : 0;
         $('#ddlTaxScenario').val(taxScenario);
@@ -936,8 +955,8 @@
                 '<td>' + escHtml(item.productName) + '</td>' +
                 '<td>' + escHtml(item.description) + '</td>' +
                 '<td class="col-num">' + (parseInt(item.qty) || 0) + '</td>' +
-                '<td class="col-num">&#8377; ' + formatNum(item.unitRate) + '</td>' +
-                '<td class="col-num">&#8377; ' + formatNum(lt) + '</td>' +
+                '<td class="col-num">' + getCurrencySymbol(billingCurrency) + ' ' + formatNum(item.unitRate) + '</td>' +
+                '<td class="col-num">' + getCurrencySymbol(billingCurrency) + ' ' + formatNum(lt) + '</td>' +
                 '<td>' + escHtml(item.basis) + '</td>' +
                 '</tr>';
             tbody.append(row);
@@ -955,13 +974,14 @@
         var tdsAmt     = Math.round(subtotal * 10) / 100;
         var netRec     = invValue - tdsAmt;
 
-        $('#tdTotSubtotal').text('₹ ' + formatNum(subtotal));
-        $('#tdGSTAmount').text('₹ ' + formatNum(gstAmt));
+        var sym = getCurrencySymbol(billingCurrency);
+        $('#tdTotSubtotal').text(sym + ' ' + formatNum(subtotal));
+        $('#tdGSTAmount').text(sym + ' ' + formatNum(gstAmt));
         $('#tdGSTLabel').text(taxScenario === 1 ? 'GST 18%' : 'GST (Non-GST)');
         $('#trGST').css('opacity', taxScenario === 1 ? 1 : 0.4);
-        $('#tdInvoiceValue').text('₹ ' + formatNum(invValue));
-        $('#tdTDSAmount').text('- ₹ ' + formatNum(tdsAmt));
-        $('#tdNetReceivable').text('₹ ' + formatNum(netRec));
+        $('#tdInvoiceValue').text(sym + ' ' + formatNum(invValue));
+        $('#tdTDSAmount').text('- ' + sym + ' ' + formatNum(tdsAmt));
+        $('#tdNetReceivable').text(sym + ' ' + formatNum(netRec));
 
         $('#hidSubtotal').val(subtotal.toFixed(2));
         $('#hidGSTAmount').val(gstAmt.toFixed(2));
