@@ -5,7 +5,7 @@
   const DEFAULT_SCREENSHOT_MS = CAPTURE_BASE_MS;
   const DEFAULT_SCREEN_CHUNK_MS = CAPTURE_BASE_MS;
   const MIN_CHUNK_BYTES = 1024;
-  const MIN_CHUNK_UPLOAD_BYTES = 16384;
+  const MIN_CHUNK_UPLOAD_BYTES = 4096;
   const SCREEN_VIDEO_BITS_PER_SECOND = 2200000;
   const CHUNK_UPLOAD_WORKER_RETRIES = 16;
   let pendingChunkParts = [];
@@ -27,6 +27,7 @@
   let screenChunkIntervalMs = DEFAULT_SCREEN_CHUNK_MS;
   let usedDesktopCaptureStreamId = false;
   let framesLookValid = false;
+  let consecutiveBlankScreenshotFrames = 0;
 
   function sendToWorker(payload) {
     return new Promise((resolve) => {
@@ -150,6 +151,7 @@
     captureActive = false;
     usedDesktopCaptureStreamId = false;
     framesLookValid = false;
+    consecutiveBlankScreenshotFrames = 0;
     stopScreenRecorder();
     stopScreenshotSchedule();
     stopChunkSchedule();
@@ -396,7 +398,12 @@
       const ctx = canvas.getContext('2d');
       if (!ctx) return false;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      if (!framesLookValid && !sampleFrameHasContent(video)) return false;
+      if (!framesLookValid && !sampleFrameHasContent(video)) {
+        consecutiveBlankScreenshotFrames += 1;
+        if (consecutiveBlankScreenshotFrames < 3) return false;
+      } else {
+        consecutiveBlankScreenshotFrames = 0;
+      }
       const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
       const base64 = dataUrl.split(',')[1];
       if (!base64 || base64.length < 1200) return false;
@@ -417,6 +424,7 @@
           },
         });
       }
+      if (res.ok) consecutiveBlankScreenshotFrames = 0;
       return res.ok;
     } catch (e) {
       console.warn('offscreen screenshot', e);
@@ -602,6 +610,29 @@
           return;
         }
         sendResponse({ ok: false, error: 'No live screen share in offscreen.' });
+        return;
+      }
+      if (message?.type === 'OFFSCREEN_SESSION_STARTED') {
+        const settings = message.settings || {};
+        screenshotIntervalMs = Number(settings.screenshotIntervalMs) || DEFAULT_SCREENSHOT_MS;
+        screenChunkIntervalMs = Number(settings.screenChunkIntervalMs) || DEFAULT_SCREEN_CHUNK_MS;
+        if (hasLiveStream() && screenStream) {
+          await armStreamPipeline(screenStream);
+          void captureScreenshotFromStream();
+          scheduleNextScreenshot(true);
+          if (screenRecorder && screenRecorder.state === 'recording') {
+            try {
+              screenRecorder.requestData();
+            } catch (_) {
+              /* ignore */
+            }
+          }
+        }
+        sendResponse({
+          ok: true,
+          hasLiveStream: hasLiveStream(),
+          pipelineReady: isCapturePipelineReady(),
+        });
         return;
       }
       if (message?.type === 'OFFSCREEN_STOP_CAPTURE') {

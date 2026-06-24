@@ -1,16 +1,16 @@
 /**
  * Shared capture timing — maximize screenshots/chunks while skipping tiny blank blobs.
  */
-const CAPTURE_BASE_MS = 12000;
+const CAPTURE_BASE_MS = 8000;
 const CAPTURE_JITTER_RATIO = 0.15;
 
 const CAPTURE_SCREENSHOT_MIN_GAP_MS = 6000;
-const CAPTURE_SCREENSHOT_MAX_GAP_MS = 10000;
+const CAPTURE_SCREENSHOT_MAX_GAP_MS = 9000;
 const CAPTURE_VIDEO_MIN_GAP_MS = 5000;
-const CAPTURE_VIDEO_MAX_GAP_MS = 8000;
+const CAPTURE_VIDEO_MAX_GAP_MS = 9000;
 
 /** MediaRecorder timeslice — emit chunk data every ~5s (accumulated before upload). */
-const CAPTURE_CHUNK_TIMESLICE_MS = 5000;
+const CAPTURE_CHUNK_TIMESLICE_MS = 7000;
 
 function jitteredCaptureDelayMs(baseMs, jitterRatio, bounds) {
   const base = Math.max(1000, Number(baseMs) || CAPTURE_BASE_MS);

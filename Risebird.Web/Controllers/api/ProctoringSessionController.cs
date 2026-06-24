@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -555,6 +556,7 @@ namespace Risebird.Web.Controllers.Api
     {
         public int? InterviewId { get; set; }
         public string? ImageBase64 { get; set; }
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public long? CapturedAt { get; set; }
         public string? CaptureSource { get; set; }
         public object? CaptureContext { get; set; }
@@ -574,6 +576,7 @@ namespace Risebird.Web.Controllers.Api
         public int? InterviewId { get; set; }
         public int? ChunkSeq { get; set; }
         public string? MimeType { get; set; }
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public long? CapturedAt { get; set; }
         public string? Data { get; set; }
         public string? CaptureSource { get; set; }

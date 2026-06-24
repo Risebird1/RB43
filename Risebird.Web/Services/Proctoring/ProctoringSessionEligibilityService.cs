@@ -11,12 +11,6 @@ namespace Risebird.Web.Services.Proctoring
     {
         private readonly IAIInterviewerService _aiInterviewerService;
 
-        /// <summary>No persistence before scheduled interview start (eligibility uses interviewDate as window start).</summary>
-        private const int MinutesBeforeStartGrace = 0;
-
-        /// <summary>Grace after scheduled end (submission, clock skew).</summary>
-        private const int MinutesAfterEndGrace = 5;
-
         public ProctoringSessionEligibilityService(IAIInterviewerService aiInterviewerService)
         {
             _aiInterviewerService = aiInterviewerService;
@@ -46,13 +40,6 @@ namespace Risebird.Web.Services.Proctoring
                 !string.Equals(details.candidateEmail.Trim(), payload.Email?.Trim(), StringComparison.OrdinalIgnoreCase))
                 return false;
             if (IsTerminalMeetingStatus(details.MeetingStatus))
-                return false;
-
-            var durationMin = details.interviewDuration > 0 ? details.interviewDuration : 60;
-            var windowStart = details.interviewDate.AddMinutes(-MinutesBeforeStartGrace);
-            var windowEnd = details.interviewDate.AddMinutes(durationMin + MinutesAfterEndGrace);
-            var now = DateTime.Now;
-            if (now < windowStart || now > windowEnd)
                 return false;
 
             return true;

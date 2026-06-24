@@ -1,4 +1,5 @@
 (function initContentMonitor() {
+  if (!/\/AIInterview(\/|$)/i.test(window.location.pathname || '')) return;
 
   let sessionActive = false;
 
@@ -209,7 +210,9 @@
     if (!key || key === 'default') return;
     const data = await chrome.storage.local.get([
       'proctoringShareEstablishedKey',
+      'proctoringAutoSharePromptKey',
       'proctoringSessionJoined',
+      'sessionActive',
     ]);
     if (data.proctoringShareEstablishedKey === key) {
       autoSharePromptDone = true;
@@ -218,6 +221,12 @@
       isScreenShareActive = true;
       screenSharePromptedThisSession = true;
       screenSharePromptSessionKey = key;
+      if (data.sessionActive === true) {
+        sessionActive = true;
+        proctoringStartForwarded = true;
+        proctoringFlow.isSessionStarted = true;
+        proctoringFlow.isProctoringActive = true;
+      }
     } else if (data.proctoringAutoSharePromptKey === key) {
       autoSharePromptDone = true;
       autoSharePickerInvoked = true;
@@ -228,6 +237,52 @@
       joinCompleted = true;
       proctoringFlow.isSessionJoined = true;
     }
+  }
+
+  async function resumeProctoringAfterPageReload() {
+    await loadPersistedShareFlags();
+    const key = getScreenShareSessionKey();
+    const data = await chrome.storage.local.get([
+      'proctoringShareEstablishedKey',
+      'proctoringAutoSharePromptKey',
+      'sessionActive',
+    ]);
+    const wasEstablished =
+      data.proctoringShareEstablishedKey === key ||
+      data.proctoringAutoSharePromptKey === key ||
+      proctoringStartForwarded ||
+      hasAutoSharePickerBeenInvoked();
+    if (!wasEstablished) return false;
+
+    const st = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
+    if (
+      st?.hasLiveStream &&
+      st?.sessionActive &&
+      st?.backendStartConfirmed &&
+      st?.backendJoinConfirmed
+    ) {
+      joinCompleted = true;
+      await finalizeProctoringStarted({
+        ok: true,
+        backendReady: true,
+        sessionStarted: true,
+        resumed: true,
+      });
+      return true;
+    }
+
+    const payload = readBootstrapPayload();
+    if (!payload?.sessionToken) return false;
+    const resumeRes = await safeRuntimeSendMessage({
+      type: 'RESUME_PROCTORING_AFTER_RELOAD',
+      payload,
+    });
+    if (resumeRes?.ok) {
+      joinCompleted = true;
+      await finalizeProctoringStarted(resumeRes);
+      return true;
+    }
+    return false;
   }
 
   /** Skip auto picker only when entire-screen capture is actually live for this interview. */
@@ -945,6 +1000,9 @@
    * Content getDisplayMedia does not — use service worker picker once per interview.
    */
   async function requestEntireScreenShareOnce(forceManual) {
+    if (!forceManual && (await resumeProctoringAfterPageReload())) {
+      return { ok: true, resumed: true };
+    }
     if (await markStartedIfLive()) {
       setupRetryCount = 0;
       const resumeRes = await safeRuntimeSendMessage({
@@ -1185,6 +1243,9 @@
     try {
       announceExtensionReady();
       await loadPersistedShareFlags();
+      if (await resumeProctoringAfterPageReload()) {
+        return;
+      }
       const payload = readBootstrapPayload();
       if (!payload?.sessionToken) {
         console.warn('[Risebird Proctoring] missing session token on page');
@@ -1304,6 +1365,7 @@
     shareRecoveryInFlight = true;
     lastShareRecoveryAt = Date.now();
     try {
+      if (await resumeProctoringAfterPageReload()) return;
       const resumeRes = await safeRuntimeSendMessage({
         type: 'BEGIN_SCREEN_SHARE',
         forceNewPicker: false,
@@ -1322,22 +1384,20 @@
     if (!el || !el.textContent || !el.textContent.trim()) return;
     if (autoPipelineInFlight || autoStartPipelineScheduled) return;
     autoStartPipelineScheduled = true;
-    if (proctoringStartForwarded || hasAutoSharePickerBeenInvoked()) {
-      if (await shouldSkipAutoSharePicker()) {
-        await resumeBackendWithoutPicker();
-      }
-      return;
-    }
+    if (await resumeProctoringAfterPageReload()) return;
     if (await shouldSkipAutoSharePicker()) {
+      // Stream is live and session established — just re-arm without a new picker.
       await resumeBackendWithoutPicker();
       return;
     }
+    // Picker may have run before but stream is dead — fall through to re-establish.
     void runJoinAndScreenShareFromBootstrap();
   }
 
   async function emitProctoringReady() {
     announceExtensionReady();
-    if (proctoringStartForwarded || hasAutoSharePickerBeenInvoked()) return;
+    if (await resumeProctoringAfterPageReload()) return;
+    // Only skip when the stream is verifiably live — never block on a stale picker flag alone.
     if (await shouldSkipAutoSharePicker()) return;
     const hasBootstrap = document.getElementById('risebird-proctoring-bootstrap');
     if (!hasBootstrap) {
@@ -1411,9 +1471,12 @@
 
 
     if (event.data?.type === 'RB_PROCTORING_HELLO') {
-      if (!hasAutoSharePickerBeenInvoked() && !proctoringStartForwarded) {
-        void emitProctoringReady();
-      }
+      announceExtensionReady();
+      void resumeProctoringAfterPageReload().then((resumed) => {
+        if (!resumed && !hasAutoSharePickerBeenInvoked() && !proctoringStartForwarded) {
+          void emitProctoringReady();
+        }
+      });
       return;
     }
 
