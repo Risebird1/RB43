@@ -429,7 +429,7 @@ namespace Risebird.Web.Controllers
                 }
             }
 
-            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, CreatedOn, billingOwnerId, transactionId, invoicePDF, transactionDate);
+            var result = await _walletService.AddClientWalletBalance(billingType, Clientid, CreditAmount, emailid, CreatedOn, billingOwnerId, transactionId, invoicePDF, transactionDate, "Manual");
             if (result)
             {
                 return Json("Credit amount added Successfully");
@@ -439,6 +439,295 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to added Credit amount, Please try again.");
             }
         }
+
+        #region Client Wallet Dashboard (Finance)
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ClientWallet(int clientId, int? month = null, int? year = null, string scope = "month")
+        {
+            if (!IsFinanceOrAdmin()) return RedirectToAction("SignOut", "Session");
+
+            var selectedMonth = month ?? DateTime.Now.Month;
+            var selectedYear = year ?? DateTime.Now.Year;
+            var allDetails = string.Equals(scope, "all", StringComparison.OrdinalIgnoreCase);
+            var dashboard = await _walletService.GetClientWalletDashboard(clientId, selectedMonth, selectedYear, allDetails);
+            if (string.IsNullOrEmpty(dashboard.ClientName))
+            {
+                TempData["ClientWalletMessage"] = "Error: Client not found.";
+                return RedirectToAction("List", "Client");
+            }
+
+            ViewBag.ClientUsers = dashboard.BillingType == 1
+                ? new SelectList(_irfService.GetClientUser(clientId), "id", "EmailId")
+                : null;
+
+            if (TempData["ClientWalletMessage"] != null)
+            {
+                ViewBag.Message = TempData["ClientWalletMessage"].ToString();
+            }
+
+            return View(dashboard);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetPOHistory(int clientId)
+        {
+            if (!IsFinanceOrAdmin()) return PartialView("_POHistory", new List<ClientPOVM>());
+            var billingType = await _clientService.GetClientBillingType(clientId);
+            var list = await _walletService.GetPOHistory(clientId);
+            ViewBag.BillingType = billingType;
+            return PartialView("_POHistory", list);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetCashCreditHistory(int clientId)
+        {
+            if (!IsFinanceOrAdmin()) return PartialView("_CashCreditHistory", new List<WalletVM>());
+            var billingType = await _clientService.GetClientBillingType(clientId);
+            var list = await _walletService.GetCashCreditHistory(clientId);
+            ViewBag.BillingType = billingType;
+            return PartialView("_CashCreditHistory", list);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> AddCashCreditPoints(int clientId, int creditAmount, DateTime? transactionDate = null, string transactionRefNumber = null, int? billingOwnerId = null, int? clientPOId = null)
+        {
+            if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
+
+            var billingType = await _clientService.GetClientBillingType(clientId);
+            if (billingType == 1 && (!billingOwnerId.HasValue || billingOwnerId.Value <= 0))
+            {
+                return Json(new { success = false, message = "Billing owner is required for this client." });
+            }
+            if (creditAmount <= 0) return Json(new { success = false, message = "Enter a valid credit amount." });
+
+            if (clientPOId.HasValue && clientPOId.Value > 0)
+            {
+                var openPOs = await _walletService.GetClientPOList(clientId, openOnly: true);
+                var po = openPOs.FirstOrDefault(x => x.id == clientPOId.Value);
+                if (po == null)
+                {
+                    return Json(new { success = false, message = "Selected PO not found or already fully credited." });
+                }
+                if (po.PendingCashCredit > 0 && creditAmount > po.PendingCashCredit)
+                {
+                    return Json(new { success = false, message = $"Cash credit cannot exceed pending PO amount (₹ {po.PendingCashCredit:N0})." });
+                }
+                if (billingType == 1 && po.BillingOwnerId != billingOwnerId)
+                {
+                    return Json(new { success = false, message = "Cash credit billing owner must match the selected PO." });
+                }
+            }
+
+            var emailid = GetSessionEmail();
+            var result = await _walletService.AddClientWalletBalance(
+                billingType, clientId, creditAmount, emailid, DateTime.Now,
+                billingType == 1 ? billingOwnerId : null,
+                transactionRefNumber, null, transactionDate, "CashCredit", clientPOId);
+
+            return Json(new { success = result, message = result ? "Cash credit added to wallet successfully." : "Failed to add cash credit." });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetOpenClientPOs(int clientId, int? billingOwnerId = null)
+        {
+            if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
+            var list = await _walletService.GetClientPOList(clientId, billingOwnerId: billingOwnerId, openOnly: true);
+            return Json(new
+            {
+                success = true,
+                items = list.Select(x => new
+                {
+                    x.id,
+                    label = string.IsNullOrEmpty(x.PONumber)
+                        ? $"{x.PeriodLabel} · ₹ {x.POCreditAmount:N0} (Pending ₹ {x.PendingCashCredit:N0})"
+                        : $"{x.PONumber} · {x.PeriodLabel} · Pending ₹ {x.PendingCashCredit:N0}",
+                    x.POCreditAmount,
+                    x.CashCreditReceived,
+                    pending = x.PendingCashCredit,
+                    x.BillingOwnerId
+                })
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> AddPOCreditPoints(int clientId, int creditAmount, int month, int year,
+            DateTime? transactionDate = null, string transactionRefNumber = null, int? billingOwnerId = null, IFormFile poFile = null)
+        {
+            if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
+
+            var client = await _clientService.GetClient(clientId);
+            if (client == null) return Json(new { success = false, message = "Client not found." });
+            if (client.BillingModel != (int)BillingModelEnum.M2 && client.BillingModel != (int)BillingModelEnum.M3)
+            {
+                return Json(new { success = false, message = "PO credit is only available for M2 and M3 billing models." });
+            }
+
+            var billingType = await _clientService.GetClientBillingType(clientId);
+            if (billingType == 1 && (!billingOwnerId.HasValue || billingOwnerId.Value <= 0))
+            {
+                return Json(new { success = false, message = "Billing owner is required for this client." });
+            }
+            if (creditAmount <= 0) return Json(new { success = false, message = "Enter a valid PO credit amount." });
+
+            var invoicePDF = await UploadPdfAsync(poFile);
+            if (poFile != null && poFile.Length > 0 && invoicePDF == null)
+            {
+                return Json(new { success = false, message = "Only PDF files are allowed." });
+            }
+
+            var emailid = GetSessionEmail();
+            var poId = await _walletService.SaveClientPO(
+                clientId, billingType, client.BillingModel, creditAmount, month, year, emailid,
+                billingType == 1 ? billingOwnerId : null,
+                transactionRefNumber, invoicePDF, "PO credit registered — cash credit to be added later in wallet");
+
+            return Json(new
+            {
+                success = poId > 0,
+                message = poId > 0
+                    ? "PO registered successfully. Add cash credit later to post amount into wallet."
+                    : "Failed to register PO."
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> UploadPODocument(int clientId, int month, int year, string transactionRefNumber = null,
+            int? billingOwnerId = null, IFormFile poFile = null)
+        {
+            if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
+
+            var client = await _clientService.GetClient(clientId);
+            if (client == null) return Json(new { success = false, message = "Client not found." });
+            if (client.BillingModel != (int)BillingModelEnum.M2 && client.BillingModel != (int)BillingModelEnum.M3)
+            {
+                return Json(new { success = false, message = "PO upload is only available for M2 and M3 billing models." });
+            }
+
+            var billingType = await _clientService.GetClientBillingType(clientId);
+            if (billingType == 1 && (!billingOwnerId.HasValue || billingOwnerId.Value <= 0))
+            {
+                return Json(new { success = false, message = "Billing owner is required for this client." });
+            }
+            if (poFile == null || poFile.Length == 0)
+            {
+                return Json(new { success = false, message = "Please select a PO PDF file." });
+            }
+
+            var invoicePDF = await UploadPdfAsync(poFile);
+            if (invoicePDF == null)
+            {
+                return Json(new { success = false, message = "Only PDF files are allowed." });
+            }
+
+            var emailid = GetSessionEmail();
+            var poId = await _walletService.SaveClientPO(
+                clientId, billingType, client.BillingModel, 0, month, year, emailid,
+                billingType == 1 ? billingOwnerId : null,
+                transactionRefNumber, invoicePDF, "PO document uploaded without credit amount");
+
+            return Json(new
+            {
+                success = poId > 0,
+                message = poId > 0 ? "PO document saved successfully." : "Failed to upload PO document."
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> UpdatePOStatus(int poId, int clientId, int status)
+        {
+            if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
+
+            // Only allow setting to Complete (4) or Paid (5)
+            if (status != 4 && status != 5)
+                return Json(new { success = false, message = "Invalid status. Allowed values: 4 (Complete), 5 (Paid)." });
+
+            var result = await _walletService.UpdatePOStatus(poId, clientId, status);
+            var label = status == 4 ? "Complete" : "Paid";
+            return Json(new
+            {
+                success = result,
+                message = result ? $"Invoice marked as {label}." : "Failed to update invoice status."
+            });
+        }
+
+        #region Wallet Details — All Clients Summary (Finance)
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> WalletDetails(
+            int? month = null, int? year = null,
+            int? fromMonth = null, int? fromYear = null,
+            int? toMonth = null, int? toYear = null)
+        {
+            if (!IsFinanceOrAdmin()) return RedirectToAction("SignOut", "Session");
+
+            int fm, fy, tm, ty;
+
+            if (fromMonth.HasValue || fromYear.HasValue || toMonth.HasValue || toYear.HasValue)
+            {
+                // Range filter submitted
+                fm = fromMonth ?? DateTime.Now.Month;
+                fy = fromYear  ?? DateTime.Now.Year;
+                tm = toMonth   ?? fm;
+                ty = toYear    ?? fy;
+            }
+            else
+            {
+                // Legacy single-month filter (or default)
+                fm = month ?? DateTime.Now.Month;
+                fy = year  ?? DateTime.Now.Year;
+                tm = fm;
+                ty = fy;
+            }
+
+            // Ensure from <= to (swap if inverted)
+            if (new DateTime(fy, fm, 1) > new DateTime(ty, tm, 1))
+                (fm, fy, tm, ty) = (tm, ty, fm, fy);
+
+            var model = await _walletService.GetAllClientsWalletSummary(fm, fy, tm, ty);
+            return View(model);
+        }
+
+        #endregion
+
+        private bool IsFinanceOrAdmin()
+        {
+            if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                return false;
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            return profileName == "Admin" || profileName == "Finance";
+        }
+
+        private string GetSessionEmail()
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            return emailid?.Replace("\"", "") ?? string.Empty;
+        }
+
+        private async Task<string> UploadPdfAsync(IFormFile file)
+        {
+            if (file == null || file.Length == 0) return null;
+            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+            if (fileMimeType != "application/pdf") return null;
+
+            var fileName = file.FileName.Replace(" ", "_");
+            var uniqueFileName = $"{DateTime.UtcNow:yyyyMMddHHmmss}_{fileName}";
+            await _azureStorageHelper.InsertBlob(uniqueFileName, "invoicefiles", file);
+            var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
+            var blob = containerRef.GetBlockBlobReference(uniqueFileName);
+            return blob.Uri.ToString();
+        }
+
+        #endregion
     }
 }
 

@@ -12,7 +12,7 @@ Create procedure usp_UpdateInterviewerFlags
 @Emailid varchar(150),  
 @LeadInterviewer bit=null,  
 @IsApproved bit=null,  
-@IsActive bit=null,
+@IsInterviewerAccess bit=null,
 @IsBlocked bit=null
 As  
 BEGIN  
@@ -22,8 +22,14 @@ ip.IsApproved=isnull(@IsApproved,ip.IsApproved),
 ip.IsDeleted=isnull(@IsBlocked,ip.IsDeleted)
 from InterviewerProfile ip join UserList ul on ip.Userid=ul.id  
 where ul.EmailId=@Emailid  
-Update UserList set IsActive=IsNull(@IsActive,IsActive) where EmailId=@Emailid  
-if(@IsActive=0)  
+-- Note: IsActive is only modified via the Edit Interviewer Profile form (Admin only).
+-- All portal flag toggles use IsInterviewerAccess.
+Update UserList set IsInterviewerAccess=IsNull(@IsInterviewerAccess,IsInterviewerAccess),
+    InactivationType = CASE WHEN @IsInterviewerAccess = 0 THEN 'ManualFlag' ELSE InactivationType END,
+    InactivatedBy = CASE WHEN @IsInterviewerAccess = 0 THEN 'Admin' ELSE InactivatedBy END,
+    InactivatedAt = CASE WHEN @IsInterviewerAccess = 0 THEN GETDATE() ELSE InactivatedAt END
+where EmailId=@Emailid  
+if(@IsInterviewerAccess=0)  
 begin  
 Update InterviewMeetings set Interviewer=null where Interviewer in(Select Emailid from UserList where  EmailId=@Emailid)  
 and interviewDate>DateAdd(Minute,330,GetDate())  

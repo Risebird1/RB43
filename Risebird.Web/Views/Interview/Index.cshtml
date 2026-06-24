@@ -3470,6 +3470,8 @@
                             Swal.fire('Success!', data.message, 'success').then(() => {
                                 closeemergencyAssignModal();
                             });
+                        } else if (data.code === 'CAP_REACHED') {
+                            Swal.fire('Interview Limit Reached', data.message, 'warning');
                         } else {
                             Swal.fire('Error!', data.message, 'error');
                         }

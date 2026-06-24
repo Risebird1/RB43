@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
@@ -440,8 +440,7 @@ namespace Risebird.Web.Controllers
         public async Task SetInterviewRequestSelectLists()
         {
             ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
-            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                            select new { ID = (int)s, Name = s.GetDescription() };
+            var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
             ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
             var _country = from InterviewRequestCountry s in Enum.GetValues(typeof(InterviewRequestCountry))
                            select new { ID = (int)s, Name = s.GetDescription() };

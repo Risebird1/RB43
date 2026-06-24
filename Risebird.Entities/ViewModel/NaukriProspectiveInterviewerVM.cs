@@ -69,6 +69,18 @@ namespace Risebird.Entities.ViewModel
         public bool?    PlivoKycAccepted            { get; set; }
         public string   PlivoCalledBy               { get; set; }
 
+        // Unified Intent (populated by both email replies and AI Plivo calls)
+        public string   Intent                      { get; set; }
+        public string   IntentSource                { get; set; }
+        public DateTime? IntentConfirmedAt          { get; set; }
+
+        // Ticket status (operational) is separate from FunnelStage (pipeline position)
+        public string   TicketStatus                { get; set; }
+        public string   FunnelStage                 { get; set; }
+
+        // Onboarding type for reporting: SelfOnboarded | IntentAutoProcessed | ManuallyOnboarded
+        public string   OnboardingType              { get; set; }
+
         public string   Status                      { get; set; }
         public string   Source                      { get; set; }
         public string   ProcessedBy                 { get; set; }
@@ -90,6 +102,13 @@ namespace Risebird.Entities.ViewModel
 
         // Pagination
         public int      TotalCount                  { get; set; }
+
+        // Global status breakdown (across all matched records, not just this page).
+        // Open + InProgress + Closed + Onboarded == TotalCount.
+        public int      OpenCount                   { get; set; }
+        public int      InProgressCount             { get; set; }
+        public int      ClosedCount                 { get; set; }
+        public int      OnboardedCount              { get; set; }
     }
 
     public class RelayNaukriPayload
@@ -136,6 +155,12 @@ namespace Risebird.Entities.ViewModel
         [JsonProperty("mag_name")]
         public string MagName                   { get; set; }
 
+        [JsonProperty("candidate_email")]
+        public string CandidateEmail            { get; set; }
+
+        [JsonProperty("candidate_phone")]
+        public string CandidatePhone            { get; set; }
+
         [JsonProperty("resume_link")]
         public string ResumeLink                { get; set; }
 
@@ -174,6 +199,12 @@ namespace Risebird.Entities.ViewModel
 
         [JsonProperty("skills_match")]
         public string SkillsMatch               { get; set; }
+
+        [JsonProperty("candidate_email")]
+        public string CandidateEmail            { get; set; }
+
+        [JsonProperty("candidate_phone")]
+        public string CandidatePhone            { get; set; }
 
         [JsonProperty("resume_link")]
         public string ResumeLink                { get; set; }

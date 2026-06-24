@@ -34,6 +34,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<TransInterviewerAvailability>> GetAvailabilityList(int ProfileId);
         //Task<IEnumerable<TransInterviewerAccDetails>> GetAccDetailsList(int ProfileId);
         Task<TransInterviewerAccDetails> GetAccDetailsList(int ProfileId);
+        Task<bool> SaveBankVerificationAsync(int interviewerProfileId, TransInterviewerAccDetails accountDetails, CashfreeBankVerificationResult verificationResult);
         Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile);
         IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId);
         Task<IEnumerable<Meeting>> GetUnapprovedInterviewerScheduledInterviews(string emailID);
@@ -65,6 +66,7 @@ namespace Risebird.Repository.Interface
         Task<InterviewReport> GetInterviewerRecommendationDetails(int Userid);
         Task<bool> InterviewerRecommendation(InterviewReport reportDetails);
         Task<TransInterviewerAccDetails> fetchBankDetails(int interviewerid);
+        Task<RBInterviewerPayoutDetails> GetInterviewerBankDetailsByUserId(int userId);
         Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid);
         string GetUserRolebyEmailid(string Emailid);
         Task<List<InterviewerRating>> fetchClientFeedbackbyInterviewer(string emailid, string type);
@@ -94,9 +96,10 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveSMEAudio(int irfId, int interviewerProfileId, string feedbackAudioLink);
         Task<bool> UpdateVerifiedInterviewers(List<TransInterviewer> interviewers, string loggedInSME);
         Task<bool> CheckIfSME(string loggedInUser);
+        Task<bool> IsSmeAssignedToIrfAsync(string loggedInUser, int irfId);
         Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList();
         Task<InterviewerProfileVM> GetInterviewerFlagDetails(string intervieweremailid);
-        Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive,bool? IsBlocked);
+        Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked);
         //Task<bool> UpdateInterviewerFlag(string Emailid, bool? Verified, bool? IsApproved);
         Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null, string clientEmailId = null);
         Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail);
@@ -117,7 +120,7 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveInterviewerPreOnboardingVerdict(string emailId, string PrimarySpecialization, string screeningResponseJson, string loggedInUser);
         Task<SaveOperationResult> SaveInterviewerPreOnboardingVerdictV2(string emailId, string PrimarySpecialization, InterviewerResumeFitmentAnalysisSchema model, string loggedInUser);
         Task UpdatePreOnboardingVerdictInterviewerProfileId(int preOnboardingVerdictId, int interviewerProfileId, string modifiedBy);
-        Task<UserList> UpdateInterviewerActiveStatus(int status, int userId);
+        Task<UserList> UpdateInterviewerActiveStatus(int status, int userId, bool activateChannels = true);
         Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForInterviewerPostAdding(int userId);
         Task<IEnumerable<IRFVm>> GetApplicableSkillChannelsForApplicantUponEdit(int applicantId);
         Task<bool> AddTargetSkillChannelToInterviewerPreOnboarding(int userId, int targetIrfId);
@@ -132,7 +135,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateApplicantsEmploymentDetails(InterviewerDirectApplicationVM obj, string loggedInUser);
         Task<IEnumerable<FLNInterviewerAcknowledgementStatusVM>> GetFLNAcknowledgementStatus(string loggedInUser, DateTime? startDate = null, DateTime? endDate = null);
         Task<bool> UpdateInterviewerResume(int userId, string resumeLink, string loggedInUser);
-        Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser);
+        Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser, bool preserveAvailability = false, bool? isAvailable = null);
         Task<bool> UpdateInterviewerAvailabilityStatus(int userId, bool availabilityStatus, int irfId, string loggedInUser);
         Task<bool> UpdateInterviewerAcknowledgementStatus(string loggedInUser, string value);
         Task<bool> AddInternalInterviewerToIRFPostPositiveVerdict(InterviewerDirectApplicationVM model);
@@ -142,7 +145,8 @@ namespace Risebird.Repository.Interface
         Task<InterviewerDirectApplicationVM> InsertApplicantsRenewed(InterviewerDirectApplicationVM obj);
         Task<bool> SaveApplicantErrorMessage(int id, string errorMessage);
 
-        Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer);
+        Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer, string inactivationType = null);
+        Task<bool> ReactivateInterviewer(int userId, string reactivatedBy);
         Task<bool> SaveExternalApplicantResume(int id, string resumeLink = null);
 
         Task<int> SaveProxyCandidateChecklist(Risebird.Entities.Data.InterviewerProxyCandidateChecklist model);
@@ -150,5 +154,6 @@ namespace Risebird.Repository.Interface
 
         Task<int> SaveInterviewerTrainingChecklist(Risebird.Entities.Data.InterviewerTrainingChecklist model);
         Task<IEnumerable<Risebird.Entities.Data.InterviewerTrainingChecklist>> GetInterviewerTrainingChecklist(string interviewerEmail, string trainingModuleCode);
+        Task<IEnumerable<InterviewerProfileVM>> GetHoldPaymentInterviewers();
     }
 }

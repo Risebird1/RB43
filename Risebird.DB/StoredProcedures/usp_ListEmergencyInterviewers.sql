@@ -22,7 +22,7 @@ Begin
 
 select ul.EmailId from TransEmergencyInterviewer tei
 join 
-UserList ul on tei.UserId = ul.id where IRFId=@IRFId and  tei.IsActive=1
+UserList ul on tei.UserId = ul.id where IRFId=@IRFId and  tei.IsActive=1 and ul.IsActive=1
 
 End
 

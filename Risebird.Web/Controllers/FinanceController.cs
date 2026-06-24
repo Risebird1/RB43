@@ -34,8 +34,9 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IClientService _clientService;
         private readonly ICashfreePayoutService _cashfreePayoutService;
+        private readonly IWalletService _walletService;
 
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService, ICashfreePayoutService cashfreePayoutService)
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService, ICashfreePayoutService cashfreePayoutService, IWalletService walletService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -48,6 +49,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _clientService = clientService;
             _cashfreePayoutService = cashfreePayoutService;
+            _walletService = walletService;
         }
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
@@ -738,6 +740,124 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
+        /// Returns all interviewers from the current session-cached FNPayment list
+        /// that have a pending payable amount AND a verified bank account.
+        /// Used to populate the Batch Payout modal with the full (unpaginated) dataset.
+        /// </summary>
+        [HttpGet]
+        public JsonResult GetAllBatchPayoutCandidates()
+        {
+            try
+            {
+                var sessionData = HttpContext.Session.GetString("financemodel");
+                if (string.IsNullOrEmpty(sessionData))
+                    return Json(new { success = false, message = "Session expired. Please reload the page.", data = new List<object>() });
+
+                var allItems = JsonConvert.DeserializeObject<List<Risebird.Entities.ViewModel.RBInterviewDetails>>(sessionData);
+                var candidates = allItems
+                    .Where(x => x.Points > 0 && x.IsBankVerified)
+                    .Select(x => new { x.id, email = x.Comment, amount = x.Points, x.IsBankVerified })
+                    .ToList();
+
+                return Json(new { success = true, data = candidates });
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { success = false, message = "Failed to load candidates.", data = new List<object>() });
+            }
+        }
+
+        /// <summary>
+        /// Processes Cashfree bank payouts for multiple interviewers in a single request.
+        /// Accepts a comma-separated list of interviewer IDs; each is paid using the same
+        /// index/date-range context that was active on the FNPayment page.
+        /// Returns JSON: { results: [{ id, email, success, message }] }
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> BatchConfirmPaymentViaCashfree(string ids, int index, DateTime? st, DateTime? se)
+        {
+            var results = new List<object>();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(ids))
+                    return Json(new { results, error = "No interviewer IDs provided." });
+
+                var idList = ids.Split(',')
+                                .Select(x => x.Trim())
+                                .Where(x => !string.IsNullOrEmpty(x))
+                                .Select(int.Parse)
+                                .ToList();
+
+                var sessionData = HttpContext.Session.GetString("financemodel");
+                List<Risebird.Entities.ViewModel.RBInterviewDetails> allItems = null;
+                if (!string.IsNullOrEmpty(sessionData))
+                    allItems = JsonConvert.DeserializeObject<List<Risebird.Entities.ViewModel.RBInterviewDetails>>(sessionData);
+
+                var stVal = st ?? DateTime.MinValue;
+                var seVal = se ?? DateTime.MinValue;
+
+                foreach (var id in idList)
+                {
+                    var item = allItems?.FirstOrDefault(x => x.id == id);
+                    if (item == null)
+                    {
+                        results.Add(new { id, email = "", success = false, message = "Interviewer not found in session." });
+                        continue;
+                    }
+                    try
+                    {
+                        var (success, message) = await _meetingService.ConfirmPaymentViaCashfree(
+                            id, index, item.Comment, item.Points.ToString(), stVal, seVal);
+                        results.Add(new { id, email = item.Comment, success, message });
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        results.Add(new { id, email = item.Comment, success = false, message = "Unexpected error during payout." });
+                    }
+                }
+
+                return Json(new { results });
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { results, error = "An unexpected error occurred." });
+            }
+        }
+
+        /// <summary>
+        /// Re-initiates a Cashfree payout for a PaymentHistory row whose PayoutStatus is TRANSFER_FAILED.
+        /// Returns structured JSON: { success, message, payoutId }.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> RetryPaymentViaCashfree(int paymentHistoryId)
+        {
+            try
+            {
+                if (paymentHistoryId <= 0)
+                    return Json(new { success = false, message = "Invalid payment history id." });
+
+                var (success, message) = await _meetingService.RetryPaymentViaCashfree(paymentHistoryId);
+                if (!success)
+                    return Json(new { success = false, message });
+
+                var payoutId = string.Empty;
+                var refIndex = message.IndexOf("Reference:", StringComparison.OrdinalIgnoreCase);
+                if (refIndex >= 0)
+                    payoutId = message.Substring(refIndex + "Reference:".Length).Trim();
+
+                return Json(new { success = true, message, payoutId });
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { success = false, message = "An unexpected error occurred. Please try again." });
+            }
+        }
+
+        /// <summary>
         /// Refreshes the Cashfree transfer status for a previously initiated payout.
         /// Returns structured JSON: { success, payoutId, status, amount, utr, updated } on success.
         /// </summary>
@@ -1399,31 +1519,31 @@ namespace Risebird.Web.Controllers
                     var model = await _meetingService.FetchFNPaymentHistory();
                     if (model != null)
                         model = model.OrderByDescending(x => x.Date).ToList();
-                    var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-                    foreach (var item in model)
-                    {
-                        if (!string.IsNullOrEmpty(item.AssessmentGroupId))
-                        {
-                            var AssessmentGroup = item.AssessmentGroupId.Split(",");
-                            string groupdetail = "";
-                            foreach (var group in AssessmentGroup)
-                            {
-                                if (group != "")
-                                {
-                                    int groupid = Convert.ToInt32(group);
-                                    if (string.IsNullOrEmpty(groupdetail))
-                                    {
-                                        groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                    }
-                                    else
-                                    {
-                                        groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                    }
-                                }
-                            }
-                            item.AssessmentGroupId = groupdetail;
-                        }
-                    }
+                    //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                    //foreach (var item in model)
+                    //{
+                    //    if (!string.IsNullOrEmpty(item.AssessmentGroupId))
+                    //    {
+                    //        var AssessmentGroup = item.AssessmentGroupId.Split(",");
+                    //        string groupdetail = "";
+                    //        foreach (var group in AssessmentGroup)
+                    //        {
+                    //            if (group != "")
+                    //            {
+                    //                int groupid = Convert.ToInt32(group);
+                    //                if (string.IsNullOrEmpty(groupdetail))
+                    //                {
+                    //                    groupdetail = AssessmentsGroups.Where(x => x.id == groupid)?.FirstOrDefault()?.ToString();
+                    //                }
+                    //                else
+                    //                {
+                    //                    groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid)?.FirstOrDefault()?.ToString();
+                    //                }
+                    //            }
+                    //        }
+                    //        item.AssessmentGroupId = groupdetail;
+                    //    }
+                    //}
                     if (HttpContext.Session.GetString("PaymentHistoryfilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PaymentHistoryfilters"));
@@ -1433,6 +1553,12 @@ namespace Risebird.Web.Controllers
                         }
                         filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
                         model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
+                    }
+                    else
+                    {
+                        var StartDate = DateTime.Now.AddDays(-30);
+                        var EndDate = DateTime.Now.AddDays(1);
+                        model = model.Where(t => t.Date >= StartDate && t.Date <= EndDate).ToList();
                     }
                     return View(model);
                 }
@@ -1521,28 +1647,28 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "Finance")
                     {
                         var model = await _meetingService.FetchFNPaymentHistory();
-                        var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
-                        foreach (var item in model)
-                        {
-                            if (!string.IsNullOrEmpty(item.AssessmentGroupId))
-                            {
-                                var AssessmentGroup = item.AssessmentGroupId.Split(",");
-                                string groupdetail = "";
-                                foreach (var group in AssessmentGroup)
-                                {
-                                    int groupid = Convert.ToInt32(group);
-                                    if (string.IsNullOrEmpty(groupdetail))
-                                    {
-                                        groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                    }
-                                    else
-                                    {
-                                        groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
-                                    }
-                                }
-                                item.AssessmentGroupId = groupdetail;
-                            }
-                        }
+                        //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
+                        //foreach (var item in model)
+                        //{
+                        //    if (!string.IsNullOrEmpty(item.AssessmentGroupId))
+                        //    {
+                        //        var AssessmentGroup = item.AssessmentGroupId.Split(",");
+                        //        string groupdetail = "";
+                        //        foreach (var group in AssessmentGroup)
+                        //        {
+                        //            int groupid = Convert.ToInt32(group);
+                        //            if (string.IsNullOrEmpty(groupdetail))
+                        //            {
+                        //                groupdetail = AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                        //            }
+                        //            else
+                        //            {
+                        //                groupdetail = groupdetail + ", " + AssessmentsGroups.Where(x => x.id == groupid).FirstOrDefault().ToString();
+                        //            }
+                        //        }
+                        //        item.AssessmentGroupId = groupdetail;
+                        //    }
+                        //}
                         if (HttpContext.Session.GetString("PaymentHistoryfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("PaymentHistoryfilters"));
@@ -1553,8 +1679,13 @@ namespace Risebird.Web.Controllers
                             filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
                             model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
                         }
-
-                        int startColumn = 1; int endColumn = 15;
+                        else
+                        {
+                            var StartDate = DateTime.Now.AddDays(-30);
+                            var EndDate = DateTime.Now.AddDays(1);
+                            model = model.Where(t => t.Date >= StartDate && t.Date <= EndDate).ToList();
+                        }
+                        int startColumn = 1; int endColumn = 20;
                         for (int a = startColumn; a <= endColumn; a++)
                         {
                             Sheet.Column(a).Width = 15;
@@ -1564,8 +1695,14 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 3].Value = "Total Amount";
                         Sheet.Cells[1, 4].Value = "TDS deduction";
                         Sheet.Cells[1, 5].Value = "Amount";
-                        Sheet.Cells[1, 6].Value = "Payment Status";
-                        Sheet.Cells[1, 7].Value = "Payment Date";
+                        Sheet.Cells[1, 6].Value = "Status";
+                        Sheet.Cells[1, 7].Value = "Comment";
+                        Sheet.Cells[1, 8].Value = "Payment Date";
+                        Sheet.Cells[1, 9].Value = "Transaction Date";
+                        Sheet.Cells[1, 10].Value = "Transfer Id";
+                        Sheet.Cells[1, 11].Value = "UTR";
+                        Sheet.Cells[1, 12].Value = "Cf Transfer Id";
+                        Sheet.Cells[1, 13].Value = "Payment Status";
                         int i = 2;
                         if (model.Count() > 0)
                         {
@@ -1585,7 +1722,13 @@ namespace Risebird.Web.Controllers
                                     Sheet.Cells[i, 4].Value = item.TotalAmount - item.Points;
                                 }
                                 Sheet.Cells[i, 6].Value = item.Status;
-                                Sheet.Cells[i, 7].Value = item.Date.ToString();
+                                Sheet.Cells[i, 7].Value = item.Comment;
+                                Sheet.Cells[i, 8].Value = item.Date.ToString();
+                                Sheet.Cells[i, 9].Value = item.TransactionDate?.ToString("yyyy-MM-dd HH:mm:ss");
+                                Sheet.Cells[i, 10].Value = item.TransferId;
+                                Sheet.Cells[i, 11].Value = item.TransferUtr;
+                                Sheet.Cells[i, 12].Value = item.CfTransferId;
+                                Sheet.Cells[i, 13].Value = item.PayoutStatus;
                                 i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -1771,6 +1914,520 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        #region GenerateInvoice
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GenerateInvoice(int? clientId = null, int? month = null, int? year = null, int? billingOwnerId = null)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var clients = _projectService.GetClients()
+                        .Where(x => !string.IsNullOrEmpty(x.Name))
+                        .OrderBy(x => x.Name)
+                        .ToList();
+                    ViewBag.ClientList = new SelectList(clients, "id", "Name");
+                    ViewBag.CurrentMonth = month ?? DateTime.Now.Month;
+                    ViewBag.CurrentYear  = year ?? DateTime.Now.Year;
+                    ViewBag.PreFillClientId = clientId ?? 0;
+                    ViewBag.PreFillBillingOwnerId = billingOwnerId ?? 0;
+                    return View(new GenerateInvoiceVM());
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetClientInvoiceData(int clientId, int month, int year, int billingOwnerId = 0)
+        {
+            try
+            {
+                var dataTask          = _meetingService.GetClientInvoiceFormData(clientId, month, year, billingOwnerId);
+                var invoiceNumTask    = _meetingService.GetNextInvoiceNumber(month, year);
+                var billingOwnersTask = _meetingService.GetClientBillingOwners(clientId);
+
+                await Task.WhenAll(dataTask, invoiceNumTask, billingOwnersTask);
+
+                var data          = dataTask.Result;
+                data.InvoiceNumber = invoiceNumTask.Result;
+                var billingOwners = billingOwnersTask.Result;
+
+                var subtotal      = data.LineItems?.Sum(x => x.LineTotal) ?? 0;
+                var gstAmount     = data.GSTApplicable ? Math.Round(subtotal * 18 / 100, 2) : 0;
+                var invoiceValue  = subtotal + gstAmount;
+                var tdsAmount     = Math.Round(subtotal * 10 / 100, 2);
+                var netReceivable = invoiceValue - tdsAmount;
+
+                return Json(new
+                {
+                    invoiceNumber      = data.InvoiceNumber,
+                    billingOwnerEmail  = data.BillingOwnerEmail,
+                    billingOwnerId     = data.BillingOwnerId,
+                    billingOwners      = billingOwners,
+                    creditPeriod       = data.PaymentTerm > 0 ? data.PaymentTerm + " Days" : string.Empty,
+                    gstNumber          = data.GSTNumber,
+                    gstApplicable      = data.GSTApplicable,
+                    billingType              = data.BillingType,
+                    interviewerBillingType   = data.InterviewerBillingType,
+                    billingCurrency          = string.IsNullOrEmpty(data.BillingCurrency) ? "INR" : data.BillingCurrency,
+                    perInterviewRate         = data.PerInterviewRate,
+                    aiPerInterviewRate       = data.AIPerInterviewRate,
+                    lineItems                = data.LineItems,
+                    subtotal           = subtotal,
+                    gstAmount          = gstAmount,
+                    invoiceValue       = invoiceValue,
+                    tdsAmount          = tdsAmount,
+                    netReceivable      = netReceivable
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { error = "Failed to load invoice data." });
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year)
+        {
+            try
+            {
+                var existing = await _meetingService.CheckDuplicateInvoice(clientId, billingOwnerId, month, year);
+                if (existing != null && existing.id > 0)
+                {
+                    System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                    return Json(new
+                    {
+                        isDuplicate   = true,
+                        invoiceNumber = existing.InvoiceNumber,
+                        createdBy     = existing.CreatedBy,
+                        createdOn     = existing.CreatedOn?.ToString("dd MMM yyyy")
+                    });
+                }
+                return Json(new { isDuplicate = false });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { isDuplicate = false });
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ViewInvoice(int invoiceId)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
+                    if (invoice == null)
+                    {
+                        TempData["InvoiceListMessage"] = "Error: Invoice not found.";
+                        return RedirectToAction("InvoiceList");
+                    }
+                    if (TempData["ViewInvoiceMsg"] != null)
+                        ViewBag.Message = TempData["ViewInvoiceMsg"].ToString();
+                    return View(invoice);
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetInvoiceById(int invoiceId)
+        {
+            try
+            {
+                var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
+                if (invoice == null) return Json(new { error = "Invoice not found." });
+                return Json(invoice);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { error = "Failed to load invoice." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod,
+            string irn, string eInvoiceFileLink, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
+            decimal tdsAmount, decimal netReceivable, string lineItemsJson, int taxScenario = 0,
+            decimal? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null,
+            string latestRemark = null)
+        {
+            try
+            {
+                List<InvoiceLineItemVM> lineItems = null;
+                if (!string.IsNullOrWhiteSpace(lineItemsJson))
+                {
+                    try { lineItems = JsonConvert.DeserializeObject<List<InvoiceLineItemVM>>(lineItemsJson); }
+                    catch { lineItems = new List<InvoiceLineItemVM>(); }
+                }
+
+                const int StatusPaid     = 5;
+                const int BillingModelM1 = 1;
+
+                // When marking as Paid (status=5), post InvoiceValue (base amount) to the client wallet
+                if (status == StatusPaid)
+                {
+                    var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
+                    if (invoice != null && invoice.BillingModel != BillingModelM1)
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                        var billingType = await _clientService.GetClientBillingType(invoice.ClientId);
+                        int? billingOwnerId = billingType == 1 ? invoice.BillingOwnerId : (int?)null;
+                        // Credit = InvoiceValue (Subtotal + GST — full invoice value).
+                        // Passing invoiceId ensures existing wallet row is updated, not duplicated.
+                        await _walletService.AddClientWalletBalance(
+                            billingType, invoice.ClientId, (int)subtotal,
+                            emailid, DateTime.Now, billingOwnerId,
+                            cashTransactionRef, null, cashTransactionDate, "CashCredit",
+                            invoiceId: invoiceId);
+                    }
+                }
+
+                // Save cashCreditAmount on the invoice record for reference
+                decimal? savedCashAmount = (cashCreditAmount.HasValue && cashCreditAmount.Value > 0)
+                    ? (decimal?)cashCreditAmount.Value : null;
+                var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems, latestRemark, cashTransactionRef, savedCashAmount, taxScenario);
+                return Json(new
+                {
+                    success,
+                    message     = success ? "Invoice updated successfully." : "Failed to update invoice.",
+                    redirectUrl = success ? Url.Action("ViewInvoice", "Finance", new { invoiceId }) : (string)null
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred." });
+            }
+        }
+
+        [Authorize]
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        public async Task<JsonResult> UploadEInvoiceFile(IFormFile file)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                    return Json(new { success = false, message = "No file received." });
+
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                var allowed = new[] { "application/pdf", "application/msword",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
+                if (!allowed.Contains(fileMimeType))
+                    return Json(new { success = false, message = "Only PDF or Word documents are allowed." });
+
+                var uniqueFileName = $"einvoice_{DateTime.UtcNow:yyyyMMddHHmmss}_{file.FileName.Replace(" ", "_")}";
+                await _azureStorageHelper.InsertBlob(uniqueFileName, "invoicefiles", file);
+                var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
+                var blob = containerRef.GetBlockBlobReference(uniqueFileName);
+                var fileUrl = blob.Uri.ToString();
+
+                return Json(new { success = true, fileUrl });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Upload failed. Please try again." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveGeneratedInvoice(GenerateInvoiceVM model, string LineItemsJson,
+            int? CashCreditAmount = null, string CashTransactionRef = null, DateTime? CashTransactionDate = null)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var emailid     = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    model.CreatedBy = emailid;
+                    if (!string.IsNullOrWhiteSpace(LineItemsJson))
+                    {
+                        try { model.LineItems = JsonConvert.DeserializeObject<List<InvoiceLineItemVM>>(LineItemsJson); }
+                        catch { model.LineItems = new List<InvoiceLineItemVM>(); }
+                    }
+
+                    // Attach transaction fields to the model so the SP saves them in one shot
+                    if (CashCreditAmount.HasValue && CashCreditAmount.Value > 0)
+                        model.CashCreditAmount = CashCreditAmount;
+                    if (!string.IsNullOrWhiteSpace(CashTransactionRef))
+                        model.UTRTrxn = CashTransactionRef;
+
+                    var invoiceId = await _meetingService.SaveGeneratedInvoice(model);
+                    if (invoiceId > 0)
+                    {
+                        // When saved as Paid (status=5), post InvoiceValue (base amount) to client wallet
+                        if (model.Status == 5)
+                        {
+                            try
+                            {
+                                var billingType    = await _clientService.GetClientBillingType(model.ClientId);
+                                int? billingOwnerId = billingType == 1 ? model.BillingOwnerId : (int?)null;
+                                // Credit = InvoiceValue (base amount).
+                                // Passing invoiceId ensures existing wallet row is updated, not duplicated.
+                                await _walletService.AddClientWalletBalance(
+                                    billingType, model.ClientId, (int)model.Subtotal,
+                                    emailid, DateTime.Now, billingOwnerId,
+                                    CashTransactionRef, null, CashTransactionDate, "CashCredit",
+                                    invoiceId: invoiceId);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            }
+                        }
+
+                        TempData["InvoiceListMessage"] = "Success: Invoice saved successfully.";
+                        return RedirectToAction("InvoiceList");
+                    }
+
+                    TempData["GenerateInvoiceMsg"] = invoiceId == -1
+                        ? "Error: An invoice has already been generated for this Client, Billing Owner, Month and Year. Duplicate invoices are not allowed."
+                        : "Error: Could not save invoice.";
+                    return RedirectToAction("GenerateInvoice");
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        #endregion
+
+        #region InvoiceList
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InvoiceList(string tab = "monthly")
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    // Normalise — only three valid values
+                    if (tab != "unpaid" && tab != "paid") tab = "monthly";
+                    ViewBag.ActiveTab = tab;
+
+                    // ── Unpaid list is always loaded (drives the badge on every tab) ──
+                    var unpaidList = await _meetingService.GetUnpaidInvoiceList();
+                    unpaidList.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                        ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                        : string.Empty);
+                    ViewBag.UnpaidList       = unpaidList;
+                    ViewBag.UnpaidCount      = unpaidList.Count;
+                    ViewBag.UnpaidTotalGross = unpaidList.Sum(x => x.GrossAmount);
+
+                    // ── Monthly data: skip when Paid tab is active ──
+                    var model = new List<InvoiceListVM>();
+                    if (tab != "paid")
+                    {
+                        var prevMonth = DateTime.Now.AddMonths(-1).Month;
+                        var prevYear  = DateTime.Now.AddMonths(-1).Year;
+                        int month = prevMonth;
+                        int year  = prevYear;
+
+                        if (HttpContext.Session.GetString("InvoiceListFilter") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InvoiceListFilter>(HttpContext.Session.GetString("InvoiceListFilter"));
+                            if (filter.Month != null && filter.Year != null)
+                            {
+                                month = Convert.ToInt32(filter.Month);
+                                year  = Convert.ToInt32(filter.Year);
+                            }
+                            model = await _meetingService.GetInvoiceList(month, year);
+                            if (model == null) model = new List<InvoiceListVM>();
+                            model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                                ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                                : string.Empty);
+                            filter.Client = filter.Client == null
+                                ? model.Select(x => x.ClientName).ToArray()
+                                : filter.Client;
+                            filter.Status = filter.Status == null
+                                ? model.Select(x => x.Status.ToString()).Distinct().ToArray()
+                                : filter.Status;
+                            model = model.Where(x =>
+                                filter.Client.Contains(x.ClientName) &&
+                                filter.Status.Contains(x.Status.ToString())).ToList();
+                        }
+                        else
+                        {
+                            model = await _meetingService.GetInvoiceList(month, year);
+                            if (model == null) model = new List<InvoiceListVM>();
+                            model.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                                ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                                : string.Empty);
+                        }
+
+                        System.Globalization.DateTimeFormatInfo mfi = new System.Globalization.DateTimeFormatInfo();
+                        ViewBag.SelectedMonth = month;
+                        ViewBag.SelectedYear  = year;
+                        ViewBag.DateResult    = mfi.GetMonthName(month) + " " + year;
+                        ViewBag.TotalGross    = model.Sum(x => x.GrossAmount);
+                        ViewBag.ClientList    = _projectService.GetClients().Select(x => x.Name).Where(x => !string.IsNullOrEmpty(x)).Distinct();
+                        ViewBag.MonthlyLoaded = true;
+                    }
+                    else
+                    {
+                        // Paid tab active — provide safe stubs so the view renders without null errors
+                        ViewBag.SelectedMonth = 0;
+                        ViewBag.SelectedYear  = 0;
+                        ViewBag.DateResult    = string.Empty;
+                        ViewBag.TotalGross    = 0m;
+                        ViewBag.ClientList    = Enumerable.Empty<string>();
+                        ViewBag.MonthlyLoaded = false;
+                    }
+
+                    // ── Paid data: skip when Monthly or Unpaid tab is active ──
+                    int paidFromYear = 0, paidFromMonth = 0, paidToYear = 0, paidToMonth = 0;
+                    var paidFilterJson = HttpContext.Session.GetString("PaidInvoiceFilter");
+                    if (!string.IsNullOrEmpty(paidFilterJson))
+                    {
+                        try
+                        {
+                            var pf = JsonConvert.DeserializeObject<dynamic>(paidFilterJson);
+                            paidFromYear  = pf.FromYear  != null ? (int)pf.FromYear  : 0;
+                            paidFromMonth = pf.FromMonth != null ? (int)pf.FromMonth : 0;
+                            paidToYear    = pf.ToYear    != null ? (int)pf.ToYear    : 0;
+                            paidToMonth   = pf.ToMonth   != null ? (int)pf.ToMonth   : 0;
+                        }
+                        catch { /* ignore bad session data */ }
+                    }
+                    ViewBag.PaidFromYear  = paidFromYear; 
+                    ViewBag.PaidFromMonth = paidFromMonth;
+                    ViewBag.PaidToYear    = paidToYear;
+                    ViewBag.PaidToMonth   = paidToMonth;
+
+                    if (tab == "paid")
+                    {
+                        var paidList = await _meetingService.GetPaidInvoiceList(paidFromYear, paidFromMonth, paidToYear, paidToMonth);
+                        paidList.ForEach(x => x.InvoiceModel = Enum.IsDefined(typeof(BillingModelEnum), x.BillingModel)
+                            ? ((BillingModelEnum)x.BillingModel).GetDescription()
+                            : string.Empty);
+                        ViewBag.PaidList       = paidList;
+                        ViewBag.PaidCount      = paidList.Count;
+                        ViewBag.PaidTotalGross = paidList.Sum(x => x.GrossAmount);
+                        ViewBag.PaidLoaded     = true;
+                    }
+                    else
+                    {
+                        ViewBag.PaidList       = new List<InvoiceListVM>();
+                        ViewBag.PaidCount      = 0;
+                        ViewBag.PaidTotalGross = 0m;
+                        ViewBag.PaidLoaded     = false;
+                    }
+
+                    if (TempData["InvoiceListMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["InvoiceListMessage"].ToString();
+                        TempData.Remove("InvoiceListMessage");
+                    }
+
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult InvoiceList(InvoiceListFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("InvoiceListFilter", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("InvoiceList");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ResetInvoiceList()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("InvoiceListFilter");
+                    return RedirectToAction("InvoiceList");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult FilterPaidInvoices(int fromYear, int fromMonth, int toYear, int toMonth)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var pf = new { FromYear = fromYear, FromMonth = fromMonth, ToYear = toYear, ToMonth = toMonth };
+                HttpContext.Session.SetString("PaidInvoiceFilter", JsonConvert.SerializeObject(pf));
+                return RedirectToAction("InvoiceList", new { tab = "paid" });
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
+        [HttpGet]
+        public IActionResult ResetPaidInvoiceFilter()
+        {
+            HttpContext.Session.Remove("PaidInvoiceFilter");
+            return RedirectToAction("InvoiceList", new { tab = "paid" });
+        }
+
+        #endregion
+
         [HttpGet]
         public async Task<IActionResult> GetInvoiceDetails(int id, string startdate, string enddate, string Clientname, string jobcountry)
         {
@@ -1840,6 +2497,7 @@ namespace Risebird.Web.Controllers
             }
             return Json(new { result = model/*, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds */});
         }
+
         [HttpGet]
         public async Task<IActionResult> CustomerDetails()
         {
@@ -2054,7 +2712,7 @@ namespace Risebird.Web.Controllers
         //}
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> FNRevenue(string year, int month)
+        public async Task<IActionResult> FNRevenue(string year, int month, string fromYear = null, int fromMonth = 0, string toYear = null, int toMonth = 0)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2064,7 +2722,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "Finance")
                 {
-                    //Start:Year
+                    //Start:Year list
                     List<string> _listyear = new List<string>();
                     var currentyear = DateTime.Now.Year;
                     var counter = currentyear - 2020;
@@ -2088,51 +2746,103 @@ namespace Risebird.Web.Controllers
                         selectListforsize.Add(selectItem);
                     }
                     ViewBag.RevenueYears = selectListforsize;
-                    //End:Year
-                    if (month == 0)
+                    //End:Year list
+
+                    // Determine if range mode or single month mode
+                    bool isRangeMode = fromMonth > 0 && toMonth > 0 && !string.IsNullOrEmpty(fromYear) && !string.IsNullOrEmpty(toYear);
+
+                    int resolvedFromMonth, resolvedFromYear, resolvedToMonth, resolvedToYear;
+                    if (isRangeMode)
                     {
-                        month = DateTime.Now.Month;
+                        resolvedFromMonth = fromMonth;
+                        resolvedFromYear  = Convert.ToInt32(fromYear);
+                        resolvedToMonth   = toMonth;
+                        resolvedToYear    = Convert.ToInt32(toYear);
                     }
-                    ViewBag.RevenueMonth = month;
-                    int curyear = Convert.ToInt32(year);
-                    DateTime stdate = new DateTime(curyear, month, 1);
-                    DateTime endate = stdate.AddMonths(1);
-                    var model = await _meetingService.FetchRevenueDetails(stdate, endate, year, month);
-                    int totalamount = 0;
+                    else
+                    {
+                        if (month == 0) month = DateTime.Now.Month;
+                        resolvedFromMonth = resolvedToMonth = month;
+                        resolvedFromYear  = resolvedToYear  = Convert.ToInt32(year);
+                    }
+
+                    ViewBag.RevenueMonth    = isRangeMode ? fromMonth  : (month == 0 ? DateTime.Now.Month : month);
+                    ViewBag.IsRangeMode     = isRangeMode;
+                    ViewBag.FromMonth       = resolvedFromMonth;
+                    ViewBag.FromYear        = resolvedFromYear.ToString();
+                    ViewBag.ToMonth         = resolvedToMonth;
+                    ViewBag.ToYear          = resolvedToYear.ToString();
+
+                    DateTime stdate = new DateTime(resolvedFromYear, resolvedFromMonth, 1);
+                    DateTime endate = new DateTime(resolvedToYear, resolvedToMonth, 1).AddMonths(1);
+
+                    var model = await _meetingService.FetchRevenueDetails(stdate, endate, resolvedFromYear, resolvedFromMonth, resolvedToYear, resolvedToMonth);
+                    decimal totalamount = 0;
                     foreach (var item in model)
                     {
-                        totalamount = totalamount + (item.TotalCount * item.PerInterviewRate);
+                        // Use the SQL-computed BaseAmount which respects InterviewerBillingType
+                        // (Skill Channel rate / Interviewer rate / Client rate) and the
+                        // Turing 30% partial-billing rule for MeetingStatus 1/3/9.
+                        var baseAmount = (int)Math.Round(item.BaseAmount);
+                        totalamount = totalamount + item.BaseAmount;
                         if (item.GSTApplicable)
                         {
                             item.GST = "Yes";
-                            item.GSTAmount = (item.TotalCount * item.PerInterviewRate * 18) / 100;
+                            item.GSTAmount = (baseAmount * 18) / 100;
                         }
                         else
                         {
                             item.GST = "No";
                             item.GSTAmount = 0;
                         }
-                        item.SystemInvoiceAmount = item.GSTAmount + (item.TotalCount * item.PerInterviewRate);
-                        item.TDSAmount = (item.TotalCount * item.PerInterviewRate * 10) / 100;
-                        if (item.invoicerealization == 1)
-                        {
-                            item.PaymentStatus = "Received";
-                        }
-                        else
-                        {
-                            item.PaymentStatus = "Pending";
-                        }
+                        item.SystemInvoiceAmount = item.GSTAmount + baseAmount;
+                        item.TDSAmount = (baseAmount * 10) / 100;
+                        //if (item.ReceivedAmount > 0)
+                        //{
+                        //    item.PaymentStatus = "Received";
+                        //}
+                        //else
+                        //{
+                        //    item.PaymentStatus = "Pending";
+                        //}
+                            var denominator = item.BillingType == 1
+                            ? (item.TotalBillingOwnerCount > 0 ? item.TotalBillingOwnerCount : 1)
+                            : 1;
+                        item.InvoiceRatio = $"{item.GeneratedInvoiceCount}/{denominator}";
                     }
-                    ViewBag.TotalRevenue = totalamount;
+                    ViewBag.TotalRevenue = Math.Round(totalamount, 2);
                     if (model != null)
                     {
-                        ViewBag.PendingPOAmount = model.Sum(x => x.POPendingAmount);
-                        ViewBag.InvoiceAmount = model.Sum(x => x.InvoiceAmount);
+                        ViewBag.PendingInvoiceAmount       = model.Sum(x => x.GeneratedInvoiceAmount) - model.Sum(x => x.ReceivedAmount);
+                        ViewBag.InvoiceAmount              = model.Sum(x => x.GeneratedInvoiceAmount);
+                        ViewBag.TotalSystemInvoiceAmount   = model.Sum(x => x.SystemInvoiceAmount);
+                        ViewBag.PendingAmount              = model.Sum(x => x.SystemInvoiceAmount) - model.Sum(x => x.ReceivedAmount);
+
+                        // Per-currency breakdown for the header summary.
+                        // ExpandoObject is used (not anonymous type) so dynamic access works in Razor views.
+                        ViewBag.RevenueByCurrency = model
+                            .GroupBy(x => string.IsNullOrEmpty(x.BillingCurrency) ? "INR" : x.BillingCurrency)
+                            .OrderBy(g => g.Key)
+                            .Select(g =>
+                            {
+                                dynamic row          = new System.Dynamic.ExpandoObject();
+                                row.Currency         = g.Key;
+                                row.TotalRevenue     = Math.Round(g.Sum(x => x.BaseAmount), 2);
+                                row.SystemInvoiceAmount  = (decimal)g.Sum(x => x.SystemInvoiceAmount);
+                                row.InvoiceAmount        = g.Sum(x => x.GeneratedInvoiceAmount);
+                                row.PendingInvoiceAmount = g.Sum(x => x.GeneratedInvoiceAmount) - g.Sum(x => x.ReceivedAmount);
+                                row.PendingAmount        = (decimal)g.Sum(x => x.SystemInvoiceAmount) - g.Sum(x => x.ReceivedAmount);
+                                return row;
+                            })
+                            .ToList();
                     }
                     else
                     {
-                        ViewBag.PendingPOAmount = 0;
-                        ViewBag.InvoiceAmount = 0;
+                        ViewBag.PendingInvoiceAmount       = 0;
+                        ViewBag.InvoiceAmount              = 0;
+                        ViewBag.TotalSystemInvoiceAmount   = 0;
+                        ViewBag.PendingAmount              = 0;
+                        ViewBag.RevenueByCurrency          = new List<object>();
                     }
                     if (TempData["RevenueMessage"] != null)
                     {
@@ -2206,7 +2916,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 2].Value = item.Name;
                                 Sheet.Cells[i, 3].Value = item.PerInterviewRate;
                                 Sheet.Cells[i, 4].Value = item.TotalCount;
-                                Sheet.Cells[i, 5].Value = item.PerInterviewRate * item.TotalCount;
+                                Sheet.Cells[i, 5].Value = item.BaseAmount;
                                 Sheet.Cells[i, 6].Value = item.BillingOwner;
                                 i++;
                             }
@@ -2255,12 +2965,21 @@ namespace Risebird.Web.Controllers
                     model = await _meetingService.FetchRevenueDetailsByClient(id, stdate, endate, billingType, year, month);
                     model = model.Select(x =>
                     {
-                        x.CurrentStatusDesc = x.CurrentStatus != 0 ? ((Revenueenum)Convert.ToInt32(x.CurrentStatus)).GetDescription() : string.Empty;
+                        x.CurrentStatusDesc = x.InvoiceStatus switch
+                        {
+                            1 => "Generated",
+                            2 => "PO Pending",
+                            3 => "Approval Pending",
+                            4 => "Invoice Realisation Pending",
+                            5 => "Paid",
+                            _ => string.Empty
+                        };
                         return x;
                     }).ToList();
                     ViewBag.BillingType = billingType;
                     ViewBag.Year = year;
                     ViewBag.Month = month;
+                    ViewBag.ClientId = id;
                     var Statuses = from Revenueenum s in Enum.GetValues(typeof(Revenueenum))
                                    select new { ID = (int)s, Name = s.GetDescription() };
                     ViewBag.CurrentStatus = new SelectList(Statuses, "ID", "Name");

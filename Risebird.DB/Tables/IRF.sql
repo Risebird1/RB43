@@ -705,6 +705,86 @@ BEGIN
     Add IsProctoring bit null
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'DmIvLockNew')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add DmIvLockNew bit NOT NULL CONSTRAINT DF_IRF_DmIvLockNew DEFAULT 0
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'DmAssignmentPolicy')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add DmAssignmentPolicy varchar(20) NOT NULL CONSTRAINT DF_IRF_DmAssignmentPolicy DEFAULT 'free'
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'DmDefaultInterviewCap')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add DmDefaultInterviewCap int NOT NULL CONSTRAINT DF_IRF_DmDefaultInterviewCap DEFAULT 20
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VoiceInstructionTranscript')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD VoiceInstructionTranscript NVARCHAR(MAX) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VoiceInstructionTranscriptUpdatedOn')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD VoiceInstructionTranscriptUpdatedOn DATETIME NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'DmEtiquetteDressCode')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD DmEtiquetteDressCode varchar(20) NOT NULL CONSTRAINT DF_IRF_DmEtiquetteDressCode DEFAULT 'formal'
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'DmEtiquetteNoEatingRule')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD DmEtiquetteNoEatingRule bit NOT NULL CONSTRAINT DF_IRF_DmEtiquetteNoEatingRule DEFAULT 1
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VoiceInstructionTranscriptUpdatedBy')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD VoiceInstructionTranscriptUpdatedBy VARCHAR(100) NULL
+END
+
 END
 
 

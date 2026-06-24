@@ -95,6 +95,8 @@ namespace Risebird.Web.Controllers
                 var model = new Client();
                 model.IsMeetingNotificationSend = true;
                 model.IsCandidateavailability = true;
+                model.BillingCurrency = "INR";
+                model.InterviewerBillingType = 1;
                 SetBillingTypeDropDown(model);
                 return View("ClientAdd", model);
             }
@@ -190,6 +192,13 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     Client clientToUpdate = await _clientService.GetClient(id);
+                    if (clientToUpdate != null)
+                    {
+                        if (string.IsNullOrEmpty(clientToUpdate.BillingCurrency))
+                            clientToUpdate.BillingCurrency = "INR";
+                        if (clientToUpdate.InterviewerBillingType == 0)
+                            clientToUpdate.InterviewerBillingType = 1;
+                    }
                     SetBillingTypeDropDown(clientToUpdate);
                     if (clientToUpdate != null)
                     {
@@ -4234,8 +4243,8 @@ namespace Risebird.Web.Controllers
             var _list = new List<SelectListItem>();
             var selectItem = new SelectListItem { Text = "Billing Owner", Value = Convert.ToString(1) };
             _list.Add(selectItem);
-            var selectItem1 = new SelectListItem { Text = "Skill Channel", Value = Convert.ToString(2) };
-            _list.Add(selectItem1);
+            //var selectItem1 = new SelectListItem { Text = "Skill Channel", Value = Convert.ToString(2) };
+            //_list.Add(selectItem1);
             var selectItem2 = new SelectListItem { Text = "Client", Value = Convert.ToString(3) };
             _list.Add(selectItem2);
             model.BillingTypeDrop = _list;
@@ -4248,6 +4257,19 @@ namespace Risebird.Web.Controllers
             var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                              select new { ID = (int)s, Name = s.GetDescription() };
             model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+
+            model.BillingCurrencyDrop = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "INR", Value = "INR" },
+                new SelectListItem { Text = "USD", Value = "USD" }
+            };
+
+            model.InterviewerBillingTypeDrop = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Client", Value = "1" },
+                new SelectListItem { Text = "Skill Channel", Value = "2" },
+                new SelectListItem { Text = "Interviewer", Value = "3" }
+            };
         }
 
         public async Task<IActionResult> GetClientCommentsForReport(int interviewId, bool allowClientAction = false)

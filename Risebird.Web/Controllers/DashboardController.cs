@@ -20,6 +20,7 @@ using Risebird.Repository;
 using Risebird.Entities.Data.AffIndaModels;
 //using Risebird.Repository;
 using Risebird.Repository.Interface;
+using Risebird.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -5214,7 +5215,7 @@ NEVER:
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> InterviewerVideoKYC(int returnBack)
+        public async Task<IActionResult> InterviewerVideoKYC(int returnBack, string email = null)
         {
             try
             {
@@ -5226,6 +5227,7 @@ NEVER:
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
                     ViewBag.ReturnBack = returnBack;
+                    ViewBag.FilterEmail = email;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = await _dashboardService.GeInterviewerVideoKYC();
@@ -6944,57 +6946,51 @@ NEVER:
             }
         }
 
-        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> AIQCNegative()
+        public async Task<IActionResult> AIQCNegative(int? interviewId = null)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "Interviewer")
-                    {
-                        var model = await _dashboardService.GetAIQCNegativeVerdictReports();
-                        model = model.Select(x =>
-                        {
-                            x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
-                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                            x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
-                            return x;
-                        }).ToList();
-                        foreach (var item in model)
-                        {
-
-                            if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
-                            {
-                                if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
-                                {
-                                    item.MeetingStatusStatusDesc = "Status Pending";
-                                }
-                            }
-                            else
-                            {
-                                item.MeetingStatusStatusDesc = string.Empty;
-
-                            }
-                        }
-
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
+                if (!CompletedInterviewsViewMode.TryAuthorizeEvidenceEndpoints(HttpContext, out var profileName))
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
+
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                ViewBag.Profile = profileName;
+                ViewBag.InterviewIdFilter = interviewId;
+                var model = await _dashboardService.GetAIQCNegativeVerdictReports();
+                if (interviewId.HasValue)
+                {
+                    model = model.Where(x => x.InterviewId == interviewId.Value).ToList();
+                }
+                model = model.Select(x =>
+                {
+                    x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                    x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
+                    return x;
+                }).ToList();
+                foreach (var item in model)
+                {
+
+                    if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                    {
+                        if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                        {
+                            item.MeetingStatusStatusDesc = "Status Pending";
+                        }
+                    }
+                    else
+                    {
+                        item.MeetingStatusStatusDesc = string.Empty;
+
+                    }
+                }
+
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -7091,6 +7087,70 @@ NEVER:
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        #region Skill Channel Billing Rate
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> SkillChannelBillingRate()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance")
+                    {
+                        var model = await _dashboardService.GetSkillChannelBillingRates();
+                        if (model == null) model = new List<SkillChannelBillingRateVM>();
+                        model = model.Select(x =>
+                        {
+                            x.Heuristicsscore = !string.IsNullOrWhiteSpace(x.Heuristicsscore)
+                                ? ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription()
+                                : string.Empty;
+                            x.CompanyType = !string.IsNullOrWhiteSpace(x.CompanyType)
+                                ? ((CompanyType)Convert.ToInt32(x.CompanyType)).GetDescription()
+                                : string.Empty;
+                            x.JobCountry = x.JobCountry == "2" ? "Onsite" : "Offshore";
+                            return x;
+                        }).ToList();
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> SaveSkillChannelBillingRate(int irfId, int billingRate)
+        {
+            try
+            {
+                var createdBy = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var result = await _dashboardService.SaveSkillChannelBillingRate(irfId, billingRate, createdBy);
+                return Json(result ? "Success" : "Failed");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Error");
+            }
+        }
+        #endregion
+
         #region Client Action Data
         public async Task<IActionResult> ClientRemovedInterviewers()
         {
@@ -7512,6 +7572,36 @@ NEVER:
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = "An error occurred while inactivating the interviewer." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ReactivateInterviewer(int userId)
+        {
+            try
+            {
+                string emailId = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                }
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
+                // Reactivating an inactivated interviewer is restricted to the Admin profile only.
+                if (profileName != "Admin")
+                    return Json(new { success = false, message = "You do not have permission to reactivate interviewers. Only an Admin can do this." });
+
+                var result = await _interviewerService.ReactivateInterviewer(userId, emailId);
+                if (result)
+                    return Json(new { success = true, message = "Interviewer reactivated successfully." });
+
+                return Json(new { success = false, message = "Failed to reactivate interviewer. Please try again." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred while reactivating the interviewer." });
             }
         }
 

@@ -1,0 +1,254 @@
+@model IEnumerable<Risebird.Entities.ViewModel.InterviewerProfileVM>
+@{
+    ViewData["Title"] = "Hold Payment Interviewers";
+    ViewBag.PageHeader = "Hold Payment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int grandPendingCount  = Model != null ? Model.Sum(x => x.PendingInterviewCount) : 0;
+    int grandPendingAmount = Model != null ? Model.Sum(x => x.TotalPendingAmount) : 0;
+    int grandPaidAmount    = Model != null ? Model.Sum(x => x.TotalPaidAmount) : 0;
+}
+<script>
+    var Header = "<a href='/Interviewer/Index'>Interviewers</a>&nbsp;/&nbsp;Hold Payment";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link href="~/Newassets/css/interviewer.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .hp-stat-card {
+        border-radius: 10px;
+        padding: 16px 20px;
+        color: #fff;
+        margin-bottom: 16px;
+    }
+    .hp-stat-card .hp-stat-label { font-size: 12px; opacity: .85; text-transform: uppercase; letter-spacing: .5px; }
+    .hp-stat-card .hp-stat-value { font-size: 26px; font-weight: 700; margin-top: 4px; }
+    .hp-stat-card .hp-stat-sub   { font-size: 11px; opacity: .75; margin-top: 2px; }
+    .bg-hp-red    { background: linear-gradient(135deg,#e53935,#c62828); }
+    .bg-hp-orange { background: linear-gradient(135deg,#fb8c00,#e65100); }
+    .bg-hp-green  { background: linear-gradient(135deg,#43a047,#2e7d32); }
+    .bg-hp-blue   { background: linear-gradient(135deg,#1e88e5,#1565c0); }
+    .pending-badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: #fff3e0; color: #e65100;
+        border: 1px solid #ffcc80; border-radius: 6px;
+        padding: 3px 10px; font-weight: 600; font-size: 13px;
+    }
+    .paid-badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: #e8f5e9; color: #2e7d32;
+        border: 1px solid #a5d6a7; border-radius: 6px;
+        padding: 3px 10px; font-weight: 600; font-size: 13px;
+    }
+    .reason-pill {
+        display: inline-block; max-width: 260px; white-space: normal;
+        background: #fff8e1; border: 1px solid #ffe082;
+        border-radius: 6px; padding: 5px 10px; font-size: 12px; color: #5d4037;
+    }
+    #holdPaymentTable th { white-space: nowrap; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad">
+
+            <!-- Page header -->
+            <div class="card-header bg-w clearfix interviewer-page-header">
+                <div class="pull-left">
+                    <h4 class="card-title">Hold Payment Interviewers</h4>
+                </div>
+                <div class="pull-right client-ms">
+                    <div id="meeting_filter" class="interviewer-search-wrap dataTables_filter pull-left">
+                        <div class="interviewer-search-box">
+                            <span class="interviewer-search-ico" aria-hidden="true" style="background:none">
+                                <svg style="position:relative;top:13px;right:13px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            </span>
+                            <input type="search" class="interviewer-search-inp" id="txtSearch" placeholder="Search interviewers..." onkeyup="filterTable()" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary stat cards -->
+            <div class="row mt-3 px-2">
+                <div class="col-md-3 col-sm-6">
+                    <div class="hp-stat-card bg-hp-red">
+                        <div class="hp-stat-label">Interviewers on Hold</div>
+                        <div class="hp-stat-value">@(Model?.Count() ?? 0)</div>
+                        <div class="hp-stat-sub">payments currently blocked</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="hp-stat-card bg-hp-orange">
+                        <div class="hp-stat-label">Pending Interviews</div>
+                        <div class="hp-stat-value">@grandPendingCount</div>
+                        <div class="hp-stat-sub">unpaid interviews across all</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="hp-stat-card bg-hp-blue">
+                        <div class="hp-stat-label">Total Amount on Hold</div>
+                        <div class="hp-stat-value">&#8377; @grandPendingAmount.ToString("N0")</div>
+                        <div class="hp-stat-sub">net pending (after deductions)</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="hp-stat-card bg-hp-green">
+                        <div class="hp-stat-label">Total Already Paid</div>
+                        <div class="hp-stat-value">&#8377; @grandPaidAmount.ToString("N0")</div>
+                        <div class="hp-stat-sub">lifetime paid to these interviewers</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="card shadow-sm mt-1">
+                <div class="card-body p-0">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <div class="text-center py-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                            <p class="mt-3 text-muted">No interviewers are currently on hold payment.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="holdPaymentTable">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Interviewer</th>
+                                        <th>Email ID</th>
+                                        <th>Mobile</th>
+                                        <th>Primary Skill</th>
+                                        <th title="Interviews with Status = Pending">Pending Interviews</th>
+                                        <th title="Net amount pending after deductions">Amount on Hold (₹)</th>
+                                        <th title="Total amount already paid out">Total Paid (₹)</th>
+                                        <th>Last Payout</th>
+                                        <th>Reason for Hold</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ int sr = 1; }
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@sr</td>
+                                            <td>
+                                                <strong>@item.FirstName @item.LastName</strong>
+                                                @if (!string.IsNullOrEmpty(item.NickName))
+                                                {
+                                                    <br /><small class="text-muted">@item.NickName</small>
+                                                }
+                                            </td>
+                                            <td><small>@item.EmailId</small></td>
+                                            <td>@item.MobileNumber</td>
+                                            <td>@item.PrimarySkill</td>
+
+                                            <td class="text-center">
+                                                @if (item.PendingInterviewCount > 0)
+                                                {
+                                                    <span class="pending-badge">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                                        @item.PendingInterviewCount
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">0</span>
+                                                }
+                                            </td>
+
+                                            <td class="text-right font-weight-bold @(item.TotalPendingAmount > 0 ? "text-danger" : "text-muted")">
+                                                &#8377; @item.TotalPendingAmount.ToString("N0")
+                                            </td>
+
+                                            <td class="text-right">
+                                                <span class="paid-badge">&#8377; @item.TotalPaidAmount.ToString("N0")</span>
+                                            </td>
+
+                                            <td>
+                                                @if (item.LastPaymentDate.HasValue)
+                                                {
+                                                    <span title="@item.LastPaymentDate.Value.ToString("dd MMM yyyy")">
+                                                        @item.LastPaymentDate.Value.ToString("dd MMM yyyy")
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Never paid</span>
+                                                }
+                                            </td>
+
+                                            <td>
+                                                @if (!string.IsNullOrWhiteSpace(item.HoldPaymentReason))
+                                                {
+                                                    <span class="reason-pill">@item.HoldPaymentReason</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">—</span>
+                                                }
+                                            </td>
+
+                                            <td>
+                                                <a href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })"
+                                                   class="btn btn-sm btn-outline-primary" title="Edit Interviewer">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                                    Edit
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        sr++;
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-secondary font-weight-bold">
+                                        <td colspan="5" class="text-right">Grand Total</td>
+                                        <td class="text-center">@grandPendingCount</td>
+                                        <td class="text-right text-danger">&#8377; @grandPendingAmount.ToString("N0")</td>
+                                        <td class="text-right">&#8377; @grandPaidAmount.ToString("N0")</td>
+                                        <td colspan="3"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="px-3 py-2 text-muted small border-top">
+                            Showing <strong>@Model.Count()</strong> interviewer(s) with payment on hold &nbsp;|&nbsp;
+                            Net amount on hold: <strong class="text-danger">&#8377; @grandPendingAmount.ToString("N0")</strong>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful", '@ViewBag.Message', "success");
+            } else {
+                swal.fire("Failed", '@ViewBag.Message', "error");
+            }
+        });
+    </script>
+}
+
+<script>
+    function filterTable() {
+        var input = document.getElementById("txtSearch").value.toLowerCase();
+        var rows = document.querySelectorAll("#holdPaymentTable tbody tr");
+        rows.forEach(function (row) {
+            var text = row.innerText.toLowerCase();
+            row.style.display = text.indexOf(input) > -1 ? "" : "none";
+        });
+    }
+</script>

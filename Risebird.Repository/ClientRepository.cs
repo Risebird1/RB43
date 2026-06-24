@@ -225,6 +225,7 @@ namespace Risebird.Repository
             parameters.Add("@IsCandidateavailability", entity.IsCandidateavailability);
             parameters.Add("@IsMeetingNotificationSend", entity.IsMeetingNotificationSend);
             parameters.Add("@PerInterviewRate", entity.PerInterviewRate);
+            parameters.Add("@AIPerInterviewRate", entity.AIPerInterviewRate);
             parameters.Add("@BillingType", entity.BillingType);
             parameters.Add("@InterviewDuration", entity.InterviewDuration);
             parameters.Add("@IsMeetingAutoCancelled", entity.IsMeetingAutoCancelled);
@@ -237,6 +238,9 @@ namespace Risebird.Repository
             parameters.Add("@IsPlanFlixable", entity.IsPlanFlixable);
             parameters.Add("@PlanType", entity.PlanType);
             parameters.Add("@IsVideoRequired", entity.IsVideoRequired);
+            parameters.Add("@BillingModel", entity.BillingModel);
+            parameters.Add("@BillingCurrency", string.IsNullOrEmpty(entity.BillingCurrency) ? "INR" : entity.BillingCurrency);
+            parameters.Add("@InterviewerBillingType", entity.InterviewerBillingType == 0 ? 1 : entity.InterviewerBillingType);
             if (entity.GSTApplicable == 1)
             {
                 parameters.Add("@GSTApplicable", true);

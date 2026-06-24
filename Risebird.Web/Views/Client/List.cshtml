@@ -40,8 +40,8 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-
-                            <table id="skillLevel" class="table table-striped table-bordered" cellspacing="0" style="width:100%;">
+                        <div style="overflow-x: auto; width: 100%;">
+                            <table id="skillLevel" class="table table-striped table-bordered" cellspacing="0" style="width:100%; min-width: 1200px;">
                                 <thead>
                                     <tr>
 
@@ -50,6 +50,9 @@
                                         <th>GST</th>
                                         <th>Billing Type</th>
                                         <th>Per Interview Rate</th>
+                                        <th>AI Per Interview Rate</th>
+                                        <th>Billing Currency</th>
+                                        <th>Interview Billing Type</th>
                                         <th>Logo</th>
                                         <th>URL</th>
                                         <th>Company Video(GIF)</th>
@@ -66,6 +69,9 @@
                                         <th>GST</th>
                                         <th>Billing Type</th>
                                         <th>Per Interview Rate</th>
+                                        <th>AI Per Interview Rate</th>
+                                        <th>Billing Currency</th>
+                                        <th>Interview Billing Type</th>
                                         <th>Logo</th>
                                         <th>URL</th>
                                         <th>Company Video(GIF)</th>
@@ -120,11 +126,31 @@
                                             {
                                                 <td style="white-space:normal;">Skill Channel</td>
                                             }
-                                            else
+                                            @if (item.BillingType == "1")
                                             {
                                                 <td style="white-space:normal;">Billing Owner</td>
                                             }
+                                            else
+                                            {
+                                                <td style="white-space:normal;">Client</td>
+                                            }
                                             <td>@item.PerInterviewRate</td>
+                                            <td>@item.AIPerInterviewRate</td>
+                                            <td>@(string.IsNullOrEmpty(item.BillingCurrency) ? "INR" : item.BillingCurrency)</td>
+                                            <td>
+                                                @if (item.InterviewerBillingType == 2)
+                                                {
+                                                    <text>Skill Channel</text>
+                                                }
+                                                else if (item.InterviewerBillingType == 3)
+                                                {
+                                                    <text>Interviewer</text>
+                                                }
+                                                else
+                                                {
+                                                    <text>Client</text>
+                                                }
+                                            </td>
                                             @if (item.LogoLink != null && item.LogoLink != "")
                                             {
                                                 <td>
@@ -163,18 +189,24 @@
 
                                             <td class="text-right" style="padding-right:30px;">
 
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
+                                                @* <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
                                                     <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
                                                 </button>
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
                                                     <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
-                                                </button>
-                                                @if (ViewBag.profile == "Admin")
+                                                </button> *@
+                                                @if (ViewBag.profile == "Admin" || ViewBag.profile == "Finance")
                                                 {
-                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add Wallet Balance">
-                                                        <span onclick="OpenAddWalletBalanceModal(@item.id)" title="Add Wallet Balance" class="fa fa-wallet"></span>
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Wallet">
+                                                        <span onclick="location.href='@Url.Action("ClientWallet", "Wallet", new { clientId = item.id })'" title="Client Wallet" class="fa fa-wallet"></span>
                                                     </button>
                                                 }
+                                                @* @if (ViewBag.profile == "Admin")
+                                                {
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add Wallet Balance">
+                                                        <span onclick="OpenAddWalletBalanceModal(@item.id)" title="Add Wallet Balance" class="fa fa-coins"></span>
+                                                    </button>
+                                                } *@
                                                 <button class="mdc-fab app-fab--absolute" aria-label="View Details">
                                                     <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
                                                 </button>
@@ -194,6 +226,7 @@
                                     }
                                 </tbody>
                             </table>
+                        </div>
                         </div>
 
 

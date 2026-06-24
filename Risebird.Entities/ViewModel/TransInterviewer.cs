@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace Risebird.Entities.ViewModel
 {
-    public class TransInterviewer
+    public partial class TransInterviewer
     {
         public int id { get; set; }
         public int IRFId { get; set; }
@@ -22,6 +22,8 @@ namespace Risebird.Entities.ViewModel
         public int Surcharge { get; set; }
         public string Source { get; set; }
         public string CompanyName { get; set; }
+        /// <summary>InterviewerProfile employment note; Insights uses when CompanyName is empty.</summary>
+        public string EmploymentComment { get; set; }
         public string ClientAction { get; set; }
         public bool IsResumeRedactAttempted { get; set; }
         public bool IsCampaignActivity { get; set; }
@@ -45,6 +47,11 @@ namespace Risebird.Entities.ViewModel
         public int TotalInterview { get; set; }
         public string RedMarkerReviewComment { get; set; }
         public int NegativeAIVerdictStatus { get; set; }
+
+        /// <summary>NULL = no cap configured (unlimited). 0 = explicit zero cap. &gt;0 = limit.</summary>
+        public int? InterviewCapacity { get; set; }
+
+        public DateTime? ModifiedAt { get; set; }
 
     }
 }

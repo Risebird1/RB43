@@ -86,6 +86,9 @@ namespace Risebird.Repository
                 p.Add("@ExperienceYears", record.ExperienceYears);
                 p.Add("@Salary", record.Salary);
                 p.Add("@MagName", record.MagName);
+                p.Add("@ParsedEmail", record.ParsedEmail);
+                p.Add("@ParsedPhone", record.ParsedPhone);
+                p.Add("@ResumeParseCompleted", record.ResumeParseCompleted);
                 p.Add("@ResumeLink", record.ResumeLink);
                 p.Add("@HasAttachment", record.HasAttachment);
                 p.Add("@Source", record.Source ?? "Naukri");
@@ -106,7 +109,8 @@ namespace Risebird.Repository
         public async Task<List<NaukriProspectiveInterviewerVM>> GetListAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
-            string automationStatus = null, string callStatus = null, string disposition = null)
+            string automationStatus = null, string callStatus = null, string disposition = null,
+            string funnelStage = null, string onboardingType = null)
         {
             try
             {
@@ -119,6 +123,8 @@ namespace Risebird.Repository
                 p.Add("@AutomationStatus", string.IsNullOrWhiteSpace(automationStatus) ? null : automationStatus);
                 p.Add("@CallStatus", string.IsNullOrWhiteSpace(callStatus) ? null : callStatus);
                 p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
+                p.Add("@FunnelStage", string.IsNullOrWhiteSpace(funnelStage) ? null : funnelStage);
+                p.Add("@OnboardingType", string.IsNullOrWhiteSpace(onboardingType) ? null : onboardingType);
                 p.Add("@DateFrom", dateFrom);
                 p.Add("@DateTo", dateTo);
                 p.Add("@Page", page);
@@ -134,6 +140,112 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return new List<NaukriProspectiveInterviewerVM>();
+            }
+        }
+
+        public async Task<Dictionary<string, int>> GetFunnelStageCountsAsync(
+            string status, string candidateName, string magName, string source,
+            DateTime? dateFrom, DateTime? dateTo,
+            string automationStatus = null, string callStatus = null, string disposition = null,
+            string funnelStage = null, string onboardingType = null)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Status", string.IsNullOrWhiteSpace(status) ? null : status);
+                p.Add("@CandidateName", string.IsNullOrWhiteSpace(candidateName) ? null : candidateName);
+                p.Add("@MagName", string.IsNullOrWhiteSpace(magName) ? null : magName);
+                p.Add("@Source", string.IsNullOrWhiteSpace(source) ? null : source);
+                p.Add("@AutomationStatus", string.IsNullOrWhiteSpace(automationStatus) ? null : automationStatus);
+                p.Add("@CallStatus", string.IsNullOrWhiteSpace(callStatus) ? null : callStatus);
+                p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
+                p.Add("@FunnelStage", string.IsNullOrWhiteSpace(funnelStage) ? null : funnelStage);
+                p.Add("@OnboardingType", string.IsNullOrWhiteSpace(onboardingType) ? null : onboardingType);
+                p.Add("@DateFrom", dateFrom);
+                p.Add("@DateTo", dateTo);
+
+                var rows = await con.QueryAsync(
+                    "usp_GetNaukriFunnelStageCounts", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+
+                var dict = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                foreach (var row in rows)
+                {
+                    string stage = row.FunnelStage as string;
+                    var key = string.IsNullOrWhiteSpace(stage) ? "New" : stage;
+                    dict[key] = (int)row.Cnt;
+                }
+                return dict;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        // Cumulative "reached at least" funnel, reconstructed from durable signals. The funnel-stage
+        // filter is intentionally ignored by the SP so the pipeline shape is preserved when a chip is
+        // selected. Keys: EmailParsed..Onboarded (cumulative), Duplicate/NotInterested/Cold/NotQualified
+        // (terminal branches), NotStarted, Total.
+        public async Task<Dictionary<string, int>> GetFunnelReachCountsAsync(
+            string status, string candidateName, string magName, string source,
+            DateTime? dateFrom, DateTime? dateTo,
+            string automationStatus = null, string callStatus = null, string disposition = null,
+            string funnelStage = null, string onboardingType = null)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Status", string.IsNullOrWhiteSpace(status) ? null : status);
+                p.Add("@CandidateName", string.IsNullOrWhiteSpace(candidateName) ? null : candidateName);
+                p.Add("@MagName", string.IsNullOrWhiteSpace(magName) ? null : magName);
+                p.Add("@Source", string.IsNullOrWhiteSpace(source) ? null : source);
+                p.Add("@AutomationStatus", string.IsNullOrWhiteSpace(automationStatus) ? null : automationStatus);
+                p.Add("@CallStatus", string.IsNullOrWhiteSpace(callStatus) ? null : callStatus);
+                p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
+                p.Add("@FunnelStage", string.IsNullOrWhiteSpace(funnelStage) ? null : funnelStage);
+                p.Add("@OnboardingType", string.IsNullOrWhiteSpace(onboardingType) ? null : onboardingType);
+                p.Add("@DateFrom", dateFrom);
+                p.Add("@DateTo", dateTo);
+
+                var rows = await con.QueryAsync(
+                    "usp_GetNaukriFunnelReachCounts", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+
+                var dict = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                foreach (var row in rows)
+                {
+                    string key = row.MetricKey as string;
+                    if (!string.IsNullOrWhiteSpace(key)) dict[key] = (int)row.Cnt;
+                }
+                return dict;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        public async Task<NaukriInvitationEmailStatus> GetInvitationEmailStatusAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return null;
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Email", email.Trim());
+                return await con.QueryFirstOrDefaultAsync<NaukriInvitationEmailStatus>(
+                    "usp_GetNaukriInvitationEmailStatus", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
 
@@ -324,9 +436,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var rows = await con.ExecuteAsync(
-                    "UPDATE NaukriProspectiveInterviewer SET ResumeLink = @Link, HasAttachment = 1, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
-                    new { Link = resumeLink, Id = id }, commandTimeout: 30);
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriResumeLink",
+                    new { Id = id, Link = resumeLink },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return rows > 0;
             }
             catch (Exception ex)
@@ -382,8 +495,9 @@ namespace Risebird.Repository
             {
                 using var con = new SqlConnection(_connectionString);
                 return await con.QueryFirstOrDefaultAsync<int?>(
-                    "SELECT Id FROM InterviewerProfile WHERE UserId = @UserId",
-                    new { UserId = userId }, commandTimeout: 30);
+                    "usp_GetInterviewerProfileIdByUserId",
+                    new { UserId = userId },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
             }
             catch (Exception ex)
             {
@@ -454,19 +568,89 @@ namespace Risebird.Repository
             {
                 using var con = new SqlConnection(_connectionString);
                 await con.ExecuteAsync(
-                    @"UPDATE NaukriProspectiveInterviewer
-                      SET SelfRegistrationCompleted = @Completed,
-                          OnboardedUserId = ISNULL(@UserId, OnboardedUserId),
-                          OnboardedProfileId = ISNULL(@ProfileId, OnboardedProfileId),
-                          OnboardingCompleted = CASE WHEN @Completed = 1 THEN 1 ELSE OnboardingCompleted END,
-                          Status = CASE WHEN @Completed = 1 THEN 'Onboarded' ELSE Status END,
-                          UpdatedAt = GETUTCDATE()
-                      WHERE Id = @Id",
+                    "usp_UpdateNaukriSelfRegistration",
                     new { Id = id, Completed = completed, UserId = userId, ProfileId = profileId },
-                    commandTimeout: 30);
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return true;
             }
             catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        // ── Prospect Onboarding redesign (Phase 2) ──────────────────────────────────
+
+        // Sets the single, unified Intent that both email replies and AI Plivo calls feed.
+        public async Task<bool> SetUnifiedIntentAsync(int id, string intent, string intentSource, DateTime? confirmedAt)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(
+                    "usp_SetNaukriUnifiedIntent",
+                    new { Id = id, Intent = intent, IntentSource = intentSource, ConfirmedAt = confirmedAt },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        // Advances the funnel forward-only (never regresses) and optionally sets the
+        // operational ticket status. Ticket status is kept separate from the funnel stage.
+        public async Task<bool> AdvanceFunnelStageAsync(int id, string funnelStage, string ticketStatus = null)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(
+                    "usp_AdvanceNaukriFunnelStage",
+                    new { Id = id, FunnelStage = funnelStage, TicketStatus = ticketStatus },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        // Sets a TERMINAL/branch funnel outcome (Duplicate, NotInterested, Unsubscribe, Cold)
+        // UNCONDITIONALLY — these are exits off the happy path, so the forward-only rank guard
+        // used by AdvanceFunnelStageAsync does not apply. Optionally sets the ticket status.
+        public async Task<bool> SetFunnelOutcomeAsync(int id, string funnelStage, string ticketStatus = null)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(
+                    "usp_SetNaukriFunnelOutcome",
+                    new { Id = id, FunnelStage = funnelStage, TicketStatus = ticketStatus },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        public async Task<bool> SetOnboardingTypeAsync(int id, string onboardingType)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(
+                    "usp_SetNaukriOnboardingType",
+                    new { Id = id, OnboardingType = onboardingType },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
+        }
+
+        public async Task<int?> FindProspectIdByOnboardedUserIdAsync(int userId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                return await con.QueryFirstOrDefaultAsync<int?>(
+                    "usp_FindNaukriProspectByOnboardedUserId",
+                    new { UserId = userId },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return null; }
         }
 
         public async Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email)
@@ -475,8 +659,9 @@ namespace Risebird.Repository
             {
                 using var con = new SqlConnection(_connectionString);
                 var row = await con.QueryFirstOrDefaultAsync<dynamic>(
-                    "SELECT TOP 1 ul.id AS UserId, ip.Id AS ProfileId FROM UserList ul LEFT JOIN InterviewerProfile ip ON ip.UserId = ul.id WHERE LOWER(LTRIM(RTRIM(ul.EmailId))) = @Email AND ul.IsActive = 1",
-                    new { Email = email.Trim().ToLower() }, commandTimeout: 30);
+                    "usp_FindActiveUserByEmail",
+                    new { Email = email?.Trim() },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 if (row == null) return (null, null);
                 return ((int?)row.UserId, (int?)row.ProfileId);
             }
@@ -520,10 +705,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var sql = @"SELECT TOP 1 Id FROM NaukriProspectiveInterviewer
-                            WHERE ParsedPhone = @Phone AND PlivoCallStatus = @Status
-                            ORDER BY Id DESC";
-                return await con.QueryFirstOrDefaultAsync<int?>(sql, new { Phone = phone, Status = callStatus });
+                return await con.QueryFirstOrDefaultAsync<int?>(
+                    "usp_FindNaukriProspectByPhoneAndCallStatus",
+                    new { Phone = phone, Status = callStatus },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
             }
             catch (Exception ex)
             {
@@ -573,13 +758,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var sql = @"SELECT TOP 1 ti.id
-                            FROM TransInterviewer ti
-                            WHERE ti.AssessmentGroupId = @AgId
-                              AND ISNULL(ti.IsActive, 0) = 1
-                              AND ISNULL(ti.IsDeleted, 0) = 0
-                            ORDER BY ti.id DESC";
-                return await con.QueryFirstOrDefaultAsync<int?>(sql, new { AgId = assessmentGroupId });
+                return await con.QueryFirstOrDefaultAsync<int?>(
+                    "usp_GetLatestActiveIRFForAssessmentGroup",
+                    new { AssessmentGroupId = assessmentGroupId },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
             }
             catch (Exception ex)
             {
@@ -593,9 +775,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var rows = await con.ExecuteAsync(
-                    "UPDATE NaukriProspectiveInterviewer SET MagName = @MagName, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
-                    new { Id = id, MagName = magName });
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriMagName",
+                    new { Id = id, MagName = magName },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return rows > 0;
             }
             catch (Exception ex)
@@ -610,9 +793,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var rows = await con.ExecuteAsync(
-                    "UPDATE NaukriProspectiveInterviewer SET ParsedEmail = @Email, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
-                    new { Id = id, Email = email });
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriParsedEmail",
+                    new { Id = id, Email = email },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return rows > 0;
             }
             catch (Exception ex)
@@ -627,9 +811,10 @@ namespace Risebird.Repository
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                var rows = await con.ExecuteAsync(
-                    "UPDATE NaukriProspectiveInterviewer SET ParsedPhone = @Phone, UpdatedAt = GETUTCDATE() WHERE Id = @Id",
-                    new { Id = id, Phone = phone });
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriParsedPhone",
+                    new { Id = id, Phone = phone },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return rows > 0;
             }
             catch (Exception ex)
@@ -719,21 +904,29 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<List<NaukriProspectiveInterviewerVM>> GetProspectCallOutcomesForMAGAsync(string magName)
+        public async Task<(List<NaukriProspectiveInterviewerVM> Items, int TotalCount)> GetProspectCallOutcomesForMAGAsync(string magName, int page = 1, int pageSize = 25)
         {
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 ? 25 : (pageSize > 200 ? 200 : pageSize);
+
             try
             {
                 using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@MagName", magName);
+                p.Add("@Page", page);
+                p.Add("@PageSize", pageSize);
+                p.Add("@TotalCount", dbType: DbType.Int32, direction: ParameterDirection.Output);
                 var result = await con.QueryAsync<NaukriProspectiveInterviewerVM>(
                     "usp_GetProspectCallOutcomesForMAG",
-                    new { MagName = magName },
+                    p,
                     commandType: System.Data.CommandType.StoredProcedure);
-                return result.AsList();
+                return (result.AsList(), p.Get<int>("@TotalCount"));
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return new List<NaukriProspectiveInterviewerVM>();
+                return (new List<NaukriProspectiveInterviewerVM>(), 0);
             }
         }
     }

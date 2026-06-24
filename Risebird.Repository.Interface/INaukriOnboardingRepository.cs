@@ -16,7 +16,23 @@ namespace Risebird.Repository.Interface
         Task<List<NaukriProspectiveInterviewerVM>> GetListAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
-            string automationStatus = null, string callStatus = null, string disposition = null);
+            string automationStatus = null, string callStatus = null, string disposition = null,
+            string funnelStage = null, string onboardingType = null);
+
+        Task<Dictionary<string, int>> GetFunnelStageCountsAsync(
+            string status, string candidateName, string magName, string source,
+            DateTime? dateFrom, DateTime? dateTo,
+            string automationStatus = null, string callStatus = null, string disposition = null,
+            string funnelStage = null, string onboardingType = null);
+
+        Task<Dictionary<string, int>> GetFunnelReachCountsAsync(
+            string status, string candidateName, string magName, string source,
+            DateTime? dateFrom, DateTime? dateTo,
+            string automationStatus = null, string callStatus = null, string disposition = null,
+            string funnelStage = null, string onboardingType = null);
+
+        // SendGrid delivery status of the invitation email for a recipient (null if none sent yet).
+        Task<NaukriInvitationEmailStatus> GetInvitationEmailStatusAsync(string email);
 
         Task<NaukriProspectiveInterviewerVM> GetByIdAsync(int id);
 
@@ -52,6 +68,15 @@ namespace Risebird.Repository.Interface
         Task<List<ActiveIRFItem>> GetActiveIRFsByAssessmentGroupIdAsync(int assessmentGroupId);
         Task<bool> UpdateSelfRegistrationAsync(int id, bool completed, int? userId, int? profileId);
 
+        // Prospect Onboarding redesign (Phase 2): unified intent + funnel/ticket separation + onboarding type
+        Task<bool> SetUnifiedIntentAsync(int id, string intent, string intentSource, DateTime? confirmedAt);
+        Task<bool> AdvanceFunnelStageAsync(int id, string funnelStage, string ticketStatus = null);
+        Task<bool> SetFunnelOutcomeAsync(int id, string funnelStage, string ticketStatus = null);
+        Task<bool> SetOnboardingTypeAsync(int id, string onboardingType);
+
+        // Returns the prospect record awaiting acknowledgement for a given onboarded user id, if any.
+        Task<int?> FindProspectIdByOnboardedUserIdAsync(int userId);
+
         Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email);
 
         Task<bool> UpdatePlivoCallStatusAsync(int id, string callStatus, string conversationId,
@@ -74,7 +99,7 @@ namespace Risebird.Repository.Interface
         Task<int> InsertBatchCallLogAsync(string magName, string initiatedBy, int totalProspects);
         Task CompleteBatchCallLogAsync(int id, int succeeded, int failed, int skipped, string status);
         Task<List<BatchCallLogEntry>> GetBatchCallHistoryAsync(string magName);
-        Task<List<NaukriProspectiveInterviewerVM>> GetProspectCallOutcomesForMAGAsync(string magName);
+        Task<(List<NaukriProspectiveInterviewerVM> Items, int TotalCount)> GetProspectCallOutcomesForMAGAsync(string magName, int page = 1, int pageSize = 25);
     }
 
     public class BatchCallMagSummary
@@ -115,6 +140,20 @@ namespace Risebird.Repository.Interface
         public string IRFId { get; set; }
         public string AssessmentGroupId { get; set; }
         public string ClientName { get; set; }
+    }
+
+    public class NaukriInvitationEmailStatus
+    {
+        public string Email { get; set; }
+        public DateTime? SentAt { get; set; }
+        public string MailSubject { get; set; }
+        public string DeliveryEvent { get; set; }   // processed | delivered | deferred | bounce | dropped
+        public string DeliveryReason { get; set; }
+        public string DeliveryStatus { get; set; }
+        public string DeliveryResponse { get; set; }
+        public bool HasBounced { get; set; }
+        public bool Opened { get; set; }
+        public bool Clicked { get; set; }
     }
 
     public class MagDropdownItem

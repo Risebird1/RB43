@@ -23,6 +23,11 @@ namespace Risebird.Entities.ViewModel
         public string   AvailabilityIntent          { get; set; }
         public string   MailBodyIntent              { get; set; }
         public string   ConcernsOrNotInterested     { get; set; }
+        // Unified availability intent — fed by BOTH the email reply and the Plivo
+        // voice-agent call. Canonical values: 'Available' | 'NotAvailable' | 'Unsubscribe'.
+        public string   Intent                      { get; set; }
+        public string   IntentSource                { get; set; }   // 'Email' | 'Call'
+        public DateTime? IntentConfirmedAt          { get; set; }
         public string   ResumeFitment               { get; set; }
         public string   ResumeLink                  { get; set; }
         public bool     HasAttachment               { get; set; }
@@ -36,6 +41,11 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedAt                   { get; set; }
         public DateTime? UpdatedAt                  { get; set; }
 
+        public string   Source                      { get; set; }
+        public bool?    IsAutoClosed                { get; set; }
+        public string   AutoClosedBy                { get; set; }
+        public DateTime? AutoClosedAt               { get; set; }
+
         // Joined from InterviewerProfile
         public string   InterviewerNickName         { get; set; }
         public string   CurrentRole                 { get; set; }
@@ -47,11 +57,31 @@ namespace Risebird.Entities.ViewModel
         public string   ExistingAssessmentGroupIds  { get; set; }
         public string   UserEmail                   { get; set; }
         public string   UserMobileNumber            { get; set; }
+        public bool     IsInterviewerActive         { get; set; }
+        public string   InactivationType            { get; set; }
 
         // Joined from MasterAssessmentGroup / AssessmentGroup
         public string   MasterAssessmentGroupName   { get; set; }
         public int?     ResolvedAssessmentGroupId   { get; set; }
         public string   AssessmentGroupName         { get; set; }
+
+        // Plivo call
+        public string   PlivoCallStatus             { get; set; }
+        public string   PlivoConversationId         { get; set; }
+        public DateTime? PlivoCallAt                { get; set; }
+        public int?     PlivoCallDuration           { get; set; }
+        public string   PlivoCallTranscript         { get; set; }
+        public string   PlivoCallSummary            { get; set; }
+        public string   PlivoIntent                 { get; set; }
+        public bool?    PlivoAssignmentHelp         { get; set; }
+        public bool?    PlivoEmailReceived          { get; set; }
+        public bool?    PlivoCallbackRequested      { get; set; }
+        public string   PlivoNotes                  { get; set; }
+        public string   PlivoCalledBy               { get; set; }
+
+        // True when this record reflects a favorable availability signal received within the
+        // "recently available" window (last 48 hours).
+        public bool     IsRecentlyAvailable         { get; set; }
 
         // Pagination
         public int      TotalCount                  { get; set; }
@@ -59,6 +89,7 @@ namespace Risebird.Entities.ViewModel
         public int      InProgressCount             { get; set; }
         public int      VerifiedCount               { get; set; }
         public int      ClosedCount                 { get; set; }
+        public int      RecentlyAvailableCount      { get; set; }
     }
 
     public class RelayInterviewerAvailabilityPayload

@@ -20,14 +20,30 @@ BEGIN
             magInfo.AssessmentGroupId AS ResolvedAssessmentGroupId,
             magInfo.AssessmentGroupName,
             ROW_NUMBER() OVER (ORDER BY
-                -- Priority 1: Call completed with interested disposition — ready for email
-                CASE WHEN np.PlivoCallStatus IN ('completed', 'answered')
-                          AND LOWER(ISNULL(np.PlivoProspectDisposition, '')) = 'interested'
+                -- Priority 1: MAG resolved but email not yet sent — send email first
+                CASE WHEN np.ApplicationLink IS NOT NULL AND np.ApplicationLink <> ''
                           AND ISNULL(np.InvitationEmailSent, 0) = 0
                      THEN 0 ELSE 1 END ASC,
-                -- Priority 2: Call completed with non-interested disposition — needs cleanup
+                -- Priority 2: Email sent, no response, grace period elapsed — ready for call
+                CASE WHEN ISNULL(np.InvitationEmailSent, 0) = 1
+                          AND np.ProspectResponse IS NULL
+                          AND ISNULL(np.SelfRegistrationCompleted, 0) = 0
+                          AND np.InvitationEmailSentAt IS NOT NULL
+                          AND DATEDIFF(MINUTE, np.InvitationEmailSentAt, GETUTCDATE()) >= 60
+                          AND ISNULL(np.PlivoCallStatus, '') NOT IN ('completed', 'answered')
+                     THEN 0 ELSE 1 END ASC,
+                -- Priority 3: Call completed with non-interested disposition — needs cleanup
                 CASE WHEN np.PlivoCallStatus IN ('completed', 'answered')
                           AND LOWER(ISNULL(np.PlivoProspectDisposition, '')) <> 'interested'
+                          AND ISNULL(np.AutomationStatus, '') NOT IN ('Cold', 'ManualRequired')
+                     THEN 0 ELSE 1 END ASC,
+                -- Priority 4: Call completed with interested disposition — needs completion
+                CASE WHEN np.PlivoCallStatus IN ('completed', 'answered')
+                          AND LOWER(ISNULL(np.PlivoProspectDisposition, '')) = 'interested'
+                     THEN 0 ELSE 1 END ASC,
+                -- Priority 5: Positive intent confirmed (email or call) but not yet onboarded — auto-continue to acknowledgement
+                CASE WHEN LOWER(ISNULL(np.Intent, '')) = 'interested'
+                          AND ISNULL(np.OnboardingCompleted, 0) = 0
                      THEN 0 ELSE 1 END ASC,
                 -- Then chronological
                 np.ReceivedAt ASC, np.Id ASC
@@ -41,32 +57,55 @@ BEGIN
               AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
         ) magInfo
         WHERE np.Status IN ('Open', 'InProgress')
-          AND ISNULL(np.InvitationEmailSent, 0) = 0
           AND ISNULL(np.AutomationStatus, '') NOT IN (
-              'Cold', 'ManualRequired', 'EmailSent', 'Completed', 'Error',
-              'ParsingResume', 'ResolvingMAG', 'SendingEmail'
+              'Cold', 'ManualRequired', 'Completed', 'Error',
+              'ParsingResume', 'ResolvingMAG', 'SendingEmail',
+              -- Auto-onboarding has reached the acknowledgement stage; completion now
+              -- depends on the interviewer accepting the acknowledgement email (handled in the web app).
+              'AwaitingAcknowledgement'
           )
           AND ISNULL(np.PlivoCallStatus, '') NOT IN ('initiated', 'triggered')
           AND np.ResumeLink IS NOT NULL AND np.ResumeLink <> ''
+          -- Don't reprocess prospects who have already been onboarded.
+          AND ISNULL(np.OnboardingCompleted, 0) = 0
+          -- Don't reprocess prospects who have landed on a TERMINAL funnel outcome. These exits
+          -- rank 0, so without this guard the forward-only advance (e.g. → 'AwaitingResponse')
+          -- could resurrect a NotInterested/Unsubscribe/Cold/Duplicate prospect into the pipeline.
+          AND ISNULL(np.FunnelStage, '') NOT IN ('Duplicate', 'NotInterested', 'Unsubscribe', 'Cold', 'NotQualified')
+          -- Exclude prospects who already responded to email (no call needed) — EXCEPT
+          -- those whose confirmed intent is 'Interested', which must be auto-continued through
+          -- EV → AI fitment → onboarding → acknowledgement email.
+          AND (
+              ISNULL(np.InvitationEmailSent, 0) = 0
+              OR np.ProspectResponse IS NULL
+              OR LOWER(ISNULL(np.Intent, '')) = 'interested'
+          )
+          AND ISNULL(np.SelfRegistrationCompleted, 0) = 0
           AND (
               -- Needs resume parse
               ISNULL(np.ResumeParseCompleted, 0) = 0
               -- OR: Resume parsed, not duplicate, needs MAG link
               OR (np.ResumeParseCompleted = 1 AND ISNULL(np.IsExistingInterviewer, 0) = 0
                   AND (np.ApplicationLink IS NULL OR np.ApplicationLink = ''))
-              -- OR: MAG link generated, needs call (within limits), phone present
+              -- OR: MAG link generated, email not yet sent
               OR (np.ApplicationLink IS NOT NULL AND np.ApplicationLink <> ''
+                  AND ISNULL(np.InvitationEmailSent, 0) = 0)
+              -- OR: Email sent, no response, grace period (60 min) elapsed, needs call
+              OR (ISNULL(np.InvitationEmailSent, 0) = 1
+                  AND np.ProspectResponse IS NULL
+                  AND np.InvitationEmailSentAt IS NOT NULL
+                  AND DATEDIFF(MINUTE, np.InvitationEmailSentAt, GETUTCDATE()) >= 60
                   AND ISNULL(np.PlivoCallAttemptsTotal, 0) < 5
                   AND ISNULL(np.PlivoCallAttemptsToday, 0) < 2
                   AND ISNULL(np.PlivoCallStatus, '') NOT IN ('completed', 'answered')
                   AND np.ParsedPhone IS NOT NULL AND np.ParsedPhone <> '')
-              -- OR: Call completed with interested disposition, needs email
+              -- OR: Call completed — needs disposition handling
               OR (np.PlivoCallStatus IN ('completed', 'answered')
-                  AND LOWER(ISNULL(np.PlivoProspectDisposition, '')) = 'interested')
-              -- OR: Call completed with non-interested disposition, needs status cleanup
-              OR (np.PlivoCallStatus IN ('completed', 'answered')
-                  AND LOWER(ISNULL(np.PlivoProspectDisposition, '')) <> 'interested'
-                  AND ISNULL(np.AutomationStatus, '') NOT IN ('Cold', 'ManualRequired'))
+                  AND ISNULL(np.AutomationStatus, '') NOT IN ('Cold', 'ManualRequired', 'Completed'))
+              -- OR: Positive intent confirmed (email reply or AI call) but not yet onboarded —
+              --     auto-continue through EV → AI fitment → onboarding → acknowledgement email.
+              OR (LOWER(ISNULL(np.Intent, '')) = 'interested'
+                  AND ISNULL(np.OnboardingCompleted, 0) = 0)
           )
     )
     SELECT * FROM Eligible WHERE RowNum <= @BatchSize;

@@ -43,21 +43,21 @@ namespace Risebird.AzureTimerFunctions
                 foreach (var item in Ribbonmodel)
                 {
                     string CCEmails = string.Empty;
-                    if (item.HRCoordinatorEmailId == item.risebirdHR)
-                    {
-                        CCEmails = item.risebirdHR;
-                    }
-                    else
-                    {
-                        if (!string.IsNullOrEmpty(item.HRCoordinatorEmailId))
-                        {
-                            CCEmails = item.risebirdHR + ";" + item.HRCoordinatorEmailId;
-                        }
-                        else
-                        {
-                            CCEmails = item.risebirdHR;
-                        }
-                    }
+                    //if (item.HRCoordinatorEmailId == item.risebirdHR)
+                    //{
+                    CCEmails = item.risebirdHR;
+                    //}
+                    //else
+                    //{
+                    //    if (!string.IsNullOrEmpty(item.HRCoordinatorEmailId))
+                    //    {
+                    //        CCEmails = item.risebirdHR + ";" + item.HRCoordinatorEmailId;
+                    //    }
+                    //    else
+                    //    {
+                    //        CCEmails = item.risebirdHR;
+                    //    }
+                    //}
                     if (item.EmailType == "reaminder")
                     {
                         if (item.isInterviewerWaiting)
@@ -88,10 +88,10 @@ namespace Risebird.AzureTimerFunctions
                             string dashboardLink = "https://portal.risebird.io/Candidate/InterviewDetails/" + item.candidateUniqueId + "?IRFId=" + item.irfId;
 
                             //var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId);
-                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, dashboardLink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId,item.uniqueid);
+                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, dashboardLink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId, item.uniqueid);
 
                         }
-                        else
+                        else if (!string.IsNullOrEmpty(item.interviewer))
                         {
                             Mail _mail = new Mail
                             {
@@ -123,7 +123,7 @@ namespace Risebird.AzureTimerFunctions
                             CC = CCEmails,
                             Subject = "Risebird Urgent Interview-Candidate(" + item.candidateName + ") is waiting for the interviewer."
                         };
-                        var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl, item.zoomlink, item.interviewMeetingId, item.JDLink,item.uniqueid);
+                        var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl, item.zoomlink, item.interviewMeetingId, item.JDLink, item.uniqueid);
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.emergencyinterviewer;
                         _whatsAppVM.buttonlink = !string.IsNullOrEmpty(linkurl) ? linkurl.Replace("https://portal.risebird.io/", "") : "";

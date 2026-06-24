@@ -78,6 +78,8 @@ namespace Risebird.Web.Controllers
             string automationStatus  = null,
             string callStatus        = null,
             string disposition       = null,
+            string funnelStage       = null,
+            string onboardingType    = null,
             string dateFrom          = null,
             string dateTo            = null,
             int    page              = 1,
@@ -93,7 +95,11 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pTo)) dtTo = pTo;
 
-                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition);
+                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition, funnelStage, onboardingType);
+
+                var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType);
+
+                var funnelReach = await _repository.GetFunnelReachCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType);
 
                 var first = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -110,6 +116,15 @@ namespace Risebird.Web.Controllers
                 ViewBag.AutomationStatus = automationStatus ?? string.Empty;
                 ViewBag.CallStatus = callStatus ?? string.Empty;
                 ViewBag.Disposition = disposition ?? string.Empty;
+                ViewBag.FunnelStage = funnelStage ?? string.Empty;
+                ViewBag.OnboardingType = onboardingType ?? string.Empty;
+                ViewBag.FunnelCounts = funnelCounts;
+                ViewBag.FunnelReach = funnelReach;
+                // Global status breakdown (Open + InProgress + Closed + Onboarded = Total).
+                ViewBag.OpenCount = first?.OpenCount ?? 0;
+                ViewBag.InProgressCount = first?.InProgressCount ?? 0;
+                ViewBag.ClosedCount = first?.ClosedCount ?? 0;
+                ViewBag.OnboardedCount = first?.OnboardedCount ?? 0;
                 ViewBag.DateFrom = dateFrom ?? string.Empty;
                 ViewBag.DateTo = dateTo ?? string.Empty;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
@@ -125,6 +140,10 @@ namespace Risebird.Web.Controllers
                 ViewBag.AutomationStatus = automationStatus ?? string.Empty;
                 ViewBag.CallStatus = callStatus ?? string.Empty;
                 ViewBag.Disposition = disposition ?? string.Empty;
+                ViewBag.FunnelStage = funnelStage ?? string.Empty;
+                ViewBag.OnboardingType = onboardingType ?? string.Empty;
+                ViewBag.FunnelCounts = new Dictionary<string, int>();
+                ViewBag.FunnelReach = new Dictionary<string, int>();
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
                 return View(new List<NaukriProspectiveInterviewerVM>());
@@ -227,6 +246,7 @@ namespace Risebird.Web.Controllers
                         record.PlivoOnboardingPreference, record.PlivoKycAccepted, record.PlivoCalledBy,
                         record.AutomationStatus, record.PlivoCallAttemptsTotal, record.PlivoCallAttemptsToday,
                         record.Status, record.Source, record.ProcessedBy,
+                        record.Intent, record.IntentSource, record.FunnelStage, record.TicketStatus, record.OnboardingType,
                         record.ResolvedAssessmentGroupId, record.AssessmentGroupName,
                         hasResumeLink = !string.IsNullOrEmpty(record.ResumeLink)
                                         && !string.Equals(record.ResumeLink, "None", StringComparison.OrdinalIgnoreCase)
@@ -249,7 +269,8 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
-            var allowed = new[] { "Open", "InProgress", "Verified", "Onboarded", "Rejected", "Closed" };
+            // Operational ticket status only; pipeline outcomes are tracked via FunnelStage.
+            var allowed = new[] { "Open", "InProgress", "Closed" };
             if (id <= 0 || !Array.Exists(allowed, s => s == status))
                 return Json(new { success = false, error = "Invalid status." });
 
@@ -257,7 +278,7 @@ namespace Risebird.Web.Controllers
             var existing = await _repository.GetByIdAsync(id);
             var ok = await _repository.UpdateStatusAsync(id, status, changedBy);
             if (ok)
-                await _repository.InsertHistoryAsync(id, "StatusChange", existing?.Status ?? "—", status, changedBy);
+                await _repository.InsertHistoryAsync(id, "StatusChange", existing?.TicketStatus ?? existing?.Status ?? "—", status, changedBy);
             return Json(new { success = ok, status });
         }
 
@@ -287,7 +308,10 @@ namespace Risebird.Web.Controllers
                         ok = await _repository.UpdateParsedEmailAsync(id, newValue?.Trim());
                         break;
                     case "ParsedPhone":
-                        ok = await _repository.UpdateParsedPhoneAsync(id, newValue?.Trim());
+                        // Relay often sends numbers with hyphens / spaces / country code — sanitise
+                        // to the bare national number before storing.
+                        newValue = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(newValue?.Trim());
+                        ok = await _repository.UpdateParsedPhoneAsync(id, newValue);
                         break;
                     default:
                         return Json(new { success = false, error = $"Field '{fieldName}' is not editable." });
@@ -435,7 +459,7 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, error = "Could not read the resume. The file may be corrupted or in an unsupported format. Try uploading a valid PDF/DOC/DOCX.", needsUpload = true });
 
                 string parsedEmail = ExtractEmail(resumeText);
-                string parsedPhone = ExtractPhone(resumeText);
+                string parsedPhone = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(ExtractPhone(resumeText));
 
                 var (isExisting, existingUserId, existingProfileId) =
                     await _repository.UpdateResumeParseResultAsync(id, parsedEmail, parsedPhone);
@@ -443,6 +467,20 @@ namespace Risebird.Web.Controllers
                 var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                 await _repository.InsertHistoryAsync(id, "ResumeParse", "—",
                     $"Email: {parsedEmail ?? "N/A"}, Phone: {parsedPhone ?? "N/A"}" + (isExisting ? $" (Existing UserId: {existingUserId})" : " (New)"), user);
+
+                // Funnel: EmailParsed -> PhoneParsed -> DuplicateChecked (or terminal Duplicate).
+                await _repository.AdvanceFunnelStageAsync(id, "EmailParsed", "InProgress");
+                if (!string.IsNullOrWhiteSpace(parsedPhone))
+                    await _repository.AdvanceFunnelStageAsync(id, "PhoneParsed", "InProgress");
+                if (isExisting)
+                {
+                    // Email already exists in the system — exits the funnel at the duplicate-check step.
+                    await _repository.SetFunnelOutcomeAsync(id, "Duplicate", "InProgress");
+                }
+                else if (!string.IsNullOrWhiteSpace(parsedEmail))
+                {
+                    await _repository.AdvanceFunnelStageAsync(id, "DuplicateChecked", "InProgress");
+                }
 
                 return Json(new
                 {
@@ -475,14 +513,43 @@ namespace Risebird.Web.Controllers
 
             try
             {
+                // Business rule: Intent must be CONFIRMED (and positive) before Employment Verification starts.
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                if (!string.Equals(record.Intent, "Interested", StringComparison.OrdinalIgnoreCase))
+                {
+                    string intentMsg = string.IsNullOrEmpty(record.Intent)
+                        ? "Intent has not been confirmed yet. Collect the prospect's intent (email reply or AI Plivo call) before running Employment Verification."
+                        : $"Intent is '{record.Intent}'. Employment Verification can only proceed once the prospect's intent is confirmed as 'Interested'.";
+                    return Json(new { success = false, error = intentMsg, intentBlocked = true });
+                }
+
                 var ok = await _repository.UpdateEmploymentVerificationAsync(id, verified, companyName, isEmployed, details);
                 if (ok)
                 {
                     var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                     string evSummary = $"Company: {companyName ?? "N/A"}, Employed: {(isEmployed ? "Yes" : "No")}";
-                    await _repository.InsertHistoryAsync(id, "EmploymentVerification", "—", evSummary, user);
+
+                    // EV qualifies ONLY when verification ran successfully AND the prospect is currently
+                    // employed. A failed verification OR isEmployed = false → terminal 'Not Qualified'.
+                    bool qualified = verified && isEmployed;
+                    if (qualified)
+                    {
+                        await _repository.InsertHistoryAsync(id, "EmploymentVerification", "—", $"{evSummary} — PASSED", user);
+                        await _repository.AdvanceFunnelStageAsync(id, "EmploymentVerified", "InProgress");
+                    }
+                    else
+                    {
+                        string reason = !verified ? "verification could not confirm a qualifying employer"
+                                                  : "prospect is not currently employed";
+                        await _repository.InsertHistoryAsync(id, "NotQualified", "—",
+                            $"{evSummary} — Employment Verification FAILED ({reason}). Funnel → Not Qualified.", user);
+                        await _repository.SetFunnelOutcomeAsync(id, "NotQualified", "Closed");
+                    }
                 }
-                return Json(new { success = ok });
+                return Json(new { success = ok, verified, isEmployed });
             }
             catch (Exception ex)
             {
@@ -555,6 +622,8 @@ namespace Risebird.Web.Controllers
                 var aiUser = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                 await _repository.InsertHistoryAsync(id, "ResumeAnalysis", "—",
                     $"Verdict: {analysis?.verdict ?? "N/A"}, Score: {score?.ToString() ?? "N/A"}", aiUser);
+
+                await _repository.AdvanceFunnelStageAsync(id, "ResumeFitment", "InProgress");
 
                 return Json(new
                 {
@@ -703,8 +772,30 @@ namespace Risebird.Web.Controllers
 
                 await _repository.UpdateOnboardingResultAsync(id, userId, profileId, agId, ackSent);
 
-                await _repository.InsertHistoryAsync(id, "Onboarded", "—",
-                    $"UserId: {userId}, AG: {agId}, Ack email: {(ackSent ? "Sent" : "Failed")}", loggedInUser);
+                // Onboarding type for reporting. This action is operator-initiated, so the canonical
+                // type is 'ManuallyOnboarded' — even if automation had touched the record earlier
+                // (the fully-automated path is tagged 'IntentAutoProcessed' by the automation job itself).
+                // A self-registered prospect (rare here) is still attributed to 'SelfOnboarded'.
+                string onboardingType = record.SelfRegistrationCompleted == true ? "SelfOnboarded"
+                    : "ManuallyOnboarded";
+                await _repository.SetOnboardingTypeAsync(id, onboardingType);
+
+                // Business rule: the acknowledgement email is a MANDATORY stage, and onboarding is only
+                // COMPLETE once the interviewer RESPONDS (accepts) to it. Sending the email advances the
+                // funnel to 'AcknowledgementSent' and keeps the ticket open (awaiting the response);
+                // the funnel reaches 'Onboarded' only in InterviewerAcknowledgementResponse (status=1).
+                if (ackSent)
+                {
+                    await _repository.AdvanceFunnelStageAsync(id, "AcknowledgementSent", "InProgress");
+                    await _repository.InsertHistoryAsync(id, "AcknowledgementSent", "—",
+                        $"UserId: {userId}, AG: {agId}, Type: {onboardingType}. Acknowledgement email sent — awaiting interviewer's acceptance to complete onboarding.", loggedInUser);
+                }
+                else
+                {
+                    await _repository.AdvanceFunnelStageAsync(id, "ResumeFitment", "InProgress");
+                    await _repository.InsertHistoryAsync(id, "AcknowledgementPending", "—",
+                        $"UserId: {userId}, AG: {agId}, Type: {onboardingType}. Profile created but acknowledgement email FAILED — use Resend to send it.", loggedInUser);
+                }
 
                 return Json(new
                 {
@@ -713,9 +804,11 @@ namespace Risebird.Web.Controllers
                     uniqueid,
                     assessmentGroupId = agId,
                     acknowledgementEmailSent = ackSent,
+                    onboardingComplete = false,
+                    awaitingAcknowledgement = ackSent,
                     message = ackSent
-                        ? $"Interviewer onboarded (UserId: {userId}) and mapped to AG + channels. Acknowledgement email sent."
-                        : $"Interviewer onboarded (UserId: {userId}) and mapped to AG + channels. Acknowledgement email FAILED — use Resend button."
+                        ? $"Profile created (UserId: {userId}) and mapped to AG + channels. Acknowledgement email sent — onboarding completes once the interviewer accepts it."
+                        : $"Profile created (UserId: {userId}) and mapped to AG + channels, but the acknowledgement email FAILED. Use the Resend button to send it."
                 });
             }
             catch (Exception ex)
@@ -760,7 +853,18 @@ namespace Risebird.Web.Controllers
                 var ackUser = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                 await _repository.InsertHistoryAsync(id, "AckEmailResent", "—", "Acknowledgement email resent", ackUser);
 
-                return Json(new { success = true, message = "Acknowledgement email sent successfully." });
+                // The acknowledgement email is (re)sent — advance to 'AcknowledgementSent' and keep the
+                // ticket open. Onboarding completes only when the interviewer accepts it (status=1),
+                // which is handled in InterviewerAcknowledgementResponse.
+                await _repository.AdvanceFunnelStageAsync(id, "AcknowledgementSent", "InProgress");
+                if (string.IsNullOrWhiteSpace(record.OnboardingType))
+                {
+                    string onboardingType = record.SelfRegistrationCompleted == true ? "SelfOnboarded"
+                        : "ManuallyOnboarded";
+                    await _repository.SetOnboardingTypeAsync(id, onboardingType);
+                }
+
+                return Json(new { success = true, message = "Acknowledgement email sent successfully. Onboarding completes once the interviewer accepts it." });
             }
             catch (Exception ex)
             {
@@ -827,7 +931,115 @@ namespace Risebird.Web.Controllers
                 await _repository.InsertHistoryAsync(id, "SkillChannelSelected", "\u2014",
                     $"IRF: {irfName} (id:{irfId}), AG: {assessmentGroupId}", user);
 
+                await _repository.AdvanceFunnelStageAsync(id, "MAGConfirmed", "InProgress");
+
                 return Json(new { success = true, applicationLink = appLink, message = "Skill channel selected." });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Confirm MAG (funnel step 4) ─────────────────────────────────────────
+        // Persists the operator's MAG choice, resolves & locks the assessment group +
+        // MAG application link, and advances the funnel to 'MAGConfirmed'. The optional
+        // assessmentGroupId lets the caller pass the exact AG picked in the dropdown; when
+        // omitted (0) we fall back to the AG resolved from the MAG name on the record.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmMag(int id, string magName, int assessmentGroupId = 0)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            if (id <= 0 || string.IsNullOrWhiteSpace(magName))
+                return Json(new { success = false, error = "MAG name is required." });
+
+            try
+            {
+                var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null) return Json(new { success = false, error = "Record not found." });
+
+                // Persist the chosen MAG name if it changed.
+                if (!string.Equals(record.MagName ?? "", magName.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    await _repository.UpdateMagNameAsync(id, magName.Trim());
+                    await _repository.InsertHistoryAsync(id, "MagChange", record.MagName ?? "—", magName.Trim(), user);
+                }
+
+                // Resolve the assessment group: prefer the explicit dropdown value, else the one
+                // resolved from the MAG name (recomputed after the name update).
+                int agId = assessmentGroupId;
+                if (agId <= 0)
+                {
+                    var refreshed = await _repository.GetByIdAsync(id);
+                    agId = refreshed?.ResolvedAssessmentGroupId ?? 0;
+                }
+
+                if (agId <= 0)
+                    return Json(new { success = false, error = "Could not resolve an assessment group for the selected MAG. Check the MAG name." });
+
+                // Lock the MAG application link to the resolved AG.
+                var encryptedAgId = await _encryptionHelper.EncryptStringValue(agId.ToString());
+                var appLink = $"https://portal.risebird.io/Interviewer/MagApplicationForm?id={Uri.EscapeDataString(encryptedAgId)}";
+                await _repository.UpdateSelectedIRFAsync(id, 0, null, appLink, agId);
+
+                await _repository.InsertHistoryAsync(id, "MagConfirmed", "—",
+                    $"MAG confirmed: {magName.Trim()} (AG: {agId}).", user);
+                await _repository.AdvanceFunnelStageAsync(id, "MAGConfirmed", "InProgress");
+
+                return Json(new
+                {
+                    success = true,
+                    assessmentGroupId = agId,
+                    applicationLink = appLink,
+                    message = $"MAG confirmed: {magName.Trim()}."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Invitation email delivery status (SendGrid) for the EmailParsed step ────
+        [HttpGet]
+        public async Task<IActionResult> GetInvitationEmailStatus(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null) return Json(new { success = false, error = "Record not found." });
+
+                if (string.IsNullOrWhiteSpace(record.ParsedEmail))
+                    return Json(new { success = true, hasEmail = false, sent = false });
+
+                var st = await _repository.GetInvitationEmailStatusAsync(record.ParsedEmail);
+                if (st == null || st.SentAt == null)
+                    return Json(new { success = true, hasEmail = true, email = record.ParsedEmail, sent = false });
+
+                return Json(new
+                {
+                    success = true,
+                    hasEmail = true,
+                    email = record.ParsedEmail,
+                    sent = true,
+                    sentAt = st.SentAt?.ToString("dd MMM yyyy, HH:mm"),
+                    deliveryEvent = st.DeliveryEvent,
+                    deliveryReason = st.DeliveryReason,
+                    deliveryStatus = st.DeliveryStatus,
+                    hasBounced = st.HasBounced,
+                    opened = st.Opened,
+                    clicked = st.Clicked
+                });
             }
             catch (Exception ex)
             {
@@ -885,6 +1097,9 @@ namespace Risebird.Web.Controllers
                 await _repository.InsertHistoryAsync(id, "InvitationEmailSent", "\u2014",
                     $"Sent to: {email}, MAG: {magName} (AG: {agId}), Link: {appLink}", user);
 
+                // Invitation sent → 'Interest Collection' (awaiting email reply or AI Plivo call).
+                await _repository.AdvanceFunnelStageAsync(id, "InterestCollection", "InProgress");
+
                 return Json(new { success = true, message = "Invitation email sent to " + email + ".", applicationLink = appLink });
             }
             catch (Exception ex)
@@ -896,9 +1111,52 @@ namespace Risebird.Web.Controllers
 
         // ── Prospect response action (public endpoint — clicked from email) ─────
 
+        // Email-client / security scanners (Microsoft Safe Links, Mimecast, Proofpoint, Gmail, etc.)
+        // auto-fetch every link in an email. The response buttons were plain GET endpoints with
+        // side-effects, so a prefetch of the 'Not Interested' link would terminate & CLOSE the ticket
+        // (and a prefetch of NeedClarity/ManualSupport would kick off auto-onboarding) without the
+        // prospect ever clicking. The GET now only renders a confirmation page; the actual state change
+        // happens on the POST below, which scanners do not issue.
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> ProspectResponseAction(int id, string response)
+        public IActionResult ProspectResponseAction(int id, string response)
+        {
+            var validResponses = new[] { "NeedClarity", "ManualSupport", "NotInterested" };
+            if (id <= 0 || string.IsNullOrWhiteSpace(response) || !validResponses.Contains(response))
+                return Content("Invalid request.", "text/html");
+
+            string prompt = response switch
+            {
+                "NeedClarity"   => "You'd like more details about this opportunity. Confirm to let our team know.",
+                "ManualSupport" => "You'd like our onboarding team to help you register. Confirm to let us know.",
+                "NotInterested" => "You're letting us know you're not interested. Confirm your response.",
+                _               => "Confirm your response."
+            };
+            string buttonLabel = response == "NotInterested" ? "Confirm" : "Confirm";
+            string buttonColor = response == "NotInterested" ? "#c62828" : "#2e7d32";
+            string actionUrl   = Url.Action("ProspectResponseAction", "NaukriOnboarding");
+
+            string confirmHtml = $@"<!DOCTYPE html><html><head><meta charset='utf-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1'>
+                <meta name='robots' content='noindex,nofollow'><title>Risebird</title>
+                <style>body{{font-family:Arial,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f5f7fa;margin:0;}}
+                .card{{background:#fff;border-radius:12px;padding:40px;max-width:480px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.1);}}
+                h2{{color:#2c3e50;margin-top:0;}} p{{color:#555;line-height:1.6;}}
+                button{{background:{buttonColor};color:#fff;border:none;border-radius:8px;padding:14px 28px;font-size:16px;cursor:pointer;margin-top:16px;}}</style></head>
+                <body><div class='card'><h2>One more step</h2><p>{prompt}</p>
+                <form method='post' action='{actionUrl}'>
+                    <input type='hidden' name='id' value='{id}' />
+                    <input type='hidden' name='response' value='{System.Net.WebUtility.HtmlEncode(response)}' />
+                    <button type='submit'>{buttonLabel}</button>
+                </form></div></body></html>";
+            return Content(confirmHtml, "text/html");
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [ActionName("ProspectResponseAction")]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> ProspectResponseActionConfirm(int id, string response)
         {
             try
             {
@@ -912,6 +1170,14 @@ namespace Risebird.Web.Controllers
                 await _repository.UpdateProspectResponseAsync(id, response);
                 await _repository.InsertHistoryAsync(id, "ProspectResponse", "\u2014",
                     $"Prospect chose: {response}", "Prospect");
+
+                // Unified Intent — email reply feeds the same single Intent as the AI Plivo call.
+                string emailIntent = MapEmailResponseToIntent(response);
+                if (!string.IsNullOrEmpty(emailIntent))
+                {
+                    await _repository.SetUnifiedIntentAsync(id, emailIntent, "Email", DateTime.UtcNow);
+                    await ApplyIntentToFunnelAsync(id, emailIntent, "Email");
+                }
 
                 string message = response switch
                 {
@@ -958,6 +1224,8 @@ namespace Risebird.Web.Controllers
                 if (foundUserId.HasValue && foundUserId.Value > 0)
                 {
                     await _repository.UpdateSelfRegistrationAsync(id, true, foundUserId.Value, foundProfileId);
+                    await _repository.SetOnboardingTypeAsync(id, "SelfOnboarded");
+                    await _repository.AdvanceFunnelStageAsync(id, "Onboarded", "Closed");
                     var sysUser = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                     await _repository.InsertHistoryAsync(id, "SelfRegistered", "\u2014",
                         $"Prospect self-registered. UserId: {foundUserId.Value}", sysUser);
@@ -989,6 +1257,10 @@ namespace Risebird.Web.Controllers
             if (string.IsNullOrWhiteSpace(newValue))
                 return Json(new { success = false, error = "New value cannot be empty." });
 
+            // Sanitise phone numbers (strip hyphens / spaces / country code) to the bare national number.
+            if (fieldName == "ParsedPhone")
+                newValue = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(newValue.Trim());
+
             try
             {
                 var changedBy = HttpContext.Session.GetString("email").Trim('"');
@@ -1011,6 +1283,25 @@ namespace Risebird.Web.Controllers
                         exProfileId = (int?)result.ExistingProfileId;
                     }
                     catch { }
+
+                    // Keep the funnel in sync with the corrected email so the prospect isn't stranded:
+                    //  • a now-duplicate email exits at the terminal 'Duplicate' stage;
+                    //  • correcting a previously-duplicate prospect to a new (non-duplicate) email
+                    //    re-enters the pipeline at 'DuplicateChecked' (Duplicate is terminal/excluded
+                    //    from automation, so without this it would stay stuck out of the funnel).
+                    var rec = await _repository.GetByIdAsync(id);
+                    if (isEx)
+                    {
+                        if (!string.Equals(rec?.FunnelStage, "Duplicate", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(rec?.FunnelStage, "Onboarded", StringComparison.OrdinalIgnoreCase))
+                            await _repository.SetFunnelOutcomeAsync(id, "Duplicate", "InProgress");
+                    }
+                    else if (string.Equals(rec?.FunnelStage, "Duplicate", StringComparison.OrdinalIgnoreCase))
+                    {
+                        await _repository.SetFunnelOutcomeAsync(id, "DuplicateChecked", "InProgress");
+                        await _repository.InsertHistoryAsync(id, "DuplicateCleared", "Duplicate",
+                            "Email corrected to a non-duplicate address — prospect re-enters the pipeline at Duplicate Checked.", changedBy);
+                    }
 
                     return Json(new
                     {
@@ -1180,6 +1471,13 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
+                string relayEmail = payload.CandidateEmail?.Trim();
+                // Relay frequently sends phone numbers with hyphens / spaces / country code —
+                // sanitise to the bare national number at ingestion.
+                string relayPhone = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(payload.CandidatePhone?.Trim());
+                bool preParsed = !string.IsNullOrWhiteSpace(relayEmail)
+                              || !string.IsNullOrWhiteSpace(relayPhone);
+
                 var record = new NaukriProspectiveInterviewer
                 {
                     SenderEmail     = payload.SenderEmail?.Trim(),
@@ -1196,6 +1494,9 @@ namespace Risebird.Web.Controllers
                     ExperienceYears = payload.ExperienceYears?.Trim(),
                     Salary          = payload.Salary?.Trim(),
                     MagName         = payload.MagName?.Trim(),
+                    ParsedEmail     = relayEmail,
+                    ParsedPhone     = relayPhone,
+                    ResumeParseCompleted = preParsed ? true : null,
                     ResumeLink      = blobResumeUrl ?? sourceResumeUrl,
                     HasAttachment   = !string.IsNullOrWhiteSpace(blobResumeUrl) || payload.HasAttachment,
                     Source          = "Naukri"
@@ -1204,8 +1505,13 @@ namespace Risebird.Web.Controllers
                 var newId = await _repository.InsertAsync(record);
 
                 if (newId > 0)
+                {
                     await _repository.InsertHistoryAsync(newId, "RecordCreated", "\u2014",
                         $"Candidate: {record.CandidateName}, MAG: {record.MagName}, Source: Naukri", "Relay Webhook");
+                    if (preParsed)
+                        await _repository.InsertHistoryAsync(newId, "RelayPreParsed", "\u2014",
+                            $"Email: {relayEmail ?? "—"}, Phone: {relayPhone ?? "—"} (extracted by Relay agent)", "Relay Webhook");
+                }
 
                 return Ok(new
                 {
@@ -1299,6 +1605,11 @@ namespace Risebird.Web.Controllers
                 }
 
                 string magName = payload.JobTitle?.Trim();
+                string relayEmail = payload.CandidateEmail?.Trim();
+                // Sanitise to the bare national number at ingestion (Relay may include formatting / country code).
+                string relayPhone = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(payload.CandidatePhone?.Trim());
+                bool preParsed = !string.IsNullOrWhiteSpace(relayEmail)
+                              || !string.IsNullOrWhiteSpace(relayPhone);
 
                 var record = new NaukriProspectiveInterviewer
                 {
@@ -1312,6 +1623,9 @@ namespace Risebird.Web.Controllers
                     KeySkills       = payload.SkillsMatch?.Trim(),
                     CurrentRole     = payload.Headline?.Trim(),
                     MagName         = magName,
+                    ParsedEmail     = relayEmail,
+                    ParsedPhone     = relayPhone,
+                    ResumeParseCompleted = preParsed ? true : null,
                     ResumeLink      = blobResumeUrl ?? sourceResumeUrl,
                     HasAttachment   = !string.IsNullOrWhiteSpace(blobResumeUrl) || payload.HasAttachment,
                     Source          = "LinkedIn"
@@ -1320,8 +1634,13 @@ namespace Risebird.Web.Controllers
                 var newId = await _repository.InsertAsync(record);
 
                 if (newId > 0)
+                {
                     await _repository.InsertHistoryAsync(newId, "RecordCreated", "—",
                         $"Candidate: {record.CandidateName}, MAG: {record.MagName}, Source: LinkedIn", "Relay Webhook");
+                    if (preParsed)
+                        await _repository.InsertHistoryAsync(newId, "RelayPreParsed", "—",
+                            $"Email: {relayEmail ?? "—"}, Phone: {relayPhone ?? "—"} (extracted by Relay agent)", "Relay Webhook");
+                }
 
                 return Ok(new
                 {
@@ -1404,6 +1723,9 @@ namespace Risebird.Web.Controllers
 
                 await _repository.InsertHistoryAsync(id, "PlivoCallInitiated", "—",
                     $"Call triggered to {phone}. ConversationId: {conversationId ?? "N/A"}", calledBy);
+
+                // Call placed → still in the Interest Collection stage (awaiting call disposition).
+                await _repository.AdvanceFunnelStageAsync(id, "InterestCollection", "InProgress");
 
                 return Json(new
                 {
@@ -1623,11 +1945,22 @@ namespace Risebird.Web.Controllers
                 await _repository.InsertHistoryAsync(recordId.Value, "PlivoCallCompleted", "—",
                     historyDetail, "PlivoCX Webhook");
 
+                // Unified Intent — the AI Plivo call disposition feeds the same single Intent
+                // as an email reply. no_answer / unknown leaves any existing intent untouched.
+                string callIntent = MapCallDispositionToIntent(payload.ProspectDisposition);
+                if (!string.IsNullOrEmpty(callIntent))
+                {
+                    await _repository.SetUnifiedIntentAsync(recordId.Value, callIntent, "Call", DateTime.UtcNow);
+                    await ApplyIntentToFunnelAsync(recordId.Value, callIntent, "Call");
+                    await SaveOnbCp("ob_hangup_intent_set",
+                        $"Unified intent '{callIntent}' set for record #{recordId} from call", callLogId: recordId);
+                }
+
                 await SaveOnbCp("ob_hangup_complete",
                     $"Processing finished for record #{recordId}. parseMethod={parseMethod}",
                     callLogId: recordId);
 
-                return Ok(new { success = true, recordId = recordId.Value });
+                return Content($"OK. recordId={recordId.Value}", "text/html");
             }
             catch (Exception ex)
             {
@@ -1635,7 +1968,7 @@ namespace Risebird.Web.Controllers
                     $"DB update exception for record #{recordId}: {ex.Message}",
                     callLogId: recordId);
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return StatusCode(500, new { error = ex.Message });
+                return Content($"Error: {ex.Message}", "text/html");
             }
         }
 
@@ -1692,6 +2025,74 @@ namespace Risebird.Web.Controllers
                 });
             }
             catch { }
+        }
+
+        // ── Prospect Onboarding redesign (Phase 2): unified-intent mapping helpers ──
+
+        // Maps a confirmed unified intent onto the funnel:
+        //   • Interested              → 'IntentConfirmed' (positive; pipeline continues, ticket InProgress)
+        //   • NotInterested           → terminal 'NotInterested' (ticket Closed)
+        //   • Unsubscribe/Drop profile→ terminal 'NotInterested' (ticket Closed) — folds into Not Interested
+        // Terminal outcomes are set unconditionally (they are exits off the happy path).
+        private async Task ApplyIntentToFunnelAsync(int id, string intent, string source)
+        {
+            switch ((intent ?? "").Trim())
+            {
+                case "Interested":
+                    await _repository.AdvanceFunnelStageAsync(id, "IntentConfirmed", "InProgress");
+                    await _repository.InsertHistoryAsync(id, "IntentConfirmed", "\u2014",
+                        $"Unified Intent set to 'Interested' (source: {source}). Funnel \u2192 Intent Confirmed.", source == "Call" ? "PlivoCX Webhook" : "Prospect");
+                    break;
+                case "NotInterested":
+                    await _repository.SetFunnelOutcomeAsync(id, "NotInterested", "Closed");
+                    await _repository.InsertHistoryAsync(id, "IntentConfirmed", "\u2014",
+                        $"Unified Intent set to 'NotInterested' (source: {source}). Funnel \u2192 Not Interested.", source == "Call" ? "PlivoCX Webhook" : "Prospect");
+                    break;
+                case "Unsubscribe":
+                    // Drop/Unsubscribe folds into the 'Not Interested' funnel classification.
+                    // (The unified Intent stays 'Unsubscribe' so the profile-deactivation logic still fires.)
+                    await _repository.SetFunnelOutcomeAsync(id, "NotInterested", "Closed");
+                    await _repository.InsertHistoryAsync(id, "IntentConfirmed", "\u2014",
+                        $"Unified Intent set to 'Unsubscribe / Drop profile' (source: {source}). Funnel \u2192 Not Interested (Drop / Unsubscribe).", source == "Call" ? "PlivoCX Webhook" : "Prospect");
+                    break;
+            }
+        }
+
+        // Maps an email-button response to the canonical unified intent.
+        private static string MapEmailResponseToIntent(string response)
+        {
+            switch ((response ?? "").Trim().ToLower())
+            {
+                case "needclarity":
+                case "manualsupport":
+                case "interested":
+                case "yes":
+                case "accept":
+                case "accepted":
+                    return "Interested";
+                case "notinterested":
+                case "no":
+                case "decline":
+                case "declined":
+                    return "NotInterested";
+                case "unsubscribe":
+                    return "Unsubscribe";
+                default:
+                    return null;
+            }
+        }
+
+        // Maps a Plivo call disposition to the canonical unified intent.
+        // Returns null for no_answer / unknown so a previously-confirmed intent is not overwritten.
+        private static string MapCallDispositionToIntent(string disposition)
+        {
+            switch ((disposition ?? "").Trim().ToLower())
+            {
+                case "interested":     return "Interested";
+                case "not_interested": return "NotInterested";
+                case "unsubscribe":    return "Unsubscribe";
+                default:               return null;
+            }
         }
 
         /// <summary>
@@ -1776,17 +2177,20 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProspectCallOutcomes(string magName)
+        public async Task<IActionResult> GetProspectCallOutcomes(string magName, int page = 1, int pageSize = 25)
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
             try
             {
-                var prospects = await _repository.GetProspectCallOutcomesForMAGAsync(magName);
+                var (prospects, totalCount) = await _repository.GetProspectCallOutcomesForMAGAsync(magName, page, pageSize);
                 return Json(new
                 {
                     success = true,
+                    totalCount,
+                    page,
+                    pageSize,
                     prospects = prospects.Select(p => new
                     {
                         p.Id, p.CandidateName, p.ParsedEmail, p.ParsedPhone,

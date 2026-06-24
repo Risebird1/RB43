@@ -31,5 +31,14 @@ namespace Risebird.Business.Interface
         /// </summary>
         /// <param name="transferId">The transferId used when the payout was created.</param>
         Task<CashfreePayoutResult> GetPayoutStatusAsync(string transferId);
+
+        /// <summary>
+        /// Verifies bank account + IFSC via Cashfree BAV Sync V2 (penny-drop style validation).
+        /// </summary>
+        Task<CashfreeBankVerificationResult> VerifyBankAccountAsync(
+            string accountName,
+            string accountNumber,
+            string ifscCode,
+            string phone);
     }
 }

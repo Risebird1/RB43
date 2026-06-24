@@ -769,6 +769,35 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<ResumeSummaryVM> ResumeSummaryFromLink(string resumeLink)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(resumeLink)) return null;
+
+                string resumeLinkToParse = resumeLink;
+                if (!resumeLink.Contains(".pdf"))
+                {
+                    resumeLinkToParse = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeLink);
+                }
+                var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
+                if (string.IsNullOrEmpty(resumeStringContent)) return null;
+
+                var threadId = await _ai.CreateThreadAsync();
+                await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
+                var runId = await _ai.CreateRunAsync(threadId, "asst_pbeYFi03nKIjbl2W1Am0ROQh");
+                await _ai.WaitForRunAsync(threadId, runId);
+                var replies = await _ai.GetMessagesAsync(threadId);
+
+                return TryParseResumeSummary(replies?.FirstOrDefault());
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         private ResumeSummaryVM TryParseResumeSummary(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw))
@@ -946,6 +975,16 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public Task<IDictionary<string, string>> EnsureCandidatePseudonymsAsync(IEnumerable<string> candidateEmails, string createdBy = null)
+        {
+            return _candidateRepository.EnsureCandidatePseudonymsAsync(candidateEmails, createdBy);
+        }
+
+        public Task<CandidatePseudonymResolveVM> ResolveCandidatePseudonymAsync(string nickName)
+        {
+            return _candidateRepository.ResolveCandidatePseudonymAsync(nickName);
         }
 
     }

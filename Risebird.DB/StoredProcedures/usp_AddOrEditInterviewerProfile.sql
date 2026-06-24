@@ -34,7 +34,8 @@ Create PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @LinkedinLink nvarchar(max),              
 @Blog nvarchar(max),              
 @IsLeadInterviewer bit,              
-@IsActive bit,              
+@IsActive bit,
+@IsInterviewerAccess bit = null,
 @IsApproved bit,              
 @AssessmentGroupId varchar(100),          
 @UserPassword nvarchar(60),       
@@ -58,7 +59,9 @@ Create PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @TargetIrfId int,
 @outputUserId int out,
 @uniqueid varchar(50) out,
-@IsInsertOperation bit out
+@IsInsertOperation bit out,
+@IsHoldPayment bit = null,
+@HoldPaymentReason varchar(500) = null
 AS              
 Begin
 
@@ -102,7 +105,8 @@ Begin
     [FirstName] = @FirstName,              
     [LastName] = @LastName,              
     [EmailId] = @EmailId,              
-    [IsActive] = @IsActive,              
+    [IsActive] = @IsActive,
+    [IsInterviewerAccess] = ISNULL(@IsInterviewerAccess, [IsInterviewerAccess]),
     [MobileNumber] = @MobileNumber,               
   [WhatsappNumber]=@WhatsappNumber          
     where Id = @UserId;              
@@ -130,6 +134,8 @@ Begin
     [IsApproved] = @IsApproved,              
     [AssessmentGroupId]=@AssessmentGroupId,    
     [Isinstaavailable]=@Isinstaavailable,  
+    [IsHoldPayment] = ISNULL(@IsHoldPayment, [IsHoldPayment]),
+    [HoldPaymentReason] = @HoldPaymentReason,
     [ModifiedBy] = @loggedInUser,  
     [ModifiedOn] = dateadd(MINUTE, 330, getdate())  
     --[IsServiceDomain] =@IsServiceDomain,    
@@ -195,6 +201,7 @@ Declare @v_User_Id int;
    [LastName],              
    [EmailId],              
    [IsActive],              
+   [IsInterviewerAccess],
    [MobileNumber],        
    [UserPassword],      
    [WhatsappNumber],    
@@ -206,6 +213,7 @@ Declare @v_User_Id int;
    @LastName,              
    @EmailId,              
    @IsActive,              
+   1,
    @MobileNumber,        
    @UserPassword,      
    @WhatsappNumber,    
@@ -242,7 +250,9 @@ Declare @v_User_Id int;
    [isVerified],  
    [CompanyName],  
    [IsEmployed],
-   [PrimarySpecializationForAcknowledgement])    
+   [PrimarySpecializationForAcknowledgement],
+   [IsHoldPayment],
+   [HoldPaymentReason])    
    --[IsServiceDomain],    
    --[IsProductDomain],    
    --[IndiaServiceRate],    
@@ -277,7 +287,9 @@ Declare @v_User_Id int;
    @isVerified,  
    @CompanyName,  
    @IsEmployed,
-   @PrimarySpecializationForAcknowledgement)    
+   @PrimarySpecializationForAcknowledgement,
+   ISNULL(@IsHoldPayment, 0),
+   @HoldPaymentReason)    
    --@IsServiceDomain,    
    --@IsProductDomain,    
    --@IndiaServiceRate,    

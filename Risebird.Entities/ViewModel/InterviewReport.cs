@@ -417,6 +417,10 @@ namespace Risebird.Entities.ViewModel
         public int InterviewId { get; set; }
         public int IRFinid { get; set; }
         public string Comment { get; set; }
+        public bool IsBankVerified { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsBlocked { get; set; }
+        public string MobileNumber { get; set; }
         public string Status { get; set; }
         public DateTime Date { get; set; }
         public string PreferredLocation { get; set; }
@@ -455,6 +459,11 @@ namespace Risebird.Entities.ViewModel
         public string AITranscriptVerdict { get; set; }
         public string AIVerdict { get; set; }
         public int InterviewerBillingCycle { get; set; }
+        public string TransferId { get; set; }
+        public string CfTransferId { get; set; }
+        public string TransferUtr { get; set; }
+        public string PayoutStatus { get; set; }
+        public DateTime? TransactionDate { get; set; }
     }
     public class SchedulingLinkVM
     {
@@ -486,16 +495,26 @@ namespace Risebird.Entities.ViewModel
         public string IFSCCode { get; set; }
         public string AccountName { get; set; }
         public string MobileNumber { get; set; }
+        public bool IsBankVerified { get; set; }
     }
     public class FnRevenueVM
     {
         public int id { get; set; }
         public string Name { get; set; }
         public int TotalCount { get; set; }
+        public int NonAIInterviewCount { get; set; }
+        public int AIInterviewCount { get; set; }
         public int PerInterviewRate { get; set; }
+        public int AIPerInterviewRate { get; set; }
         public string IRFId { get; set; }
         public string BillingOwner { get; set; }
         public int BillingType { get; set; }
+        /// <summary>1=Client, 2=Skill Channel, 3=Interviewer</summary>
+        public int InterviewerBillingType { get; set; }
+        /// <summary>e.g. INR, USD — defaults to INR if not set on client</summary>
+        public string BillingCurrency { get; set; }
+        /// <summary>Pre-computed amount from SQL using the correct rate source and Turing 30% rule</summary>
+        public decimal BaseAmount { get; set; }
         public int CurrentStatus { get; set; }
         public int POPendingAmount { get; set; }
         public int InvoiceAmount { get; set; }
@@ -512,5 +531,158 @@ namespace Risebird.Entities.ViewModel
         public DateTime? invoiceSubmission { get; set; }
         public int TDSAmount { get; set; }
         public bool GSTApplicable { get; set; }
+        public decimal GeneratedInvoiceAmount { get; set; }
+        public int GeneratedInvoiceCount { get; set; }
+        public int TotalBillingOwnerCount { get; set; }
+        public string InvoiceRatio { get; set; }
+        public decimal ReceivedAmount { get; set; }
+        public int InvoiceStatus { get; set; }
+    }
+
+    public class InvoiceListVM
+    {
+        public int id { get; set; }
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public string InvoiceModel { get; set; }
+        public int BillingModel { get; set; }
+        public int BillingOwner { get; set; }
+        public string BillingOwnerEmail { get; set; }
+        public string InvoiceNumber { get; set; }
+        public string IRN { get; set; }
+        public decimal GrossAmount { get; set; }
+        public int Status { get; set; }
+        public string StatusDesc { get; set; }
+        public string Owner { get; set; }
+        public string LatestRemark { get; set; }
+        public string UTRTrxn { get; set; }
+        public int BillingType { get; set; }
+        public int InvoiceMonth { get; set; }
+        public int InvoiceYear { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+    }
+
+    public class InvoiceListFilter
+    {
+        public string Month { get; set; }
+        public string Year { get; set; }
+        public string[] Client { get; set; }
+        public string[] Status { get; set; }
+    }
+
+    public class InvoiceLineItemVM
+    {
+        public int id { get; set; }
+        public int InvoiceId { get; set; }
+        public string ProductName { get; set; }
+        public string Description { get; set; }
+        public int Qty { get; set; }
+        public decimal UnitRate { get; set; }
+        public decimal LineTotal { get; set; }
+        public string Basis { get; set; }
+    }
+
+    public class GenerateInvoiceVM
+    {
+        public int id { get; set; }
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public string InvoiceNumber { get; set; }
+        public int InvoiceMonth { get; set; }
+        public int InvoiceYear { get; set; }
+        public string BillingOwnerEmail { get; set; }
+        public int BillingOwnerId { get; set; }
+        public string CreditPeriod { get; set; }
+        public string GSTNumber { get; set; }
+        public bool GSTApplicable { get; set; }
+        public int TaxScenario { get; set; }
+        public string IRN { get; set; }
+        public string EInvoiceFileLink { get; set; }
+        public int BillingType { get; set; }
+        public string BillingCurrency { get; set; }
+        public decimal PerInterviewRate { get; set; }
+        public decimal Subtotal { get; set; }
+        public decimal GSTAmount { get; set; }
+        public decimal InvoiceValue { get; set; }
+        public decimal TDSAmount { get; set; }
+        public decimal NetReceivable { get; set; }
+        public int Status { get; set; }
+        public string CreatedBy { get; set; }
+        public decimal? CashCreditAmount { get; set; }
+        public string UTRTrxn { get; set; }
+        public decimal InvoiceBaseAmount { get; set; }
+        public decimal NetReceivableAmount { get; set; }
+        public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
+    }
+
+    public class InvoiceDetailVM
+    {
+        public int id { get; set; }
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public int BillingOwnerId { get; set; }
+        public string BillingOwnerEmail { get; set; }
+        public string InvoiceNumber { get; set; }
+        public int InvoiceMonth { get; set; }
+        public int InvoiceYear { get; set; }
+        public string CreditPeriod { get; set; }
+        public string GSTNumber { get; set; }
+        public int TaxScenario { get; set; }
+        public string IRN { get; set; }
+        public string EInvoiceFileLink { get; set; }
+        public decimal Subtotal { get; set; }
+        public decimal GSTAmount { get; set; }
+        public decimal InvoiceValue { get; set; }
+        public decimal TDSAmount { get; set; }
+        public decimal NetReceivable { get; set; }
+        public int Status { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+        public int BillingType { get; set; }
+        public int BillingModel { get; set; }
+        public string BillingCurrency { get; set; }
+        public string LatestRemark { get; set; }
+        public string UTRTrxn { get; set; }
+        public decimal CashCreditAmount { get; set; }
+        public decimal InvoiceBaseAmount { get; set; }
+        public decimal NetReceivableAmount { get; set; }
+        public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
+    }
+
+    public class DuplicateInvoiceCheckVM
+    {
+        public int id { get; set; }
+        public string InvoiceNumber { get; set; }
+        public int Status { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public string CreatedBy { get; set; }
+    }
+
+    public class BillingOwnerOption
+    {
+        public int BillingOwnerId { get; set; }
+        public string BillingOwnerEmail { get; set; }
+    }
+
+    public class ClientInvoiceFormDataVM
+    {
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public string GSTNumber { get; set; }
+        public int PaymentTerm { get; set; }
+        public bool GSTApplicable { get; set; }
+        public int BillingType { get; set; }
+        /// <summary>1=Client, 2=Skill Channel, 3=Interviewer</summary>
+        public int InterviewerBillingType { get; set; }
+        /// <summary>e.g. INR, USD — defaults to INR if not set</summary>
+        public string BillingCurrency { get; set; }
+        public decimal PerInterviewRate { get; set; }
+        public decimal AIPerInterviewRate { get; set; }
+        public string BillingOwnerEmail { get; set; }
+        public int BillingOwnerId { get; set; }
+        public string InvoiceNumber { get; set; }
+        public List<InvoiceLineItemVM> LineItems { get; set; } = new List<InvoiceLineItemVM>();
     }
 }

@@ -760,8 +760,8 @@ namespace Risebird.Business
         {
             try
             {
-                var result =  (IList<SkillComment>)(await _clonableSkillChannelTemplateRepository.GetDeliveryHeadSampleQuestions(id, emailId));
-                return result;
+                var result = await _clonableSkillChannelTemplateRepository.GetDeliveryHeadSampleQuestions(id, emailId);
+                return result?.ToList();
             }
 
             catch (Exception e)

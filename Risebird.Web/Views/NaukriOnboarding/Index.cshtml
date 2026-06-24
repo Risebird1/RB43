@@ -14,16 +14,58 @@
     string selAutoStatus = ViewBag.AutomationStatus as string ?? string.Empty;
     string selCallStatus = ViewBag.CallStatus as string ?? string.Empty;
     string selDisposition = ViewBag.Disposition as string ?? string.Empty;
+    string selFunnelStage = ViewBag.FunnelStage as string ?? string.Empty;
+    string selOnboardingType = ViewBag.OnboardingType as string ?? string.Empty;
     string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
     bool canDelete = profileName == "Admin" || profileName == "SupportAdmin";
     int MaxCallsTotal = 5;
 
+    var funnelCounts = ViewBag.FunnelCounts as Dictionary<string, int> ?? new Dictionary<string, int>();
+    var funnelReach = ViewBag.FunnelReach as Dictionary<string, int> ?? new Dictionary<string, int>();
+    // Happy-path stages in pipeline order, used by the cumulative "reached at least" funnel strip.
+    var reachStages = new (string Key, string Label)[] {
+        ("EmailParsed",        "Email Parsed"),
+        ("PhoneParsed",        "Phone Parsed"),
+        ("DuplicateChecked",   "Duplicate Checked"),
+        ("MAGConfirmed",       "MAG Confirmed"),
+        ("InterestCollection", "Interest Collection"),
+        ("IntentConfirmed",    "Intent Confirmed"),
+        ("EmploymentVerified", "Employment Verified"),
+        ("ResumeFitment",      "AI Resume Fitment"),
+        ("AcknowledgementSent","Acknowledgement Sent"),
+        ("Onboarded",          "Onboarded")
+    };
+    int reachTop = funnelReach.TryGetValue("EmailParsed", out var rt) ? rt : 0;
+    int reachTotal = funnelReach.TryGetValue("Total", out var rtot) ? rtot : 0;
+    Func<string,int> reachOf = k => funnelReach.TryGetValue(k, out var v) ? v : 0;
+    // Ordered funnel stages: (value, display label). "_none_" maps to records with no stage yet.
+    // Linear happy path first, then the terminal exits (Duplicate / Not Interested / Cold / Not Qualified).
+    var funnelStages = new (string Value, string Key, string Label)[] {
+        ("_none_",             "New",                "New"),
+        ("EmailParsed",        "EmailParsed",        "Email Parsed"),
+        ("PhoneParsed",        "PhoneParsed",        "Phone Parsed"),
+        ("DuplicateChecked",   "DuplicateChecked",   "Duplicate Checked"),
+        ("MAGConfirmed",       "MAGConfirmed",       "MAG Confirmed"),
+        ("InterestCollection", "InterestCollection", "Interest Collection"),
+        ("IntentConfirmed",    "IntentConfirmed",    "Intent Confirmed"),
+        ("EmploymentVerified", "EmploymentVerified", "Employment Verified"),
+        ("ResumeFitment",      "ResumeFitment",      "AI Resume Fitment"),
+        ("AcknowledgementSent","AcknowledgementSent","Acknowledgement Sent"),
+        ("Onboarded",          "Onboarded",          "Onboarded"),
+        ("Duplicate",          "Duplicate",          "Duplicate"),
+        ("NotInterested",      "NotInterested",      "Not Interested"),
+        ("Cold",               "Cold",               "Cold"),
+        ("NotQualified",       "NotQualified",       "Not Qualified")
+    };
+
     bool hasFilters = !string.IsNullOrEmpty(selStatus) || !string.IsNullOrEmpty(selName)
                    || !string.IsNullOrEmpty(selMag) || !string.IsNullOrEmpty(selSource)
                    || !string.IsNullOrEmpty(selAutoStatus)
                    || !string.IsNullOrEmpty(selCallStatus) || !string.IsNullOrEmpty(selDisposition)
+                   || !string.IsNullOrEmpty(selFunnelStage)
+                   || !string.IsNullOrEmpty(selOnboardingType)
                    || !string.IsNullOrEmpty(selDateFrom) || !string.IsNullOrEmpty(selDateTo);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
@@ -39,9 +81,61 @@
         if (!string.IsNullOrEmpty(selAutoStatus)) q += $"&automationStatus={Uri.EscapeDataString(selAutoStatus)}";
         if (!string.IsNullOrEmpty(selCallStatus)) q += $"&callStatus={Uri.EscapeDataString(selCallStatus)}";
         if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
+        if (!string.IsNullOrEmpty(selFunnelStage)) q += $"&funnelStage={Uri.EscapeDataString(selFunnelStage)}";
+        if (!string.IsNullOrEmpty(selOnboardingType)) q += $"&onboardingType={Uri.EscapeDataString(selOnboardingType)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return Url.Action("Index", "NaukriOnboarding") + q;
+    }
+
+    // Common (non-funnel) filters shared by the funnel URL helpers.
+    string funnelBaseQuery()
+    {
+        var q = $"?page=1&pageSize={pageSize}";
+        if (!string.IsNullOrEmpty(selStatus)) q += $"&status={Uri.EscapeDataString(selStatus)}";
+        if (!string.IsNullOrEmpty(selName)) q += $"&candidateName={Uri.EscapeDataString(selName)}";
+        if (!string.IsNullOrEmpty(selMag)) q += $"&magName={Uri.EscapeDataString(selMag)}";
+        if (!string.IsNullOrEmpty(selSource)) q += $"&source={Uri.EscapeDataString(selSource)}";
+        if (!string.IsNullOrEmpty(selAutoStatus)) q += $"&automationStatus={Uri.EscapeDataString(selAutoStatus)}";
+        if (!string.IsNullOrEmpty(selCallStatus)) q += $"&callStatus={Uri.EscapeDataString(selCallStatus)}";
+        if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
+        if (!string.IsNullOrEmpty(selOnboardingType)) q += $"&onboardingType={Uri.EscapeDataString(selOnboardingType)}";
+        if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
+        if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
+        return q;
+    }
+
+    // Build a URL that toggles the funnel-stage filter (exact-match).
+    string funnelUrl(string stageValue)
+    {
+        var q = funnelBaseQuery();
+        // Toggle: clicking the active stage clears the filter.
+        bool clearing = stageValue == selFunnelStage;
+        if (!string.IsNullOrEmpty(stageValue) && !clearing)
+            q += $"&funnelStage={Uri.EscapeDataString(stageValue)}";
+        return Url.Action("Index", "NaukriOnboarding") + q;
+    }
+
+    string funnelLabel(string stage)
+    {
+        if (string.IsNullOrWhiteSpace(stage)) return "New";
+        foreach (var fs in new (string Key, string Label)[] {
+            ("New","New"),
+            ("EmailParsed","Email Parsed"), ("PhoneParsed","Phone Parsed"),
+            ("DuplicateChecked","Duplicate Checked"), ("MAGConfirmed","MAG Confirmed"),
+            ("InterestCollection","Interest Collection"), ("IntentConfirmed","Intent Confirmed"),
+            ("EmploymentVerified","Employment Verified"), ("ResumeFitment","AI Resume Fitment"),
+            ("AcknowledgementSent","Acknowledgement Sent"), ("Onboarded","Onboarded"),
+            ("Duplicate","Duplicate"), ("NotInterested","Not Interested"),
+            ("Cold","Cold"), ("NotQualified","Not Qualified"),
+            // Legacy values (pre-revamp rows that may not have been migrated yet)
+            ("Parsed","Email Parsed"), ("MAGMapped","MAG Confirmed"),
+            ("InvitationSent","Interest Collection"), ("AwaitingResponse","Interest Collection"),
+            ("Unsubscribe","Not Interested") })
+        {
+            if (string.Equals(fs.Key, stage, StringComparison.OrdinalIgnoreCase)) return fs.Label;
+        }
+        return stage;
     }
 }
 
@@ -56,16 +150,206 @@
     #loadingOverlay .spinner-border { width:3rem; height:3rem; }
     #loadingOverlay .loading-text { margin-top:15px; font-weight:500; color:#495057; }
 
-    .nk-filter-control { min-height:30px; height:30px; color:grey; font-weight:500; font-size:12.7px !important; padding:0.2rem 0.6rem; line-height:1.5; }
+    .nk-filter-control {
+        width: 100%;
+        min-width: 0;
+        max-width: none !important;
+        min-height: 28px;
+        height: 28px;
+        color: #334155;
+        font-weight: 500;
+        font-size: 11.5px !important;
+        padding: 0.15rem 0.45rem;
+        line-height: 1.25;
+        border-radius: 5px;
+        border-color: #cbd5e1;
+        background: #fff;
+    }
+    .nk-filter-control:focus { border-color: #0d6efd; box-shadow: 0 0 0 0.12rem rgba(13,110,253,.12); }
+    select.nk-filter-control { padding-right: 1.35rem; cursor: pointer; background-position: right 0.35rem center; background-size: 10px 8px; }
+    select.nk-filter-control option { padding: 4px 6px; white-space: normal; font-size: 11.5px; }
+    input[type="date"].nk-filter-control { padding-right: 0.35rem; }
+
+    .nk-filter-card .card-body { padding: 0.5rem 0.65rem !important; }
+
+    .nk-filter-card,
+    .nk-filter-card .card-body,
+    .nk-funnel-panel,
+    .nk-funnel-panel .card-body,
+    .nk-table-card,
+    .nk-table-card .card-body { overflow: visible; }
+
+    .nk-filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+        gap: 5px 7px;
+        align-items: center;
+    }
+    .nk-filter-grid__wide { grid-column: span 2; min-width: 0; }
+    @@media (max-width: 640px) { .nk-filter-grid__wide { grid-column: span 1; } }
+    .nk-filter-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: flex-end;
+        padding-top: 3px;
+        border-top: 1px solid #eef2f7;
+        margin-top: 1px;
+    }
+    .nk-filter-actions .btn { font-size: 11px !important; padding: 4px 10px !important; line-height: 1.25 !important; border-radius: 5px !important; }
+
     .badge { width:auto;padding:5px!important;}
     .nk-stat .stat-value { font-size:1.5rem; font-weight:700; }
     .nk-stat .stat-label { font-size:13px; font-weight:500; color:#495057; }
 
-    #nkTable { table-layout:auto; width:100%; min-width:1200px; font-size:12px; }
-    #nkTable.table-sm > thead > tr > th, #nkTable.table-sm > tbody > tr > td { padding:0.3rem 0.45rem; vertical-align:top; }
-    #nkTable thead th { font-size:12px; font-weight:600; vertical-align:middle; white-space:nowrap; }
+    .nk-funnel-panel {
+        border: 1px solid #dbeafe !important;
+        border-left: 4px solid #0d6efd !important;
+        border-radius: 10px;
+        background: linear-gradient(180deg, #f8fbff 0%, #fff 100%);
+        overflow: visible;
+    }
+    .nk-funnel-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e8eef7;
+        margin-bottom: 10px;
+    }
+    .nk-funnel-title { font-size:12px; font-weight:700; color:#1e293b; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; }
+    .nk-funnel-total { font-size:11px; font-weight:600; color:#0d6efd; background:#eaf1ff; border:1px solid #cfe0ff; border-radius:20px; padding:3px 10px; white-space:nowrap; }
+    .nk-funnel-divider { width:1px; align-self:stretch; min-height:22px; background:#dbeafe; margin:0 2px; flex-shrink:0; }
+    .nk-funnel-pills-track {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        max-width: 100%;
+    }
+    .nk-funnel-pill {
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        text-decoration:none;
+        background:#fff;
+        border:1px solid #e2e8f0;
+        border-radius:999px;
+        padding:4px 8px 4px 12px;
+        transition:all .12s;
+        max-width:100%;
+        box-shadow:0 1px 2px rgba(15,23,42,.04);
+    }
+    .nk-funnel-pill:hover { background:#f8fafc; border-color:#cbd5e1; transform: translateY(-1px); }
+    .nk-funnel-pill.active { background:#0d6efd; border-color:#0d6efd; box-shadow:0 2px 8px rgba(13,110,253,.28); }
+    .nk-funnel-pill-label { font-size:11px; font-weight:600; color:#475569; white-space:nowrap; line-height:1.2; }
+    .nk-funnel-pill.active .nk-funnel-pill-label { color:#fff; }
+    .nk-funnel-pill-count { font-size:10px; font-weight:700; color:#1e293b; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:12px; min-width:24px; text-align:center; padding:1px 7px; line-height:1.35; }
+    .nk-funnel-pill.active .nk-funnel-pill-count { color:#0d6efd; background:#fff; border-color:#fff; }
+    .nk-pill-glyph { font-size:10px; color:#fff; flex-shrink:0; }
 
-    .nk-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%; min-width:0; }
+    .nk-funnel-pill.active.mode-reached { background:#198754; border-color:#198754; box-shadow:0 2px 8px rgba(25,135,84,.28); }
+    .nk-funnel-pill.active.mode-reached .nk-funnel-pill-count { color:#198754; }
+    .nk-funnel-pill.active.mode-not { background:#b54708; border-color:#b54708; box-shadow:0 2px 8px rgba(181,71,8,.28); }
+    .nk-funnel-pill.active.mode-not .nk-funnel-pill-count { color:#b54708; }
+
+    /* "Reached at least" cumulative funnel strip */
+    .nk-reach-strip { margin-bottom:2px; }
+    .nk-reach-head { display:flex; align-items:baseline; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+    .nk-reach-title { font-size:12.5px; font-weight:700; color:#312e81; letter-spacing:.2px; }
+    .nk-reach-sub { font-size:10.5px; color:#94a3b8; }
+    .nk-reach-bars { display:flex; align-items:flex-end; gap:6px; }
+    .nk-reach-col { flex:1 1 0; min-width:54px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:4px 2px; border-radius:8px; transition:background .12s; }
+    .nk-reach-col:hover { background:#f5f3ff; }
+    .nk-reach-count { font-size:13px; font-weight:700; color:#1e1b4b; line-height:1.1; }
+    .nk-reach-track { width:100%; height:6px; background:#eef2ff; border-radius:999px; overflow:hidden; }
+    .nk-reach-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#6366f1,#818cf8); }
+    .nk-reach-pct { font-size:9.5px; font-weight:600; color:#6366f1; line-height:1; }
+    .nk-reach-label { font-size:9.5px; color:#64748b; text-align:center; line-height:1.15; white-space:normal; }
+    .nk-reach-foot { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .nk-reach-foot-lbl { font-size:10.5px; font-weight:600; color:#64748b; }
+    .nk-reach-chip { font-size:10px; font-weight:600; color:#334155; background:#fff; border:1px solid #e2e8f0; border-left:3px solid var(--c,#94a3b8); border-radius:6px; padding:2px 8px; white-space:nowrap; }
+    .nk-reach-divider { margin:14px 0 12px; border:0; border-top:1px dashed #e2e8f0; }
+
+    .nk-funnel-mode { display:inline-flex; border:1px solid #dbeafe; border-radius:999px; overflow:hidden; background:#fff; flex-shrink:0; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+    .nk-mode-btn { font-size:10px; font-weight:600; color:#64748b; text-decoration:none; padding:3px 8px; border-right:1px solid #e2e8f0; white-space:nowrap; transition:all .12s; line-height:1.25; }
+    .nk-mode-btn:last-child { border-right:0; }
+    .nk-mode-btn:hover { background:#f8fafc; color:#334155; }
+    .nk-mode-btn.active.nk-mode-at { background:#0d6efd; color:#fff; }
+    .nk-mode-btn.active.nk-mode-reached { background:#198754; color:#fff; }
+    .nk-mode-btn.active.nk-mode-not { background:#b54708; color:#fff; }
+    .nk-funnel-hint {
+        font-size:11px;
+        color:#64748b;
+        font-weight:500;
+        line-height:1.45;
+        margin-top:10px;
+        padding:8px 10px;
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        border-radius:8px;
+        width:100%;
+    }
+
+    #nkTable {
+        table-layout: fixed;
+        width: 100%;
+        min-width: 1320px;
+        font-size: 12px;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 0;
+    }
+    #nkTable thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        color: #475569;
+        background: #f1f5f9;
+        border-bottom: 2px solid #e2e8f0;
+        padding: 10px 8px;
+        vertical-align: middle;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.25;
+    }
+    #nkTable tbody td {
+        padding: 8px;
+        vertical-align: top;
+        border-bottom: 1px solid #f1f5f9;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        line-height: 1.35;
+    }
+    #nkTable tbody tr:hover { background: #f8fafc; }
+    #nkTable tbody tr:last-child td { border-bottom: 0; }
+
+    .nk-scroll {
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+        min-width: 0;
+        max-height: calc(100vh - 300px);
+    }
+
+    .col-num { width: 42px; } .col-date { width: 108px; white-space:nowrap; }
+    .col-name { width: 150px; } .col-role { width: 130px; }
+    .col-skills { width: 150px; }
+    .col-mag { width: 130px; }
+    .col-location { width: 100px; }
+    .col-exp { width: 58px; } .col-status { width: 100px; }
+    .col-actions { width: 96px; white-space:nowrap; }
+    .col-source { width: 68px; }
+    .col-call { width: 92px; }
+    .col-auto { width: 108px; }
+    .col-funnel { width: 118px; }
 
     .status-open { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
     .status-closed { background:#d4d4d4; color:#3d3d3d; border:1px solid #999; }
@@ -82,27 +366,20 @@
     #nkTable .action-btns .btn-delete-record { background:linear-gradient(180deg,#f8d7da 0%,#f1aeb5 100%) !important; border:1px solid #dc3545; color:#842029 !important; min-width:10px; padding:0.28rem 0.45rem; }
     #nkTable .action-btns .btn-delete-record:hover { background:#f5c2c7 !important; color:#58151c !important; }
 
-    #main-panel .content.client .container-fluid { min-width:0; }
-
-    .col-num { width:34px; } .col-date { width:108px; white-space:nowrap; }
-    .col-name { max-width:160px; } .col-role { min-width:100px; max-width:160px; }
-    .col-skills { min-width:120px; max-width:200px; }
-    .col-mag { min-width:90px; max-width:150px; }
-    .col-location { min-width:80px; max-width:130px; }
-    .col-exp { width:60px; } .col-status { width:110px; white-space:nowrap; }
-    .col-actions { width:100px; white-space:nowrap; }
+    #main-panel .content.client .container-fluid { min-width:0; overflow:visible; }
 
     .mgm-header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); color:#fff; border:0; padding:1rem 1.25rem; flex-wrap:wrap; gap:0.75rem; align-items:flex-start; }
     .mgm-header .modal-title-wrap { flex:1 1 220px; min-width:0; }
     .mgm-header .modal-title { font-size:1.05rem; color:#fff;font-weight:600; line-height:1.35; margin:0; word-wrap:break-word; }
     .mgm-header .btn-close { filter:invert(1) grayscale(100%) brightness(200%); opacity:.85; }
-    #manageModal .modal-content { border:none; border-radius:12px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,.18),0 0 1px rgba(0,0,0,.08); }
-    #manageModal .modal-body { font-size:12.5px; background:#fafbfc; }
+    #manageModal .modal-content { border:none; border-radius:12px; overflow:visible; box-shadow:0 12px 40px rgba(0,0,0,.18),0 0 1px rgba(0,0,0,.08); }
+    #manageModal .modal-body { font-size:12.5px; background:#fafbfc; overflow:visible; }
+    #manageModal .modal-dialog { overflow:visible; }
     .mgm-meta { font-size:12.5px; color:#6c757d; }
     .mgm-meta strong { color:#212529; }
     .mgm-section-title { font-size:12px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
     .mgm-mail-body { white-space:pre-wrap; word-break:break-word; font-size:13px; line-height:1.75; background:#f8f9fa; border-radius:6px; padding:14px 18px; border:1px solid #e9ecef; max-height:200px; overflow-y:auto; }
-    .mgm-action-card { border:1px solid #e9ecef; border-radius:8px; padding:16px; margin-bottom:12px; transition:border-color .2s; }
+    .mgm-action-card { border:1px solid #e9ecef; border-radius:8px; padding:16px; margin-bottom:12px; transition:border-color .2s; overflow:visible; }
     .mgm-action-card.completed { border-color:#198754; background:#f0fdf4; }
     .mgm-action-card.failed { border-color:#dc3545; background:#fef2f2; }
     .mgm-action-card.pending { border-color:#dee2e6; }
@@ -174,8 +451,22 @@
     #historyModal .hm-body { background:#f1f5f9; padding:0.75rem 1rem; font-size:14px; color:#334155; max-height:min(420px,calc(100vh - 14rem)); overflow-y:auto; }
     #historyModal .hm-footer { background:#f8fafc; padding:0.5rem 1rem; }
 
-    .mag-dropdown-wrap { position:relative; display:inline-block; }
-    #magDropdown { display:none; position:absolute; z-index:1060; background:#fff; border:1px solid #dee2e6; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,.18); width:380px; max-height:360px; left:0; top:100%; margin-top:4px; }
+    .mag-dropdown-wrap { position:relative; display:inline-block; z-index:20; }
+    #magDropdown {
+        display:none;
+        position:absolute;
+        z-index:1090;
+        background:#fff;
+        border:1px solid #dbeafe;
+        border-radius:10px;
+        box-shadow:0 10px 28px rgba(15,23,42,.16);
+        width:min(420px, calc(100vw - 2rem));
+        max-height:min(360px, calc(100vh - 8rem));
+        left:0;
+        top:100%;
+        margin-top:6px;
+    }
+    #magDropdown.mag-dropdown--up { top:auto; bottom:100%; margin-top:0; margin-bottom:6px; }
     #magDropdown .mag-search-wrap { padding:8px 10px; border-bottom:1px solid #eee; }
     #magDropdown .mag-search-wrap input { font-size:12px; }
     #magList { max-height:270px; overflow-y:auto; padding:4px; }
@@ -214,18 +505,90 @@
                 @if (TempData["Success"] != null) { <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i>@TempData["Success"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
                 @if (TempData["Error"] != null) { <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
 
-                @{ var cardOpen = Model.Count(r => string.Equals(r.Status, "Open", StringComparison.OrdinalIgnoreCase));
-                   var cardIP = Model.Count(r => string.Equals(r.Status, "InProgress", StringComparison.OrdinalIgnoreCase));
-                   var cardVerified = Model.Count(r => string.Equals(r.Status, "Verified", StringComparison.OrdinalIgnoreCase));
-                   var cardOnboarded = Model.Count(r => string.Equals(r.Status, "Onboarded", StringComparison.OrdinalIgnoreCase));
-                   var cardRejected = Model.Count(r => string.Equals(r.Status, "Rejected", StringComparison.OrdinalIgnoreCase)); }
+                @{
+                   // Global status breakdown across all matched records (not just the current page).
+                   // 'Onboarded' is carved out of Closed so the four cards partition the total:
+                   //   Open + In Progress + Closed + Onboarded = Total.
+                   int cardOpen = ViewBag.OpenCount != null ? (int)ViewBag.OpenCount : 0;
+                   int cardIP = ViewBag.InProgressCount != null ? (int)ViewBag.InProgressCount : 0;
+                   int cardClosed = ViewBag.ClosedCount != null ? (int)ViewBag.ClosedCount : 0;
+                   int cardOnboarded = ViewBag.OnboardedCount != null ? (int)ViewBag.OnboardedCount : 0; }
                 <div class="row g-3 mb-4">
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-success">@cardVerified</div><div class="stat-label">Verified</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value" style="color:#0f5132;">@cardOnboarded</div><div class="stat-label">Onboarded</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat"><div class="stat-value text-danger">@cardRejected</div><div class="stat-label">Rejected</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="All @(hasFilters ? "matched" : "") records. Open + In Progress + Closed + Onboarded add up to this."><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="Open tickets (not yet onboarded)"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="In-progress tickets (not yet onboarded)"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="Closed without onboarding (e.g. not interested, unsubscribed). Onboarded prospects are counted separately."><div class="stat-value text-secondary">@cardClosed</div><div class="stat-label">Closed</div></div></div>
+                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="Successfully onboarded (a closed/successful outcome, shown separately from Closed)"><div class="stat-value" style="color:#0f5132;">@cardOnboarded</div><div class="stat-label">Onboarded</div></div></div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4 nk-funnel-panel">
+                    <div class="card-body py-3 px-3">
+                        @if (reachTop > 0)
+                        {
+                            <div class="nk-reach-strip">
+                                <div class="nk-reach-head">
+                                    <span class="nk-reach-title"><i class="fas fa-stream me-1"></i>Reached at least</span>
+                                    <span class="nk-reach-sub">cumulative — how far prospects have ever progressed (credits records that later branched off)</span>
+                                </div>
+                                <div class="nk-reach-bars">
+                                    @{ int reachPrev = 0; }
+                                    @for (int ri = 0; ri < reachStages.Length; ri++)
+                                    {
+                                        var rs = reachStages[ri];
+                                        int rc = reachOf(rs.Key);
+                                        int pctTop = reachTop > 0 ? (int)Math.Round(100.0 * rc / reachTop) : 0;
+                                        int pctStep = (ri > 0 && reachPrev > 0) ? (int)Math.Round(100.0 * rc / reachPrev) : 100;
+                                        reachPrev = rc;
+                                        <div class="nk-reach-col" title="@rs.Label — @rc reached (@pctTop% of entrants@(ri > 0 ? $", {pctStep}% of previous step" : ""))">
+                                            <div class="nk-reach-count">@rc.ToString("N0")</div>
+                                            <div class="nk-reach-track"><div class="nk-reach-fill" style="width:@(Math.Max(pctTop,2))%;"></div></div>
+                                            <div class="nk-reach-pct">@pctTop%</div>
+                                            <div class="nk-reach-label">@rs.Label</div>
+                                        </div>
+                                    }
+                                </div>
+                                @{
+                                    int rDup = reachOf("Duplicate"); int rNi = reachOf("NotInterested");
+                                    int rCold = reachOf("Cold"); int rNq = reachOf("NotQualified");
+                                    int rNs = reachOf("NotStarted");
+                                }
+                                <div class="nk-reach-foot">
+                                    <span class="nk-reach-foot-lbl">Off the happy path:</span>
+                                    <span class="nk-reach-chip" style="--c:#dc3545;">Duplicate @rDup.ToString("N0")</span>
+                                    <span class="nk-reach-chip" style="--c:#e35d6a;">Not Interested @rNi.ToString("N0")</span>
+                                    <span class="nk-reach-chip" style="--c:#adb5bd;">Cold @rCold.ToString("N0")</span>
+                                    <span class="nk-reach-chip" style="--c:#d9480f;">Not Qualified @rNq.ToString("N0")</span>
+                                    <span class="nk-reach-chip" style="--c:#94a3b8;">Not started @rNs.ToString("N0")</span>
+                                    <span class="nk-reach-chip" style="--c:#0d6efd;">Entered pipeline @reachTop.ToString("N0") of @reachTotal.ToString("N0")</span>
+                                </div>
+                            </div>
+                            <hr class="nk-reach-divider" />
+                        }
+                        <div class="nk-funnel-head">
+                            <span class="nk-funnel-title"><i class="fas fa-filter me-1"></i>Funnel Stages</span>
+                            <span class="nk-funnel-total" title="Sum across all stages equals the @(hasFilters ? "matched" : "total") records">@totalCount total</span>
+                            <span class="nk-funnel-divider"></span>
+                            @{ int nkKnownSum = 0; }
+                            @foreach (var fs in funnelStages)
+                            {
+                                int c = funnelCounts.TryGetValue(fs.Key, out var cv) ? cv : 0;
+                                nkKnownSum += c;
+                                bool active = string.Equals(selFunnelStage, fs.Value, StringComparison.OrdinalIgnoreCase);
+                                <a href="@funnelUrl(fs.Value)" class="nk-funnel-pill @(active ? "active" : "")" title="Currently at &ldquo;@fs.Label&rdquo;">
+                                    <span class="nk-funnel-pill-label">@fs.Label</span>
+                                    <span class="nk-funnel-pill-count">@c</span>
+                                </a>
+                            }
+                            @{ int nkOther = totalCount - nkKnownSum; }
+                            @if (nkOther > 0)
+                            {
+                                <span class="nk-funnel-pill" style="cursor:default;" title="Records on an unrecognised/legacy funnel value — run the RevampNaukriFunnelStagesV2 migration to reclassify these.">
+                                    <span class="nk-funnel-pill-label">Other</span>
+                                    <span class="nk-funnel-pill-count">@nkOther</span>
+                                </span>
+                            }
+                        </div>
+                    </div>
                 </div>
 
                 <form asp-action="Index" asp-controller="NaukriOnboarding" method="get" id="filterForm">
@@ -234,41 +597,38 @@
                     <div class="card border-0 shadow-sm mb-3">
                         <div class="card-body py-2 px-3">
                             <div class="d-flex align-items-center gap-2" style="flex-wrap:nowrap;width:100%;">
-                                <select name="status" class="form-select nk-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()">
+                                <select name="status" class="form-select nk-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()" title="Operational ticket status">
                                     <option value="">All statuses</option>
                                     @if (selStatus == "Open") { <option value="Open" selected>Open</option> } else { <option value="Open">Open</option> }
                                     @if (selStatus == "InProgress") { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option> }
-                                    @if (selStatus == "Verified") { <option value="Verified" selected>Verified</option> } else { <option value="Verified">Verified</option> }
-                                    @if (selStatus == "Onboarded") { <option value="Onboarded" selected>Onboarded</option> } else { <option value="Onboarded">Onboarded</option> }
-                                    @if (selStatus == "Rejected") { <option value="Rejected" selected>Rejected</option> } else { <option value="Rejected">Rejected</option> }
                                     @if (selStatus == "Closed") { <option value="Closed" selected>Closed</option> } else { <option value="Closed">Closed</option> }
                                 </select>
-                                <input type="text" name="candidateName" class="form-control nk-filter-control" placeholder="Candidate name..." style="flex:1 1 0;min-width:130px;" value="@selName" />
-                                <input type="text" name="magName" class="form-control nk-filter-control" placeholder="MAG name..." style="flex:1 1 0;min-width:120px;" value="@selMag" />
-                                <select name="source" class="form-select nk-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                <input type="text" name="candidateName" class="form-control nk-filter-control" placeholder="Name..." value="@selName" />
+                                <input type="text" name="magName" class="form-control nk-filter-control" placeholder="MAG..." value="@selMag" />
+                                <select name="source" class="form-select nk-filter-control" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All sources</option>
                                     @if (selSource == "Naukri") { <option value="Naukri" selected>Naukri</option> } else { <option value="Naukri">Naukri</option> }
                                     @if (selSource == "LinkedIn") { <option value="LinkedIn" selected>LinkedIn</option> } else { <option value="LinkedIn">LinkedIn</option> }
                                 </select>
-                                <select name="automationStatus" class="form-select nk-filter-control" style="flex:1 1 0;min-width:130px;max-width:165px;" onchange="document.getElementById('filterForm').submit()">
+                                <select name="automationStatus" class="form-select nk-filter-control nk-filter-grid__wide" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All automation</option>
                                     @{ var autoOpts = new[] {
-                                        ("_any_", "Any (automated)"),
-                                        ("_none_", "Not automated"),
-                                        ("EmailSent", "Email Sent"),
-                                        ("CallTriggered", "Calling"),
-                                        ("AwaitingRetry", "Retry Pending"),
-                                        ("Cold", "Cold"),
-                                        ("ManualRequired", "Manual Required"),
-                                        ("Completed", "Completed"),
-                                        ("Error", "Error")
+                                        ("_any_", "Picked up by automation"),
+                                        ("_none_", "Not yet picked up"),
+                                        ("EmailSent", "Email sent \u2013 awaiting reply"),
+                                        ("CallTriggered", "AI call in progress"),
+                                        ("AwaitingRetry", "Waiting to retry"),
+                                        ("Cold", "No response (cold)"),
+                                        ("ManualRequired", "Needs manual review"),
+                                        ("Completed", "Automation completed"),
+                                        ("Error", "Processing error")
                                     };}
                                     @foreach (var (val, label) in autoOpts)
                                     {
                                         if (selAutoStatus == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
                                     }
                                 </select>
-                                <select name="callStatus" class="form-select nk-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                <select name="callStatus" class="form-select nk-filter-control" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All calls</option>
                                     @{ var callOpts = new[] { ("completed", "Completed"), ("triggered", "Triggered"), ("initiated", "Initiated"), ("trigger-failed", "Failed"), ("no_answer", "No Answer"), ("busy", "Busy") }; }
                                     @foreach (var (val, label) in callOpts)
@@ -276,7 +636,7 @@
                                         if (selCallStatus == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
                                     }
                                 </select>
-                                <select name="disposition" class="form-select nk-filter-control" style="flex:1 1 0;min-width:110px;max-width:140px;" onchange="document.getElementById('filterForm').submit()">
+                                <select name="disposition" class="form-select nk-filter-control" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All dispositions</option>
                                     @{ var dispOpts = new[] { ("interested", "Interested"), ("not_interested", "Not Interested"), ("unsubscribe", "Unsubscribe") }; }
                                     @foreach (var (val, label) in dispOpts)
@@ -284,17 +644,38 @@
                                         if (selDisposition == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
                                     }
                                 </select>
-                                <input type="date" name="dateFrom" class="form-control nk-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
-                                <span class="text-muted flex-shrink-0" style="font-size:11px;">\u2013</span>
-                                <input type="date" name="dateTo" class="form-control nk-filter-control" style="flex:1 1 0;min-width:120px;" value="@selDateTo" onchange="document.getElementById('filterForm').submit()" />
-                                <button style="background:#07363c4f !important;border:0px;padding:7px 10px;" type="submit" class="btn btn-primary btn-sm flex-shrink-0"><i class="fas fa-filter me-1"></i>Apply</button>
-                                <a style="padding:7px 10px!important;border:0px;background:#da7c7c !important;color:#fff" asp-action="Index" asp-controller="NaukriOnboarding" class="btn btn-sm btn-outline-secondary flex-shrink-0"><i class="fas fa-times me-1"></i>Clear</a>
+                                <select name="funnelStage" class="form-select nk-filter-control nk-filter-grid__wide" onchange="document.getElementById('filterForm').submit()">
+                                    <option value="">All funnel stages</option>
+                                    @foreach (var fs in funnelStages)
+                                    {
+                                        if (selFunnelStage == fs.Value) { <option value="@fs.Value" selected>@fs.Label</option> } else { <option value="@fs.Value">@fs.Label</option> }
+                                    }
+                                </select>
+                                <select name="onboardingType" class="form-select nk-filter-control nk-filter-grid__wide" onchange="document.getElementById('filterForm').submit()" title="How the interviewer was onboarded">
+                                    <option value="">All onboarding types</option>
+                                    @{ var onbTypeOpts = new[] {
+                                        ("SelfOnboarded",      "Self-Onboarded"),
+                                        ("IntentAutoProcessed","Intent + Auto Processed"),
+                                        ("ManuallyOnboarded",  "Manually Onboarded"),
+                                        ("_none_",             "Not onboarded yet")
+                                    };}
+                                    @foreach (var (val, label) in onbTypeOpts)
+                                    {
+                                        if (selOnboardingType == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
+                                    }
+                                </select>
+                                <input type="date" name="dateFrom" class="form-control nk-filter-control" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" title="From date" />
+                                <input type="date" name="dateTo" class="form-control nk-filter-control" value="@selDateTo" onchange="document.getElementById('filterForm').submit()" title="To date" />
+                                <div class="nk-filter-actions">
+                                    <button style="background:#07363c4f !important;border:0;" type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter me-1"></i>Apply</button>
+                                    <a style="border:0;background:#da7c7c !important;color:#fff" asp-action="Index" asp-controller="NaukriOnboarding" class="btn btn-sm btn-outline-secondary"><i class="fas fa-times me-1"></i>Clear</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </form>
 
-                <div class="card shadow-sm border-0">
+                <div class="card shadow-sm border-0 nk-table-card">
                     <div class="card-body p-0">
                         @if (!Model.Any())
                         {
@@ -305,28 +686,35 @@
                         }
                         else
                         {
-                            <div class="table-responsive nk-scroll">
-                                <table id="nkTable" class="table table-hover table-sm mb-0 align-top">
-                                    <thead class="table-light">
+                            <div class="nk-scroll">
+                                <table id="nkTable" class="table table-hover mb-0 align-top">
+                                    <colgroup>
+                                        <col class="col-num" /><col class="col-date" /><col class="col-source" />
+                                        <col class="col-name" /><col class="col-role" /><col class="col-exp" /><col class="col-location" />
+                                        <col class="col-mag" /><col class="col-skills" /><col class="col-call" /><col class="col-auto" />
+                                        <col class="col-funnel" /><col class="col-status" /><col class="col-actions" />
+                                    </colgroup>
+                                    <thead>
                                         <tr>
                                             <th class="col-num">#</th><th class="col-date">Received</th>
-                                            <th style="min-width:60px;">Source</th>
+                                            <th class="col-source">Source</th>
                                             <th class="col-name">Candidate</th><th class="col-role">Current Role</th>
                                             <th class="col-exp">Exp</th><th class="col-location">Location</th>
                                             <th class="col-mag">MAG</th><th class="col-skills">Key Skills</th>
-                                            <th style="min-width:90px;">Call</th>
-                                            <th style="min-width:80px;">Auto</th>
+                                            <th class="col-call">Call</th>
+                                            <th class="col-auto">Auto</th>
+                                            <th class="col-funnel">Funnel Stage</th>
                                             <th class="col-status">Status</th><th class="col-actions">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach (var r in Model)
                                         {
-                                            string rStatus = r.Status?.ToLower() ?? "open";
+                                            string rTicket = string.IsNullOrWhiteSpace(r.TicketStatus) ? "Open" : r.TicketStatus;
+                                            string rStatus = rTicket.ToLower();
                                             string statusCss = rStatus switch {
                                                 "open" => "status-open", "inprogress" => "status-inprogress",
-                                                "verified" => "status-verified", "onboarded" => "status-onboarded",
-                                                "rejected" => "status-rejected", "closed" => "status-closed",
+                                                "closed" => "status-closed",
                                                 _ => "bg-light border" };
 
                                             <tr id="row-@r.Id">
@@ -393,25 +781,32 @@
                                                     @if (!string.IsNullOrEmpty(r.AutomationStatus))
                                                     {
                                                         string autoBg = r.AutomationStatus switch {
-                                                            "EmailSent" or "Completed" => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
+                                                            "EmailSent" or "Completed" or "AwaitingAcknowledgement" => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
                                                             "Cold" => "background:#f8d7da;color:#842029;border:1px solid #dc3545;",
                                                             "ManualRequired" or "Error" => "background:#fff3cd;color:#856404;border:1px solid #ffc107;",
-                                                            "CallTriggered" or "ParsingResume" or "SelectingChannel" or "SendingEmail" => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
+                                                            "CallTriggered" or "ParsingResume" or "ResolvingMAG" or "SelectingChannel" or "SendingEmail" or "AutoOnboarding" => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
                                                             "AwaitingRetry" or "CallFailed" => "background:#e2e3e5;color:#41464b;border:1px solid #6c757d;",
                                                             _ => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
                                                         };
+                                                        bool emailSentAwaitingResponse = r.AutomationStatus == "EmailSent"
+                                                            && r.InvitationEmailSent == true
+                                                            && string.IsNullOrEmpty(r.PlivoCallStatus)
+                                                            && string.IsNullOrEmpty(r.ProspectResponse);
                                                         string autoLabel = r.AutomationStatus switch {
-                                                            "ParsingResume" => "Parsing",
-                                                            "SelectingChannel" => "Selecting",
-                                                            "CallTriggered" => "Calling",
-                                                            "CallFailed" => "Call Failed",
-                                                            "AwaitingRetry" => "Retry Pending",
-                                                            "SendingEmail" => "Emailing",
-                                                            "EmailSent" => "Email Sent",
-                                                            "ManualRequired" => "Manual",
-                                                            "Cold" => "Cold",
-                                                            "Completed" => "Done",
-                                                            "Error" => "Error",
+                                                            "ParsingResume" => "Parsing resume",
+                                                            "ResolvingMAG" => "Resolving MAG",
+                                                            "SelectingChannel" => "Resolving MAG",
+                                                            "CallTriggered" => "AI calling",
+                                                            "CallFailed" => "Call failed",
+                                                            "AwaitingRetry" => "Waiting to retry",
+                                                            "SendingEmail" => "Sending email",
+                                                            "EmailSent" => emailSentAwaitingResponse ? "Awaiting reply" : "Email sent",
+                                                            "AutoOnboarding" => "Onboarding",
+                                                            "AwaitingAcknowledgement" => "Awaiting acceptance",
+                                                            "ManualRequired" => "Needs manual review",
+                                                            "Cold" => "No response",
+                                                            "Completed" => "Completed",
+                                                            "Error" => "Processing error",
                                                             _ => r.AutomationStatus
                                                         };
                                                         <span class="intent-badge" style="@autoBg font-size:9.5px;" title="Automation: @r.AutomationStatus">
@@ -427,8 +822,59 @@
                                                         <span class="text-muted" style="font-size:9px;">—</span>
                                                     }
                                                 </td>
+                                                <td style="font-size:11px;white-space:nowrap;">
+                                                    @{
+                                                        string fStage = string.IsNullOrWhiteSpace(r.FunnelStage) ? "New" : r.FunnelStage;
+                                                        string fCss = fStage switch {
+                                                            "Onboarded"           => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
+                                                            "AcknowledgementSent" => "background:#e9d8fd;color:#553c9a;border:1px solid #805ad5;",
+                                                            "ResumeFitment"       => "background:#fde6d3;color:#9c4221;border:1px solid #ed8936;",
+                                                            "EmploymentVerified"  => "background:#d1f0e0;color:#1c6b47;border:1px solid #28a745;",
+                                                            "IntentConfirmed"     => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
+                                                            "InterestCollection"  => "background:#e0ecff;color:#1e40af;border:1px solid #3b82f6;",
+                                                            "MAGConfirmed"        => "background:#fde9c8;color:#92660e;border:1px solid #e6a817;",
+                                                            "DuplicateChecked"    => "background:#d9f2e6;color:#0c5d3c;border:1px solid #34c38f;",
+                                                            "PhoneParsed"         => "background:#d6eef2;color:#0c5460;border:1px solid #20a8bd;",
+                                                            "EmailParsed"         => "background:#d0f0f5;color:#0c5460;border:1px solid #17a2b8;",
+                                                            "Duplicate"           => "background:#fde2e1;color:#842029;border:1px solid #dc3545;",
+                                                            "NotInterested"       => "background:#f8d7da;color:#842029;border:1px solid #e35d6a;",
+                                                            "Cold"                => "background:#e2e3e5;color:#41464b;border:1px solid #adb5bd;",
+                                                            "NotQualified"        => "background:#f5d0c5;color:#7a2e0e;border:1px solid #d9480f;",
+                                                            // legacy
+                                                            "AwaitingResponse"    => "background:#e0ecff;color:#1e40af;border:1px solid #3b82f6;",
+                                                            "InvitationSent"      => "background:#e2e3ff;color:#3730a3;border:1px solid #6366f1;",
+                                                            "MAGMapped"           => "background:#fde9c8;color:#92660e;border:1px solid #e6a817;",
+                                                            "Parsed"              => "background:#d0f0f5;color:#0c5460;border:1px solid #17a2b8;",
+                                                            "Unsubscribe"         => "background:#f8d7da;color:#842029;border:1px solid #e35d6a;",
+                                                            _                      => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
+                                                        };
+                                                    }
+                                                    <span class="intent-badge" style="@fCss font-size:10px;white-space:nowrap;">@funnelLabel(fStage)</span>
+                                                    @if (!string.IsNullOrWhiteSpace(r.OnboardingType))
+                                                    {
+                                                        string obLabel = r.OnboardingType switch {
+                                                            "SelfOnboarded"       => "Self",
+                                                            "IntentAutoProcessed" => "Auto",
+                                                            "ManuallyOnboarded"   => "Manual",
+                                                            _                      => r.OnboardingType
+                                                        };
+                                                        string obTitle = r.OnboardingType switch {
+                                                            "SelfOnboarded"       => "Self-Onboarded (via MAG link)",
+                                                            "IntentAutoProcessed" => "Intent + Auto Processed",
+                                                            "ManuallyOnboarded"   => "Manually Onboarded",
+                                                            _                      => r.OnboardingType
+                                                        };
+                                                        string obCss = r.OnboardingType switch {
+                                                            "SelfOnboarded"       => "background:#d1e7dd;color:#0f5132;border:1px solid #198754;",
+                                                            "IntentAutoProcessed" => "background:#cfe2ff;color:#0a3278;border:1px solid #0d6efd;",
+                                                            "ManuallyOnboarded"   => "background:#fff3cd;color:#664d03;border:1px solid #ffc107;",
+                                                            _                      => "background:#e9ecef;color:#495057;border:1px solid #ced4da;"
+                                                        };
+                                                        <div class="mt-1"><span class="intent-badge" style="@obCss font-size:9px;white-space:nowrap;" title="@obTitle"><i class="fas fa-user-check me-1"></i>@obLabel</span></div>
+                                                    }
+                                                </td>
                                                 <td class="col-status">
-                                                    <span class="intent-badge @statusCss" style="font-size:12px;white-space:break-spaces;">@(r.Status ?? "Open")</span>
+                                                    <span class="intent-badge @statusCss" style="font-size:12px;white-space:break-spaces;">@(string.Equals(rTicket, "InProgress", StringComparison.OrdinalIgnoreCase) ? "In Progress" : rTicket)</span>
                                                     @if (r.ResumeAIAnalysisCompleted == true)
                                                     {
                                                         string aiBadgeClass = "text-info";
@@ -529,7 +975,6 @@
                 <div class="d-flex align-items-center gap-2 flex-wrap mgm-status-btns" id="mgmStatusActions">
                     <span class="text-muted" style="font-size:12px;">Change to</span>
                     <button type="button" class="btn btn-outline-primary btn-sm btn-mgm-status" data-status="InProgress"><i class="fas fa-hourglass-half me-1"></i>In Progress</button>
-                    <button type="button" class="btn btn-outline-danger btn-sm btn-mgm-status" data-status="Rejected"><i class="fas fa-ban me-1"></i>Reject</button>
                     <button type="button" class="btn btn-outline-secondary btn-sm btn-mgm-status" data-status="Closed"><i class="fas fa-times-circle me-1"></i>Close</button>
                     <button type="button" class="btn btn-outline-warning btn-sm btn-mgm-status" data-status="Open"><i class="fas fa-redo me-1"></i>Reopen</button>
                 </div>
@@ -568,6 +1013,7 @@
                                 <span><i class="fas fa-envelope me-1"></i>Parsed Email:</span>
                                 <span class="value" id="mgmParsedEmail">\u2014</span>
                             </div>
+                            <div id="mgmInviteEmailStatus" style="font-size:11px;margin-top:2px;"></div>
                         </div>
                         <div class="col-md-6">
                             <div class="mgm-info-row">
@@ -661,15 +1107,35 @@
                         </div>
                     </div>
 
-                    <!-- Recruitment Call (between Step 2 and Step 3) -->
+                    <!-- Step 3: Send Invitation Email -->
+                    <div class="mgm-action-card pending disabled" id="step3Card">
+                        <div class="d-flex align-items-start gap-3">
+                            <span class="mgm-step-number pending" id="step3Number">3</span>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                                    <div class="flex-grow-1" style="min-width:180px;">
+                                        <strong style="font-size:13px;">Send Invitation Email</strong>
+                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="step3Subtitle">Generates a MAG application link and sends the prospect an email with registration link and response options</div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                        <button type="button" class="btn btn-primary btn-sm mgm-action-btn" id="btnSendInvitation"><i class="fas fa-paper-plane me-1"></i>Send Email</button>
+                                        <button type="button" class="btn btn-outline-primary btn-sm mgm-action-btn" id="btnResendInvitation" style="display:none;"><i class="fas fa-redo me-1"></i>Resend</button>
+                                    </div>
+                                </div>
+                                <div class="mgm-result-block" id="step3Result" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recruitment Call (after email — only if no email response within 1 hour) -->
                     <div class="mgm-action-card pending disabled" id="plivoCallCard" style="border-color:#6f42c1;background:#faf8ff;">
                         <div class="d-flex align-items-start gap-3">
                             <span class="mgm-step-number" id="plivoCallIcon" style="background:#6f42c1;color:#fff;"><i class="fas fa-phone-alt" style="font-size:12px;"></i></span>
                             <div class="flex-grow-1">
                                 <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
                                     <div class="flex-grow-1" style="min-width:180px;">
-                                        <strong style="font-size:13px;">Recruitment Call (Plivo AI Agent)</strong>
-                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="plivoCallSubtitle">Call the prospect to gauge interest in freelance interviewing with Risebird</div>
+                                        <strong style="font-size:13px;">Follow-up Call (Plivo AI Agent)</strong>
+                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="plivoCallSubtitle">If the prospect hasn't responded to the email within 1 hour, a follow-up call is placed</div>
                                     </div>
                                     <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                         <button type="button" class="btn btn-sm mgm-action-btn text-white" id="btnInitiateCall" style="background:#6f42c1;border-color:#6f42c1;"><i class="fas fa-phone-alt me-1"></i>Call Prospect</button>
@@ -695,26 +1161,6 @@
                                         <div id="plivoDetTranscript" style="font-size:11px;background:#f8f9fa;border-radius:4px;padding:8px;margin-top:4px;max-height:150px;overflow-y:auto;white-space:pre-wrap;"></div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Send Invitation Email -->
-                    <div class="mgm-action-card pending disabled" id="step3Card">
-                        <div class="d-flex align-items-start gap-3">
-                            <span class="mgm-step-number pending" id="step3Number">3</span>
-                            <div class="flex-grow-1">
-                                <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
-                                    <div class="flex-grow-1" style="min-width:180px;">
-                                        <strong style="font-size:13px;">Send Invitation Email</strong>
-                                        <div class="text-muted mt-1" style="font-size:11.5px;" id="step3Subtitle">Generates a MAG application link and sends the prospect an email with registration link and response options</div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                        <button type="button" class="btn btn-primary btn-sm mgm-action-btn" id="btnSendInvitation"><i class="fas fa-paper-plane me-1"></i>Send Email</button>
-                                        <button type="button" class="btn btn-outline-primary btn-sm mgm-action-btn" id="btnResendInvitation" style="display:none;"><i class="fas fa-redo me-1"></i>Resend</button>
-                                    </div>
-                                </div>
-                                <div class="mgm-result-block" id="step3Result" style="display:none;"></div>
                             </div>
                         </div>
                     </div>
@@ -793,21 +1239,41 @@
                                 </div>
                             </div>
 
-                            <!-- M3: Onboard Interviewer -->
+                            <!-- M3: Send Acknowledgement -->
                             <div class="mgm-action-card pending disabled" id="mStep3Card">
                                 <div class="d-flex align-items-start gap-3">
-                                    <span class="mgm-step-number pending" id="mStep3Number" style="background:#198754;color:#fff;font-size:10px;"><i class="fas fa-user-plus"></i></span>
+                                    <span class="mgm-step-number pending" id="mStep3Number" style="background:#0d6efd;color:#fff;font-size:11px;">AK</span>
                                     <div class="flex-grow-1">
                                         <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
                                             <div class="flex-grow-1" style="min-width:180px;">
-                                                <strong style="font-size:13px;">Onboard Interviewer</strong>
-                                                <div class="text-muted mt-1" style="font-size:11.5px;" id="mStep3Subtitle">Create interviewer profile, map to Assessment Group, and send acknowledgement email</div>
+                                                <strong style="font-size:13px;">Send Acknowledgement</strong>
+                                                <div class="text-muted mt-1" style="font-size:11.5px;" id="mStep3Subtitle">Creates the interviewer profile, maps to the Assessment Group &amp; channels, and emails the acknowledgement (accept / decline) to the interviewer</div>
                                             </div>
                                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                                <button type="button" class="btn btn-success btn-sm mgm-action-btn" id="btnManualOnboard"><i class="fas fa-user-plus me-1"></i>Onboard</button>
+                                                <button type="button" class="btn btn-primary btn-sm mgm-action-btn" id="btnManualOnboard"><i class="fas fa-paper-plane me-1"></i>Send Acknowledgement</button>
+                                                <button type="button" class="btn btn-outline-primary btn-sm mgm-action-btn" id="btnResendAck" style="display:none;"><i class="fas fa-redo me-1"></i>Resend</button>
                                             </div>
                                         </div>
                                         <div class="mgm-result-block" id="mStep3Result" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- M4: Onboarding -->
+                            <div class="mgm-action-card pending disabled" id="mStep4Card">
+                                <div class="d-flex align-items-start gap-3">
+                                    <span class="mgm-step-number pending" id="mStep4Number" style="background:#198754;color:#fff;font-size:10px;"><i class="fas fa-user-plus"></i></span>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                                            <div class="flex-grow-1" style="min-width:180px;">
+                                                <strong style="font-size:13px;">Onboarding</strong>
+                                                <div class="text-muted mt-1" style="font-size:11.5px;" id="mStep4Subtitle">Onboarding completes once the interviewer accepts the acknowledgement email</div>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <button type="button" class="btn btn-outline-success btn-sm mgm-action-btn" id="btnCheckOnboarding"><i class="fas fa-sync-alt me-1"></i>Refresh Status</button>
+                                            </div>
+                                        </div>
+                                        <div class="mgm-result-block" id="mStep4Result" style="display:none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -918,7 +1384,7 @@
         $('#mgmSubject').text(r.subject || '\u2014');
         var skillsFull = r.keySkills || '\u2014';
         $('#mgmSkills').text(skillsFull).attr('title', skillsFull);
-        updateStatusBadge(r.status || 'Open');
+        updateStatusBadge(r.ticketStatus || 'Open');
 
         $('#mgmParsedEmail').text(r.parsedEmail || '\u2014');
         $('#mgmParsedPhone').text(r.parsedPhone || '\u2014');
@@ -931,6 +1397,46 @@
         syncAutomationBadge(r);
         syncPlivoCallUI(r);
         syncPipeline(r);
+        loadInvitationEmailStatus();
+    }
+
+    // Fetches & renders the SendGrid delivery status of the invitation email for the EmailParsed step.
+    // Until the invitation has been sent there is nothing to show against the parsed email.
+    function loadInvitationEmailStatus() {
+        var $el = $('#mgmInviteEmailStatus');
+        $el.empty();
+        if (!currentRecordId) return;
+        $.ajax({
+            url: '@Url.Action("GetInvitationEmailStatus", "NaukriOnboarding")', type: 'GET',
+            data: { id: currentRecordId },
+            success: function (res) {
+                if (!res || !res.success || !res.hasEmail) return;
+                if (!res.sent) {
+                    $el.html('<span style="color:#6c757d;"><i class="fas fa-clock me-1"></i>Invitation not sent yet</span>');
+                    return;
+                }
+                var ev = (res.deliveryEvent || '').toLowerCase();
+                var style, icon, label;
+                if (res.hasBounced || ev === 'bounce' || ev === 'dropped') {
+                    style = 'color:#842029;font-weight:600;'; icon = 'fa-exclamation-triangle';
+                    label = (ev === 'dropped' ? 'Dropped' : 'Bounced') + (res.deliveryReason ? ' \u2014 ' + res.deliveryReason : '');
+                    label += ' \u00b7 try a different email';
+                } else if (ev === 'delivered') {
+                    style = 'color:#0f5132;font-weight:600;'; icon = 'fa-check-circle'; label = 'Delivered';
+                } else if (ev === 'deferred') {
+                    style = 'color:#92660e;font-weight:600;'; icon = 'fa-hourglass-half'; label = 'Deferred';
+                } else if (ev === 'processed') {
+                    style = 'color:#1e40af;font-weight:600;'; icon = 'fa-paper-plane'; label = 'Sent (processing)';
+                } else {
+                    style = 'color:#495057;'; icon = 'fa-envelope'; label = 'Sent';
+                }
+                var html = '<span style="' + style + '"><i class="fas ' + icon + ' me-1"></i>Invitation: ' + $('<span>').text(label).html() + '</span>';
+                if (res.opened) html += ' <span style="color:#0a3278;" title="Opened the invitation email"><i class="fas fa-envelope-open me-1"></i>Opened</span>';
+                if (res.clicked) html += ' <span style="color:#0a3278;" title="Clicked a link in the invitation"><i class="fas fa-mouse-pointer me-1"></i>Clicked</span>';
+                if (res.sentAt) html += ' <span style="color:#9aa0a6;">(' + res.sentAt + ')</span>';
+                $el.html(html);
+            }
+        });
     }
 
     function syncAutomationBadge(r) {
@@ -949,8 +1455,13 @@
         };
         var label = labels[r.automationStatus] || r.automationStatus;
         var color = colors[r.automationStatus] || '#6c757d';
-        badge.html('<i class="fas fa-robot me-1"></i>' + label +
-            (r.plivoCallAttemptsTotal > 0 ? ' (' + r.plivoCallAttemptsTotal + '/5 calls)' : ''))
+        var extra = '';
+        if (r.automationStatus === 'EmailSent' && r.invitationEmailSentAt && !r.plivoCallStatus) {
+            extra = ' (awaiting response)';
+        } else if (r.plivoCallAttemptsTotal > 0) {
+            extra = ' (' + r.plivoCallAttemptsTotal + '/5 calls)';
+        }
+        badge.html('<i class="fas fa-robot me-1"></i>' + label + extra)
             .css({ background: color, color: '#fff', display: 'inline-block' }).show();
     }
 
@@ -977,7 +1488,7 @@
         $('#btnViewCallDetails').hide();
         $('#plivoCallCard').css('border-color', '#6f42c1').css('background', '#faf8ff');
         $('#plivoCallIcon').css('background', '#6f42c1');
-        $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
+        $('#plivoCallSubtitle').html('If the prospect hasn\'t responded to the email within 1 hour, a follow-up call is placed');
         for (var s = 1; s <= 4; s++) $('#step'+s+'Subtitle').html(defaultSubtitles[s]);
         $('#btnParseResume').prop('disabled',false).html('<i class="fas fa-file-invoice me-1"></i>Parse Resume');
         $('#btnConfirmMag').prop('disabled',false).html('<i class="fas fa-check me-1"></i>Confirm MAG');
@@ -996,16 +1507,19 @@
         $('#manualStepsBody').hide();
         $('#manualToggleIcon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
         $('#btnToggleManualSteps').html('<i class="fas fa-chevron-down me-1" id="manualToggleIcon"></i>Expand');
-        ['mStep1Card','mStep2Card','mStep3Card'].forEach(function(id){ $('#'+id).removeClass('completed failed disabled').addClass('pending'); });
-        $('#mStep2Card, #mStep3Card').addClass('disabled');
-        $('#mStep1Result, #mStep2Result, #mStep3Result').hide().empty();
+        ['mStep1Card','mStep2Card','mStep3Card','mStep4Card'].forEach(function(id){ $('#'+id).removeClass('completed failed disabled').addClass('pending'); });
+        $('#mStep2Card, #mStep3Card, #mStep4Card').addClass('disabled');
+        $('#mStep1Result, #mStep2Result, #mStep3Result, #mStep4Result').hide().empty();
         $('#btnTriggerEV').prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment').show();
         $('#btnRetryEV').hide();
         $('#btnRunAIAnalysis').prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Run AI Analysis');
-        $('#btnManualOnboard').prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Onboard');
+        $('#btnManualOnboard').prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Send Acknowledgement');
+        $('#btnResendAck').hide();
+        $('#btnCheckOnboarding').prop('disabled',false).html('<i class="fas fa-sync-alt me-1"></i>Refresh Status');
         $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
         $('#mStep2Subtitle').html('AI evaluates the resume against the MAG\'s specialization');
-        $('#mStep3Subtitle').html('Create interviewer profile, map to Assessment Group, and send acknowledgement email');
+        $('#mStep3Subtitle').html('Creates the interviewer profile, maps to the Assessment Group &amp; channels, and emails the acknowledgement (accept / decline) to the interviewer');
+        $('#mStep4Subtitle').html('Onboarding completes once the interviewer accepts the acknowledgement email');
     }
 
     /* ── MAG edit dropdown (Step 2) ──────────────────────────────── */
@@ -1032,6 +1546,24 @@
         $('#magDropdown').hide();
     }
 
+    function positionMagDropdown() {
+        var $dd = $('#magDropdown');
+        var $wrap = $('#step2MagArea');
+        if (!$dd.length || !$wrap.length || !$dd.is(':visible')) return;
+        $dd.removeClass('mag-dropdown--up');
+        var rect = $wrap[0].getBoundingClientRect();
+        var ddH = Math.min($dd.outerHeight() || 280, 360);
+        var spaceBelow = window.innerHeight - rect.bottom;
+        if (spaceBelow < ddH + 12 && rect.top > ddH + 12) {
+            $dd.addClass('mag-dropdown--up');
+        }
+        var listMax = Math.max(120, Math.min(270, (window.innerHeight - rect.bottom - 80)));
+        if ($dd.hasClass('mag-dropdown--up')) {
+            listMax = Math.max(120, Math.min(270, rect.top - 80));
+        }
+        $('#magList').css('max-height', listMax + 'px');
+    }
+
     $('#btnChangeMag').on('click', function (e) {
         e.stopPropagation();
         var $dd = $('#magDropdown');
@@ -1039,6 +1571,7 @@
         loadMags(function () {
             renderMagList('');
             $dd.show();
+            positionMagDropdown();
             $('#magSearchInput').val('').focus();
         });
     });
@@ -1046,6 +1579,8 @@
     $(document).on('click', function (e) {
         if (!$(e.target).closest('.mag-dropdown-wrap').length) $('#magDropdown').hide();
     });
+
+    $(window).on('resize.nkMagDd', function () { positionMagDropdown(); });
 
     $('#magSearchInput').on('input', function () { renderMagList($(this).val()); })
         .on('click', function (e) { e.stopPropagation(); });
@@ -1099,19 +1634,42 @@
     $('#btnConfirmMag').on('click', function () {
         if (!currentRecordId) return;
         var r = currentRecord;
-        var agId = r ? r.resolvedAssessmentGroupId : 0;
-        var magName = r ? r.magName : '';
-        if (!agId || agId <= 0) {
-            alert('No MAG resolved. Please select a MAG first.');
+        var agId = r ? (r.resolvedAssessmentGroupId || 0) : 0;
+        var magName = r ? (r.magName || '') : '';
+        if (!magName) {
+            alert('No MAG selected. Please pick a MAG first.');
             return;
         }
-        markStep(2, 'completed', '<i class="fas fa-check-circle text-success me-1"></i>MAG confirmed: <strong>' + $('<span>').text(magName).html() + '</strong> (AG #' + agId + ')');
-        showManualSectionIfReady();
+        var $btn = $(this);
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Saving...');
+        $.ajax({
+            url: '@Url.Action("ConfirmMag", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, magName: magName, assessmentGroupId: agId },
+            success: function (res) {
+                if (res && res.success) {
+                    if (currentRecord) {
+                        currentRecord.resolvedAssessmentGroupId = res.assessmentGroupId;
+                        currentRecord.applicationLink = res.applicationLink;
+                        currentRecord.funnelStage = 'MAGConfirmed';
+                    }
+                    markStep(2, 'completed', '<i class="fas fa-check-circle text-success me-1"></i>MAG confirmed: <strong>' + $('<span>').text(magName).html() + '</strong> (AG #' + res.assessmentGroupId + ')');
+                    showManualSectionIfReady();
+                } else {
+                    alert((res && res.error) || 'Failed to confirm MAG.');
+                    $btn.prop('disabled', false).html('<i class="fas fa-check me-1"></i>Confirm MAG');
+                }
+            },
+            error: function () {
+                alert('Request failed. Please try again.');
+                $btn.prop('disabled', false).html('<i class="fas fa-check me-1"></i>Confirm MAG');
+            }
+        });
     });
 
     function syncPipeline(r) {
         var step1Done = false, step2Done = false, step3Done = false;
         var step1Blocked = false;
+        var prospectResponded = r.selfRegistrationCompleted === true || r.onboardingCompleted === true || !!r.prospectResponse;
 
         initStep2Mag(r);
 
@@ -1145,7 +1703,7 @@
             }
         }
 
-        // Step 3: Send Invitation Email
+        // Step 3: Send Invitation Email (now before the call)
         if (r.invitationEmailSent === true) {
             var html3 = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Invitation email sent</span>';
             if (r.invitationEmailSentAt) html3 += ' on ' + r.invitationEmailSentAt;
@@ -1174,18 +1732,37 @@
         }
 
         // ── Explicit step enablement pass ──
+        // New flow: Parse → MAG → Email → [wait 1hr] → Call → Track Progress
         if (step1Blocked) {
             $('#step2Card, #step3Card, #step4Card, #plivoCallCard').addClass('disabled');
         } else {
             if (step1Done) { $('#step2Card').removeClass('disabled failed'); $('#step2Number').removeClass('failed'); }
-            if (step2Done) { $('#plivoCallCard').removeClass('disabled'); $('#step3Card').removeClass('disabled'); }
-            if (step3Done) { $('#step4Card').removeClass('disabled'); $('#step4Subtitle').html('Waiting for prospect to respond or self-register...'); }
+            if (step2Done) { $('#step3Card').removeClass('disabled'); }
+            if (step3Done) {
+                $('#step4Card').removeClass('disabled');
+                $('#step4Subtitle').html('Waiting for prospect to respond or self-register...');
+                // Enable call card only if prospect hasn't already responded to the email
+                if (!prospectResponded) {
+                    $('#plivoCallCard').removeClass('disabled');
+                }
+            }
+        }
+
+        // Show "call skipped" notice when prospect already responded via email
+        if (step3Done && prospectResponded) {
+            var skipReason = r.selfRegistrationCompleted === true ? 'Prospect self-registered — no call needed.'
+                : r.prospectResponse === 'NotInterested' ? 'Prospect declined via email — no call needed.'
+                : 'Prospect responded to email — no call needed.';
+            $('#plivoCallSubtitle').html('<span class="text-success" style="font-size:11px;"><i class="fas fa-check-circle me-1"></i>' + skipReason + '</span>');
+            $('#btnInitiateCall').hide();
+            $('#plivoCallCard').css('border-color', '#198754').css('background', '#f0fdf4');
+            $('#plivoCallIcon').css('background', '#198754');
         }
 
         // ── Manual onboarding section sync ──
         syncManualOnboarding(r, step1Done, step2Done);
 
-        // Sync Plivo button disabled state with card disabled state
+        // Sync Plivo button disabled state
         if ($('#plivoCallCard').hasClass('disabled')) {
             $('#btnInitiateCall').prop('disabled', true);
         } else if (r.parsedPhone) {
@@ -1194,7 +1771,7 @@
             if (pStatus === 'triggered' || pStatus === 'initiated') {
                 $('#btnInitiateCall').prop('disabled', true);
             } else if ((pStatus === 'completed' || pStatus === 'answered') && (pDisp === 'interested' || pDisp === 'unsubscribe')) {
-                // Call completed positively or unsubscribed — no retry
+                // Call completed — no retry
             } else {
                 $('#btnInitiateCall').prop('disabled', false);
             }
@@ -1222,8 +1799,8 @@
         if (message) result.html(message).show();
 
         if (step === 1 && state === 'completed') { $('#step2Card').removeClass('disabled'); }
-        if (step === 2 && state === 'completed') { $('#plivoCallCard').removeClass('disabled'); $('#step3Card').removeClass('disabled'); $('#btnInitiateCall').prop('disabled', false); }
-        if (step === 3 && state === 'completed') { $('#step4Card').removeClass('disabled'); }
+        if (step === 2 && state === 'completed') { $('#step3Card').removeClass('disabled'); }
+        if (step === 3 && state === 'completed') { $('#step4Card').removeClass('disabled'); $('#plivoCallCard').removeClass('disabled'); $('#btnInitiateCall').prop('disabled', false); }
     }
 
     /* ── Status change ──────────────────────────────────────── */
@@ -1232,7 +1809,7 @@
         var status = $(this).data('status'); if (!currentRecordId) return;
         $.ajax({ url: '@Url.Action("UpdateStatus", "NaukriOnboarding")', type: 'POST',
             data: { __RequestVerificationToken: verificationToken, id: currentRecordId, status: status },
-            success: function (res) { if (res.success) { updateStatusBadge(res.status); if (currentRecord) currentRecord.status = res.status; } }
+            success: function (res) { if (res.success) { updateStatusBadge(res.status); if (currentRecord) currentRecord.ticketStatus = res.status; } }
         });
     });
 
@@ -1335,6 +1912,7 @@
                     if (currentRecord) { currentRecord.invitationEmailSent = true; currentRecord.applicationLink = res.applicationLink; }
                     $('#btnSendInvitation').hide(); $('#btnResendInvitation').show();
                     $('#step4Card').removeClass('disabled');
+                    $('#plivoCallCard').removeClass('disabled'); $('#btnInitiateCall').prop('disabled', false);
                     $('#step4Subtitle').html('Waiting for prospect to respond or self-register...');
                 } else {
                     markStep(3, 'failed', res.error || 'Failed to send email.');
@@ -1573,22 +2151,17 @@
     /* ══════════ Manual Onboarding Section ══════════ */
 
     function showManualSectionIfReady() {
+        // The manual onboarding controls (EV → AI → Send Acknowledgement → Onboarding) are always
+        // available so an operator can run them on demand; the banner only highlights cases that
+        // explicitly need manual help.
+        $('#manualOnboardSection').show();
         if (!currentRecord) return;
         var r = currentRecord;
-        var step1Ok = r.resumeParseCompleted === true && r.isExistingInterviewer !== true;
-        var step2Ok = r.resolvedAssessmentGroupId > 0 && ($('#step2Card').hasClass('completed') || r.applicationLink || r.invitationEmailSent === true);
-
         var pref = (r.plivoOnboardingPreference || '').toLowerCase();
         var resp = (r.prospectResponse || '');
         var needsManual = pref === 'manual_onboarding' || pref === 'need_clarity' || pref === 'facing_errors'
                        || resp === 'ManualSupport' || resp === 'NeedClarity';
-
-        if (step1Ok && step2Ok) {
-            $('#manualOnboardSection').show();
-        } else if (step1Ok && needsManual) {
-            $('#manualOnboardSection').show();
-            $('#manualOnboardBanner').show();
-        }
+        if (needsManual) $('#manualOnboardBanner').show();
     }
 
     function syncManualOnboarding(r, step1Done, step2Done) {
@@ -1612,12 +2185,8 @@
             reason = 'The prospect clicked <strong>Need Clarity</strong> in the invitation email.';
         }
 
-        // Always show the manual section if step 1 is done (operator may choose manual onboarding at any time)
-        if (step1Done && step2Done) {
-            $('#manualOnboardSection').show();
-        } else if (step1Done && needsManual) {
-            $('#manualOnboardSection').show();
-        }
+        // The manual onboarding section is always available so an operator can run the steps on demand.
+        $('#manualOnboardSection').show();
 
         if (needsManual) {
             $('#manualOnboardBanner').show();
@@ -1629,11 +2198,17 @@
 
         // Sync existing EV / AI / Onboard state
         if (r.employmentVerified === true) {
-            var evHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Verified</span>';
-            if (r.employmentCompanyName) evHtml += ' &mdash; <strong>' + $('<span>').text(r.employmentCompanyName).html() + '</strong>';
-            if (r.employmentIsEmployed === true) evHtml += ' <span class="employed-yes">(Employed)</span>';
-            else if (r.employmentIsEmployed === false) evHtml += ' <span class="employed-no">(Not Employed)</span>';
-            mMarkStep(1, 'completed', evHtml);
+            if (r.employmentIsEmployed === true || r.employmentCompanyName) {
+                var evHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Verified</span>';
+                if (r.employmentCompanyName) evHtml += ' &mdash; <strong>' + $('<span>').text(r.employmentCompanyName).html() + '</strong>';
+                evHtml += ' <span class="employed-yes">(Employed)</span>';
+                mMarkStep(1, 'completed', evHtml);
+            } else {
+                var evHtml2 = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Verified</span>';
+                evHtml2 += ' <span class="employed-no">(Not Employed)</span>';
+                mMarkStep(1, 'failed', evHtml2);
+                $('#btnTriggerEV').hide(); $('#btnRetryEV').show().prop('disabled', false);
+            }
         }
 
         if (r.resumeAIAnalysisCompleted === true) {
@@ -1644,11 +2219,29 @@
             mMarkStep(2, isPositive ? 'completed' : 'failed', aiHtml);
         }
 
+        // M3 (Send Acknowledgement): profile created + acknowledgement email sent.
         if (r.onboardingCompleted === true) {
-            var obHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Interviewer onboarded successfully!</span>';
-            if (r.onboardedUserId) obHtml += '<br/><strong>UserId:</strong> ' + r.onboardedUserId;
-            if (r.onboardedProfileId) obHtml += ' &mdash; <strong>ProfileId:</strong> ' + r.onboardedProfileId;
-            mMarkStep(3, 'completed', obHtml);
+            var ackHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Profile created &amp; mapped.</span>';
+            if (r.onboardedUserId) ackHtml += '<br/><strong>UserId:</strong> ' + r.onboardedUserId;
+            if (r.onboardedProfileId) ackHtml += ' &mdash; <strong>ProfileId:</strong> ' + r.onboardedProfileId;
+            if (r.acknowledgementEmailSent === true) {
+                ackHtml += '<br/><span class="text-success"><i class="fas fa-paper-plane me-1"></i>Acknowledgement email sent.</span>';
+            } else {
+                ackHtml += '<br/><span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Acknowledgement email failed &mdash; use Resend.</span>';
+            }
+            mMarkStep(3, 'completed', ackHtml);
+            $('#btnResendAck').show().prop('disabled', false);
+
+            // M4 (Onboarding): completes only when the interviewer ACCEPTS the acknowledgement email.
+            var fs = (r.funnelStage || '').toLowerCase();
+            if (fs === 'onboarded') {
+                var obHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Interviewer accepted the acknowledgement &mdash; onboarding complete!</span>';
+                if (r.onboardedUserId) obHtml += '<br/><strong>UserId:</strong> ' + r.onboardedUserId;
+                mMarkStep(4, 'completed', obHtml);
+            } else {
+                $('#mStep4Card').removeClass('disabled');
+                mMarkStep(4, 'pending', '<span class="text-warning"><i class="fas fa-hourglass-half me-1"></i>Awaiting the interviewer\'s acceptance of the acknowledgement email. Use <strong>Refresh Status</strong> to check.</span>');
+            }
         }
     }
 
@@ -1659,14 +2252,16 @@
             card.addClass('completed');
             if (step === 1) { $('#btnTriggerEV').hide(); $('#btnRetryEV').hide(); $('#mStep1Subtitle').html('<span class="text-success" style="font-size:11px;">Employment verified</span>'); }
             if (step === 2) { $('#btnRunAIAnalysis').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed'); $('#mStep2Subtitle').html('<span class="text-success" style="font-size:11px;">AI analysis complete</span>'); }
-            if (step === 3) { $('#btnManualOnboard').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Onboarded'); $('#mStep3Subtitle').html('<span class="text-success" style="font-size:11px;">Interviewer onboarded</span>'); }
+            if (step === 3) { $('#btnManualOnboard').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Acknowledgement Sent'); $('#mStep3Subtitle').html('<span class="text-success" style="font-size:11px;">Profile created &amp; acknowledgement sent</span>'); }
+            if (step === 4) { $('#btnCheckOnboarding').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Onboarded'); $('#mStep4Subtitle').html('<span class="text-success" style="font-size:11px;">Interviewer onboarded</span>'); }
         } else if (state === 'failed') {
             card.addClass('failed');
         } else { card.addClass('pending'); }
         if (message) result.html(message).show();
 
-        if (step === 1 && (state === 'completed' || state === 'failed')) { $('#mStep2Card').removeClass('disabled'); }
+        if (step === 1 && state === 'completed') { $('#mStep2Card').removeClass('disabled'); }
         if (step === 2 && state === 'completed') { $('#mStep3Card').removeClass('disabled'); }
+        if (step === 3 && state === 'completed') { $('#mStep4Card').removeClass('disabled'); }
     }
 
     $('#btnToggleManualSteps').on('click', function () {
@@ -1702,12 +2297,12 @@
                 var isEmployed = (result.message == null && companyName !== '');
                 var details = result.message || '';
 
-                if (result.message == null) {
+                if (isEmployed) {
                     var evHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Verified</span>';
-                    if (companyName) evHtml += ' &mdash; <strong>' + $('<span>').text(companyName).html() + '</strong>';
+                    evHtml += ' &mdash; <strong>' + $('<span>').text(companyName).html() + '</strong>';
                     evHtml += ' <span class="employed-yes">(Employed)</span>';
                     mMarkStep(1, 'completed', evHtml);
-                    $('#mgmCompany').text(companyName || '\u2014');
+                    $('#mgmCompany').text(companyName);
                     $('#mgmEmployed').html('<span class="employed-yes">Yes</span>');
                 } else {
                     var evHtml2 = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Verification completed</span>';
@@ -1773,38 +2368,82 @@
         });
     });
 
-    /* ── M3: Onboard Interviewer ── */
+    /* ── M3: Send Acknowledgement (create profile + map + email acknowledgement) ── */
 
     $('#btnManualOnboard').on('click', function () {
         if (!currentRecordId) return;
-        if (!confirm('This will create a UserList and InterviewerProfile entry and map the interviewer to the Assessment Group. Proceed?')) return;
+        if (!confirm('This will create a UserList and InterviewerProfile entry, map the interviewer to the Assessment Group & channels, and email them the acknowledgement (accept / decline). Onboarding completes only once the interviewer accepts it. Proceed?')) return;
         var btn = $(this);
-        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Onboarding...');
-        $('#mStep3Subtitle').text('Creating interviewer profile...');
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Sending...');
+        $('#mStep3Subtitle').text('Creating profile and sending acknowledgement...');
 
         $.ajax({
             url: '@Url.Action("OnboardInterviewer", "NaukriOnboarding")', type: 'POST', timeout: 120000,
             data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
             success: function (res) {
                 if (res.success) {
-                    var obHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message || 'Interviewer onboarded successfully!') + '</span>';
-                    if (res.userId) obHtml += '<br/><strong>UserId:</strong> ' + res.userId;
-                    if (res.profileId) obHtml += ' &mdash; <strong>ProfileId:</strong> ' + res.profileId;
-                    mMarkStep(3, 'completed', obHtml);
-                    updateStatusBadge('Onboarded');
-                    if (currentRecord) { currentRecord.onboardingCompleted = true; currentRecord.onboardedUserId = res.userId; }
+                    var ackHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (res.message || 'Profile created and acknowledgement email sent.') + '</span>';
+                    if (res.userId) ackHtml += '<br/><strong>UserId:</strong> ' + res.userId;
+                    if (res.profileId) ackHtml += ' &mdash; <strong>ProfileId:</strong> ' + res.profileId;
+                    mMarkStep(3, 'completed', ackHtml);
+                    $('#btnResendAck').show().prop('disabled', false);
+                    if (currentRecord) {
+                        currentRecord.onboardingCompleted = true;
+                        currentRecord.onboardedUserId = res.userId;
+                        currentRecord.onboardedProfileId = res.profileId;
+                        currentRecord.acknowledgementEmailSent = res.acknowledgementEmailSent !== false;
+                    }
+                    // M4 (Onboarding) is now pending the interviewer's acceptance.
+                    $('#mStep4Card').removeClass('disabled');
+                    mMarkStep(4, 'pending', '<span class="text-warning"><i class="fas fa-hourglass-half me-1"></i>Awaiting the interviewer\'s acceptance of the acknowledgement email. Use <strong>Refresh Status</strong> to check.</span>');
                 } else {
-                    mMarkStep(3, 'failed', '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Onboarding failed.') + '</span>');
-                    btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry');
-                    $('#mStep3Subtitle').html('Create interviewer profile, map to Assessment Group, and send acknowledgement email');
+                    mMarkStep(3, 'failed', '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Could not send acknowledgement.') + '</span>');
+                    btn.prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Retry');
+                    $('#mStep3Subtitle').html('Creates the interviewer profile, maps to the Assessment Group &amp; channels, and emails the acknowledgement (accept / decline) to the interviewer');
                 }
             },
             error: function () {
                 mMarkStep(3, 'failed', '<span class="text-danger">Request failed.</span>');
-                btn.prop('disabled',false).html('<i class="fas fa-user-plus me-1"></i>Retry');
-                $('#mStep3Subtitle').html('Create interviewer profile, map to Assessment Group, and send acknowledgement email');
+                btn.prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Retry');
+                $('#mStep3Subtitle').html('Creates the interviewer profile, maps to the Assessment Group &amp; channels, and emails the acknowledgement (accept / decline) to the interviewer');
             }
         });
+    });
+
+    /* ── M3: Resend Acknowledgement ── */
+
+    $('#btnResendAck').on('click', function () {
+        if (!currentRecordId) return;
+        var btn = $(this);
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Resending...');
+        $.ajax({
+            url: '@Url.Action("ResendAcknowledgement", "NaukriOnboarding")', type: 'POST', timeout: 60000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            success: function (res) {
+                btn.prop('disabled',false).html('<i class="fas fa-redo me-1"></i>Resend');
+                if (res.success) {
+                    if (currentRecord) currentRecord.acknowledgementEmailSent = true;
+                    $('#mStep3Result').append('<br/><span class="text-success"><i class="fas fa-paper-plane me-1"></i>Acknowledgement email resent.</span>');
+                } else {
+                    alert(res.error || 'Could not resend the acknowledgement email.');
+                }
+            },
+            error: function () {
+                btn.prop('disabled',false).html('<i class="fas fa-redo me-1"></i>Resend');
+                alert('Request failed. Please try again.');
+            }
+        });
+    });
+
+    /* ── M4: Onboarding — refresh acceptance status ── */
+
+    $('#btnCheckOnboarding').on('click', function () {
+        if (!currentRecordId) return;
+        var btn = $(this);
+        btn.prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Refreshing...');
+        $('#mgmLoading').show(); $('#mgmContent').hide();
+        resetPipeline();
+        loadRecordDetails(currentRecordId);
     });
 
     /* ── Plivo Call ─────────────────────────────────────────── */
@@ -1829,7 +2468,7 @@
         detBtn.hide();
         card.css('border-color', '#6f42c1').css('background', '#faf8ff');
         $('#plivoCallIcon').css('background', '#6f42c1');
-        $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
+        $('#plivoCallSubtitle').html('If the prospect hasn\'t responded to the email within 1 hour, a follow-up call is placed');
 
         var cardDisabled = card.hasClass('disabled');
         btn.prop('disabled', cardDisabled);
@@ -1919,13 +2558,13 @@
                 } else {
                     $('#plivoCallResult').html('<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Failed.') + '</span>').show();
                     btn.prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Prospect');
-                    $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
+                    $('#plivoCallSubtitle').html('If the prospect hasn\'t responded to the email within 1 hour, a follow-up call is placed');
                 }
             },
             error: function () {
                 $('#plivoCallResult').html('<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Request failed.</span>').show();
                 btn.prop('disabled', false).html('<i class="fas fa-phone-alt me-1"></i>Call Prospect');
-                $('#plivoCallSubtitle').html('Call the prospect to gauge interest in freelance interviewing with Risebird');
+                $('#plivoCallSubtitle').html('If the prospect hasn\'t responded to the email within 1 hour, a follow-up call is placed');
             }
         });
     });

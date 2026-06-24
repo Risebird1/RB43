@@ -45,6 +45,23 @@ Select Distinct ul.EmailId as Comment,ul.id,Sum(ip.Points) as Points
 from InterviewPoints ip join UserList ul on ul.id=ip.userid
 where ip.Status='Advance' group by ul.EmailId,ul.id
 
-Select sp.id,(Isnull(sp.Points,0)-Isnull(ap.Points,0)) as Points,sp.Comment From @SubmitedPoints sp left join @AdvancedPoints ap on sp.id=ap.id order by id
+Select sp.id,
+       (Isnull(sp.Points,0)-Isnull(ap.Points,0)) as Points,
+       sp.Comment,
+       ISNULL(tic.IsBankVerified, 0) as IsBankVerified,
+       ISNULL(ul.IsActive, 0) as IsActive,
+       ISNULL(irp.IsDeleted, 0) as IsBlocked,
+       COALESCE(
+           NULLIF(LTRIM(RTRIM(CAST(ul.MobileNumber AS varchar(20)))), ''),
+           NULLIF(LTRIM(RTRIM(ul.WhatsappNumber)), ''),
+           NULLIF(LTRIM(RTRIM(irp.AltMobileNumber)), '')
+       ) as MobileNumber
+From @SubmitedPoints sp
+left join @AdvancedPoints ap on sp.id = ap.id
+left join UserList ul on ul.id = sp.id
+left join InterviewerProfile irp on irp.UserId = sp.id
+left join TransInterviewerAccDetails tic on tic.InterviewerProfileId = irp.id
+where ISNULL(irp.IsHoldPayment, 0) = 0
+order by sp.id
 END
 GO

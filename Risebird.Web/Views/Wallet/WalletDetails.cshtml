@@ -1,0 +1,410 @@
+@model Risebird.Entities.ViewModel.AllClientsWalletVM
+@using Risebird.Entities.Enum
+@{
+    ViewData["Title"] = "Wallet Details";
+    ViewBag.PageHeader = "Wallet Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int activeCount = Model.Clients.Count(c => c.MonthInterviewCount > 0);
+    int totalCount  = Model.Clients.Count;
+
+    string BillingModelBadge(int bm) => bm switch
+    {
+        1 => "<span class='badge badge-primary'>M1</span>",
+        2 => "<span class='badge badge-success'>M2</span>",
+        3 => "<span class='badge badge-warning'>M3</span>",
+        4 => "<span class='badge badge-info'>M4</span>",
+        _ => "<span class='badge badge-light'>—</span>"
+    };
+    string BillingModelFull(int bm) => bm switch
+    {
+        1 => "Prepaid",
+        2 => "Postpaid + Pre-PO",
+        3 => "Postpaid + Post-PO",
+        4 => "Postpaid Direct",
+        _ => "—"
+    };
+    var months = System.Globalization.DateTimeFormatInfo.CurrentInfo.MonthNames;
+}
+
+<link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<style>
+    .stat-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #f5f5f5;
+        border-radius: 20px;
+        padding: 5px 13px;
+        font-size: 12px;
+        color: #444;
+        margin-right: 6px;
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+    .stat-pill strong { color: #222; }
+    .stat-pill.green  { background: #e8f5e9; color: #2e7d32; }
+    .stat-pill.red    { background: #fce4ec; color: #c62828; }
+    .stat-pill.blue   { background: #e3f2fd; color: #1565c0; }
+    .stat-pill.purple { background: #f3e5f5; color: #6a1b9a; }
+
+    .inactive-row td { opacity: 0.5; }
+
+    .int-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+    .int-badge.active   { background: #e3f2fd; color: #1565c0; }
+    .int-badge.inactive { background: #f5f5f5; color: #999; }
+
+    .scope-badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; margin-top: 3px; }
+    .scope-user   { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .scope-client { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+
+    .toggle-owners {
+        cursor: pointer;
+        font-size: 10px;
+        color: #1565c0;
+        border: 1px solid #90caf9;
+        background: #e3f2fd;
+        border-radius: 10px;
+        padding: 1px 7px;
+        margin-left: 5px;
+        user-select: none;
+    }
+
+    .owner-sub-row { background: #f9fbff; }
+    .owner-sub-row td { padding: 4px 10px 4px 28px !important; }
+    .owner-mini-table { width: 100%; font-size: 11px; }
+    .owner-mini-table th { font-weight: 600; color: #888; padding: 3px 8px; border-bottom: 1px solid #eee; }
+    .owner-mini-table td { padding: 3px 8px; color: #555; }
+
+    .amount-credit { color: #2e7d32; font-weight: 600; }
+    .amount-debit  { color: #c62828; font-weight: 600; }
+    .amount-neg    { color: #c62828; font-weight: 600; }
+    .amount-pos    { color: #2e7d32; font-weight: 600; }
+    .amount-neutral{ color: #555; }
+
+    #clientSearch {
+        padding: 6px 12px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        font-size: 12px;
+        width: 210px;
+        outline: none;
+    }
+    #clientSearch:focus { border-color: #90caf9; }
+</style>
+
+<div class="main-panel" id="main-panel">
+
+    @* ── Header ── *@
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title">Wallet Details</h4>
+                    <div>
+                        <label style="color: forestgreen; font-weight: 600;">
+                            @Model.PeriodLabel &nbsp;|&nbsp;
+                            Active (with interviews): @activeCount &nbsp;·&nbsp; All Clients: @totalCount
+                        </label>
+                    </div>
+                </div>
+                <div class="pull-right client-ms" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+
+                    @* ── Original single-month filter (unchanged behaviour) ── *@
+                    <form id="singleMonthForm" method="get" action="/Wallet/WalletDetails"
+                          style="display:inline-flex;align-items:center;gap:6px;">
+                        <select name="month" id="smMonth" class="form-control form-control-sm" style="width:120px;"
+                                onchange="submitSingleMonth()">
+                            @for (int m = 1; m <= 12; m++)
+                            {
+                                if (m == Model.FromMonth)
+                                {
+                                    <option value="@m" selected="selected">@months[m - 1]</option>
+                                }
+                                else
+                                {
+                                    <option value="@m">@months[m - 1]</option>
+                                }
+                            }
+                        </select>
+                        <select name="year" id="smYear" class="form-control form-control-sm" style="width:85px;"
+                                onchange="submitSingleMonth()">
+                            @for (int y = DateTime.Now.Year - 2; y <= DateTime.Now.Year + 1; y++)
+                            {
+                                if (y == Model.FromYear)
+                                {
+                                    <option value="@y" selected="selected">@y</option>
+                                }
+                                else
+                                {
+                                    <option value="@y">@y</option>
+                                }
+                            }
+                        </select>
+                    </form>
+
+                    @* ── Date range filter (new addition) ── *@
+                    @{ bool isRange = !(Model.FromMonth == Model.ToMonth && Model.FromYear == Model.ToYear); }
+                    <form method="get" action="/Wallet/WalletDetails"
+                          style="display:inline-flex;align-items:center;gap:5px;background:@(isRange ? "#fff8e1" : "#f5f5f5");padding:4px 8px;border-radius:6px;border:1px solid @(isRange ? "#ffe082" : "#e0e0e0");">
+                        <small style="color:#888;font-size:11px;">Range:</small>
+                        <select name="fromMonth" class="form-control form-control-sm" style="width:105px;">
+                            @for (int m = 1; m <= 12; m++)
+                            {
+                                if (m == Model.FromMonth)
+                                {
+                                    <option value="@m" selected="selected">@months[m - 1]</option>
+                                }
+                                else
+                                {
+                                    <option value="@m">@months[m - 1]</option>
+                                }
+                            }
+                        </select>
+                        <select name="fromYear" class="form-control form-control-sm" style="width:78px;">
+                            @for (int y = DateTime.Now.Year - 3; y <= DateTime.Now.Year + 1; y++)
+                            {
+                                if (y == Model.FromYear)
+                                {
+                                    <option value="@y" selected="selected">@y</option>
+                                }
+                                else
+                                {
+                                    <option value="@y">@y</option>
+                                }
+                            }
+                        </select>
+                        <small style="color:#888;font-size:11px;">→</small>
+                        <select name="toMonth" class="form-control form-control-sm" style="width:105px;">
+                            @for (int m = 1; m <= 12; m++)
+                            {
+                                if (m == Model.ToMonth)
+                                {
+                                    <option value="@m" selected="selected">@months[m - 1]</option>
+                                }
+                                else
+                                {
+                                    <option value="@m">@months[m - 1]</option>
+                                }
+                            }
+                        </select>
+                        <select name="toYear" class="form-control form-control-sm" style="width:78px;">
+                            @for (int y = DateTime.Now.Year - 3; y <= DateTime.Now.Year + 1; y++)
+                            {
+                                if (y == Model.ToYear)
+                                {
+                                    <option value="@y" selected="selected">@y</option>
+                                }
+                                else
+                                {
+                                    <option value="@y">@y</option>
+                                }
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary" style="padding:3px 10px;">Apply</button>
+                        @if (isRange)
+                        {
+                            <a href="/Wallet/WalletDetails" class="btn btn-sm btn-default" style="padding:3px 8px;" title="Clear range">✕</a>
+                        }
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg" style="padding: 15px;">
+
+                    @* ── Summary Pills ── *@
+                    <div style="margin-bottom: 14px;">
+                        <span class="stat-pill">
+                            <i class="fa fa-calendar-check-o"></i> Total Interviews <strong>@Model.Clients.Sum(c => c.MonthInterviewCount)</strong>
+                        </span>
+                        @foreach (var tot in Model.TotalsByCurrency)
+                        {
+                            <span class="stat-pill green">
+                                <i class="fa fa-arrow-up"></i> Period Credit (@tot.Currency) <strong>@tot.Symbol@tot.MonthCredit.ToString("N0")</strong>
+                            </span>
+                            <span class="stat-pill red">
+                                <i class="fa fa-arrow-down"></i> Period Debit (@tot.Currency) <strong>@tot.Symbol@tot.MonthDebit.ToString("N0")</strong>
+                            </span>
+                            <span class="stat-pill @(tot.MonthNet >= 0 ? "green" : "red")">
+                                <i class="fa fa-balance-scale"></i> Period Net (@tot.Currency) <strong>@tot.Symbol@tot.MonthNet.ToString("N0")</strong>
+                            </span>
+                            <span class="stat-pill purple">
+                                <i class="fa fa-database"></i> Overall Balance (@tot.Currency) <strong>@tot.Symbol@tot.OverallBalance.ToString("N0")</strong>
+                            </span>
+                        }
+                    </div>
+
+                    @* ── Search ── *@
+                    <div class="clearfix" style="margin-bottom: 8px;">
+                        <div class="pull-right">
+                            <input type="text" id="clientSearch" placeholder="&#128269; Search client..." oninput="filterTable()" />
+                        </div>
+                    </div>
+
+                    @* ── Table ── *@
+                    <div class="table-responsive">
+                        <table id="walletTable" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Client</th>
+                                    <th>Billing Model</th>
+                                    <th>Rates</th>
+                                    <th>Interviews</th>
+                                    <th>Period Credit</th>
+                                    <th>Period Debit</th>
+                                    <th>Period Net</th>
+                                    <th>Overall Balance</th>
+                                    <th>Wallet Txns</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                @foreach (var tot in Model.TotalsByCurrency)
+                                {
+                                    <tr>
+                                        <th colspan="5" style="text-align:right;">Totals (@tot.Currency)</th>
+                                        <th class="amount-credit">@tot.Symbol@tot.MonthCredit.ToString("N0")</th>
+                                        <th class="amount-debit">@tot.Symbol@tot.MonthDebit.ToString("N0")</th>
+                                        <th class="@(tot.MonthNet >= 0 ? "amount-pos" : "amount-neg")">@tot.Symbol@tot.MonthNet.ToString("N0")</th>
+                                        <th class="amount-neutral">@tot.Symbol@tot.OverallBalance.ToString("N0")</th>
+                                        <th></th>
+                                    </tr>
+                                }
+                            </tfoot>
+                            <tbody>
+                                @{ int rowIdx = 0; }
+                                @foreach (var cl in Model.Clients)
+                                {
+                                    rowIdx++;
+                                    bool isActive = cl.MonthInterviewCount > 0;
+
+                                    var ownerRows = Model.BillingOwnerCounts
+                                        .Where(b => b.ClientId == cl.ClientId)
+                                        .ToList();
+
+                                    <tr class="@(!isActive ? "inactive-row" : "") client-row" data-name="@cl.ClientName.ToLower()">
+                                        <td>@rowIdx</td>
+                                        <td style="font-weight: 600;">@cl.ClientName</td>
+                                        <td>
+                                            @Html.Raw(BillingModelBadge(cl.BillingModel))
+                                            <small style="color:#666;margin-left:4px;">@BillingModelFull(cl.BillingModel)</small>
+                                            <br />
+                                            @if (cl.BillingType == 1)
+                                            {
+                                                <span class="scope-badge scope-user">User Scope</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="scope-badge scope-client">Client Scope</span>
+                                            }
+                                        </td>
+                                        <td style="font-size:11px;">
+                                            @cl.CurrencySymbol@cl.PerInterviewRate / interview<br />
+                                            <span style="color:#888;">AI: @cl.CurrencySymbol@cl.AIPerInterviewRate</span>
+                                        </td>
+                                        <td>
+                                            @if (isActive)
+                                            {
+                                                <span class="int-badge active">@cl.MonthInterviewCount</span>
+                                                @if (ownerRows.Any())
+                                                {
+                                                    <span class="toggle-owners" onclick="toggleOwners(@cl.ClientId)">&#9660; by owner</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="int-badge inactive">0</span>
+                                            }
+                                        </td>
+                                        <td class="amount-credit">@cl.CurrencySymbol@cl.MonthCredit.ToString("N0")</td>
+                                        <td class="amount-debit">@cl.CurrencySymbol@cl.MonthDebit.ToString("N0")</td>
+                                        <td class="@(cl.MonthNet >= 0 ? "amount-pos" : "amount-neg")">@cl.CurrencySymbol@cl.MonthNet.ToString("N0")</td>
+                                        <td class="amount-neutral">@cl.CurrencySymbol@cl.OverallBalance.ToString("N0")</td>
+                                        <td style="color:#888;">@cl.TransactionCount</td>
+                                    </tr>
+
+                                    @if (ownerRows.Any())
+                                    {
+                                        <tr class="owner-sub-row" id="owners-@cl.ClientId" style="display:none;">
+                                            <td></td>
+                                            <td colspan="9">
+                                                <table class="owner-mini-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Billing Owner</th>
+                                                            <th>Email</th>
+                                                                        <th>Interviews — @Model.PeriodLabel</th>
+                                                                            @if (cl.BillingType == 1)
+                                                                            {
+                                                                                <th>Period Credit (@cl.BillingCurrency)</th>
+                                                                                <th>Period Debit (@cl.BillingCurrency)</th>
+                                                                                <th>Period Net (@cl.BillingCurrency)</th>
+                                                                            }
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var ow in ownerRows)
+                                                        {
+                                                            <tr>
+                                                                <td>@ow.BillingOwnerName</td>
+                                                                <td style="color:#888;">@ow.BillingOwnerEmail</td>
+                                                                <td><span class="int-badge active">@ow.MonthInterviewCount</span></td>
+                                                                @if (cl.BillingType == 1)
+                                                                                {
+                                                                                    <td class="amount-credit">@cl.CurrencySymbol@ow.MonthCredit.ToString("N0")</td>
+                                                                                    <td class="amount-debit">@cl.CurrencySymbol@ow.MonthDebit.ToString("N0")</td>
+                                                                                    <td class="@(ow.MonthNet >= 0 ? "amount-pos" : "amount-neg")">@cl.CurrencySymbol@ow.MonthNet.ToString("N0")</td>
+                                                                                }
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+<script>
+    function submitSingleMonth() {
+        document.getElementById('singleMonthForm').submit();
+    }
+
+    function toggleOwners(clientId) {
+        var row = document.getElementById('owners-' + clientId);
+        if (!row) return;
+        row.style.display = (row.style.display === '' || row.style.display === 'none') ? 'table-row' : 'none';
+    }
+
+    function filterTable() {
+        var q = document.getElementById('clientSearch').value.toLowerCase();
+        document.querySelectorAll('#walletTable tbody tr.client-row').forEach(function (tr) {
+            var name = tr.getAttribute('data-name') || '';
+            var show = name.indexOf(q) >= 0;
+            tr.style.display = show ? '' : 'none';
+            var next = tr.nextElementSibling;
+            if (next && next.classList.contains('owner-sub-row')) {
+                next.style.display = 'none';
+            }
+        });
+    }
+</script>
+}

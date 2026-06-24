@@ -13,7 +13,8 @@ CREATE PROCEDURE usp_InactivateInterviewer
     @modifiedBy varchar(200),    
     @modifiedOn datetime,    
     @comment varchar(500),
-	@blockinterviewer bit
+	@blockinterviewer bit,
+    @InactivationType varchar(50) = NULL   -- when NULL, falls back to ManualBlock/ManualRemove (legacy behaviour)
 AS    
 BEGIN    
         DECLARE @EmailId varchar(200)    
@@ -23,9 +24,16 @@ BEGIN
         FROM UserList     
         WHERE id = @InterviewerId    
     
-        -- Update UserList to set IsActive = 0    
+        -- Resolve the inactivation type: explicit value wins, else legacy block/remove default.
+        DECLARE @ResolvedType varchar(50) =
+            ISNULL(@InactivationType, CASE WHEN @blockinterviewer = 1 THEN 'ManualBlock' ELSE 'ManualRemove' END)
+
+        -- Update UserList to set IsActive = 0 with inactivation tracking
         UPDATE UserList     
-        SET IsActive = 0    
+        SET IsActive = 0,
+            InactivationType = @ResolvedType,
+            InactivatedBy = @ModifiedBy,
+            InactivatedAt = @modifiedOn
         WHERE id = @InterviewerId    
     
         -- Update InterviewerProfile flags    

@@ -1159,6 +1159,32 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<SkillChannelBillingRateVM>> GetSkillChannelBillingRates()
+        {
+            try
+            {
+                return await _dashboardRespository.GetSkillChannelBillingRates();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> SaveSkillChannelBillingRate(int irfId, int billingRate, string createdBy)
+        {
+            try
+            {
+                return await _dashboardRespository.SaveSkillChannelBillingRate(irfId, billingRate, createdBy);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public async Task<IEnumerable<PQIDetails>> GetClientRemovedInterviewers()
         {
             try

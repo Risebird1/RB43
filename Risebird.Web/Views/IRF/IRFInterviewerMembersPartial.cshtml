@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.IRFInterviewerMembers>
+@model IEnumerable<Risebird.Entities.ViewModel.IRFInterviewerMembers>
 <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
 <div>
     @if (Model != null && Model.Count() != 0)
@@ -13,7 +13,7 @@
                             <th>EmailId</th>
                             @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
                             {
-                                <th>Billing(USD)</th>
+                                <th>Billing(@(Model?.FirstOrDefault()?.BillingCurrency ?? "INR"))</th>
                             }
                             @* <th>Client Action</th>*@
                             @* <th>Type</th>*@
@@ -76,14 +76,7 @@
                                     }
                                     @if (ViewBag.IRFId > 0)
                                     {
-                                        <span>
-                                            <button class="btn shadow btn-xs sharp me-1" aria-label="Add Interviewer" style="background: #8dbe9c!important;;border-color: #8dbe9c;width: 25px !important;height: 25px !important;top: -5px;position: relative;left: -2px;margin: 0px 0px 0px 3px;">
-                                                <span onclick="javascript:OpenAddInterviewerModal('@item.EmailId', '@ViewBag.IRFName','@item.UserId', '@ViewBag.IRFId');" title="Add Interviewer" class="mdc-fab__icon touch">
-                                                    <span class="fa fa-user-plus" style="left:-4px;top:-10px;position: relative;font-size:12px;font-family: 'Font Awesome 5 Pro';color:#fff"></span>
-                                                </span>
-                                            </button>
-                                        </span>
-
+                                        @* Item 16: Add Interviewer removed from MAG unassignment list — use screened apply flows instead. *@
                                     }
                                     <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = item.JDTitle, userId = item.UserId, irfId = item.IRFId, irfName = item.IRFName})">
                                         <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="background:#5ab3cb;border-color:#5ab3cb; width:22px!important;height:22px!important;top: -5px;position:relative;left:-2px;margin: 0px 0px 0px 3px;">

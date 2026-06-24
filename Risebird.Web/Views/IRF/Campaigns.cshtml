@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.AGCampaignModel>
+@model IEnumerable<Risebird.Entities.ViewModel.AGCampaignModel>
 @using Risebird.Entities
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
@@ -17,6 +17,26 @@
 
 }
 
+@functions {
+    string CampBcPillClass(string? status)
+    {
+        if (string.IsNullOrWhiteSpace(status)) return "camp-bc-pill--pending";
+        switch (status.Trim().ToLowerInvariant())
+        {
+            case "completed": return "camp-bc-pill--done";
+            case "running": return "camp-bc-pill--running";
+            case "stopped": return "camp-bc-pill--stopped";
+            default: return "camp-bc-pill--pending";
+        }
+    }
+
+    string CampBcStatusLabel(string? status)
+    {
+        if (string.IsNullOrWhiteSpace(status)) return "Pending";
+        return status.Trim();
+    }
+}
+
 @* @if (HttpContextAccessor.HttpContext.Session.GetString("ActivityTrackerFilters") != null)
 {
     filter = JsonConvert.DeserializeObject<ActivityTrackerFilter>(HttpContextAccessor.HttpContext.Session.GetString("ActivityTrackerFilters"));
@@ -30,6 +50,130 @@
 
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<style>
+    #campaignTable th:nth-child(4),
+    #campaignTable td:nth-child(4) {
+        min-width: 210px;
+        max-width: 260px;
+        white-space: normal;
+        vertical-align: top;
+    }
+
+    .camp-created-by {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+    }
+
+    .camp-created-by__name {
+        font-size: 12px;
+        font-weight: 600;
+        color: #1e293b;
+        word-break: break-word;
+    }
+
+    .camp-created-by__at {
+        font-size: 10px;
+        color: #64748b;
+        line-height: 1.35;
+    }
+
+    .camp-bc-status {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
+    }
+
+    .camp-bc-pill {
+        display: inline-flex;
+        align-items: center;
+        align-self: flex-start;
+        gap: 5px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
+
+    .camp-bc-pill--done { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .camp-bc-pill--running { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .camp-bc-pill--stopped { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .camp-bc-pill--scheduled { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+    .camp-bc-pill--pending { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+
+    .camp-bc-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 4px;
+    }
+
+    .camp-bc-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 0;
+        padding: 4px 2px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+    }
+
+    .camp-bc-stat__val {
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    .camp-bc-stat__lbl {
+        font-size: 8px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: #64748b;
+        margin-top: 2px;
+        line-height: 1;
+    }
+
+    .camp-bc-stat--ok .camp-bc-stat__val { color: #15803d; }
+    .camp-bc-stat--fail .camp-bc-stat__val { color: #b91c1c; }
+    .camp-bc-stat--skip .camp-bc-stat__val { color: #a16207; }
+    .camp-bc-stat--total .camp-bc-stat__val { color: #1e293b; }
+
+    .camp-bc-progress {
+        height: 5px;
+        border-radius: 999px;
+        background: #e2e8f0;
+        overflow: hidden;
+    }
+
+    .camp-bc-progress__bar {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .camp-bc-meta {
+        font-size: 10px;
+        color: #64748b;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+
+    .camp-bc-note {
+        font-size: 10px;
+        color: #64748b;
+        line-height: 1.35;
+    }
+</style>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -70,7 +214,7 @@
                                                     <th>Name</th>
                                                     <th>Primary Assessment Group</th>
                                                     <th>Created By</th>
-                                                    <th>Created At</th>
+                                                    <th>Batch Call Status</th>
                                                     <th>Actions</th>
                                                     
 
@@ -81,7 +225,7 @@
                                                     <th>Name</th>
                                                     <th>Primary Assessment Group</th>
                                                     <th>Created By</th>
-                                                    <th>Created At</th>
+                                                    <th>Batch Call Status</th>
                                                     <th>Actions</th>
 
                                                 </tr>
@@ -93,8 +237,86 @@
                                                     <tr>
                                                         <td> @item.CampaignName </td>
                                                         <td> @item.AssessmentGroupName </td>
-                                                        <td> @item.CreatedBy </td>
-                                                        <td> @item.CreatedAt </td>
+                                                        <td>
+                                                            <div class="camp-created-by">
+                                                                <span class="camp-created-by__name">@(string.IsNullOrWhiteSpace(item.CreatedBy) ? "\u2014" : item.CreatedBy)</span>
+                                                                @if (item.CreatedAt.HasValue)
+                                                                {
+                                                                    <span class="camp-created-by__at">at @item.CreatedAt.Value.ToString("dd MMM yyyy, HH:mm")</span>
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            @if (item.BatchCallLogId.HasValue)
+                                                            {
+                                                                int attempted = item.BatchCallAttempted ?? 0;
+                                                                int succeeded = item.BatchCallSucceeded ?? 0;
+                                                                int failed = item.BatchCallFailed ?? 0;
+                                                                int skipped = item.BatchCallSkipped ?? 0;
+                                                                int successPct = attempted > 0 ? (int)Math.Round(succeeded * 100.0 / attempted) : 0;
+
+                                                                <div class="camp-bc-status">
+                                                                    <span class="camp-bc-pill @CampBcPillClass(item.BatchCallStatus)">@CampBcStatusLabel(item.BatchCallStatus)</span>
+                                                                    <div class="camp-bc-stats">
+                                                                        <div class="camp-bc-stat camp-bc-stat--ok" title="Succeeded">
+                                                                            <span class="camp-bc-stat__val">@succeeded</span>
+                                                                            <span class="camp-bc-stat__lbl">OK</span>
+                                                                        </div>
+                                                                        <div class="camp-bc-stat camp-bc-stat--fail" title="Failed">
+                                                                            <span class="camp-bc-stat__val">@failed</span>
+                                                                            <span class="camp-bc-stat__lbl">Fail</span>
+                                                                        </div>
+                                                                        <div class="camp-bc-stat camp-bc-stat--skip" title="Skipped">
+                                                                            <span class="camp-bc-stat__val">@skipped</span>
+                                                                            <span class="camp-bc-stat__lbl">Skip</span>
+                                                                        </div>
+                                                                        <div class="camp-bc-stat camp-bc-stat--total" title="Total attempted">
+                                                                            <span class="camp-bc-stat__val">@attempted</span>
+                                                                            <span class="camp-bc-stat__lbl">Total</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    @if (attempted > 0)
+                                                                    {
+                                                                        <div class="camp-bc-progress" title="@successPct% succeeded">
+                                                                            <div class="camp-bc-progress__bar" style="width:@successPct%;"></div>
+                                                                        </div>
+                                                                    }
+                                                                    <div class="camp-bc-meta">
+                                                                        @if (item.BatchCallCompletedAt.HasValue)
+                                                                        {
+                                                                            <span>Completed @item.BatchCallCompletedAt.Value.ToString("dd MMM yyyy, HH:mm")</span>
+                                                                        }
+                                                                        else if (item.BatchCallInitiatedAt.HasValue)
+                                                                        {
+                                                                            <span>Started @item.BatchCallInitiatedAt.Value.ToString("dd MMM yyyy, HH:mm")</span>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else if (item.BatchCallTriggeredAt.HasValue)
+                                                            {
+                                                                <div class="camp-bc-status">
+                                                                    <span class="camp-bc-pill camp-bc-pill--running">In Progress</span>
+                                                                    <span class="camp-bc-note">Placing availability calls to unresponded interviewers.</span>
+                                                                    <div class="camp-bc-meta">Triggered @item.BatchCallTriggeredAt.Value.ToString("dd MMM yyyy, HH:mm")</div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="camp-bc-status">
+                                                                    <span class="camp-bc-pill camp-bc-pill--scheduled">Scheduled</span>
+                                                                    <span class="camp-bc-note">Auto batch call runs 1 hour after campaign creation.</span>
+                                                                    @if (item.CreatedAt.HasValue)
+                                                                    {
+                                                                        var eligibleAt = item.CreatedAt.Value.AddHours(1);
+                                                                        if (DateTime.Now < eligibleAt)
+                                                                        {
+                                                                            <div class="camp-bc-meta">Eligible at @eligibleAt.ToString("dd MMM yyyy, HH:mm")</div>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            }
+                                                        </td>
                                                         <td>
                                                             <a style="text-decoration:none;" target="_blank" href="@Url.Action("CampaignDetails", "IRF" , new { campaignId = item.id})" title="Campaign Details">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Campaign Details" style="position:relative;top:3px;">
@@ -103,13 +325,6 @@
                                                                     </span>
                                                                 </button>
                                                             </a>
-                                                         @*    <a style="text-decoration:none;" target="_blank" href="@Url.Action("RecipientActivityDetails", "Mail" , new { recipientType = "Interviewer", campaignName = item.CampaignName})" title="Campaign Mail Activity">
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Campaign Mail Activity" style="position:relative;top:3px;">
-                                                                    <span title="Campaign Mail Activity" class="mdc-fab__icon material-icons">
-                                                                        <i style="font-size:14px;" class='fa fa-envelope' style='color: white'></i>
-                                                                    </span>
-                                                                </button>
-                                                            </a> *@
                                                             <a style="text-decoration:none;" target="_blank" href="@Url.Action("GetOpenClickCampaignMailDetails", "Dashboard" , new {campaignId = item.id})" title="Campaign Mail Activity">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Campaign Mail Activity" style="position:relative;top:3px;">
                                                                     <span title="Campaign Mail Activity" class="mdc-fab__icon material-icons">
@@ -117,6 +332,25 @@
                                                                     </span>
                                                                 </button>
                                                             </a>
+                                                            @{
+                                                                bool alreadyTriggered = item.BatchCallTriggeredAt.HasValue;
+                                                                bool hourElapsed = item.CreatedAt.HasValue && DateTime.Now.Subtract(item.CreatedAt.Value).TotalHours >= 1;
+                                                                bool canTrigger = !alreadyTriggered && hourElapsed;
+                                                                string btnTitle = alreadyTriggered ? "Batch call already triggered"
+                                                                    : !hourElapsed ? "Available 1 hour after campaign creation"
+                                                                    : "Call unresponded interviewers for availability";
+                                                            }
+                                                            <button class="mdc-fab app-fab--absolute btn-trigger-batch-call"
+                                                                    aria-label="Trigger Availability Calls"
+                                                                    style="position:relative;top:3px;@(canTrigger ? "background:#17a2b8 !important;border-color:#17a2b8 !important;" : "opacity:0.45;cursor:not-allowed;")"
+                                                                    title="@btnTitle"
+                                                                    data-campaign-id="@item.id"
+                                                                    data-campaign-name="@item.CampaignName"
+                                                                    @(canTrigger ? "" : "disabled")>
+                                                                <span class="mdc-fab__icon material-icons">
+                                                                    <i style="font-size:14px;" class="fa fa-phone"></i>
+                                                                </span>
+                                                            </button>
                                                         </td>
 
                                                     </tr>
@@ -304,4 +538,85 @@
 
 </script>
 
+<script>
+    $(document).on('click', '.btn-trigger-batch-call:not([disabled])', function () {
+        var btn = $(this);
+        var campaignId = btn.data('campaign-id');
+        var campaignName = btn.data('campaign-name');
+
+        Swal.fire({
+            title: 'Trigger Availability Calls?',
+            html: 'This will place Plivo calls to all unresponded interviewers in campaign <strong>' + campaignName + '</strong>.<br><br>Do you want to proceed?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#17a2b8',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, call them',
+            cancelButtonText: 'Cancel'
+        }).then(function (result) {
+            if (!result.value) return;
+
+            btn.prop('disabled', true).css('opacity', '0.45');
+            btn.find('i').removeClass('fa-phone').addClass('fa-spinner fa-spin');
+
+            // The batch call runs synchronously on the server — one Plivo call is placed per
+            // unresponded interviewer with a short gap between each — so the request can take a
+            // while. Show a persistent, non-dismissible progress modal so the operator knows it
+            // is in progress (instead of the dialog just disappearing).
+            Swal.fire({
+                title: 'Placing availability calls…',
+                html: 'Calling unresponded interviewers in campaign <strong>' + campaignName + '</strong>.<br><br>'
+                    + 'This can take a few minutes for large campaigns. Please keep this tab open until it finishes.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                onOpen: function () { Swal.showLoading(); }
+            });
+
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            if (!token) {
+                token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            }
+
+            $.ajax({
+                url: '@Url.Action("TriggerCampaignBatchCall", "IRF")',
+                type: 'POST',
+                data: { __RequestVerificationToken: token, campaignId: campaignId },
+                timeout: 600000,
+                success: function (res) {
+                    btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-phone');
+                    if (res.success) {
+                        Swal.fire({
+                            title: 'Calls Triggered!',
+                            html: (res.message ? res.message + '<br><br>' : '')
+                                + '<b>Succeeded:</b> ' + (res.succeeded || 0) + '<br><b>Failed:</b> ' + (res.failed || 0) + '<br><b>Skipped:</b> ' + (res.skipped || 0),
+                            type: 'success',
+                            allowOutsideClick: false,
+                            confirmButtonColor: '#17a2b8'
+                        }).then(function () { location.reload(); });
+                    } else {
+                        btn.prop('disabled', false).css('opacity', '1');
+                        Swal.fire('Error', res.error || 'Failed to trigger batch calls.', 'error');
+                    }
+                },
+                error: function (xhr, textStatus) {
+                    btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-phone');
+                    btn.prop('disabled', false).css('opacity', '1');
+                    if (textStatus === 'timeout') {
+                        // The server keeps placing the calls even though the browser stopped waiting.
+                        Swal.fire({
+                            title: 'Still in progress',
+                            html: 'The calls are taking longer than expected and are still being placed in the background.<br>Refresh this page in a few minutes to see the final batch-call status.',
+                            type: 'info',
+                            confirmButtonColor: '#17a2b8'
+                        }).then(function () { location.reload(); });
+                    } else {
+                        Swal.fire('Error', 'Request failed. Please try again.', 'error');
+                    }
+                }
+            });
+        });
+    });
+</script>
+@Html.AntiForgeryToken()
 @* <script src="~/js/filtervalidation.js"></script> *@

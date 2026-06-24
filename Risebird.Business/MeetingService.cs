@@ -372,7 +372,10 @@ namespace Risebird.Business
                     }
                     else if (!string.IsNullOrEmpty(meeting.interviewer))
                     {
-                        await _notificationHelper.SendInterviewerMailOnAssinment(meeting.interviewer, meeting.interviewDate.ToString());
+                        if (await _meetingRespository.IsUserActive(meeting.interviewer))
+                        {
+                            await _notificationHelper.SendInterviewerMailOnAssinment(meeting.interviewer, meeting.interviewDate.ToString());
+                        }
                         return true;
                     }
                 }
@@ -562,6 +565,9 @@ namespace Risebird.Business
             {
                 if (!string.IsNullOrEmpty(meetingToUpdate.NewActiveInterviewer))
                 {
+                    var capCheck = _meetingRespository.CheckInterviewerCapForAssignment(meetingToUpdate.irfIntId, meetingToUpdate.NewActiveInterviewer);
+                    if (capCheck.IsInactive || (capCheck.IsCapEnforced && !capCheck.Allowed))
+                        return false;
                     meetingToUpdate.interviewer = meetingToUpdate.NewActiveInterviewer;
                 }
                 //if (!string.IsNullOrEmpty(meetingToUpdate.NewActiveQCInterviewer))
@@ -854,11 +860,17 @@ namespace Risebird.Business
         //    //}
         //}
 
+        public CapCheckResult CheckInterviewerCapForAssignmentByMeeting(int meetingId, string interviewerEmail) =>
+            _meetingRespository.CheckInterviewerCapForAssignmentByMeeting(meetingId, interviewerEmail);
+
         public async Task<string> AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate)
         {
             try
             {
-                //var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var gateCheck = _meetingRespository.CheckInterviewerCapForAssignmentByMeeting(meetingid, interviewerMail);
+                if (gateCheck.IsInactive)
+                    return "INACTIVE_IVY|You are not active on this channel and cannot be assigned.";
+
                 var assignedMeeting = await _meetingRespository.GetAllAssignedInterviewsForTheWeek(interviewerMail);
                 var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
                 if (checkDateMeeting != null && checkDateMeeting.Count() > 0)
@@ -871,6 +883,10 @@ namespace Risebird.Business
                     return "Failed! You already have an interview scheduled within 30 minutes. Please contact Risebird HR.";
 
                 }
+
+                if (gateCheck.IsCapEnforced && !gateCheck.Allowed)
+                    return $"CAP_REACHED|Interview limit reached ({gateCheck.Capacity}). You have {gateCheck.Assigned} of {gateCheck.Capacity} interviews assigned on this channel.";
+
                 return await _meetingRespository.AssignYourself(meetingid, interviewerMail);
             }
             catch (Exception ex)
@@ -1165,7 +1181,7 @@ namespace Risebird.Business
                     model.encodedresumeLink = interviewDetails.encodedresumeLink;
                     model.IRFId = irfId;
 
-                    model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
+                    //model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
                     model.currentEmployerName = interviewDetails.currentEmployerName;
                     model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
                     model.PreferredLocation = interviewDetails.preferredLocation;
@@ -1256,7 +1272,6 @@ namespace Risebird.Business
                 reportModel.IsJoinabilitySelectabilityRequired = interviewDetails.IsJoinabilitySelectabilityRequired;
                 reportModel.ProctorReport = interviewDetails.ProctorReport;
                 reportModel.IsProctor = interviewDetails.IsProctor;
-                reportModel.NickName = interviewDetails.NickName;
                 reportModel.ClientAction = interviewDetails.ClientAction;
                 if (reportModel.IsEdited)
                 {
@@ -1268,6 +1283,16 @@ namespace Risebird.Business
                 reportModel.HasDistinctParticipants = interviewDetails.HasDistinctParticipants;
                 reportModel.AadhaarVerified = interviewDetails.AadhaarVerified;
                 reportModel.Interviewer = interviewDetails.interviewer;
+                reportModel.NickName = interviewDetails.NickName;
+                if (string.IsNullOrWhiteSpace(reportModel.NickName) || reportModel.NickName.Contains("@"))
+                {
+                    if (!string.IsNullOrWhiteSpace(reportModel.Interviewer))
+                    {
+                        var codedName = await FetchInterviewerCodedName(reportModel.Interviewer);
+                        if (!string.IsNullOrWhiteSpace(codedName?.NickName))
+                            reportModel.NickName = codedName.NickName;
+                    }
+                }
                 reportModel.JDTiltle = interviewDetails.JDTiltle;
                 reportModel.LogoUrl = interviewDetails.LogoUrl;
                 reportModel.AudioTranscriptFileLink = interviewDetails.AudioTranscriptFileLink;
@@ -2208,7 +2233,7 @@ namespace Risebird.Business
 
                     model.IRFId = irfId;
 
-                    model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
+                    //model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
                     model.currentEmployerName = interviewDetails.currentEmployerName;
                     model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
                     model.PreferredLocation = interviewDetails.preferredLocation;
@@ -3003,6 +3028,14 @@ namespace Risebird.Business
                 {
                     return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
                 }
+                var capCheck = _meetingRespository.CheckInterviewerCapForAssignmentByMeeting(Convert.ToInt32(id), Emailid);
+                if (!capCheck.Allowed)
+                {
+                    if (capCheck.IsInactive)
+                        return "INACTIVE_IVY|This interviewer is not active on this channel and cannot be assigned.";
+                    if (capCheck.IsCapEnforced)
+                        return $"CAP_REACHED|Interview limit reached ({capCheck.Capacity}). You have {capCheck.Assigned} of {capCheck.Capacity} interviews assigned on this channel.";
+                }
                 return _meetingRespository.ReAssignMeeting(Convert.ToInt32(id), Emailid);
             }
             catch (Exception ex)
@@ -3019,6 +3052,14 @@ namespace Risebird.Business
                 if (assignedMeeting != "Valid")
                 {
                     return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
+                }
+                var capCheck = _meetingRespository.CheckInterviewerCapForAssignmentByMeeting(Convert.ToInt32(id), Emailid);
+                if (!capCheck.Allowed)
+                {
+                    if (capCheck.IsInactive)
+                        return "INACTIVE_IVY|This interviewer is not active on this channel and cannot be assigned.";
+                    if (capCheck.IsCapEnforced)
+                        return $"CAP_REACHED|Interview limit reached ({capCheck.Capacity}). You have {capCheck.Assigned} of {capCheck.Capacity} interviews assigned on this channel.";
                 }
                 return _meetingRespository.ReassignMeetingByTeam(Convert.ToInt32(id), Emailid);
             }
@@ -3119,6 +3160,127 @@ namespace Risebird.Business
                 return "Fail";
             }
         }
+
+        public async Task<List<InvoiceListVM>> GetInvoiceList(int month, int year)
+        {
+            try
+            {
+                return await _meetingRespository.GetInvoiceList(month, year);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<InvoiceListVM>();
+            }
+        }
+
+
+        public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0)
+        {
+            try
+            {
+                return await _meetingRespository.GetClientInvoiceFormData(clientId, month, year, billingOwnerId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new ClientInvoiceFormDataVM();
+            }
+        }
+
+        public async Task<InvoiceDetailVM> GetGeneratedInvoiceById(int invoiceId)
+        {
+            try { return await _meetingRespository.GetGeneratedInvoiceById(invoiceId); }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return null; }
+        }
+
+        public async Task<List<InvoiceListVM>> GetUnpaidInvoiceList()
+        {
+            try { return await _meetingRespository.GetUnpaidInvoiceList(); }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return new List<InvoiceListVM>(); }
+        }
+
+        public async Task<List<InvoiceListVM>> GetPaidInvoiceList(int fromYear = 0, int fromMonth = 0, int toYear = 0, int toMonth = 0)
+        {
+            try { return await _meetingRespository.GetPaidInvoiceList(fromYear, fromMonth, toYear, toMonth); }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return new List<InvoiceListVM>(); }
+        }
+
+        public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
+            decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
+            List<InvoiceLineItemVM> lineItems, string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0)
+        {
+            try
+            {
+                if (lineItems != null && lineItems.Any())
+                {
+                    var tasks = lineItems.Select(li =>
+                        _meetingRespository.UpdateInvoiceLineItem(li.id, li.UnitRate, li.LineTotal));
+                    await Task.WhenAll(tasks);
+                }
+                return await _meetingRespository.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, latestRemark, utrTrxn, cashCreditAmount, taxScenario);
+            }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return false; }
+        }
+
+        public async Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year)
+        {
+            try
+            {
+                return await _meetingRespository.CheckDuplicateInvoice(clientId, billingOwnerId, month, year);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<List<BillingOwnerOption>> GetClientBillingOwners(int clientId)
+        {
+            try
+            {
+                return await _meetingRespository.GetClientBillingOwners(clientId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<BillingOwnerOption>();
+            }
+        }
+
+        public async Task<string> GetNextInvoiceNumber(int month, int year)
+        {
+            try
+            {
+                return await _meetingRespository.GetNextInvoiceNumber(month, year);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return string.Empty;
+            }
+        }
+
+        public async Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model)
+        {
+            try
+            {
+                int invoiceId = await _meetingRespository.SaveGeneratedInvoice(model);
+                if (invoiceId > 0 && model.LineItems != null && model.LineItems.Any())
+                {
+                    await _meetingRespository.SaveGeneratedInvoiceLineItems(invoiceId, model.LineItems);
+                }
+                return invoiceId;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
         public List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null)
         {
             try
@@ -3540,11 +3702,13 @@ namespace Risebird.Business
                 if (payableAmount < 1)
                     return Tuple.Create(false, "Payable amount must be at least ₹1.");
 
-                // 3. Fetch bank details
-                var payoutDetailsList = await FetchAllPayoutDetails();
-                var bankDetails = payoutDetailsList?.FirstOrDefault(x => x.Userid == id);
+                // 3. Fetch bank details directly from TransInterviewerAccDetails (by interviewer user id)
+                var bankDetails = await _interviewerRepository.GetInterviewerBankDetailsByUserId(id);
                 if (bankDetails == null || string.IsNullOrWhiteSpace(bankDetails.AccountNumber) || string.IsNullOrWhiteSpace(bankDetails.IFSCCode))
                     return Tuple.Create(false, "Bank account details are missing or incomplete for this interviewer.");
+
+                //if (!bankDetails.IsBankVerified)
+                //    return Tuple.Create(false, "Bank account is not verified. The interviewer must verify their account from My Profile before payment can be processed.");
 
                 // 4. Build a unique transfer id (alphanumeric + underscore, ≤ 40 chars)
                 var commentvalue = $"{st} to {se}";
@@ -3570,7 +3734,7 @@ namespace Risebird.Business
                 // 6. Insert payment history record (with CashFree transfer IDs) and get the new id
                 var paymentHistoryIdStr = await InsertPaymentHistory(
                     email, payableAmount, totalAmount, "Done", commentvalue,
-                    transferId:   payoutResult.PayoutId,
+                    transferId: payoutResult.PayoutId,
                     cfTransferId: payoutResult.CFPayoutId,
                     payoutStatus: payoutResult.Status);
                 if (string.IsNullOrEmpty(paymentHistoryIdStr))
@@ -3588,6 +3752,74 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return Tuple.Create(false, "An unexpected error occurred. Please try again.");
+            }
+        }
+
+        /// <summary>
+        /// Re-initiates a Cashfree payout for a PaymentHistory row whose PayoutStatus is TRANSFER_FAILED.
+        /// Inserts a new PaymentHistory row for the retry and returns (success, message).
+        /// </summary>
+        public async Task<Tuple<bool, string>> RetryPaymentViaCashfree(int paymentHistoryId)
+        {
+            try
+            {
+                // 1. Load the original failed payment history row
+                var original = await _meetingRespository.GetPaymentHistoryById(paymentHistoryId);
+                if (original == null)
+                    return Tuple.Create(false, "Payment history record not found.");
+
+                if (!string.Equals(original.PayoutStatus, "TRANSFER_FAILED", StringComparison.OrdinalIgnoreCase))
+                    return Tuple.Create(false, "Retry is only allowed for payments with status TRANSFER_FAILED.");
+
+                var payableAmount = original.Points;   // Amount already stored is the payable (post-TDS) amount
+                var email         = original.InterviewerEmailid;
+                var userId        = original.Userid;
+
+                if (payableAmount < 1)
+                    return Tuple.Create(false, "Payable amount must be at least ₹1.");
+
+                // 2. Fetch bank details
+                var bankDetails = await _interviewerRepository.GetInterviewerBankDetailsByUserId(userId);
+                if (bankDetails == null || string.IsNullOrWhiteSpace(bankDetails.AccountNumber) || string.IsNullOrWhiteSpace(bankDetails.IFSCCode))
+                    return Tuple.Create(false, "Bank account details are missing or incomplete for this interviewer.");
+
+                // 3. Build a unique transfer id for the retry attempt
+                var transferId = $"RB_{userId}_R_{DateTime.Now:yyyyMMddHHmmss}";
+                if (transferId.Length > 40)
+                    transferId = transferId.Substring(0, 40);
+
+                var mobilenumber = NormalizeMobile(bankDetails.MobileNumber);
+
+                // 4. Call Cashfree
+                var payoutResult = await _cashfreePayoutService.CreatePayoutToBankAsync(
+                    accountName:   bankDetails.AccountName ?? bankDetails.FirstName,
+                    accountNumber: bankDetails.AccountNumber,
+                    ifscCode:      bankDetails.IFSCCode,
+                    email:         bankDetails.InterviewerEmailid ?? email,
+                    phone:         mobilenumber,
+                    amount:        payableAmount,
+                    transferId:    transferId,
+                    remarks:       "Risebird interviewer payout retry");
+
+                if (!payoutResult.Success)
+                    return Tuple.Create(false, payoutResult.ErrorMessage ?? "Cashfree payout retry failed.");
+
+                // 5. Update the existing PaymentHistory row with the new Cashfree transfer references
+                var rowsUpdated = await _meetingRespository.UpdatePaymentHistoryForRetry(
+                    paymentHistoryId,
+                    transferId:    payoutResult.PayoutId,
+                    cfTransferId:  payoutResult.CFPayoutId,
+                    payoutStatus:  payoutResult.Status);
+
+                if (rowsUpdated == 0)
+                    return Tuple.Create(false, $"Payout retry succeeded but failed to update history record. Ref: {payoutResult.PayoutId}");
+
+                return Tuple.Create(true, $"Payment retry initiated via Cashfree. Reference: {payoutResult.PayoutId}");
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Tuple.Create(false, "An unexpected error occurred during payment retry. Please try again.");
             }
         }
 
@@ -3860,11 +4092,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, string year, int month)
+        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, int fromYear, int fromMonth, int toYear, int toMonth)
         {
             try
             {
-                var result = _meetingRespository.FetchRevenueDetails(stdate, endate, year, month);
+                var result = _meetingRespository.FetchRevenueDetails(stdate, endate, fromYear, fromMonth, toYear, toMonth);
                 return result.Result;
             }
             catch (Exception e)

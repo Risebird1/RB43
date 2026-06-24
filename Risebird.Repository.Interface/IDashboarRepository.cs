@@ -89,6 +89,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetCandidatesWhoHaventConfirmed();
         Task<List<PQIDetails>> GetTotalInterviewerRiskIRFDetails(string uniqueid = null, string Email = null);
         Task<IEnumerable<IRFDetailsList>> GetAllSkillChannelsList();
+        Task<IEnumerable<SkillChannelBillingRateVM>> GetSkillChannelBillingRates();
+        Task<bool> SaveSkillChannelBillingRate(int irfId, int billingRate, string createdBy);
         Task<IEnumerable<PQIDetails>> GetClientRemovedInterviewers();
         Task<IEnumerable<PQIDetails>> GetTotalRedMarkeredInterviewers();
         Task<IEnumerable<ToalInterviewerInterviewDetails>> GetTotalInterviews(DateTime startdate, DateTime enddate);

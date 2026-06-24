@@ -1,12 +1,17 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using RestSharp;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Data.PlivoCXModels;
 using Risebird.Entities.ViewModel;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -17,10 +22,11 @@ namespace Risebird.AzureTimerFunctions
     /// Automated prospect onboarding pipeline — runs every 5 minutes.
     /// Processes up to 2 eligible prospects per invocation, advancing each through:
     ///   1. Parse Resume (extract email/phone, duplicate check)
-    ///   2. Select MAG & latest active skill channel
-    ///   3. Trigger Plivo CX recruitment call (async — result via webhook)
-    ///   4. Send invitation email (once call completes with interested disposition)
+    ///   2. Select MAG & generate application link
+    ///   3. Send invitation email (with registration link and response options)
+    ///   4. Trigger Plivo CX recruitment call — only if no email response within 1 hour
     ///
+    /// If the prospect responds to the email (positively or negatively), no call is needed.
     /// Call retry policy: max 2 per day, max 5 total.
     /// After 5 failed attempts the prospect is marked Cold.
     /// </summary>
@@ -34,6 +40,13 @@ namespace Risebird.AzureTimerFunctions
         private readonly INotificationHelper          _notificationHelper;
         private readonly IEncryptionHelper            _encryptionHelper;
         private readonly IApplicationErrorLogger      _errorLogger;
+        // Auto-continue (positive intent → EV → AI fitment → onboarding → acknowledgement) dependencies
+        private readonly IAadhaarService              _aadhaarService;
+        private readonly IAssistantServiceHelper      _assistantServiceHelper;
+        private readonly IInterviewerService          _interviewerService;
+        private readonly IHttpRequestHelper           _httpRequestHelper;
+        private readonly string                       _evApiKey;
+        private readonly string                       _evEndpoint;
         private readonly ILogger                      _log;
 
         private const int MaxCallsPerDay  = 2;
@@ -48,7 +61,11 @@ namespace Risebird.AzureTimerFunctions
             IPlivoCXService             plivoCXService,
             INotificationHelper         notificationHelper,
             IEncryptionHelper           encryptionHelper,
-            IApplicationErrorLogger     errorLogger)
+            IApplicationErrorLogger     errorLogger,
+            IAadhaarService             aadhaarService,
+            IAssistantServiceHelper     assistantServiceHelper,
+            IInterviewerService         interviewerService,
+            IHttpRequestHelper          httpRequestHelper)
         {
             _configuration     = configuration;
             _repository        = repository;
@@ -58,6 +75,12 @@ namespace Risebird.AzureTimerFunctions
             _notificationHelper = notificationHelper;
             _encryptionHelper  = encryptionHelper;
             _errorLogger       = errorLogger;
+            _aadhaarService    = aadhaarService;
+            _assistantServiceHelper = assistantServiceHelper;
+            _interviewerService = interviewerService;
+            _httpRequestHelper = httpRequestHelper;
+            _evApiKey          = _configuration["EmploymentVerfication:apikey"];
+            _evEndpoint        = _configuration["EmploymentVerfication:endPoint"];
             _log = loggerFactory.CreateLogger<ProspectOnboardingAutomationJob>();
         }
 
@@ -68,14 +91,13 @@ namespace Risebird.AzureTimerFunctions
 
             try
             {
-                // Business hours guard: 9 AM – 9 PM IST (UTC+5:30 → UTC 3:30–15:30)
-                var utcNow = DateTime.UtcNow;
-                var istHour = utcNow.AddHours(5).AddMinutes(30).Hour;
-                if (istHour < 9 || istHour >= 21)
-                {
-                    _log.LogInformation($"[OnboardAuto] Outside business hours (IST {istHour}:xx). Skipping.");
-                    return;
-                }
+                // Business-hours (9 AM – 9 PM IST) applies ONLY to prospect-facing communication steps —
+                // the invitation email, the recruitment call, and the onboarding/acknowledgement-email
+                // finalization. Those are guarded individually below via IsWithinBusinessHours().
+                // Non-communication steps (resume parse, MAG resolution, employment verification, AI
+                // résumé fitment) run around the clock, so the job itself is NOT skipped off-hours.
+                var istHour = DateTime.UtcNow.AddHours(5).AddMinutes(30).Hour;
+                _log.LogInformation($"[OnboardAuto] IST hour {istHour}:xx — prospect communications {(IsWithinBusinessHours() ? "ENABLED" : "DEFERRED (off-hours)")}.");
 
                 var prospects = await _repository.GetEligibleProspectsForAutomationAsync(2);
                 if (prospects == null || !prospects.Any())
@@ -112,43 +134,102 @@ namespace Risebird.AzureTimerFunctions
             }
         }
 
+        private static readonly TimeSpan EmailToCallGracePeriod = TimeSpan.FromHours(1);
+
         private async Task ProcessProspectAsync(Entities.ViewModel.NaukriProspectiveInterviewerVM p)
         {
-            _log.LogInformation($"[OnboardAuto] #{p.Id} '{p.CandidateName}' — resume={p.ResumeParseCompleted}, irf={p.SelectedIRFId}, call={p.PlivoCallStatus}, email={p.InvitationEmailSent}");
+            _log.LogInformation($"[OnboardAuto] #{p.Id} '{p.CandidateName}' — resume={p.ResumeParseCompleted}, email={p.InvitationEmailSent}, call={p.PlivoCallStatus}, response={p.ProspectResponse}");
 
             // ── Step 1: Parse Resume ──────────────────────────────────────────────
             if (p.ResumeParseCompleted != true)
             {
-                await _repository.UpdateAutomationStatusAsync(p.Id, "ParsingResume");
-                var parsed = await ParseResumeAsync(p);
-                if (!parsed)
+                if (!string.IsNullOrWhiteSpace(p.ParsedEmail) || !string.IsNullOrWhiteSpace(p.ParsedPhone))
                 {
-                    await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
-                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        "Automation: resume parse failed — manual intervention needed.", "AutomationJob");
-                    return;
+                    _log.LogInformation($"[OnboardAuto] #{p.Id} — email/phone pre-populated by Relay, marking parse complete.");
+                    await _repository.UpdateResumeParseResultAsync(p.Id, p.ParsedEmail, p.ParsedPhone);
+                    p.ResumeParseCompleted = true;
+                    var refreshed0 = await _repository.GetByIdAsync(p.Id);
+                    if (refreshed0 != null)
+                    {
+                        p.IsExistingInterviewer = refreshed0.IsExistingInterviewer;
+                        p.ResolvedAssessmentGroupId = refreshed0.ResolvedAssessmentGroupId;
+                    }
                 }
+                else
+                {
+                    await _repository.UpdateAutomationStatusAsync(p.Id, "ParsingResume");
+                    var parsed = await ParseResumeAsync(p);
+                    if (!parsed)
+                    {
+                        await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
+                        await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                            "Automation: resume parse failed — manual intervention needed.", "AutomationJob");
+                        return;
+                    }
 
-                var refreshed = await _repository.GetByIdAsync(p.Id);
-                if (refreshed == null) return;
+                    var refreshed = await _repository.GetByIdAsync(p.Id);
+                    if (refreshed == null) return;
 
-                p.ParsedEmail = refreshed.ParsedEmail;
-                p.ParsedPhone = refreshed.ParsedPhone;
-                p.IsExistingInterviewer = refreshed.IsExistingInterviewer;
-                p.ResumeParseCompleted = refreshed.ResumeParseCompleted;
-                p.ResolvedAssessmentGroupId = refreshed.ResolvedAssessmentGroupId;
+                    p.ParsedEmail = refreshed.ParsedEmail;
+                    p.ParsedPhone = refreshed.ParsedPhone;
+                    p.IsExistingInterviewer = refreshed.IsExistingInterviewer;
+                    p.ResumeParseCompleted = refreshed.ResumeParseCompleted;
+                    p.ResolvedAssessmentGroupId = refreshed.ResolvedAssessmentGroupId;
+                }
+            }
+            else
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — resume already parsed, skipping Step 1.");
             }
 
+            // ── Funnel: EmailParsed -> PhoneParsed ────────────────────────────────
+            // Only advance when this genuinely moves the prospect forward — the advance SP
+            // unconditionally re-stamps TicketStatus/UpdatedAt, so a blind call each pass would
+            // churn the row (and re-open status) for prospects already deeper in the funnel.
+            if (p.ResumeParseCompleted == true && !string.IsNullOrWhiteSpace(p.ParsedEmail)
+                && !IsTerminalFunnelStage(p.FunnelStage))
+            {
+                string parseTarget = string.IsNullOrWhiteSpace(p.ParsedPhone) ? "EmailParsed" : "PhoneParsed";
+                if (FunnelRank(parseTarget) > FunnelRank(p.FunnelStage))
+                    await _repository.AdvanceFunnelStageAsync(p.Id, parseTarget, "InProgress");
+            }
+
+            // ── Step 1 (gate): Duplicate check — the FIRST funnel stage ───────────
+            // An email can exist only once in UserList (unique constraint), as ANY profile
+            // (interviewer, candidate, etc.). If the prospect's email already exists in the
+            // system they cannot be onboarded again, so they exit the funnel at 'Duplicate'.
+            // The operator still reviews these (AutomationStatus = ManualRequired).
             if (p.IsExistingInterviewer == true)
             {
-                _log.LogInformation($"[OnboardAuto] #{p.Id} — duplicate email, needs manual edit.");
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — duplicate email, exits funnel at 'Duplicate'.");
+                await _repository.SetFunnelOutcomeAsync(p.Id, "Duplicate", "InProgress");
                 await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
-                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                    $"Automation: duplicate email ({p.ParsedEmail}) — operator must edit.", "AutomationJob");
+                await _repository.InsertHistoryAsync(p.Id, "DuplicateDetected", "—",
+                    $"Automation: email ({p.ParsedEmail}) already exists in the system — exits at Duplicate. Operator review required.", "AutomationJob");
                 return;
             }
 
-            // ── Step 2: Resolve MAG & generate application link ────────────────────
+            // ── Step 1.5: Detect self-registration via the MAG link ───────────────
+            // If the prospect completed the MAG application form themselves, an active
+            // UserList entry now exists for their email. This must be reflected in the
+            // funnel as 'Onboarded' (mirrors NaukriOnboardingController.CheckSelfRegistration,
+            // which previously only ran when an operator opened the record). Detecting it
+            // here also prevents the pipeline from calling them again or auto-creating a
+            // duplicate profile.
+            //   • OnboardedUserId == null  → the system has NOT auto-created a profile, so a
+            //     user found by email means the prospect registered themselves.
+            if (await TryReflectSelfRegistrationAsync(p))
+                return;
+
+            // Passed the duplicate screen → advance to 'DuplicateChecked' (only when moving forward).
+            if (p.ResumeParseCompleted == true && !string.IsNullOrWhiteSpace(p.ParsedEmail)
+                && !IsTerminalFunnelStage(p.FunnelStage)
+                && FunnelRank("DuplicateChecked") > FunnelRank(p.FunnelStage))
+            {
+                await _repository.AdvanceFunnelStageAsync(p.Id, "DuplicateChecked", "InProgress");
+            }
+
+            // ── Step 2: Resolve MAG & generate application link ───────────────────
             if (string.IsNullOrWhiteSpace(p.ApplicationLink))
             {
                 await _repository.UpdateAutomationStatusAsync(p.Id, "ResolvingMAG");
@@ -165,93 +246,8 @@ namespace Risebird.AzureTimerFunctions
                 if (refreshed == null) return;
                 p.ApplicationLink = refreshed.ApplicationLink;
                 p.ResolvedAssessmentGroupId = refreshed.ResolvedAssessmentGroupId;
-            }
 
-            // ── Step 3: Recruitment Call ───────────────────────────────────────────
-
-            // Guard: no phone means we can't call — mark for manual handling
-            if (string.IsNullOrWhiteSpace(p.ParsedPhone))
-            {
-                _log.LogInformation($"[OnboardAuto] #{p.Id} — no phone number parsed. Needs manual intervention.");
-                await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
-                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                    "Automation: no phone number found in resume — operator must add manually.", "AutomationJob");
-                return;
-            }
-
-            // If call completed — check disposition
-            if (string.Equals(p.PlivoCallStatus, "completed", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(p.PlivoCallStatus, "answered", StringComparison.OrdinalIgnoreCase))
-            {
-                if (string.Equals(p.PlivoProspectDisposition, "interested", StringComparison.OrdinalIgnoreCase))
-                {
-                    // Fall through to Step 4 — send email
-                }
-                else
-                {
-                    var disp = p.PlivoProspectDisposition ?? "unknown";
-                    _log.LogInformation($"[OnboardAuto] #{p.Id} — call completed with disposition '{disp}'.");
-
-                    bool isUnsubscribe = string.Equals(disp, "unsubscribe", StringComparison.OrdinalIgnoreCase)
-                                      || string.Equals(disp, "not_interested", StringComparison.OrdinalIgnoreCase);
-                    string status = isUnsubscribe ? "Cold" : "ManualRequired";
-                    await _repository.UpdateAutomationStatusAsync(p.Id, status);
-                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        $"Automation: call completed — disposition: {disp}. Marked {status}.", "AutomationJob");
-                    return;
-                }
-            }
-            else if (p.InvitationEmailSent != true)
-            {
-                // Call not yet completed — check if we should (re)trigger
-                bool callInProgress = string.Equals(p.PlivoCallStatus, "initiated", StringComparison.OrdinalIgnoreCase)
-                                   || string.Equals(p.PlivoCallStatus, "triggered", StringComparison.OrdinalIgnoreCase);
-                if (callInProgress)
-                {
-                    _log.LogInformation($"[OnboardAuto] #{p.Id} — call in progress ({p.PlivoCallStatus}). Waiting.");
-                    return;
-                }
-
-                int totalAttempts = p.PlivoCallAttemptsTotal;
-                int todayAttempts = p.PlivoCallAttemptsToday;
-
-                if (totalAttempts >= MaxCallsTotal)
-                {
-                    _log.LogInformation($"[OnboardAuto] #{p.Id} — max total attempts ({MaxCallsTotal}) reached. Marking cold.");
-                    await _repository.UpdateAutomationStatusAsync(p.Id, "Cold");
-                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        $"Automation: {totalAttempts} call attempt(s) exhausted with no completed call. Marked Cold.", "AutomationJob");
-                    return;
-                }
-
-                if (todayAttempts >= MaxCallsPerDay)
-                {
-                    _log.LogInformation($"[OnboardAuto] #{p.Id} — daily limit ({MaxCallsPerDay}) reached. Will retry tomorrow.");
-                    await _repository.UpdateAutomationStatusAsync(p.Id, "AwaitingRetry");
-                    return;
-                }
-
-                // Check call window before triggering
-                if (!IsWithinCallWindow())
-                {
-                    _log.LogInformation($"[OnboardAuto] #{p.Id} — outside 9 AM–9 PM IST. Deferring call.");
-                    return;
-                }
-
-                var callOk = await TriggerCallAsync(p);
-                if (callOk)
-                {
-                    await _repository.UpdateAutomationStatusAsync(p.Id, "CallTriggered", incrementCallAttempt: true);
-                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        $"Automation: call #{totalAttempts + 1} triggered to {p.ParsedPhone}.", "AutomationJob");
-                }
-                else
-                {
-                    await _repository.UpdateAutomationStatusAsync(p.Id, "CallFailed", incrementCallAttempt: true);
-                    await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        "Automation: call trigger failed.", "AutomationJob");
-                }
-                return;
+                await _repository.AdvanceFunnelStageAsync(p.Id, "MAGConfirmed", "InProgress");
             }
 
             // ── Step 3: Send Invitation Email ─────────────────────────────────────
@@ -275,13 +271,21 @@ namespace Risebird.AzureTimerFunctions
                     return;
                 }
 
+                // Communication step — do not email a prospect outside business hours (9 AM–9 PM IST).
+                if (!IsWithinBusinessHours())
+                {
+                    _log.LogInformation($"[OnboardAuto] #{p.Id} — outside business hours. Deferring invitation email until 9 AM–9 PM IST.");
+                    return;
+                }
+
                 await _repository.UpdateAutomationStatusAsync(p.Id, "SendingEmail");
                 var emailOk = await SendInvitationEmailAsync(p);
                 if (emailOk)
                 {
                     await _repository.UpdateAutomationStatusAsync(p.Id, "EmailSent");
+                    await _repository.AdvanceFunnelStageAsync(p.Id, "InterestCollection", "InProgress");
                     await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
-                        $"Automation: invitation email sent to {p.ParsedEmail}.", "AutomationJob");
+                        $"Automation: invitation email sent to {p.ParsedEmail}. Call will be deferred for {EmailToCallGracePeriod.TotalMinutes:0} min to allow prospect to respond.", "AutomationJob");
                 }
                 else
                 {
@@ -289,7 +293,642 @@ namespace Risebird.AzureTimerFunctions
                     await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
                         "Automation: email send failed — manual intervention needed.", "AutomationJob");
                 }
+                return;
             }
+
+            // ── Step 3.5: Positive intent → auto-continue to acknowledgement ───────
+            // Once the prospect's intent is confirmed as 'Interested' (via email reply or AI Plivo
+            // call) and they have NOT self-registered via the MAG link, push them automatically
+            // through EV → AI fitment → onboarding → acknowledgement email. Onboarding only truly
+            // COMPLETES when the interviewer accepts the acknowledgement email (handled in the web app).
+            if (string.Equals(p.Intent, "Interested", StringComparison.OrdinalIgnoreCase)
+                && p.SelfRegistrationCompleted != true
+                && p.OnboardingCompleted != true)
+            {
+                await AutoContinueToAcknowledgementAsync(p);
+                return;
+            }
+
+            // ── Step 4: Recruitment Call (only after email grace period) ───────────
+            // If the prospect already responded to the email, the call is unnecessary.
+            if (HasProspectRespondedToEmail(p))
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — prospect responded to email (response={p.ProspectResponse}, selfReg={p.SelfRegistrationCompleted}). Skipping call.");
+                return;
+            }
+
+            // Invited, no positive intent yet, no response yet, and not yet cold → 'Awaiting Response'.
+            // Only fire while the prospect is genuinely still waiting: never bump a call that already
+            // concluded (handled below) or a prospect that already landed on a terminal outcome
+            // (Duplicate/NotInterested/Unsubscribe/Cold/Onboarded) back into the active funnel — those
+            // stages rank 0, so the forward-only guard alone would happily re-advance them.
+            bool callConcluded = string.Equals(p.PlivoCallStatus, "completed", StringComparison.OrdinalIgnoreCase)
+                              || string.Equals(p.PlivoCallStatus, "answered", StringComparison.OrdinalIgnoreCase);
+            if (!callConcluded
+                && !IsTerminalFunnelStage(p.FunnelStage)
+                && !string.Equals(p.FunnelStage, "InterestCollection", StringComparison.OrdinalIgnoreCase))
+            {
+                await _repository.AdvanceFunnelStageAsync(p.Id, "InterestCollection", "InProgress");
+            }
+
+            // Enforce grace period: wait at least 1 hour after email was sent
+            if (p.InvitationEmailSentAt.HasValue)
+            {
+                var elapsed = DateTime.UtcNow - p.InvitationEmailSentAt.Value;
+                if (elapsed < EmailToCallGracePeriod)
+                {
+                    var remaining = EmailToCallGracePeriod - elapsed;
+                    _log.LogInformation($"[OnboardAuto] #{p.Id} — email sent {elapsed.TotalMinutes:0} min ago. Waiting {remaining.TotalMinutes:0} more min before calling.");
+                    return;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(p.ParsedPhone))
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — no phone number parsed. Needs manual intervention.");
+                await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
+                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                    "Automation: no phone number found in resume — operator must add manually.", "AutomationJob");
+                return;
+            }
+
+            // If call completed — check disposition
+            if (string.Equals(p.PlivoCallStatus, "completed", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(p.PlivoCallStatus, "answered", StringComparison.OrdinalIgnoreCase))
+            {
+                var disp = p.PlivoProspectDisposition ?? "unknown";
+                if (string.Equals(disp, "interested", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Defensive: normally the Plivo hangup webhook stamps Intent='Interested', which is
+                    // caught earlier at Step 3.5. If the webhook didn't sync the unified intent, treat a
+                    // completed 'interested' call as positive and auto-continue to the acknowledgement.
+                    _log.LogInformation($"[OnboardAuto] #{p.Id} — call completed with 'interested' disposition. Auto-continuing to acknowledgement.");
+                    if (!string.Equals(p.Intent, "Interested", StringComparison.OrdinalIgnoreCase))
+                    {
+                        await _repository.SetUnifiedIntentAsync(p.Id, "Interested", "Call", DateTime.UtcNow);
+                        p.Intent = "Interested";
+                    }
+                    await AutoContinueToAcknowledgementAsync(p);
+                }
+                else
+                {
+                    _log.LogInformation($"[OnboardAuto] #{p.Id} — call completed with disposition '{disp}'.");
+
+                    bool isUnsubscribe   = string.Equals(disp, "unsubscribe", StringComparison.OrdinalIgnoreCase);
+                    bool isNotInterested = string.Equals(disp, "not_interested", StringComparison.OrdinalIgnoreCase);
+
+                    if (isUnsubscribe || isNotInterested)
+                    {
+                        // Explicit negative intent on the call → terminal funnel outcome + ticket Closed.
+                        // Drop/Unsubscribe folds into 'NotInterested' for the funnel, but the unified
+                        // Intent keeps 'Unsubscribe' so the profile-deactivation logic still fires.
+                        string intentVal = isUnsubscribe ? "Unsubscribe" : "NotInterested";
+                        await _repository.SetUnifiedIntentAsync(p.Id, intentVal, "Call", DateTime.UtcNow);
+                        await _repository.SetFunnelOutcomeAsync(p.Id, "NotInterested", "Closed");
+                        await _repository.UpdateAutomationStatusAsync(p.Id, "Completed");
+                        await _repository.InsertHistoryAsync(p.Id, "IntentConfirmed", "—",
+                            $"Automation: call completed — disposition '{disp}'. Funnel → Not Interested.", "AutomationJob");
+                    }
+                    else
+                    {
+                        // Ambiguous/other disposition → needs a human to look at it.
+                        await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
+                        await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                            $"Automation: call completed — disposition: {disp}. Marked ManualRequired.", "AutomationJob");
+                    }
+                }
+                return;
+            }
+
+            // Call not yet completed — check if we should (re)trigger
+            bool callInProgress = string.Equals(p.PlivoCallStatus, "initiated", StringComparison.OrdinalIgnoreCase)
+                               || string.Equals(p.PlivoCallStatus, "triggered", StringComparison.OrdinalIgnoreCase);
+            if (callInProgress)
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — call in progress ({p.PlivoCallStatus}). Waiting.");
+                return;
+            }
+
+            int totalAttempts = p.PlivoCallAttemptsTotal;
+            int todayAttempts = p.PlivoCallAttemptsToday;
+
+            if (totalAttempts >= MaxCallsTotal)
+            {
+                // Outreach exhausted (1 invitation email + up to 5 calls) with no response → terminal 'Cold'.
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — max total attempts ({MaxCallsTotal}) reached. Marking Cold.");
+                await _repository.UpdateAutomationStatusAsync(p.Id, "Cold");
+                await _repository.SetFunnelOutcomeAsync(p.Id, "Cold", "Closed");
+                await _repository.InsertHistoryAsync(p.Id, "MarkedCold", "—",
+                    $"Automation: {totalAttempts} call attempt(s) + invitation email exhausted with no response. Funnel → Cold.", "AutomationJob");
+                return;
+            }
+
+            if (todayAttempts >= MaxCallsPerDay)
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — daily limit ({MaxCallsPerDay}) reached. Will retry tomorrow.");
+                await _repository.UpdateAutomationStatusAsync(p.Id, "AwaitingRetry");
+                return;
+            }
+
+            if (!IsWithinCallWindow())
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — outside 9 AM–9 PM IST. Deferring call.");
+                return;
+            }
+
+            var callOk = await TriggerCallAsync(p);
+            if (callOk)
+            {
+                await _repository.UpdateAutomationStatusAsync(p.Id, "CallTriggered", incrementCallAttempt: true);
+                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                    $"Automation: call #{totalAttempts + 1} triggered to {p.ParsedPhone} (no email response after {EmailToCallGracePeriod.TotalMinutes:0} min).", "AutomationJob");
+            }
+            else
+            {
+                await _repository.UpdateAutomationStatusAsync(p.Id, "CallFailed", incrementCallAttempt: true);
+                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                    "Automation: call trigger failed.", "AutomationJob");
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the prospect has taken any action in response to the invitation
+        /// email — self-registration, clicking a response link, or completing onboarding.
+        /// When true, the Plivo call is unnecessary.
+        /// </summary>
+        /// <summary>
+        /// Detects whether the prospect has self-registered via the MAG application link and,
+        /// if so, reflects it in the funnel (stage → 'Onboarded', ticket → 'Closed') and stops
+        /// further automation. Returns true when self-registration was detected and finalized.
+        ///
+        /// "Self-registered" mirrors the operator-facing CheckSelfRegistration definition:
+        /// an active UserList entry exists for the prospect's email that the system did NOT
+        /// auto-create (OnboardedUserId is still null).
+        /// </summary>
+        private async Task<bool> TryReflectSelfRegistrationAsync(NaukriProspectiveInterviewerVM p)
+        {
+            if (p.SelfRegistrationCompleted == true
+                || p.OnboardingCompleted == true
+                || p.OnboardedUserId.HasValue
+                || string.IsNullOrWhiteSpace(p.ParsedEmail))
+                return false;
+
+            var (userId, profileId) = await _repository.FindUserByEmailAsync(p.ParsedEmail);
+            if (!userId.HasValue || userId.Value <= 0)
+                return false;
+
+            await _repository.UpdateSelfRegistrationAsync(p.Id, true, userId.Value, profileId);
+            await _repository.SetOnboardingTypeAsync(p.Id, "SelfOnboarded");
+            await _repository.AdvanceFunnelStageAsync(p.Id, "Onboarded", "Closed");
+            await _repository.UpdateAutomationStatusAsync(p.Id, "Completed");
+            await _repository.InsertHistoryAsync(p.Id, "SelfRegistered", "—",
+                $"Prospect self-registered via MAG link (UserId: {userId.Value}). Funnel advanced to Onboarded.", "AutomationJob");
+
+            _log.LogInformation($"[OnboardAuto] #{p.Id} — detected self-registration (UserId {userId.Value}). Marked Onboarded.");
+            return true;
+        }
+
+        private static bool HasProspectRespondedToEmail(Entities.ViewModel.NaukriProspectiveInterviewerVM p)
+        {
+            if (p.SelfRegistrationCompleted == true)
+                return true;
+
+            if (string.IsNullOrWhiteSpace(p.ProspectResponse))
+                return false;
+
+            return true;
+        }
+
+        // Terminal funnel exits — once a prospect lands on one of these the automation must never
+        // pull them back into the active pipeline (e.g. bumping them to 'AwaitingResponse').
+        private static readonly string[] TerminalFunnelStages =
+            { "Duplicate", "NotInterested", "Unsubscribe", "Cold", "NotQualified", "Onboarded" };
+
+        private static bool IsTerminalFunnelStage(string funnelStage)
+            => !string.IsNullOrWhiteSpace(funnelStage)
+               && TerminalFunnelStages.Contains(funnelStage, StringComparer.OrdinalIgnoreCase);
+
+        // Ordinal rank of the linear happy-path stages — mirrors dbo.fn_NaukriFunnelStageRank.
+        // Terminal exits and New/blank rank 0. Used to keep forward-only advances from re-stamping
+        // the row (and TicketStatus) on every pass for prospects already deeper in the funnel.
+        private static readonly string[] FunnelOrder =
+        {
+            "EmailParsed", "PhoneParsed", "DuplicateChecked", "MAGConfirmed", "InterestCollection",
+            "IntentConfirmed", "EmploymentVerified", "ResumeFitment", "AcknowledgementSent", "Onboarded"
+        };
+
+        private static int FunnelRank(string stage)
+        {
+            if (string.IsNullOrWhiteSpace(stage)) return 0;
+            int idx = Array.FindIndex(FunnelOrder, s => string.Equals(s, stage, StringComparison.OrdinalIgnoreCase));
+            return idx < 0 ? 0 : idx + 1;
+        }
+
+        // ── Auto-continue: positive intent → EV → AI fitment → onboarding → acknowledgement ──
+
+        /// <summary>
+        /// When a prospect's intent is confirmed as 'Interested' (via email reply or AI Plivo call)
+        /// and they have NOT self-registered, automatically advances them through the remaining
+        /// pipeline: Employment Verification → AI Resume Fitment → onboarding (profile + AG/channel
+        /// mapping) → acknowledgement email.
+        ///
+        /// STRICT GATES — auto-onboarding only proceeds when ALL of the following hold; otherwise the
+        /// prospect is routed to manual review ('ManualRequired'):
+        ///   • the prospect is NOT a duplicate/existing interviewer,
+        ///   • Employment Verification PASSES (a non-blacklisted company is found),
+        ///   • the AI resume fitment verdict is POSITIVE,
+        ///   • the resume is readable.
+        ///
+        /// Onboarding only truly COMPLETES once the interviewer ACCEPTS the acknowledgement email
+        /// (handled in InterviewerController.InterviewerAcknowledgementResponse). This method's
+        /// terminal success state is 'AwaitingAcknowledgement'.
+        /// This method is idempotent and resumable: EV / AI / onboarding are skipped if already done.
+        /// </summary>
+        private async Task AutoContinueToAcknowledgementAsync(NaukriProspectiveInterviewerVM p)
+        {
+            // Always operate on the freshest copy — earlier steps in this run (and other touchpoints)
+            // may have updated EV / AI / onboarding flags.
+            var rec = await _repository.GetByIdAsync(p.Id);
+            if (rec == null) return;
+
+            if (rec.OnboardingCompleted == true)
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — already onboarded. Nothing to auto-continue.");
+                return;
+            }
+
+            // Gate (duplicate / existing user): never auto-create a profile for an existing interviewer.
+            if (rec.IsExistingInterviewer == true)
+            {
+                await MarkManualAsync(rec.Id, $"Auto-onboard halted: duplicate/existing interviewer ({rec.ParsedEmail}). Operator must review.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(rec.ParsedEmail))
+            {
+                await MarkManualAsync(rec.Id, "Auto-onboard halted: no parsed email available.");
+                return;
+            }
+
+            // Record the positive 'IntentConfirmed' funnel stage before progressing the pipeline
+            // (forward-only; a no-op if already past it).
+            await _repository.AdvanceFunnelStageAsync(rec.Id, "IntentConfirmed", "InProgress");
+
+            // A resolved assessment group is required to onboard. Try one more MAG resolution if missing.
+            int? agId = rec.ResolvedAssessmentGroupId;
+            if (agId == null || agId <= 0)
+            {
+                var resolved = await ResolveMAGAndGenerateLinkAsync(rec);
+                if (resolved)
+                {
+                    var refreshed = await _repository.GetByIdAsync(rec.Id);
+                    if (refreshed != null) { rec = refreshed; agId = rec.ResolvedAssessmentGroupId; }
+                }
+                if (agId == null || agId <= 0)
+                {
+                    await MarkManualAsync(rec.Id, $"Auto-onboard halted: no assessment group resolved for MAG '{rec.MagName}'.");
+                    return;
+                }
+            }
+
+            _log.LogInformation($"[OnboardAuto] #{p.Id} — positive intent confirmed (source={rec.IntentSource}). Auto-continuing EV → AI → onboard → ack.");
+            await _repository.UpdateAutomationStatusAsync(rec.Id, "AutoOnboarding");
+
+            // ── Gate 1: Employment Verification (must PASS) ──────────────────────────
+            if (rec.EmploymentVerified != true)
+            {
+                var ev = await RunEmploymentVerificationAsync(rec.ParsedEmail, rec.ParsedPhone);
+                await _repository.UpdateEmploymentVerificationAsync(rec.Id, ev.passed, ev.companyName, ev.isEmployed, ev.message);
+                await _repository.InsertHistoryAsync(rec.Id, "EmploymentVerification", "—",
+                    $"Auto-EV — Company: {ev.companyName ?? "N/A"}, Employed: {(ev.isEmployed ? "Yes" : "No")} — {(ev.passed ? "PASSED" : "FAILED")}. {ev.message}", "AutomationJob");
+
+                if (!ev.passed)
+                {
+                    // Employment Verification failed → terminal 'Not Qualified' funnel outcome (ticket Closed).
+                    await _repository.SetFunnelOutcomeAsync(rec.Id, "NotQualified", "Closed");
+                    await _repository.UpdateAutomationStatusAsync(rec.Id, "Completed");
+                    await _repository.InsertHistoryAsync(rec.Id, "NotQualified", "—",
+                        $"Automation: Employment Verification did not pass ({ev.message}). Funnel → Not Qualified.", "AutomationJob");
+                    _log.LogInformation($"[OnboardAuto] #{rec.Id} — EV failed ({ev.message}). Funnel → Not Qualified.");
+                    return;
+                }
+
+                await _repository.AdvanceFunnelStageAsync(rec.Id, "EmploymentVerified", "InProgress");
+                rec.EmploymentVerified = true;
+                rec.EmploymentCompanyName = ev.companyName;
+                rec.EmploymentIsEmployed = ev.isEmployed;
+            }
+
+            // ── Gates 2 & 3: AI Resume Fitment (verdict must be POSITIVE; resume must be readable) ──
+            bool aiPositive;
+            if (rec.ResumeAIAnalysisCompleted == true)
+            {
+                aiPositive = !string.IsNullOrEmpty(rec.AIVerdict) && rec.AIVerdict.ToLower().Contains("yes");
+            }
+            else
+            {
+                var ai = await RunResumeFitmentAsync(rec);
+                if (!ai.readable)
+                {
+                    await MarkManualAsync(rec.Id, "Auto-onboard halted: resume could not be read for AI fitment. Operator must upload a valid resume.");
+                    return;
+                }
+                if (!ai.analysed)
+                {
+                    await MarkManualAsync(rec.Id, "Auto-onboard halted: AI fitment analysis failed. Operator must review.");
+                    return;
+                }
+
+                await _repository.UpdateAIAnalysisAsync(rec.Id, true, ai.analysisJson, ai.verdict, ai.score, ai.positive ? "Verified" : "InProgress");
+                await _repository.InsertHistoryAsync(rec.Id, "ResumeAnalysis", "—",
+                    $"Auto-AI — Verdict: {ai.verdict ?? "N/A"}, Score: {ai.score?.ToString() ?? "N/A"}", "AutomationJob");
+                await _repository.AdvanceFunnelStageAsync(rec.Id, "ResumeFitment", "InProgress");
+                aiPositive = ai.positive;
+            }
+
+            if (!aiPositive)
+            {
+                await MarkManualAsync(rec.Id, "Auto-onboard halted: AI resume fitment verdict is not positive. Operator must review.");
+                return;
+            }
+
+            // ── Onboard + acknowledgement email ──────────────────────────────────────
+            // This finalization sends the acknowledgement email to the prospect, so it is a
+            // communication step gated to business hours (9 AM–9 PM IST). Employment Verification and
+            // AI fitment above have already run and been persisted, so on the next in-hours run this
+            // method resumes here (those gates are skipped) and proceeds to onboard.
+            if (!IsWithinBusinessHours())
+            {
+                _log.LogInformation($"[OnboardAuto] #{rec.Id} — EV & AI fitment complete; deferring onboarding + acknowledgement email until business hours (9 AM–9 PM IST).");
+                await _repository.InsertHistoryAsync(rec.Id, "AutomationNote", "—",
+                    "Automation: EV & AI fitment passed; onboarding + acknowledgement email deferred until business hours (9 AM–9 PM IST).", "AutomationJob");
+                return;
+            }
+
+            await AutoOnboardInterviewerAsync(rec, agId.Value);
+        }
+
+        /// <summary>
+        /// Creates the interviewer profile (mapping to the resolved AG + active channels) and sends the
+        /// MANDATORY acknowledgement email. Onboarding is only marked complete once the interviewer
+        /// accepts that email, so the terminal state here is 'AwaitingAcknowledgement' (ack sent) or
+        /// 'ManualRequired' (profile created but ack email failed / profile creation failed).
+        /// </summary>
+        private async Task AutoOnboardInterviewerAsync(NaukriProspectiveInterviewerVM rec, int agId)
+        {
+            string candidateName = (rec.CandidateName ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(candidateName)) candidateName = "Interviewer";
+            string[] nameParts = candidateName.Split(new[] { ' ' }, 2);
+            string firstName = nameParts[0];
+            string lastName = nameParts.Length > 1 ? nameParts[1] : "";
+            if (firstName.Length < 2) firstName = firstName.PadRight(2, 'x');
+
+            decimal experience = 0;
+            if (!string.IsNullOrWhiteSpace(rec.ExperienceYears))
+            {
+                var numMatch = Regex.Match(rec.ExperienceYears, @"(\d+)");
+                if (numMatch.Success) decimal.TryParse(numMatch.Value, out experience);
+            }
+
+            string phone = rec.ParsedPhone ?? "";
+            if (phone.Length > 0 && phone.Length < 10) phone = phone.PadRight(10, '0');
+
+            var portalBase = _configuration["ApplicationUrl"] ?? "https://portal.risebird.io";
+
+            var profileVM = new InterviewerProfileVM
+            {
+                EmailId = rec.ParsedEmail.Trim().ToLower(),
+                FirstName = firstName,
+                LastName = lastName,
+                MobileNumber = phone,
+                Country = "26",
+                City = rec.Location ?? "",
+                Experience = experience,
+                CurrentRole = rec.CurrentRole ?? "",
+                ResumeLink = rec.ResumeLink ?? "",
+                Gender = "Male",
+                AssessmentGroupId = agId.ToString(),
+                AssessmentGroupArray = new[] { agId.ToString() },
+                PreviousAssessmentGroupArray = new string[0],
+                AssessmentGroupDifference = agId.ToString(),
+                RemovedAssessmentGroups = "",
+                PrimarySpecializationForAcknowledgement = rec.AssessmentGroupName ?? rec.MagName ?? "",
+                IsActive = true,
+                Isavailable = 1,
+                CompanyName = rec.EmploymentCompanyName ?? "",
+                IsEmployed = rec.EmploymentIsEmployed == true,
+                ResourceUrl = $"{portalBase}/NaukriOnboarding/Index"
+            };
+
+            bool addResult;
+            string assessmentGroupList = null;
+            int userId = 0;
+            string uniqueid = null;
+            try
+            {
+                addResult = _interviewerService.AddInterviewerProfile(
+                    profileVM, "AutomationJob",
+                    out assessmentGroupList, out userId, out uniqueid);
+            }
+            catch (Exception svcEx)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, svcEx);
+                await MarkManualAsync(rec.Id, $"Auto-onboard halted: failed to create interviewer profile ({svcEx.Message}).");
+                return;
+            }
+
+            if (!addResult || userId <= 0)
+            {
+                string detail = !string.IsNullOrEmpty(assessmentGroupList)
+                    ? $"AG capacity issue: {assessmentGroupList}"
+                    : (_interviewerService.LastAddProfileException?.Message ?? "Unknown reason");
+                await MarkManualAsync(rec.Id, $"Auto-onboard halted: profile creation failed. Reason: {detail} [Email: {profileVM.EmailId}, AG: {agId}].");
+                return;
+            }
+
+            int? profileId = await _repository.GetInterviewerProfileIdByUserIdAsync(userId);
+
+            bool ackSent = false;
+            try
+            {
+                string yesButton  = $"{portalBase}/Interviewer/InterviewerAcknowledgementResponse?status=1&user={userId}";
+                string dropButton = $"{portalBase}/Interviewer/InterviewerAcknowledgementResponse?status=4&user={userId}";
+                string agNames    = rec.AssessmentGroupName ?? rec.MagName ?? "";
+
+                await _notificationHelper.SendAcknowledgementEmailToInterviewer(
+                    rec.ParsedEmail, rec.CandidateName ?? firstName,
+                    yesButton, dropButton, agNames,
+                    rec.AssessmentGroupName ?? rec.MagName ?? "",
+                    uniqueid ?? "");
+
+                ackSent = true;
+            }
+            catch (Exception ackEx)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ackEx);
+            }
+
+            await _repository.UpdateOnboardingResultAsync(rec.Id, userId, profileId, agId, ackSent);
+            await _repository.SetOnboardingTypeAsync(rec.Id, "IntentAutoProcessed");
+
+            if (ackSent)
+            {
+                // Mandatory acknowledgement stage. Onboarding completes only when the interviewer
+                // accepts the email (status=1) — handled in InterviewerAcknowledgementResponse.
+                await _repository.AdvanceFunnelStageAsync(rec.Id, "AcknowledgementSent", "InProgress");
+                await _repository.UpdateAutomationStatusAsync(rec.Id, "AwaitingAcknowledgement");
+                await _repository.InsertHistoryAsync(rec.Id, "AcknowledgementSent", "—",
+                    $"Automation: profile created (UserId {userId}, AG {agId}, Type IntentAutoProcessed) and acknowledgement email sent. Awaiting interviewer's acceptance to complete onboarding.", "AutomationJob");
+                _log.LogInformation($"[OnboardAuto] #{rec.Id} — auto-onboarded UserId {userId}; acknowledgement email sent. Awaiting acceptance.");
+            }
+            else
+            {
+                await _repository.AdvanceFunnelStageAsync(rec.Id, "ResumeFitment", "InProgress");
+                await _repository.UpdateAutomationStatusAsync(rec.Id, "ManualRequired");
+                await _repository.InsertHistoryAsync(rec.Id, "AcknowledgementPending", "—",
+                    $"Automation: profile created (UserId {userId}, AG {agId}) but acknowledgement email FAILED. Operator must use Resend.", "AutomationJob");
+                _log.LogWarning($"[OnboardAuto] #{rec.Id} — auto-onboarded UserId {userId} but acknowledgement email FAILED. Marked ManualRequired.");
+            }
+        }
+
+        /// <summary>
+        /// Performs Employment Verification server-side: first reuses any cached result for the mobile
+        /// number, otherwise calls Signzy. EV PASSES only when a non-blacklisted employer/company is found
+        /// AND the prospect is currently employed there. Every other outcome — verification could not run
+        /// (no phone / not configured / API error / no records), blacklisted company, or isEmployed = false
+        /// (exit marked) — returns passed = false, which routes the prospect to the terminal 'Not Qualified'
+        /// funnel stage.
+        /// </summary>
+        private async Task<(bool passed, string companyName, bool isEmployed, string message)>
+            RunEmploymentVerificationAsync(string email, string mobile)
+        {
+            if (string.IsNullOrWhiteSpace(mobile))
+                return (false, null, false, "No phone number available for employment verification.");
+
+            // Signzy's EV API rejects numbers carrying a country code (e.g. "+91"), so strip it
+            // up front — this also keeps the cache lookup consistent with the bare number.
+            mobile = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(mobile);
+
+            try
+            {
+                // 1) Reuse a cached EV result if present for this number.
+                var cached = await _aadhaarService.GetEmployementDetailsByMobileNumber(mobile);
+                if (cached != null && (!string.IsNullOrWhiteSpace(cached.CompanyName) || cached.isVerified))
+                {
+                    string company = cached.CompanyName;
+                    bool blacklisted = !string.IsNullOrWhiteSpace(company)
+                                       && (await _aadhaarService.CheckCompanyStatus(company)) != null;
+                    bool hasEmployer = !string.IsNullOrWhiteSpace(company) && !blacklisted;
+                    // EV qualifies ONLY when a non-blacklisted employer is found AND the prospect is
+                    // currently employed there. Otherwise → Not Qualified.
+                    bool passed = hasEmployer && cached.Isemployed;
+                    string msg = blacklisted     ? "Company is blacklisted in our system."
+                               : !hasEmployer    ? (cached.message ?? "No employment records found.")
+                               : !cached.Isemployed ? "Prospect is not currently employed (exit marked)."
+                               :                    "Verified (cached employment record).";
+                    return (passed, company, cached.Isemployed, msg);
+                }
+
+                // 2) No cached record — call Signzy.
+                if (string.IsNullOrWhiteSpace(_evEndpoint) || string.IsNullOrWhiteSpace(_evApiKey))
+                    return (false, null, false, "Employment verification is not configured.");
+
+                var mobiledata = new SignzyEmployeeRequest { mobileNumber = mobile, CandidateEmail = email, panNumber = "" };
+                var headers = new Dictionary<string, string>
+                {
+                    { "Content-Type", "application/json" },
+                    { "Authorization", _evApiKey }
+                };
+
+                var response = await _httpRequestHelper.MakeHttpRequest(_evEndpoint, Method.Post, mobiledata, headers);
+                var resultset = JsonConvert.DeserializeObject<SignzyEVResponseResult>(response.Content);
+                var conv = resultset?.result?.result;
+
+                if (conv == null)
+                {
+                    string err = resultset?.error?.message ?? resultset?.message ?? "No employment records found.";
+                    return (false, null, false, err);
+                }
+
+                string companyName = conv.summary?.recentEmployerData?.establishmentName;
+                bool isEmployed = conv.summary != null && !conv.summary.dateOfExitMarked;
+
+                if (string.IsNullOrWhiteSpace(companyName))
+                    return (false, companyName, isEmployed, "No employment records found.");
+
+                bool isBlacklisted = (await _aadhaarService.CheckCompanyStatus(companyName)) != null;
+                if (isBlacklisted)
+                    return (false, companyName, isEmployed, "Company is blacklisted in our system.");
+
+                // A company was found, but if the prospect has exited (not currently employed) → Not Qualified.
+                if (!isEmployed)
+                    return (false, companyName, isEmployed, "Prospect is not currently employed (exit marked).");
+
+                return (true, companyName, isEmployed, "Verified via Signzy.");
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (false, null, false, $"Employment verification error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Reads the resume text and runs the OpenAI fitment analysis for the prospect's specialization.
+        /// Returns whether the resume was readable, whether analysis succeeded, the verdict/score, and
+        /// whether the verdict is positive (verdict contains "yes" — includes "conditional yes").
+        /// </summary>
+        private async Task<(bool analysed, bool positive, string verdict, int? score, string analysisJson, bool readable)>
+            RunResumeFitmentAsync(NaukriProspectiveInterviewerVM rec)
+        {
+            string resumeUrl = rec.ResumeLink;
+            if (string.IsNullOrWhiteSpace(resumeUrl))
+                return (false, false, null, null, null, false);
+
+            string resumeText = null;
+            try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
+            catch { }
+
+            if (string.IsNullOrWhiteSpace(resumeText))
+            {
+                try
+                {
+                    string converted = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
+                    if (!string.IsNullOrWhiteSpace(converted))
+                        resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(converted);
+                }
+                catch { }
+            }
+
+            if (string.IsNullOrWhiteSpace(resumeText))
+                return (false, false, null, null, null, false);
+
+            try
+            {
+                string specialization = rec.AssessmentGroupName ?? rec.MagName ?? rec.KeySkills ?? "General";
+                var aiResponse = await _assistantServiceHelper.GenerateResumeAnalysis(resumeText, specialization);
+                var analysisJson = aiResponse?.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value;
+                if (string.IsNullOrWhiteSpace(analysisJson))
+                    return (false, false, null, null, null, true);
+
+                var analysis = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(analysisJson);
+                bool positive = analysis != null
+                    && !string.IsNullOrEmpty(analysis.verdict)
+                    && analysis.verdict.ToLower().Contains("yes");
+                return (true, positive, analysis?.verdict, analysis?.fitmentScore, analysisJson, true);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (false, false, null, null, null, true);
+            }
+        }
+
+        private async Task MarkManualAsync(int id, string note)
+        {
+            await _repository.UpdateAutomationStatusAsync(id, "ManualRequired");
+            await _repository.InsertHistoryAsync(id, "AutomationNote", "—", note, "AutomationJob");
+            _log.LogInformation($"[OnboardAuto] #{id} — {note}");
         }
 
         // ── Pipeline step implementations ─────────────────────────────────────────
@@ -416,11 +1055,17 @@ namespace Risebird.AzureTimerFunctions
             }
         }
 
-        private static bool IsWithinCallWindow()
+        /// <summary>
+        /// Business hours for all prospect-facing communication (emails &amp; calls): 9 AM–9 PM IST.
+        /// Non-communication pipeline steps ignore this window.
+        /// </summary>
+        private static bool IsWithinBusinessHours()
         {
             var ist = DateTime.UtcNow.AddHours(5).AddMinutes(30);
             return ist.Hour >= 9 && ist.Hour < 21;
         }
+
+        private static bool IsWithinCallWindow() => IsWithinBusinessHours();
 
         private async Task<bool> TriggerCallAsync(Entities.ViewModel.NaukriProspectiveInterviewerVM p)
         {

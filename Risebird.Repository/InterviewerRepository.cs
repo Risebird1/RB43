@@ -442,6 +442,7 @@ namespace Risebird.Repository
             parameters.Add("@LinkedinLink", entity.LinkedinLink);
             parameters.Add("@Blog", entity.Blog);
             parameters.Add("@IsActive", entity.IsActive);
+            parameters.Add("@IsInterviewerAccess", entity.IsInterviewerAccess);
             parameters.Add("@IsApproved", entity.IsApproved);
             parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
             if (entity.AssessmentGroupArray != null)
@@ -471,6 +472,8 @@ namespace Risebird.Repository
             parameters.Add("@outputUserId", dbType: DbType.Int32, direction: ParameterDirection.Output, size: 5215585);
             parameters.Add("@uniqueid", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
             parameters.Add("@IsInsertOperation", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+            parameters.Add("@IsHoldPayment", entity.IsHoldPayment);
+            parameters.Add("@HoldPaymentReason", entity.HoldPaymentReason);
 
             return parameters;
         }
@@ -1086,11 +1089,81 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> SaveBankVerificationAsync(
+            int interviewerProfileId,
+            TransInterviewerAccDetails accountDetails,
+            CashfreeBankVerificationResult verificationResult)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewerProfileId", interviewerProfileId);
+                parameters.Add("@AccountName", accountDetails?.AccountName);
+                parameters.Add("@AccountNumber", BankAccountVerificationHelper.NormalizeAccountNumber(accountDetails?.AccountNumber));
+                parameters.Add("@IFSCCode", BankAccountVerificationHelper.NormalizeIfsc(accountDetails?.IFSCCode));
+                parameters.Add("@IsBankVerified", verificationResult?.IsValid == true);
+                parameters.Add("@VerifiedOn", verificationResult?.IsValid == true ? DateTime.UtcNow : (DateTime?)null);
+                parameters.Add("@VerifiedAccountNumber", BankAccountVerificationHelper.NormalizeAccountNumber(accountDetails?.AccountNumber));
+                parameters.Add("@VerifiedIFSCCode", BankAccountVerificationHelper.NormalizeIfsc(accountDetails?.IFSCCode));
+                parameters.Add("@VerifiedAccountName", BankAccountVerificationHelper.NormalizeName(accountDetails?.AccountName));
+                parameters.Add("@NameAtBank", verificationResult?.NameAtBank);
+                parameters.Add("@CashfreeReferenceId", verificationResult?.ReferenceId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_SaveInterviewerBankVerification", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+                return true;
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        private static void AddBankVerificationParameters(
+            DynamicParameters paramsAccount,
+            TransInterviewerAccDetails previous,
+            TransInterviewerAccDetails current)
+        {
+            var preserveVerification = previous?.IsBankVerified == true
+                && !BankAccountVerificationHelper.CoreBankDetailsChanged(previous, current);
+
+            if (preserveVerification)
+            {
+                paramsAccount.Add("@IsBankVerified", true);
+                paramsAccount.Add("@VerifiedOn", previous.VerifiedOn);
+                paramsAccount.Add("@VerifiedAccountNumber", previous.VerifiedAccountNumber);
+                paramsAccount.Add("@VerifiedIFSCCode", previous.VerifiedIFSCCode);
+                paramsAccount.Add("@VerifiedAccountName", previous.VerifiedAccountName);
+                paramsAccount.Add("@NameAtBank", previous.NameAtBank);
+                paramsAccount.Add("@CashfreeReferenceId", previous.CashfreeReferenceId);
+            }
+            else
+            {
+                paramsAccount.Add("@IsBankVerified", false);
+                paramsAccount.Add("@VerifiedOn", null);
+                paramsAccount.Add("@VerifiedAccountNumber", null);
+                paramsAccount.Add("@VerifiedIFSCCode", null);
+                paramsAccount.Add("@VerifiedAccountName", null);
+                paramsAccount.Add("@NameAtBank", null);
+                paramsAccount.Add("@CashfreeReferenceId", null);
+            }
+        }
+
         #region Interviewer My Profile Repository function
         public async Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile)
         {
             try
             {
+                var previousAccDetails = await GetAccDetailsList(interviewerProfile.id);
 
                 // In this case, Only passing the required parameters to fil in the tables
                 var parameters = new DynamicParameters();
@@ -1139,6 +1212,10 @@ namespace Risebird.Repository
                 paramsAccount.Add("@IFSCCode", interviewerProfile.InterviewerAccDetails.IFSCCode);
                 paramsAccount.Add("@UPIId", interviewerProfile.InterviewerAccDetails.UPIId);
                 paramsAccount.Add("@PAN", interviewerProfile.InterviewerAccDetails.PAN);
+                AddBankVerificationParameters(
+                    paramsAccount,
+                    previousAccDetails,
+                    interviewerProfile.InterviewerAccDetails);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -2135,6 +2212,31 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<RBInterviewerPayoutDetails> GetInterviewerBankDetailsByUserId(int userId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserId", userId);
+                    var result = await SqlMapper.QueryAsync<RBInterviewerPayoutDetails>(con, "usp_GetInterviewerBankDetailsByUserId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
         public async Task<List<TransInterviewerAvailability>> fetchAvailDetails(int interviewerid)
         {
@@ -2972,6 +3074,38 @@ namespace Risebird.Repository
 
         }
 
+        public async Task<bool> IsSmeAssignedToIrfAsync(string loggedInUser, int irfId)
+        {
+            if (string.IsNullOrWhiteSpace(loggedInUser) || irfId <= 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    const string sql = @"
+SELECT CAST(CASE WHEN EXISTS (
+    SELECT 1
+    FROM dbo.SkillChannelSMEs scs
+    INNER JOIN dbo.InterviewerProfile ip ON ip.id = scs.InterviewerProfileId
+    INNER JOIN dbo.UserList ul ON ul.id = ip.UserId
+    WHERE LOWER(LTRIM(RTRIM(ul.EmailId))) = LOWER(LTRIM(RTRIM(@emailID)))
+      AND scs.IRFId = @irfId
+      AND (scs.IsDeleted IS NULL OR scs.IsDeleted = 0)
+) THEN 1 ELSE 0 END AS BIT)";
+
+                    return await SqlMapper.QuerySingleAsync<bool>(con, sql, new { emailID = loggedInUser.Trim(), irfId });
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
 
         public async Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList()
@@ -3014,7 +3148,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive, bool? IsBlocked)
+        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked)
         {
             try
             {
@@ -3022,13 +3156,13 @@ namespace Risebird.Repository
                 {
                     if (IsBlocked == true)
                     {
-                        IsActive = false;
+                        IsInterviewerAccess = false;
                     }
                     var parameters = new DynamicParameters();
                     parameters.Add("@Emailid", Emailid);
                     parameters.Add("@LeadInterviewer", LeadInterviewer);
                     parameters.Add("@IsApproved", IsApproved);
-                    parameters.Add("@IsActive", IsActive);
+                    parameters.Add("@IsInterviewerAccess", IsInterviewerAccess);
                     parameters.Add("@IsBlocked", IsBlocked);
                     var results = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerFlags", parameters,
                            commandType: CommandType.StoredProcedure);
@@ -3320,9 +3454,9 @@ namespace Risebird.Repository
                     parameters.Add("@CodedResumeLink", model.CodedResumeLink);
                     parameters.Add("@IsResumeRedactAttempted", model.IsResumeRedactAttempted);
                     parameters.Add("@IsResumeRedactFailed", model.IsResumeRedactFailed);
-                    var results = await SqlMapper.QueryAsync(con, "usp_SaveInterviewerCodedResume", parameters,
+                    var rows = await con.ExecuteAsync("usp_SaveInterviewerCodedResume", parameters,
                            commandType: CommandType.StoredProcedure);
-                    return true;
+                    return rows > 0;
                 }
             }
             catch (SqlException ex)
@@ -3468,7 +3602,7 @@ namespace Risebird.Repository
             catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                
+
                 // Extract user-friendly error message from SQL exception
                 string errorMessage = ExtractUserFriendlyErrorMessage(ex.Message);
                 return SaveOperationResult.FailureResult(errorMessage);
@@ -3514,13 +3648,13 @@ namespace Risebird.Repository
             {
                 var startIndex = sqlErrorMessage.IndexOf("Error in usp_SaveInterviewerPreOnboardingVerdictV2:") + "Error in usp_SaveInterviewerPreOnboardingVerdictV2:".Length;
                 var errorPart = sqlErrorMessage.Substring(startIndex).Trim();
-                
+
                 // Remove metadata after the pipe symbol
                 if (errorPart.Contains(" | "))
                 {
                     errorPart = errorPart.Substring(0, errorPart.IndexOf(" | ")).Trim();
                 }
-                
+
                 return string.IsNullOrEmpty(errorPart) ? "Failed to save verdict." : errorPart;
             }
 
@@ -3578,13 +3712,14 @@ namespace Risebird.Repository
         //    }
         //    return false;
         //}
-        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId)
+        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId, bool activateChannels = true)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@status", status);
                 dynamicParameters.Add("@userId", userId);
+                dynamicParameters.Add("@ActivateChannels", activateChannels);
                 //dynamicParameters.Add("@targetIrf", targetIrf);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -3663,12 +3798,12 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
                     new Exception($"SQL Exception in AddTargetSkillChannelToInterviewerPreOnboarding for UserId: {userId}, TargetIrfId: {targetIrfId}. SQL Error: {ex.Message}, Number: {ex.Number}, State: {ex.State}", ex));
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
                     new Exception($"Exception in AddTargetSkillChannelToInterviewerPreOnboarding for UserId: {userId}, TargetIrfId: {targetIrfId}", ex));
             }
             return false;
@@ -4083,7 +4218,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser)
+        public async Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser, bool preserveAvailability = false, bool? isAvailable = null)
         {
             try
             {
@@ -4095,6 +4230,8 @@ namespace Risebird.Repository
                     parameters.Add("@timeNow", DateTime.Now);
                     parameters.Add("@irfId", irfId);
                     parameters.Add("@PerformedBy", loggedInUser);
+                    parameters.Add("@preserveAvailability", preserveAvailability);
+                    parameters.Add("@IsAvailable", isAvailable);
                     var results = await SqlMapper.QueryAsync(con, "usp_UpdateIRFInterviewerActiveStatus", parameters,
                            commandType: CommandType.StoredProcedure);
                     return true;
@@ -4205,7 +4342,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer)
+        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer, string inactivationType = null)
         {
             try
             {
@@ -4215,9 +4352,30 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@modifiedOn", DateTime.Now);
                 dynamicParameters.Add("@comment", comment);
                 dynamicParameters.Add("@blockinterviewer", blockinterviewer);
+                dynamicParameters.Add("@InactivationType", string.IsNullOrWhiteSpace(inactivationType) ? null : inactivationType);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "usp_InactivateInterviewer", dynamicParameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> ReactivateInterviewer(int userId, string reactivatedBy)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@UserId", userId);
+                dynamicParameters.Add("@ReactivatedBy", reactivatedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_ReactivateInterviewer", dynamicParameters, commandType: CommandType.StoredProcedure);
                     return true;
                 }
             }
@@ -4333,6 +4491,28 @@ namespace Risebird.Repository
                 {
                     return await SqlMapper.QueryAsync<Risebird.Entities.Data.InterviewerTrainingChecklist>(
                         con, "usp_GetInterviewerTrainingChecklist", parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<InterviewerProfileVM>> GetHoldPaymentInterviewers()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<InterviewerProfileVM>(
+                        con, "usp_GetHoldPaymentInterviewers", null, commandType: CommandType.StoredProcedure);
                 }
             }
             catch (SqlException ex)

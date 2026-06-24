@@ -1,0 +1,453 @@
+@model Risebird.Entities.ViewModel.InvoiceDetailVM
+@using System.Globalization
+@{
+    ViewData["Title"] = "View Invoice";
+    ViewBag.PageHeader = "View Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var months = new[] { "", "January", "February", "March", "April", "May", "June",
+                         "July", "August", "September", "October", "November", "December" };
+    var periodLabel = (Model.InvoiceMonth >= 1 && Model.InvoiceMonth <= 12
+                        ? months[Model.InvoiceMonth] : Model.InvoiceMonth.ToString())
+                      + " " + Model.InvoiceYear;
+}
+
+<link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .vi-card           { background:#fff; border-radius:8px; padding:24px; box-shadow:0 1px 4px rgba(0,0,0,.10); margin-bottom:16px; }
+    .vi-section-title  { font-size:13px; font-weight:700; color:#5c6bc0; letter-spacing:.5px; text-transform:uppercase; margin-bottom:14px; border-bottom:2px solid #e8eaf6; padding-bottom:6px; }
+    .vi-label          { font-size:12px; font-weight:600; color:#555; margin-bottom:4px; }
+    .auto-field        { background:#f5f7fa !important; color:#333; }
+    .editable-field    { background:#fffde7 !important; border:1px solid #ffe082; }
+    .totals-table td   { padding:6px 12px; font-size:14px; }
+    .totals-table .label-col  { color:#666; width:60%; text-align:right; padding-right:20px; }
+    .totals-table .val-col    { font-weight:600; text-align:right; min-width:130px; }
+    .invoice-value-row td     { font-size:16px; font-weight:700; color:#1a237e; border-top:2px solid #c5cae9; border-bottom:2px solid #c5cae9; }
+    .line-items-table th      { background:#e8eaf6; font-size:12px; font-weight:700; }
+    .line-items-table td, .line-items-table th { vertical-align:middle; }
+    .tag-edit { font-size:10px; color:#999; font-style:italic; margin-left:4px; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <div class="mobile-view"><h4 class="card-title">View Invoice</h4></div>
+                    <label style="font-weight:700; font-size:14px; color:#3949ab;">
+                        @Model.InvoiceNumber &nbsp;|&nbsp; @Model.ClientName &nbsp;|&nbsp; @periodLabel
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert @(ViewBag.Message.ToString().StartsWith("Success") ? "alert-success" : "alert-danger")" style="margin:10px 15px;">
+            @ViewBag.Message
+        </div>
+    }
+    <div id="divSaveMsg" class="alert" style="display:none; margin:10px 15px;"></div>
+
+    <div class="content">
+
+        <!-- ── Section 1: Invoice Summary (read-only) ── -->
+        <div class="vi-card">
+            <div class="vi-section-title">Invoice Summary</div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="vi-label">Client</label>
+                    <input type="text" class="form-control auto-field" value="@Model.ClientName" readonly />
+                </div>
+                <div class="col-md-4">
+                    <label class="vi-label">Invoice Number</label>
+                    <input type="text" class="form-control auto-field" value="@Model.InvoiceNumber" readonly />
+                </div>
+                <div class="col-md-4">
+                    <label class="vi-label">Period</label>
+                    <input type="text" class="form-control auto-field" value="@periodLabel" readonly />
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="vi-label">Billing Owner</label>
+                    <input type="text" class="form-control auto-field"
+                           value="@(Model.BillingType == 1 ? Model.BillingOwnerEmail : "Client")" readonly />
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="vi-label">Created By</label>
+                    <input type="text" class="form-control auto-field" value="@Model.CreatedBy" readonly />
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="vi-label">Created On</label>
+                    <input type="text" class="form-control auto-field"
+                           value="@Model.CreatedOn?.ToString("dd MMM yyyy")" readonly />
+                </div>
+                @if (Model.BillingModel != (int)Risebird.Entities.Enum.BillingModelEnum.M1 && Model.BillingModel != 0 && !string.IsNullOrEmpty(Model.UTRTrxn))
+                {
+                    <div class="col-md-4 mt-3">
+                        <label class="vi-label">UTR / Trxn No.</label>
+                        <input type="text" class="form-control auto-field" value="@Model.UTRTrxn" readonly />
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- ── Section 2: Editable Fields ── -->
+        <div class="vi-card">
+            <div class="vi-section-title">Update Details</div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="vi-label">GST Number <span class="tag-edit">(editable)</span></label>
+                    <input type="text" id="editGSTNumber" class="form-control editable-field"
+                           value="@Model.GSTNumber" placeholder="GST Number" />
+                </div>
+                <div class="col-md-4">
+                    <label class="vi-label">Credit Period <span class="tag-edit">(editable)</span></label>
+                    <input type="text" id="editCreditPeriod" class="form-control editable-field"
+                           value="@Model.CreditPeriod" placeholder="e.g. 30 Days" />
+                </div>
+                <div class="col-md-4">
+                    <label class="vi-label">IRN <span class="tag-edit">(editable)</span></label>
+                    <input type="text" id="editIRN" class="form-control editable-field"
+                           value="@Model.IRN" placeholder="IRN" />
+                    <div style="margin-top:8px;">
+                        <label class="vi-label">e-Invoice File <span style="font-weight:400;color:#888;">(PDF / Word)</span></label>
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;">
+                            <label class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:11px;cursor:pointer;margin:0;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:4px;"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+                                Upload e-Invoice
+                                <input type="file" id="fileEInvoiceView" accept=".pdf,.doc,.docx" style="display:none;" onchange="uploadEInvoiceFileView(this)" />
+                            </label>
+                            <span id="spnEInvoiceViewStatus" style="font-size:12px;color:#555;"></span>
+                        </div>
+                        <input type="hidden" id="hidEInvoiceFileLinkView" value="@Model.EInvoiceFileLink" />
+                        <div id="divEInvoiceLinkView" style="margin-top:5px;@(string.IsNullOrEmpty(Model.EInvoiceFileLink) ? "display:none;" : "")">
+                            <a id="lnkEInvoiceFileView" href="@Model.EInvoiceFileLink" target="_blank" style="font-size:12px;color:#1976d2;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:3px;"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
+                                View Uploaded File
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="vi-label">Latest Remark <span class="tag-edit">(editable)</span></label>
+                    <input type="text" id="editLatestRemark" class="form-control editable-field"
+                           value="@Model.LatestRemark" placeholder="Add remark" maxlength="500" />
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="vi-label">Tax Scenario <span class="tag-edit">(editable)</span></label>
+                    <select id="editTaxScenario" class="form-control editable-field">
+                        @if (Model.TaxScenario == 0) { <option value="0" selected="selected">Non-GST (0%)</option> } else { <option value="0">Non-GST (0%)</option> }
+                        @if (Model.TaxScenario == 1) { <option value="1" selected="selected">GST 18%</option> } else { <option value="1">GST 18%</option> }
+                    </select>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label class="vi-label">Status <span class="tag-edit">(editable)</span></label>
+                    <select id="editStatus" class="form-control editable-field">
+                        @if (Model.Status == 0) { <option value="0" selected="selected">Draft</option> } else { <option value="0">Draft</option> }
+                        @if (Model.Status == 1) { <option value="1" selected="selected">Generated</option> } else { <option value="1">Generated</option> }
+                        @if (Model.Status == 2) { <option value="2" selected="selected">PO Pending</option> } else { <option value="2">PO Pending</option> }
+                        @if (Model.Status == 3) { <option value="3" selected="selected">Approval Pending</option> } else { <option value="3">Approval Pending</option> }
+                        @if (Model.Status == 4) { <option value="4" selected="selected">Invoice Realisation Pending</option> } else { <option value="4">Invoice Realisation Pending</option> }
+                        @if (Model.Status == 5) { <option value="5" selected="selected">Paid</option> } else { <option value="5">Paid</option> }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Section 2b: Cash Credit Info (non-M1, visible only when Paid) ── -->
+        @if (Model.BillingModel != (int)Risebird.Entities.Enum.BillingModelEnum.M1 && Model.BillingModel != 0)
+        {
+            <div class="vi-card" id="cashCreditSection" style="display:@(Model.Status == 5 ? "block" : "none"); border-left:4px solid #43a047;">
+                <div class="vi-section-title" style="color:#2e7d32;">Cash Credit Information</div>
+                @if (Model.Status == 5)
+                {
+                    <div class="alert alert-success" style="font-size:12px;padding:8px 12px;margin-top:-8px;margin-bottom:14px;">
+                        <strong>Payment already recorded.</strong> The transaction reference below was saved when this invoice was marked Paid.
+                        You may update the details and re-save if needed (entering an amount will add a new wallet credit entry).
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted" style="font-size:12px;margin-top:-8px;margin-bottom:14px;">
+                        This invoice will be marked <strong>Paid</strong>. Enter the cash credit details to post the received amount into the client wallet.
+                    </p>
+                }
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="vi-label">Invoice Base Amount (&#8377;)</label>
+                        <input type="text" class="form-control auto-field"
+                               value="@((Model.InvoiceBaseAmount > 0 ? Model.InvoiceBaseAmount : Model.Subtotal).ToString("N2", System.Globalization.CultureInfo.InvariantCulture))" readonly />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="vi-label">Net Receivable Amount (&#8377;)</label>
+                        <input type="text" class="form-control auto-field"
+                               value="@((Model.NetReceivableAmount > 0 ? Model.NetReceivableAmount : Model.NetReceivable).ToString("N2", System.Globalization.CultureInfo.InvariantCulture))" readonly />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="vi-label">Credit Amount (&#8377;) <span class="tag-edit">(reference)</span></label>
+                        <input type="number" id="cashCreditAmount" class="form-control editable-field"
+                               min="0" placeholder="Actual amount received (optional)"
+                               value="@(Model.CashCreditAmount > 0 ? Model.CashCreditAmount.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) : "")" />
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <label class="vi-label">Transaction / Reference No.</label>
+                        <input type="text" id="cashTransactionRef" class="form-control editable-field"
+                               value="@Model.UTRTrxn" placeholder="UTR / Ref number" />
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <label class="vi-label">Payment Date</label>
+                        <input type="date" id="cashTransactionDate" class="form-control editable-field"
+                               value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- ── Section 3: Line Items ── -->
+        <div class="vi-card">
+            <div class="vi-section-title">Line Items</div>
+            <div class="table-responsive">
+                <table class="table table-bordered line-items-table" id="tblLineItems">
+                    <thead>
+                        <tr>
+                            <th>IRF / Product</th>
+                            <th>Description</th>
+                            <th class="text-right" style="width:90px;">Qty</th>
+                            <th class="text-center" style="width:140px;">Unit Rate &#8377; <span class="tag-edit">(editable)</span></th>
+                            <th class="text-right" style="width:130px;">Line Total (&#8377;)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblLineItemsBody">
+                        @if (Model.LineItems != null && Model.LineItems.Any())
+                        {
+                            @foreach (var li in Model.LineItems)
+                            {
+                                <tr data-id="@li.id" data-qty="@li.Qty">
+                                    <td>@li.ProductName</td>
+                                    <td>@li.Description</td>
+                                    <td class="text-right">@li.Qty</td>
+                                    <td class="text-center">
+                                        <input type="number" class="form-control form-control-sm unit-rate-input text-right"
+                                               value="@li.UnitRate.ToString("F2", CultureInfo.InvariantCulture)"
+                                               min="0" step="0.01" style="width:120px;" />
+                                    </td>
+                                    <td class="text-right line-total-cell">@li.LineTotal.ToString("N2")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center text-muted">No line items found.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── Section 4: Totals ── -->
+        <div class="vi-card">
+            <div class="vi-section-title">Totals</div>
+            <table class="totals-table" style="margin-left:auto;">
+                <tr>
+                    <td class="label-col">Subtotal</td>
+                    <td class="val-col">&#8377; <span id="spnSubtotal">@Model.Subtotal.ToString("N2")</span></td>
+                </tr>
+                <tr>
+                    <td class="label-col">GST (<span id="spnGSTLabel">@Html.Raw(Model.TaxScenario == 1 ? "18%" : "0%")</span>)</td>
+                    <td class="val-col">&#8377; <span id="spnGSTAmount">@Model.GSTAmount.ToString("N2")</span></td>
+                </tr>
+                <tr class="invoice-value-row">
+                    <td class="label-col">Invoice Value</td>
+                    <td class="val-col">&#8377; <span id="spnInvoiceValue">@Model.InvoiceValue.ToString("N2")</span></td>
+                </tr>
+                <tr>
+                    <td class="label-col">TDS (10%)</td>
+                    <td class="val-col">&#8377; <span id="spnTDSAmount">@Model.TDSAmount.ToString("N2")</span></td>
+                </tr>
+                <tr>
+                    <td class="label-col"><strong>Net Receivable</strong></td>
+                    <td class="val-col"><strong>&#8377; <span id="spnNetReceivable">@Model.NetReceivable.ToString("N2")</span></strong></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ── Action Buttons ── -->
+        <div class="vi-card">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button type="button" id="btnSaveChanges"
+                            class="mdc-button mdc-button--raised mdc-ripple-upgraded"
+                            onclick="saveChanges()">
+                        <font style="font-size:12px;">Save Changes</font>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+</div>
+
+<input type="hidden" id="hidInvoiceId"    value="@Model.id" />
+<input type="hidden" id="hidBillingModel" value="@Model.BillingModel" />
+
+<script>
+    var _billingModel  = parseInt($('#hidBillingModel').val() || 0);
+    var _M1            = 1;
+    var _alreadyPaid   = @(Model.Status == 5 ? "true" : "false");
+    var _existingUTR   = '@Html.Raw((Model.UTRTrxn ?? "").Replace("'", "\\'"))';
+
+    // Show/hide cash credit section when status changes
+    $('#editStatus').on('change', function () {
+        var isPaid = parseInt($(this).val()) === 5;
+        var isNonM1 = _billingModel !== _M1 && _billingModel !== 0;
+        if (isPaid && isNonM1) {
+            $('#cashCreditSection').slideDown(200);
+        } else {
+            $('#cashCreditSection').slideUp(200);
+        }
+    });
+
+    // Recalculate and update GST label when Tax Scenario changes
+    $('#editTaxScenario').on('change', function () {
+        var ts = parseInt($(this).val());
+        $('#spnGSTLabel').text(ts === 1 ? '18%' : '0%');
+        refreshTotals();
+    });
+
+    // Live recalculate when unit rate changes
+    $('#tblLineItemsBody').on('input', '.unit-rate-input', function () {
+        var row   = $(this).closest('tr');
+        var qty   = parseInt(row.data('qty') || 0);
+        var rate  = parseFloat($(this).val() || 0);
+        row.find('.line-total-cell').text((qty * rate).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+        refreshTotals();
+    });
+
+    function refreshTotals() {
+        var taxScenario = parseInt($('#editTaxScenario').val() || 0);
+        var subtotal = 0;
+        $('#tblLineItemsBody .line-total-cell').each(function () {
+            subtotal += parseFloat($(this).text().replace(/,/g, '') || 0);
+        });
+        var gstAmount     = taxScenario === 1 ? Math.round(subtotal * 18 / 100 * 100) / 100 : 0;
+        var invoiceValue  = subtotal + gstAmount;
+        var tdsAmount     = Math.round(subtotal * 10 / 100 * 100) / 100;
+        var netReceivable = invoiceValue - tdsAmount;
+
+        var fmt = function (n) { return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); };
+        $('#spnSubtotal').text(fmt(subtotal));
+        $('#spnGSTAmount').text(fmt(gstAmount));
+        $('#spnInvoiceValue').text(fmt(invoiceValue));
+        $('#spnTDSAmount').text(fmt(tdsAmount));
+        $('#spnNetReceivable').text(fmt(netReceivable));
+    }
+
+    function saveChanges() {
+        var taxScenario  = parseInt($('#editTaxScenario').val() || 0);
+        var selectedStatus = parseInt($('#editStatus').val());
+        var isPaid       = selectedStatus === 5;
+        var isNonM1      = _billingModel !== _M1 && _billingModel !== 0;
+
+        // Wallet credit uses InvoiceValue (base amount) — cashCreditAmount is stored as reference only.
+        // No mandatory validation needed; section is informational when status = Paid.
+
+        // Collect line items
+        var lineItems = [];
+        $('#tblLineItemsBody tr[data-id]').each(function () {
+            var id    = parseInt($(this).data('id'));
+            var qty   = parseInt($(this).data('qty') || 0);
+            var rate  = parseFloat($(this).find('.unit-rate-input').val() || 0);
+            lineItems.push({ id: id, unitRate: rate, lineTotal: qty * rate });
+        });
+
+        var subtotal      = lineItems.reduce(function (s, li) { return s + li.lineTotal; }, 0);
+        var gstAmount     = taxScenario === 1 ? Math.round(subtotal * 18 / 100 * 100) / 100 : 0;
+        var invoiceValue  = subtotal + gstAmount;
+        var tdsAmount     = Math.round(subtotal * 10 / 100 * 100) / 100;
+        var netReceivable = invoiceValue - tdsAmount;
+
+        var payload = {
+            invoiceId:        $('#hidInvoiceId').val(),
+            taxScenario:      taxScenario,
+            gstNumber:        $('#editGSTNumber').val().trim(),
+            creditPeriod:     $('#editCreditPeriod').val().trim(),
+            irn:              $('#editIRN').val().trim(),
+            eInvoiceFileLink: $('#hidEInvoiceFileLinkView').val().trim(),
+            status:           selectedStatus,
+            subtotal:         subtotal.toFixed(2),
+            gstAmount:        gstAmount.toFixed(2),
+            invoiceValue:     invoiceValue.toFixed(2),
+            tdsAmount:        tdsAmount.toFixed(2),
+            netReceivable:    netReceivable.toFixed(2),
+            lineItemsJson:    JSON.stringify(lineItems),
+            latestRemark:     $('#editLatestRemark').val().trim()
+        };
+
+        if (isPaid && isNonM1) {
+            payload.cashCreditAmount    = parseFloat($('#cashCreditAmount').val() || 0);
+            payload.cashTransactionRef  = $('#cashTransactionRef').val().trim();
+            payload.cashTransactionDate = $('#cashTransactionDate').val();
+        }
+
+        $('#btnSaveChanges').prop('disabled', true).html('<font style="font-size:12px;">Saving…</font>');
+
+        $.ajax({
+            type: 'POST',
+            url: '/Finance/UpdateInvoiceDetails',
+            data: payload,
+            success: function (res) {
+                $('#btnSaveChanges').prop('disabled', false)
+                    .html('<font style="font-size:12px;">Save Changes</font>');
+                var cls = res.success ? 'alert-success' : 'alert-danger';
+                $('#divSaveMsg').attr('class', 'alert ' + cls).html(res.message).show();
+                if (res.success) {
+                    refreshTotals();
+                    $('html, body').animate({ scrollTop: 0 }, 400);
+                }
+            },
+            error: function () {
+                $('#btnSaveChanges').prop('disabled', false)
+                    .html('<font style="font-size:12px;">Save Changes</font>');
+                $('#divSaveMsg').attr('class', 'alert alert-danger').html('An error occurred.').show();
+            }
+        });
+    }
+
+    function uploadEInvoiceFileView(input) {
+        if (!input.files || !input.files[0]) return;
+        var file = input.files[0];
+        var status = document.getElementById('spnEInvoiceViewStatus');
+        status.style.color = '#555';
+        status.textContent = 'Uploading…';
+
+        var fd = new FormData();
+        fd.append('file', file);
+
+        $.ajax({
+            url: '/Finance/UploadEInvoiceFile',
+            type: 'POST',
+            data: fd,
+            processData: false,
+            contentType: false,
+            headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+            success: function (res) {
+                if (res.success) {
+                    document.getElementById('hidEInvoiceFileLinkView').value = res.fileUrl;
+                    document.getElementById('lnkEInvoiceFileView').href = res.fileUrl;
+                    document.getElementById('divEInvoiceLinkView').style.display = 'block';
+                    status.style.color = '#2e7d32';
+                    status.textContent = file.name + ' — uploaded';
+                } else {
+                    status.style.color = '#c62828';
+                    status.textContent = res.message || 'Upload failed.';
+                }
+            },
+            error: function () {
+                status.style.color = '#c62828';
+                status.textContent = 'Upload failed. Please try again.';
+            }
+        });
+        input.value = '';
+    }
+</script>

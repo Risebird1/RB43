@@ -10,6 +10,8 @@ CREATE PROCEDURE [dbo].[usp_GetNaukriProspectiveInterviewers]
     @AutomationStatus   VARCHAR(50)  = NULL,
     @CallStatus         VARCHAR(50)  = NULL,
     @Disposition        VARCHAR(50)  = NULL,
+    @FunnelStage        VARCHAR(50)  = NULL,   -- exact stage value, or '_none_' for unstarted (New)
+    @OnboardingType     VARCHAR(50)  = NULL,   -- SelfOnboarded | IntentAutoProcessed | ManuallyOnboarded | _none_
     @DateFrom           DATETIME     = NULL,
     @DateTo             DATETIME     = NULL,
     @Page               INT          = 1,
@@ -25,10 +27,21 @@ BEGIN
         SELECT
             np.*,
             COUNT(*) OVER() AS TotalCount,
+            -- Global status breakdown over the matched set. 'Onboarded' (a FunnelStage outcome) is
+            -- carved out first so the four buckets partition the total exactly:
+            --   Open + InProgress + Closed + Onboarded = TotalCount.
+            SUM(CASE WHEN ISNULL(np.FunnelStage, '') = 'Onboarded' THEN 1 ELSE 0 END) OVER() AS OnboardedCount,
+            SUM(CASE WHEN ISNULL(np.FunnelStage, '') <> 'Onboarded'
+                      AND ISNULL(np.TicketStatus, 'Open') = 'Open'                  THEN 1 ELSE 0 END) OVER() AS OpenCount,
+            SUM(CASE WHEN ISNULL(np.FunnelStage, '') <> 'Onboarded'
+                      AND ISNULL(np.TicketStatus, 'Open') NOT IN ('Open', 'Closed') THEN 1 ELSE 0 END) OVER() AS InProgressCount,
+            SUM(CASE WHEN ISNULL(np.FunnelStage, '') <> 'Onboarded'
+                      AND ISNULL(np.TicketStatus, 'Open') = 'Closed'                THEN 1 ELSE 0 END) OVER() AS ClosedCount,
             ROW_NUMBER() OVER (ORDER BY np.ReceivedAt DESC, np.Id DESC) AS RowNum
         FROM NaukriProspectiveInterviewer np
         WHERE
-            (@Status IS NULL OR np.Status = @Status)
+            -- @Status now filters on the operational TicketStatus dimension (Open | InProgress | Closed).
+            (@Status IS NULL OR ISNULL(np.TicketStatus, 'Open') = @Status)
             AND (@CandidateName IS NULL OR np.CandidateName LIKE '%' + @CandidateName + '%')
             AND (@MagName IS NULL OR np.MagName LIKE '%' + @MagName + '%')
             AND (@Source IS NULL OR np.[Source] = @Source)
@@ -40,6 +53,16 @@ BEGIN
             )
             AND (@CallStatus IS NULL OR LOWER(ISNULL(np.PlivoCallStatus, '')) = LOWER(@CallStatus))
             AND (@Disposition IS NULL OR LOWER(ISNULL(np.PlivoProspectDisposition, '')) = LOWER(@Disposition))
+            AND (
+                @FunnelStage IS NULL
+                OR (@FunnelStage = '_none_' AND dbo.fn_NaukriCanonicalFunnelStage(np.FunnelStage) = 'New')
+                OR dbo.fn_NaukriCanonicalFunnelStage(np.FunnelStage) = @FunnelStage
+            )
+            AND (
+                @OnboardingType IS NULL
+                OR (@OnboardingType = '_none_' AND ISNULL(np.OnboardingType, '') = '')
+                OR np.OnboardingType = @OnboardingType
+            )
             AND (@DateFrom IS NULL OR np.ReceivedAt >= @DateFrom)
             AND (@DateTo IS NULL OR np.ReceivedAt < DATEADD(DAY, 1, @DateTo))
     )

@@ -13,6 +13,8 @@ CREATE TABLE [dbo].[PaymentHistory](
     [TransferId][varchar](50) NULL,
     [CfTransferId][varchar](100) NULL,
     [PayoutStatus][NVARCHAR](50) NULL,
+    [TransferUtr][NVARCHAR](100) NULL,
+    [TransactionDate][datetime] NULL,
  CONSTRAINT [PK_PaymentHistory] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -66,6 +68,26 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE PaymentHistory
     ADD PayoutStatus NVARCHAR(50) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'TransferUtr'
+      AND Object_ID = Object_ID(N'PaymentHistory'))
+BEGIN
+    ALTER TABLE PaymentHistory
+    ADD TransferUtr VARCHAR(100) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'TransactionDate'
+      AND Object_ID = Object_ID(N'PaymentHistory'))
+BEGIN
+    ALTER TABLE PaymentHistory
+    ADD TransactionDate DATETIME NULL
 END
 END
 GO

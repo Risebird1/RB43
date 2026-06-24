@@ -36,7 +36,7 @@ namespace Risebird.AzureTimerFunctions
             try
             {
                 var mails = new List<Meeting>();
-                var query = "select distinct im.interviewer,ul.uniqueid from InterviewMeetings im join UserList ul on ul.Emailid=im.interviewer where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
+                var query = "select distinct im.id, im.interviewer,ul.uniqueid, ul.MobileNumber from InterviewMeetings im join UserList ul on ul.Emailid=im.interviewer where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1 and ul.IsActive=1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now);
                 dynamicParameters.Add("@timeH", DateTime.Now.Date.AddDays(1));
@@ -56,7 +56,7 @@ namespace Risebird.AzureTimerFunctions
                                 Mail _mail = new Mail
                                 {
                                     TO = mail.interviewer,
-                                    Subject = "Upcoming Risebird Interviews Confirmation Check In - Mandatory"
+                                    Subject = "Upcoming Risebird Interviews Confirmation Check In - Mandatory"
                                 };
                                 var InterviewerUrl = "https://portal.risebird.io/Interview/PublicMyInterviewInvite?id=" + mail.uniqueid;
                                 var emailsend = await _notificationHelper.SendInerviewerMeetingReminder(_mail, InterviewerUrl, mail.uniqueid);

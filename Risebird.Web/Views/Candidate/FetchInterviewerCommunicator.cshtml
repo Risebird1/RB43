@@ -325,7 +325,7 @@
                                                                 <i class="fa fa-users" aria-hidden="true" style="color: #fff;position: relative; left: -2px;"></i>
                                                                 </span>
                                                                 </button> *@
-                                                                                        <button class="ic-btn-act" aria-label="HM Instruction">
+                                                                                       <button class="ic-btn-act" aria-label="HM Instruction">
                                                                                             <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="HM Instruction">
                                                                                                 <i class="fas fa-tasks"></i>
                                                                                             </span>
@@ -346,7 +346,7 @@
                                                                                 }
                                                                             }
                                                                         }
-                                                                        @if (ViewBag.ClientRole != "Reviewer")
+                                                                         @if (ViewBag.ClientRole != "Reviewer")
                                                                         {
                                                                                         <button class="ic-btn-act" aria-label="Download Candidate Reports">
                                                                                             <span onclick="location.href='@Url.Action("CandidateDataExporttoExcel", "Candidate",new { irfId =item.id, irfName =item.IRFId,emailid=ViewBag.emailid})'" title="Download Candidate Reports"><i class="fas fa-file-excel"></i></span>

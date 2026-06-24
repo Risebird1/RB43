@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -14,11 +19,15 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.OpenAIModels;
+using Risebird.Entities.Data.PlivoCXModels;
 using Risebird.Entities.Data.VapiModels;
 using Risebird.Entities.Enum;
+using Risebird.Entities.Helpers;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
+using Risebird.Web.Helpers;
 using Syncfusion.DocIO.DLS;
 using System;
 using System.Collections.Generic;
@@ -76,13 +85,19 @@ namespace Risebird.Web.Controllers
         private readonly ITwilioHelper _twilioHelper;
         private readonly IActivityTrackerService _activityTrackerService;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
+        private readonly IOpenAISpeechToTextService _speechToTextService;
+        private readonly IPlivoCXService _plivoCXService;
+        private readonly IInterviewerEmailAvailabilityRepository _eaRepository;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
             HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper,
-            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper, IActivityTrackerService activityTrackerService, IAssistantServiceHelper assistantServiceHelper)
+            ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper, IActivityTrackerService activityTrackerService, IAssistantServiceHelper assistantServiceHelper,
+            IOpenAISpeechToTextService speechToTextService,
+            IPlivoCXService plivoCXService,
+            IInterviewerEmailAvailabilityRepository eaRepository)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -113,6 +128,9 @@ namespace Risebird.Web.Controllers
             _twilioHelper = twilioHelper;
             _activityTrackerService = activityTrackerService;
             _assistantServiceHelper = assistantServiceHelper;
+            _speechToTextService = speechToTextService;
+            _plivoCXService = plivoCXService;
+            _eaRepository = eaRepository;
         }
 
         [Authorize]
@@ -1026,8 +1044,7 @@ namespace Risebird.Web.Controllers
             var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                              select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
-            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                            select new { ID = (int)s, Name = s.GetDescription() };
+            var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
             ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
 
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
@@ -1075,18 +1092,108 @@ namespace Risebird.Web.Controllers
 
         private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName, string jdTitle)
         {
+            _ = System.Threading.Tasks.Task.Run(async () =>
+            {
+                try
+                {
+                    if (!int.TryParse(assessmentGroupId, out int agId))
+                        return;
+                    string magName = await _eaRepository.GetMAGNameByAssessmentGroupIdAsync(agId);
+                    if (string.IsNullOrWhiteSpace(magName))
+                        return;
 
-            return;
+                    var interviewers = await _eaRepository.GetCallableInterviewersForMAGAsync(magName, onlyUncalled: true);
+                    if (interviewers == null || !interviewers.Any())
+                        return;
 
-            //var dto = new AvailabilityCheckDTO { id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName, JDTitle = jdTitle };
-            //var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
-            ////var path = $"http://localhost:7071/api/CheckIRFAvailability";
-            //var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
-            ////functionKey = string.Empty;
-            //await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
+                    string callerId = _configuration["PlivoCX:AvailabilityCallerId"]
+                                   ?? _configuration["PlivoCX:OnboardingCallerId"]
+                                   ?? _configuration["Plivo:FromNumber"]
+                                   ?? "+918031136547";
 
-            //await MakeIVRCallForAvailability(dto);
+                    int batchLogId = 0;
+                    string initiatedBy = "IRF AutoCall";
+                    try
+                    {
+                        batchLogId = await _eaRepository.InsertBatchCallLogAsync(magName, initiatedBy, interviewers.Count);
+                    }
+                    catch { }
 
+                    int succeeded = 0, failed = 0;
+
+                    foreach (var interviewer in interviewers)
+                    {
+                        try
+                        {
+                            // Profile interviewers (not yet in InterviewerEmailAvailability) are NOT
+                            // inserted up-front. We pass a self-contained token as log_id; the hangup
+                            // webhook creates the row only if the call confirms availability.
+                            bool deferred = interviewer.Source == "Profile" && interviewer.InterviewerProfileId.HasValue;
+                            int eaId = interviewer.Id;
+
+                            string logId = deferred
+                                ? AvailabilityCallToken.Build(interviewer.InterviewerProfileId.Value, magName, "IRFAutoCall")
+                                : eaId.ToString();
+
+                            string phone = interviewer.Phone?.Trim() ?? "";
+                            if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
+                            else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
+
+                            if (!deferred)
+                                await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "initiated", null,
+                                    DateTime.UtcNow, null, null, null, null, null, null, null, null, initiatedBy);
+
+                            var triggerRequest = new PlivoCXAvailabilityTriggerRequest
+                            {
+                                CallerId        = callerId,
+                                PhoneNumber     = phone,
+                                InterviewerName = interviewer.InterviewerName ?? "there",
+                                InterviewerEmail = interviewer.SenderEmail,
+                                MagName         = magName,
+                                LogId           = logId,
+                                TodayDate       = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                            };
+
+                            var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
+
+                            if (!string.IsNullOrEmpty(response?.Error))
+                            {
+                                if (!deferred)
+                                    await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "trigger-failed", null,
+                                        null, null, null, response.Error, null, null, null, null, null, null);
+                                failed++;
+                            }
+                            else
+                            {
+                                if (!deferred)
+                                {
+                                    await _eaRepository.UpdatePlivoCallStatusAsync(eaId, "triggered", response?.ConversationId,
+                                        null, null, null, null, null, null, null, null, null, null);
+                                    await _eaRepository.InsertHistoryAsync(eaId, "IRFAutoCall", "—",
+                                        $"Availability call triggered for IRF '{irfName}'. ConvId: {response?.ConversationId ?? "N/A"}", initiatedBy);
+                                }
+                                succeeded++;
+                            }
+
+                            await System.Threading.Tasks.Task.Delay(1200);
+                        }
+                        catch
+                        {
+                            failed++;
+                        }
+                    }
+
+                    if (batchLogId > 0)
+                    {
+                        try { await _eaRepository.CompleteBatchCallLogAsync(batchLogId, succeeded, failed, 0, "Completed"); }
+                        catch { }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    try { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); } catch { }
+                }
+            });
         }
         private async Task MakeIVRCallForAvailability(AvailabilityCheckDTO dto)
         {
@@ -2358,8 +2465,7 @@ namespace Risebird.Web.Controllers
 
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
             //ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
-            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                            select new { ID = (int)s, Name = s.GetDescription() };
+            var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
             ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
             var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                              select new { ID = (int)s, Name = s.GetDescription() };
@@ -4793,8 +4899,7 @@ namespace Risebird.Web.Controllers
             {
                 model._skilldetails.SeniorityLevelArray = model._skilldetails.SeniorityLevel.Split(',');
             }
-            var seniorityLevelTypes = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                      select new { ID = (int)s, Name = s.GetDescription() };
+            var seniorityLevelTypes = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
             var selectListforSeniorityLevel = new List<SelectListItem>();
             foreach (var item in seniorityLevelTypes)
             {
@@ -7202,6 +7307,208 @@ namespace Risebird.Web.Controllers
             _irfService.SaveIRFAudioLink(Convert.ToInt32(Irfid), uploadedfbaudioFileURL);
             return uploadedfbaudioFileURL;
         }
+
+        /// <summary>
+        /// Transcribes the HM voice brief already stored on IRF.AudioComment using OpenAI Whisper (same path as AI Interview STT).
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> TranscribeVoiceInstruction(int irfId, bool isMultiLingual = false)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var audioUrl = _irfService.FetchIRFAudioLink(irfId);
+                if (string.IsNullOrWhiteSpace(audioUrl))
+                    return Json(new { success = false, message = "No voice recording found. Record and upload audio first." });
+
+                using var downloadClient = new HttpClient();
+                await using var remoteStream = await downloadClient.GetStreamAsync(audioUrl);
+                using var audioBuffer = new MemoryStream();
+                await remoteStream.CopyToAsync(audioBuffer);
+                audioBuffer.Position = 0;
+
+                var transcript = await _speechToTextService.TranscribeAsync(audioBuffer, "voice_instruction.wav", isMultiLingual);
+                if (!IsVoiceInstructionTranscriptionValid(transcript, isMultiLingual))
+                    return Json(new { success = false, message = "Could not produce a clear transcript. Try re-recording in a quiet environment." });
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                _irfService.SaveVoiceInstructionTranscript(irfId, transcript, emailid);
+                var brief = _irfService.FetchVoiceInstructionBrief(irfId);
+                return Json(new
+                {
+                    success = true,
+                    transcript,
+                    audioUrl = brief?.AudioUrl,
+                    transcriptUpdatedOn = IndiaTimeHelper.ToUtcIso8601(brief?.TranscriptUpdatedOn)
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Transcription failed: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult FetchVoiceInstructionBrief(int irfid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+
+                var brief = _irfService.FetchVoiceInstructionBrief(irfid);
+                return Json(new
+                {
+                    success = true,
+                    audioUrl = brief?.AudioUrl,
+                    transcript = brief?.Transcript,
+                    transcriptUpdatedOn = IndiaTimeHelper.ToUtcIso8601(brief?.TranscriptUpdatedOn),
+                    transcriptUpdatedBy = brief?.TranscriptUpdatedBy
+                });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateVoiceInstructionTranscript(int irfId, string transcript, bool regenerateRubric = false)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                if (string.IsNullOrWhiteSpace(transcript))
+                    return Json(new { success = false, message = "Transcript cannot be empty." });
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var saved = _irfService.SaveVoiceInstructionTranscript(irfId, transcript.Trim(), emailid);
+                if (!saved)
+                    return Json(new { success = false, message = "Could not save transcript." });
+
+                var brief = _irfService.FetchVoiceInstructionBrief(irfId);
+                return Json(new
+                {
+                    success = true,
+                    transcript = brief?.Transcript,
+                    transcriptUpdatedOn = IndiaTimeHelper.ToUtcIso8601(brief?.TranscriptUpdatedOn),
+                    regenerateRubric
+                });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GenerateRubricFromVoice(int irfId, string transcript = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var brief = _irfService.FetchVoiceInstructionBrief(irfId);
+                var voiceText = !string.IsNullOrWhiteSpace(transcript)
+                    ? transcript.Trim()
+                    : brief?.Transcript?.Trim();
+                if (string.IsNullOrWhiteSpace(voiceText))
+                    return Json(new { success = false, message = "Save a voice transcript first (record audio and transcribe, or enter text manually)." });
+
+                if (!string.IsNullOrWhiteSpace(transcript)
+                    && !string.Equals(transcript.Trim(), brief?.Transcript?.Trim(), StringComparison.Ordinal))
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                    _irfService.SaveVoiceInstructionTranscript(irfId, transcript.Trim(), emailid);
+                }
+
+                var irfVm = await _irfService.GetEditIRF(irfId, 0, false);
+                if (irfVm == null)
+                    return Json(new { success = false, message = "Skill channel not found." });
+
+                var currentSkills = DmVoiceRubricRevisionHelper.GetScoreRubricSkills(irfVm.SkillCollection).ToList();
+                AssignmentVM magDetails = null;
+                if (int.TryParse(irfVm.AssessmentGroupId, out var assessmentGroupId) && assessmentGroupId > 0)
+                    magDetails = await _irfRepository.GetAssessmentGroupDetails(assessmentGroupId);
+
+                var revisionPrompt = DmVoiceRubricRevisionHelper.BuildRevisionUserMessage(
+                    irfVm, currentSkills, magDetails, voiceText);
+
+                var result = await _assistantServiceHelper.GenerateTechRubricRevision(revisionPrompt);
+                if (result == null)
+                    return Json(new { success = false, message = "Rubric revision returned no result." });
+
+                var rawJson = result.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
+                if (string.IsNullOrWhiteSpace(rawJson))
+                    return Json(new { success = false, message = "Rubric revision returned empty content." });
+
+                rawJson = DmVoiceRubricRevisionHelper.ExtractJsonFromAssistantText(rawJson);
+                var model = DmVoiceRubricRevisionHelper.DeserializeRubricSchema(rawJson);
+                var revisedSkills = DmVoiceRubricRevisionHelper.ToTransSkills(model, irfId);
+
+                if (!revisedSkills.Any() && currentSkills.Any())
+                    return Json(new { success = false, message = "No rubric skills could be parsed from the assistant response." });
+
+                var magSkillNames = DmVoiceRubricRevisionHelper.BuildMagSkillNameSet(magDetails);
+                var weightNormalization = DmVoiceRubricRevisionHelper.NormalizeWeightageTo100(revisedSkills);
+                revisedSkills = weightNormalization.Skills;
+                var diff = DmVoiceRubricRevisionHelper.CompareRubrics(currentSkills, revisedSkills, magSkillNames);
+                var outcome = DmVoiceRubricRevisionHelper.BuildOutcome(
+                    currentSkills, revisedSkills, diff, voiceText, weightNormalization);
+
+                return Json(new
+                {
+                    success = true,
+                    skillCount = outcome.RevisedSkills.Count,
+                    changed = outcome.Changed,
+                    removed = diff.Removed,
+                    added = diff.Added,
+                    modified = diff.Modified,
+                    magWarnings = diff.MagWarnings,
+                    message = outcome.Message,
+                    weightsAdjusted = outcome.WeightsAdjusted,
+                    totalWeightBefore = weightNormalization.TotalBefore,
+                    pendingSave = outcome.Changed,
+                    reloadRequired = false,
+                    revisedSkills = DmVoiceRubricRevisionHelper.ToClientSkillPayload(outcome.RevisedSkills)
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
+
+        private static bool IsVoiceInstructionTranscriptionValid(string text, bool isMultilingual)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+            if (!isMultilingual)
+            {
+                var cleaned = new string(text.Where(c => char.IsLetter(c) || char.IsDigit(c)).ToArray());
+                if (text.Length == 0) return false;
+                double validRatio = (double)cleaned.Length / text.Length;
+                if (validRatio < 0.5)
+                    return false;
+            }
+            return true;
+        }
+
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
         [RequestSizeLimit(1048576000)]
@@ -8682,56 +8989,308 @@ namespace Risebird.Web.Controllers
             return View(interviewlist);
         }
         #region Delivery Head Instruction
+
+        private async Task<bool> AuthorizeClientShareAccessAsync(int irfId, string type = null)
+        {
+            if (irfId <= 0) return false;
+            var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (string.IsNullOrEmpty(email) || !DeliveryHeadInstructionViewMode.IsClientRoleProfile(profile))
+                return false;
+            return await _clientService.VerifyClientAuthenticity(irfId, email);
+        }
+
+        /// <summary>DM/SME full access; client role limited to associated IRF.</summary>
+        private async Task<bool> AuthorizeDhiMutatingAccessAsync(int irfId, string type = null)
+        {
+            if (irfId <= 0) return false;
+            var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            if (string.IsNullOrEmpty(email)) return false;
+            var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (DeliveryHeadInstructionViewMode.IsOperationalProfile(profile)) return true;
+            if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profile))
+                return await AuthorizeClientShareAccessAsync(irfId, type);
+            if (string.Equals(profile, "Interviewer", StringComparison.OrdinalIgnoreCase))
+                return await _interviewerService.IsSmeAssignedToIrfAsync(email, irfId);
+            return false;
+        }
+
+        private bool IsClientShareRequest(int irfId, string type = null)
+        {
+            var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (DeliveryHeadInstructionViewMode.IsOperationalProfile(profile))
+                return false;
+            if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profile))
+                return true;
+            return DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                || DeliveryHeadInstructionViewMode.IsClientShareType(type);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetDmInterviewerPanelMetrics(int irfId, string Type = null)
+        {
+            try
+            {
+                var isClientShare = IsClientShareRequest(irfId, Type);
+                var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
+                if (isClientShare)
+                {
+                    if (!await AuthorizeClientShareAccessAsync(irfId, Type))
+                        return Json(new { ok = false });
+                }
+                else if (!isSmeView && HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { ok = false });
+                }
+
+                if (isSmeView)
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                    if (!await _interviewerService.IsSmeAssignedToIrfAsync(emailid, irfId))
+                    {
+                        return Json(new { ok = false });
+                    }
+                }
+
+                var model = await _irfService.GetEditIRF(irfId, 0, false);
+                var source = model?.InterviewerCollection?.AsEnumerable();
+                if (isClientShare || isSmeView)
+                {
+                    source = source?.Where(x => x != null && x.IsActive);
+                }
+
+                if (isClientShare)
+                {
+                    var interviewers = source?
+                        .Select(iv =>
+                        {
+                            DeliveryHeadInstructionViewMode.StripInterviewerForClientView(iv);
+                            return DeliveryHeadInstructionViewMode.BuildClientPanelMetricsEntry(iv);
+                        })
+                        .ToList();
+                    return Json(new { ok = true, interviewers });
+                }
+
+                var interviewersInternal = source?
+                    .Select(iv =>
+                    {
+                        if (isSmeView)
+                        {
+                            DeliveryHeadInstructionViewMode.StripInterviewerForSmeView(iv);
+                        }
+
+                        return new
+                        {
+                            userId = iv.UserId,
+                            email = (isClientShare || isSmeView) ? "" : (iv.EmailId ?? ""),
+                            companyName = !string.IsNullOrWhiteSpace(iv.CompanyName)
+                                ? iv.CompanyName.Trim()
+                                : (!string.IsNullOrWhiteSpace(iv.EmploymentComment) ? iv.EmploymentComment.Trim() : null),
+                            futureAssignedCount = iv.TotalFuture,
+                            lastLoginAt = iv.LastLoginAt.HasValue ? iv.LastLoginAt.Value.ToString("o") : (string)null,
+                            lastInterviewConductedAt = iv.LastInterviewConductedAt.HasValue
+                                ? iv.LastInterviewConductedAt.Value.ToString("o") : (string)null,
+                            perSuccessRate = (isClientShare || isSmeView) ? 0 : iv.PerSuccessRate,
+                            surcharge = (isClientShare || isSmeView) ? 0 : iv.Surcharge,
+                            clientAction = (isClientShare || isSmeView) ? null : iv.ClientAction
+                        };
+                    })
+                    .ToList();
+
+                return Json(new { ok = true, interviewers = interviewersInternal });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false });
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetDmInterviewerCvState(int irfId, int userId, string Type = null)
+        {
+            try
+            {
+                var isClientShare = IsClientShareRequest(irfId, Type);
+                var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
+                if (isClientShare)
+                {
+                    if (!await AuthorizeClientShareAccessAsync(irfId, Type))
+                        return Json(new { ok = false });
+                }
+                else if (!isSmeView && HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { ok = false });
+                }
+
+                if (isSmeView)
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                    if (!await _interviewerService.IsSmeAssignedToIrfAsync(emailid, irfId))
+                    {
+                        return Json(new { ok = false });
+                    }
+                }
+
+                var model = await _irfService.GetEditIRF(irfId, 0, false);
+                var iv = model?.InterviewerCollection?
+                    .Where(x => x.IsActive)
+                    .FirstOrDefault(x => x.UserId == userId);
+                if (iv == null)
+                {
+                    return Json(new { ok = false });
+                }
+
+                if (isClientShare)
+                {
+                    DeliveryHeadInstructionViewMode.StripInterviewerForClientView(iv);
+                    return Json(DeliveryHeadInstructionViewMode.BuildClientCvStatePayload(iv));
+                }
+
+                if (isSmeView)
+                {
+                    DeliveryHeadInstructionViewMode.StripInterviewerForSmeView(iv);
+                }
+
+                return Json(new
+                {
+                    ok = true,
+                    resumeLink = isClientShare ? "" : (iv.ResumeLink ?? ""),
+                    codedCvLink = DmIvCodedCvHelper.GetDisplayCodedCvLink(iv.CodedResumeLink) ?? "",
+                    cvCode = DmIvCodedCvHelper.HasDisplayCodedCv(iv.CodedResumeLink) ? (iv.NickName ?? "CV") : "",
+                    isResumeRedactAttempted = iv.IsResumeRedactAttempted,
+                    aiVerdict = iv.AIVerdict ?? "",
+                    aiScore = iv.AIScreeningScore,
+                    aiReasonFull = iv.OpenAIScreeningResponse ?? "",
+                    futureAssignedCount = iv.TotalFuture,
+                    perSuccessRate = (isClientShare || isSmeView) ? 0 : iv.PerSuccessRate,
+                    surcharge = (isClientShare || isSmeView) ? 0 : iv.Surcharge
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false });
+            }
+        }
+
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> DeliveryHeadInstruction(int irfid, string Type = null)//Type = "ublc" stands for public here
+        public async Task<IActionResult> GetClientShareInterviewerInsights(int irfId, int userId, string Type = null)
         {
+            var isClientShare = IsClientShareRequest(irfId, Type);
+            var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
+
+            if (isClientShare || isSmeView)
+            {
+                return StatusCode(403);
+            }
+
+            return Unauthorized();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeliveryHeadInstruction(string irfid, string Type = null)//Type = "ublc" stands for client share link
+        {
+            var resolvedIrfId = await _irfService.ResolveSkillChannelNumericIdAsync(irfid);
             ViewBag.PageType = "";
-            if (!string.IsNullOrEmpty(Type) && Type == "ublc" /*&& HttpContext.Session.GetString("email") == null*/)
+            ViewBag.IsClientShareView = false;
+            ViewBag.IsSmeView = false;
+
+            var hasSession = HttpContext.Session.GetString("email") != null
+                || HttpContext.Session.GetString("profileName") != null;
+            var clientEntryRequested = DeliveryHeadInstructionViewMode.WantsClientShareEntry(HttpContext, Type);
+
+            if (!hasSession)
             {
-                ViewBag.PageType = "Public";
-                return View(new IRFVm { id = irfid });
+                if (clientEntryRequested)
+                    return StatusCode(403, "You do not have access to this skill channel.");
+                if (User.Identity?.IsAuthenticated == true)
+                    return RedirectToAction("Index", "Home");
+                return RedirectToAction("SignIn", "Session");
             }
-            else if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+
+            var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            ViewBag.profileName = profileName;
+            var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
+            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+
+            if (resolvedIrfId <= 0)
             {
-                var meetingLineUpType = "";
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                ViewBag.profileName = profileName;
-                var model = new IRFVm();
-                //var level = await _irfRepository.GetLevelTech();
-                //level = level.Where(x => x.id != 1 && x.id != 7).ToList();
-                //ViewBag.LevelTech = new SelectList(level, "id", "Name");
-                //var techlevels = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
-                //                 select new { ID = (int)s, Name = s.GetDescription() };
-                //ViewBag.LevelTech = new SelectList(techlevels, "ID", "Name");
-                //var Skillset = await _irfRepository.GetSkills();
-                //ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
-                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
-                var result = await _clientService.VerifyClientAuthenticity(irfid, emailid);
-                if (!result && profileName == "Public")
+                if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profileName))
+                    return StatusCode(403, "You do not have access to this skill channel.");
+                ViewBag.Message = "Skill Channel not found.";
+                return View(new IRFVm { id = 0 });
+            }
+
+            if (string.Equals(profileName, "Interviewer", StringComparison.OrdinalIgnoreCase))
+            {
+                var isSmeForIrf = await _interviewerService.IsSmeAssignedToIrfAsync(emailid, resolvedIrfId);
+                if (!isSmeForIrf)
                 {
-                    ViewBag.Message = "Do not have access for this skill Channel instruction";
-                    return View(model);
+                    ViewBag.Message = "You do not have access to this skill channel.";
+                    return View(new IRFVm { id = resolvedIrfId });
                 }
-                model = await _irfService.GetEditIRF(irfid, 0, false);
 
-                model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfid);
-                model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
-                model.CandidateVideo = _irfService.GetVideoConsentForm(irfid).Result;
-                model.InterviewerCollection = model.InterviewerCollection.Where(x => x.IsActive).ToList();
-                await checkSkillSetandSeperate(model);
-                return View(model);
+                ViewBag.IsSmeView = true;
+                DeliveryHeadInstructionViewMode.SetSmeSession(HttpContext, resolvedIrfId);
+                var smeModel = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
+                if (smeModel == null)
+                {
+                    ViewBag.Message = "Skill Channel not found.";
+                    return View(new IRFVm { id = resolvedIrfId });
+                }
+
+                DeliveryHeadInstructionViewMode.ApplySmeViewFilter(smeModel);
+                smeModel.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
+                smeModel.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
+                var smeVoiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
+                smeModel.VoiceInstructionTranscript = smeVoiceBrief?.Transcript;
+                smeModel.VoiceInstructionTranscriptUpdatedOn = smeVoiceBrief?.TranscriptUpdatedOn;
+                smeModel.CandidateVideo = _irfService.GetVideoConsentForm(resolvedIrfId).Result;
+                await checkSkillSetandSeperate(smeModel);
+                return View(smeModel);
             }
-            else
+
+            if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profileName))
             {
-                return RedirectToAction("SignOut", "Session");
+                if (!await AuthorizeClientShareAccessAsync(resolvedIrfId, Type))
+                    return StatusCode(403, "You do not have access to this skill channel.");
+
+                ViewBag.PageType = "Public";
+                ViewBag.IsClientShareView = true;
+                DeliveryHeadInstructionViewMode.SetClientShareSession(HttpContext, resolvedIrfId);
+
+                var clientModel = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
+                if (clientModel == null)
+                    return StatusCode(403, "You do not have access to this skill channel.");
+
+                DeliveryHeadInstructionViewMode.ApplyClientViewFilter(clientModel);
+                clientModel.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
+                clientModel.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
+                var clientVoiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
+                clientModel.VoiceInstructionTranscript = clientVoiceBrief?.Transcript;
+                clientModel.VoiceInstructionTranscriptUpdatedOn = clientVoiceBrief?.TranscriptUpdatedOn;
+                await checkSkillSetandSeperate(clientModel);
+                return View(clientModel);
             }
 
+            var model = await _irfService.GetEditIRF(resolvedIrfId, 0, false);
+            if (model == null)
+            {
+                ViewBag.Message = "Skill Channel not found.";
+                return View(new IRFVm { id = resolvedIrfId });
+            }
+
+            model.DeliveryHeadSampleQuestions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(resolvedIrfId);
+            model.AudioComment = _irfService.FetchIRFAudioLink(resolvedIrfId);
+            var voiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
+            model.VoiceInstructionTranscript = voiceBrief?.Transcript;
+            model.VoiceInstructionTranscriptUpdatedOn = voiceBrief?.TranscriptUpdatedOn;
+            model.CandidateVideo = _irfService.GetVideoConsentForm(resolvedIrfId).Result;
+            await checkSkillSetandSeperate(model);
+            return View(model);
         }
         [HttpPost]
         public async Task<IActionResult> DeliveryHeadInstruction(IRFVm model)
@@ -8742,12 +9301,31 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    await checkSkillSetandCombine(model);
-                    foreach (var item in model.SkillCollection)
+                    var existingSkills = (await _irfRepository.GetSkillsbyIRFid(model.id))?.ToList() ?? new List<TransSkill>();
+                    var skillsToSave = BuildDeliveryHeadRubricSkillsForSave(model, existingSkills);
+                    var formPostedRubric = Request?.Form?.Keys?.Any(k =>
+                        k != null && k.StartsWith("SkillCollection[", StringComparison.OrdinalIgnoreCase)) == true;
+                    if (formPostedRubric
+                        && !skillsToSave.Any(x => x.SkillSet == 1)
+                        && existingSkills.Any(x => x.SkillSet == 1))
+                    {
+                        ModelState.AddModelError(string.Empty, "Score rubric could not be saved. Please refresh the page and try again.");
+                        await checkSkillSetandSeperate(model);
+                        var jobLevelsErr = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
+                        ViewBag.JobLevelList = new SelectList(jobLevelsErr, "ID", "Name");
+                        if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profileName))
+                        {
+                            ViewBag.IsClientShareView = true;
+                            ViewBag.PageType = "Public";
+                            DeliveryHeadInstructionViewMode.ApplyClientViewFilter(model);
+                        }
+                        return View(model);
+                    }
+                    foreach (var item in skillsToSave)
                     {
                         item.IRFId = model.id;
                     }
-                    var result = await _irfService.UpdateTechSkills(model.SkillCollection);
+                    var result = await _irfService.UpdateTechSkills(skillsToSave);
                     if (result)
                     {
                         return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.id });
@@ -8757,8 +9335,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.LevelTech = new SelectList(level, "id", "Name");
                     var Skillset = await _irfRepository.GetSkills();
                     ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
-                    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
+                    var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
                     ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
                     return View(model);
                 }
@@ -8961,8 +9538,183 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> DeleteSkillChannelSampleQuestions(int questionid)
         {
             var result = await _irfService.DeleteSkillChannelSampleQuestions(questionid);
-            return Json("success");
+            return Json(new { success = result });
         }
+
+        [HttpPost]
+        public async Task<JsonResult> GetDmInterviewerEtiquetteJson(int irfId, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false });
+                var etiquette = await _irfService.GetDmInterviewerEtiquette(irfId);
+                return Json(new { success = etiquette != null, etiquette });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateDmInterviewerEtiquette(int irfId, string dressCode, bool cameraRequired, bool noEatingRule, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false });
+                var result = await _irfService.UpdateDmInterviewerEtiquette(irfId, dressCode, cameraRequired, noEatingRule);
+                return Json(new { success = result });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetDeliveryHeadSampleQuestionsJson(int irfId, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, questions = new List<SkillComment>() });
+                }
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                {
+                    return Json(new { success = false, questions = new List<SkillComment>() });
+                }
+                // DHI sample questions are a shared IRF pool for internal DM and client share (ublc).
+                // Do not filter by CreatedBy — otherwise AI/manual questions from one side are hidden on the other.
+                var questions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfId, emailId: null);
+                return Json(new { success = true, questions = questions ?? new List<SkillComment>() });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, questions = new List<SkillComment>() });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GenerateQuestionsFromRubric(int irfId, bool useVoiceTranscript = false, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                var irfVm = await _irfService.GetEditIRF(irfId, 0, false);
+                if (irfVm == null || irfVm.SkillCollection == null || !irfVm.SkillCollection.Any())
+                    return Json(new { success = false, message = "No rubric skills found for this channel." });
+
+                var rubricPrompt = DmIvQuestionRubricHelper.BuildRubricPromptSection(irfVm.SkillCollection);
+                var rubricInput = $"Role: {irfVm.IRFId}\nInterview Type: Technical\n\n{rubricPrompt}";
+
+                if (useVoiceTranscript)
+                {
+                    var voiceBrief = _irfService.FetchVoiceInstructionBrief(irfId);
+                    if (!string.IsNullOrWhiteSpace(voiceBrief?.Transcript))
+                    {
+                        rubricInput = $"Hiring manager voice brief (canonical):\n{voiceBrief.Transcript.Trim()}\n\n{rubricInput}";
+                    }
+                }
+
+                var validSkillNames = DmIvQuestionRubricHelper.BuildValidSkillNameSet(irfVm.SkillCollection);
+
+                var assistantId = _configuration["OpenAI:RubricQuestionAssistantId"];
+                if (string.IsNullOrEmpty(assistantId))
+                    return Json(new { success = false, message = "Rubric question assistant not configured." });
+
+                var apiKey = _configuration["OpenAI:ApiKey"];
+                if (string.IsNullOrEmpty(apiKey))
+                    return Json(new { success = false, message = "OpenAI API key not configured." });
+
+                var generationResult = await RunRubricQuestionGenerationAsync(assistantId, apiKey, rubricInput, irfId, emailid, validSkillNames);
+                if (generationResult.RetryAttempted)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                        new Exception($"GenerateQuestionsFromRubric: retried after >50% skill mismatches for IRF {irfId}."));
+                }
+                return Json(generationResult.Response);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SaveDeliveryHeadSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, int? id = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                    return Json(new { success = false, message = "Forbidden" });
+                if (string.IsNullOrWhiteSpace(skillName) || string.IsNullOrWhiteSpace(comment))
+                {
+                    return Json(new { success = false, message = "Skill and question are required." });
+                }
+                if (comment.Length > 300)
+                {
+                    return Json(new { success = false, message = "Question must not exceed 300 characters." });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                if (id.HasValue && id.Value > 0)
+                {
+                    var ok = await _irfService.UpdateSkillChannelSampleQuestion(id.Value, comment.Trim(), expectedAnswer?.Trim());
+                    return Json(new { success = ok, id = id.Value });
+                }
+                var model = new TechSkillComments
+                {
+                    IRFId = irfId,
+                    CreatedBy = emailid,
+                    SkillCollection = new List<SkillComment>
+                    {
+                        new SkillComment
+                        {
+                            SkillName = skillName.Trim(),
+                            Comment = comment.Trim(),
+                            ExpectedAnswer = expectedAnswer?.Trim(),
+                            CreatedBy = emailid
+                        }
+                    }
+                };
+                var added = await _irfService.AddIRFSampleQuestions(model);
+                if (!added)
+                {
+                    return Json(new { success = false, message = "Failed to save question." });
+                }
+                var questions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfId, emailid);
+                var created = questions?.OrderByDescending(q => q.id)
+                    .FirstOrDefault(q => string.Equals(q.SkillName, skillName, StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(q.Comment, comment.Trim(), StringComparison.Ordinal));
+                return Json(new { success = true, id = created?.id ?? 0 });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Save failed." });
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> DeliveryHeadSkillDetails(int id)
         {
@@ -9322,6 +10074,89 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TriggerCampaignBatchCall(int campaignId)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var campaigns = await _eaRepository.GetCampaignsEligibleForBatchCallAsync();
+                var campaign = campaigns?.FirstOrDefault(c => c.CampaignId == campaignId);
+                if (campaign == null)
+                    return Json(new { success = false, error = "Campaign not found or already triggered." });
+
+                await _eaRepository.MarkCampaignBatchCallTriggeredAsync(campaignId);
+
+                var interviewers = await _eaRepository.GetCampaignUnrespondedInterviewersAsync(campaignId);
+                if (interviewers == null || !interviewers.Any())
+                    return Json(new { success = true, succeeded = 0, failed = 0, skipped = 0, message = "No unresponded interviewers to call." });
+
+                string callerId = _configuration["PlivoCX:AvailabilityCallerId"]
+                               ?? _configuration["PlivoCX:OnboardingCallerId"]
+                               ?? _configuration["Plivo:FromNumber"]
+                               ?? "+918031136547";
+
+                string source = "Campaign";
+                string initiatedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "Manual";
+
+                int batchLogId = 0;
+                try { batchLogId = await _eaRepository.InsertBatchCallLogAsync(campaign.MagName, initiatedBy, interviewers.Count, campaignId); }
+                catch { }
+
+                int succeeded = 0, failed = 0, skipped = 0;
+
+                foreach (var interviewer in interviewers)
+                {
+                    try
+                    {
+                        string phone = interviewer.Phone?.Trim() ?? "";
+                        if (string.IsNullOrWhiteSpace(phone) || phone.Length < 10) { skipped++; continue; }
+                        if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
+                        else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
+
+                        // Defer record creation: the row is created by the hangup webhook only
+                        // if the call confirms availability.
+                        var triggerRequest = new PlivoCXAvailabilityTriggerRequest
+                        {
+                            CallerId         = callerId,
+                            PhoneNumber      = phone,
+                            InterviewerName  = interviewer.InterviewerName ?? "there",
+                            InterviewerEmail = interviewer.SenderEmail,
+                            MagName          = campaign.MagName,
+                            LogId            = AvailabilityCallToken.Build(interviewer.InterviewerProfileId, campaign.MagName, source),
+                            TodayDate        = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                        };
+
+                        var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
+
+                        if (!string.IsNullOrEmpty(response?.Error))
+                            failed++;
+                        else
+                            succeeded++;
+
+                        await System.Threading.Tasks.Task.Delay(1200);
+                    }
+                    catch { failed++; }
+                }
+
+                if (batchLogId > 0)
+                {
+                    try { await _eaRepository.CompleteBatchCallLogAsync(batchLogId, succeeded, failed, skipped, "Completed"); }
+                    catch { }
+                }
+
+                return Json(new { success = true, succeeded, failed, skipped });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
             }
         }
 
@@ -10029,6 +10864,49 @@ namespace Risebird.Web.Controllers
                     irfDetails.SkillCollection.Add(item);
                 }
             }
+        }
+
+        /// <summary>
+        /// HM score-rubric save: replace SkillSet 1 (and 2 when posted) from the form, keep other skill sets from DB.
+        /// usp_TechSkillBulkInsert deletes all rows for the IRF — never pass only partial form data without merging.
+        /// </summary>
+        private static List<TransSkill> BuildDeliveryHeadRubricSkillsForSave(IRFVm model, List<TransSkill> existingAll)
+        {
+            var result = new List<TransSkill>();
+            var primary = (model.SkillCollection ?? new List<TransSkill>())
+                .Where(x => x != null && (!string.IsNullOrWhiteSpace(x.SkillName) || x.LevelId > 0))
+                .ToList();
+            foreach (var item in primary)
+            {
+                item.SkillSet = 1;
+                result.Add(item);
+            }
+
+            if (model.SkillSetsevaluate > 1)
+            {
+                var secondaryFromForm = (model.SkillTwoCollection ?? new List<TransSkill>())
+                    .Where(x => x != null && (!string.IsNullOrWhiteSpace(x.SkillName) || x.LevelId > 0))
+                    .ToList();
+                if (secondaryFromForm.Any())
+                {
+                    foreach (var item in secondaryFromForm)
+                    {
+                        item.SkillSet = 2;
+                        result.Add(item);
+                    }
+                }
+                else
+                {
+                    result.AddRange(existingAll.Where(x => x.SkillSet == 2));
+                }
+                result.AddRange(existingAll.Where(x => x.SkillSet != 1 && x.SkillSet != 2));
+            }
+            else
+            {
+                result.AddRange(existingAll.Where(x => x.SkillSet != 1));
+            }
+
+            return result;
         }
         public async Task checkSkillSetandSeperate(IRFVm irfDetails)
         {
@@ -11118,7 +11996,11 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
 
-                if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR")
+                if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR"
+                    || (string.Equals(profileName, "Interviewer", StringComparison.OrdinalIgnoreCase)
+                        && int.TryParse(Request.Form["IrfId"], out var smeIrfId)
+                        && smeIrfId > 0
+                        && await _interviewerService.IsSmeAssignedToIrfAsync(emailId, smeIrfId)))
                 {
                     if (Request.Form.Files.Count() > 0)
                     {
@@ -11130,37 +12012,26 @@ namespace Risebird.Web.Controllers
                         {
                             foreach (var file in Request.Form.Files)
                             {
+                                if (!ResumeUploadValidator.IsAllowedResumeUpload(file, _fileMimeTypeHelper, out var resumeValidationError))
+                                {
+                                    return Json(resumeValidationError);
+                                }
+
                                 var fileName = file.FileName.Replace(" ", "_");
                                 FileInfo fi = new FileInfo(fileName);
-                                if (fi.Extension.ToLower() == ".pdf")
-                                {
-                                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
-                                    if (fileMimeType == "application/pdf")
-                                    {
-                                        await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
-                                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                        var blob = containerRef.GetBlockBlobReference(fileName);
-                                        string uploadedaudioFileURL = blob.Uri.ToString();
 
-                                        if (uploadedaudioFileURL == null)
-                                        {
-                                            return Json("Resume upload has failed.");
-                                        }
-                                        else
-                                        {
-                                            var sas = _sasUrlHelper.CreateSasUrl("resumes");
-                                            sasUrl = uploadedaudioFileURL + "?" + sas;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        return Json("Please select valid file for import(.pdf)!");
-                                    }
-                                }
-                                else
+                                await _azureStorageHelper.InsertResumeBlob(fileName, "resumes", file, fi.Extension);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(fileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+
+                                if (uploadedaudioFileURL == null)
                                 {
-                                    return Json("Please select valid file for import(.pdf)!");
+                                    return Json("Resume upload has failed.");
                                 }
+
+                                var sas = _sasUrlHelper.CreateSasUrl("resumes");
+                                sasUrl = uploadedaudioFileURL + "?" + sas;
                             }
                             var result = await _interviewerService.UpdateInterviewerResume(userId, sasUrl, emailId);
                             if (result)
@@ -11180,7 +12051,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return Json("Please select valid file for import(.pdf)!");
+                        return Json("Please select valid file for import(.pdf, .doc, .docx)!");
                     }
                 }
                 else
@@ -11305,6 +12176,486 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
+        public async Task<JsonResult> UpdateInterviewerRbVet(int transInterviewerId, bool isVerified, int irfId, int userId, string interviewerEmail)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                if (string.Equals(profileName, "Interviewer", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!await _interviewerService.IsSmeAssignedToIrfAsync(emailid, irfId))
+                    {
+                        return Json(new { success = false, message = "Forbidden" });
+                    }
+                }
+                else if (profileName == "Client" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+
+                if (string.IsNullOrWhiteSpace(interviewerEmail) && userId > 0)
+                {
+                    var ivRow = (await _irfService.GetEditIRF(irfId, 0, false))?.InterviewerCollection?
+                        .FirstOrDefault(x => x.UserId == userId);
+                    interviewerEmail = ivRow?.EmailId;
+                }
+
+                if (string.IsNullOrWhiteSpace(interviewerEmail))
+                {
+                    return Json(new { success = false, message = "Interviewer not found." });
+                }
+
+                var interviewers = new List<TransInterviewer>
+                {
+                    new TransInterviewer { id = transInterviewerId, IsSMEVerified = isVerified }
+                };
+                var ok = await _interviewerService.UpdateVerifiedInterviewers(interviewers, emailid);
+
+                if (ok)
+                {
+                    var clientAction = isVerified ? "Shortlisted" : "Rejected";
+                    await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfId, interviewerEmail, clientAction);
+
+                    var (isActive, isAvailable) = DmIvRecordHelper.ComputeFlagsFromVet(isVerified, clientAction);
+                    await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, isActive, irfId, emailid, isAvailable: isAvailable);
+                }
+
+                var rbClientAction = isVerified ? "Shortlisted" : "Rejected";
+                var rbFlags = DmIvRecordHelper.ComputeFlagsFromVet(isVerified, rbClientAction);
+                return Json(new
+                {
+                    success = ok,
+                    active = ok && rbFlags.isActive,
+                    available = ok && rbFlags.isAvailable,
+                    clientVet = ok && isVerified,
+                    transId = transInterviewerId,
+                    irfId,
+                    userId,
+                    email = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId) ? null : interviewerEmail
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateInterviewerClientVet(int irfId, string interviewerEmail, bool isApproved, int userId, string Type = null)
+        {
+            try
+            {
+                var isClientShare = IsClientShareRequest(irfId, Type);
+
+                if (isClientShare)
+                {
+                    if (!await AuthorizeClientShareAccessAsync(irfId, Type))
+                        return Json(new { success = false, message = "Forbidden", error = "You do not have access to this skill channel." });
+                }
+                else if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized", error = "You don't have permission to vet this interviewer." });
+                }
+                else
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                    {
+                        return Json(new { success = false, message = "You don't have permission to vet this interviewer.", error = "You don't have permission to vet this interviewer." });
+                    }
+                }
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                // Same scope as DM Approval grid (usp_GetSkillChannelDetailsForUpdate) — not assessment-group filtered.
+                var channelIv = await _irfRepository.GetSkillChannelInterviewersForEdit(irfId);
+                var ti = channelIv?.InterviewerCollection?.FirstOrDefault(x => x.UserId == userId);
+                if (ti == null)
+                {
+                    return Json(new { success = false, message = "Interviewer not found on this channel.", error = "Interviewer not found on this channel." });
+                }
+                var rbVetYes = ti.IsSMEVerified || ti.IsSMEVerifiedStored == true;
+                if (isApproved && !rbVetYes)
+                {
+                    return Json(new { success = false, message = "Client Vet requires RB Vet first.", error = "Client Vet requires RB Vet first." });
+                }
+
+                var action = isApproved ? "Shortlisted" : "Rejected";
+                var emailForUpdate = !string.IsNullOrWhiteSpace(ti.EmailId) ? ti.EmailId.Trim() : interviewerEmail?.Trim();
+                if (string.IsNullOrWhiteSpace(emailForUpdate))
+                {
+                    return Json(new { success = false, message = "Interviewer email is missing.", error = "Interviewer email is missing." });
+                }
+
+                var ok = await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfId, emailForUpdate, action);
+                if (!ok)
+                {
+                    return Json(new { success = false, message = "Could not update client vet status. Please try again.", error = "Could not update client vet status. Please try again." });
+                }
+
+                var (isActive, isAvailable) = DmIvRecordHelper.ComputeFlagsFromVet(rbVetYes, action);
+                var activeOk = await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, isActive, irfId, emailid, isAvailable: isAvailable);
+                if (!activeOk)
+                {
+                    return Json(new { success = false, message = "Client vet saved but active status could not be updated. Please refresh and try again.", error = "Client vet saved but active status could not be updated. Please refresh and try again." });
+                }
+
+                var flags = DmIvRecordHelper.ComputeFlagsFromVet(rbVetYes, action);
+                return Json(new { success = true, clientAction = action, active = flags.isActive, available = flags.isAvailable });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = ex.Message, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetInterviewerResumeSummary(string resumeLink)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false });
+
+                if (string.IsNullOrEmpty(resumeLink))
+                    return View("~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml", (ResumeSummaryVM)null);
+
+                var summary = await _candidateService.ResumeSummaryFromLink(resumeLink);
+                return View("~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml", summary);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View("~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml", (ResumeSummaryVM)null);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetInterviewerCodedCvSummary(string codedCvLink, int? irfId = null, string Type = null)
+        {
+            const string viewPath = "~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml";
+            try
+            {
+                var isClientShare = irfId.HasValue && irfId.Value > 0 && IsClientShareRequest(irfId.Value, Type);
+                if (isClientShare)
+                {
+                    if (!await AuthorizeClientShareAccessAsync(irfId.Value, Type))
+                        return StatusCode(403);
+                }
+                else if (HttpContext.Session.GetString("email") == null)
+                    return View(viewPath, (ResumeSummaryVM)null);
+
+                if (string.IsNullOrWhiteSpace(codedCvLink))
+                    return View(viewPath, (ResumeSummaryVM)null);
+
+                using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(60) };
+                var json = await client.GetStringAsync(codedCvLink);
+                if (string.IsNullOrWhiteSpace(json))
+                    return View(viewPath, (ResumeSummaryVM)null);
+
+                var summary = JsonConvert.DeserializeObject<ResumeSummaryVM>(json);
+                return View(viewPath, summary);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View(viewPath, (ResumeSummaryVM)null);
+            }
+        }
+
+        /// <summary>
+        /// AI resume summary for DM Approval: generates summary, persists JSON to InterviewerProfile.CodedResumeLink.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> GenerateInterviewerResumeSummaryAndSave(int userId, string resumeLink, int irfId = 0)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                if (string.Equals(profileName, "Interviewer", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (irfId <= 0 || !await _interviewerService.IsSmeAssignedToIrfAsync(emailid, irfId))
+                        return Json(new { success = false, message = "Not authorized." });
+                }
+                else if (profileName == "Client" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                else if (profileName != "Admin" && profileName != "SupportAdmin" && profileName != "InterviewerManagement"
+                    && profileName != "SeniorInterviewerManagement" && profileName != "SeniorHR")
+                {
+                    return Json(new { success = false, message = "Not authorized." });
+                }
+
+                if (userId <= 0 || string.IsNullOrWhiteSpace(resumeLink))
+                    return Json(new { success = false, message = "Resume is required." });
+
+                // Always overwrite InterviewerProfile.CodedResumeLink — legacy Affinda/XML/PDF links are replaced on explicit Generate.
+                var summary = await _candidateService.ResumeSummaryFromLink(resumeLink);
+                if (summary == null)
+                    return Json(new { success = false, message = "OpenAI did not return a valid resume summary. The resume may be unreadable, empty, or in an unsupported format." });
+
+                var uploadedLink = await UploadInterviewerResumeSummaryAsCodedCvAsync(summary);
+                if (string.IsNullOrEmpty(uploadedLink))
+                    return Json(new { success = false, message = "Could not upload coded CV to storage." });
+
+                var saveModel = new InterviewerProfileVM
+                {
+                    UserId = userId,
+                    CodedResumeLink = uploadedLink,
+                    IsResumeRedactAttempted = true,
+                    IsResumeRedactFailed = false
+                };
+                var saved = await _interviewerService.SaveInterviewerCodedResume(saveModel);
+                if (!saved)
+                    return Json(new { success = false, message = "Could not save coded CV to interviewer profile." });
+
+                var summaryHtml = await RenderResumeSummaryPartialToStringAsync(summary);
+                var cvCode = _interviewerService.GetNickNames(userId)?.FirstOrDefault();
+                if (string.IsNullOrWhiteSpace(cvCode))
+                    cvCode = "CV";
+                else
+                    cvCode = cvCode.Trim();
+
+                return Json(new
+                {
+                    success = true,
+                    codedCvLink = uploadedLink,
+                    cvCode,
+                    savedAt = DateTime.UtcNow.ToString("o"),
+                    summaryHtml
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = DmResumeSummaryFailureMessage(ex) });
+            }
+        }
+
+        private static string DmResumeSummaryFailureMessage(Exception ex)
+        {
+            if (ex == null) return "Failed to generate resume summary.";
+            if (ex is TaskCanceledException || ex is OperationCanceledException)
+                return "OpenAI API timeout — please retry.";
+            if (ex.InnerException is TaskCanceledException || ex.InnerException is OperationCanceledException)
+                return "OpenAI API timeout — please retry.";
+            var msg = ex.Message?.Trim();
+            if (!string.IsNullOrEmpty(msg) && msg.Length <= 240)
+                return msg;
+            return "Failed to generate resume summary.";
+        }
+
+        private async Task<string> UploadInterviewerResumeSummaryAsCodedCvAsync(ResumeSummaryVM summary)
+        {
+            var jsonPayload = JsonConvert.SerializeObject(summary, Newtonsoft.Json.Formatting.Indented);
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(jsonPayload));
+            var unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var fileName = "ResumeSummary_" + unixTime + "_" + Guid.NewGuid().ToString("N").Substring(0, 10);
+            var uploadedLink = await _azureStorageHelper.InsertBlobCloudCompare(
+                fileName, "resumes", null, stream, contentType: "application/json");
+            if (string.IsNullOrEmpty(uploadedLink))
+                return null;
+
+            var sas = _sasUrlHelper.CreateSasUrl("resumes");
+            if (!string.IsNullOrEmpty(sas))
+                uploadedLink = uploadedLink + "?" + sas;
+
+            return uploadedLink;
+        }
+
+        private async Task<string> RenderResumeSummaryPartialToStringAsync(ResumeSummaryVM summary)
+        {
+            const string viewPath = "~/Views/Candidate/_CandidateResumeSummaryBodyPartial.cshtml";
+            var viewEngine = HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
+            var tempDataProvider = HttpContext.RequestServices.GetService(typeof(ITempDataProvider)) as ITempDataProvider;
+            if (viewEngine == null || tempDataProvider == null)
+                return null;
+
+            var actionContext = new ActionContext(HttpContext, RouteData, ControllerContext.ActionDescriptor);
+            using var sw = new StringWriter();
+            var viewResult = viewEngine.FindView(actionContext, viewPath, isMainPage: false);
+            if (viewResult.View == null)
+                return null;
+
+            var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+            {
+                Model = summary
+            };
+            var viewContext = new ViewContext(
+                actionContext,
+                viewResult.View,
+                viewDictionary,
+                new TempDataDictionary(HttpContext, tempDataProvider),
+                sw,
+                new HtmlHelperOptions());
+
+            await viewResult.View.RenderAsync(viewContext);
+            return sw.ToString();
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> RequestVideoKYC(string interviewerEmail, string interviewerName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+
+                var dashboardLink = $"https://{Request.Host}/Dashboard/InterviewerIndex";
+                var result = await _notificationHelper.SendRequestVideoKYCEmail(interviewerEmail, interviewerName ?? interviewerEmail, dashboardLink);
+                bool sent = !string.IsNullOrEmpty(result) && !result.Contains("Failed");
+                return Json(new { success = sent });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SaveDmIvPolicy(int irfId, bool dmIvLockNew, string dmAssignmentPolicy, int dmDefaultInterviewCap)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var policy = string.Equals(dmAssignmentPolicy, "limited", StringComparison.OrdinalIgnoreCase) ? "limited" : "free";
+                var cap = Math.Max(1, Math.Min(99, dmDefaultInterviewCap));
+                var ok = await _irfService.UpdateDmIvPolicy(irfId, dmIvLockNew, policy, cap, emailid);
+                return Json(new { success = ok });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateInterviewerCapacity(int transInterviewerId, int interviewCapacity)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var cap = Math.Max(0, Math.Min(99, interviewCapacity));
+                var ok = await _irfService.UpdateTransInterviewerCapacity(transInterviewerId, cap, emailid);
+                return Json(new
+                {
+                    success = ok,
+                    interviewCapacity = cap,
+                    capConfigured = true,
+                    capFromDefault = false,
+                    message = ok ? null : "Could not update interview limit."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateInterviewerPerSuccessRate(int transInterviewerId, int perSuccessRate)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+
+                return Json(new
+                {
+                    success = false,
+                    message = "Per-interview rate cannot be changed from DM Approval."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Per-interview rate cannot be changed from DM Approval." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ApplyDefaultInterviewCap(int irfId, int defaultCap)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Client" || profileName == "Interviewer" || profileName == "Public")
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var cap = Math.Max(1, Math.Min(99, defaultCap));
+                if (irfId <= 0)
+                {
+                    return Json(new { success = false, message = "Invalid skill channel id." });
+                }
+                var ok = await _irfService.ApplyDefaultInterviewCapToIrf(irfId, cap, emailid);
+                if (!ok)
+                {
+                    return Json(new { success = false, message = "Could not update interviewer caps. Check that TransInterviewer.InterviewCapacity exists on this database." });
+                }
+                return Json(new { success = true, defaultCap = cap });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Server error while applying cap." });
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> SaveSurcharge(int userId, int surcharge, int irfId)
         {
             try
@@ -11317,9 +12668,20 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SupportAdmin")
                     {
+                        var panel = await _irfRepository.GetTransInterviewer(irfId);
+                        var ti = panel?.FirstOrDefault(x => x.UserId == userId);
+                        if (ti == null)
+                        {
+                            return Json(new { success = false, message = "Interviewer not found on this channel." });
+                        }
+
+                        if (!DmIvSurchargeHelper.TryValidate(surcharge, out var validationError))
+                        {
+                            return Json(new { success = false, message = validationError });
+                        }
 
                         var result = await _irfService.UpdateInterviewerSurcharge(userId, surcharge, irfId, emailid);
-                        return Json(result);
+                        return Json(new { success = result, surcharge });
                     }
                     else
                     {
@@ -11335,7 +12697,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(false);
+                return Json(new { success = false, message = "Failed to save surcharge." });
 
             }
         }
@@ -11559,6 +12921,224 @@ namespace Risebird.Web.Controllers
             {
                 return Json("Fail to Update Biiling Cycle, Try again to update the billing cycle.");
             }
+        }
+
+        private sealed class RubricQuestionGenerationResult
+        {
+            public object Response { get; set; }
+            public bool RetryAttempted { get; set; }
+        }
+
+        private async Task<RubricQuestionGenerationResult> RunRubricQuestionGenerationAsync(
+            string assistantId, string apiKey, string rubricInput, int irfId, string emailid,
+            HashSet<string> validSkillNames, bool isRetry = false)
+        {
+            var raw = await FetchAssistantTextResponseAsync(assistantId, apiKey, rubricInput);
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                return new RubricQuestionGenerationResult
+                {
+                    Response = new { success = false, message = "AI returned an empty response." }
+                };
+            }
+
+            var parseResult = await ParseAndSaveRubricQuestionsAsync(raw, irfId, emailid, validSkillNames);
+            if (!parseResult.Parsed)
+            {
+                return new RubricQuestionGenerationResult { Response = parseResult.ErrorResponse };
+            }
+
+            var total = parseResult.TotalCount;
+            var rejected = parseResult.Mismatches.Count;
+            if (!isRetry && total > 0 && rejected > total / 2)
+            {
+                var retryInput = rubricInput + "\n\nREMINDER: Every question's skill_or_competency MUST be copied exactly from the Score Rubric skill list above.";
+                var retry = await RunRubricQuestionGenerationAsync(assistantId, apiKey, retryInput, irfId, emailid, validSkillNames, isRetry: true);
+                retry.RetryAttempted = true;
+                return retry;
+            }
+
+            foreach (var mismatch in parseResult.Mismatches)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                    new Exception($"GenerateQuestionsFromRubric IRF {irfId}: rejected skill '{mismatch.Returned}' (valid: {string.Join(", ", validSkillNames)})."));
+            }
+
+            object response;
+            if (parseResult.Saved.Count == 0)
+            {
+                response = new
+                {
+                    success = false,
+                    message = "All generated questions were rejected because skill names did not match the rubric.",
+                    rejectedSkills = parseResult.Mismatches.Select(m => m.Returned).Distinct().ToList(),
+                    validSkills = validSkillNames.ToList()
+                };
+            }
+            else
+            {
+                response = new
+                {
+                    success = true,
+                    questions = parseResult.Saved,
+                    count = parseResult.Saved.Count,
+                    rejectedCount = rejected,
+                    warning = rejected > 0
+                        ? $"{rejected} question(s) were rejected due to skill-name mismatches."
+                        : null
+                };
+            }
+
+            return new RubricQuestionGenerationResult { Response = response, RetryAttempted = isRetry };
+        }
+
+        private async Task<string> FetchAssistantTextResponseAsync(string assistantId, string apiKey, string rubricInput)
+        {
+            using (var http = new HttpClient())
+            {
+                http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+                http.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
+                http.Timeout = TimeSpan.FromSeconds(120);
+
+                var threadResp = await http.PostAsync("https://api.openai.com/v1/threads",
+                    new StringContent("{}", System.Text.Encoding.UTF8, "application/json"));
+                var threadJson = Newtonsoft.Json.Linq.JObject.Parse(await threadResp.Content.ReadAsStringAsync());
+                var threadId = threadJson["id"]?.ToString();
+                if (string.IsNullOrEmpty(threadId)) return null;
+
+                var msgPayload = Newtonsoft.Json.JsonConvert.SerializeObject(new { role = "user", content = rubricInput });
+                var msgResp = await http.PostAsync($"https://api.openai.com/v1/threads/{threadId}/messages",
+                    new StringContent(msgPayload, System.Text.Encoding.UTF8, "application/json"));
+                if (!msgResp.IsSuccessStatusCode) return null;
+
+                var runPayload = Newtonsoft.Json.JsonConvert.SerializeObject(new { assistant_id = assistantId });
+                var runResp = await http.PostAsync($"https://api.openai.com/v1/threads/{threadId}/runs",
+                    new StringContent(runPayload, System.Text.Encoding.UTF8, "application/json"));
+                var runJson = Newtonsoft.Json.Linq.JObject.Parse(await runResp.Content.ReadAsStringAsync());
+                var runId = runJson["id"]?.ToString();
+                var runStatus = runJson["status"]?.ToString();
+                if (string.IsNullOrEmpty(runId)) return null;
+
+                var pollStart = DateTime.UtcNow;
+                while (runStatus == "queued" || runStatus == "in_progress")
+                {
+                    if ((DateTime.UtcNow - pollStart).TotalSeconds > 90) return null;
+                    await System.Threading.Tasks.Task.Delay(3000);
+                    var statusResp = await http.GetAsync($"https://api.openai.com/v1/threads/{threadId}/runs/{runId}");
+                    var statusJson = Newtonsoft.Json.Linq.JObject.Parse(await statusResp.Content.ReadAsStringAsync());
+                    runStatus = statusJson["status"]?.ToString() ?? "unknown";
+                }
+
+                if (runStatus != "completed") return null;
+
+                var msgsResp = await http.GetAsync($"https://api.openai.com/v1/threads/{threadId}/messages");
+                var msgsJson = Newtonsoft.Json.Linq.JObject.Parse(await msgsResp.Content.ReadAsStringAsync());
+                var dataArr = msgsJson["data"] as Newtonsoft.Json.Linq.JArray;
+                if (dataArr == null) return null;
+
+                foreach (var msg in dataArr)
+                {
+                    if (msg["role"]?.ToString() != "assistant") continue;
+                    var contentArr = msg["content"] as Newtonsoft.Json.Linq.JArray;
+                    if (contentArr == null) continue;
+                    foreach (var block in contentArr)
+                    {
+                        if (block["type"]?.ToString() == "text")
+                        {
+                            var raw = block["text"]?["value"]?.ToString();
+                            if (!string.IsNullOrWhiteSpace(raw)) return raw;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        private sealed class RubricQuestionParseResult
+        {
+            public bool Parsed { get; set; }
+            public object ErrorResponse { get; set; }
+            public List<object> Saved { get; set; } = new List<object>();
+            public List<(string Returned, string Question)> Mismatches { get; set; } = new List<(string, string)>();
+            public int TotalCount { get; set; }
+        }
+
+        private async Task<RubricQuestionParseResult> ParseAndSaveRubricQuestionsAsync(
+            string raw, int irfId, string emailid, HashSet<string> validSkillNames)
+        {
+            var result = new RubricQuestionParseResult();
+            var cleaned = raw.Trim();
+            if (cleaned.StartsWith("```json", StringComparison.OrdinalIgnoreCase))
+                cleaned = cleaned.Substring(7).TrimStart();
+            else if (cleaned.StartsWith("```"))
+                cleaned = cleaned.Substring(3).TrimStart();
+            if (cleaned.EndsWith("```"))
+                cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
+
+            var jsonStart = cleaned.IndexOf('{');
+            var jsonEnd = cleaned.LastIndexOf('}');
+            if (jsonStart >= 0 && jsonEnd > jsonStart)
+                cleaned = cleaned.Substring(jsonStart, jsonEnd + 1 - jsonStart);
+
+            Newtonsoft.Json.Linq.JObject jsonObj;
+            try { jsonObj = Newtonsoft.Json.Linq.JObject.Parse(cleaned); }
+            catch (Newtonsoft.Json.JsonException parseEx)
+            {
+                var preview = cleaned.Length > 300 ? cleaned.Substring(0, 300) + "..." : cleaned;
+                result.Parsed = false;
+                result.ErrorResponse = new { success = false, message = "AI returned a non-JSON response: " + preview, parseError = parseEx.Message };
+                return result;
+            }
+
+            var bank = (jsonObj["question_answer_score_bank"]
+                ?? jsonObj["questions"]
+                ?? jsonObj["question_bank"]
+                ?? jsonObj["sample_questions"]) as Newtonsoft.Json.Linq.JArray;
+
+            if (bank == null)
+            {
+                var firstArr = jsonObj.Properties()
+                    .FirstOrDefault(p => p.Value is Newtonsoft.Json.Linq.JArray arr && arr.Count > 0 && arr[0] is Newtonsoft.Json.Linq.JObject);
+                bank = firstArr?.Value as Newtonsoft.Json.Linq.JArray;
+            }
+
+            if (bank == null || !bank.Any())
+            {
+                result.Parsed = false;
+                result.ErrorResponse = new { success = false, message = "AI did not return any questions in the expected format." };
+                return result;
+            }
+
+            result.Parsed = true;
+            result.TotalCount = bank.Count;
+
+            foreach (var q in bank)
+            {
+                var skill = q["skill_or_competency"]?.ToString()?.Trim();
+                if (string.IsNullOrEmpty(skill))
+                    skill = q["rubric_parameter"]?.ToString()?.Trim();
+
+                if (!DmIvQuestionRubricHelper.TryMatchSkill(skill, validSkillNames, out var matchedSkill))
+                {
+                    result.Mismatches.Add((skill ?? "(empty)", (q["interviewer_question"] ?? q["question"])?.ToString() ?? ""));
+                    continue;
+                }
+
+                var question = (q["interviewer_question"] ?? q["question"] ?? q["question_text"])?.ToString() ?? "";
+                if (string.IsNullOrWhiteSpace(question)) continue;
+
+                var strongAnswer = q["expected_candidate_answer"]?["strong_answer"]?.ToString()
+                    ?? q["expected_answer"]?.ToString()
+                    ?? q["strong_answer"]?.ToString()
+                    ?? q["answer"]?.ToString() ?? "";
+                var payload = q.ToString(Newtonsoft.Json.Formatting.None);
+
+                var newId = await _irfService.AddAIGeneratedSampleQuestion(irfId, matchedSkill, question, strongAnswer, payload, emailid);
+                if (newId > 0)
+                    result.Saved.Add(new { id = newId, skillName = matchedSkill, comment = question, expectedAnswer = strongAnswer, isGeneratedByAi = true });
+            }
+
+            return result;
         }
     }
 }

@@ -23,6 +23,28 @@
         width: 500px;
     }
 
+    .open-iv-cap-pill {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #1d4ed8;
+        background: #eff6ff;
+        clear: both;
+    }
+
+    .open-iv-cap-pill--full {
+        color: #b45309;
+        background: #fffbeb;
+    }
+
+    .open-iv-cap-blocked {
+        cursor: not-allowed;
+        opacity: 0.65;
+    }
+
         .swal2-popup #swal2-content {
             text-align: center;
             color: #00000094;
@@ -276,10 +298,27 @@
                                                     }
                                                     @foreach (var item in Model)
                                                     {
+                                                        var ivCapState = DmIvCapHelper.GetCapStateForRow(
+                                                            item.DmAssignmentPolicy,
+                                                            item.InterviewCapacity,
+                                                            item.IvFutureAssignedCount,
+                                                            item.DmDefaultInterviewCap > 0 ? item.DmDefaultInterviewCap : DmIvCapHelper.DefaultCapFallback);
+                                                        var ivCapEnforced = ivCapState.IsCapEnforced;
+                                                        var ivEffectiveCap = ivCapState.EffectiveCap;
+                                                        var ivCapReached = ivCapState.IsCapReached && ivCapEnforced;
+                                                        var ivCapTitle = ivCapReached
+                                                            ? $"Interview limit reached ({ivEffectiveCap}). You can't take more interviews on this channel right now."
+                                                            : "Assign Yourself";
                                                         <tr id=@item.id>
                                                             <td class="text-center">
-                                                                @* <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate})'" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button> *@
-                                                                <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="AssingInterviewYourSelf('@item.id','@item.interviewDate','@item.AudioComment','@item.CompanyDetails')" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button>
+                                                                @if (ivCapReached)
+                                                                {
+                                                                    <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn open-iv-cap-blocked" disabled="disabled" title="@ivCapTitle" aria-label="@ivCapTitle"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.45"><circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span></button>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="AssingInterviewYourSelf('@item.id','@item.interviewDate','@item.AudioComment','@item.CompanyDetails')" title="@ivCapTitle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button>
+                                                                }
                                                             </td>
                                                             <td>
                                                                 <button class="mandate-btn" aria-label="Upload audio for verification"><span onclick="InstructionModel('@item.AudioComment','@item.CompanyDetails')"><svg style="color: rgb(223, 135, 12);margin:0px 4px;" xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16"> <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" fill="#df870c"></path> <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" fill="#df870c"></path> </svg>Mandatory Video Instruction</span></button>
@@ -346,6 +385,12 @@
                                                                         <span style="font-weight: 500;font-size: 14px;color: #918d8d;margin-top:9px;display: inline-block;padding-right:5px;">Interview Price:</span>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)
                                                                     </div><div style="float:left"><span style="font-weight: 500;font-size: 14px;color: #918d8d;margin-top:9px;padding-right:5px;display: inline-block;">Interview Duration:</span>@item.interviewDuration Min.</div>
                                                                 </div>
+                                                                @if (ivCapEnforced)
+                                                                {
+                                                                    <div class="open-iv-cap-pill @(ivCapReached ? "open-iv-cap-pill--full" : "")" title="Future assigned interviews on this channel">
+                                                                        @item.IvFutureAssignedCount / @ivEffectiveCap interviews on channel
+                                                                    </div>
+                                                                }
 
                                                             </td>
                                                             <td>
@@ -558,6 +603,12 @@
     function formatAssignYourselfMessage(raw) {
         if (raw == null) return '';
         var s = String(raw);
+        if (s.indexOf('CAP_REACHED|') === 0) {
+            return $('<div/>').text(s.substring('CAP_REACHED|'.length)).html();
+        }
+        if (s.indexOf('INACTIVE_IVY|') === 0) {
+            return $('<div/>').text(s.substring('INACTIVE_IVY|'.length)).html();
+        }
         if (s.indexOf('|VIDEO_MANDATE') !== -1) {
             return '<div class="assign-success-compact">'
                 + '<div class="assign-success-compact__lead">Interview assigned successfully</div>'
@@ -893,15 +944,24 @@
     }
     function bindinterviewalertdetails(data,videolink,textinstruction){
         $('#mandate-popup-btn').show();
-        if(data.includes('Successfully')){
-            setInterviewerAlertStatus(true, formatAssignYourselfMessage(data));
+        var msg = '';
+        if (data && typeof data === 'object' && data.message) {
+            msg = String(data.message);
+        } else {
+            msg = data == null ? '' : String(data);
+        }
+        if((data && data.code === 'OK') || msg.indexOf('Successfully') !== -1 || msg.indexOf('|VIDEO_MANDATE') !== -1){
+            setInterviewerAlertStatus(true, formatAssignYourselfMessage(msg));
             bindinstructiondetails(videolink,textinstruction);
         }
         else
         {
-            setInterviewerAlertStatus(false, formatAssignYourselfMessage(data));
+            setInterviewerAlertStatus(false, formatAssignYourselfMessage(msg));
             document.getElementById("divvideoinstruction").style.display="none";
             document.getElementById("divcompanytextinstruction").style.display="none";
+            if ((data && data.code === 'CAP_REACHED') || msg.indexOf('CAP_REACHED|') === 0) {
+                $("#popupreload").val("true");
+            }
         }
     }
      function bindinstructiondetails(videolink,textinstruction){

@@ -27,6 +27,7 @@ using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Helpers;
 using Risebird.Web.Services.Proctoring;
+using Risebird.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -1900,6 +1901,7 @@ namespace Risebird.Web.Controllers
                 reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
                 //reportModel.chatMessageViewModel = chatMessageModel; 
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
+                EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = false;
                 List<TypingSpeedAssessment> typingAssessments;
@@ -2040,6 +2042,7 @@ namespace Risebird.Web.Controllers
                 //reportModel.chatMessageViewModel = chatMessageModel;
 
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault()); //JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
+                EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = true;
                 List<TypingSpeedAssessment> typingAssessmentsAdaptive;
@@ -2330,6 +2333,7 @@ namespace Risebird.Web.Controllers
                 var reportModel = new AIInterviewReportWrapperClass();
                 reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
+                EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
                 reportModel.CandidateEmail = meetingDetails?.candidateEmail;
                 reportModel.CandidateName = meetingDetails?.candidateName;
                 reportModel.InterviewDate = meetingDetails?.interviewDate ?? DateTime.MinValue;
@@ -2399,90 +2403,144 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")
+                    return Json(new { success = false, message = "Unauthorized." });
+                }
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Trim('"');
+                if (!DeliveryHeadInstructionViewMode.IsOperationalProfile(profileName))
+                {
+                    return Json(new { success = false, message = "You do not have permission to generate AI question videos." });
+                }
+
+                if (id <= 0)
+                {
+                    return Json(new { success = false, message = "Invalid question id." });
+                }
+
+                var questionDetails = await _iRFService.GetDeliveryHeadSampleQuestionById(id);
+                if (questionDetails == null)
+                {
+                    return Json(new { success = false, message = "Question not found." });
+                }
+
+                if (string.IsNullOrWhiteSpace(questionDetails.Comment))
+                {
+                    return Json(new { success = false, message = "Question text is required before generating a video." });
+                }
+
+                var irfVm = await _iRFService.GetEditIRF(questionDetails.IRFId, 0, false);
+                if (irfVm == null || !DmSynthesiaVideoViewMode.UsesSynthesiaVideos(irfVm.IsAIInterview, irfVm.AIInterviewType))
+                {
+                    return Json(new { success = false, message = "AI question videos are only available for Preset AI interview channels." });
+                }
+
+                string videoId;
+                try
+                {
+                    videoId = await _synthesiaTextToVideoService.CreateVideoAsync(questionDetails.Comment, SynthesiaAIAvatarTemplates.Reema);
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    return Json(new { success = false, message = "Could not reach Synthesia API. Check configuration and try again." });
+                }
+
+                if (string.IsNullOrWhiteSpace(videoId))
+                {
+                    return Json(new { success = false, message = "Synthesia did not return a video id." });
+                }
+
+                string synthesiaDownloadUrl = null;
+                const int maxPollAttempts = 20;
+                for (var attempt = 0; attempt < maxPollAttempts; attempt++)
+                {
+                    await Task.Delay(8000);
+                    try
                     {
-                        var questionDetails = await _iRFService.GetDeliveryHeadSampleQuestionById(id);
-
-                        //now call the synthesia api to generate the video
-                        var videoId = await _synthesiaTextToVideoService.CreateVideoAsync(questionDetails.Comment, SynthesiaAIAvatarTemplates.Reema);
-
-                        // Wait/poll until video is ready (Synthesia usually takes 30–60s)
-                        string videoUrl;
-                        do
-                        {
-                            await Task.Delay(8000);
-                            videoUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
-                        } while (string.IsNullOrWhiteSpace(videoUrl));
-
-
-                        //save the video in our blob/
-                        string uploadedVideoUrl = string.Empty;
-
-                        if (videoUrl != null)
-                        {
-                            HttpClient myWebClient = new HttpClient();
-                            using (Stream myStream = myWebClient.GetStreamAsync(videoUrl).Result)
-                            {
-                                var fileName = $"aiVideo_{id.ToString()}_{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
-                                //long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                                //fileName = fileName + "_" + unixTime.ToString();
-                                try
-                                {
-                                    uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, "botinterviewvideo", null, myStream).Result;
-
-                                }
-                                catch (Exception ex)
-                                {
-                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-
-                                }
-
-                                //generate SAS URL from the uploaded video url
-                                //var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
-
-                                //if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
-                                //{
-                                //    videoSasUrl = uploadedVideoUrl + "?" + sas;
-                                //}
-                            }
-                        }
-
-                        //save the video link in our db against the above id
-
-                        var result = await _iRFService.SaveSampleQuestionAIVideoLink(id, uploadedVideoUrl);
-                        if (result)
-                        {
-                            return Json($"Successfully created an AI Video for the question starting with '{questionDetails.Comment.Substring(0, 25)}'");
-                        }
-                        else
-                        {
-                            return Json($"Failed to create an AI Video for the question starting with '{questionDetails.Comment.Substring(0, 25)}'");
-                        }
+                        synthesiaDownloadUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        return RedirectToAction("SignOut", "Session");
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                     }
 
+                    if (!string.IsNullOrWhiteSpace(synthesiaDownloadUrl))
+                        break;
                 }
-                else
+
+                if (string.IsNullOrWhiteSpace(synthesiaDownloadUrl))
                 {
-                    return RedirectToAction("SignOut", "Session");
+                    return Json(new { success = false, message = "Synthesia video is still processing. Please try again in a minute." });
                 }
+
+                string uploadedVideoUrl = string.Empty;
+                using (var httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(5) })
+                using (var myStream = await httpClient.GetStreamAsync(synthesiaDownloadUrl))
+                {
+                    var fileName = $"aiVideo_{id}_{DateTime.UtcNow:yyyyMMddTHHmmss}";
+                    try
+                    {
+                        uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "botinterviewvideo", null, myStream);
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        return Json(new { success = false, message = "Video was generated but could not be saved to storage." });
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(uploadedVideoUrl))
+                {
+                    return Json(new { success = false, message = "Video upload failed." });
+                }
+
+                var saved = await _iRFService.SaveSampleQuestionAIVideoLink(id, uploadedVideoUrl);
+                if (!saved)
+                {
+                    return Json(new { success = false, message = "Video was created but could not be linked to this question." });
+                }
+
+                var preview = questionDetails.Comment.Length > 25
+                    ? questionDetails.Comment.Substring(0, 25) + "…"
+                    : questionDetails.Comment;
+                return Json(new
+                {
+                    success = true,
+                    videoUrl = uploadedVideoUrl,
+                    message = $"Successfully created an AI video for the question starting with '{preview}'."
+                });
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                //return Json($"Failed to create an AI Video for the question starting with '{questionDetails.Comment.Substring(0, 25)}'");
+                return Json(new { success = false, message = "Video generation failed: " + ex.Message });
+            }
+        }
 
-                return Json(false);
+        private void EnrichQuestionRatingsWithActualQuestions(AIInterviewEvaluation evaluation, List<BotInterviewQuestionVideos> videoDetails)
+        {
+            if (evaluation?.QuestionRatings == null || videoDetails == null || !videoDetails.Any())
+                return;
 
+            for (int i = 0; i < evaluation.QuestionRatings.Count; i++)
+            {
+                var qr = evaluation.QuestionRatings[i];
+                if (string.IsNullOrWhiteSpace(qr.Question) || System.Text.RegularExpressions.Regex.IsMatch(qr.Question, @"^Q\d+$"))
+                {
+                    int index = -1;
+                    var match = System.Text.RegularExpressions.Regex.Match(qr.Question ?? "", @"\d+");
+                    if (match.Success)
+                        index = int.Parse(match.Value) - 1;
+                    else
+                        index = i;
+
+                    if (index >= 0 && index < videoDetails.Count && !string.IsNullOrWhiteSpace(videoDetails[index].question))
+                    {
+                        qr.Question = videoDetails[index].question;
+                    }
+                }
             }
         }
 
@@ -2503,6 +2561,64 @@ namespace Risebird.Web.Controllers
                      !string.IsNullOrEmpty(strict.FinalVerdict) || !string.IsNullOrEmpty(strict.FinalComment) ||
                      strict.OverallTechnicalScore != 0 || strict.OverallCommunicationScore != 0))
                 {
+                    var rootForFix = JsonConvert.DeserializeObject<JObject>(cleaned);
+
+                    if (strict.RubricScoreSummary != null && strict.RubricScoreSummary.Any(r => string.IsNullOrEmpty(r.RubricItem)))
+                    {
+                        var rArr = rootForFix?["rubric_score_summary"] as JArray;
+                        if (rArr != null)
+                        {
+                            strict.RubricScoreSummary = rArr.Select(r => new RubricScoreSummary
+                            {
+                                RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
+                                ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
+                                ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("observed_at"),
+                                Score = r.Value<float?>("score") ?? 0
+                            }).ToList();
+                        }
+                    }
+
+                    if (strict.QuestionRatings == null && rootForFix != null)
+                    {
+                        var qArr = (JArray)(rootForFix["question_ratings"] ?? rootForFix["questions"] ?? rootForFix["questionRatings"] ?? rootForFix["question_evaluations"]);
+                        if (qArr != null)
+                        {
+                            strict.QuestionRatings = qArr.Select(q => new QuestionRating
+                            {
+                                Question = q.Value<string>("question") ?? q.Value<string>("text") ?? q.Value<string>("question_id"),
+                                Verdict = q.Value<string>("verdict") ?? q.Value<string>("evaluation_summary"),
+                                Score = q.Value<int?>("score") ?? 0,
+                                Comment = q.Value<string>("comment") ?? q.Value<string>("evaluation_summary"),
+                                CommunicationScore = q.Value<int?>("communication_score") ?? 0,
+                                CommunicationComment = q.Value<string>("communication_comment")
+                            }).ToList();
+                        }
+                    }
+
+                    if (strict.RubricScoreSummary == null && rootForFix != null)
+                    {
+                        var rArr = (JArray)(rootForFix["rubric_score_summary"] ?? rootForFix["category_scores"] ?? rootForFix["rubric_summary"] ?? rootForFix["rubric"]);
+                        if (rArr != null)
+                        {
+                            strict.RubricScoreSummary = rArr.Select(r => new RubricScoreSummary
+                            {
+                                RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("score_rubric_parameter") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
+                                ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
+                                ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("summary"),
+                                Score = r.Value<float?>("score") ?? r.Value<float?>("average_score") ?? 0
+                            }).ToList();
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(strict.FinalVerdict) && rootForFix != null)
+                    {
+                        strict.FinalVerdict = rootForFix.Value<string>("final_verdict") ?? rootForFix.Value<string>("verdict") ?? rootForFix.Value<string>("overall_recommendation");
+                    }
+                    if (string.IsNullOrEmpty(strict.FinalComment) && rootForFix != null)
+                    {
+                        strict.FinalComment = rootForFix.Value<string>("final_comment") ?? rootForFix.Value<string>("comment") ?? rootForFix.Value<string>("overall_summary");
+                    }
+
                     return strict;
                 }
             }
@@ -2516,35 +2632,35 @@ namespace Risebird.Web.Controllers
                 var eval = new AIInterviewEvaluation
                 {
                     OverallTechnicalScore = root.Value<int?>("overall_technical_score") ?? root.Value<int?>("overall_score") ?? 0,
-                    FinalVerdict = root.Value<string>("final_verdict") ?? root.Value<string>("verdict"),
-                    FinalComment = root.Value<string>("final_comment") ?? root.Value<string>("comment"),
+                    FinalVerdict = root.Value<string>("final_verdict") ?? root.Value<string>("verdict") ?? root.Value<string>("overall_recommendation"),
+                    FinalComment = root.Value<string>("final_comment") ?? root.Value<string>("comment") ?? root.Value<string>("overall_summary"),
                     OverallCommunicationScore = root.Value<int?>("overall_communication_score") ?? root.Value<int?>("communication_score") ?? 0,
                     OverallCommunicationScoreReasoning = root.Value<string>("overall_communication_score reasoning") ?? root.Value<string>("overall_communication_score_reasoning")
                 };
 
-                var qNode = (JArray)(root["question_ratings"] ?? root["questions"] ?? root["questionRatings"]);
+                var qNode = (JArray)(root["question_ratings"] ?? root["questions"] ?? root["questionRatings"] ?? root["question_evaluations"]);
                 if (qNode != null)
                 {
                     eval.QuestionRatings = qNode.Select(q => new QuestionRating
                     {
-                        Question = q.Value<string>("question") ?? q.Value<string>("text"),
-                        Verdict = q.Value<string>("verdict"),
+                        Question = q.Value<string>("question") ?? q.Value<string>("text") ?? q.Value<string>("question_id"),
+                        Verdict = q.Value<string>("verdict") ?? q.Value<string>("evaluation_summary"),
                         Score = q.Value<int?>("score") ?? 0,
-                        Comment = q.Value<string>("comment"),
+                        Comment = q.Value<string>("comment") ?? q.Value<string>("evaluation_summary"),
                         CommunicationScore = q.Value<int?>("communication_score") ?? 0,
                         CommunicationComment = q.Value<string>("communication_comment")
                     }).ToList();
                 }
 
-                var rNode = (JArray)(root["rubric_score_summary"] ?? root["rubric_summary"] ?? root["rubric"]);
+                var rNode = (JArray)(root["rubric_score_summary"] ?? root["rubric_summary"] ?? root["rubric"] ?? root["category_scores"]);
                 if (rNode != null)
                 {
                     eval.RubricScoreSummary = rNode.Select(r => new RubricScoreSummary
                     {
-                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("item"),
-                        ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected"),
-                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed"),
-                        Score = r.Value<int?>("score") ?? 0
+                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("score_rubric_parameter") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
+                        ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
+                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("summary"),
+                        Score = r.Value<float?>("score") ?? r.Value<float?>("average_score") ?? 0
                     }).ToList();
                 }
 

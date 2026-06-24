@@ -23,6 +23,7 @@ CREATE PROCEDURE [dbo].[usp_AddClient]
 @IsCandidateavailability bit,      
 @IsMeetingNotificationSend bit,      
 @PerInterviewRate int,  
+@AIPerInterviewRate int,  
 @BillingType int,  
 @InterviewDuration int,  
 @IsMeetingAutoCancelled bit,  
@@ -35,7 +36,10 @@ CREATE PROCEDURE [dbo].[usp_AddClient]
 @IsTranscript bit,
 @IsPlanFlixable bit,
 @PlanType int,
-@IsVideoRequired bit
+@IsVideoRequired bit,
+@BillingModel int,
+@BillingCurrency varchar(10),
+@InterviewerBillingType int
 AS            
 Begin            
  Declare @Clientid int          
@@ -53,6 +57,7 @@ Begin
     ,[IsCandidateavailability]      
     ,[IsMeetingNotificationSend]     
  ,[PerInterviewRate]  
+ ,[AIPerInterviewRate]  
  ,[BillingType]  
  ,[InterviewDuration]  
  ,[IsMeetingAutoCancelled]  
@@ -65,7 +70,10 @@ Begin
  ,[IsTranscript]
  ,[IsPlanFlixable]
  ,[PlanType]
- ,[IsVideoRequired])          
+ ,[IsVideoRequired]
+ ,[BillingModel]
+ ,[BillingCurrency]
+ ,[InterviewerBillingType])          
      VALUES            
      (@clientName            
      ,@clientDescr            
@@ -78,6 +86,7 @@ Begin
   ,@IsCandidateavailability      
   ,@IsMeetingNotificationSend    
   ,@PerInterviewRate  
+  ,@AIPerInterviewRate  
   ,@BillingType  
   ,@InterviewDuration  
   ,@IsMeetingAutoCancelled  
@@ -90,7 +99,10 @@ Begin
   ,@IsTranscript
   ,@IsPlanFlixable
   ,@PlanType
-  ,@IsVideoRequired)            
+  ,@IsVideoRequired
+  ,@BillingModel
+  ,@BillingCurrency
+  ,@InterviewerBillingType)            
         
 set @Clientid=SCOPE_IDENTITY()  
 Insert into SeniorHR Select id as Userid,@Clientid as Clientid from UserList where idprofile=32  

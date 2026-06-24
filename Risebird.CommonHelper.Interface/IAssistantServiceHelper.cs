@@ -11,6 +11,7 @@ namespace Risebird.CommonHelper.Interface
         Task<bool> DeleteVectors();
         Task<bool> DeleteFiles(int maxIterations = 10);
         Task<RunResult> GenerateTechRubric(string jobTitle);
+        Task<RunResult> GenerateTechRubricRevision(string revisionPrompt);
         Task<RunResult> GenerateTranscriptAnalysis(string transcriptData);
         Task<RunResult> GenerateQcAnalysisInterviewAIMerge(string userMessageContent, string assistantId, bool useJsonResponseFormat = true);
         Task<RunResult> GenerateResumeAnalysis(string resumeStringData, string jobTitle);

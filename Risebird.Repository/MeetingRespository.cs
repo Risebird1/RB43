@@ -34,6 +34,25 @@ namespace Risebird.Repository
             _notificationHelper = notificationHelper;
         }
 
+        public async Task<bool> IsUserActive(string emailId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(emailId)) return false;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryFirstOrDefaultAsync<bool?>(
+                        "SELECT IsActive FROM UserList WHERE EmailId = @EmailId",
+                        new { EmailId = emailId });
+                    return result == true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings()
         {
             try
@@ -881,35 +900,32 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<string>(
-                        con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid }, commandType: Text);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@meetingId", meetingid);
+                    parameters.Add("@interviewerEmail", interviewerMail);
+                    var row = await con.QueryFirstOrDefaultAsync<dynamic>(
+                        "usp_AssignYourselfToOpenInterview",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
 
+                    if (row == null)
+                        return "Failed to assigned interview, Please contact Risebird HR.";
 
-                    //var query = "Select videoConfirmation from InterviewerProfile where videoConfirmation=1 and UserId=(select Id from userList where Emailid=@Emailid)";
-                    //var dynamicParameters = new DynamicParameters();
-                    //dynamicParameters.Add("@EmailId", interviewerMail);
-                    //var results = await con.QueryAsync<int>(query, dynamicParameters);
-
-                    var videoquery = "Select ISNULL(IRF.IsVideoRequired,0) from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@meetingid";
-                    var videodynamicParameters = new DynamicParameters();
-                    videodynamicParameters.Add("@meetingid", meetingid);
-                    var videoresults = await con.QueryAsync<bool>(videoquery, videodynamicParameters);
-                    if (videoresults.FirstOrDefault())
+                    var resultCode = (string)row.ResultCode;
+                    if (resultCode == "CAP_REACHED")
                     {
-                        return "Interview assigned Successfully|VIDEO_MANDATE";
+                        var assigned = (int)row.Assigned;
+                        var capacity = (int)row.Capacity;
+                        return $"CAP_REACHED|Interview limit reached ({capacity}). You have {assigned} of {capacity} interviews assigned on this channel.";
                     }
-                    else
-                    {
-                        return "Interview assigned Successfully.";
-                    }
-                    //if (results.FirstOrDefault() == 1)
-                    //{
-                    //return "We recommend to the interviewer to keep their video on throughout the interview. On keeping your Video On, you will be paid 10% of the Base Pay, which is close to 50 for Offshore & 100 for Onsite Interviews.Kindly use a Virtual Background, if keeping your Video ON. Rest assured your data is 100% private and you will never be mapped to your current company.";
-                    //}
-                    //else
-                    //{
-                    //    return "Interview assigned Successfully.";
-                    //}
+                    if (resultCode == "INACTIVE")
+                        return "INACTIVE_IVY|You are not active on this channel and cannot be assigned.";
+                    if (resultCode == "OK")
+                        return (string)row.Message;
+
+                    return !string.IsNullOrEmpty((string)row.Message)
+                        ? (string)row.Message
+                        : "Failed to assigned interview, Please contact Risebird HR.";
                 }
             }
             catch (SqlException ex)
@@ -4392,7 +4408,7 @@ namespace Risebird.Repository
         }
 
         /// <summary>
-        /// Updates PaymentHistory.PayoutStatus (and back-fills CfTransferId when provided)
+        /// Updates PaymentHistory.PayoutStatus, TransferUtr (and back-fills CfTransferId when provided)
         /// using TransferId and/or CfTransferId as the lookup key.
         /// Delegates to stored procedure <c>usp_UpdatePaymentHistoryTransferStatus</c>.
         /// Returns the number of rows updated (0 means no matching record found).
@@ -4400,7 +4416,9 @@ namespace Risebird.Repository
         public async Task<int> UpdatePaymentHistoryTransferStatus(
             string transferId,
             string cfTransferId,
-            string payoutStatus)
+            string payoutStatus,
+            string transferUtr = null,
+            string eventTime   = null)
         {
             try
             {
@@ -4408,6 +4426,10 @@ namespace Risebird.Repository
                 parameters.Add("@TransferId",   transferId   ?? string.Empty);
                 parameters.Add("@CfTransferId", cfTransferId ?? string.Empty);
                 parameters.Add("@PayoutStatus", payoutStatus);
+                parameters.Add("@TransferUtr",  transferUtr);
+                parameters.Add("@EventTime",    string.IsNullOrWhiteSpace(eventTime)
+                                                    ? (DateTime?)null
+                                                    : (DateTime.TryParse(eventTime, out var dt) ? dt : (DateTime?)null));
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -4426,12 +4448,142 @@ namespace Risebird.Repository
             }
         }
 
+        /// <summary>
+        /// Fetches the PaymentHistoryId, interviewer EmailId, and Amount for a
+        /// PaymentHistory row matched by TransferId and/or CfTransferId.
+        /// Used by the webhook controller to send a confirmation email on TRANSFER_SUCCESS.
+        /// </summary>
+        public async Task<PaymentHistoryEmailDetails> GetPaymentDetailsByTransferId(
+            string transferId,
+            string cfTransferId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@TransferId",   transferId   ?? string.Empty);
+                parameters.Add("@CfTransferId", cfTransferId ?? string.Empty);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QuerySingleOrDefaultAsync<PaymentHistoryEmailDetails>(
+                        "usp_GetPaymentDetailsByTransferId",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Inserts one row into <c>PaymentLogs</c> via <c>usp_InsertPaymentLog</c>.
+        /// Swallows all exceptions so logging never breaks the caller.
+        /// </summary>
+        public async Task InsertPaymentLog(
+            string endpoint,
+            string requestBody,
+            string responseBody,
+            int?   httpStatusCode,
+            string logLevel,
+            string eventType          = null,
+            string transferId         = null,
+            string cfTransferId       = null,
+            string transferStatus     = null,
+            string signatureTimestamp = null,
+            string signatureReceived  = null,
+            int?   rowsUpdated        = null,
+            string errorMessage       = null,
+            string callerIp           = null)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Endpoint",           endpoint);
+                parameters.Add("@RequestBody",        requestBody);
+                parameters.Add("@ResponseBody",       responseBody);
+                parameters.Add("@HttpStatusCode",     httpStatusCode);
+                parameters.Add("@LogLevel",           logLevel);
+                parameters.Add("@EventType",          eventType);
+                parameters.Add("@TransferId",         transferId);
+                parameters.Add("@CfTransferId",       cfTransferId);
+                parameters.Add("@TransferStatus",     transferStatus);
+                parameters.Add("@SignatureTimestamp", signatureTimestamp);
+                parameters.Add("@SignatureReceived",  signatureReceived);
+                parameters.Add("@RowsUpdated",        rowsUpdated);
+                parameters.Add("@ErrorMessage",       errorMessage);
+                parameters.Add("@CallerIp",           callerIp);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await con.ExecuteAsync(
+                        "usp_InsertPaymentLog",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        public async Task<RBInterviewDetails> GetPaymentHistoryById(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QuerySingleOrDefaultAsync<RBInterviewDetails>(
+                        "usp_GetPaymentHistoryById",
+                        new { id },
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<int> UpdatePaymentHistoryForRetry(int id, string transferId, string cfTransferId, string payoutStatus)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@id",           id);
+                parameters.Add("@TransferId",   transferId);
+                parameters.Add("@CfTransferId", cfTransferId);
+                parameters.Add("@PayoutStatus", payoutStatus);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QuerySingleOrDefaultAsync<int>(
+                        "usp_UpdatePaymentHistoryForRetry",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
         public async Task<List<RBInterviewDetails>> FetchFNPaymentHistory()
         {
             try
             {
                 List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
-                var query = "Select ph.id,ul.EmailId as InterviewerEmailid, ul.FirstName,ph.PaymentDate as Date,ph.Status,ph.Amount as Points,ip.AssessmentGroupId,ph.TotalAmount from PaymentHistory ph join Userlist ul on ul.id=ph.Userid join InterviewerProfile ip on ip.Userid=ul.id ";
+                var query = @"Select ph.id, ul.EmailId as InterviewerEmailid, ul.FirstName, ph.PaymentDate as Date, ph.Status,
+                    ph.Amount as Points, ip.AssessmentGroupId, ph.TotalAmount, ph.TransferId, ph.CfTransferId, ph.TransferUtr, ph.PayoutStatus, ph.TransactionDate, ph.Comment
+                    from PaymentHistory ph
+                    join Userlist ul on ul.id = ph.Userid
+                    join InterviewerProfile ip on ip.Userid = ul.id";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<RBInterviewDetails>(query, null);
@@ -4798,6 +4950,67 @@ namespace Risebird.Repository
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
+
+        public CapCheckResult CheckInterviewerCapForAssignment(int irfIntId, string interviewerEmail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfIntId", irfIntId);
+                    parameters.Add("@interviewerEmail", interviewerEmail);
+                    var row = con.QueryFirstOrDefault<dynamic>("usp_CheckInterviewerCapForAssignment", parameters, commandType: CommandType.StoredProcedure);
+                    if (row == null) return CapCheckResult.AllowedResult;
+                    return new CapCheckResult
+                    {
+                        Allowed = (int)row.Allowed == 1,
+                        IsLocked = (int)row.IsLocked == 1,
+                        IsInactive = row.IsInactive != null && (int)row.IsInactive == 1,
+                        IsCapEnforced = row.IsCapEnforced != null && (int)row.IsCapEnforced == 1,
+                        CapConfigured = row.CapConfigured != null && (int)row.CapConfigured == 1,
+                        Assigned = row.Assigned != null ? (int)row.Assigned : 0,
+                        Capacity = row.Capacity != null ? (int)row.Capacity : 0
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex).GetAwaiter().GetResult();
+                return CapCheckResult.AllowedResult;
+            }
+        }
+
+        public CapCheckResult CheckInterviewerCapForAssignmentByMeeting(int meetingId, string interviewerEmail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@meetingId", meetingId);
+                    parameters.Add("@interviewerEmail", interviewerEmail);
+                    var row = con.QueryFirstOrDefault<dynamic>("usp_CheckInterviewerCapForAssignment", parameters, commandType: CommandType.StoredProcedure);
+                    if (row == null) return CapCheckResult.AllowedResult;
+                    return new CapCheckResult
+                    {
+                        Allowed = (int)row.Allowed == 1,
+                        IsLocked = (int)row.IsLocked == 1,
+                        IsInactive = row.IsInactive != null && (int)row.IsInactive == 1,
+                        IsCapEnforced = row.IsCapEnforced != null && (int)row.IsCapEnforced == 1,
+                        CapConfigured = row.CapConfigured != null && (int)row.CapConfigured == 1,
+                        Assigned = row.Assigned != null ? (int)row.Assigned : 0,
+                        Capacity = row.Capacity != null ? (int)row.Capacity : 0
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex).GetAwaiter().GetResult();
+                return CapCheckResult.AllowedResult;
+            }
+        }
+
         public string ReAssignMeeting(int id, string interviewerMail)
         {
             try
@@ -5031,6 +5244,305 @@ namespace Risebird.Repository
                 return "Fail";
             }
         }
+        public async Task<List<InvoiceListVM>> GetInvoiceList(int month, int year)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Month", month);
+                    parameters.Add("@Year", year);
+                    var result = await SqlMapper.QueryAsync<InvoiceListVM>(con, "usp_GetInvoiceList", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<InvoiceListVM>();
+            }
+        }
+
+
+        public async Task<List<InvoiceListVM>> GetUnpaidInvoiceList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<InvoiceListVM>(con, "usp_GetUnpaidInvoices",
+                        commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<InvoiceListVM>();
+            }
+        }
+
+        public async Task<List<InvoiceListVM>> GetPaidInvoiceList(int fromYear = 0, int fromMonth = 0, int toYear = 0, int toMonth = 0)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@FromYear",  fromYear);
+                    parameters.Add("@FromMonth", fromMonth);
+                    parameters.Add("@ToYear",    toYear);
+                    parameters.Add("@ToMonth",   toMonth);
+                    var result = await SqlMapper.QueryAsync<InvoiceListVM>(con, "usp_GetPaidInvoices", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<InvoiceListVM>();
+            }
+        }
+
+        public async Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ClientId", clientId);
+                    parameters.Add("@Month", month);
+                    parameters.Add("@Year", year);
+                    parameters.Add("@BillingOwnerId", billingOwnerId);
+                    using (var multi = await con.QueryMultipleAsync("usp_GetClientInvoiceFormData", parameters, commandType: CommandType.StoredProcedure))
+                    {
+                        var clientData = (await multi.ReadAsync<ClientInvoiceFormDataVM>()).FirstOrDefault() ?? new ClientInvoiceFormDataVM();
+                        clientData.LineItems = (await multi.ReadAsync<InvoiceLineItemVM>()).ToList();
+                        return clientData;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new ClientInvoiceFormDataVM();
+            }
+        }
+
+        public async Task<InvoiceDetailVM> GetGeneratedInvoiceById(int invoiceId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@InvoiceId", invoiceId);
+                    using (var multi = await SqlMapper.QueryMultipleAsync(con, "usp_GetGeneratedInvoiceById", parameters,
+                        commandType: CommandType.StoredProcedure))
+                    {
+                        var header    = (await multi.ReadAsync<InvoiceDetailVM>()).FirstOrDefault();
+                        var lineItems = (await multi.ReadAsync<InvoiceLineItemVM>()).ToList();
+                        if (header != null) header.LineItems = lineItems;
+                        return header;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
+            decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
+            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@InvoiceId",         invoiceId);
+                    parameters.Add("@GSTNumber",         gstNumber);
+                    parameters.Add("@CreditPeriod",      creditPeriod);
+                    parameters.Add("@IRN",               irn);
+                    parameters.Add("@EInvoiceFileLink",  eInvoiceFileLink);
+                    parameters.Add("@Status",            status);
+                    parameters.Add("@Subtotal",          subtotal);
+                    parameters.Add("@GSTAmount",         gstAmount);
+                    parameters.Add("@InvoiceValue",      invoiceValue);
+                    parameters.Add("@TDSAmount",         tdsAmount);
+                    parameters.Add("@NetReceivable",     netReceivable);
+                    parameters.Add("@LatestRemark",      latestRemark);
+                    parameters.Add("@UTRTrxn",           utrTrxn);
+                    parameters.Add("@CashCreditAmount",  cashCreditAmount);
+                    parameters.Add("@TaxScenario",       taxScenario);
+                    var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_UpdateInvoiceDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return (result.FirstOrDefault()?.UpdatedRows ?? 0) > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task UpdateInvoiceLineItem(int lineItemId, decimal unitRate, decimal lineTotal)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@LineItemId", lineItemId);
+                    parameters.Add("@UnitRate",   unitRate);
+                    parameters.Add("@LineTotal",  lineTotal);
+                    await SqlMapper.ExecuteAsync(con, "usp_UpdateInvoiceLineItems", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        public async Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ClientId",       clientId);
+                    parameters.Add("@BillingOwnerId", billingOwnerId);
+                    parameters.Add("@InvoiceMonth",   month);
+                    parameters.Add("@InvoiceYear",    year);
+                    var result = await SqlMapper.QueryAsync<DuplicateInvoiceCheckVM>(con, "usp_CheckDuplicateInvoice", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<List<BillingOwnerOption>> GetClientBillingOwners(int clientId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ClientId", clientId);
+                    var result = await SqlMapper.QueryAsync<BillingOwnerOption>(con, "usp_GetClientBillingOwners", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<BillingOwnerOption>();
+            }
+        }
+
+        public async Task<string> GetNextInvoiceNumber(int month, int year)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Month", month);
+                    parameters.Add("@Year", year);
+                    var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_GetNextInvoiceNumber", parameters, commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault()?.InvoiceNumber ?? string.Empty;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
+        }
+
+        public async Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id",                model.id);
+                    parameters.Add("@ClientId",          model.ClientId);
+                    parameters.Add("@BillingOwnerId",    model.BillingOwnerId);
+                    parameters.Add("@InvoiceNumber",     model.InvoiceNumber);
+                    parameters.Add("@InvoiceMonth",      model.InvoiceMonth);
+                    parameters.Add("@InvoiceYear",       model.InvoiceYear);
+                    parameters.Add("@BillingOwnerEmail", model.BillingOwnerEmail);
+                    parameters.Add("@CreditPeriod",      model.CreditPeriod);
+                    parameters.Add("@GSTNumber",         model.GSTNumber);
+                    parameters.Add("@TaxScenario",       model.TaxScenario);
+                    parameters.Add("@IRN",               model.IRN);
+                    parameters.Add("@EInvoiceFileLink",  model.EInvoiceFileLink);
+                    parameters.Add("@Subtotal",          model.Subtotal);
+                    parameters.Add("@GSTAmount",         model.GSTAmount);
+                    parameters.Add("@InvoiceValue",      model.InvoiceValue);
+                    parameters.Add("@TDSAmount",         model.TDSAmount);
+                    parameters.Add("@NetReceivable",     model.NetReceivable);
+                    parameters.Add("@Status",            model.Status);
+                    parameters.Add("@CreatedBy",         model.CreatedBy);
+                    parameters.Add("@CashCreditAmount",  model.CashCreditAmount);
+                    parameters.Add("@UTRTrxn",           model.UTRTrxn);
+                    parameters.Add("@BillingCurrency",   string.IsNullOrEmpty(model.BillingCurrency) ? "INR" : model.BillingCurrency);
+                    var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_SaveGeneratedInvoice", parameters, commandType: CommandType.StoredProcedure);
+                    return (int)(result.FirstOrDefault()?.NewId ?? 0);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task SaveGeneratedInvoiceLineItems(int invoiceId, List<InvoiceLineItemVM> lineItems)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    foreach (var item in lineItems)
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@InvoiceId",   invoiceId);
+                        parameters.Add("@ProductName", item.ProductName);
+                        parameters.Add("@Description", item.Description);
+                        parameters.Add("@Qty",         item.Qty);
+                        parameters.Add("@UnitRate",    item.UnitRate);
+                        parameters.Add("@LineTotal",   item.LineTotal);
+                        parameters.Add("@Basis",       item.Basis);
+                        await SqlMapper.ExecuteAsync(con, "usp_SaveGeneratedInvoiceLineItems", parameters, commandType: CommandType.StoredProcedure);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
         public async Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null)
         {
             try
@@ -6284,18 +6796,19 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             }
             return null;
         }
-        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, string year, int month)
+        public async Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, int fromYear, int fromMonth, int toYear, int toMonth)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var currentyear = Convert.ToInt32(year);
                     var parameters = new DynamicParameters();
                     parameters.Add("@StartDate", stdate);
                     parameters.Add("@EndDate", endate);
-                    parameters.Add("@year", currentyear);
-                    parameters.Add("@month", month);
+                    parameters.Add("@FromYear", fromYear);
+                    parameters.Add("@FromMonth", fromMonth);
+                    parameters.Add("@ToYear", toYear);
+                    parameters.Add("@ToMonth", toMonth);
                     var result = await SqlMapper.QueryAsync<FnRevenueVM>(con, "usp_GetRevenueDetailsByDate", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
                     return (List<FnRevenueVM>)result;

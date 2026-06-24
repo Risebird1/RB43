@@ -15,45 +15,149 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Revenue</h4></div>
-                    <div>
-                        <label id="txtAmount" style="padding:0 0 0 0">Total Revenue: @ViewBag.TotalRevenue </label> |
-                        <label id="txtTdsdeducted" style="padding:0 0 0 0">Total Pending PO Amount: @ViewBag.PendingPOAmount</label> |
-                        <label id="txtPayableAmount" style="padding:0 0 0 0">Total Invoice Raised Amount: @ViewBag.InvoiceAmount</label>
+                    @{
+                        Func<string, string> currSym = code => code switch {
+                            "USD" => "$", "EUR" => "€", "GBP" => "£",
+                            "AED" => "AED ", "SGD" => "S$", "AUD" => "A$",
+                            _ => "₹"
+                        };
+                        Func<string, string> currBg = code => code == "INR" ? "#1565c0" : "#2e7d32";
+                    }
+                    <div style="font-size:11px;line-height:2;">
+                        @if (ViewBag.RevenueByCurrency != null)
+                        {
+                            foreach (dynamic grp in ViewBag.RevenueByCurrency)
+                            {
+                                string cur  = grp.Currency;
+                                string sym  = currSym(cur);
+                                string bg   = currBg(cur);
+                                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;">
+                                    <span style="padding:1px 7px;border-radius:3px;font-size:11px;font-weight:700;color:#fff;background:@bg;min-width:36px;text-align:center;">@cur</span>
+                                    <span><strong>Revenue:</strong> @sym@(((decimal)grp.TotalRevenue).ToString("N2"))</span>
+                                    <span style="color:#9ca3af;">|</span>
+                                    <span><strong>System Invoice:</strong> @sym@(((decimal)grp.SystemInvoiceAmount).ToString("N2"))</span>
+                                    <span style="color:#9ca3af;">|</span>
+                                    <span><strong>Invoice Raised:</strong> @sym@(((decimal)grp.InvoiceAmount).ToString("N2"))</span>
+                                    <span style="color:#9ca3af;">|</span>
+                                    <span><strong>Pending Invoice:</strong> @sym@(((decimal)grp.PendingInvoiceAmount).ToString("N2"))</span>
+                                    <span style="color:#9ca3af;">|</span>
+                                    <span><strong>Pending Amount:</strong> @sym@(((decimal)grp.PendingAmount).ToString("N2"))</span>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
                 <input type="hidden" value="@ViewBag.RevenueMonth" id="hiddrevenuemonth" />
-                <div class="pull-right client-ms">
-                    <select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onchange="Changemonth()">
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
-                    </select>
-                    <select id="TdsSelectYear" name="TdsSelectYear" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onchange="Changemonth()">
-                        @foreach (var item in (List<SelectListItem>)(ViewBag.RevenueYears))
-                        {
-                            @if (item != null)
+                <input type="hidden" value="@ViewBag.FromMonth"   id="hidFromMonth" />
+                <input type="hidden" value="@ViewBag.FromYear"    id="hidFromYear" />
+                <input type="hidden" value="@ViewBag.ToMonth"     id="hidToMonth" />
+                <input type="hidden" value="@ViewBag.ToYear"      id="hidToYear" />
+                <div class="pull-right client-ms" style="padding-top:10px">
+                    <!-- Range toggle -->
+                    <label style="font-size:12px;margin-right:4px;vertical-align:middle;">Range</label>
+                    <input type="checkbox" id="chkRange" style="vertical-align:middle;margin-right:8px;" @(ViewBag.IsRangeMode == true ? "checked" : "") onchange="ToggleRangeMode()" />
+
+                    <!-- Single month mode -->
+                    <span id="singleMonthMode" style="@(ViewBag.IsRangeMode == true ? "display:none;" : "")">
+                        <select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onchange="Changemonth()">
+                            @{ var months = new[] {"January","February","March","April","May","June","July","August","September","October","November","December"}; }
+                            @for (int m = 1; m <= 12; m++)
                             {
-                                @if (item.Selected)
+                                if (m == (int)ViewBag.RevenueMonth)
                                 {
-                                    <option value="@item.Value" selected>@item.Text</option>
+                                    <option value="@m" selected>@months[m-1]</option>
                                 }
                                 else
                                 {
-                                    <option value="@item.Value">@item.Text</option>
+                                    <option value="@m">@months[m-1]</option>
                                 }
                             }
-                        }
-                    </select>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                        </select>
+                        <select id="TdsSelectYear" name="TdsSelectYear" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onchange="Changemonth()">
+                            @foreach (var item in (List<SelectListItem>)(ViewBag.RevenueYears))
+                            {
+                                @if (item != null)
+                                {
+                                    @if (item.Selected)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </span>
+
+                    <!-- Range mode -->
+                    <span id="rangeMonthMode" style="@(ViewBag.IsRangeMode == true ? "" : "display:none;")">
+                        <label style="font-size:11px;vertical-align:middle;">From:</label>
+                        <select id="ddlFromMonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                            @{ var monthsArr = new[] {"January","February","March","April","May","June","July","August","September","October","November","December"}; }
+                            @for (int m = 1; m <= 12; m++)
+                            {
+                                if (m == (int)ViewBag.FromMonth)
+                                {
+                                    <option value="@m" selected>@monthsArr[m-1]</option>
+                                }
+                                else
+                                {
+                                    <option value="@m">@monthsArr[m-1]</option>
+                                }
+                            }
+                        </select>
+                        <select id="ddlFromYear" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                            @foreach (var item in (List<SelectListItem>)(ViewBag.RevenueYears))
+                            {
+                                @if (item != null)
+                                {
+                                    @if (item.Value == ViewBag.FromYear?.ToString())
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            }
+                        </select>
+                        <label style="font-size:11px;vertical-align:middle;margin-left:4px;">To:</label>
+                        <select id="ddlToMonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                            @for (int m = 1; m <= 12; m++)
+                            {
+                                if (m == (int)ViewBag.ToMonth)
+                                {
+                                    <option value="@m" selected>@monthsArr[m-1]</option>
+                                }
+                                else
+                                {
+                                    <option value="@m">@monthsArr[m-1]</option>
+                                }
+                            }
+                        </select>
+                        <select id="ddlToYear" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                            @foreach (var item in (List<SelectListItem>)(ViewBag.RevenueYears))
+                            {
+                                @if (item != null)
+                                {
+                                    @if (item.Value == ViewBag.ToYear?.ToString())
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            }
+                        </select>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="ApplyRange()">Go</button>
+                    </span>
+
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-left:4px;">
                         <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="ExportRevenueDetails()" data-original-title="Tooltip on top">
                             <font style="font-family: Roboto, sans-serif;font-size: 12px;padding-left: 3px;"> Export Excel</font>
                         </span>
@@ -85,92 +189,84 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Name</th>
-                                                            <th>Total Interviews</th>
-                                                            <th>Per Interview Rate</th>
+                                                            <th>Non-AI Interviews</th>
+                                                            <th>Non-AI Rate</th>
+                                                            <th>AI Interviews</th>
+                                                            <th>AI Rate</th>
                                                             <th>Amount</th>
                                                             <th>GST</th>
                                                             <th>GST Amount</th>
                                                             <th>System Invoice Amount</th>
-                                                            <th>PO Pending Amount</th>
                                                             <th>Invoice Amount</th>
-                                                            <th>Invoice Submitted</th>
-                                                            <th>Invoice Submission</th>
-                                                            <th>Invoice Due Date</th>
-                                                            <th>Payment Status</th>
-                                                            <th>Payment Date</th>
+                                                            <th>Received Amount</th>
+                                                            <th>PO Amount</th>
                                                             <th>TDS</th>
-                                                            <th>Pending</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
                                                             <th>Name</th>
-                                                            <th>Total Interviews</th>
-                                                            <th>Per Interview Rate</th>
+                                                            <th>Non-AI Interviews</th>
+                                                            <th>Non-AI Rate</th>
+                                                            <th>AI Interviews</th>
+                                                            <th>AI Rate</th>
                                                             <th>Amount</th>
                                                             <th>GST</th>
                                                             <th>GST Amount</th>
                                                             <th>System Invoice Amount</th>
-                                                            <th>PO Pending Amount</th>
                                                             <th>Invoice Amount</th>
-                                                            <th>Invoice Submitted</th>
-                                                            <th>Invoice Submission</th>
-                                                            <th>Invoice Due Date</th>
-                                                            <th>Payment Status</th>
-                                                            <th>Payment Date</th>
+                                                            <th>Received Amount</th>
+                                                            <th>PO Amount</th>
                                                             <th>TDS</th>
-                                                            <th>Pending</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </tfoot>
                                                     <tbody id="tblbodyPayment">
                                                         @if (Model.Count() == 0)
                                                         {
-                                                            <tr><td colspan="4" style="text-align:center">No Result found</td></tr>
+                                                            <tr><td colspan="12" style="text-align:center">No Result found</td></tr>
                                                         }
                                                         @foreach (var item in Model)
                                                         {
 
                                                             <tr>
-                                                                <td>@item.Name<input type="hidden" id="hidclient_@item.id" value="@item.Name" /></td>
-                                                                <td>@item.TotalCount<input type="hidden" id="hidinterviewcount_@item.id" value="@item.TotalCount" /></td>
+                                                                <td>
+                                                                    @item.Name
+                                                                    @{
+                                                                        var currBadgeColor = (item.BillingCurrency ?? "INR") == "INR" ? "#1565c0" : "#2e7d32";
+                                                                        var billingTypeLabel = item.InterviewerBillingType == 2 ? "SC" : item.InterviewerBillingType == 3 ? "IV" : "";
+                                                                    }
+                                                                    <span style="margin-left:4px;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600;color:#fff;background:@currBadgeColor;" title="Billing Currency">@(item.BillingCurrency ?? "INR")</span>
+                                                                    @if (!string.IsNullOrEmpty(billingTypeLabel))
+                                                                    {
+                                                                        <span style="margin-left:3px;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600;color:#fff;background:#6a1b9a;" title="@(item.InterviewerBillingType == 2 ? "Skill Channel Billing" : "Interviewer Billing")">@billingTypeLabel</span>
+                                                                    }
+                                                                    <input type="hidden" id="hidclient_@item.id" value="@item.Name" />
+                                                                </td>
+                                                                <td>@item.NonAIInterviewCount<input type="hidden" id="hidnonaicnt_@item.id" value="@item.NonAIInterviewCount" /></td>
                                                                 <td>@item.PerInterviewRate<input type="hidden" id="hidrate_@item.id" value="@item.PerInterviewRate" /></td>
-                                                                <td>@(item.TotalCount * item.PerInterviewRate)</td>
+                                                                <td>@item.AIInterviewCount<input type="hidden" id="hidaicnt_@item.id" value="@item.AIInterviewCount" /></td>
+                                                                <td>@item.AIPerInterviewRate<input type="hidden" id="hidairate_@item.id" value="@item.AIPerInterviewRate" /></td>
+                                                                <td>
+                                                                    @item.BaseAmount.ToString("N2")
+                                                                    <input type="hidden" id="hidinterviewcount_@item.id" value="@item.TotalCount" />
+                                                                </td>
                                                                 <td>@item.GST</td>
                                                                 <td>@item.GSTAmount</td>
                                                                 <td>@item.SystemInvoiceAmount</td>
-                                                                <td>@item.POPendingAmount</td>
-                                                                <td>@item.InvoiceAmount</td>
-                                                                @if (item.invoiceSubmitted)
-                                                                {
-                                                                    <td>Yes</td>
-                                                                    <td>@item.invoiceSubmission</td>
-                                                                    <td>@(item.invoiceSubmission?.AddMonths(item.PaymentTerm))</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>No</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                }
-                                                                <td>@item.PaymentStatus</td>
-                                                                @if (item.PaymentStatus == "Received")
-                                                                {
-                                                                    <td>@item.invoiceDate</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td></td>
-                                                                }
+                                                                <td>@(item.GeneratedInvoiceAmount > 0 ? item.GeneratedInvoiceAmount.ToString("N2") : "0.00")</td>
+                                                                <td>@(item.ReceivedAmount > 0 ? item.ReceivedAmount.ToString("N2") : "0.00")</td>
+                                                                <td>@(item.POPendingAmount > 0 ? item.POPendingAmount.ToString() : "")</td>
                                                                 <td>@item.TDSAmount</td>
-                                                                <td>0</td>
                                                                 <td>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Download Completed Interview List">
                                                                         <span title="Download Completed Interview List" onclick="CompletedInterviewsExcel(@item.id)" class="mdc-fab__icon material-icons">
                                                                             <i class="far fa-file-excel excel-file card-title-space" data-toggle="tooltip" data-placement="bottom" style="font-size: 16px !important;color: white;" title="Download Completed Interview List" data-original-title="Tooltip on bottom"></i>
                                                                         </span>
                                                                     </button>
+                                                                    @if (ViewBag.IsRangeMode != true)
+                                                                    {
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
                                                                         <span onclick="Details(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
@@ -179,14 +275,20 @@
                                                                             </svg>
                                                                         </span>
                                                                     </button>
-                                                                    @if (item.BillingType == 3)
+                                                                    }
+                                                                    @if (ViewBag.IsRangeMode != true && item.BillingType == 3)
                                                                     {
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Status">
+                                                                        @* <button class="mdc-fab app-fab--absolute" aria-label="Status">
                                                                             <span onclick="DetailedView(@item.id,@item.BillingType)" title="Status" class="mdc-fab__icon material-icons">
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-receipt" viewBox="0 0 16 16">
                                                                                     <path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zm.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0l-.509-.51z" />
                                                                                     <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z" />
                                                                                 </svg>
+                                                                            </span>
+                                                                        </button> *@
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Generate Invoice" onclick="GenerateInvoiceForClient(@item.id)" style="background-color:#3949ab;">
+                                                                            <span title="Generate Invoice" class="mdc-fab__icon material-icons">
+                                                                                <i class="fas fa-file-invoice" style="font-size:14px;color:white;"></i>
                                                                             </span>
                                                                         </button>
                                                                     }
@@ -347,15 +449,41 @@
         $("#ddlmonth").val(month);
     });
 
+    function ToggleRangeMode() {
+        var isRange = $("#chkRange").is(":checked");
+        if (isRange) {
+            $("#singleMonthMode").hide();
+            $("#rangeMonthMode").show();
+        } else {
+            $("#singleMonthMode").show();
+            $("#rangeMonthMode").hide();
+        }
+    }
     function ExportRevenueDetails() {
-        var month = $("#ddlmonth").val();
-        var year = $("#TdsSelectYear").val();
-        window.location.href = "/Finance/ExportGenerateFNRevenue?year=" + year + "&month=" + month;
+        var isRange = $("#chkRange").is(":checked");
+        if (isRange) {
+            var fromMonth = $("#ddlFromMonth").val();
+            var fromYear  = $("#ddlFromYear").val();
+            var toMonth   = $("#ddlToMonth").val();
+            var toYear    = $("#ddlToYear").val();
+            window.location.href = "/Finance/ExportGenerateFNRevenue?fromYear=" + fromYear + "&fromMonth=" + fromMonth + "&toYear=" + toYear + "&toMonth=" + toMonth;
+        } else {
+            var month = $("#ddlmonth").val();
+            var year = $("#TdsSelectYear").val();
+            window.location.href = "/Finance/ExportGenerateFNRevenue?year=" + year + "&month=" + month;
+        }
     }
     function Changemonth() {
         var month = $("#ddlmonth").val();
         var year = $("#TdsSelectYear").val();
         window.location.href = "/Finance/FNRevenue?year=" + year + "&month=" + month;
+    }
+    function ApplyRange() {
+        var fromMonth = $("#ddlFromMonth").val();
+        var fromYear  = $("#ddlFromYear").val();
+        var toMonth   = $("#ddlToMonth").val();
+        var toYear    = $("#ddlToYear").val();
+        window.location.href = "/Finance/FNRevenue?fromYear=" + fromYear + "&fromMonth=" + fromMonth + "&toYear=" + toYear + "&toMonth=" + toMonth;
     }
 </script>
 
@@ -435,6 +563,11 @@
         var month = $("#ddlmonth").val();
         var year = $("#TdsSelectYear").val();
         window.location.href = "/Finance/FNRevenueByClient?id=" + clientid + "&year=" + year + "&month=" + month;
+    }
+    function GenerateInvoiceForClient(clientId) {
+        var month = $("#ddlmonth").val();
+        var year = $("#TdsSelectYear").val();
+        window.open('/Finance/GenerateInvoice?clientId=' + clientId + '&month=' + month + '&year=' + year, '_blank');
     }
     function CompletedInterviewsExcel(clientid) {
         var month = $("#ddlmonth").val();

@@ -23,11 +23,13 @@ namespace Risebird.Business
         private readonly IIRFRepository _irfRepository;
         private readonly IActivityTrackerRepository _activityTrackerRepository;
         private readonly IEncryptionHelper _encryptionHelper;
+        private readonly ICandidateService _candidateService;
 
         public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger,
             IUserService userService, IMeetingRespository meetingRespository,
             INotificationHelper notificationHelper, IPasswordHelper passwordHelper,
-            IIRFRepository irfRepository, IActivityTrackerRepository activityTrackerRepository, IEncryptionHelper encryptionHelper)
+            IIRFRepository irfRepository, IActivityTrackerRepository activityTrackerRepository, IEncryptionHelper encryptionHelper,
+            ICandidateService candidateService)
         {
             _interviewerRepository = interviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -38,6 +40,7 @@ namespace Risebird.Business
             _irfRepository = irfRepository;
             _activityTrackerRepository = activityTrackerRepository;
             _encryptionHelper = encryptionHelper;
+            _candidateService = candidateService;
         }
 
         #region Interviewer Profile Service Functions
@@ -568,6 +571,23 @@ namespace Risebird.Business
                 interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
                 //Add Method
                 return _interviewerRepository.AddInterviewerMyProfile(interviewerProfile).Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> SaveBankVerificationAsync(
+            int interviewerProfileId,
+            TransInterviewerAccDetails accountDetails,
+            CashfreeBankVerificationResult verificationResult)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveBankVerificationAsync(
+                    interviewerProfileId, accountDetails, verificationResult);
             }
             catch (Exception e)
             {
@@ -1442,6 +1462,11 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public Task<bool> IsSmeAssignedToIrfAsync(string loggedInUser, int irfId)
+        {
+            return _interviewerRepository.IsSmeAssignedToIrfAsync(loggedInUser, irfId);
+        }
         public async Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList()
         {
             try
@@ -1467,11 +1492,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive,bool? IsBlocked)
+        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked)
         {
             try
             {
-                return await _interviewerRepository.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsActive, IsBlocked);
+                return await _interviewerRepository.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsInterviewerAccess, IsBlocked);
             }
             catch (SqlTypeException ex)
             {
@@ -1508,7 +1533,45 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.GetInterviewerStatsAndRatingsDetails(interviewerUserId, type, irfId, clientEmailId);
+                var rows = (await _interviewerRepository.GetInterviewerStatsAndRatingsDetails(interviewerUserId, type, irfId, clientEmailId))?.ToList();
+                if (rows == null || rows.Count == 0)
+                {
+                    return rows;
+                }
+
+                var emails = rows
+                    .Select(r => r.candidateEmail)
+                    .Where(e => !string.IsNullOrWhiteSpace(e))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                var pseudonyms = emails.Count > 0
+                    ? await _candidateService.EnsureCandidatePseudonymsAsync(emails)
+                    : new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (var row in rows)
+                {
+                    if (!string.IsNullOrWhiteSpace(row.candidateEmail))
+                    {
+                        if (pseudonyms.TryGetValue(row.candidateEmail.Trim(), out var codedId))
+                        {
+                            row.candidateCodedId = codedId;
+                        }
+                        else
+                        {
+                            var match = pseudonyms.FirstOrDefault(kv =>
+                                string.Equals(kv.Key, row.candidateEmail, StringComparison.OrdinalIgnoreCase));
+                            if (!string.IsNullOrEmpty(match.Value))
+                            {
+                                row.candidateCodedId = match.Value;
+                            }
+                        }
+                    }
+
+                    row.candidateEmail = null;
+                }
+
+                return rows;
             }
             catch (SqlTypeException ex)
             {
@@ -1664,11 +1727,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId)
+        public async Task<UserList> UpdateInterviewerActiveStatus(int status, int userId, bool activateChannels = true)
         {
             try
             {
-                var result = await _interviewerRepository.UpdateInterviewerActiveStatus(status, userId);
+                var result = await _interviewerRepository.UpdateInterviewerActiveStatus(status, userId, activateChannels);
 
                 if (result != null)
                 {
@@ -1935,11 +1998,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser)
+        public async Task<bool> UpdateIRFInterviewerActiveStatus(int userId, bool status, int irfId, string loggedInUser, bool preserveAvailability = false, bool? isAvailable = null)
         {
             try
             {
-                return await _interviewerRepository.UpdateIRFInterviewerActiveStatus(userId, status, irfId, loggedInUser);
+                return await _interviewerRepository.UpdateIRFInterviewerActiveStatus(userId, status, irfId, loggedInUser, preserveAvailability, isAvailable);
             }
             catch (Exception ex)
             {
@@ -1996,17 +2059,43 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer)
+        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer, string inactivationType = null)
         {
             try
             {
-                var flagUpdateResult = await _interviewerRepository.InactivateInterviewer(interviewerId, modifiedBy, comment, blockinterviewer);
+                var flagUpdateResult = await _interviewerRepository.InactivateInterviewer(interviewerId, modifiedBy, comment, blockinterviewer, inactivationType);
                 return flagUpdateResult;
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        public async Task<bool> ReactivateInterviewer(int userId, string reactivatedBy)
+        {
+            try
+            {
+                return await _interviewerRepository.ReactivateInterviewer(userId, reactivatedBy);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<InterviewerProfileVM>> GetHoldPaymentInterviewers()
+        {
+            try
+            {
+                return await _interviewerRepository.GetHoldPaymentInterviewers();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

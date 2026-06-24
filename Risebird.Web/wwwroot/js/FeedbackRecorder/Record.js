@@ -1,4 +1,4 @@
-﻿
+
 $.getScript("https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js");
 //webkitURL is deprecated but nevertheless
 URL = window.URL || window.webkitURL;
@@ -20,7 +20,10 @@ function startRecording() {
     document.getElementById("stopRecButton").disabled = false;
     document.getElementById("startRecButton").disabled = true;
     document.getElementById("cancelRecButton").disabled = false;
-    document.getElementById("recordingStatus").innerHTML = "Recording started...";
+    var useDmV4Hooks = typeof window.dmV4OnVoiceRecordingStarted === 'function';
+    if (!useDmV4Hooks) {
+        document.getElementById("recordingStatus").innerHTML = "Recording started...";
+    }
 
     var constraints = { audio: true, video: false };
 
@@ -53,11 +56,19 @@ function startRecording() {
         //start the recording process
         rec.record();
 
+        if (useDmV4Hooks) {
+            window.dmV4OnVoiceRecordingStarted();
+        }
+
         //console.log("Recording started");
 
     }).catch(function (err) {
-        //enable the record button if getUserMedia() fails
-
+        document.getElementById("stopRecButton").disabled = true;
+        document.getElementById("startRecButton").disabled = false;
+        document.getElementById("cancelRecButton").disabled = true;
+        if (typeof window.dmV4OnVoiceRecordingStartFailed === 'function') {
+            window.dmV4OnVoiceRecordingStartFailed(err);
+        }
     });
 }
 
@@ -234,11 +245,19 @@ function createIRFDownloadLink(blob) {
         contentType: false,
         type: "POST",
         success: function (data) {
-            document.getElementById("recordingStatus").innerHTML = '';
-            document.getElementById('anchorAudioId').href = data;
-            splitData = data.split("/");
-            document.getElementById('anchorAudioId').innerHTML = splitData[splitData.length - 1];
-            document.getElementById('controlAudioId').src = data;
+            if (typeof dmV4OnVoiceUploadComplete === 'function') {
+                dmV4OnVoiceUploadComplete(data);
+            } else {
+                document.getElementById("recordingStatus").innerHTML = '';
+                var anchor = document.getElementById('anchorAudioId');
+                if (anchor) {
+                    anchor.href = data;
+                    var splitData = data.split("/");
+                    anchor.innerHTML = splitData[splitData.length - 1];
+                }
+                var audio = document.getElementById('controlAudioId');
+                if (audio) audio.src = data;
+            }
         }
     });
     recordingsList.appendChild(li);

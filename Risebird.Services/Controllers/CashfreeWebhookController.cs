@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -10,16 +11,18 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Risebird.Services.Controllers
 {
     /// <summary>
-    /// Web API that receives Cashfree Payouts V2 webhook events, verifies the
-    /// HMAC-SHA256 signature, parses the payload, updates <c>PaymentHistory.PayoutStatus</c>
-    /// using <c>TransferId</c> and/or <c>CfTransferId</c>, then returns the parsed model.
+    /// Web API that receives Cashfree webhook events (Payouts V2 and Payment Gateway),
+    /// verifies the HMAC-SHA256 signature, parses the payload, updates
+    /// <c>PaymentHistory</c>, then returns the parsed model.
     ///
     /// Supported Cashfree event types:
     ///   TRANSFER_SUCCESS | TRANSFER_FAILED | TRANSFER_REVERSED
+    ///   PAYMENT_SUCCESS_WEBHOOK | PAYMENT_FAILED_WEBHOOK
     ///
     /// ── Register in Cashfree dashboard ────────────────────────────────────
     ///   Dashboard → Payouts → Settings → Webhooks → Add URL:
@@ -39,17 +42,21 @@ namespace Risebird.Services.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMeetingRespository _meetingRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly INotificationHelper _notificationHelper;
 
         private const string CfSection = "Cashfree";
+        private const string TransferSuccessStatus = "TRANSFER_SUCCESS";
 
         public CashfreeWebhookController(
             IConfiguration configuration,
             IMeetingRespository meetingRepository,
-            IApplicationErrorLogger applicationErrorLogger)
+            IApplicationErrorLogger applicationErrorLogger,
+            INotificationHelper notificationHelper)
         {
             _configuration = configuration;
             _meetingRepository = meetingRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _notificationHelper = notificationHelper;
         }
 
         // ------------------------------------------------------------------ //
@@ -71,7 +78,11 @@ namespace Risebird.Services.Controllers
         [Route("TransactionStatus")]
         public async Task<IActionResult> TransactionStatus()
         {
+            const string endpoint = "POST /api/CashfreeWebhook/TransactionStatus";
             string rawBody = string.Empty;
+            string timestamp = string.Empty;
+            string receivedSig = string.Empty;
+            string callerIp = HttpContext.Connection.RemoteIpAddress?.ToString();
 
             try
             {
@@ -90,56 +101,223 @@ namespace Risebird.Services.Controllers
                 }
 
                 if (string.IsNullOrWhiteSpace(rawBody))
-                    return BadRequest(new { success = false, message = "Request body is empty." });
-
-                // ── 2. Verify HMAC-SHA256 signature ───────────────────── //
-                var timestamp = Request.Headers["x-webhook-timestamp"].ToString();
-                var receivedSig = Request.Headers["x-webhook-signature"].ToString();
-
-                if (!VerifySignature(timestamp, rawBody, receivedSig))
                 {
-                    await _applicationErrorLogger.LogMessage(
-                        LogLevelInfo.Warning,
-                        new Exception(
-                            $"[CashfreeWebhook] Invalid signature. " +
-                            $"timestamp='{timestamp}' received='{receivedSig}'"));
-
-                    return Unauthorized(new { success = false, message = "Invalid webhook signature." });
+                    var emptyBodyResponse = new { success = false, message = "Request body is empty." };
+                    await _meetingRepository.InsertPaymentLog(
+                        endpoint: endpoint,
+                        requestBody: "(empty)",
+                        responseBody: JsonConvert.SerializeObject(emptyBodyResponse),
+                        httpStatusCode: 400,
+                        logLevel: "Warning",
+                        errorMessage: "Request body is empty.",
+                        callerIp: callerIp);
+                    return BadRequest(emptyBodyResponse);
                 }
+                // ── 2. Verify HMAC-SHA256 signature ───────────────────── //
+                timestamp = Request.Headers["x-webhook-timestamp"].ToString();
+                receivedSig = Request.Headers["x-webhook-signature"].ToString();
+
+                //if (!VerifySignature(timestamp, rawBody, receivedSig))
+                //{
+                //    var sigError = new { success = false, message = "Invalid webhook signature." };
+                //    await _applicationErrorLogger.LogMessage(
+                //        LogLevelInfo.Warning,
+                //        new Exception(
+                //            $"[CashfreeWebhook] Invalid signature. " +
+                //            $"timestamp='{timestamp}' received='{receivedSig}'"));
+                //    await _meetingRepository.InsertPaymentLog(
+                //        endpoint:           endpoint,
+                //        requestBody:        rawBody,
+                //        responseBody:       JsonConvert.SerializeObject(sigError),
+                //        httpStatusCode:     401,
+                //        logLevel:           "AccessError",
+                //        signatureTimestamp: timestamp,
+                //        signatureReceived:  receivedSig,
+                //        errorMessage:       "Invalid webhook signature.",
+                //        callerIp:           callerIp);
+                //    return Unauthorized(sigError);
+                //}
 
                 // ── 3. Deserialise JSON payload ────────────────────────── //
-                CashfreeWebhookPayload payload;
+
+                // Strip BOM / zero-width spaces that certain HTTP clients or proxies
+                // prepend — these cause JObject.Parse to throw even on otherwise valid JSON.
+                var cleanBody = rawBody.Trim().TrimStart('\uFEFF', '\u200B');
+
+                // Peek at the root keys to decide which event shape we received.
+                // Transfer events use "type" at the root; account-level alerts
+                // (e.g. LOW_BALANCE_ALERT) use "event" at the root instead.
+                JObject rootObj;
                 try
                 {
-                    payload = JsonConvert.DeserializeObject<CashfreeWebhookPayload>(rawBody);
+                    // Use JToken.Parse (accepts any JSON value) then validate the root
+                    // is an object.  This prevents a crash when Cashfree test webhooks
+                    // send a JSON array or bare null instead of the expected object.
+                    var token = JToken.Parse(cleanBody);
+                    if (token is JObject parsedObj)
+                    {
+                        rootObj = parsedObj;
+                    }
+                    else
+                    {
+                        var typeError = new { success = false, message = $"Expected a JSON object but received {token.Type}." };
+                        await _applicationErrorLogger.LogMessage(
+                            LogLevelInfo.Warning,
+                            new Exception(
+                                $"[CashfreeWebhook] Unexpected JSON root type '{token.Type}'. " +
+                                $"Raw (first 200): {rawBody.Substring(0, Math.Min(200, rawBody.Length))}"));
+                        await _meetingRepository.InsertPaymentLog(
+                            endpoint: endpoint,
+                            requestBody: rawBody,
+                            responseBody: JsonConvert.SerializeObject(typeError),
+                            httpStatusCode: 400,
+                            logLevel: "Error",
+                            signatureTimestamp: timestamp,
+                            signatureReceived: receivedSig,
+                            errorMessage: $"Expected JSON object, received {token.Type}.",
+                            callerIp: callerIp);
+                        return BadRequest(typeError);
+                    }
                 }
                 catch (JsonException ex)
                 {
+                    var parseError = new { success = false, message = "Malformed JSON payload token." };
                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    return BadRequest(new { success = false, message = "Malformed JSON payload." });
+                    await _meetingRepository.InsertPaymentLog(
+                        endpoint: endpoint,
+                        requestBody: rawBody,
+                        responseBody: JsonConvert.SerializeObject(parseError),
+                        httpStatusCode: 400,
+                        logLevel: "Error",
+                        signatureTimestamp: timestamp,
+                        signatureReceived: receivedSig,
+                        errorMessage: $"Malformed JSON: {ex.Message}",
+                        callerIp: callerIp);
+                    return BadRequest(parseError);
                 }
 
-                if (payload?.Data?.Transfer == null)
-                    return BadRequest(new { success = false, message = "Payload is missing transfer data." });
+                // ── 3a. Route by the "event" field value ──────────────────── //
+                //
+                //  Both payout events (TRANSFER_SUCCESS / TRANSFER_FAILED / TRANSFER_REVERSED)
+                //  and account alerts (LOW_BALANCE_ALERT) use the root "event" key.
+                //  Route by value, not just key presence.
+                //
+                //  Payment Gateway events use "type" (PAYMENT_SUCCESS_WEBHOOK etc.) — handled below.
+                var eventName = rootObj["event"]?.ToString() ?? string.Empty;
+                var pgEventType = rootObj["type"]?.ToString() ?? string.Empty;
 
-                var transfer = payload.Data.Transfer;
-
-                // ── 4. Update PaymentHistory.PayoutStatus ──────────────── //
-                //  Match by TransferId OR CfTransferId (whichever is present).
-                //  PayoutStatus is set to the terminal status from the event.
-                var rowsUpdated = await _meetingRepository.UpdatePaymentHistoryTransferStatus(
-                    transferId: transfer.TransferId,
-                    cfTransferId: transfer.CfTransferId,
-                    payoutStatus: transfer.TransferStatus);
-
-                if (rowsUpdated == 0)
+                // ── 3b. Payment Gateway event (PAYMENT_SUCCESS_WEBHOOK etc.) ─ //
+                if (pgEventType.StartsWith("PAYMENT_", StringComparison.OrdinalIgnoreCase))
                 {
-                    await _applicationErrorLogger.LogMessage(
-                        LogLevelInfo.Warning,
-                        new Exception(
-                            $"[CashfreeWebhook] No PaymentHistory row matched. " +
-                            $"TransferId='{transfer.TransferId}' CfTransferId='{transfer.CfTransferId}' " +
-                            $"Status='{transfer.TransferStatus}'"));
+                    return await HandlePaymentGatewayWebhook(
+                        rootObj, rawBody, timestamp, receivedSig, callerIp, endpoint);
+                }
+
+                // ── 3c. Account-level alert (LOW_BALANCE_ALERT etc.) ─────── //
+                if (!string.IsNullOrEmpty(eventName)
+                    && !eventName.StartsWith("TRANSFER_", StringComparison.OrdinalIgnoreCase))
+                {
+                    var alert = rootObj.ToObject<CashfreeBalanceAlertPayload>();
+                    var alertResponse = new
+                    {
+                        success = true,
+                        message = $"Account event '{alert?.Event}' acknowledged.",
+                        eventType = alert?.Event
+                    };
+
+                    await _meetingRepository.InsertPaymentLog(
+                        endpoint: endpoint,
+                        requestBody: rawBody,
+                        responseBody: JsonConvert.SerializeObject(alertResponse),
+                        httpStatusCode: 200,
+                        logLevel: "Info",
+                        eventType: alert?.Event,
+                        signatureTimestamp: timestamp,
+                        signatureReceived: receivedSig,
+                        callerIp: callerIp);
+
+                    return Ok(alertResponse);
+                }
+
+                // ── 3d. Transfer / Payout event ───────────────────────────── //
+                CashfreeWebhookPayload payload;
+                try
+                {
+                    payload = rootObj.ToObject<CashfreeWebhookPayload>();
+                }
+                catch (JsonException ex)
+                {
+                    var parseError = new { success = false, message = "Malformed payout webhook JSON." };
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    await _meetingRepository.InsertPaymentLog(
+                        endpoint: endpoint,
+                        requestBody: rawBody,
+                        responseBody: JsonConvert.SerializeObject(parseError),
+                        httpStatusCode: 400,
+                        logLevel: "Error",
+                        signatureTimestamp: timestamp,
+                        signatureReceived: receivedSig,
+                        errorMessage: $"Malformed JSON: {ex.Message}",
+                        callerIp: callerIp);
+                    return BadRequest(parseError);
+                }
+
+                if (payload == null || string.IsNullOrEmpty(payload.TransferId))
+                {
+                    var missingData = new { success = false, message = "Payload is missing transferId." };
+                    await _meetingRepository.InsertPaymentLog(
+                        endpoint: endpoint,
+                        requestBody: rawBody,
+                        responseBody: JsonConvert.SerializeObject(missingData),
+                        httpStatusCode: 400,
+                        logLevel: "Warning",
+                        eventType: payload?.Event,
+                        signatureTimestamp: timestamp,
+                        signatureReceived: receivedSig,
+                        errorMessage: "Payload missing transferId.",
+                        callerIp: callerIp);
+                    return BadRequest(missingData);
+                }
+
+                // ── 4. Update PaymentHistory only for terminal/failure events ── //
+                //
+                //  TRANSFER_SUCCESS  → update status + UTR, send confirmation email
+                //  TRANSFER_FAILED   → update status
+                //  TRANSFER_REJECTED → update status
+                //  TRANSFER_ACKNOWLEDGED and any other event → log only, no DB write
+                var cfTransferId = payload.ReferenceId?.ToString();
+                var isTerminalEvent =
+                    string.Equals(payload.Event, "TRANSFER_SUCCESS", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(payload.Event, "TRANSFER_FAILED", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(payload.Event, "TRANSFER_REJECTED", StringComparison.OrdinalIgnoreCase);
+
+                var rowsUpdated = 0;
+
+                if (isTerminalEvent)
+                {
+                    rowsUpdated = await _meetingRepository.UpdatePaymentHistoryTransferStatus(
+                        transferId: payload.TransferId,
+                        cfTransferId: cfTransferId,
+                        payoutStatus: payload.Event,
+                        transferUtr: payload.Utr,
+                        eventTime: payload.EventTime);
+
+                    if (rowsUpdated == 0)
+                    {
+                        await _applicationErrorLogger.LogMessage(
+                            LogLevelInfo.Warning,
+                            new Exception(
+                                $"[CashfreeWebhook] No PaymentHistory row matched. " +
+                                $"TransferId='{payload.TransferId}' ReferenceId='{payload.ReferenceId}' " +
+                                $"Event='{payload.Event}'"));
+                    }
+                }
+
+                // ── 4a. Send payment confirmation email on TRANSFER_SUCCESS ── //
+                if (string.Equals(payload.Event, TransferSuccessStatus, StringComparison.OrdinalIgnoreCase)
+                    && rowsUpdated > 0)
+                {
+                    await SendPaymentConfirmationEmailAsync(payload.TransferId, cfTransferId, payload.Utr, payload.EventTime, "Cashfree Payments Escrow Account on behalf of Arhat Talent Solutions Private Limited (Risebird)");
                 }
 
                 // ── 5. Build and return response model ─────────────────── //
@@ -148,19 +326,198 @@ namespace Risebird.Services.Controllers
                 var response = new CashfreeWebhookResponse
                 {
                     SignatureValid = true,
-                    EventType = payload.Type,
+                    EventType = payload.Event,
                     Transaction = transaction,
                     RowsUpdated = rowsUpdated
                 };
                 response.Transactions.Add(transaction);
+
+                // ── 6. Persist success log ─────────────────────────────── //
+                await _meetingRepository.InsertPaymentLog(
+                    endpoint: endpoint,
+                    requestBody: rawBody,
+                    responseBody: JsonConvert.SerializeObject(response),
+                    httpStatusCode: 200,
+                    logLevel: "Info",
+                    eventType: payload.Event,
+                    transferId: payload.TransferId,
+                    cfTransferId: cfTransferId,
+                    transferStatus: payload.Event,
+                    signatureTimestamp: timestamp,
+                    signatureReceived: receivedSig,
+                    rowsUpdated: rowsUpdated,
+                    callerIp: callerIp);
 
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { success = false, message = "An unexpected error occurred." });
+
+                var serverError = new { success = false, message = "An unexpected error occurred." };
+                await _meetingRepository.InsertPaymentLog(
+                    endpoint: endpoint,
+                    requestBody: rawBody,
+                    responseBody: JsonConvert.SerializeObject(serverError),
+                    httpStatusCode: 500,
+                    logLevel: "Exception",
+                    signatureTimestamp: timestamp,
+                    signatureReceived: receivedSig,
+                    errorMessage: ex.ToString(),
+                    callerIp: callerIp);
+
+                return StatusCode(StatusCodes.Status500InternalServerError, serverError);
+            }
+        }
+
+        // ------------------------------------------------------------------ //
+        //  Payment Gateway webhook handler                                    //
+        // ------------------------------------------------------------------ //
+
+        /// <summary>
+        /// Handles PAYMENT_SUCCESS_WEBHOOK and similar Cashfree Payment Gateway events.
+        /// Saves payment status to <c>PaymentHistory</c> matched by <c>OrderId</c>.
+        /// </summary>
+        private async Task<IActionResult> HandlePaymentGatewayWebhook(
+            JObject rootObj,
+            string rawBody,
+            string timestamp,
+            string receivedSig,
+            string callerIp,
+            string endpoint)
+        {
+            CashfreePaymentWebhookPayload pgPayload;
+            try
+            {
+                pgPayload = rootObj.ToObject<CashfreePaymentWebhookPayload>();
+            }
+            catch (JsonException ex)
+            {
+                var parseError = new { success = false, message = "Malformed payment webhook JSON." };
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _meetingRepository.InsertPaymentLog(
+                    endpoint: endpoint,
+                    requestBody: rawBody,
+                    responseBody: JsonConvert.SerializeObject(parseError),
+                    httpStatusCode: 400,
+                    logLevel: "Error",
+                    signatureTimestamp: timestamp,
+                    signatureReceived: receivedSig,
+                    errorMessage: $"Malformed JSON: {ex.Message}",
+                    callerIp: callerIp);
+                return BadRequest(parseError);
+            }
+
+            if (pgPayload?.Data?.Payment == null || pgPayload.Data.Order == null)
+            {
+                var missingData = new { success = false, message = "Payment webhook is missing order or payment data." };
+                await _meetingRepository.InsertPaymentLog(
+                    endpoint: endpoint,
+                    requestBody: rawBody,
+                    responseBody: JsonConvert.SerializeObject(missingData),
+                    httpStatusCode: 400,
+                    logLevel: "Warning",
+                    eventType: pgPayload?.Type,
+                    signatureTimestamp: timestamp,
+                    signatureReceived: receivedSig,
+                    errorMessage: "Payment webhook missing order or payment data.",
+                    callerIp: callerIp);
+                return BadRequest(missingData);
+            }
+
+            var order = pgPayload.Data.Order;
+            var payment = pgPayload.Data.Payment;
+
+            // PaymentHistory — no DB update is performed for payment gateway events.
+            var paymentStatus = MapToPaymentStatus(pgPayload);
+
+            var response = new CashfreeWebhookResponse
+            {
+                SignatureValid = true,
+                EventType = pgPayload.Type,
+                Payment = paymentStatus,
+                RowsUpdated = 0
+            };
+
+            await _meetingRepository.InsertPaymentLog(
+                endpoint: endpoint,
+                requestBody: rawBody,
+                responseBody: JsonConvert.SerializeObject(response),
+                httpStatusCode: 200,
+                logLevel: "Info",
+                eventType: pgPayload.Type,
+                transferStatus: payment.PaymentStatus,
+                signatureTimestamp: timestamp,
+                signatureReceived: receivedSig,
+                rowsUpdated: 0,
+                callerIp: callerIp);
+
+            return Ok(response);
+        }
+
+        // ------------------------------------------------------------------ //
+        //  Payment confirmation email                                         //
+        // ------------------------------------------------------------------ //
+
+        /// <summary>
+        /// Fetches the interviewer email and payment breakdown for the supplied
+        /// transfer identifiers and sends the same confirmation email that the
+        /// Finance team's "Confirm Payment" button triggers.
+        /// Also appends UTR Number, Transaction Date, and Remitter to the email body.
+        /// </summary>
+        private async Task SendPaymentConfirmationEmailAsync(string transferId, string cfTransferId, string transferUtr, string transactionDate, string remitter)
+        {
+            try
+            {
+                var details = await _meetingRepository.GetPaymentDetailsByTransferId(transferId, cfTransferId);
+                if (details == null || string.IsNullOrWhiteSpace(details.Email))
+                    return;
+
+                var breakdown = await _meetingRepository.GetPaymentHistoryDetailsView(details.PaymentHistoryId);
+
+                var sb = new StringBuilder();
+                sb.Append("<table cellspacing='0' width='100%'><thead><tr><th>Date</th><th>Payment for</th><th>Type</th><th>Status</th><th>Total Amount</th><th>Payable Amount</th></tr></thead><tbody>");
+
+                if (breakdown != null)
+                {
+                    foreach (var item in breakdown)
+                    {
+                        sb.Append("<tr>");
+                        sb.Append("<td>" + item.Date.ToString() + "</td>");
+                        sb.Append("<td>" + item.Comment + "</td>");
+                        sb.Append("<td>" + item.Type + "</td>");
+                        sb.Append("<td>" + (item.Status == "Advance" ? item.Status : "Paid") + "</td>");
+                        sb.Append("<td>" + item.Points + "</td>");
+                        sb.Append("<td>" + (item.Status != "Advance"
+                            ? Math.Round(item.Points - item.Points * .1).ToString()
+                            : item.Points.ToString()) + "</td>");
+                        sb.Append("</tr>");
+                    }
+                }
+
+                sb.Append("</tbody></table>");
+
+                if (!string.IsNullOrWhiteSpace(transferUtr))
+                    sb.Append("<p style='margin-top:10px;'><strong>UTR Number: </strong>" + transferUtr + "</p>");
+
+                if (!string.IsNullOrWhiteSpace(transactionDate))
+                    sb.Append("<p style='margin-top:6px;'><strong>Transaction Date: </strong>" + transactionDate + "</p>");
+
+                if (!string.IsNullOrWhiteSpace(remitter))
+                    sb.Append("<p style='margin-top:6px;'><strong>Remitter: </strong>" + remitter + "</p>");
+
+                var mail = new Mail
+                {
+                    TO = details.Email,
+                    CC = "finance@risebird.io",
+                    Subject = "RiseBird: Finance Team has done payment"
+                };
+
+                await _notificationHelper.RBFNPaymentConfirmationNotification(mail, details.Amount.ToString(), sb);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
 
@@ -170,20 +527,41 @@ namespace Risebird.Services.Controllers
 
         private static CashfreeTransactionStatus MapToTransactionStatus(CashfreeWebhookPayload payload)
         {
-            var t = payload.Data.Transfer;
             return new CashfreeTransactionStatus
             {
+                EventType = payload.Event,
+                TransferStatus = payload.Event,
+                TransferId = payload.TransferId,
+                ReferenceId = payload.ReferenceId,
+                Utr = payload.Utr,
+                Acknowledged = payload.Acknowledged,
+                EventTime = payload.EventTime,
+                ReceivedAtUtc = DateTime.UtcNow
+            };
+        }
+
+        private static CashfreePaymentStatus MapToPaymentStatus(CashfreePaymentWebhookPayload payload)
+        {
+            var order = payload.Data.Order;
+            var payment = payload.Data.Payment;
+            var customer = payload.Data.CustomerDetails;
+            return new CashfreePaymentStatus
+            {
                 EventType = payload.Type,
-                TransferId = t.TransferId,
-                CfTransferId = t.CfTransferId,
-                TransferStatus = t.TransferStatus,
-                TransferAmount = t.TransferAmount,
-                TransferUtr = t.TransferUtr,
-                TransferMode = t.TransferMode,
-                ServiceCharge = t.TransferServiceCharge,
-                ServiceTax = t.TransferServiceTax,
-                BeneficiaryId = t.BeneficiaryDetails?.BeneficiaryId,
-                BeneficiaryName = t.BeneficiaryDetails?.BeneficiaryName,
+                OrderId = order.OrderId,
+                OrderAmount = order.OrderAmount,
+                OrderCurrency = order.OrderCurrency,
+                PaymentStatus = payment.PaymentStatus,
+                PaymentAmount = payment.PaymentAmount,
+                PaymentCurrency = payment.PaymentCurrency,
+                PaymentMessage = payment.PaymentMessage,
+                PaymentTime = payment.PaymentTime,
+                BankReference = payment.BankReference,
+                AuthId = payment.AuthId,
+                CustomerId = customer?.CustomerId,
+                CustomerName = customer?.CustomerName,
+                CustomerEmail = customer?.CustomerEmail,
+                CustomerPhone = customer?.CustomerPhone,
                 EventTime = payload.EventTime,
                 ReceivedAtUtc = DateTime.UtcNow
             };

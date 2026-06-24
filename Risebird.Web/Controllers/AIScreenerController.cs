@@ -30,6 +30,7 @@ using ExcelDataReader.Log;
 using Risebird.CommonHelper;
 using static SkiaSharp.HarfBuzz.SKShaper;
 using Newtonsoft.Json.Linq;
+using Risebird.Web.Helpers;
 
 namespace Risebird.Web.Controllers
 {
@@ -515,6 +516,91 @@ namespace Risebird.Web.Controllers
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(null);
+            }
+        }
+
+        /// <summary>
+        /// Same pipeline as ScreenInterviewer; returns JSON for in-page DM Approval updates.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> ScreenInterviewerAjax(string jdTitle, int irfId, int userId, string irfName, bool isRedo = false)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                {
+                    return Json(new { ok = false, message = "Session expired." });
+                }
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName != "Admin" && profileName != "SeniorHR" && profileName != "SupportAdmin"
+                    && profileName != "InterviewerManagement" && profileName != "SeniorInterviewerManagement")
+                {
+                    return Json(new { ok = false, message = "Not authorized." });
+                }
+
+                var interviewer = await _irfService.GetInterviewerOpenAIScreeningResults(irfId, userId);
+                if (interviewer == null || string.IsNullOrWhiteSpace(interviewer.ResumeLink))
+                {
+                    return Json(new { ok = false, message = "No resume on file to screen." });
+                }
+
+                if (!isRedo && !string.IsNullOrEmpty(interviewer.OpenAIScreeningResponse))
+                {
+                    return Json(new
+                    {
+                        ok = true,
+                        cached = true,
+                        aiVerdict = interviewer.AIVerdict,
+                        aiScore = interviewer.AIScreeningScore,
+                        reasoning = interviewer.OpenAIScreeningResponse
+                    });
+                }
+
+                var resumeStringContent = await ReadPdfFromUrlAsync(interviewer.ResumeLink);
+                if (string.IsNullOrWhiteSpace(resumeStringContent))
+                {
+                    return Json(new { ok = false, message = "Could not read resume PDF." });
+                }
+
+                var response = await _assistantServiceHelper.GenerateResumeAnalysis(resumeStringContent, jdTitle);
+                var saveOperationResult = false;
+                var aiVerdict = interviewer.AIVerdict;
+                var aiScore = interviewer.AIScreeningScore;
+                var reasoning = interviewer.OpenAIScreeningResponse;
+
+                if (response != null)
+                {
+                    var aiAnalysisModel = JsonConvert.DeserializeObject<InterviewerResumeFitmentAnalysisSchema>(
+                        response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", ""));
+                    if (aiAnalysisModel != null)
+                    {
+                        saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResultsV2(irfId, userId, aiAnalysisModel);
+                        aiVerdict = aiAnalysisModel.verdict;
+                        aiScore = aiAnalysisModel.fitmentScore;
+                        reasoning = aiAnalysisModel.completeFitmentAnalysis;
+                    }
+                }
+
+                if (!saveOperationResult)
+                {
+                    return Json(new { ok = false, message = "Failed to save screening results." });
+                }
+
+                return Json(new
+                {
+                    ok = true,
+                    cached = false,
+                    aiVerdict,
+                    aiScore,
+                    reasoning,
+                    screenedAt = DateTime.UtcNow.ToString("o")
+                });
+            }
+            catch (System.Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Screening failed." });
             }
         }
 
@@ -1283,142 +1369,103 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == ProfileNames.Admin || profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.SeniorHR || profileName == ProfileNames.Interviewer || profileName == ProfileNames.Finance || profileName == ProfileNames.QualityController)
-                    {
-                        var report = await _meetingService.GetInteviewReport(interviewId, irfId);
-
-                        ViewBag.InterviewerEmail = report?.Interviewer;
-                        ViewBag.CandidateEmail = report?.CandidateEmail;
-                        ViewBag.IRFName = report?.IRFName;
-                        ViewBag.InterviewDate = report?.interviewDate;
-                        ViewBag.AITranscriptVerdict = report?.AITranscriptVerdict;
-                        ViewBag.AITranscriptAnalysisScore = report?.AITranscriptAnalysisScore;
-                        //ViewBag.JobTitle = jdTitle;
-
-                        if (report != null && !string.IsNullOrEmpty(report.AITranscriptAnalysis) && !isRedo)
-                        {
-                            //return View(JsonConvert.DeserializeObject<RunResult>(report.AITranscriptAnalysis));
-                            return View("SavedTransciptAnalysis", report.AITranscriptAnalysis);
-                        }
-
-
-                        // OPTIMIZATION: Validate transcript link before attempting download
-                        if (string.IsNullOrEmpty(report.AudioTranscriptFileLink))
-                        {
-                            ViewBag.SaveOperationResult = "Transcript link is missing. Cannot perform analysis.";
-                            return View("SavedTransciptAnalysis", string.Empty);
-                        }
-
-                        string transcriptText;
-                        using (HttpClient client = new HttpClient())
-                        {
-                            transcriptText = await client.GetStringAsync(report.AudioTranscriptFileLink);
-                        }
-
-                        // OPTIMIZATION: Pre-screen transcript for validity (saves API calls on corrupted/empty transcripts)
-                        if (!string.IsNullOrEmpty(transcriptText))
-                        {
-                            var (isValid, validationReason) = _transcriptOptimizationHelper.ValidateTranscriptForAnalysis(transcriptText);
-                            if (!isValid)
-                            {
-                                await _activityTrackerService.DebugLogger($"TranscriptAnalysis: Interview {interviewId} validation failed: {validationReason}", "transcriptOptimization", string.Empty);
-                                ViewBag.SaveOperationResult = $"Transcript validation failed: {validationReason}";
-                                return View("SavedTransciptAnalysis", string.Empty);
-                            }
-
-                            // OPTIMIZATION: Reduce token usage by removing filler words, timestamps, and excessive whitespace
-                            var estimatedTokensBefore = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
-                            transcriptText = _transcriptOptimizationHelper.OptimizeTranscriptText(transcriptText);
-                            var estimatedTokensAfter = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
-
-                            await _activityTrackerService.DebugLogger($"TranscriptAnalysis: Interview {interviewId} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter})", "transcriptOptimization", string.Empty);
-                        }
-                        else
-                        {
-                            await _activityTrackerService.DebugLogger($"TranscriptAnalysis: Interview {interviewId} transcript is empty or could not be downloaded", "transcriptOptimization", string.Empty);
-                            ViewBag.SaveOperationResult = "Transcript is empty or could not be downloaded.";
-                            return View("SavedTransciptAnalysis", string.Empty);
-                        }
-
-                        var aiAnalysis = await _assistantServiceHelper.GenerateTranscriptAnalysis(transcriptText);
-
-                        bool saveOperationResult = true;
-                        var aiAnalysisModel = new TranscriptAnalysisSchema();
-                        if (aiAnalysis != null)
-                        {
-                            aiAnalysisModel = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
-                            if (aiAnalysisModel != null)
-                            {
-                                saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
-
-                                ViewBag.AITranscriptVerdict = aiAnalysisModel.verdict;
-                                ViewBag.AITranscriptAnalysisScore = aiAnalysisModel.score;
-                            }
-                            try
-                            {
-                                var jsonToProcess = aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
-                                var modelset = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(jsonToProcess);
-                                //TransScript Analysis save to db
-                                bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(interviewId, modelset, jsonToProcess, true);
-                            }
-                            catch (Exception ex)
-                            {
-
-                            }
-                        }
-                        if (saveOperationResult)
-                        {
-                            ViewBag.SaveOperationResult = "Transcript analysis saved successfully.";
-                        }
-                        else
-                        {
-                            ViewBag.SaveOperationResult = "Failed to save Transcript analysis";
-                        }
-
-                        //return View(aiAnalysis);
-                        return View("SavedTransciptAnalysis", aiAnalysisModel.completeAnalysis);
-                        //var request = new ScreeningRequest
-                        //{
-                        //    //Skills = skills,
-                        //    JDTitle = jdTitle,
-                        //    ResumeLink = interviewer?.ResumeLink ?? resumeLink,
-                        //    Type = ProfileNames.Interviewer
-                        //};
-                        //var response = await _assistantServiceHelper.ScreenAsync(request);
-
-                        //var responseInJson = JsonConvert.SerializeObject(response);
-                        ////save the response in db
-                        //bool saveOperationResult = true;
-                        //if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
-                        //{
-                        //    saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResults(irfId, userId, responseInJson.Replace("'", ""));
-                        //}
-
-                        //if (saveOperationResult)
-                        //{
-                        //    ViewBag.SaveOperationResult = "Evaluation saved successfully.";
-                        //}
-                        //else
-                        //{
-                        //    ViewBag.SaveOperationResult = "Failed to save the evaluation.";
-                        //}
-
-                        //return View(response);
-
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
+                if (!CompletedInterviewsViewMode.TryAuthorizeEvidenceEndpoints(HttpContext, out _))
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
+
+                var report = await _meetingService.GetInteviewReport(interviewId, irfId);
+
+                ViewBag.InterviewerCodedName = report?.NickName;
+                ViewBag.CandidateEmail = report?.CandidateEmail;
+                ViewBag.IRFName = report?.IRFName;
+                ViewBag.InterviewDate = report?.interviewDate;
+                ViewBag.AITranscriptVerdict = report?.AITranscriptVerdict;
+                ViewBag.AITranscriptAnalysisScore = report?.AITranscriptAnalysisScore;
+                //ViewBag.JobTitle = jdTitle;
+
+                if (report != null && !string.IsNullOrEmpty(report.AITranscriptAnalysis) && !isRedo)
+                {
+                    //return View(JsonConvert.DeserializeObject<RunResult>(report.AITranscriptAnalysis));
+                    return View("SavedTransciptAnalysis", report.AITranscriptAnalysis);
+                }
+
+
+                // OPTIMIZATION: Validate transcript link before attempting download
+                if (string.IsNullOrEmpty(report.AudioTranscriptFileLink))
+                {
+                    ViewBag.SaveOperationResult = "Transcript link is missing. Cannot perform analysis.";
+                    return View("SavedTransciptAnalysis", string.Empty);
+                }
+
+                string transcriptText;
+                using (HttpClient client = new HttpClient())
+                {
+                    transcriptText = await client.GetStringAsync(report.AudioTranscriptFileLink);
+                }
+
+                // OPTIMIZATION: Pre-screen transcript for validity (saves API calls on corrupted/empty transcripts)
+                if (!string.IsNullOrEmpty(transcriptText))
+                {
+                    var (isValid, validationReason) = _transcriptOptimizationHelper.ValidateTranscriptForAnalysis(transcriptText);
+                    if (!isValid)
+                    {
+                        await _activityTrackerService.DebugLogger($"TranscriptAnalysis: Interview {interviewId} validation failed: {validationReason}", "transcriptOptimization", string.Empty);
+                        ViewBag.SaveOperationResult = $"Transcript validation failed: {validationReason}";
+                        return View("SavedTransciptAnalysis", string.Empty);
+                    }
+
+                    // OPTIMIZATION: Reduce token usage by removing filler words, timestamps, and excessive whitespace
+                    var estimatedTokensBefore = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
+                    transcriptText = _transcriptOptimizationHelper.OptimizeTranscriptText(transcriptText);
+                    var estimatedTokensAfter = _transcriptOptimizationHelper.EstimateTokenCount(transcriptText);
+
+                    await _activityTrackerService.DebugLogger($"TranscriptAnalysis: Interview {interviewId} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter})", "transcriptOptimization", string.Empty);
+                }
+                else
+                {
+                    await _activityTrackerService.DebugLogger($"TranscriptAnalysis: Interview {interviewId} transcript is empty or could not be downloaded", "transcriptOptimization", string.Empty);
+                    ViewBag.SaveOperationResult = "Transcript is empty or could not be downloaded.";
+                    return View("SavedTransciptAnalysis", string.Empty);
+                }
+
+                var aiAnalysis = await _assistantServiceHelper.GenerateTranscriptAnalysis(transcriptText);
+
+                bool saveOperationResult = true;
+                var aiAnalysisModel = new TranscriptAnalysisSchema();
+                if (aiAnalysis != null)
+                {
+                    aiAnalysisModel = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                    if (aiAnalysisModel != null)
+                    {
+                        saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
+
+                        ViewBag.AITranscriptVerdict = aiAnalysisModel.verdict;
+                        ViewBag.AITranscriptAnalysisScore = aiAnalysisModel.score;
+                    }
+                    try
+                    {
+                        var jsonToProcess = aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
+                        var modelset = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(jsonToProcess);
+                        //TransScript Analysis save to db
+                        bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(interviewId, modelset, jsonToProcess, true);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+                if (saveOperationResult)
+                {
+                    ViewBag.SaveOperationResult = "Transcript analysis saved successfully.";
+                }
+                else
+                {
+                    ViewBag.SaveOperationResult = "Failed to save Transcript analysis";
+                }
+
+                //return View(aiAnalysis);
+                return View("SavedTransciptAnalysis", aiAnalysisModel.completeAnalysis);
 
             }
             catch (System.Exception ex)

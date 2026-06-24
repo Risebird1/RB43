@@ -168,10 +168,24 @@
                                             @Html.ValidationMessageFor(model => model.PerInterviewRate, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
+                                    <div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.AIPerInterviewRate, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.TextBoxFor(model => model.AIPerInterviewRate, new { @class = "form-control", type = "number" })
+                                            @Html.ValidationMessageFor(model => model.AIPerInterviewRate, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
                                     <div class="col-md-6 col-sm-6 pl-1 pull-left rightpad">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.BillingType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                             @Html.DropDownListFor(model => model.BillingType, Model.BillingTypeDrop, "Select", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left rightpad">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.BillingModel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.DropDownListFor(model => model.BillingModel, Html.GetEnumSelectList<BillingModelEnum>(), "Select", new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.BillingModel, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6 pr-1 pull-left">
@@ -232,6 +246,18 @@
                                         <div class="form-group">
                                             @Html.Label("", "", htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.CheckBoxFor(model => model.IsPlanFlixable) Client Plan Relation (Flixable)
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pl-1 pull-left rightpad">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.BillingCurrency, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.DropDownListFor(model => model.BillingCurrency, Model.BillingCurrencyDrop, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left rightpad">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.InterviewerBillingType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.DropDownListFor(model => model.InterviewerBillingType, Model.InterviewerBillingTypeDrop, new { @class = "form-control" })
                                         </div>
                                     </div>
                                 </div>

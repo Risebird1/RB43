@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace Risebird.Entities.Data
 {
-    public class Meeting
+    public partial class Meeting
     {
         public string CancelationStatus { get; set; }
         public int id { get; set; }

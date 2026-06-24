@@ -80,7 +80,7 @@ namespace Risebird.Business
                 irfDetails.NoOfPosition = 0;
                 irfDetails.Type = "B2B";
                 irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
-                irfDetails.JobLevel = Convert.ToInt16(JobLevels.SE);
+                irfDetails.JobLevel = null;
                 int irfId = 0;
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
@@ -1554,7 +1554,10 @@ namespace Risebird.Business
                     //get emails
                     foreach (var item in updatedMeetings ?? new List<MeetingVM>())
                     {
-                        await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
+                        if (!string.IsNullOrEmpty(item.interviewer))
+                        {
+                            await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
+                        }
                         await _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, null, item.interviewDate.ToString("MMMM dd, yyyy"), irfId);
                         //if (emailid != item.ClientHrContact)
                         //{
@@ -1563,7 +1566,10 @@ namespace Risebird.Business
                         //    await _notificationHelper.SendInterviewCancelledMailClient(item.interviewDate.ToString(), item.candidateName, ClientHrContact, irfId, item.imid);
 
                         //}
-                        await _notificationHelper.SendInterviewCancelledMail(item.risebirdHR, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
+                        if (!string.IsNullOrEmpty(item.risebirdHR))
+                        {
+                            await _notificationHelper.SendInterviewCancelledMail(item.risebirdHR, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
+                        }
                     }
 
                 }
@@ -2839,6 +2845,32 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public VoiceInstructionBriefVm FetchVoiceInstructionBrief(int irfid)
+        {
+            try
+            {
+                return _irfRepository.FetchVoiceInstructionBrief(irfid);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new VoiceInstructionBriefVm();
+            }
+        }
+
+        public bool SaveVoiceInstructionTranscript(int irfid, string transcript, string updatedBy)
+        {
+            try
+            {
+                return _irfRepository.SaveVoiceInstructionTranscript(irfid, transcript, updatedBy);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public async Task<IEnumerable<AssessmentIRFListVM>> GetAssessmentGroupQuestionList(int Assessmentid)
         {
             try
@@ -3694,6 +3726,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        /// <summary>Resolve numeric IRF.id from either database id or string skill-channel code (IRF.IRFId).</summary>
+        public async Task<int> ResolveSkillChannelNumericIdAsync(string irfKey)
+        {
+            if (string.IsNullOrWhiteSpace(irfKey))
+                return 0;
+
+            if (int.TryParse(irfKey.Trim(), out var numericId) && numericId > 0)
+                return numericId;
+
+            var byName = await GetSkillChannelDetailsByName(irfKey.Trim());
+            return byName?.id ?? 0;
+        }
         public async Task<bool> UpdateTechSkills(IList<TransSkill> techskills)
         {
             try
@@ -3783,6 +3828,33 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy)
+        {
+            try
+            {
+                return await _irfRepository.AddAIGeneratedSampleQuestion(irfId, skillName, comment, expectedAnswer, generatedPayload, createdBy);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+
+        public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer)
+        {
+            try
+            {
+                return await _irfRepository.UpdateSkillChannelSampleQuestion(id, comment, expectedAnswer);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id)
         {
             try
@@ -4616,6 +4688,59 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> UpdateDmIvPolicy(int irfId, bool dmIvLockNew, string dmAssignmentPolicy, int dmDefaultInterviewCap, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.UpdateDmIvPolicy(irfId, dmIvLockNew, dmAssignmentPolicy, dmDefaultInterviewCap, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateTransInterviewerCapacity(int transInterviewerId, int interviewCapacity, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.UpdateTransInterviewerCapacity(transInterviewerId, interviewCapacity, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateTransInterviewerPerSuccessRate(int transInterviewerId, int perSuccessRate, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.UpdateTransInterviewerPerSuccessRate(transInterviewerId, perSuccessRate, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> ApplyDefaultInterviewCapToIrf(int irfId, int defaultCap, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.ApplyDefaultInterviewCapToIrf(irfId, defaultCap, loggedInUser);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<bool> UpdateVideoConsentFile(int irfid, string uploadedFileURL)
         {
             try
@@ -4653,6 +4778,33 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<DmInterviewerEtiquetteVm> GetDmInterviewerEtiquette(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetDmInterviewerEtiquette(irfId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateDmInterviewerEtiquette(int irfId, string dressCode, bool cameraRequired, bool noEatingRule)
+        {
+            try
+            {
+                return await _irfRepository.UpdateDmInterviewerEtiquette(irfId, dressCode, cameraRequired, noEatingRule);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<bool> UpdateNewPriority(int irfid, int PriorityLevel)
         {
             try

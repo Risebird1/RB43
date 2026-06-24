@@ -22,6 +22,9 @@ namespace Risebird.Entities.Data
         public string   AvailabilityIntent          { get; set; }
         public string   MailBodyIntent              { get; set; }
         public string   ConcernsOrNotInterested     { get; set; }
+        public string   Intent                      { get; set; }
+        public string   IntentSource                { get; set; }
+        public DateTime? IntentConfirmedAt          { get; set; }
         public string   ResumeFitment               { get; set; }
         public string   ResumeLink                  { get; set; }
         public bool     HasAttachment               { get; set; }
@@ -34,5 +37,10 @@ namespace Risebird.Entities.Data
         public string   ProcessedBy                 { get; set; }
         public DateTime CreatedAt                   { get; set; }
         public DateTime? UpdatedAt                  { get; set; }
+
+        public string   Source                      { get; set; }
+        public bool?    IsAutoClosed                { get; set; }
+        public string   AutoClosedBy                { get; set; }
+        public DateTime? AutoClosedAt               { get; set; }
     }
 }

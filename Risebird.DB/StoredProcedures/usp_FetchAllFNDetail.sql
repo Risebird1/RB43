@@ -63,6 +63,7 @@ Select Distinct id,InterviewId,Type,Comment,FirstName,Status,Userid,PrePoints,Pe
 candidateEmail,candidateName,MeetingStatus,InterviewStatus,Date,PreferredLocation,InterviewerEmailid,ClientName,VideoLink,VideoDuration,
 ChannelOwner,Rate,PrimarySkillInvite,IRFId,IsEmergency,MaxVideoDuration,Surcharge,CandidateRatingAmount,ClientRatingAmount,QCPoints,PaymentSLA,VideoReward  
 From CTE
+Where CTE.Userid NOT IN (SELECT UserId FROM InterviewerProfile WHERE ISNULL(IsHoldPayment, 0) = 1)
 END
 
 GO

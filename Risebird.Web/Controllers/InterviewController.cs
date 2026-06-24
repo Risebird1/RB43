@@ -26,6 +26,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
+using Risebird.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -2996,7 +2997,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement")
                     {
                         var result = await _meetingService.AssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
-                        return Json(result);
+                        return Json(FormatOpenAssignResult(id, emailid.ToLower(), result));
                     }
                 }
             }
@@ -3004,7 +3005,36 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return Json("Fail to Assign,Please try Again.");
+            return Json(new { code = "ERROR", message = "Fail to Assign,Please try Again." });
+        }
+
+        private object FormatOpenAssignResult(int meetingId, string interviewerEmail, string result)
+        {
+            if (string.IsNullOrEmpty(result))
+                return new { code = "ERROR", message = "Fail to Assign,Please try Again." };
+
+            if (result.StartsWith("CAP_REACHED|", StringComparison.OrdinalIgnoreCase))
+            {
+                var capCheck = _meetingService.CheckInterviewerCapForAssignmentByMeeting(meetingId, interviewerEmail);
+                var capMsg = result.Substring("CAP_REACHED|".Length);
+                return new
+                {
+                    code = "CAP_REACHED",
+                    cap = capCheck.Capacity,
+                    futureAssigned = capCheck.Assigned,
+                    message = capMsg
+                };
+            }
+
+            if (result.StartsWith("INACTIVE_IVY|", StringComparison.OrdinalIgnoreCase))
+            {
+                return new { code = "INACTIVE_IVY", message = result.Substring("INACTIVE_IVY|".Length) };
+            }
+
+            if (result.IndexOf("Successfully", StringComparison.OrdinalIgnoreCase) >= 0)
+                return new { code = "OK", message = result };
+
+            return new { code = "ERROR", message = result };
         }
 
         [Authorize]
@@ -5541,9 +5571,19 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> ReassignMeeting(string id, string meetingid, string Emailid)
         {
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
-            var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
+            var result = _meetingService.ReassignMeeting(id, meetingid, Emailid);
+            if (result.StartsWith("CAP_REACHED|"))
+            {
+                var capMsg = result.Substring("CAP_REACHED|".Length);
+                return Json(new { meetings = capMsg, codedname = (string)null, code = "CAP_REACHED" });
+            }
+            if (result.StartsWith("INACTIVE_IVY|"))
+            {
+                var inactiveMsg = result.Substring("INACTIVE_IVY|".Length);
+                return Json(new { meetings = inactiveMsg, codedname = (string)null, code = "INACTIVE_IVY" });
+            }
             var codedname = (await _meetingService.FetchInterviewerCodedName(Emailid))?.NickName;
-            return Json(new { meetings = meetings, codedname = codedname });
+            return Json(new { meetings = result, codedname = codedname });
         }
 
         [AllowAnonymous]
@@ -7548,12 +7588,19 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> ClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null)
+        public async Task<IActionResult> ClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, string maskCandidate = null)
         {
             try
             {
                 ViewBag.InterviewId = interviewId;
                 ViewBag.IrfId = irfId;
+                if (CandidateReportMaskingHelper.IsMaskCandidateParam(maskCandidate))
+                {
+                    CandidateReportMaskingHelper.ActivateMaskContext(HttpContext.Session);
+                }
+
+                var shouldMaskCandidate = CandidateReportMaskingHelper.ShouldMaskCandidate(Request, HttpContext.Session, maskCandidate);
+                ViewBag.MaskCandidate = shouldMaskCandidate;
                 if (!string.IsNullOrEmpty(uniqueid) && string.IsNullOrEmpty(publicEmailId))
                 {
                     ViewBag.SecurelyShared = "True";
@@ -7640,6 +7687,12 @@ namespace Risebird.Web.Controllers
                 {
                     model.IsQCRequired = false;
                 }
+
+                if (shouldMaskCandidate)
+                {
+                    await CandidateReportMaskingHelper.ApplyMaskingAsync(model, _candidateService, email);
+                }
+
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;
@@ -8058,10 +8111,18 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool downloadPdf = false)
+        public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool downloadPdf = false, string maskCandidate = null)
         {
             try
             {
+                if (CandidateReportMaskingHelper.IsMaskCandidateParam(maskCandidate))
+                {
+                    CandidateReportMaskingHelper.ActivateMaskContext(HttpContext.Session);
+                }
+
+                var shouldMaskCandidate = CandidateReportMaskingHelper.ShouldMaskCandidate(Request, HttpContext.Session, maskCandidate);
+                ViewBag.MaskCandidate = shouldMaskCandidate;
+
                 ViewBag.PageStatus = "Mainurl";
                 var email = HttpContext.Session.GetString("email") ?? string.Empty;
                 email = email.Replace("\"", "");
@@ -8115,6 +8176,12 @@ namespace Risebird.Web.Controllers
                 model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
                 string output = Regex.Replace(model.InterviewerComment ?? string.Empty, "<.*?>", string.Empty);
                 model.InterviewerComment = output;
+
+                if (shouldMaskCandidate)
+                {
+                    await CandidateReportMaskingHelper.ApplyMaskingAsync(model, _candidateService, email);
+                }
+
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
@@ -8429,7 +8496,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<IActionResult> PaymentSlaDetails(string actionstatus, int returnBack)
+        public async Task<IActionResult> PaymentSlaDetails(string actionstatus, int returnBack, int? interviewId = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -8438,11 +8505,19 @@ namespace Risebird.Web.Controllers
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
                 ViewBag.ReturnBack = returnBack;
-                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "Finance")
+                ViewBag.InterviewIdFilter = interviewId;
+                if (interviewId.HasValue)
+                {
+                    ViewBag.EmbeddedSingleInterview = true;
+                }
+                var authorized = interviewId.HasValue
+                    ? CompletedInterviewsViewMode.IsEvidenceAuthorizedProfile(profileName)
+                    : profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "Finance";
+                if (authorized)
                 {
                     if (string.IsNullOrWhiteSpace(actionstatus))
                     {
-                        actionstatus = "QCRejectPending";
+                        actionstatus = interviewId.HasValue ? "QCRejectPending" : "QCRejectPending";
                     }
                     if (TempData["SuccessErrorMessageQCForm"] != null)
                     {
@@ -8451,30 +8526,35 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.actionstatus = actionstatus;
                     IEnumerable<PaymentSLAVM> model;
-                    //if (actionstatus == "HighSeverityPending" || actionstatus == "QCUnderReview" || actionstatus == "FakeReport" || actionstatus == "RedoRequested")
-                    //{
-                    //    model = Array.Empty<PaymentSLAVM>();
-                    //}
-                    //else
-                    //{
-                    model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
-                    if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
+                    if (interviewId.HasValue)
                     {
-                        var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PaymentSlaDetailsFilters"));
-                        if (filter.StartDate != null && filter.EndDate != null)
+                        var merged = new List<PaymentSLAVM>();
+                        foreach (var status in new[] { "QCRejectPending", "QCSelectPending", "SLACompleted" })
                         {
-                            filter.EndDate = filter.EndDate?.AddDays(1);
-                            model = model.Where(m => m.CreatedOn >= filter.StartDate && m.CreatedOn <= filter.EndDate).ToList();
+                            merged.AddRange(await _meetingService.FetchPaymentSlaDetails(status));
                         }
+                        model = merged.Where(m => m.Interviewid == interviewId.Value).GroupBy(m => m.Interviewid).Select(g => g.First()).ToList();
                     }
                     else
                     {
-                        DateTime StartDate = DateTime.Now.AddMonths(-1);
-                        DateTime EndDate = DateTime.Now.AddDays(1);
-                        model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
+                        model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
+                        if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PaymentSlaDetailsFilters"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                filter.EndDate = filter.EndDate?.AddDays(1);
+                                model = model.Where(m => m.CreatedOn >= filter.StartDate && m.CreatedOn <= filter.EndDate).ToList();
+                            }
+                        }
+                        else
+                        {
+                            DateTime StartDate = DateTime.Now.AddMonths(-1);
+                            DateTime EndDate = DateTime.Now.AddDays(1);
+                            model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
+                        }
                     }
                     model = model.Select(x => { x.PriorityLevelDesc = x.PriorityLevel > 0 ? ((PriorityLevel)x.PriorityLevel).GetDescription() : string.Empty; return x; }).ToList();
-                    //}
                     return View(model);
                 }
             }
@@ -8731,13 +8811,11 @@ namespace Risebird.Web.Controllers
             if (sessionRequired)
             {
                 ViewBag.SessionRequired = true;
-                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                select new { ID = (int)s, Name = s.GetDescription() };
+                var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
                 return View(new Risebird.Entities.Data.Meeting());
             }
-            var jobLevelsList = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                select new { ID = (int)s, Name = s.GetDescription() };
+            var jobLevelsList = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
             ViewBag.JobLevelList = new SelectList(jobLevelsList, "ID", "Name");
             var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
             if (result != null)
@@ -9328,7 +9406,7 @@ namespace Risebird.Web.Controllers
                         return new OkResult();
                     }
                     ViewBag.CandidateEmail = model.CandidateEmail;
-                    ViewBag.Interviewer = model.Interviewer;
+                    ViewBag.InterviewerCodedName = model.NickName;
                     ViewBag.InterviewDate = model.interviewDate;
                     ViewBag.IRFName = model.IRFName;
                     ViewBag.JdTitle = model.JDTiltle;
@@ -9339,6 +9417,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
+                    ViewBag.InterviewerCodedName = model.NickName;
                     return View(model);
                 }
             }
@@ -9434,17 +9513,24 @@ namespace Risebird.Web.Controllers
                 var ai_qcAnalysisModel = new AIReportQCAnalysisSchema();
                 if (response != null)
                 {
-                    ai_qcAnalysisModel = JsonConvert.DeserializeObject<AIReportQCAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
-                    if (ai_qcAnalysisModel != null)
-                    {
-                        //saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
-                        saveOperationResult = await _meetingService.SaveOpenAIReportQCV2(model.InterviewId, ai_qcAnalysisModel);//responseInJson.Replace("'", "")
-                    }
+                    //ai_qcAnalysisModel = JsonConvert.DeserializeObject<AIReportQCAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                    //if (ai_qcAnalysisModel != null)
+                    //{
+                    //    //saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
+                    //    saveOperationResult = await _meetingService.SaveOpenAIReportQCV2(model.InterviewId, ai_qcAnalysisModel);//responseInJson.Replace("'", "")
+                    //}
                     try
                     {
                         var rawJson = response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
                         var reportModel = JsonConvert.DeserializeObject<ReportAIQCResponseSchema>(rawJson);
                         var reportaiModel = await MapReportAIResponseToTranscriptSchema(reportModel);
+                        if (reportaiModel != null)
+                        {
+                            ai_qcAnalysisModel.final_score = reportaiModel.score;
+                            ai_qcAnalysisModel.completeAnalysis = reportaiModel.completeAnalysis;
+                            ai_qcAnalysisModel.final_verdict = reportaiModel.verdict;
+                            saveOperationResult = await _meetingService.SaveOpenAIReportQCV2(model.InterviewId, ai_qcAnalysisModel);
+                        }
                         bool result = await _meetingService.SaveQcInterviewAIevaluation(model.InterviewId, reportaiModel, reportAIJsonResponse: rawJson, transcritAi: false);
                     }
                     catch (Exception ex)
@@ -9921,14 +10007,17 @@ namespace Risebird.Web.Controllers
                     await TrackInterviewerRelatedbuttonClient("Interview", currenturl, "Reassign Interview", interviewId, 0);
                     return Json(new { success = true, message = "Interview assigned successfully." });
                 }
-                //string linkurl = "https://portal.risebird.io/Interview/ReassignMeetingByEI?id=" + Meetingid;
-                //Mail _mail = new Mail
-                //{
-                //    TO = interviewer,
-                //    //Subject = "Risebird Urgent Interview-Candidate(" + item.candidateName + ") is waiting for the interviewer."
-                //};
-                ////var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl, item.zoomlink, item.interviewMeetingId, item.JDLink, item.uniqueid);
-                return Json(new { success = true, message = "An error occurred while assigning the interview." });
+                if (result.StartsWith("CAP_REACHED|"))
+                {
+                    var capMsg = result.Substring("CAP_REACHED|".Length);
+                    return Json(new { success = false, message = capMsg, code = "CAP_REACHED" });
+                }
+                if (result.StartsWith("INACTIVE_IVY|"))
+                {
+                    var inactiveMsg = result.Substring("INACTIVE_IVY|".Length);
+                    return Json(new { success = false, message = inactiveMsg, code = "INACTIVE_IVY" });
+                }
+                return Json(new { success = false, message = result });
             }
             catch (Exception ex)
             {
@@ -10003,14 +10092,13 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> QCMergedAIDetails(int interviewId)
         {
             string emailId = string.Empty;
             try
             {
-                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                if (!CompletedInterviewsViewMode.TryAuthorizeEvidenceEndpoints(HttpContext, out _))
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
@@ -10045,14 +10133,13 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> ContradictionReport(int interviewId)
         {
             string emailId = string.Empty;
             try
             {
-                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                if (!CompletedInterviewsViewMode.TryAuthorizeEvidenceEndpoints(HttpContext, out _))
                 {
                     return RedirectToAction("SignOut", "Session");
                 }

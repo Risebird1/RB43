@@ -136,6 +136,13 @@ namespace Risebird.Business.Interface
 
         Task<string> InsertPaymentHistory(string Interviewer, int Amount, int TotalAmount, string actionvalue, string Comment, string transferId = null, string cfTransferId = null, string payoutStatus = null);
         Task<List<RBInterviewDetails>> FetchFNPaymentHistory();
+
+        /// <summary>
+        /// Re-initiates a Cashfree payout for a PaymentHistory row whose <c>PayoutStatus</c>
+        /// is <c>TRANSFER_FAILED</c>. Inserts a new PaymentHistory row for the retry attempt
+        /// and returns (success, message).
+        /// </summary>
+        Task<Tuple<bool, string>> RetryPaymentViaCashfree(int paymentHistoryId);
         Task<IEnumerable<MeetingVM>> GetClientSelectedMeetings(string emailId, bool isFilter = false, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<Meeting>> FetchOpenMeetingById(string id);
         string ReassignMeeting(string id, string meetingid, string Emailid);
@@ -150,6 +157,18 @@ namespace Risebird.Business.Interface
         Task<List<InvoiceDetailsVM>> FetchFNInvoiceDetails(string Startdate, string Enddate);
         Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id);
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
+        Task<List<InvoiceListVM>> GetInvoiceList(int month, int year);
+        Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0);
+        Task<List<BillingOwnerOption>> GetClientBillingOwners(int clientId);
+        Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year);
+        Task<InvoiceDetailVM> GetGeneratedInvoiceById(int invoiceId);
+        Task<List<InvoiceListVM>> GetUnpaidInvoiceList();
+        Task<List<InvoiceListVM>> GetPaidInvoiceList(int fromYear = 0, int fromMonth = 0, int toYear = 0, int toMonth = 0);
+        Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
+            decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
+            List<InvoiceLineItemVM> lineItems, string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0);
+        Task<string> GetNextInvoiceNumber(int month, int year);
+        Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model);
         List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null);
         Task<List<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid, DateTime startdate, DateTime enddate);
         List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid);
@@ -191,7 +210,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> QCReportDetailsByInterviewer(string emailId);
         Task<bool> UpdateQCReportRedFlagsResolved(int interviewid);
         Task<List<MeetingVM>> GetReslovedRedFlagsInterviewList();
-        Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, string year, int month);
+        Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, int fromYear, int fromMonth, int toYear, int toMonth);
         Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate, int billingType, string year, int month);
         Task<List<FnRevenueVM>> FetchAllRevenueDetails(DateTime stdate, DateTime endate);
         Task<MeetingVM> GetInterviewMeetingById(int id);
@@ -279,5 +298,7 @@ namespace Risebird.Business.Interface
         /// Fetches the current transfer status from Cashfree for the given transferId.
         /// </summary>
         Task<CashfreePayoutResult> GetCashfreePayoutStatus(string transferId);
+
+        CapCheckResult CheckInterviewerCapForAssignmentByMeeting(int meetingId, string interviewerEmail);
     }
 }

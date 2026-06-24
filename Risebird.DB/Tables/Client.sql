@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[Client](
             [IsCandidateavailability] [bit] NULL,
             [IsMeetingNotificationSend] [bit] NULL,
             [PerInterviewRate] [int] NULL,
+            [AIPerInterviewRate] [int] NULL,
             [BillingType] [int] NULL,
             [InterviewDuration] [int] NULL,
             [IsMeetingAutoCancelled] [bit] NULL,
@@ -156,6 +157,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add [PerInterviewRate] int	
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AIPerInterviewRate')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add [AIPerInterviewRate] int	
 END
 IF NOT EXISTS(
     SELECT *
@@ -348,6 +358,33 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add ModifiedInterviewStatus bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'BillingModel')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add BillingModel int NULL
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'BillingCurrency')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add BillingCurrency varchar(10) NULL DEFAULT 'INR'
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewerBillingType')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add InterviewerBillingType int NULL DEFAULT 1
 END
 
 END

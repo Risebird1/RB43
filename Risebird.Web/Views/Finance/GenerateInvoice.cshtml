@@ -1,0 +1,1082 @@
+@model Risebird.Entities.ViewModel.GenerateInvoiceVM
+@{
+    ViewData["Title"] = "Generate Invoice";
+    ViewBag.PageHeader = "Generate Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* ── Generate Invoice page (scoped) ── */
+    .gen-inv-page {
+        --gen-inv-primary: #42a5f5;
+        --gen-inv-primary-light: #e3f2fd;
+        --gen-inv-primary-dark: #1e88e5;
+        --gen-inv-border: #dce0e8;
+        --gen-inv-text: #2c3e50;
+        --gen-inv-muted: #6b7280;
+        --gen-inv-control-h: 40px;
+    }
+
+    .gen-inv-page > .content {
+        padding-top: 8px;
+        max-width: 1200px;
+    }
+
+    .gen-inv-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding: 0 4px;
+    }
+
+    .gen-inv-page-title {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--gen-inv-primary);
+    }
+
+    .gen-inv-invoice-badge {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gen-inv-primary);
+        background: var(--gen-inv-primary-light);
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 1px solid #90caf9;
+    }
+
+    .gen-inv-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 22px 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+        border: 1px solid var(--gen-inv-border);
+        margin-bottom: 18px;
+    }
+
+    .gen-inv-section-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--gen-inv-primary);
+        letter-spacing: .6px;
+        text-transform: uppercase;
+        margin: 0 0 18px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--gen-inv-primary-light);
+    }
+
+    .gen-inv-row {
+        --bs-gutter-y: 1rem;
+        margin-bottom: 0;
+    }
+
+    #divAutoFields {
+        margin-top: 12px;
+        padding-top: 16px;
+        border-top: 1px solid var(--gen-inv-border);
+    }
+
+    .gen-inv-field {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        margin-bottom: 0;
+    }
+
+    .gen-inv-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--gen-inv-muted);
+        letter-spacing: .4px;
+        text-transform: uppercase;
+        margin: 0 0 6px;
+        min-height: 18px;
+        line-height: 1.3;
+        display: block;
+    }
+
+    .gen-inv-page .form-control {
+        width: 100%;
+        height: var(--gen-inv-control-h) !important;
+        min-height: var(--gen-inv-control-h);
+        line-height: 1.4 !important;
+        padding: 8px 12px !important;
+        box-sizing: border-box;
+        border-radius: 6px !important;
+        border: 1px solid var(--gen-inv-border) !important;
+        background: #fff !important;
+        color: var(--gen-inv-text);
+        font-size: 13px !important;
+        box-shadow: none !important;
+        margin: 0;
+    }
+
+    .gen-inv-page select.form-control {
+        padding-right: 32px !important;
+        -webkit-appearance: menulist;
+        appearance: auto;
+        cursor: pointer;
+    }
+
+    .gen-inv-page .form-control:focus {
+        border-color: var(--gen-inv-primary) !important;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(66, 165, 245, .18) !important;
+    }
+
+    .gen-inv-page .form-control:disabled,
+    .gen-inv-page .form-control[readonly].auto-field {
+        background: #f3f4f6 !important;
+        color: #4b5563;
+        cursor: default;
+    }
+
+    .auto-field-editable {
+        background: #fffbeb !important;
+        border-color: #fcd34d !important;
+    }
+
+    .tag-auto {
+        font-size: 10px;
+        font-weight: 500;
+        color: #9ca3af;
+        font-style: italic;
+        text-transform: none;
+        letter-spacing: 0;
+        margin-left: 4px;
+    }
+
+    /* Line items table — match Finance/InvoiceList (.journey) grey header */
+    .gen-inv-table-wrap {
+        border: 1px solid #dee2e65e;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .gen-inv-table {
+        width: 100%;
+        margin-bottom: 0;
+        font-size: 13px;
+        font-family: Roboto, sans-serif;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .gen-inv-table thead th {
+        background: #e0e0e0 !important;
+        color: #676767 !important;
+        font-size: 13px;
+        font-weight: 500 !important;
+        letter-spacing: normal;
+        text-transform: none;
+        padding: 7px 10px !important;
+        border: 1px solid #dee2e65e !important;
+        border-top: none;
+        vertical-align: middle !important;
+        white-space: nowrap;
+        font-family: Roboto, sans-serif;
+    }
+
+    .gen-inv-table tbody td {
+        padding: 8px 10px !important;
+        border: 1px solid #dee2e65e !important;
+        border-top: none;
+        vertical-align: middle !important;
+        line-height: 1.4;
+        color: var(--gen-inv-text);
+        font-family: Roboto, sans-serif;
+    }
+
+    .gen-inv-table tbody tr:nth-child(even) {
+        background: #fafafa;
+    }
+
+    .gen-inv-table tbody tr:hover {
+        background: #f5f5f5;
+    }
+
+    .gen-inv-table tfoot td {
+        padding: 8px 10px !important;
+        background: #ececec !important;
+        border: 1px solid #dee2e65e !important;
+        font-weight: 500 !important;
+        font-size: 13px;
+        color: #676767 !important;
+        font-family: Roboto, sans-serif;
+        vertical-align: middle !important;
+    }
+
+    .gen-inv-table .col-num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .gen-inv-table .col-idx {
+        text-align: center;
+        color: var(--gen-inv-muted);
+        width: 48px;
+    }
+
+    /* Totals panel */
+    .gen-inv-totals-wrap {
+        background: #fafbfc;
+        border: 1px solid var(--gen-inv-border);
+        border-radius: 8px;
+        padding: 4px 0;
+        overflow: hidden;
+    }
+
+    .gen-inv-totals-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    .gen-inv-totals-table td {
+        padding: 10px 18px;
+        font-size: 14px;
+        border-bottom: 1px solid #eef0f4;
+        vertical-align: middle;
+    }
+
+    .gen-inv-totals-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .gen-inv-totals-table .label-col {
+        color: var(--gen-inv-muted);
+        text-align: right;
+        width: 62%;
+        padding-right: 16px;
+    }
+
+    .gen-inv-totals-table .val-col {
+        font-weight: 600;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: var(--gen-inv-text);
+        min-width: 140px;
+    }
+
+    .gen-inv-totals-table .invoice-value-row td {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--gen-inv-primary);
+        background: var(--gen-inv-primary-light);
+        border-top: 2px solid #90caf9;
+        border-bottom: 2px solid #90caf9;
+    }
+
+    .gen-inv-totals-table .net-row td {
+        font-size: 15px;
+        font-weight: 700;
+        background: #f0fdf4;
+    }
+
+    .gen-inv-totals-table .net-row .val-col {
+        color: #15803d;
+    }
+
+    .gen-inv-totals-table .tds-row .val-col {
+        color: #b91c1c;
+    }
+
+    /* Upload + actions */
+    .gen-inv-upload-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        min-height: var(--gen-inv-control-h);
+    }
+
+    .gen-inv-upload-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 36px;
+        padding: 0 14px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #fff;
+        background: var(--gen-inv-primary);
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 0;
+        line-height: 1;
+    }
+
+    .gen-inv-upload-btn:hover {
+        background: var(--gen-inv-primary-dark);
+    }
+
+    .gen-inv-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding-top: 4px;
+    }
+
+    .gen-inv-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+        height: 40px !important;
+        padding: 0 20px !important;
+        font-size: 13px !important;
+        font-weight: 600;
+        border-radius: 6px !important;
+        cursor: pointer;
+        line-height: 1 !important;
+        border: none;
+    }
+
+    .gen-inv-btn--draft {
+        background: #fff !important;
+        border: 1px solid var(--gen-inv-primary) !important;
+        color: var(--gen-inv-primary) !important;
+    }
+
+    .gen-inv-btn--draft:hover {
+        background: var(--gen-inv-primary-light) !important;
+    }
+
+    .gen-inv-btn--generate {
+        background: var(--gen-inv-primary) !important;
+        color: #fff !important;
+    }
+
+    .gen-inv-btn--generate:hover {
+        background: var(--gen-inv-primary-dark) !important;
+    }
+
+    .gen-inv-btn:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+
+    #divNoLineItems {
+        color: var(--gen-inv-muted);
+        font-size: 13px;
+        padding: 28px 16px;
+        text-align: center;
+        background: #fafbfc;
+        border-radius: 8px;
+        border: 1px dashed var(--gen-inv-border);
+    }
+
+    #divMsg {
+        margin: 0 0 16px !important;
+        border-radius: 8px;
+    }
+
+    #divDuplicateWarning {
+        border-radius: 8px;
+        margin-bottom: 14px !important;
+    }
+
+    @@media (max-width: 767px) {
+        .gen-inv-card {
+            padding: 16px;
+        }
+
+        .gen-inv-table thead th,
+        .gen-inv-table tbody td,
+        .gen-inv-table tfoot td {
+            padding: 8px 10px;
+            font-size: 12px;
+        }
+    }
+</style>
+
+<div class="main-panel gen-inv-page" id="main-panel">
+    <div class="content">
+        <div class="gen-inv-page-header">
+            <h4 class="gen-inv-page-title">Generate Invoice</h4>
+            <div id="divInvoiceHeader" class="gen-inv-invoice-badge" style="display:none;">
+                <span id="lblInvoiceNum"></span>
+            </div>
+        </div>
+
+    @if (TempData["GenerateInvoiceMsg"] != null)
+    {
+        <div id="divMsg" class="alert @(TempData["GenerateInvoiceMsg"].ToString().StartsWith("Success") ? "alert-success" : "alert-danger")">
+            @TempData["GenerateInvoiceMsg"]
+        </div>
+    }
+
+        <form id="invoiceForm" method="post" action="@Url.Action("SaveGeneratedInvoice","Finance")">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="hidId"                   name="id"                   value="0" />
+            <input type="hidden" id="hidStatus"               name="Status"               value="0" />
+            <input type="hidden" id="hidLineItemsJson"        name="LineItemsJson"        value="" />
+            <input type="hidden" id="hidCashCreditAmount"    name="CashCreditAmount"    value="" />
+            <input type="hidden" id="hidCashTransactionRef"  name="CashTransactionRef"  value="" />
+            <input type="hidden" id="hidCashTransactionDate" name="CashTransactionDate" value="" />
+
+            <!-- ── Section 1: Client & Period ── -->
+            <div class="gen-inv-card">
+                <div class="gen-inv-section-title">Invoice Details</div>
+                <div class="row g-3 gen-inv-row">
+                    <div class="col-md-6">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="ddlClient">Client <span class="text-danger">*</span></label>
+                            @Html.DropDownList("ClientId",
+                                (SelectList)ViewBag.ClientList,
+                                "-- Select Client --",
+                                new { @class = "form-control", id = "ddlClient", required = "required" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="ddlMonth">Month <span class="text-danger">*</span></label>
+                            @{
+                                int curMonth = (int)ViewBag.CurrentMonth;
+                                int curYear  = (int)ViewBag.CurrentYear;
+                                var months   = new[] {
+                                    (1,"January"),(2,"February"),(3,"March"),(4,"April"),
+                                    (5,"May"),(6,"June"),(7,"July"),(8,"August"),
+                                    (9,"September"),(10,"October"),(11,"November"),(12,"December")
+                                };
+                            }
+                            <select id="ddlMonth" name="InvoiceMonth" class="form-control" required>
+                                @foreach (var m in months)
+                                {
+                                    if (m.Item1 == curMonth)
+                                    {
+                                        <option value="@m.Item1" selected="selected">@m.Item2</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@m.Item1">@m.Item2</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="ddlYear">Year <span class="text-danger">*</span></label>
+                            <select id="ddlYear" name="InvoiceYear" class="form-control" required>
+                                @for (int y = DateTime.Now.Year; y >= 2020; y--)
+                                {
+                                    if (y == curYear)
+                                    {
+                                        <option value="@y" selected="selected">@y</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@y">@y</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 gen-inv-row" id="divAutoFields" style="display:none;">
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtInvoiceNumber">Invoice Number <span class="tag-auto">auto</span></label>
+                            <input type="text" id="txtInvoiceNumber" name="InvoiceNumber" class="form-control auto-field" readonly />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="ddlBillingOwner">Billing Owner Entity <span class="tag-auto" id="lblBillingOwnerTag">auto</span></label>
+                            <select id="ddlBillingOwner" name="BillingOwnerEmail" class="form-control" style="display:none;"></select>
+                            <input type="text" id="txtBillingOwner" name="BillingOwnerEmail" class="form-control auto-field-editable" placeholder="Billing owner email" maxlength="200" style="display:none;" />
+                            <input type="hidden" id="hidBillingOwnerId" name="BillingOwnerId" value="0" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtCreditPeriod">Credit Period <span class="tag-auto">auto</span></label>
+                            <input type="text" id="txtCreditPeriod" name="CreditPeriod" class="form-control auto-field-editable" placeholder="e.g. 45 Days" maxlength="100" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtGSTNumber">GST Number <span class="tag-auto">auto</span></label>
+                            <input type="text" id="txtGSTNumber" name="GSTNumber" class="form-control auto-field-editable" placeholder="GST number" maxlength="100" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="ddlTaxScenario">Tax Scenario</label>
+                            <select id="ddlTaxScenario" name="TaxScenario" class="form-control">
+                                <option value="0">Non-GST</option>
+                                <option value="1">GST 18%</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtIRN">IRN</label>
+                            <input type="text" id="txtIRN" name="IRN" class="form-control" placeholder="Enter IRN" maxlength="200" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label">e-Invoice File <span class="tag-auto">PDF / Word</span></label>
+                            <div class="gen-inv-upload-row">
+                                <label class="gen-inv-upload-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+                                    Upload e-Invoice
+                                    <input type="file" id="fileEInvoice" accept=".pdf,.doc,.docx" style="display:none;" onchange="uploadEInvoiceFile(this)" />
+                                </label>
+                                <span id="spnEInvoiceUploadStatus" style="font-size:12px;color:#555;"></span>
+                            </div>
+                            <input type="hidden" id="hidEInvoiceFileLink" name="EInvoiceFileLink" value="" />
+                            <div id="divEInvoiceLink" style="display:none;margin-top:8px;">
+                                <a id="lnkEInvoiceFile" href="#" target="_blank" style="font-size:12px;color:#42a5f5;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:3px;"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
+                                    View Uploaded File
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Section 2: Line Items ── -->
+            <div class="gen-inv-card" id="divLineItemsCard" style="display:none;">
+                <div class="gen-inv-section-title">
+                    Line Items
+                    <span class="tag-auto">auto-populated from wallet</span>
+                </div>
+                <div id="divNoLineItems" style="display:none;">No interviews found for the selected client &amp; month.</div>
+                <div class="gen-inv-table-wrap table-responsive" id="divLineItemsTable">
+                    <table class="table table-striped table-bordered journey gen-inv-table" id="tblLineItems">
+                        <thead>
+                            <tr>
+                                <th class="col-idx">#</th>
+                                <th>Product</th>
+                                <th>Description</th>
+                                <th class="col-num" style="width:10%">Qty</th>
+                                <th class="col-num" style="width:12%" id="thUnitHeader">Unit (&#8377;)</th>
+                                <th class="col-num" style="width:14%" id="thLineTotalHeader">Line Total (&#8377;)</th>
+                                <th style="width:10%">Basis</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblLineItemsBody"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-end col-num">Subtotal</td>
+                                <td class="col-num" id="tdSubtotal">0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── Section 3: Totals ── -->
+            <div class="gen-inv-card" id="divTotalsCard" style="display:none;">
+                <div class="gen-inv-section-title">Invoice Summary</div>
+                <div class="row justify-content-end">
+                    <div class="col-md-6 col-lg-5">
+                        <div class="gen-inv-totals-wrap">
+                            <table class="gen-inv-totals-table">
+                                <tbody>
+                                    <tr>
+                                        <td class="label-col">Subtotal</td>
+                                        <td class="val-col" id="tdTotSubtotal">&#8377; 0.00</td>
+                                    </tr>
+                                    <tr id="trGST">
+                                        <td class="label-col" id="tdGSTLabel">GST 18%</td>
+                                        <td class="val-col" id="tdGSTAmount">&#8377; 0.00</td>
+                                    </tr>
+                                    <tr class="invoice-value-row">
+                                        <td class="label-col">Invoice Value</td>
+                                        <td class="val-col" id="tdInvoiceValue">&#8377; 0.00</td>
+                                    </tr>
+                                    <tr class="tds-row">
+                                        <td class="label-col">TDS 10% (net payment)</td>
+                                        <td class="val-col" id="tdTDSAmount">- &#8377; 0.00</td>
+                                    </tr>
+                                    <tr class="net-row">
+                                        <td class="label-col">Net Receivable</td>
+                                        <td class="val-col" id="tdNetReceivable">&#8377; 0.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- hidden fields for totals -->
+                        <input type="hidden" name="Subtotal"             id="hidSubtotal"             value="0" />
+                        <input type="hidden" name="GSTAmount"            id="hidGSTAmount"            value="0" />
+                        <input type="hidden" name="InvoiceValue"         id="hidInvoiceValue"         value="0" />
+                        <input type="hidden" name="TDSAmount"            id="hidTDSAmount"            value="0" />
+                        <input type="hidden" name="NetReceivable"        id="hidNetReceivable"        value="0" />
+                        <input type="hidden" name="InvoiceBaseAmount"    id="hidInvoiceBaseAmount"    value="0" />
+                        <input type="hidden" name="NetReceivableAmount"  id="hidNetReceivableAmount"  value="0" />
+                        <input type="hidden" name="BillingType"          id="hidBillingType"          value="0" />
+                        <input type="hidden" name="BillingCurrency"      id="hidBillingCurrency"      value="INR" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Transaction Details (shown when Save as Paid is requested) ── -->
+            <div class="gen-inv-card" id="divTransactionCard" style="display:none; border-left:4px solid #43a047;">
+                <div class="gen-inv-section-title" style="color:#2e7d32;">Payment / Transaction Details</div>
+                <p style="font-size:12px;color:#6b7280;margin-top:-10px;margin-bottom:16px;">
+                    The invoice base amount will be credited to the client wallet. Fill in the remaining payment details below.
+                </p>
+                <div class="row g-3 gen-inv-row">
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" id="lblInvoiceBaseAmt">Invoice Base Amount (&#8377;)</label>
+                            <input type="text" id="txtInvoiceBaseAmt" class="form-control auto-field" readonly placeholder="—" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" id="lblNetReceivableAmt">Net Receivable (&#8377;)</label>
+                            <input type="text" id="txtNetReceivableAmt" class="form-control auto-field" readonly placeholder="—" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtPaidCreditAmount" id="lblCreditAmt">Credit Amount (&#8377;) <span style="font-size:10px;color:#9ca3af;font-style:italic;">(reference)</span></label>
+                            <input type="number" id="txtPaidCreditAmount" class="form-control" min="0" placeholder="Actual amount received (optional)" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtPaidTransactionRef">Transaction / UTR Ref No.</label>
+                            <input type="text" id="txtPaidTransactionRef" class="form-control" placeholder="UTR / Ref number" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="gen-inv-field">
+                            <label class="gen-inv-label" for="txtPaidTransactionDate">Payment Date</label>
+                            <input type="date" id="txtPaidTransactionDate" class="form-control"
+                                   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Action Buttons ── -->
+            <div class="gen-inv-card" id="divActionsCard" style="display:none;">
+                <div id="divDuplicateWarning"
+                     class="alert alert-danger"
+                     role="alert"
+                     style="display:none;">
+                </div>
+                <div class="gen-inv-actions">
+                    <button type="button" class="gen-inv-btn gen-inv-btn--draft"
+                            onclick="submitInvoice(0)">
+                        Save as Draft
+                    </button>
+                    <button type="button" id="btnGenerateInvoice"
+                            class="gen-inv-btn gen-inv-btn--generate"
+                            onclick="submitInvoice(1)">
+                        Generate Invoice
+                    </button>
+                    <button type="button" id="btnSaveAsPaid"
+                            class="gen-inv-btn"
+                            style="background:#43a047 !important; color:#fff !important;"
+                            onclick="handleSaveAsPaid()">
+                        Save as Paid
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    var invoiceData           = null;
+    var BILLING_TYPE_OWNER    = 1;
+    var preFillBillingOwnerId = @(ViewBag.PreFillBillingOwnerId ?? 0);
+    var billingCurrency       = 'INR';
+
+    function getCurrencySymbol(code) {
+        var map = { 'INR': '₹', 'USD': '$', 'EUR': '€', 'GBP': '£', 'AED': 'AED', 'SGD': 'S$', 'AUD': 'A$' };
+        return map[code] || code;
+    }
+
+    function applyCurrencyToUI(code) {
+        billingCurrency = code || 'INR';
+        var sym = getCurrencySymbol(billingCurrency);
+        $('#hidBillingCurrency').val(billingCurrency);
+        $('#thUnitHeader').text('Unit (' + sym + ')');
+        $('#thLineTotalHeader').text('Line Total (' + sym + ')');
+        $('#lblInvoiceBaseAmt').html('Invoice Base Amount (' + sym + ')');
+        $('#lblNetReceivableAmt').html('Net Receivable (' + sym + ')');
+        $('#lblCreditAmt').html('Credit Amount (' + sym + ') <span style="font-size:10px;color:#9ca3af;font-style:italic;">(reference)</span>');
+    }
+
+    $(document).ready(function () {
+        $('#ddlClient').change(onClientOrPeriodChange);
+        $('#ddlMonth').change(onClientOrPeriodChange);
+        $('#ddlYear').change(onClientOrPeriodChange);
+
+        $('#ddlTaxScenario').change(function () {
+            var sub = parseFloat($('#hidSubtotal').val()) || 0;
+            recalcTotals(sub, parseInt($(this).val()));
+        });
+
+        var initClientId = parseInt('@(ViewBag.PreFillClientId ?? 0)') || 0;
+        if (initClientId > 0) {
+            $('#ddlClient').val(initClientId).trigger('change');
+        }
+    });
+
+    // ── Step 1: client / month / year changed ─────────────────────────────────
+    // Fetch header info. Line items are loaded immediately for BillingType 2/3,
+    // but deferred for BillingType 1 until a billing owner is chosen.
+    function onClientOrPeriodChange() {
+        var clientId = $('#ddlClient').val();
+        var month    = $('#ddlMonth').val();
+        var year     = $('#ddlYear').val();
+        if (!clientId || clientId === '') return;
+
+        hideLineItemsSection();
+
+        $.ajax({
+            type: 'GET',
+            url: '/Finance/GetClientInvoiceData',
+            data: { clientId: clientId, month: month, year: year, billingOwnerId: 0 },
+            success: function (data) {
+                if (data.error) { alert(data.error); return; }
+                invoiceData = data;
+                populateHeader(data);
+
+                if (data.billingType === BILLING_TYPE_OWNER) {
+                    // BillingType=1: duplicate check is deferred until billing owner is selected
+                    hideDuplicateWarning();
+                    showLineItemsPlaceholder('Select a billing owner above to load line items.');
+                } else {
+                    // BillingType=2/3: check duplicate now (billingOwnerId = 0 for client-based billing)
+                    checkDuplicate(clientId, 0, month, year, null);
+                    renderLineItems(data.lineItems || []);
+                    recalcTotals(data.subtotal, parseInt($('#ddlTaxScenario').val()));
+                    showLineItemsSection();
+                }
+            },
+            error: function () { alert('Failed to load invoice data.'); }
+        });
+    }
+
+    // ── Step 2: billing owner selected (BillingType=1 only) ───────────────────
+    function onBillingOwnerChange(ownerId) {
+        var clientId = $('#ddlClient').val();
+        var month    = $('#ddlMonth').val();
+        var year     = $('#ddlYear').val();
+        if (!ownerId || ownerId === 0) { hideLineItemsSection(); return; }
+
+        checkDuplicate(clientId, ownerId, month, year, function () {
+            $.ajax({
+                type: 'GET',
+                url: '/Finance/GetClientInvoiceData',
+                data: { clientId: clientId, month: month, year: year, billingOwnerId: ownerId },
+                success: function (data) {
+                    if (data.error) { alert(data.error); return; }
+                    renderLineItems(data.lineItems || []);
+                    recalcTotals(data.subtotal, parseInt($('#ddlTaxScenario').val()));
+                    showLineItemsSection();
+                },
+                error: function () { alert('Failed to load line items.'); }
+            });
+        });
+    }
+
+    // ── Duplicate invoice check ────────────────────────────────────────────────
+    // Calls server; if a Generated invoice already exists, shows warning and
+    // disables the Generate Invoice button. Calls onAllowed() to continue loading.
+    function checkDuplicate(clientId, billingOwnerId, month, year, onAllowed) {
+        $.ajax({
+            type: 'GET',
+            url: '/Finance/CheckDuplicateInvoice',
+            data: { clientId: clientId, billingOwnerId: billingOwnerId, month: month, year: year },
+            success: function (res) {
+                hideDuplicateWarning();
+                if (res.isDuplicate) {
+                    showDuplicateWarning(res.invoiceNumber, res.createdBy, res.createdOn);
+                } else {
+                    enableGenerateButton();
+                }
+                if (onAllowed) onAllowed();
+            },
+            error: function () { if (onAllowed) onAllowed(); }
+        });
+    }
+
+    function showDuplicateWarning(invNo, by, on) {
+        var msg = '⚠ Invoice <strong>' + invNo + '</strong> already generated for this combination'
+                + (by ? ' by <strong>' + by + '</strong>' : '')
+                + (on ? ' on ' + on : '') + '.';
+        $('#divDuplicateWarning').html(msg).show();
+        $('#btnGenerateInvoice').prop('disabled', true).css('opacity', '0.5');
+    }
+
+    function hideDuplicateWarning() {
+        $('#divDuplicateWarning').hide().html('');
+        enableGenerateButton();
+    }
+
+    function enableGenerateButton() {
+        $('#btnGenerateInvoice').prop('disabled', false).css('opacity', '1');
+    }
+
+    // ── Populate header fields (no line items) ────────────────────────────────
+    function populateHeader(data) {
+        $('#txtInvoiceNumber').val(data.invoiceNumber);
+        $('#txtCreditPeriod').val(data.creditPeriod || '');
+        $('#txtGSTNumber').val(data.gstNumber || '');
+        $('#hidBillingType').val(data.billingType || 0);
+        applyCurrencyToUI(data.billingCurrency);
+
+        var taxScenario = data.gstApplicable ? 1 : 0;
+        $('#ddlTaxScenario').val(taxScenario);
+
+        // ── Billing Owner field ──────────────────────────────────────────────
+        if (data.billingType === BILLING_TYPE_OWNER) {
+            // Dropdown — populated, user must choose
+            $('#lblBillingOwnerTag').text('');
+            var ddl = $('#ddlBillingOwner').prop('disabled', false).empty();
+            ddl.append('<option value="" data-id="0">-- Select Billing Owner --</option>');
+            if (data.billingOwners && data.billingOwners.length) {
+                $.each(data.billingOwners, function (i, bo) {
+                    ddl.append(
+                        $('<option></option>')
+                            .val(bo.billingOwnerEmail)
+                            .text(bo.billingOwnerEmail)
+                            .attr('data-id', bo.billingOwnerId)
+                    );
+                });
+            }
+            ddl.off('change').on('change', function () {
+                var sel     = $(this).find('option:selected');
+                var ownerId = parseInt(sel.data('id')) || 0;
+                $('#hidBillingOwnerId').val(ownerId);
+                onBillingOwnerChange(ownerId);
+            });
+            $('#hidBillingOwnerId').val(0);
+            $('#ddlBillingOwner').show();
+            $('#txtBillingOwner').hide();
+
+            // Auto-select billing owner if pre-filled from FNRevenueByClient
+            if (preFillBillingOwnerId > 0) {
+                $('#ddlBillingOwner option').each(function () {
+                    if (parseInt($(this).data('id')) === preFillBillingOwnerId) {
+                        $('#ddlBillingOwner').val($(this).val());
+                        $('#hidBillingOwnerId').val(preFillBillingOwnerId);
+                        onBillingOwnerChange(preFillBillingOwnerId);
+                        preFillBillingOwnerId = 0;
+                        return false;
+                    }
+                });
+            }
+
+        } else if (data.billingType === 2 || data.billingType === 3) {
+            // Not Applicable — disabled
+            $('#lblBillingOwnerTag').text('');
+            $('#txtBillingOwner').val('Not Applicable')
+                .prop('disabled', true)
+                .removeClass('auto-field-editable').addClass('auto-field')
+                .show();
+            $('#ddlBillingOwner').hide();
+            $('#hidBillingOwnerId').val(0);
+
+        } else {
+            // Editable auto-filled text
+            $('#lblBillingOwnerTag').text('auto');
+            $('#txtBillingOwner').val(data.billingOwnerEmail || '')
+                .prop('disabled', false)
+                .removeClass('auto-field').addClass('auto-field-editable')
+                .show();
+            $('#hidBillingOwnerId').val(data.billingOwnerId || 0);
+            $('#ddlBillingOwner').hide();
+        }
+
+        $('#divAutoFields').show();
+        $('#divInvoiceHeader').show();
+        $('#lblInvoiceNum').text(data.invoiceNumber);
+        $('#divActionsCard').show();
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function hideLineItemsSection() {
+        $('#divLineItemsCard').hide();
+        $('#divTotalsCard').hide();
+        $('#tblLineItemsBody').empty();
+        $('#hidLineItemsJson').val('');
+    }
+
+    function showLineItemsSection() {
+        $('#divLineItemsCard').show();
+        $('#divTotalsCard').show();
+    }
+
+    function showLineItemsPlaceholder(msg) {
+        $('#tblLineItemsBody').empty();
+        $('#divNoLineItems').text(msg).show();
+        $('#divLineItemsTable').hide();
+        $('#tblLineItems tfoot').hide();
+        $('#divLineItemsCard').show();
+        $('#divTotalsCard').hide();
+    }
+
+    function renderLineItems(items) {
+        var tbody = $('#tblLineItemsBody');
+        tbody.empty();
+
+        if (!items || items.length === 0) {
+            $('#divNoLineItems').show();
+            $('#divLineItemsTable').hide();
+            $('#tblLineItems tfoot').hide();
+            return;
+        }
+
+        $('#divNoLineItems').hide();
+        $('#divLineItemsTable').show();
+        $('#tblLineItems tfoot').show();
+
+        var subtotal = 0;
+        $.each(items, function (i, item) {
+            var lt = parseFloat(item.lineTotal) || 0;
+            subtotal += lt;
+            var row = '<tr>' +
+                '<td class="col-idx">' + (i + 1) + '</td>' +
+                '<td>' + escHtml(item.productName) + '</td>' +
+                '<td>' + escHtml(item.description) + '</td>' +
+                '<td class="col-num">' + (parseInt(item.qty) || 0) + '</td>' +
+                '<td class="col-num">' + getCurrencySymbol(billingCurrency) + ' ' + formatNum(item.unitRate) + '</td>' +
+                '<td class="col-num">' + getCurrencySymbol(billingCurrency) + ' ' + formatNum(lt) + '</td>' +
+                '<td>' + escHtml(item.basis) + '</td>' +
+                '</tr>';
+            tbody.append(row);
+        });
+
+        $('#tdSubtotal').text(formatNum(subtotal));
+        $('#hidSubtotal').val(subtotal.toFixed(2));
+        $('#hidLineItemsJson').val(JSON.stringify(items));
+    }
+
+    function recalcTotals(subtotal, taxScenario) {
+        subtotal = parseFloat(subtotal) || 0;
+        var gstAmt     = taxScenario === 1 ? Math.round(subtotal * 18) / 100 : 0;
+        var invValue   = subtotal + gstAmt;
+        var tdsAmt     = Math.round(subtotal * 10) / 100;
+        var netRec     = invValue - tdsAmt;
+
+        var sym = getCurrencySymbol(billingCurrency);
+        $('#tdTotSubtotal').text(sym + ' ' + formatNum(subtotal));
+        $('#tdGSTAmount').text(sym + ' ' + formatNum(gstAmt));
+        $('#tdGSTLabel').text(taxScenario === 1 ? 'GST 18%' : 'GST (Non-GST)');
+        $('#trGST').css('opacity', taxScenario === 1 ? 1 : 0.4);
+        $('#tdInvoiceValue').text(sym + ' ' + formatNum(invValue));
+        $('#tdTDSAmount').text('- ' + sym + ' ' + formatNum(tdsAmt));
+        $('#tdNetReceivable').text(sym + ' ' + formatNum(netRec));
+
+        $('#hidSubtotal').val(subtotal.toFixed(2));
+        $('#hidGSTAmount').val(gstAmt.toFixed(2));
+        $('#hidInvoiceValue').val(invValue.toFixed(2));
+        $('#hidTDSAmount').val(tdsAmt.toFixed(2));
+        $('#hidNetReceivable').val(netRec.toFixed(2));
+        // InvoiceBaseAmount = Subtotal (base before GST); NetReceivableAmount = net after TDS
+        $('#hidInvoiceBaseAmount').val(subtotal.toFixed(2));
+        $('#hidNetReceivableAmount').val(netRec.toFixed(2));
+    }
+
+    function submitInvoice(status) {
+        if (!$('#ddlClient').val()) { alert('Please select a client.'); return; }
+        if (!$('#txtInvoiceNumber').val()) { alert('Invoice number not generated. Please reselect client & month.'); return; }
+        $('#hidStatus').val(status);
+        $('#invoiceForm').submit();
+    }
+
+    // ── Save as Paid ──────────────────────────────────────────────────────────
+    // First click expands the transaction details section.
+    // Second click (when section is visible) validates and submits with status=5.
+    function handleSaveAsPaid() {
+        if (!$('#ddlClient').val()) { alert('Please select a client.'); return; }
+        if (!$('#txtInvoiceNumber').val()) { alert('Invoice number not generated. Please reselect client & month.'); return; }
+
+        var sectionVisible = $('#divTransactionCard').is(':visible');
+
+        if (!sectionVisible) {
+            // Populate read-only info fields: InvoiceBaseAmount = Subtotal, NetReceivable = after TDS
+            var baseAmt = parseFloat($('#hidSubtotal').val()) || 0;
+            var netRec  = parseFloat($('#hidNetReceivable').val()) || 0;
+            $('#txtInvoiceBaseAmt').val(baseAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#txtNetReceivableAmt').val(netRec.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('#divTransactionCard').slideDown(200);
+            $('#btnSaveAsPaid').text('Confirm Save as Paid');
+            $('html, body').animate({ scrollTop: $('#divTransactionCard').offset().top - 80 }, 300);
+            return;
+        }
+
+        // InvoiceValue drives the wallet credit — cashCreditAmount is optional reference only
+        var cashAmt = parseFloat($('#txtPaidCreditAmount').val() || 0);
+
+        // Transfer transaction details to hidden form fields
+        $('#hidCashCreditAmount').val(cashAmt > 0 ? cashAmt : '');
+        $('#hidCashTransactionRef').val($('#txtPaidTransactionRef').val().trim());
+        $('#hidCashTransactionDate').val($('#txtPaidTransactionDate').val());
+
+        $('#hidStatus').val(5);
+        $('#invoiceForm').submit();
+    }
+
+    function formatNum(n) {
+        n = parseFloat(n) || 0;
+        return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function escHtml(s) {
+        if (!s) return '';
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function uploadEInvoiceFile(input) {
+        if (!input.files || !input.files[0]) return;
+        var file = input.files[0];
+        var status = document.getElementById('spnEInvoiceUploadStatus');
+        status.style.color = '#555';
+        status.textContent = 'Uploading…';
+
+        var fd = new FormData();
+        fd.append('file', file);
+
+        $.ajax({
+            url: '/Finance/UploadEInvoiceFile',
+            type: 'POST',
+            data: fd,
+            processData: false,
+            contentType: false,
+            headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+            success: function (res) {
+                if (res.success) {
+                    document.getElementById('hidEInvoiceFileLink').value = res.fileUrl;
+                    document.getElementById('lnkEInvoiceFile').href = res.fileUrl;
+                    document.getElementById('divEInvoiceLink').style.display = 'block';
+                    status.style.color = '#2e7d32';
+                    status.textContent = file.name + ' — uploaded';
+                } else {
+                    status.style.color = '#c62828';
+                    status.textContent = res.message || 'Upload failed.';
+                }
+            },
+            error: function () {
+                status.style.color = '#c62828';
+                status.textContent = 'Upload failed. Please try again.';
+            }
+        });
+        input.value = '';
+    }
+</script>

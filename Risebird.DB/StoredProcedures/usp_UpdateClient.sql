@@ -22,6 +22,7 @@ Create PROCEDURE [dbo].[usp_UpdateClient]
 @IsCandidateavailability bit,    
 @IsMeetingNotificationSend bit,  
 @PerInterviewRate int,
+@AIPerInterviewRate int,
 @BillingType int,
 @InterviewDuration int,
 @IsMeetingAutoCancelled bit,
@@ -36,7 +37,10 @@ Create PROCEDURE [dbo].[usp_UpdateClient]
 @IsTranscript bit,
 @IsPlanFlixable bit,
 @PlanType int,
-@IsVideoRequired bit
+@IsVideoRequired bit,
+@BillingModel int,
+@BillingCurrency varchar(10),
+@InterviewerBillingType int
 AS          
 Begin          
       
@@ -56,6 +60,7 @@ SET
   ,[IsCandidateavailability]=@IsCandidateavailability    
   ,[IsMeetingNotificationSend]=@IsMeetingNotificationSend  
   ,[PerInterviewRate]=@PerInterviewRate
+  ,[AIPerInterviewRate]=@AIPerInterviewRate
   ,[BillingType]=@BillingType
   ,[InterviewDuration]=@InterviewDuration
   ,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
@@ -71,6 +76,9 @@ SET
   ,[IsPlanFlixable]=@IsPlanFlixable
   ,[PlanType]=@PlanType
   ,[IsVideoRequired]=@IsVideoRequired
+  ,[BillingModel]=@BillingModel
+  ,[BillingCurrency]=@BillingCurrency
+  ,[InterviewerBillingType]=@InterviewerBillingType
 WHERE          
       Id = @id          
 End     

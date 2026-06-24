@@ -1,0 +1,676 @@
+@model Risebird.Entities.ViewModel.ClientWalletDashboardVM
+@using Risebird.Entities.Enum
+@{
+    ViewData["Title"] = "Wallet";
+    ViewBag.PageHeader = "Wallet";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var scopeLabel = Model.BillingType == 1 ? "User Scope" : "Client Scope";
+    var cashLabel = Model.CashRemaining < 0 ? "owed by Risebird" : "available";
+    var poUtil = Model.POCreditUtilizationPercent;
+}
+
+<link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<style>
+    .wallet-page .summary-card {
+        background: #fff;
+        border: 1px solid #e8e8e8;
+        border-radius: 8px;
+        padding: 18px 20px;
+        min-height: 130px;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .wallet-page .summary-card h6 {
+        font-size: 11px;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        color: #666;
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+    .wallet-page .summary-card .amount {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    .wallet-page .summary-card .sub {
+        font-size: 12px;
+        color: #888;
+    }
+    .wallet-page .progress {
+        height: 8px;
+        margin-top: 10px;
+        background: #eee;
+    }
+    .wallet-page .info-box {
+        background: #e8f4fd;
+        border-left: 4px solid #2196F3;
+        padding: 12px 16px;
+        margin: 15px 0;
+        border-radius: 4px;
+        font-size: 13px;
+        color: #333;
+    }
+    .wallet-page .action-bar .btn-action {
+        margin: 4px 6px 4px 0;
+    }
+    .wallet-page .month-filter {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+    }
+    .wallet-page .month-filter select {
+        min-width: 120px;
+    }
+    .wallet-page .stat-pill {
+        display: inline-block;
+        background: #f5f5f5;
+        border-radius: 20px;
+        padding: 6px 14px;
+        margin-right: 8px;
+        font-size: 13px;
+    }
+    .wallet-page .stat-pill strong { color: #333; }
+</style>
+
+<div class="main-panel wallet-page" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title" style="margin:0;">
+                        Wallet — @Model.ClientName
+                        @if (!string.IsNullOrEmpty(Model.BillingModelDesc))
+                        {
+                            <span style="font-size:14px;color:#555;"> · @Model.BillingModelDesc · @scopeLabel</span>
+                        }
+                    </h4>
+                </div>
+                <div class="pull-right client-ms">
+                    <a href="@Url.Action("List", "Client")" class="mdc-button mdc-button--outlined mdc-ripple-upgraded btn-action" style="text-decoration:none;">
+                        <span class="mdc-button__label"><span class="fa fa-arrow-left"></span> Back to Client</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg" style="padding:15px;">
+
+                    @if (Model.BillingType == 1)
+                    {
+                        <div class="info-box">
+                            <strong>User scope:</strong> One wallet per billing owner. POs and invoices are mapped to the billing owner.
+                            @if (Model.BillingModel == (int)BillingModelEnum.M3)
+                            {
+                                <span>For M3, cash balance can go negative on delivery. Add PO credit points to restore coverage.</span>
+                            }
+                        </div>
+                    }
+
+                    <!-- Overall summary (always all-time) -->
+                    <div class="row" style="margin-bottom:10px;">
+                        <div class="col-md-12">
+                            <small class="text-muted" style="font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Overall Summary</small>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom:20px;">
+                        <div class="col-md-6">
+                            <div class="summary-card">
+                                <h6>Cash Credit Balance (Signed · Single Ledger)</h6>
+                                <div class="amount" style="color:@(Model.CashRemaining < 0 ? "#e74c3c" : "#2e7d32");">
+                                    @(Model.CashRemaining < 0 ? "- " : "")&#8377; @Math.Abs(Model.CashRemaining).ToString("N0")
+                                </div>
+                                <div class="sub">@cashLabel</div>
+                                <div class="sub" style="margin-top:8px;line-height:1.6;">
+                                    Added: &#8377;@Model.CashCreditAdded.ToString("N0") ·
+                                    Consumed: &#8377;@Model.CashDebitConsumed.ToString("N0") ·
+                                    <strong style="color:@(Model.CashRemaining < 0 ? "#e74c3c" : "#2e7d32");">
+                                        Remaining: @(Model.CashRemaining < 0 ? "- " : "")&#8377;@Math.Abs(Model.CashRemaining).ToString("N0")
+                                    </strong>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" style="margin-top:10px;" onclick="OpenCashCreditHistory()">
+                                    <i class="fa fa-history"></i> Cash Add History
+                                </button>
+                            </div>
+                        </div>
+                        @if (Model.SupportsPO)
+                        {
+                            <div class="col-md-6">
+                                <div class="summary-card">
+                                    <h6>PO Credit Limit (@(Model.BillingModel == (int)BillingModelEnum.M2 ? "M2" : "M3"))</h6>
+                                    <div class="amount" style="color:#1565c0;">&#8377; @Model.POCreditLimit.ToString("N0")</div>
+                                    <div class="sub" style="margin-top:8px;line-height:1.6;">
+                                        PO Cash Received: &#8377;@Model.POCashReceived.ToString("N0") ·
+                                        <strong style="color:#1565c0;">PO Cash Remaining: &#8377;@Model.POCashRemaining.ToString("N0")</strong>
+                                    </div>
+                                    <div class="sub" style="margin-top:4px;line-height:1.6;">
+                                        Consumed: &#8377;@Model.POConsumed.ToString("N0") ·
+                                        <strong>Remaining: &#8377;@Model.PORemaining.ToString("N0")</strong>
+                                        @if (Model.POCreditLimit > 0) { <span> · @poUtil% utilized</span> }
+                                    </div>
+                                    @if (Model.POCreditLimit > 0)
+                                    {
+                                        <div class="progress">
+                                            <div class="progress-bar @(poUtil >= 80 ? "bg-danger" : "bg-warning")"
+                                                 style="width:@poUtil%"></div>
+                                        </div>
+                                    }
+                                    <button type="button" class="btn btn-sm btn-outline-primary" style="margin-top:10px;" onclick="OpenPOHistory()">
+                                        <i class="fa fa-history"></i> PO History
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Details filter (month-wise or all data) -->
+                    <div class="info-box" style="background:#f8f9fa;border-color:#ddd;margin-top:5px;">
+                        <div class="month-filter" style="flex-wrap:wrap;">
+                            <label style="margin:0 8px 0 0;font-size:13px;font-weight:600;">Details view:</label>
+                            <label style="margin:0 12px 0 0;font-weight:normal;cursor:pointer;">
+                                <input type="radio" name="detailsScope" id="scopeMonth" value="month" @(Model.IsAllDetailsView ? "" : "checked") /> Month-wise
+                            </label>
+                            <label style="margin:0 12px 0 0;font-weight:normal;cursor:pointer;">
+                                <input type="radio" name="detailsScope" id="scopeAll" value="all" @(Model.IsAllDetailsView ? "checked" : "") /> All data
+                            </label>
+                            <span id="monthFilterGroup" style="display:@(Model.IsAllDetailsView ? "none" : "inline-flex");gap:8px;align-items:center;margin-left:10px;">
+                                <select id="selMonth" class="form-control input-sm">
+                                    @for (int m = 1; m <= 12; m++)
+                                    {
+                                        <option value="@m" selected="@(m == Model.SelectedMonth)">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)</option>
+                                    }
+                                </select>
+                                <select id="selYear" class="form-control input-sm">
+                                    @for (int y = DateTime.Now.Year; y >= 2020; y--)
+                                    {
+                                        <option value="@y" selected="@(y == Model.SelectedYear)">@y</option>
+                                    }
+                                </select>
+                            </span>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="ApplyDetailsFilter()" style="margin-left:8px;">Apply</button>
+                        </div>
+                    </div>
+
+                    <!-- Period stats for details section -->
+                    <div style="margin-bottom:15px;margin-top:15px;">
+                        <span class="stat-pill"><strong>@Model.DetailsPeriodLabel</strong></span>
+                        @if (!Model.IsAllDetailsView)
+                        {
+                            <span class="stat-pill">Credit: &#8377;@Model.MonthCredit.ToString("N0")</span>
+                            <span class="stat-pill">Debit: &#8377;@Model.MonthDebit.ToString("N0")</span>
+                        }
+                        else
+                        {
+                            <span class="stat-pill">Credit: &#8377;@Model.OverallCredit.ToString("N0")</span>
+                            <span class="stat-pill">Debit: &#8377;@Model.OverallDebit.ToString("N0")</span>
+                        }
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="action-bar" style="margin-bottom:20px;">
+                        @if (!Model.SupportsPO)
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised btn-action" onclick="OpenCashCreditModal()">
+                                <span class="fa fa-plus"></span> Add Cash Credit Points
+                            </button>
+                        }
+                        @if (Model.SupportsPO)
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised btn-action" onclick="OpenPOCreditModal()">
+                                <span class="fa fa-plus"></span> Add PO Credit Points
+                            </button>
+                        }
+                        @if (Model.SupportsPO)
+                        {
+                            <button type="button" class="mdc-button mdc-button--outlined btn-action" onclick="OpenPOHistory()">
+                                <span class="fa fa-history"></span> PO History
+                            </button>
+                        }
+                        <button type="button" class="mdc-button mdc-button--outlined btn-action" onclick="OpenCashCreditHistory()">
+                            <span class="fa fa-history"></span> Cash Add History
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--outlined btn-action" onclick="OpenWalletLogModal(null)">
+                            <span class="fa fa-list"></span> View Wallet Balance Log
+                        </button>
+                    </div>
+                    @if (Model.SupportsPO)
+                    {
+                        <p class="text-muted" style="font-size:12px;margin-top:-10px;">
+                            <em>Add PO Credit Points</em> registers the PO amount. Mark the invoice as <strong>Complete</strong> or <strong>Paid</strong> to unlock <em>Add Cash Credit</em>.
+                        </p>
+                    }
+
+                    @if (Model.SupportsPO && Model.PORecords.Any())
+                    {
+                        <h5 style="margin:20px 0 12px;font-weight:600;">PO Register — @Model.DetailsPeriodLabel</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered journey">
+                                <thead>
+                                    <tr>
+                                        <th>PO Number</th>
+                                        @if (Model.IsAllDetailsView) { <th>Period</th> }
+                                        @if (Model.BillingType == 1) { <th>Billing Owner</th> }
+                                        <th class="text-right">PO Credit</th>
+                                        <th class="text-right">Cash Received</th>
+                                        <th class="text-right">Pending Cash</th>
+                                        <th>Status</th>
+                                        <th>Document</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var po in Model.PORecords)
+                                    {
+                                        <tr>
+                                            <td>@(string.IsNullOrEmpty(po.PONumber) ? "—" : po.PONumber)</td>
+                                            @if (Model.IsAllDetailsView)
+                                            {
+                                                <td>@po.PeriodLabel</td>
+                                            }
+                                            @if (Model.BillingType == 1)
+                                            {
+                                                <td>@(string.IsNullOrEmpty(po.BillingOwnerEmail) ? "—" : po.BillingOwnerEmail)</td>
+                                            }
+                                            <td class="text-right">@(po.POCreditAmount > 0 ? "₹ " + po.POCreditAmount.ToString("N0") : "—")</td>
+                                            <td class="text-right">@(po.CashCreditReceived > 0 ? "₹ " + po.CashCreditReceived.ToString("N0") : "—")</td>
+                                            <td class="text-right">@(po.POCreditAmount > 0 ? "₹ " + po.PendingCashCredit.ToString("N0") : "—")</td>
+                                            <td><span class="badge @po.StatusCss">@po.StatusDesc</span></td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(po.PODocumentUrl))
+                                                {
+                                                    <a href="@po.PODocumentUrl" target="_blank" class="btn btn-sm btn-link">View PDF</a>
+                                                }
+                                                else { <span>—</span> }
+                                            </td>
+                                            <td class="text-center">
+                                                @if (po.Status < 4)
+                                                {
+                                                    <a href="javascript:void(0)" onclick="MarkPOStatus(@po.id, @Model.ClientId, 4)" class="btn btn-sm btn-outline-primary" style="margin:2px;">Mark Complete</a>
+                                                }
+                                                @if (po.Status == 4)
+                                                {
+                                                    <a href="javascript:void(0)" onclick="MarkPOStatus(@po.id, @Model.ClientId, 5)" class="btn btn-sm btn-outline-warning" style="margin:2px;">Mark Paid</a>
+                                                }
+                                                @if ((po.Status == 4 || po.Status == 5) && po.POCreditAmount > 0 && po.PendingCashCredit > 0)
+                                                {
+                                                    <a href="javascript:void(0)" onclick="OpenCashCreditForPO(@po.id, @(po.BillingOwnerId ?? 0), @po.PendingCashCredit.ToString("0.##"))" class="btn btn-sm btn-outline-success" style="margin:2px;">Add Cash Credit</a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+                    @if (Model.SupportsPO && !Model.PORecords.Any())
+                    {
+                        <div class="info-box" style="background:#fff;border-color:#eee;color:#666;margin-top:15px;">
+                            No PO records for <strong>@Model.DetailsPeriodLabel</strong>.
+                        </div>
+                    }
+
+                    <!-- Per-owner wallets -->
+                    @if (Model.BillingType == 1 && Model.OwnerWallets.Any())
+                    {
+                        <h5 style="margin:20px 0 12px;font-weight:600;">Per-Owner Wallets — @Model.DetailsPeriodLabel</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered journey">
+                                <thead>
+                                    <tr>
+                                        <th>Billing Owner</th>
+                                        <th>Email</th>
+                                        <th class="text-right">PO Credit</th>
+                                        <th class="text-right">Consumed</th>
+                                        <th class="text-right">Remaining</th>
+                                        <th class="text-right">Cash</th>
+                                        <th>State</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var owner in Model.OwnerWallets)
+                                    {
+                                        <tr>
+                                            <td>@owner.BillingOwnerName</td>
+                                            <td>@owner.BillingOwnerEmail</td>
+                                            <td class="text-right">@(owner.POCredit > 0 ? "₹ " + owner.POCredit.ToString("N0") : "—")</td>
+                                            <td class="text-right">@(owner.Consumed > 0 ? "₹ " + owner.Consumed.ToString("N0") : "—")</td>
+                                            <td class="text-right">@(owner.POCredit > 0 || owner.Consumed > 0 ? "₹ " + owner.Remaining.ToString("N0") : "—")</td>
+                                            <td class="text-right">@(owner.CashBalance != 0 ? "₹ " + owner.CashBalance.ToString("N0") : "—")</td>
+                                            <td><span class="badge @owner.StateCss">@owner.State</span></td>
+                                            <td class="text-center">
+                                                <a href="javascript:void(0)" onclick="OpenWalletLogModal(@owner.BillingOwnerId)" class="btn btn-sm btn-outline-secondary">View log</a>
+                                                @if (Model.SupportsPO)
+                                                {
+                                                    <a href="javascript:void(0)" onclick="OpenPOCreditModal(@owner.BillingOwnerId)" class="btn btn-sm btn-outline-primary">Add PO</a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else if (Model.BillingType == 1)
+                    {
+                        <div class="info-box" style="background:#fff;border-color:#eee;color:#666;">
+                            No per-owner wallet activity for <strong>@Model.DetailsPeriodLabel</strong>.
+                        </div>
+                    }
+                    else if (Model.BillingType == 3)
+                    {
+                        <div class="info-box" style="background:#f9f9f9;border-color:#ccc;">
+                            Client-level wallet — billing owner is not required. All PO and wallet entries apply to the client.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Wallet Log Modal -->
+<div class="modal fade" id="walletLogModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Wallet Balance Log</h5>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="walletLogBody">
+                <div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PO History Modal -->
+<div class="modal fade" id="poHistoryModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">PO History — Overall</h5>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="poHistoryBody">
+                <div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cash Add History Modal -->
+<div class="modal fade" id="cashHistoryModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cash Add History — Overall</h5>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="cashHistoryBody">
+                <div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cash Credit Modal -->
+<div class="modal fade" id="cashCreditModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Add Cash Credit Points</h5><button type="button" class="close" data-bs-dismiss="modal">&times;</button></div>
+            <div class="modal-body">
+                @if (Model.BillingType == 1)
+                {
+                    <div class="form-group">
+                        <label>Billing Owner *</label>
+                        @Html.DropDownList("ddlCashOwner", ViewBag.ClientUsers as SelectList, "-- Select Billing Owner --", new { @class = "form-control", id = "ddlCashOwner", onchange = "LoadOpenPOs()" })
+                    </div>
+                }
+                @if (Model.SupportsPO)
+                {
+                    <div class="form-group">
+                        <label>Link to PO (optional)</label>
+                        <select id="ddlCashPO" class="form-control">
+                            <option value="">— Standalone cash credit —</option>
+                        </select>
+                        <small class="text-muted">Select a registered PO to post cash credit against it in wallet.</small>
+                    </div>
+                }
+                <input type="hidden" id="hidCashPOId" value="" />
+                <div class="form-group">
+                    <label>Credit Amount *</label>
+                    <input type="number" id="txtCashAmount" class="form-control" min="1" />
+                </div>
+                <div class="form-group">
+                    <label>Transaction Date</label>
+                    <input type="date" id="txtCashDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="form-group">
+                    <label>Reference / Transaction Id</label>
+                    <input type="text" id="txtCashRef" class="form-control" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="SubmitCashCredit()">Add Cash Credit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PO Credit Modal -->
+<div class="modal fade" id="poCreditModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Add PO Credit Points</h5><button type="button" class="close" data-bs-dismiss="modal">&times;</button></div>
+            <div class="modal-body">
+                @if (Model.BillingType == 1)
+                {
+                    <div class="form-group">
+                        <label>Billing Owner *</label>
+                        @Html.DropDownList("ddlPOOwner", ViewBag.ClientUsers as SelectList, "-- Select Billing Owner --", new { @class = "form-control", id = "ddlPOOwner" })
+                    </div>
+                }
+                <div class="form-group">
+                    <label>PO Credit Amount *</label>
+                    <input type="number" id="txtPOAmount" class="form-control" min="1" />
+                </div>
+                <div class="form-group">
+                    <label>PO Month *</label>
+                    <input type="month" id="txtPOMonth" class="form-control" value="@($"{Model.SelectedYear:D4}-{Model.SelectedMonth:D2}")" />
+                </div>
+                <div class="form-group">
+                    <label>PO Number / Reference</label>
+                    <input type="text" id="txtPORef" class="form-control" placeholder="Enter PO number" />
+                </div>
+                <div class="form-group">
+                    <label>Upload PO Document (PDF)</label>
+                    <input type="file" id="txtPOCreditFile" class="form-control" accept=".pdf" />
+                    <small class="text-muted">Attach the signed PO document along with the credit amount.</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="SubmitPOCredit()">Save PO Credit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.Message != null)
+{
+    <script>
+        $(function () {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes('success')) swal.fire('Success', msg, 'success');
+            else swal.fire('Error', msg, 'error');
+        });
+    </script>
+}
+
+<script>
+    var _clientId = @Model.ClientId;
+    var _billingType = @Model.BillingType;
+    var _requiresOwner = @(Model.BillingType == 1 ? "true" : "false");
+
+    function ApplyDetailsFilter() {
+        var scope = $('input[name="detailsScope"]:checked').val() || 'month';
+        var url = '/Wallet/ClientWallet?clientId=' + _clientId + '&scope=' + scope;
+        if (scope === 'month') {
+            url += '&month=' + $('#selMonth').val() + '&year=' + $('#selYear').val();
+        } else {
+            url += '&month=' + @Model.SelectedMonth + '&year=' + @Model.SelectedYear;
+        }
+        window.location.href = url;
+    }
+
+    $(function () {
+        $('input[name="detailsScope"]').change(function () {
+            $('#monthFilterGroup').toggle($('#scopeMonth').is(':checked'));
+        });
+    });
+
+    function OpenWalletLogModal(billingOwnerId) {
+        $('#walletLogBody').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+        $('#walletLogModal').modal('show');
+        $.post('/Wallet/GetWalletDetails', {
+            billingType: _billingType,
+            clientId: _clientId,
+            billingOwnerId: billingOwnerId || null,
+            actiontype: 'All'
+        }, function (html) {
+            $('#walletLogBody').html(html);
+        });
+    }
+
+    function OpenPOHistory() {
+        $('#poHistoryBody').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+        $('#poHistoryModal').modal('show');
+        $.get('/Wallet/GetPOHistory', { clientId: _clientId }, function (html) {
+            $('#poHistoryBody').html(html);
+        });
+    }
+
+    function OpenCashCreditHistory() {
+        $('#cashHistoryBody').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+        $('#cashHistoryModal').modal('show');
+        $.get('/Wallet/GetCashCreditHistory', { clientId: _clientId }, function (html) {
+            $('#cashHistoryBody').html(html);
+        });
+    }
+
+    function OpenCashCreditModal() {
+        $('#hidCashPOId').val('');
+        $('#ddlCashPO').val('');
+        LoadOpenPOs();
+        $('#cashCreditModal').modal('show');
+    }
+
+    function OpenCashCreditForPO(poId, ownerId, pending) {
+        $('#hidCashPOId').val(poId);
+        if (ownerId > 0) $('#ddlCashOwner').val(ownerId);
+        LoadOpenPOs(poId);
+        $('#txtCashAmount').val(Math.floor(pending));
+        $('#cashCreditModal').modal('show');
+    }
+
+    function LoadOpenPOs(selectedId) {
+        var ownerId = _requiresOwner ? $('#ddlCashOwner').val() : null;
+        $.get('/Wallet/GetOpenClientPOs', { clientId: _clientId, billingOwnerId: ownerId }, function (r) {
+            var $ddl = $('#ddlCashPO');
+            $ddl.empty().append('<option value="">— Standalone cash credit —</option>');
+            if (r.success && r.items) {
+                r.items.forEach(function (item) {
+                    $ddl.append('<option value="' + item.id + '">' + item.label + '</option>');
+                });
+            }
+            var pre = selectedId || $('#hidCashPOId').val();
+            if (pre) $ddl.val(pre);
+        });
+    }
+
+    function OpenPOCreditModal(ownerId) {
+        $('#txtPOAmount').val('');
+        $('#txtPORef').val('');
+        $('#txtPOCreditFile').val('');
+        $('#txtPOMonth').val('@($"{Model.SelectedYear:D4}-{Model.SelectedMonth:D2}")');
+        if (ownerId) $('#ddlPOOwner').val(ownerId);
+        else if (_requiresOwner) $('#ddlPOOwner').val('');
+        $('#poCreditModal').modal('show');
+    }
+
+    function parseMonthYear(val) {
+        if (!val) return { month: @Model.SelectedMonth, year: @Model.SelectedYear };
+        var p = val.split('-');
+        return { year: parseInt(p[0]), month: parseInt(p[1]) };
+    }
+
+    function SubmitCashCredit() {
+        var ownerId = _requiresOwner ? $('#ddlCashOwner').val() : null;
+        if (_requiresOwner && !ownerId) { swal.fire('Validation', 'Select billing owner.', 'warning'); return; }
+        var amt = parseInt($('#txtCashAmount').val());
+        if (!amt || amt <= 0) { swal.fire('Validation', 'Enter valid credit amount.', 'warning'); return; }
+        var clientPOId = $('#ddlCashPO').val() || $('#hidCashPOId').val() || null;
+        $.post('/Wallet/AddCashCreditPoints', {
+            clientId: _clientId,
+            creditAmount: amt,
+            transactionDate: $('#txtCashDate').val(),
+            transactionRefNumber: $('#txtCashRef').val(),
+            billingOwnerId: ownerId,
+            clientPOId: clientPOId
+        }, function (r) {
+            if (r.success) { swal.fire('Success', r.message, 'success').then(function () { location.reload(); }); }
+            else swal.fire('Error', r.message, 'error');
+        });
+    }
+
+    function MarkPOStatus(poId, clientId, status) {
+        var label = status === 4 ? 'Complete' : 'Paid';
+        swal.fire({
+            title: 'Mark as ' + label + '?',
+            text: 'This will update the invoice status to ' + label + '.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, mark ' + label
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
+            $.post('/Wallet/UpdatePOStatus', { poId: poId, clientId: clientId, status: status }, function (r) {
+                if (r.success) {
+                    swal.fire('Updated', r.message, 'success').then(function () { location.reload(); });
+                } else {
+                    swal.fire('Error', r.message, 'error');
+                }
+            });
+        });
+    }
+
+    function SubmitPOCredit() {
+        var ownerId = _requiresOwner ? $('#ddlPOOwner').val() : null;
+        if (_requiresOwner && !ownerId) { swal.fire('Validation', 'Select billing owner.', 'warning'); return; }
+        var amt = parseInt($('#txtPOAmount').val());
+        if (!amt || amt <= 0) { swal.fire('Validation', 'Enter valid PO credit amount.', 'warning'); return; }
+        var my = parseMonthYear($('#txtPOMonth').val());
+        var fd = new FormData();
+        fd.append('clientId', _clientId);
+        fd.append('creditAmount', amt);
+        fd.append('month', my.month);
+        fd.append('year', my.year);
+        fd.append('transactionRefNumber', $('#txtPORef').val());
+        if (ownerId) fd.append('billingOwnerId', ownerId);
+        var f = $('#txtPOCreditFile')[0].files[0];
+        if (f) fd.append('poFile', f);
+        $.ajax({ url: '/Wallet/AddPOCreditPoints', type: 'POST', data: fd, processData: false, contentType: false,
+            success: function (r) {
+                if (r.success) swal.fire('Success', r.message, 'success').then(function () { location.reload(); });
+                else swal.fire('Error', r.message, 'error');
+            }
+        });
+    }
+</script>

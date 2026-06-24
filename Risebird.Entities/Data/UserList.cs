@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -25,6 +25,7 @@ namespace Risebird.Entities.Data
         public string MobileNumber { get; set; }
 
         public bool IsActive { get; set; }
+        public bool IsInterviewerAccess { get; set; }
         public DateTime LastLogin { get; set; }
         public DateTime LastLogout { get; set; }
         public string ImageURL { get; set; }
@@ -43,5 +44,8 @@ namespace Risebird.Entities.Data
         public string[] ClientsArray { get; set; }
         public string HMVideoForTargetIRF { get; set; }
         public string uniqueid { get; set; }
+        public string InactivationType { get; set; }
+        public string InactivatedBy { get; set; }
+        public DateTime? InactivatedAt { get; set; }
     }
 }

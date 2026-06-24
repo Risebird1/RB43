@@ -49,9 +49,13 @@ namespace Risebird.Entities.Data
         public bool IsMeetingNotificationSend { get; set; }
         [Display(Name = "Per Interview Rate")]
         public int PerInterviewRate { get; set; }
+        [Display(Name = "AI Per Interview Rate")]
+        public int AIPerInterviewRate { get; set; }
         [Display(Name = "Billing Type")]
         public string BillingType { get; set; }
         public List<SelectListItem> BillingTypeDrop { get; set; }
+        [Display(Name = "Billing Model")]
+        public int BillingModel { get; set; }
         public string LoggedEmail { get; set; }
         [Display(Name = "Interview Duration")]
         public int InterviewDuration { get; set; }
@@ -84,5 +88,13 @@ namespace Risebird.Entities.Data
         public int PlanType { get; set; }
         public bool IsPlanFlixable { get; set; }
         public bool IsVideoRequired { get; set; }
+
+        [Display(Name = "Billing Currency")]
+        public string BillingCurrency { get; set; }
+        public List<SelectListItem> BillingCurrencyDrop { get; set; }
+
+        [Display(Name = "Interview Billing Type")]
+        public int InterviewerBillingType { get; set; }
+        public List<SelectListItem> InterviewerBillingTypeDrop { get; set; }
     }
 }

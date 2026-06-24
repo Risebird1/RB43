@@ -95,8 +95,10 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Lead Interviewer")]
         public bool IsLeadInterviewer { get; set; }
-        [Display(Name = "Is Active")]
+        [Display(Name = "Interviewer Access")]
         public bool IsActive { get; set; }
+        [Display(Name = "Interviewer Access")]
+        public bool IsInterviewerAccess { get; set; }
         [Display(Name = "Is Approved")]
         public bool IsApproved { get; set; }
 
@@ -249,5 +251,17 @@ namespace Risebird.Entities.ViewModel
         public int AIScreeningScore { get; set; }
         public bool IsDeleted { get; set; }
         public string AvailabilityStatusValue { get; set; }
+
+        [Display(Name = "Hold Payment")]
+        public bool IsHoldPayment { get; set; }
+
+        [Display(Name = "Hold Payment Reason")]
+        public string HoldPaymentReason { get; set; }
+
+        // Payment summary fields (used on the Hold Payment list page)
+        public int PendingInterviewCount { get; set; }
+        public int TotalPendingAmount { get; set; }
+        public int TotalPaidAmount { get; set; }
+        public DateTime? LastPaymentDate { get; set; }
     }
 }

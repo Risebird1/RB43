@@ -13,6 +13,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using Risebird.Web.Helpers;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
@@ -56,6 +57,8 @@ namespace Risebird.Web.Controllers
         private readonly IEncryptionHelper _encryptionHelper;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IPdfReaderHelper _pdfReaderHelper;
+        private readonly ICashfreePayoutService _cashfreePayoutService;
+        private readonly INaukriOnboardingRepository _naukriOnboardingRepository;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
         ISkillService skillService, IProfileService profileService,
@@ -65,7 +68,9 @@ namespace Risebird.Web.Controllers
         IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService,
         IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper,
         IAffIndaResumeParserHelper affIndaResumeParserHelper, IEncryptionHelper encryptionHelper,
-        IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper)
+        IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper,
+        ICashfreePayoutService cashfreePayoutService,
+        INaukriOnboardingRepository naukriOnboardingRepository)
 
         {
             _interviewerService = interviewerService;
@@ -91,6 +96,8 @@ namespace Risebird.Web.Controllers
             _encryptionHelper = encryptionHelper;
             _assistantServiceHelper = assistantServiceHelper;
             _pdfReaderHelper = pdfReaderHelper;
+            _cashfreePayoutService = cashfreePayoutService;
+            _naukriOnboardingRepository = naukriOnboardingRepository;
         }
 
 
@@ -579,7 +586,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || (interviewerProfile.ShowAddToSkillChannelOption && profileName == "InterviewerManagement"))
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || profileName == "Finance" || (interviewerProfile.ShowAddToSkillChannelOption && profileName == "InterviewerManagement"))
                     {
                         if (interviewerProfile.ShowAddToSkillChannelOption)
                         {
@@ -706,6 +713,42 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> HoldPayment()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SupportAdmin")
+                    {
+                        if (TempData["MessageInterviewer"] != null)
+                        {
+                            ViewBag.Message = TempData["MessageInterviewer"].ToString();
+                            TempData.Remove("MessageInterviewer");
+                        }
+                        var model = await _interviewerService.GetHoldPaymentInterviewers();
+                        return View("HoldPayment", model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> EditApplicant(int applicantId, bool showAddToSkillChannelOption)
@@ -1511,12 +1554,12 @@ namespace Risebird.Web.Controllers
                     data = new
                     {
                         interviewerEmail = latest.InterviewerEmail,
-                        totalItems       = latest.TotalItems,
-                        totalChecked     = latest.TotalChecked,
-                        savedOn          = latest.CreatedOn.HasValue
+                        totalItems = latest.TotalItems,
+                        totalChecked = latest.TotalChecked,
+                        savedOn = latest.CreatedOn.HasValue
                                             ? latest.CreatedOn.Value.ToString("dd MMM yyyy, hh:mm tt") + " UTC"
                                             : "—",
-                        checklistState   = checklistState
+                        checklistState = checklistState
                     }
                 });
             }
@@ -1832,6 +1875,115 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = "Could not save right now. Please try again." });
+            }
+        }
+
+        /// <summary>
+        /// Self-service bank account verification via Cashfree BAV (My Profile → Account Details tab).
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> VerifyBankAccount(
+            int interviewerProfileId,
+            string accountName,
+            string accountNumber,
+            string ifscCode,
+            string phone)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { success = false, message = "Session expired. Please sign in again." });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName != "Interviewer")
+                    return Json(new { success = false, message = "Only interviewers can verify bank accounts here." });
+
+                if (interviewerProfileId <= 0)
+                    return Json(new { success = false, message = "Invalid profile. Please refresh the page and try again." });
+
+                if (string.IsNullOrWhiteSpace(accountNumber) || string.IsNullOrWhiteSpace(ifscCode))
+                    return Json(new { success = false, message = "Account number and IFSC are required." });
+
+                var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var profile = await _interviewerService.GetInterviewerProfileByEmailId(email, profileName);
+                if (profile == null || profile.id != interviewerProfileId)
+                    return Json(new { success = false, message = "You can only verify your own bank account." });
+
+                if (string.IsNullOrWhiteSpace(phone))
+                    phone = profile.MobileNumber;
+
+                var existingAcc = profile.InterviewerAccDetails;
+                var incomingAcc = new TransInterviewerAccDetails
+                {
+                    AccountName = accountName,
+                    AccountNumber = accountNumber,
+                    IFSCCode = ifscCode
+                };
+                var verifiedSnapshot = new TransInterviewerAccDetails
+                {
+                    AccountNumber = existingAcc?.VerifiedAccountNumber,
+                    IFSCCode = existingAcc?.VerifiedIFSCCode,
+                    AccountName = existingAcc?.VerifiedAccountName
+                };
+                if (existingAcc?.IsBankVerified == true
+                    && !BankAccountVerificationHelper.CoreBankDetailsChanged(verifiedSnapshot, incomingAcc))
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        alreadyVerified = true,
+                        isBankVerified = true,
+                        message = "Your bank account is already verified.",
+                        verifiedOn = existingAcc.VerifiedOn?.ToString("dd MMM yyyy, hh:mm tt") + " UTC",
+                        nameAtBank = existingAcc.NameAtBank
+                    });
+                }
+
+                var result = await _cashfreePayoutService.VerifyBankAccountAsync(accountName, accountNumber, ifscCode, phone);
+
+                if (result.IsValid)
+                {
+                    var accDetails = new TransInterviewerAccDetails
+                    {   
+                        AccountName = accountName,
+                        AccountNumber = accountNumber,
+                        IFSCCode = ifscCode
+                    };
+                    var saved = await _interviewerService.SaveBankVerificationAsync(interviewerProfileId, accDetails, result);
+                    if (!saved)
+                        return Json(new { success = false, message = "Account verified with Cashfree but could not save status. Please try again." });
+
+                    var message = string.IsNullOrWhiteSpace(result.ErrorMessage)
+                        ? $"Account verified. Name at bank: {result.NameAtBank ?? "—"}."
+                        : result.ErrorMessage;
+                    return Json(new
+                    {
+                        success = true,
+                        isValid = true,
+                        isBankVerified = true,
+                        verifiedOn = DateTime.UtcNow.ToString("dd MMM yyyy, hh:mm tt") + " UTC",
+                        message,
+                        nameAtBank = result.NameAtBank,
+                        bankName = result.BankName,
+                        branch = result.Branch,
+                        nameMatchResult = result.NameMatchResult,
+                        nameMatchScore = result.NameMatchScore,
+                        referenceId = result.ReferenceId
+                    });
+                }
+
+                return Json(new
+                {
+                    success = false,
+                    isValid = false,
+                    message = result.ErrorMessage ?? "Bank account could not be verified.",
+                    accountStatusCode = result.AccountStatusCode
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Verification failed. Please try again later." });
             }
         }
 
@@ -4336,16 +4488,12 @@ namespace Risebird.Web.Controllers
                 }
                 if (!string.IsNullOrEmpty(resumeLink) && userid != 0)
                 {
-                    //call method to redact resume and save the redacted resume
                     var redactedResumeLink = await RedactResume(resumeLink, userid);
                     if (!string.IsNullOrEmpty(redactedResumeLink))
                     {
                         return Json(redactedResumeLink);
                     }
-                    else
-                    {
-                        return Json("failed");
-                    }
+                    return Json("failed");
                 }
             }
             return PartialView(model);
@@ -4442,9 +4590,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<JsonResult> InterviewerFlagUpdate(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsActive, bool? IsBlocked)
+        public async Task<JsonResult> InterviewerFlagUpdate(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked)
         {
-            var result = await _interviewerService.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsActive, IsBlocked);
+            var result = await _interviewerService.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsInterviewerAccess, IsBlocked);
             return Json("success");
         }
         [Authorize]
@@ -4608,6 +4756,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.UsePl = usePl;
                     }
+                    ViewBag.ShowEvidenceColumn = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, null, ViewBag.UsePl as string);
                     return View("StatsDetails", statsDetailsList);
 
                     //else
@@ -4628,10 +4777,19 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> InterviewerStatsDetailsForClient(int userId, string statType, string clientEmailId, string interviewerEmailId = null, int? irfId = null, string irfName = null, string usePl = null)
+        public async Task<IActionResult> InterviewerStatsDetailsForClient(int userId, string statType, string clientEmailId, string interviewerEmailId = null, int? irfId = null, string irfName = null, string usePl = null, string maskCandidate = null)
         {
             try
             {
+                if (CandidateReportMaskingHelper.IsMaskCandidateParam(maskCandidate))
+                {
+                    CandidateReportMaskingHelper.ActivateMaskContext(HttpContext.Session);
+                }
+
+                ViewBag.MaskCandidate = CandidateReportMaskingHelper.IsMaskCandidateParam(maskCandidate)
+                    || HttpContext.Session.GetString(CandidateReportMaskingHelper.SessionKey) == "1"
+                    || DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId ?? 0);
+
                 IEnumerable<StatsDetailsVM> statsDetailsList;
                 statsDetailsList = await _interviewerService.GetInterviewerStatsAndRatingsDetails(userId, statType, irfId, clientEmailId);
                 statsDetailsList = statsDetailsList.Select(x =>
@@ -4657,12 +4815,47 @@ namespace Risebird.Web.Controllers
                         statsDetailsList = statsDetailsList.OrderByDescending(x => x.interviewDate).Take(5);
                     }
                 }
+                ViewBag.ShowEvidenceColumn = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, clientEmailId, ViewBag.UsePl as string);
                 return View("StatsDetails", statsDetailsList);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        /// <summary>Role-filtered JSON for Completed Interviews rows (evidence metadata stripped for client views).</summary>
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> InterviewerStatsDetailsData(int userId, string statType, string clientEmailId = null, int? irfId = null, string usePl = null, string maskCandidate = null)
+        {
+            try
+            {
+                if (CandidateReportMaskingHelper.IsMaskCandidateParam(maskCandidate))
+                {
+                    CandidateReportMaskingHelper.ActivateMaskContext(HttpContext.Session);
+                }
+
+                var statsDetailsList = await _interviewerService.GetInterviewerStatsAndRatingsDetails(userId, statType, irfId, clientEmailId);
+                statsDetailsList = statsDetailsList.Select(x =>
+                {
+                    x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                    return x;
+                }).ToList();
+
+                if (string.Equals(usePl, "Public", StringComparison.OrdinalIgnoreCase))
+                {
+                    statsDetailsList = statsDetailsList.OrderByDescending(x => x.interviewDate).Take(5).ToList();
+                }
+
+                var showEvidence = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, clientEmailId, usePl);
+                return Json(CompletedInterviewsViewMode.BuildApiResponse(statsDetailsList, showEvidence));
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { showEvidenceColumn = false, rows = Array.Empty<object>(), error = "Unable to load stats details." });
             }
         }
 
@@ -4910,8 +5103,48 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Some error occured. Please try again.");
             }
         }
+        // Email-client and corporate security scanners (Microsoft Safe Links, Mimecast, Proofpoint,
+        // Barracuda, Gmail image/link proxy, etc.) automatically FETCH every link in an email to scan
+        // it. The acknowledgement Accept/Drop links were plain GET endpoints with immediate side-effects,
+        // so such a prefetch would silently ACCEPT (activate the account + mark the prospect Onboarded
+        // and CLOSE the ticket) or DROP the interviewer — with no human ever clicking. To stop that, the
+        // GET below only renders a harmless confirmation page; the real state change happens on the POST,
+        // which automated scanners do not issue.
         [HttpGet]
-        public async Task<JsonResult> InterviewerAcknowledgementResponse(int status, string user)//, int irf
+        public IActionResult InterviewerAcknowledgementResponse(int status, string user)
+        {
+            if ((status != 1 && status != 4) || string.IsNullOrWhiteSpace(user))
+                return Content("Invalid request.", "text/html");
+
+            bool isAccept = status == 1;
+            string heading     = isAccept ? "Confirm your onboarding" : "Confirm dropping your profile";
+            string body        = isAccept
+                ? "Please confirm that you want to accept and activate your interviewer profile with Risebird."
+                : "Please confirm that you do not wish to proceed and want to drop your profile.";
+            string buttonLabel = isAccept ? "Yes, activate my profile" : "Yes, drop my profile";
+            string buttonColor = isAccept ? "#2e7d32" : "#c62828";
+            string actionUrl   = Url.Action("InterviewerAcknowledgementResponse", "Interviewer");
+
+            string html = $@"<!DOCTYPE html><html><head><meta charset='utf-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1'>
+                <meta name='robots' content='noindex,nofollow'><title>Risebird</title>
+                <style>body{{font-family:Arial,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f5f7fa;margin:0;}}
+                .card{{background:#fff;border-radius:12px;padding:40px;max-width:480px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.1);}}
+                h2{{color:#2c3e50;margin-top:0;}} p{{color:#555;line-height:1.6;}}
+                button{{background:{buttonColor};color:#fff;border:none;border-radius:8px;padding:14px 28px;font-size:16px;cursor:pointer;margin-top:16px;}}</style></head>
+                <body><div class='card'><h2>{heading}</h2><p>{body}</p>
+                <form method='post' action='{actionUrl}'>
+                    <input type='hidden' name='status' value='{status}' />
+                    <input type='hidden' name='user' value='{System.Net.WebUtility.HtmlEncode(user)}' />
+                    <button type='submit'>{buttonLabel}</button>
+                </form></div></body></html>";
+            return Content(html, "text/html");
+        }
+
+        [HttpPost]
+        [ActionName("InterviewerAcknowledgementResponse")]
+        [IgnoreAntiforgeryToken]
+        public async Task<JsonResult> InterviewerAcknowledgementResponseConfirm(int status, string user)//, int irf
         {
             //check link expiry befire hitting db
 
@@ -4939,10 +5172,43 @@ namespace Risebird.Web.Controllers
 
                 if (userId.HasValue && userId.Value > 0)//!string.IsNullOrEmpty(userId)
                 {
-                    var result = await _interviewerService.UpdateInterviewerActiveStatus(status, userId.Value);//, irf
+                    // Detect whether this user came through the NaukriOnboarding prospect funnel.
+                    // For such interviewers we DO NOT auto-activate their skill channels on
+                    // acknowledgement — channels remain Available (IsActive = 0) so an operator can
+                    // manually review and activate them. Their UserList account is still activated.
+                    int? prospectId = null;
+                    try { prospectId = await _naukriOnboardingRepository.FindProspectIdByOnboardedUserIdAsync(userId.Value); }
+                    catch (Exception nex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, nex); }
+                    bool activateChannels = !prospectId.HasValue;
+
+                    var result = await _interviewerService.UpdateInterviewerActiveStatus(status, userId.Value, activateChannels);//, irf
 
                     if (result != null)
                     {
+                        // If this user came through the prospect onboarding funnel, the
+                        // acknowledgement RESPONSE is what completes onboarding — not the email send.
+                        try
+                        {
+                            if (prospectId.HasValue)
+                            {
+                                if (status == 1)
+                                {
+                                    await _naukriOnboardingRepository.AdvanceFunnelStageAsync(prospectId.Value, "Onboarded", "Closed");
+                                    await _naukriOnboardingRepository.InsertHistoryAsync(prospectId.Value, "Onboarded", "\u2014",
+                                        "Interviewer accepted the acknowledgement email — onboarding complete.", "Interviewer");
+                                }
+                                else if (status == 4)
+                                {
+                                    await _naukriOnboardingRepository.AdvanceFunnelStageAsync(prospectId.Value, "AcknowledgementSent", "Closed");
+                                    await _naukriOnboardingRepository.InsertHistoryAsync(prospectId.Value, "AcknowledgementDeclined", "\u2014",
+                                        "Interviewer declined/dropped via the acknowledgement email — onboarding not completed.", "Interviewer");
+                                }
+                            }
+                        }
+                        catch (Exception nex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, nex);
+                        }
 
                         if (!string.IsNullOrEmpty(result.EmailId))
                         {

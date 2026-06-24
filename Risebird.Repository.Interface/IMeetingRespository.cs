@@ -8,6 +8,7 @@ namespace Risebird.Repository.Interface
 {
     public interface IMeetingRespository
     {
+        Task<bool> IsUserActive(string emailId);
         Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings();
         Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate, string emailId = null);
         Task<IEnumerable<MeetingVM>> GetAllCancelInterview(DateTime startDate, DateTime endDate, string emailId = null);
@@ -165,6 +166,8 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateTranscriptLink(int interviewId, string transcriptLink = null, string clientExternalTranscriptUploadedUrl = null);
         Task<IEnumerable<Meeting>> FetchOpenMeetingById(string id);
         string CheckMeetingAssignationValidation(string Emailid);
+        CapCheckResult CheckInterviewerCapForAssignment(int irfIntId, string interviewerEmail);
+        CapCheckResult CheckInterviewerCapForAssignmentByMeeting(int meetingId, string interviewerEmail);
         string ReAssignMeeting(int id, string interviewerMail);
         string ReassignMeetingByTeam(int id, string interviewerMail);
         Task<InterviewerDetails> FetchInterviewerCodedName(string emailId);
@@ -179,6 +182,20 @@ namespace Risebird.Repository.Interface
         Task<List<InvoiceDetailsVM>> FetchFNInvoiceDetails(string Startdate, string Enddate);
         Task<InvoiceDetailsVM> GetInvoiceDetailsById(int id);
         Task<string> SaveInvoiceDetails(InvoiceDetailsVM model);
+        Task<List<InvoiceListVM>> GetInvoiceList(int month, int year);
+        Task<ClientInvoiceFormDataVM> GetClientInvoiceFormData(int clientId, int month, int year, int billingOwnerId = 0);
+        Task<List<BillingOwnerOption>> GetClientBillingOwners(int clientId);
+        Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year);
+        Task<InvoiceDetailVM> GetGeneratedInvoiceById(int invoiceId);
+        Task<List<InvoiceListVM>> GetUnpaidInvoiceList();
+        Task<List<InvoiceListVM>> GetPaidInvoiceList(int fromYear = 0, int fromMonth = 0, int toYear = 0, int toMonth = 0);
+        Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
+            decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
+            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0);
+        Task UpdateInvoiceLineItem(int lineItemId, decimal unitRate, decimal lineTotal);
+        Task<string> GetNextInvoiceNumber(int month, int year);
+        Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model);
+        Task SaveGeneratedInvoiceLineItems(int invoiceId, List<InvoiceLineItemVM> lineItems);
         Task<IEnumerable<Meeting>> GetAllAssignedInterviewsForToday(string emailID);
         Task<IEnumerable<Meeting>> GetAllAssignedInterviewsForTheWeek(string emailID);
         Task<IEnumerable<MeetingVM>> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null);
@@ -232,7 +249,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> QCReportDetailsByDate(DateTime Startdate, DateTime Enddate);
         Task<bool> UpdateQCReportRedFlagsResolved(int interviewid);
         Task<IEnumerable<MeetingVM>> GetReslovedRedFlagsInterviewList();
-        Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, string year, int month);
+        Task<List<FnRevenueVM>> FetchRevenueDetails(DateTime stdate, DateTime endate, int fromYear, int fromMonth, int toYear, int toMonth);
         Task<List<FnRevenueVM>> FetchRevenueDetailsByClient(int clientid, DateTime stdate, DateTime endate, int billingType, string year, int month);
         Task<List<FnRevenueVM>> FetchAllRevenueDetails(DateTime stdate, DateTime endate);
         Task<bool> SaveVideoDetailsById(int interviewid, string VideoURL, int videoduration);
@@ -332,15 +349,60 @@ namespace Risebird.Repository.Interface
         Task<PaymentHistoryGatewayRow> FetchExistingCashfreePayout(int userId, DateTime st, DateTime se);
 
         /// <summary>
-        /// Updates the <c>PayoutStatus</c> (and optionally <c>CfTransferId</c>) on a
+        /// Updates <c>PayoutStatus</c>, <c>TransferUtr</c> (and optionally <c>CfTransferId</c>) on a
         /// PaymentHistory row identified by <paramref name="transferId"/> and/or
         /// <paramref name="cfTransferId"/> received from a Cashfree Payout webhook event.
         /// Either parameter alone is enough for the match; both are used when available.
         /// </summary>
         /// <param name="transferId">Your internal transfer_id sent when the payout was created.</param>
-        /// <param name="cfTransferId">Cashfree's own numeric cf_transfer_id.</param>
-        /// <param name="payoutStatus">Terminal status from the webhook: SUCCESS | FAILED | REVERSED.</param>
+        /// <param name="cfTransferId">Cashfree's numeric referenceId for this transfer.</param>
+        /// <param name="payoutStatus">Terminal event from the webhook: TRANSFER_SUCCESS | TRANSFER_FAILED | TRANSFER_REJECTED.</param>
+        /// <param name="transferUtr">Bank UTR number — saved when present in the webhook.</param>
+        /// <param name="eventTime">Webhook eventTime — stored as <c>TransactionDate</c> on the PaymentHistory row.</param>
         /// <returns>Number of rows updated (0 if no matching row was found).</returns>
-        Task<int> UpdatePaymentHistoryTransferStatus(string transferId, string cfTransferId, string payoutStatus);
+        Task<int> UpdatePaymentHistoryTransferStatus(string transferId, string cfTransferId, string payoutStatus, string transferUtr = null, string eventTime = null);
+
+        /// <summary>
+        /// Fetches the <see cref="PaymentHistoryEmailDetails"/> (PaymentHistoryId, Email, Amount)
+        /// for the PaymentHistory row matched by <paramref name="transferId"/> or <paramref name="cfTransferId"/>.
+        /// Used by the webhook to obtain the interviewer email for sending a confirmation mail.
+        /// </summary>
+        Task<PaymentHistoryEmailDetails> GetPaymentDetailsByTransferId(string transferId, string cfTransferId);
+
+        /// <summary>
+        /// Fetches a single PaymentHistory row by its primary key, including the interviewer's
+        /// <c>Userid</c>, <c>InterviewerEmailid</c>, <c>Amount</c>, <c>TotalAmount</c>, and <c>PayoutStatus</c>.
+        /// Returns <c>null</c> if no matching row is found.
+        /// </summary>
+        Task<RBInterviewDetails> GetPaymentHistoryById(int id);
+
+        /// <summary>
+        /// Updates an existing TRANSFER_FAILED PaymentHistory row in-place with new Cashfree
+        /// transfer references from a retry attempt. Clears <c>TransferUtr</c> and
+        /// <c>TransactionDate</c> (the new transfer has not yet settled) and resets
+        /// <c>PaymentDate</c> to now.
+        /// </summary>
+        /// <returns>Number of rows updated (0 if no matching row was found).</returns>
+        Task<int> UpdatePaymentHistoryForRetry(int id, string transferId, string cfTransferId, string payoutStatus);
+
+        /// <summary>
+        /// Inserts a single row into <c>PaymentLogs</c> capturing the full context of one
+        /// <c>TransactionStatus</c> webhook call (input, output, errors, parsed fields).
+        /// </summary>
+        Task InsertPaymentLog(
+            string endpoint,
+            string requestBody,
+            string responseBody,
+            int? httpStatusCode,
+            string logLevel,
+            string eventType        = null,
+            string transferId       = null,
+            string cfTransferId     = null,
+            string transferStatus   = null,
+            string signatureTimestamp = null,
+            string signatureReceived  = null,
+            int?   rowsUpdated      = null,
+            string errorMessage     = null,
+            string callerIp         = null);
     }
 }

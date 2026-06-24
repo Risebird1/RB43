@@ -1,4 +1,4 @@
-﻿
+
 
 <script>
 
@@ -47,12 +47,12 @@
                                     <header>
                                         <h4>Select File here</h4>
                                     </header>
-                                    <p>Files Supported: PDF</p>
+                                    <p>Files supported: PDF, DOC, and DOCX</p>
                                     <label for="ResumeFiles">
                                         <a class="drop-btn text-light" role="button" aria-disabled="false">Drop your files or <span class="filepond--label-action" tabindex="0">Browse</span></a>
 
                                     </label>
-                                    <input type="file" name="ResumeFiles" accept=".pdf" id="ResumeFiles" style="visibility: hidden; position: absolute;"/>
+                                    <input type="file" name="ResumeFiles" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" id="ResumeFiles" style="visibility: hidden; position: absolute;"/>
 
                                     <div id="files-area">
                                         <span id="filesList">
@@ -132,12 +132,24 @@
 
 </script>
 <script>
+    function isAllowedResumeFileName(fileName) {
+        return /\.(pdf|doc|docx)$/i.test((fileName || '').toLowerCase());
+    }
+
     function uploadResume() {
         debugger;
         //var userId=  $('#UserId').val();
         var form_data = new FormData();
         var filesInput = document.getElementsByName('ResumeFiles')[0];
+        if (!filesInput || !filesInput.files.length) {
+            swal.fire('Please select a PDF, DOC, or DOCX resume to upload.');
+            return;
+        }
         for (var i = 0; i < filesInput.files.length; i++) {
+            if (!isAllowedResumeFileName(filesInput.files[i].name)) {
+                swal.fire('Please select a PDF, DOC, or DOCX resume to upload.');
+                return;
+            }
             form_data.append('ResumeFiles',filesInput.files[i]);
         }
         form_data.append("UserId", interviewerUserId);

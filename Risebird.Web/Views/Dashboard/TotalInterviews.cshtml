@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.ToalInterviewerInterviewDetails>
+@model IEnumerable<Risebird.Entities.ViewModel.ToalInterviewerInterviewDetails>
 @using Risebird.Entities.Data;
 @using Risebird.Entities.ViewModel
 @using Risebird.Entities.Enum
@@ -9,6 +9,9 @@
     ViewData["Title"] = "Total Interviews Details";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    // Reactivating an inactivated interviewer is restricted to the Admin profile only.
+    string profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
+    bool canReactivate = profileName == "Admin";
 }
 <script>
     var Header = "<div>Total Interviews Details</div>";
@@ -87,6 +90,12 @@
                                                     <th>Deficit Meetings</th>
                                                     <th>Available</th>
                                                     <th>Comment</th>
+                                                    @if (ViewBag.Type == "Removed")
+                                                    {
+                                                        <th>Inactivation Type</th>
+                                                        <th>Inactivated By</th>
+                                                        <th>Inactivated At</th>
+                                                    }
                                             </thead>
                                             <tfoot>
                                                 <tr>
@@ -106,6 +115,12 @@
                                                     <th>Deficit Meetings</th>
                                                     <th>Available</th>
                                                     <th>Comment</th>
+                                                    @if (ViewBag.Type == "Removed")
+                                                    {
+                                                        <th>Inactivation Type</th>
+                                                        <th>Inactivated By</th>
+                                                        <th>Inactivated At</th>
+                                                    }
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -162,6 +177,14 @@
                                                                         </svg>
                                                                     </span>
                                                                 </button>
+                                                                @if (ViewBag.Type == "Removed" && canReactivate)
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Reactivate Interviewer" style="width:27px!important;height:27px!important;background:#28a745 !important;border-color:#28a745 !important;">
+                                                                        <span onclick="javascript:reactivateInterviewer('@item.UserId');" title="Reactivate Interviewer" class="mdc-fab__icon material-icons">
+                                                                            <i class="fa fa-undo" style="font-size:12px;color:#fff;"></i>
+                                                                        </span>
+                                                                    </button>
+                                                                }
                                                             </td>
                                                             <td>
                                                                 <c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@item.interviewer')">@item.interviewer</c>
@@ -194,6 +217,29 @@
                                                                 <td>No</td>
                                                             }
                                                             <td>@item.RedMarkerReviewComment</td>
+                                                            @if (ViewBag.Type == "Removed")
+                                                            {
+                                                                <td>
+                                                                    @{
+                                                                        string typeLabel = item.InactivationType switch {
+                                                                            "ManualRemove" => "Manual (Removed)",
+                                                                            "ManualBlock" => "Manual (Blocked)",
+                                                                            "ManualFlag" => "Manual (Flag)",
+                                                                            "NoShow" => "System (No-Show)",
+                                                                            "ProfileDrop" => "Self (Profile Drop)",
+                                                                            "Blacklist" => "System (Blacklist)",
+                                                                            "Unsubscribe" => "Self (Unsubscribe)",
+                                                                            _ => string.IsNullOrEmpty(item.InactivationType) ? "—" : item.InactivationType
+                                                                        };
+                                                                        bool isSystem = item.InactivationType == "NoShow" || item.InactivationType == "Blacklist" || item.InactivationType == "Unsubscribe";
+                                                                        string badgeBg = isSystem ? "#fef3c7" : (item.InactivationType == "ProfileDrop" ? "#e0f2fe" : "#f3f4f6");
+                                                                        string badgeFg = isSystem ? "#92400e" : (item.InactivationType == "ProfileDrop" ? "#0369a1" : "#374151");
+                                                                    }
+                                                                    <span style="padding:3px 8px;border-radius:4px;font-size:11px;background:@badgeBg;color:@badgeFg;white-space:nowrap;">@typeLabel</span>
+                                                                </td>
+                                                                <td style="font-size:12px;">@(item.InactivatedBy ?? "—")</td>
+                                                                <td style="font-size:12px;white-space:nowrap;">@(item.InactivatedAt.HasValue ? item.InactivatedAt.Value.ToString("dd MMM yy, HH:mm") : "—")</td>
+                                                            }
                                                         </tr>
                                                     }
                                                 }
@@ -551,6 +597,36 @@
                             'An error occurred while processing your request.',
                             'error'
                         );
+                    }
+                });
+            }
+        });
+    }
+    function reactivateInterviewer(userId) {
+        Swal.fire({
+            title: 'Reactivate Interviewer',
+            text: "Are you sure you want to reactivate this interviewer?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, reactivate',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Dashboard/ReactivateInterviewer',
+                    type: 'POST',
+                    data: { userId: userId },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Reactivated!', response.message, 'success').then(() => { window.location.reload(); });
+                        } else {
+                            Swal.fire('Error!', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error!', 'An error occurred while processing your request.', 'error');
                     }
                 });
             }

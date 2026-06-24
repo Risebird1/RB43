@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -6,7 +7,13 @@ namespace Risebird.Entities.ViewModel
     {
         public DateTime interviewDate { get; set; }
         public string interviewer { get; set; }
+
+        /// <summary>Internal hydration only — stripped before Interviewer Stats Details is rendered.</summary>
+        [JsonIgnore]
         public string candidateEmail { get; set; }
+
+        /// <summary>Stable coded candidate identifier shown on Interviewer Stats Details.</summary>
+        public string candidateCodedId { get; set; }
         public string Client { get; set; }
         public string SkillChannel { get; set; }
         public int? MeetingStatus { get; set; }
