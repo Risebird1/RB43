@@ -23,6 +23,23 @@
     int MaxCallsTotal = 5;
 
     var funnelCounts = ViewBag.FunnelCounts as Dictionary<string, int> ?? new Dictionary<string, int>();
+    var funnelReach = ViewBag.FunnelReach as Dictionary<string, int> ?? new Dictionary<string, int>();
+    // Happy-path stages in pipeline order, used by the cumulative "reached at least" funnel strip.
+    var reachStages = new (string Key, string Label)[] {
+        ("EmailParsed",        "Email Parsed"),
+        ("PhoneParsed",        "Phone Parsed"),
+        ("DuplicateChecked",   "Duplicate Checked"),
+        ("MAGConfirmed",       "MAG Confirmed"),
+        ("InterestCollection", "Interest Collection"),
+        ("IntentConfirmed",    "Intent Confirmed"),
+        ("EmploymentVerified", "Employment Verified"),
+        ("ResumeFitment",      "AI Resume Fitment"),
+        ("AcknowledgementSent","Acknowledgement Sent"),
+        ("Onboarded",          "Onboarded")
+    };
+    int reachTop = funnelReach.TryGetValue("EmailParsed", out var rt) ? rt : 0;
+    int reachTotal = funnelReach.TryGetValue("Total", out var rtot) ? rtot : 0;
+    Func<string,int> reachOf = k => funnelReach.TryGetValue(k, out var v) ? v : 0;
     // Ordered funnel stages: (value, display label). "_none_" maps to records with no stage yet.
     // Linear happy path first, then the terminal exits (Duplicate / Not Interested / Cold / Not Qualified).
     var funnelStages = new (string Value, string Key, string Label)[] {
@@ -237,6 +254,24 @@
     .nk-funnel-pill.active.mode-reached .nk-funnel-pill-count { color:#198754; }
     .nk-funnel-pill.active.mode-not { background:#b54708; border-color:#b54708; box-shadow:0 2px 8px rgba(181,71,8,.28); }
     .nk-funnel-pill.active.mode-not .nk-funnel-pill-count { color:#b54708; }
+
+    /* "Reached at least" cumulative funnel strip */
+    .nk-reach-strip { margin-bottom:2px; }
+    .nk-reach-head { display:flex; align-items:baseline; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+    .nk-reach-title { font-size:12.5px; font-weight:700; color:#312e81; letter-spacing:.2px; }
+    .nk-reach-sub { font-size:10.5px; color:#94a3b8; }
+    .nk-reach-bars { display:flex; align-items:flex-end; gap:6px; }
+    .nk-reach-col { flex:1 1 0; min-width:54px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:4px 2px; border-radius:8px; transition:background .12s; }
+    .nk-reach-col:hover { background:#f5f3ff; }
+    .nk-reach-count { font-size:13px; font-weight:700; color:#1e1b4b; line-height:1.1; }
+    .nk-reach-track { width:100%; height:6px; background:#eef2ff; border-radius:999px; overflow:hidden; }
+    .nk-reach-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#6366f1,#818cf8); }
+    .nk-reach-pct { font-size:9.5px; font-weight:600; color:#6366f1; line-height:1; }
+    .nk-reach-label { font-size:9.5px; color:#64748b; text-align:center; line-height:1.15; white-space:normal; }
+    .nk-reach-foot { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .nk-reach-foot-lbl { font-size:10.5px; font-weight:600; color:#64748b; }
+    .nk-reach-chip { font-size:10px; font-weight:600; color:#334155; background:#fff; border:1px solid #e2e8f0; border-left:3px solid var(--c,#94a3b8); border-radius:6px; padding:2px 8px; white-space:nowrap; }
+    .nk-reach-divider { margin:14px 0 12px; border:0; border-top:1px dashed #e2e8f0; }
 
     .nk-funnel-mode { display:inline-flex; border:1px solid #dbeafe; border-radius:999px; overflow:hidden; background:#fff; flex-shrink:0; box-shadow:0 1px 2px rgba(15,23,42,.04); }
     .nk-mode-btn { font-size:10px; font-weight:600; color:#64748b; text-decoration:none; padding:3px 8px; border-right:1px solid #e2e8f0; white-space:nowrap; transition:all .12s; line-height:1.25; }
@@ -488,6 +523,47 @@
 
                 <div class="card border-0 shadow-sm mb-4 nk-funnel-panel">
                     <div class="card-body py-3 px-3">
+                        @if (reachTop > 0)
+                        {
+                            <div class="nk-reach-strip">
+                                <div class="nk-reach-head">
+                                    <span class="nk-reach-title"><i class="fas fa-stream me-1"></i>Reached at least</span>
+                                    <span class="nk-reach-sub">cumulative — how far prospects have ever progressed (credits records that later branched off)</span>
+                                </div>
+                                <div class="nk-reach-bars">
+                                    @{ int reachPrev = 0; }
+                                    @for (int ri = 0; ri < reachStages.Length; ri++)
+                                    {
+                                        var rs = reachStages[ri];
+                                        int rc = reachOf(rs.Key);
+                                        int pctTop = reachTop > 0 ? (int)Math.Round(100.0 * rc / reachTop) : 0;
+                                        int pctStep = (ri > 0 && reachPrev > 0) ? (int)Math.Round(100.0 * rc / reachPrev) : 100;
+                                        reachPrev = rc;
+                                        <div class="nk-reach-col" title="@rs.Label — @rc reached (@pctTop% of entrants@(ri > 0 ? $", {pctStep}% of previous step" : ""))">
+                                            <div class="nk-reach-count">@rc.ToString("N0")</div>
+                                            <div class="nk-reach-track"><div class="nk-reach-fill" style="width:@(Math.Max(pctTop,2))%;"></div></div>
+                                            <div class="nk-reach-pct">@pctTop%</div>
+                                            <div class="nk-reach-label">@rs.Label</div>
+                                        </div>
+                                    }
+                                </div>
+                                @{
+                                    int rDup = reachOf("Duplicate"); int rNi = reachOf("NotInterested");
+                                    int rCold = reachOf("Cold"); int rNq = reachOf("NotQualified");
+                                    int rNs = reachOf("NotStarted");
+                                }
+                                <div class="nk-reach-foot">
+                                    <span class="nk-reach-foot-lbl">Off the happy path:</span>
+                                    <span class="nk-reach-chip" style="--c:#dc3545;">Duplicate @rDup.ToString("N0")</span>
+                                    <span class="nk-reach-chip" style="--c:#e35d6a;">Not Interested @rNi.ToString("N0")</span>
+                                    <span class="nk-reach-chip" style="--c:#adb5bd;">Cold @rCold.ToString("N0")</span>
+                                    <span class="nk-reach-chip" style="--c:#d9480f;">Not Qualified @rNq.ToString("N0")</span>
+                                    <span class="nk-reach-chip" style="--c:#94a3b8;">Not started @rNs.ToString("N0")</span>
+                                    <span class="nk-reach-chip" style="--c:#0d6efd;">Entered pipeline @reachTop.ToString("N0") of @reachTotal.ToString("N0")</span>
+                                </div>
+                            </div>
+                            <hr class="nk-reach-divider" />
+                        }
                         <div class="nk-funnel-head">
                             <span class="nk-funnel-title"><i class="fas fa-filter me-1"></i>Funnel Stages</span>
                             <span class="nk-funnel-total" title="Sum across all stages equals the @(hasFilters ? "matched" : "total") records">@totalCount total</span>

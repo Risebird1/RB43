@@ -185,6 +185,51 @@ namespace Risebird.Repository
             }
         }
 
+        // Cumulative "reached at least" funnel, reconstructed from durable signals. The funnel-stage
+        // filter is intentionally ignored by the SP so the pipeline shape is preserved when a chip is
+        // selected. Keys: EmailParsed..Onboarded (cumulative), Duplicate/NotInterested/Cold/NotQualified
+        // (terminal branches), NotStarted, Total.
+        public async Task<Dictionary<string, int>> GetFunnelReachCountsAsync(
+            string status, string candidateName, string magName, string source,
+            DateTime? dateFrom, DateTime? dateTo,
+            string automationStatus = null, string callStatus = null, string disposition = null,
+            string funnelStage = null, string onboardingType = null)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Status", string.IsNullOrWhiteSpace(status) ? null : status);
+                p.Add("@CandidateName", string.IsNullOrWhiteSpace(candidateName) ? null : candidateName);
+                p.Add("@MagName", string.IsNullOrWhiteSpace(magName) ? null : magName);
+                p.Add("@Source", string.IsNullOrWhiteSpace(source) ? null : source);
+                p.Add("@AutomationStatus", string.IsNullOrWhiteSpace(automationStatus) ? null : automationStatus);
+                p.Add("@CallStatus", string.IsNullOrWhiteSpace(callStatus) ? null : callStatus);
+                p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
+                p.Add("@FunnelStage", string.IsNullOrWhiteSpace(funnelStage) ? null : funnelStage);
+                p.Add("@OnboardingType", string.IsNullOrWhiteSpace(onboardingType) ? null : onboardingType);
+                p.Add("@DateFrom", dateFrom);
+                p.Add("@DateTo", dateTo);
+
+                var rows = await con.QueryAsync(
+                    "usp_GetNaukriFunnelReachCounts", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+
+                var dict = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                foreach (var row in rows)
+                {
+                    string key = row.MetricKey as string;
+                    if (!string.IsNullOrWhiteSpace(key)) dict[key] = (int)row.Cnt;
+                }
+                return dict;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
         public async Task<NaukriInvitationEmailStatus> GetInvitationEmailStatusAsync(string email)
         {
             if (string.IsNullOrWhiteSpace(email)) return null;

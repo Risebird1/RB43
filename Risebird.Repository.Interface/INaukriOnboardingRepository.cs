@@ -25,6 +25,12 @@ namespace Risebird.Repository.Interface
             string automationStatus = null, string callStatus = null, string disposition = null,
             string funnelStage = null, string onboardingType = null);
 
+        Task<Dictionary<string, int>> GetFunnelReachCountsAsync(
+            string status, string candidateName, string magName, string source,
+            DateTime? dateFrom, DateTime? dateTo,
+            string automationStatus = null, string callStatus = null, string disposition = null,
+            string funnelStage = null, string onboardingType = null);
+
         // SendGrid delivery status of the invitation email for a recipient (null if none sent yet).
         Task<NaukriInvitationEmailStatus> GetInvitationEmailStatusAsync(string email);
 
