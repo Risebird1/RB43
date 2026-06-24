@@ -626,6 +626,10 @@
             } catch (_) {
               /* ignore */
             }
+            // Re-arm the periodic flush every time session starts/resumes.
+            // The timer may have stopped if captureActive was briefly false, or if
+            // the SW woke from sleep and the old setTimeout closure died with it.
+            startChunkPeriodicFlush(screenRecorder);
           }
         }
         sendResponse({

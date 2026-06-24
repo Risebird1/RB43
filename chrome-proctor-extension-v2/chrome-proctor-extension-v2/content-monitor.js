@@ -157,9 +157,9 @@
 
   function canRequestScreenShare(forceManual) {
     if (isPromptingScreenShare) return false;
-    if (isScreenShareStillLive() || hasValidMonitorShare) return false;
+    if (isScreenShareStillLive()) return false;
     if (!forceManual) {
-      if (autoSharePromptDone || hasPromptedScreenShareThisSession()) return false;
+      if (autoSharePromptDone || hasValidMonitorShare || hasPromptedScreenShareThisSession()) return false;
       const elapsed = Date.now() - (proctoringFlow.lastPromptAt || 0);
       if (proctoringFlow.lastPromptAt && elapsed < MIN_PROMPT_INTERVAL_MS) return false;
     }
@@ -1292,6 +1292,7 @@
       }
     } finally {
       autoPipelineInFlight = false;
+      autoStartPipelineScheduled = false;
     }
   }
 
@@ -1390,7 +1391,16 @@
       await resumeBackendWithoutPicker();
       return;
     }
-    // Picker may have run before but stream is dead — fall through to re-establish.
+    // Stream is dead or never established.
+    // Clear stale in-memory and stored share flags so canRequestScreenShare allows the picker again.
+    // (loadPersistedShareFlags may have set hasValidMonitorShare/autoSharePromptDone from old storage.)
+    autoSharePromptDone = false;
+    hasValidMonitorShare = false;
+    isScreenShareActive = false;
+    screenSharePromptedThisSession = false;
+    screenSharePromptSessionKey = '';
+    autoSharePickerInvoked = false;
+    await clearPersistedShareFlags();
     void runJoinAndScreenShareFromBootstrap();
   }
 

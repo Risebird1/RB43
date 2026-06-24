@@ -105,6 +105,8 @@ let screenPickerAttemptedKey = null;
 let screenPickerInFlight = false;
 /** Join + /start + offscreen warm complete; screen picker runs in phase 2. */
 let proctoringPrepareKey = null;
+/** True once restoreSessionFromStorageOnStartup has finished. Guards cold-start races. */
+let startupRestoreCompleted = false;
 
 /** Broad http(s) access — optional; requested at join/start (user gesture). Required for tab URL logging & screenshots on arbitrary sites during proctoring. */
 const OPTIONAL_WEB_ORIGINS = ['http://*/*', 'https://*/*'];
@@ -786,7 +788,9 @@ async function uploadScreenshotPayload(payload) {
 
 async function uploadScreenChunkPayload(payload) {
   if (!state.sessionToken) {
-    return { ok: false, retry: false };
+    // SW may have just woken from sleep — token restores from storage within ~300ms.
+    // Return retry:true so uploadWithSessionRetry waits and retries rather than dropping the chunk.
+    return { ok: false, retry: true, error: 'state_not_ready' };
   }
   if (!state.sessionActive) {
     const armed = await ensureSessionActiveForMediaUpload();
@@ -853,6 +857,9 @@ function computeFlowPhase(contentFlow) {
     if (contentFlow?.isProctoringActive === false) return PROCTORING_FLOW_PHASE.SCREEN_SHARING_ACTIVE;
     return PROCTORING_FLOW_PHASE.PROCTORING_ACTIVE;
   }
+  // Offscreen capture may be live while contentScreenShareActive is still syncing to the tab.
+  // Show proctoring_active so the badge and status reflect the real state immediately.
+  if (state.sessionActive) return PROCTORING_FLOW_PHASE.PROCTORING_ACTIVE;
   if (contentFlow?.isPromptingScreenShare) return PROCTORING_FLOW_PHASE.WAITING_FOR_SCREEN_SHARE;
   return PROCTORING_FLOW_PHASE.WAITING_FOR_SCREEN_SHARE;
 }
@@ -1606,34 +1613,24 @@ async function finalizeProctoringAfterCapture(tabId, senderWindowId, sessionKey)
   await armMediaCaptureAfterSessionStart();
   await messageOffscreen({ type: 'OFFSCREEN_CAPTURE_SCREENSHOT_NOW' });
 
+  // Mark capture active immediately — backend join+start succeeded and offscreen is recording.
+  // Tab messages below are best-effort; a mid-reload tab will re-sync on the next message cycle.
+  state.contentScreenShareActive = true;
+
   try {
     const startRes = await chrome.tabs.sendMessage(tabId, {
       type: 'START_CONTENT_MONITORING',
       settings: getContentMonitoringSettings(),
     });
     if (startRes && startRes.ok === false) {
-      return {
-        ok: false,
-        error: startRes?.error || 'Could not start page monitoring.',
-        captureMayBeLive: await offscreenCaptureActive(),
-        retry: true,
-        doNotRetryPicker: true,
-        pickerInvoked: true,
-      };
+      console.warn('[Risebird Proctoring] START_CONTENT_MONITORING rejected:', startRes.error);
+    } else {
+      await chrome.tabs.sendMessage(tabId, { type: 'NOTIFY_PROCTORING_STARTED' });
     }
-    await chrome.tabs.sendMessage(tabId, { type: 'NOTIFY_PROCTORING_STARTED' });
-  } catch (err) {
-    return {
-      ok: false,
-      error: 'Could not reach this page. Refresh the interview tab and ensure the extension is enabled.',
-      captureMayBeLive: await offscreenCaptureActive(),
-      retry: true,
-      doNotRetryPicker: true,
-      pickerInvoked: true,
-    };
+  } catch (_) {
+    // Tab may be mid-reload. Capture is already running; retry via NOTIFY in background.
+    void chrome.tabs.sendMessage(tabId, { type: 'NOTIFY_PROCTORING_STARTED' }).catch(() => {});
   }
-
-  state.contentScreenShareActive = true;
   scheduleOffscreenMediaKeepAlive();
   scheduleUploadQueueAlarm();
   void processUploadQueue();
@@ -1757,6 +1754,17 @@ async function beginEntireScreenShare(tabId, tabUrl, senderWindowId, options = {
   const forceNewPicker = options.forceNewPicker === true;
   const promptFirst = options.promptFirst === true;
   const bootstrapPayload = options.payload || null;
+
+  // If the SW just woke from sleep, session state (including screenPickerAttemptedKey) is still
+  // being restored from storage. Wait up to 2s before doing any picker checks, so we don't
+  // accidentally re-show the screen-picker on every answer submission / page reload.
+  if (!startupRestoreCompleted) {
+    for (let w = 0; w < 20; w++) {
+      if (startupRestoreCompleted) break;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+  }
+
   clearStaleSetupLock();
   const sessionKey = getSessionKey();
 
@@ -2888,6 +2896,8 @@ async function restoreSessionFromStorageOnStartup() {
     }
   } catch (e) {
     console.warn('restoreSessionFromStorageOnStartup', e);
+  } finally {
+    startupRestoreCompleted = true;
   }
 }
 
