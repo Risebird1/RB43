@@ -112,11 +112,11 @@ BEGIN
                 * CAST(ISNULL(BillingRate, 0) AS DECIMAL(18,2))
                 * CASE WHEN IsPartial = 1 THEN CAST(0.30 AS DECIMAL(5,2))
                                           ELSE CAST(1.00 AS DECIMAL(5,2)) END   AS LineTotal,
-            ISNULL(InterviewerName, interviewer)
+            'Interviewer Rate'
                 + CASE WHEN IsPartial = 1 THEN ' | Partial Billing (30%)'
                                           ELSE '' END                           AS Basis
         FROM cte
-        GROUP BY IRFId, JDTiltle, interviewer, InterviewerName, BillingRate, IsPartial
+        GROUP BY IRFId, JDTiltle,BillingRate, IsPartial
         ORDER BY IRFId
     END
 
