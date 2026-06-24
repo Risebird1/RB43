@@ -30,10 +30,10 @@ begin
 set @points=-350  
 end  
 --Start: Update EI Interviewer   
-update [dbo].[InterviewMeetings] set interviewer=LTrim(RTrim(@interviewer)) Output inserted.id into @updatetable  
-where id = @meetingid
---update [dbo].[InterviewMeetings] set interviewer=LTrim(RTrim(@interviewer)),EIAssigned=1,IsEmergency=1 Output inserted.id into @updatetable  
---where id = @meetingid and ISNULL(EIAssigned,0)!=1  
+--update [dbo].[InterviewMeetings] set interviewer=LTrim(RTrim(@interviewer)) Output inserted.id into @updatetable  
+--where id = @meetingid
+update [dbo].[InterviewMeetings] set interviewer=LTrim(RTrim(@interviewer)),EIAssigned=1,IsEmergency=1 Output inserted.id into @updatetable  
+where id = @meetingid and ISNULL(EIAssigned,0)!=1  
 --End: Update EI Interviewer  
 Declare @Count int  
 set @Count= (Select top 1 id from @updatetable)  
