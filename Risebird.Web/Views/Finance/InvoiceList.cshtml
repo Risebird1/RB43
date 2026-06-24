@@ -27,6 +27,18 @@
     var unpaidList          = ViewBag.UnpaidList as List<InvoiceListVM> ?? new List<InvoiceListVM>();
     bool unpaidHasAnyRemark = unpaidList.Any(m => !string.IsNullOrEmpty(m.LatestRemark));
 
+    // Per-status counts & gross for unpaid sub-tabs
+    int upCountDraft              = unpaidList.Count(x => x.Status == 0);
+    int upCountGenerated          = unpaidList.Count(x => x.Status == 1);
+    int upCountPOPending          = unpaidList.Count(x => x.Status == 2);
+    int upCountApprovalPending    = unpaidList.Count(x => x.Status == 3);
+    int upCountIRP                = unpaidList.Count(x => x.Status == 4);
+    decimal upGrossDraft              = unpaidList.Where(x => x.Status == 0).Sum(x => x.GrossAmount);
+    decimal upGrossGenerated          = unpaidList.Where(x => x.Status == 1).Sum(x => x.GrossAmount);
+    decimal upGrossPOPending          = unpaidList.Where(x => x.Status == 2).Sum(x => x.GrossAmount);
+    decimal upGrossApprovalPending    = unpaidList.Where(x => x.Status == 3).Sum(x => x.GrossAmount);
+    decimal upGrossIRP                = unpaidList.Where(x => x.Status == 4).Sum(x => x.GrossAmount);
+
     // Paid data (only populated when tab == "paid")
     bool paidLoaded         = (bool)(ViewBag.PaidLoaded ?? false);
     var paidList            = ViewBag.PaidList as List<InvoiceListVM> ?? new List<InvoiceListVM>();
@@ -144,6 +156,57 @@
         color: #999;
         font-size: 13px;
     }
+    /* ── Unpaid sub-tabs ── */
+    .inv-sub-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e8e8e8;
+    }
+    .inv-sub-tabs .sub-tab {
+        cursor: pointer;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-family: Roboto, sans-serif;
+        font-weight: 500;
+        border: 1px solid #d0d0d0;
+        background: #f5f5f5;
+        color: #555;
+        user-select: none;
+        transition: background .15s, border-color .15s, color .15s;
+        white-space: nowrap;
+    }
+    .inv-sub-tabs .sub-tab:hover:not(.active) {
+        background: #e8eaf6;
+        border-color: #9fa8da;
+        color: #3949ab;
+    }
+    .inv-sub-tabs .sub-tab.active {
+        background: #3949ab;
+        border-color: #3949ab;
+        color: #fff;
+    }
+    .inv-sub-tab-badge {
+        display: inline-block;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 1px 6px;
+        margin-left: 4px;
+        background: rgba(0,0,0,0.12);
+        color: inherit;
+    }
+    .inv-sub-tabs .sub-tab.active .inv-sub-tab-badge {
+        background: rgba(255,255,255,0.28);
+    }
+    #unpaid-sub-summary {
+        margin-bottom: 10px;
+    }
+    /* Hidden integer-status column used only for DataTable column search */
+    .inv-status-int-col { display: none !important; }
 </style>
 
 <div class="main-panel invoice-list-page" id="main-panel">
@@ -334,12 +397,60 @@
                             @if (activeTab == "unpaid")
                             {
                                 <div id="pane-unpaid">
-                                    <div style="margin-bottom:10px;">
-                                        <span class="inv-summary-label">
+
+                                    @* ── Unpaid sub-tabs (one per status) ── *@
+                                    <div class="inv-sub-tabs" id="unpaidSubTabs">
+                                        <span class="sub-tab active" data-ustatus="all"
+                                              data-label="All Unpaid Invoices"
+                                              data-gross="@ViewBag.UnpaidTotalGross.ToString("N2")"
+                                              data-count="@unpaidList.Count">
+                                            All
+                                            <span class="inv-sub-tab-badge">@unpaidList.Count</span>
+                                        </span>
+                                        <span class="sub-tab" data-ustatus="0"
+                                              data-label="Draft"
+                                              data-gross="@upGrossDraft.ToString("N2")"
+                                              data-count="@upCountDraft">
+                                            Draft
+                                            <span class="inv-sub-tab-badge">@upCountDraft</span>
+                                        </span>
+                                        <span class="sub-tab" data-ustatus="1"
+                                              data-label="Generated"
+                                              data-gross="@upGrossGenerated.ToString("N2")"
+                                              data-count="@upCountGenerated">
+                                            Generated
+                                            <span class="inv-sub-tab-badge">@upCountGenerated</span>
+                                        </span>
+                                        <span class="sub-tab" data-ustatus="2"
+                                              data-label="PO Pending"
+                                              data-gross="@upGrossPOPending.ToString("N2")"
+                                              data-count="@upCountPOPending">
+                                            PO Pending
+                                            <span class="inv-sub-tab-badge">@upCountPOPending</span>
+                                        </span>
+                                        <span class="sub-tab" data-ustatus="3"
+                                              data-label="Approval Pending"
+                                              data-gross="@upGrossApprovalPending.ToString("N2")"
+                                              data-count="@upCountApprovalPending">
+                                            Approval Pending
+                                            <span class="inv-sub-tab-badge">@upCountApprovalPending</span>
+                                        </span>
+                                        <span class="sub-tab" data-ustatus="4"
+                                              data-label="Invoice Realisation Pending"
+                                              data-gross="@upGrossIRP.ToString("N2")"
+                                              data-count="@upCountIRP">
+                                            Invoice Realisation Pending
+                                            <span class="inv-sub-tab-badge">@upCountIRP</span>
+                                        </span>
+                                    </div>
+
+                                    <div id="unpaid-sub-summary">
+                                        <span class="inv-summary-label" id="unpaidSummaryText">
                                             All Unpaid Invoices &nbsp;|&nbsp;
                                             Total Gross: &#8377;@ViewBag.UnpaidTotalGross.ToString("N2")
                                         </span>
                                     </div>
+
                                     <div class="table-responsive">
                                         <table id="tblUnpaid" class="table table-striped table-bordered journey inv-tab-table" cellspacing="0" width="100%">
                                             <thead>
@@ -358,6 +469,7 @@
                                                     @if (unpaidHasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
                                                     <th>Actions</th>
+                                                    <th class="inv-status-int-col"></th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -376,19 +488,20 @@
                                                     @if (unpaidHasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
                                                     <th>Actions</th>
+                                                    <th class="inv-status-int-col"></th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
                                                 @if (!unpaidList.Any())
                                                 {
                                                     <tr>
-                                                        <td colspan="@(unpaidHasAnyRemark ? 14 : 13)" class="text-center">No unpaid invoices found.</td>
+                                                        <td colspan="@(unpaidHasAnyRemark ? 15 : 14)" class="text-center">No unpaid invoices found.</td>
                                                     </tr>
                                                 }
                                                 @{ int unpaidRow = 1; }
                                                 @foreach (var item in unpaidList)
                                                 {
-                                                    <tr>
+                                                    <tr data-ustatus="@item.Status">
                                                         <td>@unpaidRow</td>
                                                         <td>@item.ClientName</td>
                                                         <td style="white-space:nowrap;">
@@ -428,6 +541,7 @@
                                                                 <i class="fa fa-eye"></i> View
                                                             </a>
                                                         </td>
+                                                        <td class="inv-status-int-col">@item.Status</td>
                                                     </tr>
                                                     unpaidRow++;
                                                 }
@@ -776,17 +890,49 @@
         });
     }
 
+    // ── Unpaid sub-tab filtering ──────────────────────────────────────────────
+    var _unpaidDT = null;
+    var _activeUnpaidStatus = 'all';
+
     function applyUnpaidDataTable() {
         if ($.fn.DataTable.isDataTable('#tblUnpaid')) return;
-        $('#tblUnpaid').DataTable({
+        _unpaidDT = $('#tblUnpaid').DataTable({
             pagingType: 'full_numbers',
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
             order: [],
             responsive: true,
             language: { search: '_INPUT_', searchPlaceholder: 'Search records' },
+            // Last column holds the raw status integer — hidden from display, kept searchable
+            columnDefs: [{ targets: -1, visible: false, orderable: false, searchable: true }],
             fnInitComplete: function () {
                 $('.dataTables_filter input:eq(0)').after(refreshBtn('tblUnpaid'));
             }
+        });
+
+        // Sub-tab click handler
+        $('#unpaidSubTabs').off('click.ustab').on('click.ustab', '.sub-tab', function () {
+            var $tab = $(this);
+            if ($tab.hasClass('active')) return;
+
+            $('#unpaidSubTabs .sub-tab').removeClass('active');
+            $tab.addClass('active');
+
+            _activeUnpaidStatus = $tab.attr('data-ustatus');
+
+            // Filter by exact integer value in the hidden last column
+            if (_activeUnpaidStatus === 'all') {
+                _unpaidDT.column(-1).search('').draw();
+            } else {
+                _unpaidDT.column(-1).search('^' + _activeUnpaidStatus + '$', true, false).draw();
+            }
+
+            var label = $tab.attr('data-label') || 'Unpaid Invoices';
+            var gross = $tab.attr('data-gross') || '0.00';
+            var count = $tab.attr('data-count') || '0';
+            $('#unpaidSummaryText').html(
+                label + ' &nbsp;|&nbsp; Count: ' + count +
+                ' &nbsp;|&nbsp; Total Gross: &#8377;' + gross
+            );
         });
     }
 
@@ -813,6 +959,7 @@
     function RefreshTable(tableId) {
         if ($.fn.DataTable.isDataTable('#' + tableId)) {
             $('#' + tableId).DataTable().destroy();
+            if (tableId === 'tblUnpaid') { _unpaidDT = null; _activeUnpaidStatus = 'all'; }
         }
         setTimeout(function () {
             if (tableId === 'tblInvoiceList') applyMonthlyDataTable();
