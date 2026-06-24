@@ -205,6 +205,8 @@
     #unpaid-sub-summary {
         margin-bottom: 10px;
     }
+    /* Hidden integer-status column used only for DataTable column search */
+    .inv-status-int-col { display: none !important; }
 </style>
 
 <div class="main-panel invoice-list-page" id="main-panel">
@@ -467,6 +469,7 @@
                                                     @if (unpaidHasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
                                                     <th>Actions</th>
+                                                    <th class="inv-status-int-col"></th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -485,13 +488,14 @@
                                                     @if (unpaidHasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
                                                     <th>Actions</th>
+                                                    <th class="inv-status-int-col"></th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
                                                 @if (!unpaidList.Any())
                                                 {
                                                     <tr>
-                                                        <td colspan="@(unpaidHasAnyRemark ? 14 : 13)" class="text-center">No unpaid invoices found.</td>
+                                                        <td colspan="@(unpaidHasAnyRemark ? 15 : 14)" class="text-center">No unpaid invoices found.</td>
                                                     </tr>
                                                 }
                                                 @{ int unpaidRow = 1; }
@@ -537,6 +541,7 @@
                                                                 <i class="fa fa-eye"></i> View
                                                             </a>
                                                         </td>
+                                                        <td class="inv-status-int-col">@item.Status</td>
                                                     </tr>
                                                     unpaidRow++;
                                                 }
@@ -886,32 +891,26 @@
     }
 
     // ── Unpaid sub-tab filtering ──────────────────────────────────────────────
+    var _unpaidDT = null;
     var _activeUnpaidStatus = 'all';
-
-    // Register a custom DataTables search function for #tblUnpaid
-    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-        if (settings.nTable.id !== 'tblUnpaid') return true;
-        if (_activeUnpaidStatus === 'all') return true;
-        var rowNode = settings.aoData[dataIndex] && settings.aoData[dataIndex].nTr;
-        if (!rowNode) return true;
-        return $(rowNode).attr('data-ustatus') === _activeUnpaidStatus;
-    });
 
     function applyUnpaidDataTable() {
         if ($.fn.DataTable.isDataTable('#tblUnpaid')) return;
-        $('#tblUnpaid').DataTable({
+        _unpaidDT = $('#tblUnpaid').DataTable({
             pagingType: 'full_numbers',
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
             order: [],
             responsive: true,
             language: { search: '_INPUT_', searchPlaceholder: 'Search records' },
+            // Last column holds the raw status integer — hidden from display, kept searchable
+            columnDefs: [{ targets: -1, visible: false, orderable: false, searchable: true }],
             fnInitComplete: function () {
                 $('.dataTables_filter input:eq(0)').after(refreshBtn('tblUnpaid'));
             }
         });
 
         // Sub-tab click handler
-        $('#unpaidSubTabs').on('click', '.sub-tab', function () {
+        $('#unpaidSubTabs').off('click.ustab').on('click.ustab', '.sub-tab', function () {
             var $tab = $(this);
             if ($tab.hasClass('active')) return;
 
@@ -920,6 +919,13 @@
 
             _activeUnpaidStatus = $tab.attr('data-ustatus');
 
+            // Filter by exact integer value in the hidden last column
+            if (_activeUnpaidStatus === 'all') {
+                _unpaidDT.column(-1).search('').draw();
+            } else {
+                _unpaidDT.column(-1).search('^' + _activeUnpaidStatus + '$', true, false).draw();
+            }
+
             var label = $tab.attr('data-label') || 'Unpaid Invoices';
             var gross = $tab.attr('data-gross') || '0.00';
             var count = $tab.attr('data-count') || '0';
@@ -927,8 +933,6 @@
                 label + ' &nbsp;|&nbsp; Count: ' + count +
                 ' &nbsp;|&nbsp; Total Gross: &#8377;' + gross
             );
-
-            $('#tblUnpaid').DataTable().draw();
         });
     }
 
@@ -955,6 +959,7 @@
     function RefreshTable(tableId) {
         if ($.fn.DataTable.isDataTable('#' + tableId)) {
             $('#' + tableId).DataTable().destroy();
+            if (tableId === 'tblUnpaid') { _unpaidDT = null; _activeUnpaidStatus = 'all'; }
         }
         setTimeout(function () {
             if (tableId === 'tblInvoiceList') applyMonthlyDataTable();
