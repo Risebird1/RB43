@@ -99,6 +99,8 @@ namespace Risebird.Web.Controllers
 
                 var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType);
 
+                var funnelReach = await _repository.GetFunnelReachCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType);
+
                 var first = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
                 int totalPages = totalCount > 0 ? (int)Math.Ceiling((double)totalCount / pageSize) : 1;
@@ -117,6 +119,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
                 ViewBag.OnboardingType = onboardingType ?? string.Empty;
                 ViewBag.FunnelCounts = funnelCounts;
+                ViewBag.FunnelReach = funnelReach;
                 // Global status breakdown (Open + InProgress + Closed + Onboarded = Total).
                 ViewBag.OpenCount = first?.OpenCount ?? 0;
                 ViewBag.InProgressCount = first?.InProgressCount ?? 0;
@@ -140,6 +143,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
                 ViewBag.OnboardingType = onboardingType ?? string.Empty;
                 ViewBag.FunnelCounts = new Dictionary<string, int>();
+                ViewBag.FunnelReach = new Dictionary<string, int>();
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
                 return View(new List<NaukriProspectiveInterviewerVM>());
