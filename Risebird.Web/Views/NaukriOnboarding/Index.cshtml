@@ -492,14 +492,24 @@
                             <span class="nk-funnel-title"><i class="fas fa-filter me-1"></i>Funnel Stages</span>
                             <span class="nk-funnel-total" title="Sum across all stages equals the @(hasFilters ? "matched" : "total") records">@totalCount total</span>
                             <span class="nk-funnel-divider"></span>
+                            @{ int nkKnownSum = 0; }
                             @foreach (var fs in funnelStages)
                             {
                                 int c = funnelCounts.TryGetValue(fs.Key, out var cv) ? cv : 0;
+                                nkKnownSum += c;
                                 bool active = string.Equals(selFunnelStage, fs.Value, StringComparison.OrdinalIgnoreCase);
                                 <a href="@funnelUrl(fs.Value)" class="nk-funnel-pill @(active ? "active" : "")" title="Currently at &ldquo;@fs.Label&rdquo;">
                                     <span class="nk-funnel-pill-label">@fs.Label</span>
                                     <span class="nk-funnel-pill-count">@c</span>
                                 </a>
+                            }
+                            @{ int nkOther = totalCount - nkKnownSum; }
+                            @if (nkOther > 0)
+                            {
+                                <span class="nk-funnel-pill" style="cursor:default;" title="Records on an unrecognised/legacy funnel value — run the RevampNaukriFunnelStagesV2 migration to reclassify these.">
+                                    <span class="nk-funnel-pill-label">Other</span>
+                                    <span class="nk-funnel-pill-count">@nkOther</span>
+                                </span>
                             }
                         </div>
                     </div>

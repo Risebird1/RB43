@@ -45,20 +45,23 @@ BEGIN
         VALUES (@AssessmentGroupId, @InterviewerProfileId, 0, ISNULL(@AssignedBy, 'System'), GETDATE())
     END
 
-    -- 3. Map interviewer to all active IRFs belonging to this AssessmentGroupId
+    -- 3. Map interviewer to all active IRFs belonging to this AssessmentGroupId.
+    --    Channels are added as AVAILABLE ONLY (IsAvailable = 1) but NOT active (IsActive = 0):
+    --    an operator must manually review and activate each channel. ActivatedAt therefore
+    --    stays NULL until that manual activation happens.
     INSERT INTO TransInterviewer (IRFId, InterviewerId, UserId, IsActive, IsAvailable, IsSMEVerified, ClientAction, PerSuccessRate, [Source], AddedAt, ActivatedAt)
     SELECT
         irf.id,
         @InterviewerProfileId,
         @UserId,
-        CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,
-        1,
+        0,   -- IsActive: pending manual operator activation
+        1,   -- IsAvailable
         CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,
         CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE 'Shortlisted' END,
         ISNULL(irf.FlatRate, 0),
         'EmailAvailability',
         GETDATE(),
-        CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE GETDATE() END
+        NULL -- ActivatedAt: set only when an operator activates the channel
     FROM IRF irf
     WHERE LTRIM(RTRIM(irf.AssessmentGroupId)) = CAST(@AssessmentGroupId AS VARCHAR)
       AND ISNULL(irf.IsPaused, 0) = 0
