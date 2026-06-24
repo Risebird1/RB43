@@ -515,6 +515,16 @@ namespace Risebird.Entities.ViewModel
         public string BillingCurrency { get; set; }
         /// <summary>Pre-computed amount from SQL using the correct rate source and Turing 30% rule</summary>
         public decimal BaseAmount { get; set; }
+        /// <summary>
+        /// Effective rate in use as of today for this client/IRF.
+        /// For InterviewerBillingType 1 (Client): from ClientBillingRateHistory; fallback PerInterviewRate.
+        /// For InterviewerBillingType 2 (SkillChannel): from SkillChannelBillingRate; fallback above.
+        /// For InterviewerBillingType 3 (Interviewer): 0 (rate is per interviewer).
+        /// BaseAmount is computed per-interview using the rate effective at the interview date —
+        /// so a mid-period rate change is reflected correctly in BaseAmount even when CurrentRate
+        /// shows the latest rate.
+        /// </summary>
+        public int CurrentRate { get; set; }
         public int CurrentStatus { get; set; }
         public int POPendingAmount { get; set; }
         public int InvoiceAmount { get; set; }

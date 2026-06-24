@@ -186,7 +186,7 @@
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
                                                 <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
-                                                    <thead>
+                                                            <thead>
                                                         <tr>
                                                             <th>Name</th>
                                                             <th>Non-AI Interviews</th>
@@ -244,10 +244,25 @@
                                                                     }
                                                                     <input type="hidden" id="hidclient_@item.id" value="@item.Name" />
                                                                 </td>
+                                                                @{
+                                                                    var usePerSuccess  = item.InterviewerBillingType == 1 || item.InterviewerBillingType == 2;
+                                                                    // Non-AI rate: PerSuccessRate (effective-date) for types 1 & 2; otherwise PerInterviewRate
+                                                                    var displayRate    = usePerSuccess ? item.CurrentRate : item.PerInterviewRate;
+                                                                    var nonAiRateTip   = usePerSuccess
+                                                                        ? "PerSuccessRate — effective rate as of today. Non-AI amount is calculated per-interview using the rate active at each interview date."
+                                                                        : "";
+                                                                }
                                                                 <td>@item.NonAIInterviewCount<input type="hidden" id="hidnonaicnt_@item.id" value="@item.NonAIInterviewCount" /></td>
-                                                                <td>@item.PerInterviewRate<input type="hidden" id="hidrate_@item.id" value="@item.PerInterviewRate" /></td>
+                                                                <td title="@nonAiRateTip">
+                                                                    @displayRate
+                                                                    <input type="hidden" id="hidrate_@item.id" value="@displayRate" />
+                                                                    <input type="hidden" id="hidcurrentrate_@item.id" value="@item.CurrentRate" />
+                                                                </td>
                                                                 <td>@item.AIInterviewCount<input type="hidden" id="hidaicnt_@item.id" value="@item.AIInterviewCount" /></td>
-                                                                <td>@item.AIPerInterviewRate<input type="hidden" id="hidairate_@item.id" value="@item.AIPerInterviewRate" /></td>
+                                                                <td title="AI Rate — always from Client table">
+                                                                    @item.AIPerInterviewRate
+                                                                    <input type="hidden" id="hidairate_@item.id" value="@item.AIPerInterviewRate" />
+                                                                </td>
                                                                 <td>
                                                                     @item.BaseAmount.ToString("N2")
                                                                     <input type="hidden" id="hidinterviewcount_@item.id" value="@item.TotalCount" />
