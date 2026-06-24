@@ -8811,12 +8811,12 @@ namespace Risebird.Web.Controllers
             if (sessionRequired)
             {
                 ViewBag.SessionRequired = true;
-            var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
-            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
-            return View(new Risebird.Entities.Data.Meeting());
-        }
-        var jobLevelsList = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
-        ViewBag.JobLevelList = new SelectList(jobLevelsList, "ID", "Name");
+                var jobLevels = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
+                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+                return View(new Risebird.Entities.Data.Meeting());
+            }
+            var jobLevelsList = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
+            ViewBag.JobLevelList = new SelectList(jobLevelsList, "ID", "Name");
             var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
             if (result != null)
                 result.interviewer = emailid;
@@ -9513,17 +9513,24 @@ namespace Risebird.Web.Controllers
                 var ai_qcAnalysisModel = new AIReportQCAnalysisSchema();
                 if (response != null)
                 {
-                    ai_qcAnalysisModel = JsonConvert.DeserializeObject<AIReportQCAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
-                    if (ai_qcAnalysisModel != null)
-                    {
-                        //saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
-                        saveOperationResult = await _meetingService.SaveOpenAIReportQCV2(model.InterviewId, ai_qcAnalysisModel);//responseInJson.Replace("'", "")
-                    }
+                    //ai_qcAnalysisModel = JsonConvert.DeserializeObject<AIReportQCAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                    //if (ai_qcAnalysisModel != null)
+                    //{
+                    //    //saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
+                    //    saveOperationResult = await _meetingService.SaveOpenAIReportQCV2(model.InterviewId, ai_qcAnalysisModel);//responseInJson.Replace("'", "")
+                    //}
                     try
                     {
                         var rawJson = response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
                         var reportModel = JsonConvert.DeserializeObject<ReportAIQCResponseSchema>(rawJson);
                         var reportaiModel = await MapReportAIResponseToTranscriptSchema(reportModel);
+                        if (reportaiModel != null)
+                        {
+                            ai_qcAnalysisModel.final_score = reportaiModel.score;
+                            ai_qcAnalysisModel.completeAnalysis = reportaiModel.completeAnalysis;
+                            ai_qcAnalysisModel.final_verdict = reportaiModel.verdict;
+                            saveOperationResult = await _meetingService.SaveOpenAIReportQCV2(model.InterviewId, ai_qcAnalysisModel);
+                        }
                         bool result = await _meetingService.SaveQcInterviewAIevaluation(model.InterviewId, reportaiModel, reportAIJsonResponse: rawJson, transcritAi: false);
                     }
                     catch (Exception ex)
