@@ -47,7 +47,7 @@
 
     </script>
 
-    <div id="risebird-proctoring-panel" hidden aria-hidden="true"></div>
+    <div id="risebird-proctoring-panel" hidden aria-hidden="true" style="position:fixed;bottom:16px;right:16px;z-index:99998;max-width:320px;padding:10px 14px;border-radius:10px;background:#0d2818;border:1px solid #4eda92;color:#e8fff0;font:600 13px/1.4 system-ui,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.35);"></div>
 
     <script type="text/javascript">
 
@@ -184,6 +184,38 @@
 
                 proctoringActive = true;
 
+                showProctoringPanel('Session started', 'Proctoring active — waiting for upload counters…');
+
+            }
+
+            function showProctoringPanel(title, detail) {
+
+                var panel = document.getElementById('risebird-proctoring-panel');
+
+                if (!panel) return;
+
+                panel.hidden = false;
+
+                panel.removeAttribute('aria-hidden');
+
+                panel.innerHTML = '<div style="color:#4eda92;margin-bottom:4px;">&#9679; ' + title + '</div><div style="font-weight:500;font-size:12px;opacity:.92;">' + (detail || '') + '</div>';
+
+            }
+
+            function updateProctoringPanelStats(data) {
+
+                if (!data) return;
+
+                var shots = data.screenshotUploads != null ? data.screenshotUploads : 0;
+
+                var chunks = data.screenChunkUploads != null ? data.screenChunkUploads : 0;
+
+                var phase = data.flowPhase || 'proctoring_active';
+
+                var label = (phase === 'proctoring_active' || phase === 'screen_sharing_active' || data.sessionActive) ? 'Session started' : phase;
+
+                showProctoringPanel(label, 'Screenshots: ' + shots + ' · Video chunks: ' + chunks + ' (every ~8–12s)');
+
             }
 
             var helloIntervalId = null;
@@ -265,6 +297,14 @@
                     if (ev.data && ev.data.type === 'RB_PROCTORING_STARTED') {
 
                         onProctoringStarted();
+
+                        return;
+
+                    }
+
+                    if (ev.data && ev.data.type === 'RB_PROCTORING_STATS') {
+
+                        updateProctoringPanelStats(ev.data);
 
                         return;
 

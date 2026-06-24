@@ -1,13 +1,16 @@
 /**
- * Shared capture timing — screenshots ~3.75–5/min, video chunks ~3.3–4.3/min.
+ * Shared capture timing — maximize screenshots/chunks while skipping tiny blank blobs.
  */
-const CAPTURE_BASE_MS = 18000;
-const CAPTURE_JITTER_RATIO = 0.2;
+const CAPTURE_BASE_MS = 12000;
+const CAPTURE_JITTER_RATIO = 0.15;
 
-const CAPTURE_SCREENSHOT_MIN_GAP_MS = 12000;
-const CAPTURE_SCREENSHOT_MAX_GAP_MS = 16000;
-const CAPTURE_VIDEO_MIN_GAP_MS = 14000;
-const CAPTURE_VIDEO_MAX_GAP_MS = 18000;
+const CAPTURE_SCREENSHOT_MIN_GAP_MS = 6000;
+const CAPTURE_SCREENSHOT_MAX_GAP_MS = 10000;
+const CAPTURE_VIDEO_MIN_GAP_MS = 5000;
+const CAPTURE_VIDEO_MAX_GAP_MS = 8000;
+
+/** MediaRecorder timeslice — emit chunk data every ~5s (accumulated before upload). */
+const CAPTURE_CHUNK_TIMESLICE_MS = 5000;
 
 function jitteredCaptureDelayMs(baseMs, jitterRatio, bounds) {
   const base = Math.max(1000, Number(baseMs) || CAPTURE_BASE_MS);
@@ -38,10 +41,10 @@ function interviewVideoChunkDelayMs(baseMs) {
   });
 }
 
-const CAPTURE_FIRST_SCREENSHOT_MS = 3000;
-const CAPTURE_FIRST_CHUNK_MS = 4000;
+const CAPTURE_FIRST_SCREENSHOT_MS = 1000;
+const CAPTURE_FIRST_CHUNK_MS = 2000;
 
-function videoChunkTimesliceMs(baseMs) {
-  return interviewVideoChunkDelayMs(baseMs || CAPTURE_BASE_MS);
+function videoChunkTimesliceMs(_baseMs) {
+  return CAPTURE_CHUNK_TIMESLICE_MS;
 }
 

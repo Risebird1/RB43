@@ -43,13 +43,53 @@ namespace Risebird.CommonHelper
 
         public async Task<string> TranscribeAsync(Stream audioStream, string fileName, bool isHindi = false)
         {
+            if (string.IsNullOrWhiteSpace(_openAiKey))
+            {
+                throw new InvalidOperationException("OpenAI API key is not configured.");
+            }
+
+            using var buffered = new MemoryStream();
+            await audioStream.CopyToAsync(buffered);
+            if (buffered.Length < 500)
+            {
+                throw new InvalidOperationException($"Audio recording is too short ({buffered.Length} bytes).");
+            }
+
+            var contentTypes = new[]
+            {
+                ResolveAudioContentType(fileName),
+                "video/webm",
+                "audio/webm",
+                "application/octet-stream"
+            }.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+
+            Exception lastError = null;
+            foreach (var contentType in contentTypes)
+            {
+                try
+                {
+                    buffered.Position = 0;
+                    return await SendTranscriptionOnceAsync(buffered, fileName, contentType, isHindi);
+                }
+                catch (Exception ex)
+                {
+                    lastError = ex;
+                }
+            }
+
+            throw lastError ?? new Exception("Speech-to-text failed.");
+        }
+
+        private async Task<string> SendTranscriptionOnceAsync(Stream audioStream, string fileName, string contentType, bool isHindi)
+        {
             using var form = new MultipartFormDataContent();
             using var audioContent = new StreamContent(audioStream);
-            audioContent.Headers.ContentType = new MediaTypeHeaderValue("audio/wav");
+            audioContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
 
             form.Add(audioContent, "file", fileName);
             form.Add(new StringContent("whisper-1"), "model");
-            if(isHindi)
+            form.Add(new StringContent("json"), "response_format");
+            if (isHindi)
             {
                 form.Add(new StringContent("hi"), "language");
             }
@@ -61,15 +101,14 @@ namespace Risebird.CommonHelper
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _openAiKey);
 
-            var requestPayload = $"{{\"model\":\"whisper-1\",\"file\":\"{fileName}\",\"language\":\"{(isHindi ? "hi" : "en")}\"}}";
-            
+            var requestPayload = $"{{\"model\":\"whisper-1\",\"file\":\"{fileName}\",\"contentType\":\"{contentType}\",\"language\":\"{(isHindi ? "hi" : "auto")}\"}}";
+
             var sw = System.Diagnostics.Stopwatch.StartNew();
             var response = await _http.SendAsync(request);
             sw.Stop();
-            
+
             var content = await response.Content.ReadAsStringAsync();
 
-            // Log the API call
             await _openAIApiLogger.LogApiCallAsync(
                 apiEndpoint: "https://api.openai.com/v1/audio/transcriptions",
                 apiMethod: "POST",
@@ -91,7 +130,7 @@ namespace Risebird.CommonHelper
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception("Speech-to-text failed: " + content);
+                throw new Exception($"Speech-to-text failed ({contentType}, {audioStream.Length} bytes): {content}");
             }
 
             var json = JsonDocument.Parse(content);
@@ -150,6 +189,19 @@ namespace Risebird.CommonHelper
             }
 
             return await response.Content.ReadAsByteArrayAsync();
+        }
+
+        private static string ResolveAudioContentType(string fileName)
+        {
+            var ext = Path.GetExtension(fileName ?? string.Empty)?.ToLowerInvariant();
+            return ext switch
+            {
+                ".webm" => "video/webm",
+                ".ogg" => "audio/ogg",
+                ".mp4" or ".m4a" => "audio/mp4",
+                ".mpeg" or ".mp3" => "audio/mpeg",
+                _ => "audio/wav",
+            };
         }
     }
 

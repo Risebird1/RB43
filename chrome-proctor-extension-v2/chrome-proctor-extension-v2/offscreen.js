@@ -4,7 +4,8 @@
 (function initOffscreenCapture() {
   const DEFAULT_SCREENSHOT_MS = CAPTURE_BASE_MS;
   const DEFAULT_SCREEN_CHUNK_MS = CAPTURE_BASE_MS;
-  const MIN_CHUNK_BYTES = 4096;
+  const MIN_CHUNK_BYTES = 1024;
+  const MIN_CHUNK_UPLOAD_BYTES = 16384;
   const SCREEN_VIDEO_BITS_PER_SECOND = 2200000;
   const CHUNK_UPLOAD_WORKER_RETRIES = 16;
   let pendingChunkParts = [];
@@ -17,6 +18,7 @@
   let screenChunkSeq = 0;
   let screenshotScheduleTimeout = null;
   let chunkScheduleTimeout = null;
+  let chunkPeriodicFlushTimer = null;
   let frameWatchTimer = null;
   let captureVideoEl = null;
   let captureActive = false;
@@ -141,6 +143,7 @@
       clearTimeout(chunkScheduleTimeout);
       chunkScheduleTimeout = null;
     }
+    stopChunkPeriodicFlush();
   }
 
   function stopAllCapture() {
@@ -166,8 +169,11 @@
   }
 
   function isEntireScreenShare(videoTrack, fromDesktopCapturePicker) {
-    if (fromDesktopCapturePicker) return true;
-    return (videoTrack?.getSettings?.().displaySurface || '') === 'monitor';
+    const surface = (videoTrack?.getSettings?.().displaySurface || '').toLowerCase();
+    if (surface === 'monitor') return true;
+    if (surface === 'browser' || surface === 'window' || surface === 'tab') return false;
+    if (fromDesktopCapturePicker && !surface) return true;
+    return false;
   }
 
   async function waitForVideoDimensions(video, timeoutMs) {
@@ -228,6 +234,9 @@
   async function uploadChunkBlob(blob, recorder) {
     if (!blob || blob.size < MIN_CHUNK_BYTES) return;
     if (!isCapturePipelineReady()) return;
+    const video = captureVideoEl;
+    const largeEnough = blob.size >= MIN_CHUNK_UPLOAD_BYTES;
+    if (video && !largeEnough && !framesLookValid && !sampleFrameHasContent(video)) return;
     try {
       const dataUrl = await blobToDataUrl(blob);
       const res = await uploadWithSessionRetry('UPLOAD_SCREEN_CHUNK', {
@@ -238,9 +247,25 @@
         captureSource: 'offscreen_display_media',
         captureContext: { captureHost: 'offscreen', bytes: blob.size },
       });
-      if (!res.ok) console.warn('offscreen chunk upload failed:', res.error);
+      if (!res.ok) {
+        void sendToWorker({
+          type: 'PROCTORING_VIOLATION',
+          payload: {
+            violationType: 'screen_chunk_upload_failed',
+            message: 'Screen chunk upload failed',
+            metadata: { eventCategory: 'screen_chunk', error: res.error || 'upload_failed' },
+          },
+        });
+      }
     } catch (e) {
-      console.warn('offscreen chunk encode', e);
+      void sendToWorker({
+        type: 'PROCTORING_VIOLATION',
+        payload: {
+          violationType: 'screen_chunk_upload_failed',
+          message: 'Screen chunk upload failed',
+          metadata: { eventCategory: 'screen_chunk', error: e?.message || String(e) },
+        },
+      });
     }
   }
 
@@ -282,6 +307,31 @@
     return new MediaRecorder(stream, { videoBitsPerSecond: SCREEN_VIDEO_BITS_PER_SECOND });
   }
 
+  function stopChunkPeriodicFlush() {
+    if (chunkPeriodicFlushTimer) {
+      clearTimeout(chunkPeriodicFlushTimer);
+      chunkPeriodicFlushTimer = null;
+    }
+  }
+
+  function startChunkPeriodicFlush(recorder) {
+    stopChunkPeriodicFlush();
+    const tick = () => {
+      if (!captureActive || !recorder || recorder.state !== 'recording') {
+        stopChunkPeriodicFlush();
+        return;
+      }
+      try {
+        if (isCapturePipelineReady()) recorder.requestData();
+      } catch (_) {
+        /* ignore */
+      }
+      void flushPendingChunkParts(recorder, false);
+      chunkPeriodicFlushTimer = setTimeout(tick, CAPTURE_CHUNK_TIMESLICE_MS);
+    };
+    chunkPeriodicFlushTimer = setTimeout(tick, CAPTURE_CHUNK_TIMESLICE_MS);
+  }
+
   function scheduleEarlyChunkFlush(recorder) {
     stopChunkSchedule();
     if (!recorder || recorder.state !== 'recording' || !captureActive) return;
@@ -309,6 +359,7 @@
     const timesliceMs = videoChunkTimesliceMs(screenChunkIntervalMs);
     recorder.start(timesliceMs);
     scheduleEarlyChunkFlush(recorder);
+    startChunkPeriodicFlush(recorder);
     screenRecorder = recorder;
   }
 
@@ -345,9 +396,10 @@
       const ctx = canvas.getContext('2d');
       if (!ctx) return false;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      if (!framesLookValid && !sampleFrameHasContent(video)) return false;
       const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
       const base64 = dataUrl.split(',')[1];
-      if (!base64 || base64.length < 2000) return false;
+      if (!base64 || base64.length < 1200) return false;
 
       const res = await uploadWithSessionRetry('UPLOAD_SCREENSHOT', {
         imageBase64: base64,
@@ -355,6 +407,16 @@
         captureSource: 'offscreen_display_media',
         captureContext: { captureHost: 'offscreen', width: canvas.width, height: canvas.height },
       });
+      if (!res.ok) {
+        void sendToWorker({
+          type: 'PROCTORING_VIOLATION',
+          payload: {
+            violationType: 'screenshot_upload_failed',
+            message: 'Screenshot upload failed',
+            metadata: { eventCategory: 'screenshot', error: res.error || 'upload_failed' },
+          },
+        });
+      }
       return res.ok;
     } catch (e) {
       console.warn('offscreen screenshot', e);
@@ -446,10 +508,17 @@
   async function armStreamPipeline(stream) {
     const video = await ensureCaptureVideo(stream);
     await waitForVideoDimensions(video, DIMENSIONS_WAIT_MS);
+    await hintContentCheck(video);
+    if (!framesLookValid && !sampleFrameHasContent(video)) {
+      await new Promise((r) => setTimeout(r, 1500));
+      framesLookValid = sampleFrameHasContent(video);
+    }
+    if (!framesLookValid && hasVideoDimensions()) {
+      framesLookValid = true;
+    }
     startFrameWatch(video);
-    void hintContentCheck(video);
     ensureRecordingPipeline(stream);
-    return { ok: true, framesLookValid, hasLiveStream: hasLiveStream() };
+    return { ok: true, framesLookValid, hasLiveStream: hasLiveStream(), pipelineReady: isCapturePipelineReady() };
   }
 
   async function startDisplayCapture(desktopStreamId) {
@@ -500,6 +569,9 @@
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     const t = message?.type;
+    if (message?.target && message.target !== 'offscreen') {
+      return false;
+    }
     if (!t || !String(t).startsWith('OFFSCREEN_')) {
       return false;
     }

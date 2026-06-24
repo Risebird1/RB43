@@ -46,6 +46,9 @@
   let initProctoringInFlight = false;
   let autoSharePromptDone = false;
   let autoSharePickerInvoked = false;
+  let autoStartPipelineScheduled = false;
+  let shareRecoveryInFlight = false;
+  let lastShareRecoveryAt = 0;
 
   function safeRuntimeSendMessage(payload) {
 
@@ -313,7 +316,7 @@
   }
 
   async function uploadScreenChunk(blob, mimeType) {
-    if (!blob || blob.size < 4096) return;
+    if (!blob || blob.size < 1024) return;
     chunkSeq += 1;
     const seq = chunkSeq;
     const capturedAt = Date.now();
@@ -330,7 +333,7 @@
       return;
     }
     if (!data || !String(data).startsWith('data:')) return;
-    await safeRuntimeSendMessage({
+    const res = await safeRuntimeSendMessage({
       type: 'UPLOAD_SCREEN_CHUNK',
       payload: {
         chunkSeq: seq,
@@ -340,6 +343,14 @@
         captureSource: 'content_display_media',
       },
     });
+    if (res && res.ok === false) {
+      recordViolation('screen_chunk_upload_failed', 'Screen chunk upload failed', {
+        eventCategory: 'screen_chunk',
+        error: res.error || 'upload_failed',
+        chunkSeq: seq,
+        capturedAt,
+      });
+    }
   }
 
   function startScreenRecorder(stream) {
@@ -483,6 +494,44 @@
 
     );
 
+    void postProctoringStats();
+
+  }
+
+  let proctoringStatsTimer = null;
+
+  async function postProctoringStats() {
+    try {
+      const res = await safeRuntimeSendMessage({ type: 'GET_STATE' });
+      const st = res?.state || {};
+      window.postMessage(
+        {
+          source: 'risebird-proctor-extension',
+          type: 'RB_PROCTORING_STATS',
+          flowPhase: st.flowPhase || '',
+          sessionActive: st.sessionActive === true,
+          screenshotUploads: st.screenshotUploads || 0,
+          screenChunkUploads: st.screenChunkUploads || 0,
+          lastScreenshotAt: st.lastScreenshotAt || null,
+          lastScreenChunkAt: st.lastScreenChunkAt || null,
+        },
+        window.location.origin
+      );
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
+  function startProctoringStatsPolling() {
+    if (proctoringStatsTimer) return;
+    void postProctoringStats();
+    proctoringStatsTimer = window.setInterval(() => void postProctoringStats(), 3000);
+  }
+
+  function stopProctoringStatsPolling() {
+    if (!proctoringStatsTimer) return;
+    window.clearInterval(proctoringStatsTimer);
+    proctoringStatsTimer = null;
   }
 
 
@@ -522,8 +571,9 @@
 
   async function initProctoringSessionWithRetry(payload) {
     let lastError = null;
+    const initPayload = Object.assign({}, payload, { deferSessionStart: true });
     for (let i = 0; i < JOIN_HANDSHAKE_MAX_ATTEMPTS; i++) {
-      const initRes = await safeRuntimeSendMessage({ type: 'INIT_PROCTORING_SESSION', payload });
+      const initRes = await safeRuntimeSendMessage({ type: 'INIT_PROCTORING_SESSION', payload: initPayload });
       if (initRes?.ok) {
         proctoringFlow.isSessionJoined = true;
         proctoringFlow.isSessionStarted = Boolean(initRes.sessionStarted || initRes.proctoringReady);
@@ -545,21 +595,33 @@
     (async () => {
 
       if (message?.type === 'REQUEST_MANUAL_SCREEN_SHARE') {
-        await requestEntireScreenShareOnce(true);
+        if (await isOffscreenCaptureLive()) {
+          const resumeRes = await safeRuntimeSendMessage({
+            type: 'BEGIN_SCREEN_SHARE',
+            forceNewPicker: false,
+            promptFirst: false,
+            payload: readBootstrapPayload(),
+          });
+          if (resumeRes?.ok) await finalizeProctoringStarted(resumeRes);
+          sendResponse({ ok: Boolean(resumeRes?.ok), resumed: Boolean(resumeRes?.ok) });
+          return;
+        }
+        await requestEntireScreenShareOnce(false);
+        sendResponse({ ok: true });
+        return;
+      }
+
+      if (message?.type === 'NOTIFY_SHARE_RECOVERY_NEEDED') {
+        void tryShareRecoveryOnce();
         sendResponse({ ok: true });
         return;
       }
 
       if (message?.type === 'NOTIFY_PROCTORING_STARTED') {
-
-        await finalizeProctoringStarted();
-
+        await finalizeProctoringStarted({ ok: true, sessionStarted: true, backendReady: true });
         await chrome.storage.local.set({ sessionActive: true });
-
         sendResponse({ ok: true });
-
         return;
-
       }
 
 
@@ -803,8 +865,27 @@
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  async function finalizeProctoringStarted() {
+  async function finalizeProctoringStarted(shareRes) {
     hideScreenShareOverlay();
+
+    let st = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
+    const backendReadyFromShare =
+      shareRes?.ok === true && shareRes?.backendReady === true && shareRes?.sessionStarted === true;
+    if (!st?.backendJoinConfirmed || !st?.sessionActive || !st?.backendStartConfirmed) {
+      if (!backendReadyFromShare) {
+        const ensured = await safeRuntimeSendMessage({ type: 'ENSURE_SESSION_STARTED' });
+        if (!ensured?.ok) {
+          postStartFailed(ensured?.error || 'Join/start did not complete on server.');
+          return { ok: false, error: ensured?.error || 'Join/start did not complete.' };
+        }
+      }
+      st = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
+      if (!st?.joined || !st?.sessionActive || !st?.backendStartConfirmed) {
+        postStartFailed('Backend join/start did not complete.');
+        return { ok: false, error: 'Backend join/start did not complete.' };
+      }
+    }
+
     sessionActive = true;
     proctoringStartForwarded = true;
     screenShareConfirmed = true;
@@ -821,6 +902,8 @@
     proctoringPrepareDone = true;
     syncFlowFlags();
     postStarted();
+    startProctoringStatsPolling();
+    void safeRuntimeSendMessage({ type: 'REQUEST_CAPTURE_RECOVERY' });
     window.postMessage(
       { source: 'risebird-proctor-extension', type: 'RB_PROCTORING_PREPARE_READY' },
       window.location.origin
@@ -830,11 +913,12 @@
 
   async function markStartedIfLive() {
     const st = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
-    if (!st?.joined) return false;
+    if (!st?.joined || !st?.backendJoinConfirmed) return false;
     joinCompleted = true;
     proctoringFlow.isSessionJoined = true;
-    proctoringFlow.isSessionStarted = Boolean(st.sessionActive);
-    if (st.pipelineReady || st.contentScreenShareActive || (st.hasLiveStream && st.sessionActive)) {
+    proctoringFlow.isSessionStarted = Boolean(st.sessionActive && st.backendStartConfirmed);
+    if (st.pipelineReady && st.backendStartConfirmed) return true;
+    if (st.contentScreenShareActive && st.hasLiveStream && st.sessionActive && st.backendStartConfirmed) {
       return true;
     }
     return false;
@@ -869,7 +953,7 @@
         promptFirst: false,
         payload: readBootstrapPayload(),
       });
-      if (resumeRes?.ok) return await finalizeProctoringStarted();
+      if (resumeRes?.ok) return await finalizeProctoringStarted(resumeRes);
     }
 
     if (!forceManual && (await shouldSkipAutoSharePicker())) {
@@ -879,7 +963,7 @@
         promptFirst: false,
         payload: readBootstrapPayload(),
       });
-      if (resumeRes?.ok) return await finalizeProctoringStarted();
+      if (resumeRes?.ok) return await finalizeProctoringStarted(resumeRes);
       return { ok: false, doNotRetryPicker: true, alreadyPrompted: true };
     }
 
@@ -893,6 +977,16 @@
     }
 
     if (forceManual) {
+      if (await isOffscreenCaptureLive()) {
+        const resumeRes = await safeRuntimeSendMessage({
+          type: 'BEGIN_SCREEN_SHARE',
+          forceNewPicker: false,
+          promptFirst: false,
+          payload: readBootstrapPayload(),
+        });
+        if (resumeRes?.ok) return await finalizeProctoringStarted(resumeRes);
+        return resumeRes || { ok: false };
+      }
       await clearPersistedShareFlags();
       await safeRuntimeSendMessage({ type: 'CLEAR_STALE_SCREEN_PICKER_STATE', force: true });
       screenShareConfirmed = false;
@@ -935,13 +1029,23 @@
           { source: 'risebird-proctor-extension', type: 'RB_PROCTORING_JOIN_OK' },
           window.location.origin
         );
-        return await finalizeProctoringStarted();
+        return await finalizeProctoringStarted(shareRes);
+      }
+      if (shareRes?.retry && shareRes?.doNotRetryPicker) {
+        await resumeBackendWithoutPicker();
       }
       if (
         !forceManual &&
-        (shareRes?.pickerInvoked || shareRes?.pickerCancelled || shareRes?.pickerAlreadyAttempted)
+        !shareRes?.pickerCancelled &&
+        !shareRes?.invalidShare &&
+        (shareRes?.pickerInvoked || shareRes?.pickerAlreadyAttempted)
       ) {
         await markAutoSharePickerInvoked();
+      }
+      if (shareRes?.invalidShare && !forceManual) {
+        await clearPersistedShareFlags();
+        await safeRuntimeSendMessage({ type: 'RESET_SCREEN_PICKER_FOR_SESSION' });
+        window.setTimeout(() => void requestEntireScreenShareOnce(false), 800);
       }
       if (isFatalSetupError(shareRes?.error)) {
         shareRes = Object.assign({}, shareRes, { doNotRetryPicker: true });
@@ -974,7 +1078,7 @@
       promptFirst: false,
       payload,
     });
-    if (resumeRes?.ok) await finalizeProctoringStarted();
+    if (resumeRes?.ok) await finalizeProctoringStarted(resumeRes);
   }
 
   function scheduleSetupRetry() {
@@ -1063,7 +1167,7 @@
     if (isPromptingScreenShare) return;
     if (await markStartedIfLive()) {
       const resumeRes = await safeRuntimeSendMessage({ type: 'BEGIN_SCREEN_SHARE', forceNewPicker: false });
-      if (resumeRes?.ok) await finalizeProctoringStarted();
+      if (resumeRes?.ok) await finalizeProctoringStarted(resumeRes);
       return;
     }
     if (!joinCompleted) {
@@ -1088,6 +1192,14 @@
         return;
       }
       await persistJoinPayload(payload);
+
+      const armRes = await safeRuntimeSendMessage({ type: 'PROCTORING_ARM_JOIN', payload });
+      if (!armRes?.ok) {
+        console.warn('[Risebird Proctoring] POST join before share failed:', armRes?.error);
+        scheduleSetupRetry();
+        return;
+      }
+
       removeScreenShareOverlay();
 
       if (await markStartedIfLive()) {
@@ -1097,7 +1209,7 @@
         });
         if (resumeRes?.ok) {
           joinCompleted = true;
-          await finalizeProctoringStarted();
+          await finalizeProctoringStarted(resumeRes);
           return;
         }
       }
@@ -1113,6 +1225,9 @@
         scheduleSetupRetry();
       } else if (shareRes?.ok) {
         setupRetryCount = 0;
+      } else if (shareRes?.retry && shareRes?.doNotRetryPicker) {
+        await resumeBackendWithoutPicker();
+        scheduleSetupRetry();
       }
     } finally {
       autoPipelineInFlight = false;
@@ -1182,10 +1297,31 @@
     });
   }
 
+  async function tryShareRecoveryOnce() {
+    if (shareRecoveryInFlight || isPromptingScreenShare || autoPipelineInFlight) return;
+    const elapsed = Date.now() - lastShareRecoveryAt;
+    if (lastShareRecoveryAt && elapsed < MIN_PROMPT_INTERVAL_MS) return;
+    shareRecoveryInFlight = true;
+    lastShareRecoveryAt = Date.now();
+    try {
+      const resumeRes = await safeRuntimeSendMessage({
+        type: 'BEGIN_SCREEN_SHARE',
+        forceNewPicker: false,
+        promptFirst: false,
+        payload: readBootstrapPayload(),
+      });
+      if (resumeRes?.ok) await finalizeProctoringStarted(resumeRes);
+      else if (resumeRes?.retry) scheduleSetupRetry();
+    } finally {
+      shareRecoveryInFlight = false;
+    }
+  }
+
   async function tryStartAutoPipeline() {
     const el = document.getElementById('risebird-proctoring-bootstrap');
     if (!el || !el.textContent || !el.textContent.trim()) return;
-    if (autoPipelineInFlight) return;
+    if (autoPipelineInFlight || autoStartPipelineScheduled) return;
+    autoStartPipelineScheduled = true;
     if (proctoringStartForwarded || hasAutoSharePickerBeenInvoked()) {
       if (await shouldSkipAutoSharePicker()) {
         await resumeBackendWithoutPicker();
@@ -1203,35 +1339,35 @@
     announceExtensionReady();
     if (proctoringStartForwarded || hasAutoSharePickerBeenInvoked()) return;
     if (await shouldSkipAutoSharePicker()) return;
-    const hasBootstrap = await waitForBootstrapElement(60000);
+    const hasBootstrap = document.getElementById('risebird-proctoring-bootstrap');
     if (!hasBootstrap) {
-      console.warn('[Risebird Proctoring] bootstrap not found yet');
-      return;
+      const found = await waitForBootstrapElement(60000);
+      if (!found) {
+        console.warn('[Risebird Proctoring] bootstrap not found yet');
+        return;
+      }
     }
     await tryStartAutoPipeline();
   }
 
   function scheduleProctoringReadyPing() {
-    const run = () => void emitProctoringReady();
-    run();
+    void emitProctoringReady();
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', run, { once: true });
+      document.addEventListener('DOMContentLoaded', () => void emitProctoringReady(), { once: true });
     }
   }
 
   function watchBootstrapForEarlyPipeline() {
-    const tryEarly = () => {
+    if (document.getElementById('risebird-proctoring-bootstrap')) {
       announceExtensionReady();
       void tryStartAutoPipeline();
-    };
-    if (document.getElementById('risebird-proctoring-bootstrap')) {
-      tryEarly();
       return;
     }
     const observer = new MutationObserver(() => {
       if (document.getElementById('risebird-proctoring-bootstrap')) {
         observer.disconnect();
-        tryEarly();
+        announceExtensionReady();
+        void tryStartAutoPipeline();
       }
     });
     observer.observe(document.documentElement, { childList: true, subtree: true });
@@ -1255,6 +1391,18 @@
       hideScreenShareOverlay();
     }
   });
+
+  window.setInterval(async () => {
+    if (!joinCompleted && !proctoringStartForwarded) return;
+    const st = await safeRuntimeSendMessage({ type: 'GET_PROCTORING_SETUP_STATE' });
+    if (!st?.sessionActive) return;
+    if (st.pipelineReady && st.hasLiveStream) return;
+    if (st.captureStale || (!st.hasLiveStream && st.sessionActive)) {
+      void tryShareRecoveryOnce();
+    } else if (st.hasLiveStream && !st.pipelineReady) {
+      void safeRuntimeSendMessage({ type: 'REQUEST_CAPTURE_RECOVERY' });
+    }
+  }, 20000);
 
   window.addEventListener('message', (event) => {
 

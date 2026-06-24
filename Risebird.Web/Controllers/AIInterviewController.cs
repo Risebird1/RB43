@@ -864,13 +864,35 @@ namespace Risebird.Web.Controllers
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Index([FromForm] ChatMessageViewModel model)
         {
-
             try
             {
-                // ViewBag is not carried from GET to POST — re-apply so _RisebirdProctoringAiInterview has token, interview id, name, email on every render.
-                var meetingForProctoring = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(model.SessionId);
-                if (meetingForProctoring != null)
-                    await ApplyAiProctoringViewBagAsync(meetingForProctoring, model.SessionId);
+                if (model == null || model.SessionId == Guid.Empty)
+                {
+                    return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                        Guid.Empty,
+                        "Session expired",
+                        "Your interview session was not recognized. Please reopen the interview link from your invitation email."));
+                }
+
+                var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(model.SessionId);
+                if (meetingDetails == null)
+                {
+                    return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                        model.SessionId,
+                        "Interview not found",
+                        "This interview session could not be found. Please reopen the original interview link."));
+                }
+
+                HydrateModelFromMeeting(model, meetingDetails);
+
+                try
+                {
+                    await ApplyAiProctoringViewBagAsync(meetingDetails, model.SessionId);
+                }
+                catch (Exception proctorEx)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, proctorEx);
+                }
 
                 if (model.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                 {
@@ -886,12 +908,39 @@ namespace Risebird.Web.Controllers
                     }
                     else if (!model.showChatBox)
                     {
+                        if (model.AudioFile == null || model.AudioFile.Length == 0)
+                        {
+                            return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                                model.SessionId,
+                                "Missing audio",
+                                "Your recording was not attached. Please record again and wait until processing finishes before the page reloads."));
+                        }
+
+                        if (model.AudioFile.Length < 500)
+                        {
+                            return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                                model.SessionId,
+                                "Recording too short",
+                                "Your recording was too short to transcribe. Please speak for at least a few seconds and try again."));
+                        }
+
                         if (model.AudioFile != null && model.AudioFile.Length > 0)
                         {
-                            using var stream = model.AudioFile.OpenReadStream();
-                            userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                            try
+                            {
+                                using var stream = model.AudioFile.OpenReadStream();
+                                userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                            }
+                            catch (Exception sttEx)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, sttEx);
+                                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                                    model.SessionId,
+                                    "Error with audio",
+                                    "Could not transcribe your recording. Please check your microphone and try again."));
+                            }
 
-                            if (!IsTranscriptionValid(userMessage, model.isMultiLingual))//!model.isMultiLingual && 
+                            if (!IsTranscriptionValid(userMessage, model.isMultiLingual))//!model.isMultiLingual &&
                             {
                                 // Rewind the stream to re-run transcription
                                 var exitModel = new AIInterviewExitModalViewModel
@@ -915,8 +964,27 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile != null && model.AudioFile.Length > 0)
                         {
-                            using var stream = model.AudioFile.OpenReadStream();
-                            tranScribedResponse = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                            if (model.AudioFile.Length < 500)
+                            {
+                                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                                    model.SessionId,
+                                    "Recording too short",
+                                    "Your recording was too short to transcribe. Please speak for at least a few seconds and try again."));
+                            }
+
+                            try
+                            {
+                                using var stream = model.AudioFile.OpenReadStream();
+                                tranScribedResponse = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                            }
+                            catch (Exception sttEx)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, sttEx);
+                                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                                    model.SessionId,
+                                    "Error with audio",
+                                    "Could not transcribe your recording. Please check your microphone and try again."));
+                            }
 
                             //if (!IsTranscriptionValid(tranScribedResponse))
                             //{
@@ -967,12 +1035,14 @@ namespace Risebird.Web.Controllers
                     }
 
 
-                    var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
-                    var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
-                    //if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
-                    if (allQuestions?.Count() == 35)
-                    //if (allQuestions?.Count() == 3)                                 
+                    var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId)
+                        ?? Enumerable.Empty<TranscriptConv>();
+                    var assistantQuestionCount = CountAssistantQuestions(transcript);
+                    if (assistantQuestionCount == 35)
                     {
+                        var payloadError = ValidatePresetAnswerPayloadBeforeSave(model, userMessage);
+                        if (payloadError != null) return payloadError;
+
                         bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
                         var exitModel = new AIInterviewExitModalViewModel();
                         if (!iscandidateVideoSavedTodb)
@@ -1036,6 +1106,9 @@ namespace Risebird.Web.Controllers
                         //        model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(reply) });
                         //    }
                         //}
+
+                        var payloadError = ValidatePresetAnswerPayloadBeforeSave(model, userMessage);
+                        if (payloadError != null) return payloadError;
 
                         bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
                         if (!iscandidateVideoSavedTodb)
@@ -1136,8 +1209,8 @@ namespace Risebird.Web.Controllers
                                         QuestionId = model.CurrentQuestionId,
                                         SampleText = model.TypingSampleText,
                                         TypedText = model.TypedText,
-                                        TimeStarted = DateTime.Parse(model.TypingStartTime),
-                                        TimeCompleted = DateTime.Parse(model.TypingEndTime),
+                                    TimeStarted = TryParseInterviewDateTime(model.TypingStartTime) ?? DateTime.Now,
+                                    TimeCompleted = TryParseInterviewDateTime(model.TypingEndTime) ?? DateTime.Now,
                                         TimeTakenInSeconds = model.TypingTimeTaken,
                                         TotalCharacters = analysisResult?.meta?.user_total_words_typed ?? 0,
                                         CorrectCharacters = analysisResult?.counts?.correct_words ?? 0,
@@ -1184,8 +1257,8 @@ namespace Risebird.Web.Controllers
                                     AudioUrl = model.ListeningAudioUrl,
                                     AudioTranscription = model.ListeningAudioTranscription,
                                     CandidateSummary = model.ListeningSummary,
-                                    TimeStarted = DateTime.Parse(model.ListeningStartTime),
-                                    TimeCompleted = DateTime.Parse(model.ListeningEndTime),
+                                    TimeStarted = TryParseInterviewDateTime(model.ListeningStartTime) ?? DateTime.Now,
+                                    TimeCompleted = TryParseInterviewDateTime(model.ListeningEndTime) ?? DateTime.Now,
                                     TimeTakenInSeconds = model.ListeningTimeTaken,
                                     CreatedBy = model.candidateName
                                 };
@@ -1252,7 +1325,7 @@ namespace Risebird.Web.Controllers
 
                             model.Message = "";
 
-                            //model.IsAdaptive = true;
+                            await RefreshModelMeetingFieldsAsync(model);
                             return View(model);
                         }
                         else
@@ -1311,12 +1384,14 @@ namespace Risebird.Web.Controllers
                         return View("ExitModalPartial", exitModel);
                     }
 
-                    var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
-                    var allQuestions = transcript.Where(x => x.Role.ToLower() == "assistant");
-                    //if (allQuestions?.Count() == 10) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
-                    if (allQuestions?.Count() == 35) //&& !string.IsNullOrEmpty(model.CurrentQuestion)
-                                                     //if (allQuestions?.Count() == 3)//&& !string.IsNullOrEmpty(model.CurrentQuestion)
+                    var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId)
+                        ?? Enumerable.Empty<TranscriptConv>();
+                    var assistantQuestionCount = CountAssistantQuestions(transcript);
+                    if (assistantQuestionCount == 35)
                     {
+                        var payloadError = ValidatePresetAnswerPayloadBeforeSave(model, userMessage);
+                        if (payloadError != null) return payloadError;
+
                         bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
                         var exitModel = new AIInterviewExitModalViewModel();
                         if (!iscandidateVideoSavedTodb)
@@ -1417,7 +1492,7 @@ namespace Risebird.Web.Controllers
 
                         model.Message = "";
 
-                        model.IsAdaptive = true;
+                        await RefreshModelMeetingFieldsAsync(model);
                         return View(model);
                     }
                 }
@@ -1425,20 +1500,114 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                await _aiinterviewerService.LogAIInterviewException(model.SessionId.ToString(), "POST", ex);
-                var exitModelError = new AIInterviewExitModalViewModel
+                var sessionId = model?.SessionId ?? Guid.Empty;
+                if (sessionId != Guid.Empty)
                 {
-                    Title = "Interview Not Found",
-                    Message = "The interview session could not be found. Please check the session ID and try again.",
-                    IconClass = "fa-exclamation-triangle",
-                    IconColor = "#dc3545",
-                    ButtonText = "Close",
-                    ButtonClass = "btn-danger",
-                    SessionId = model.SessionId.ToString()
-                };
-                return View("ExitModalPartial", exitModelError);
+                    await _aiinterviewerService.LogAIInterviewException(sessionId.ToString(), "POST", ex);
+                }
+                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                    sessionId,
+                    "Error submitting answer",
+                    "Your answer could not be processed. Please check your network connection and try again. If the problem continues, reload the interview link."));
             }
 
+        }
+
+        private static AIInterviewExitModalViewModel CreateAnswerSubmitErrorView(Guid sessionId, string title, string message)
+        {
+            return new AIInterviewExitModalViewModel
+            {
+                Title = title,
+                Message = message,
+                IconClass = "fa-exclamation-triangle",
+                IconColor = "#dc3545",
+                ButtonText = "Close",
+                ButtonClass = "btn-danger",
+                SessionId = sessionId == Guid.Empty ? null : sessionId.ToString(),
+                ExitTime = DateTime.Now,
+                IsFromIndex = true,
+                IsSuccess = false
+            };
+        }
+
+        private static void HydrateModelFromMeeting(ChatMessageViewModel model, MeetingVM meeting)
+        {
+            model.InterviewId = meeting.InterviewId;
+            model.IRFId = meeting.irfIntId;
+            model.TimeLeftInSeconds = meeting.TimeLeftInSeconds;
+            model.candidateName = meeting.candidateName;
+            model.AssistantId = meeting.AssistantId;
+            model.AIInterviewType = meeting.AIInterviewType;
+            model.showChatBox = meeting.showChatBox;
+            model.isMultiLingual = meeting.isMultiLingual;
+            model.IsAdaptive = meeting.IsAdaptive;
+        }
+
+        private async Task RefreshModelMeetingFieldsAsync(ChatMessageViewModel model)
+        {
+            var meeting = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(model.SessionId);
+            if (meeting == null) return;
+            HydrateModelFromMeeting(model, meeting);
+            try
+            {
+                await ApplyAiProctoringViewBagAsync(meeting, model.SessionId);
+            }
+            catch (Exception proctorEx)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, proctorEx);
+            }
+        }
+
+        private static int CountAssistantQuestions(IEnumerable<TranscriptConv> transcript)
+        {
+            return transcript?.Count(x => string.Equals(x.Role, "assistant", StringComparison.OrdinalIgnoreCase)) ?? 0;
+        }
+
+        private static DateTime? TryParseInterviewDateTime(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+            return DateTime.TryParse(value, out var parsed) ? parsed : null;
+        }
+
+        private IActionResult ValidatePresetAnswerPayloadBeforeSave(ChatMessageViewModel model, string userMessage)
+        {
+            if (string.IsNullOrWhiteSpace(model.CurrentQuestion))
+            {
+                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                    model.SessionId,
+                    "Missing question",
+                    "The current interview question was not found. Please reload the interview page and try again."));
+            }
+
+            if (string.IsNullOrWhiteSpace(userMessage)
+                && !model.IsTypingSpeedQuestion
+                && !model.IsListeningComprehensionQuestion)
+            {
+                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                    model.SessionId,
+                    "Missing answer",
+                    "Your spoken answer was not captured. Please record again and wait for processing to finish."));
+            }
+
+            if (!model.IsTypingSpeedQuestion
+                && !model.IsListeningComprehensionQuestion
+                && (model.VideoFile == null || model.VideoFile.Length == 0))
+            {
+                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                    model.SessionId,
+                    "Video not ready",
+                    "Your video answer was not attached yet. Please stop recording and wait a moment, then try again."));
+            }
+
+            if (model.InterviewId <= 0)
+            {
+                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                    model.SessionId,
+                    "Session error",
+                    "Interview details were missing for this submission. Please reload the interview link and try again."));
+            }
+
+            return null;
         }
 
         private bool IsTranscriptionValid(string text, bool isMultilingual)

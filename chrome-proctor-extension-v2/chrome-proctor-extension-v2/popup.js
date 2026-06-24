@@ -138,7 +138,11 @@ const FLOW_PHASE_LABELS = {
 };
 
 function formatFlowPhase(state) {
+  if (state.sessionActive && (state.contentScreenShareActive || state.hasLiveStream || state.pipelineReady)) {
+    return 'Session started';
+  }
   const phase = state.flowPhase || 'not_joined';
+  if (phase === 'screen_sharing_active' || phase === 'proctoring_active') return 'Session started';
   return FLOW_PHASE_LABELS[phase] || phase;
 }
 
@@ -314,7 +318,7 @@ function startLiveRefresh() {
   if (liveRefreshTimer) return;
   liveRefreshTimer = window.setInterval(() => {
     refreshState().catch((e) => showMessage(e.message, true));
-  }, 4000);
+  }, 2000);
 }
 
 window.addEventListener('beforeunload', () => {
