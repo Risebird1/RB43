@@ -55,8 +55,8 @@ BEGIN
             AND (@Disposition IS NULL OR LOWER(ISNULL(np.PlivoProspectDisposition, '')) = LOWER(@Disposition))
             AND (
                 @FunnelStage IS NULL
-                OR (@FunnelStage = '_none_' AND ISNULL(np.FunnelStage, '') = '')
-                OR np.FunnelStage = @FunnelStage
+                OR (@FunnelStage = '_none_' AND dbo.fn_NaukriCanonicalFunnelStage(np.FunnelStage) = 'New')
+                OR dbo.fn_NaukriCanonicalFunnelStage(np.FunnelStage) = @FunnelStage
             )
             AND (
                 @OnboardingType IS NULL

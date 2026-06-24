@@ -22,7 +22,7 @@ BEGIN
     SET NOCOUNT ON;
 
     SELECT
-        CASE WHEN ISNULL(np.FunnelStage, '') = '' THEN 'New' ELSE np.FunnelStage END AS FunnelStage,
+        dbo.fn_NaukriCanonicalFunnelStage(np.FunnelStage) AS FunnelStage,
         COUNT(*) AS Cnt
     FROM NaukriProspectiveInterviewer np
     WHERE
@@ -40,8 +40,8 @@ BEGIN
         AND (@Disposition IS NULL OR LOWER(ISNULL(np.PlivoProspectDisposition, '')) = LOWER(@Disposition))
         AND (
             @FunnelStage IS NULL
-            OR (@FunnelStage = '_none_' AND ISNULL(np.FunnelStage, '') = '')
-            OR np.FunnelStage = @FunnelStage
+            OR (@FunnelStage = '_none_' AND dbo.fn_NaukriCanonicalFunnelStage(np.FunnelStage) = 'New')
+            OR dbo.fn_NaukriCanonicalFunnelStage(np.FunnelStage) = @FunnelStage
         )
         AND (
             @OnboardingType IS NULL
@@ -50,6 +50,6 @@ BEGIN
         )
         AND (@DateFrom IS NULL OR np.ReceivedAt >= @DateFrom)
         AND (@DateTo IS NULL OR np.ReceivedAt < DATEADD(DAY, 1, @DateTo))
-    GROUP BY CASE WHEN ISNULL(np.FunnelStage, '') = '' THEN 'New' ELSE np.FunnelStage END
+    GROUP BY dbo.fn_NaukriCanonicalFunnelStage(np.FunnelStage)
 END
 GO
