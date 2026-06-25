@@ -108,9 +108,13 @@ BEGIN
                     (CASE WHEN f.ResumeAIAnalysisCompleted = 1 THEN 8 ELSE 0 END),
                     -- 9 AcknowledgementSent
                     (CASE WHEN f.AcknowledgementEmailSent = 1 THEN 9 ELSE 0 END),
-                    -- 10 Onboarded
-                    (CASE WHEN f.OnboardingCompleted = 1 OR f.OnboardedUserId IS NOT NULL
-                          THEN 10 ELSE 0 END),
+                    -- 10 Onboarded — ONLY a genuine acceptance counts. OnboardingCompleted /
+                    --    OnboardedUserId are set when the InterviewerProfile is CREATED (at
+                    --    acknowledgement-send time), NOT when the prospect accepts, so they must
+                    --    NOT be used here. The authoritative "accepted & onboarded" marker is
+                    --    FunnelStage = 'Onboarded' (set only on acceptance / self-registration),
+                    --    which is already contributed below via fn_NaukriFunnelStageRank.
+                    (CASE WHEN f.CanonStage = 'Onboarded' THEN 10 ELSE 0 END),
                     -- current happy-path stage rank (0 for terminal/branch/New)
                     (dbo.fn_NaukriFunnelStageRank(f.CanonStage)),
                     -- minimum reach credited to records that have branched off

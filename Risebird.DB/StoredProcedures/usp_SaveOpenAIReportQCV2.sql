@@ -20,7 +20,8 @@ if(@completeAnalysis is not null and @completeAnalysis != 'null')
 Begin
 	  update InterviewComments set OpenAIQCResponse = @completeAnalysis,
 	  AIVerdict=@verdict, 
-	  AIReportQCAnalysisScore = @score 
+	  AIReportQCAnalysisScore = @score,
+	  IsAIQCAtempted = 1
 	  where interviewId =@interviewId
 
 End
