@@ -77,6 +77,11 @@ namespace Risebird.Repository
                     HoldPaymentReason = interviewerProfile?.HoldPaymentReason,
                     IsInterviewerAccess = interviewerProfile?.IsInterviewerAccess ?? false,
                     IsBlockedProfile = interviewerProfile?.IsDeleted ?? false,
+                    PAN = interviewerProfile?.PAN,
+                    AccountName = interviewerProfile?.AccountName,
+                    AccountNumber = interviewerProfile?.AccountNumber,
+                    IFSCCode = interviewerProfile?.IFSCCode,
+                    IsBankVerified = interviewerProfile?.IsBankVerified ?? false,
 
                     CandidateTotalCount = candidateStats.TotalCount,
                     CandidateTotalCompleted = candidateStats.TotalCompleted,

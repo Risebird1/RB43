@@ -22,30 +22,31 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
+        public IActionResult Index()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return RedirectToAction("SignOut", "Session");
+
+            ViewBag.profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            return View(null);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(string emailId)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                    var sessionEmail = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-
-                    ViewBag.profileName = profileName;
-                    ViewBag.SessionEmail = sessionEmail;
-
-                    if (string.IsNullOrWhiteSpace(emailId))
-                    {
-                        return View(null);
-                    }
-
-                    var result = await _emailLookupService.GetEmailLookupData(emailId.Trim());
-                    return View(result);
-                }
-                else
-                {
+                if (HttpContext.Session.GetString("email") == null)
                     return RedirectToAction("SignOut", "Session");
-                }
+
+                ViewBag.profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+
+                if (string.IsNullOrWhiteSpace(emailId))
+                    return View(null);
+
+                var result = await _emailLookupService.GetEmailLookupData(emailId.Trim());
+                return View(result);
             }
             catch (Exception ex)
             {

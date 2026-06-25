@@ -29,6 +29,11 @@ namespace Risebird.Entities.ViewModel
         public string HoldPaymentReason { get; set; }
         public bool IsInterviewerAccess { get; set; }
         public bool IsBlockedProfile { get; set; }
+        public string PAN { get; set; }
+        public string AccountName { get; set; }
+        public string AccountNumber { get; set; }
+        public string IFSCCode { get; set; }
+        public bool IsBankVerified { get; set; }
 
         public int CandidateTotalCount { get; set; }
         public int CandidateTotalCompleted { get; set; }
@@ -76,6 +81,11 @@ namespace Risebird.Entities.ViewModel
         public string HoldPaymentReason { get; set; }
         public bool IsInterviewerAccess { get; set; }
         public bool IsDeleted { get; set; }
+        public string PAN { get; set; }
+        public string AccountName { get; set; }
+        public string AccountNumber { get; set; }
+        public string IFSCCode { get; set; }
+        public bool IsBankVerified { get; set; }
     }
 
     public class EmailLookupInterviewStatsVM

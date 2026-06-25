@@ -43,6 +43,11 @@ BEGIN
         ISNULL(ipr.HoldPaymentReason, '')    AS HoldPaymentReason,
         ISNULL(ul.IsInterviewerAccess, 0)    AS IsInterviewerAccess,
         ISNULL(ipr.IsDeleted, 0)             AS IsDeleted,
+        ISNULL(tic.PAN, '')                  AS PAN,
+        ISNULL(tic.AccountName, '')          AS AccountName,
+        ISNULL(tic.AccountNumber, '')        AS AccountNumber,
+        ISNULL(tic.IFSCCode, '')             AS IFSCCode,
+        ISNULL(tic.IsBankVerified, 0)        AS IsBankVerified,
         ISNULL(
             STUFF((
                 SELECT DISTINCT ', ' + ski.Name
@@ -54,6 +59,7 @@ BEGIN
         '') AS PrimarySkill
     FROM InterviewerProfile ipr
     INNER JOIN UserList ul ON ul.id = ipr.UserId
+    LEFT JOIN TransInterviewerAccDetails tic ON tic.InterviewerProfileId = ipr.Id
     WHERE ul.EmailId = @EmailId;
 
     -- Result Set 3: Interview stats as Candidate
