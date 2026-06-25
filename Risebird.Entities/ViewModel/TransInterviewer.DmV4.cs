@@ -34,6 +34,29 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>When the row was added to this skill channel.</summary>
         public DateTime? AddedAt { get; set; }
+
+        // ── Auto-QC removal (item 59) ──────────────────────────────────────────
+        // Populated by the auto-removal service when QCMergedAIDetails triggers
+        // removal with verdict "suspicious" or "redo". Null = not auto-QC-removed.
+
+        /// <summary>"suspicious" | "redo" | null. Drives the Auto QC badge variant.</summary>
+        public string AutoQcVerdict { get; set; }
+
+        /// <summary>The interviewId that triggered auto-QC removal, for the badge tooltip/link.</summary>
+        public int? AutoQcTriggeringInterviewId { get; set; }
+
+        /// <summary>UTC timestamp when auto-QC removal was applied.</summary>
+        public DateTime? AutoQcRemovedAt { get; set; }
+
+        // ── Inactive audit summary (loaded with usp_GetSkillChannelDetailsForUpdate) ──
+
+        /// <summary>True when inactive-audit columns were returned from the load SP.</summary>
+        public bool InactiveAuditSummaryLoaded { get; set; }
+
+        public string LatestInactiveAuditEventType { get; set; }
+        public string LatestInactiveAuditReasonDetail { get; set; }
+        public int? LatestInactiveAuditTriggeringInterviewId { get; set; }
+        public DateTime? LatestInactiveAuditChangedAt { get; set; }
     }
 
 }
