@@ -28,6 +28,8 @@ namespace Risebird.Entities.Data
         public string InterviewerEmail { get; set; }
         public string InterviewerCodedId { get; set; }
         public bool RbVetAlreadyNo { get; set; }
+        public string ClientAction { get; set; }
+        public bool IsRbVetYes { get; set; }
     }
 
     public class TransInterviewerInactiveAuditSummary
