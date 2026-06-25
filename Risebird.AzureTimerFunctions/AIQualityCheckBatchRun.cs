@@ -73,7 +73,8 @@ namespace Risebird.AzureTimerFunctions
                     try
                     {
                         using var client = CreateHttpClient();
-                        var contradictionUrl = $"https://portal.risebird.io/Interview/AIClientReport?interviewId={item.id}&irfId={item.irfIntId}&IsContradictionAI=true&isBackgroudJobRequest=true";
+                        //var contradictionUrl = $"https://portal.risebird.io/Interview/AIClientReport?interviewId={item.id}&irfId={item.irfIntId}&IsContradictionAI=true&isBackgroudJobRequest=true";
+                        var contradictionUrl = $"https://portal.risebird.io/Interview/AIClientReport?interviewId={item.id}&irfId={item.irfIntId}&IsContradictionAI=true";
                         var response = await client.GetAsync(contradictionUrl);
                         response.EnsureSuccessStatusCode();
                         log.LogInformation($"AIQualityCheckBatchRun: Contradiction AI succeeded for interview {item.id}.");
