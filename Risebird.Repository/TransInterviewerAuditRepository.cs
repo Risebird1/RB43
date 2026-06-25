@@ -113,6 +113,24 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<int> GetFutureAssignedCountForInterviewAsync(int interviewId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                return await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_GetFutureAssignedInterviewsForInterview",
+                    new { InterviewId = interviewId },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 30);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
         public async Task<IReadOnlyList<TransInterviewerInactiveAuditSummary>> GetInactiveAuditSummariesByIrfIdAsync(int irfId)
         {
             try
