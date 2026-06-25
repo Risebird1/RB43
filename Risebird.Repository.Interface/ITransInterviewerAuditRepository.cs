@@ -18,6 +18,8 @@ namespace Risebird.Repository.Interface
 
         Task<TransInterviewerInterviewContext> GetContextForInterviewAsync(int interviewId);
 
+        Task<int> GetFutureAssignedCountForInterviewAsync(int interviewId);
+
         Task<IReadOnlyList<TransInterviewerInactiveAuditSummary>> GetInactiveAuditSummariesByIrfIdAsync(int irfId);
 
         Task<bool> HasAutoQcRemovalAuditForInterviewAsync(int transInterviewerId, int triggeringInterviewId, string auditSource = null);

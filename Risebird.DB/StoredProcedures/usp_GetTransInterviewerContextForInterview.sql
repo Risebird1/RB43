@@ -9,8 +9,13 @@ BEGIN
         ti.UserId          AS UserId,
         ti.IRFId           AS IrfId,
         ti.IsActive        AS IsActive,
+        ti.ClientAction    AS ClientAction,
         ul.EmailId         AS InterviewerEmail,
         ip.NickName        AS InterviewerCodedId,
+        CASE
+            WHEN ti.IsSMEVerified = 1 THEN CAST(1 AS BIT)
+            ELSE CAST(0 AS BIT)
+        END                AS IsRbVetYes,
         CASE
             WHEN ti.IsSMEVerified = 0 THEN CAST(1 AS BIT)
             ELSE CAST(0 AS BIT)
