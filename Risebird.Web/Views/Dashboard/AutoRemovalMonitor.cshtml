@@ -1,0 +1,234 @@
+@model Risebird.Entities.ViewModel.AutoQcRemovalMonitorVm
+@{
+    ViewData["Title"] = "Auto QC Removal Monitor";
+    var backfill = Model?.LatestBackfill;
+}
+<script>
+    var Header = "<div>Auto QC Removal Monitor</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<style>
+    .autoqc-monitor { padding: 16px; }
+    .autoqc-metrics { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+    .autoqc-metric {
+        flex: 1 1 160px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        min-width: 140px;
+    }
+    .autoqc-metric__label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: .04em; }
+    .autoqc-metric__value { font-size: 24px; font-weight: 700; color: #0f172a; margin-top: 4px; }
+    .autoqc-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 16px; }
+    .autoqc-filters label { font-size: 12px; color: #475569; display: block; margin-bottom: 4px; }
+    .autoqc-filters input, .autoqc-filters select { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+    .autoqc-backfill-banner {
+        background: #fff7ed;
+        border: 1px solid #fdba74;
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin-bottom: 16px;
+        font-size: 13px;
+        color: #9a3412;
+    }
+    .autoqc-actions { margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .autoqc-btn {
+        appearance: none;
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .autoqc-btn--primary {
+        background: #42a5f5;
+        border-color: #42a5f5;
+        color: #fff;
+    }
+    .autoqc-table-wrap { overflow-x: auto; }
+    .autoqc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .autoqc-table th, .autoqc-table td { border-bottom: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; white-space: nowrap; }
+    .autoqc-table th { background: #f8fafc; font-size: 11px; text-transform: uppercase; color: #64748b; }
+    .autoqc-pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .autoqc-pill--suspicious { background: #fef3c7; color: #92400e; }
+    .autoqc-pill--redo { background: #fee2e2; color: #991b1b; }
+    .autoqc-pill--forward { background: #dbeafe; color: #1e40af; }
+    .autoqc-pill--backfill { background: #ede9fe; color: #5b21b6; }
+</style>
+
+<div class="main-panel autoqc-monitor" id="main-panel">
+    <div class="autoqc-actions">
+        <button type="button" class="autoqc-btn" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'">Back</button>
+        <button type="button" class="autoqc-btn" id="btnPreviewBackfill">Preview backfill count (60d)</button>
+        <button type="button" class="autoqc-btn autoqc-btn--primary" id="btnRunBackfill">Run 60-day backfill (once)</button>
+    </div>
+
+    @if (backfill != null)
+    {
+        <div class="autoqc-backfill-banner">
+            <strong>Backfill executed on @backfill.ExecutedAtUtc.ToString("u")</strong>:
+            @backfill.RecordsRemoved interviewer-channel record(s) removed from @backfill.TriggeringInterviewCount triggering interview(s).
+            Batch ID: <code>@backfill.BatchId</code> (@backfill.ExecutedBy)
+        </div>
+    }
+
+    <div class="autoqc-metrics">
+        <div class="autoqc-metric"><div class="autoqc-metric__label">Today</div><div class="autoqc-metric__value">@Model.TodayRemovals</div></div>
+        <div class="autoqc-metric"><div class="autoqc-metric__label">7-day removals</div><div class="autoqc-metric__value">@Model.Rolling7DayRemovals</div></div>
+        <div class="autoqc-metric"><div class="autoqc-metric__label">30-day removals</div><div class="autoqc-metric__value">@Model.Rolling30DayRemovals</div></div>
+        <div class="autoqc-metric"><div class="autoqc-metric__label">30-day reactivations</div><div class="autoqc-metric__value">@Model.Rolling30DayReactivations</div></div>
+        <div class="autoqc-metric"><div class="autoqc-metric__label">Reactivation rate</div><div class="autoqc-metric__value">@Model.ReactivationRatePercent%</div></div>
+        <div class="autoqc-metric"><div class="autoqc-metric__label">Suspicious</div><div class="autoqc-metric__value">@Model.SuspiciousCount</div></div>
+        <div class="autoqc-metric"><div class="autoqc-metric__label">Redo</div><div class="autoqc-metric__value">@Model.RedoCount</div></div>
+        <div class="autoqc-metric"><div class="autoqc-metric__label">Forward trigger</div><div class="autoqc-metric__value">@Model.ForwardTriggerCount</div></div>
+        <div class="autoqc-metric"><div class="autoqc-metric__label">Backfill</div><div class="autoqc-metric__value">@Model.BackfillCount</div></div>
+    </div>
+
+    @{
+        var filterSource = Model.FilterSource ?? "";
+        var filterVerdict = Model.FilterVerdict ?? "";
+    }
+    <form class="autoqc-filters" method="get" action="@Url.Action("AutoRemovalMonitor", "Dashboard")">
+        <div>
+            <label for="from">From (UTC)</label>
+            <input type="date" id="from" name="from" value="@(Model.FilterFrom?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div>
+            <label for="to">To (UTC)</label>
+            <input type="date" id="to" name="to" value="@(Model.FilterTo?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div>
+            <label for="irfId">IRF id</label>
+            <input type="number" id="irfId" name="irfId" value="@Model.FilterIrfId" placeholder="All" />
+        </div>
+        <div>
+            <label for="source">Source</label>
+            <select id="source" name="source">
+                <option value="" selected="@(filterSource == "")">All</option>
+                <option value="forward_trigger" selected="@(filterSource == "forward_trigger")">Forward trigger</option>
+                <option value="retroactive_backfill_60day" selected="@(filterSource == "retroactive_backfill_60day")">Backfill (60d)</option>
+            </select>
+        </div>
+        <div>
+            <label for="verdict">Verdict</label>
+            <select id="verdict" name="verdict">
+                <option value="" selected="@(filterVerdict == "")">All</option>
+                <option value="suspicious" selected="@(filterVerdict == "suspicious")">Suspicious</option>
+                <option value="redo" selected="@(filterVerdict == "redo")">Redo</option>
+            </select>
+        </div>
+        <div><button type="submit" class="autoqc-btn autoqc-btn--primary">Apply filters</button></div>
+    </form>
+
+    <h4 style="margin: 0 0 8px;">Removals</h4>
+    <div class="autoqc-table-wrap">
+        <table class="autoqc-table">
+            <thead>
+                <tr>
+                    <th>Removed at (UTC)</th>
+                    <th>Interviewer</th>
+                    <th>IRF</th>
+                    <th>Verdict</th>
+                    <th>Source</th>
+                    <th>Interview</th>
+                    <th>Reactivated?</th>
+                    <th>Batch</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.Removals == null || Model.Removals.Count == 0)
+            {
+                <tr><td colspan="8">No automated removals in this range.</td></tr>
+            }
+            else
+            {
+                foreach (var row in Model.Removals)
+                {
+                    <tr>
+                        <td>@row.RemovedAt.ToString("u")</td>
+                        <td>@(row.InterviewerCodedId ?? "—")</td>
+                        <td>@(row.IrfName ?? row.IrfId.ToString())</td>
+                        <td>
+                            <span class="autoqc-pill @(row.Verdict == "suspicious" ? "autoqc-pill--suspicious" : "autoqc-pill--redo")">@row.Verdict</span>
+                        </td>
+                        <td>
+                            <span class="autoqc-pill @(row.Source == "retroactive_backfill_60day" ? "autoqc-pill--backfill" : "autoqc-pill--forward")">@row.Source</span>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(row.QcDetailsUrl))
+                            {
+                                <a href="@row.QcDetailsUrl" target="_blank" rel="noopener">@row.TriggeringInterviewId</a>
+                            }
+                            else
+                            {
+                                @(row.TriggeringInterviewId?.ToString() ?? "—")
+                            }
+                        </td>
+                        <td>@(row.WasReactivated ? "Yes" : "No")</td>
+                        <td>@(row.BackfillBatchId?.ToString() ?? "—")</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.IrfBreakdown != null && Model.IrfBreakdown.Count > 0)
+    {
+        <h4 style="margin: 24px 0 8px;">Per-IRF breakdown</h4>
+        <div class="autoqc-table-wrap">
+            <table class="autoqc-table">
+                <thead>
+                    <tr>
+                        <th>IRF</th>
+                        <th>Removals</th>
+                        <th>Reactivations</th>
+                        <th>Suspicious</th>
+                        <th>Redo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var irf in Model.IrfBreakdown)
+                {
+                    <tr>
+                        <td>@(irf.IrfName ?? irf.IrfId.ToString())</td>
+                        <td>@irf.Removals</td>
+                        <td>@irf.Reactivations</td>
+                        <td>@irf.SuspiciousRemovals</td>
+                        <td>@irf.RedoRemovals</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<script>
+    (function () {
+        $('#btnPreviewBackfill').on('click', function () {
+            $.get('@Url.Action("GetAutoQcBackfillPreviewCount", "Dashboard")', function (res) {
+                if (!res || !res.ok) {
+                    alert((res && res.message) || 'Failed to load preview count.');
+                    return;
+                }
+                var msg = 'Would backfill up to ' + res.candidateTransInterviewerCount + ' interviewer-channel record(s) (60-day window).';
+                if (res.backfillAlreadyRun) {
+                    msg += '\n\nBackfill already ran on ' + res.latestExecutedAtUtc + ' (batch ' + res.latestBatchId + ').';
+                }
+                alert(msg);
+            });
+        });
+        $('#btnRunBackfill').on('click', function () {
+            if (!confirm('Run the one-time 60-day retroactive backfill? Already-inactive interviewers are skipped.')) return;
+            $.post('@Url.Action("RunAutoQcBackfill", "Dashboard")', function (res) {
+                alert((res && res.message) || 'Backfill finished.');
+                if (res && res.ok) location.reload();
+            });
+        });
+    })();
+</script>

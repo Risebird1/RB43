@@ -84,6 +84,8 @@ namespace Risebird.Web.Controllers
         private readonly ISupportTicketRepository _repository;
         private readonly ITranscriptOptimizationHelper _transcriptOptimizationHelper;
         private readonly IQcInterviewAIMergeJobService _qcInterviewAIMergeJobService;
+        private readonly IAutoQcRemovalMonitorService _autoQcRemovalMonitorService;
+        private readonly IDmIvAutoQcBackfillService _autoQcBackfillService;
 
         //private readonly IIRFService _irfService;
 
@@ -103,7 +105,9 @@ namespace Risebird.Web.Controllers
             IPlivoService plivoService, IPlivoCallRepository plivoCallRepository,
             IPlivoCXService plivoCXService, IPlivoCXCallRepository plivoCXCallRepository,
             IPlivoWhatsAppService plivoWhatsAppService, IPlivoWhatsAppRepository plivoWhatsAppRepository, ISupportTicketRepository repository, ITranscriptOptimizationHelper transcriptOptimizationHelper,
-            IQcInterviewAIMergeJobService qcInterviewAIMergeJobService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IQcInterviewAIMergeJobService qcInterviewAIMergeJobService,
+            IAutoQcRemovalMonitorService autoQcRemovalMonitorService,
+            IDmIvAutoQcBackfillService autoQcBackfillService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -145,6 +149,20 @@ namespace Risebird.Web.Controllers
             _repository = repository;
             _transcriptOptimizationHelper = transcriptOptimizationHelper;
             _qcInterviewAIMergeJobService = qcInterviewAIMergeJobService;
+            _autoQcRemovalMonitorService = autoQcRemovalMonitorService;
+            _autoQcBackfillService = autoQcBackfillService;
+        }
+
+        private static bool IsAutoQcOpsProfile(string profileName)
+        {
+            if (string.IsNullOrWhiteSpace(profileName)) return false;
+            return profileName == "Admin"
+                || profileName == "Quality Controller"
+                || profileName == "SupportAdmin"
+                || profileName == "SeniorHR"
+                || profileName == "InterviewerManagement"
+                || profileName == "SeniorInterviewerManagement"
+                || profileName == "TechSupport";
         }
 
         [Authorize]
@@ -7757,6 +7775,100 @@ NEVER:
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        /// <summary>
+        /// Ops monitor for automated QC verdict removals — forward trigger + 60-day backfill.
+        /// Trigger: QcInterviewAIMergeJobService.ProcessRowAsync after usp_SaveQcInterviewAIMergedDetails.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> AutoRemovalMonitor(DateTime? from = null, DateTime? to = null, int? irfId = null, string source = null, string verdict = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return RedirectToAction("SignOut", "Session");
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return RedirectToAction("SignOut", "Session");
+
+                var fromUtc = from ?? DateTime.UtcNow.AddDays(-30);
+                var toUtc = to ?? DateTime.UtcNow;
+                var model = await _autoQcRemovalMonitorService.GetMonitorAsync(fromUtc, toUtc, irfId, source, verdict);
+                ViewBag.Profile = profileName;
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAutoQcBackfillPreviewCount()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                var count = await _autoQcBackfillService.GetPreDeploymentCandidateCountAsync();
+                var status = await _autoQcBackfillService.GetRunStatusAsync();
+                return Json(new
+                {
+                    ok = true,
+                    candidateTransInterviewerCount = count,
+                    backfillAlreadyRun = status.HasRun,
+                    latestBatchId = status.LatestBatchId,
+                    latestExecutedAtUtc = status.LatestExecutedAtUtc
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Failed to load preview count." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> RunAutoQcBackfill(bool forceRerun = false)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? profileName;
+                var result = await _autoQcBackfillService.RunBackfillAsync(email, forceRerun);
+                return Json(new
+                {
+                    ok = result.Ok,
+                    message = result.Message,
+                    batchId = result.BatchId,
+                    recordsRemoved = result.RecordsRemoved,
+                    recordsSkipped = result.RecordsSkipped,
+                    triggeringInterviewCount = result.TriggeringInterviewCount,
+                    preDeploymentCandidateCount = result.PreDeploymentCandidateCount
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Backfill failed; see logs." });
             }
         }
 
