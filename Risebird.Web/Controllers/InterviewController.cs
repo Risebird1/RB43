@@ -73,6 +73,7 @@ namespace Risebird.Web.Controllers
         private readonly IEncryptionHelper _encryptionHelper;
         private readonly IActivityTrackerService _activityTrackerService;
         private readonly IReportQCOptimizationHelper _reportQCOptimizationHelper;
+        private readonly IDmIvChannelDeactivationService _dmIvChannelDeactivationService;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -91,7 +92,7 @@ namespace Risebird.Web.Controllers
             IIRFService irfService, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor,
             IConverter converter, IAssistantServiceHelper assistantServiceHelper, IEncryptionHelper encryptionHelper, IActivityTrackerService activityTrackerService,
-            IReportQCOptimizationHelper reportQCOptimizationHelper)//IConverter converter,
+            IReportQCOptimizationHelper reportQCOptimizationHelper, IDmIvChannelDeactivationService dmIvChannelDeactivationService)//IConverter converter,
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -123,6 +124,7 @@ namespace Risebird.Web.Controllers
             _encryptionHelper = encryptionHelper;
             _activityTrackerService = activityTrackerService;
             _reportQCOptimizationHelper = reportQCOptimizationHelper;
+            _dmIvChannelDeactivationService = dmIvChannelDeactivationService;
         }
 
 
@@ -8845,6 +8847,69 @@ namespace Risebird.Web.Controllers
             var result = await _meetingService.RemoveOrShortlistInterviewer(interviewid, action);
             return Json("success");
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetRemoveInterviewerFromClientReportPreview(int interviewId)
+        {
+            try
+            {
+                var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                if (string.IsNullOrWhiteSpace(email))
+                    return Json(new { success = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var preview = await _dmIvChannelDeactivationService.GetClientReportPreviewAsync(interviewId, profileName);
+                return Json(new
+                {
+                    success = true,
+                    isClientRole = preview.IsClientRole,
+                    futureAssignedCount = preview.FutureAssignedCount
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not load removal preview." });
+            }
+        }
+
+        /// <summary>
+        /// Role-conditional Remove Interviewer for Client Report pages. Role is read from session only — request payload cannot override.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> RemoveInterviewerFromClientReport(int interviewid, string claimedRole = null)
+        {
+            try
+            {
+                var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                if (string.IsNullOrWhiteSpace(email))
+                    return Json(new { success = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var result = await _dmIvChannelDeactivationService.DeactivateInterviewerOnChannelFromClientReportAsync(
+                    interviewid, profileName, email);
+
+                if (!result.Success)
+                    return Json(new { success = false, message = result.Message });
+
+                return Json(new
+                {
+                    success = true,
+                    flagFlipped = result.FlagFlipped,
+                    role = result.Role,
+                    transInterviewerId = result.TransInterviewerId,
+                    irfId = result.IrfId,
+                    interviewerUserId = result.InterviewerUserId,
+                    futureAssignedCount = result.FutureAssignedCount
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not remove interviewer. Please try again." });
+            }
+        }
+
         [HttpPost]
         public async Task<JsonResult> RemoveOrShortlistInterviewerFromIRF(int irfid, string interviewer, string action = null)
         {
