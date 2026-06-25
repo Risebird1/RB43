@@ -516,8 +516,8 @@ namespace Risebird.AzureTimerFunctions
                                         {
                                             using (HttpClient client = new HttpClient())
                                             {
-                                                client.Timeout = TimeSpan.FromMinutes(3);
-                                                var request = new HttpRequestMessage(HttpMethod.Get, $"https://portal.risebird.io/Interview/AIClientReport?interviewId={meeting.imid}&irfId={meeting.irfIntId}&IsContradictionAI={true}");
+                                                client.Timeout = TimeSpan.FromMinutes(15);
+                                                var request = new HttpRequestMessage(HttpMethod.Get, $"https://portal.risebird.io/Interview/AIClientReport?interviewId={meeting.imid}&irfId={meeting.irfIntId}&IsContradictionAI=true&isBackgroudJobRequest=true");
                                                 var response = await client.SendAsync(request);
                                                 response.EnsureSuccessStatusCode();
                                             }
