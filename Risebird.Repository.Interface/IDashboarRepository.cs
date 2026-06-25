@@ -85,6 +85,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Surcharges>> GetPerSuccessRateDetails(int InterviewId, int IRFId, string Type, int UserId);
         Task<IEnumerable<TransInterviewer>> GetTransInterviewersWithNegativeAIVerdict();
         Task<IEnumerable<Meeting>> GetQCPendingReportsForAIQC();
+        Task ResetAIQCAttempted(int interviewId);
+        Task ResetStuckAIQCAttempts();
         Task<IEnumerable<AINegativeVerdictQCReports>> GetAIQCNegativeVerdictReports();
         Task<IEnumerable<MeetingVM>> GetCandidatesWhoHaventConfirmed();
         Task<List<PQIDetails>> GetTotalInterviewerRiskIRFDetails(string uniqueid = null, string Email = null);
