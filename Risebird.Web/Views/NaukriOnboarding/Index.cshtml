@@ -898,7 +898,14 @@
                                                         catch { }
                                                         <br /><span style="font-size:9px;" class="@aiBadgeClass" title="AI Verdict"><i class="fas fa-robot"></i> @aiLabel</span>
                                                     }
-                                                    @if (r.OnboardingCompleted == true) { <br /><span style="font-size:9px;" class="text-success"><i class="fas fa-check-double"></i> Onboarded</span> }
+                                                    @if (string.Equals(r.FunnelStage, "Onboarded", StringComparison.OrdinalIgnoreCase))
+                                                    {
+                                                        <br /><span style="font-size:9px;" class="text-success" title="Onboarded — the prospect accepted the acknowledgement (or self-registered) and exists in UserList."><i class="fas fa-check-double"></i> Onboarded</span>
+                                                    }
+                                                    else if (r.OnboardingCompleted == true)
+                                                    {
+                                                        <br /><span style="font-size:9px;" class="text-warning" title="Interviewer profile created and acknowledgement email sent — awaiting the prospect's acceptance to complete onboarding. NOT yet onboarded."><i class="fas fa-user-clock"></i> Awaiting acceptance</span>
+                                                    }
                                                 </td>
                                                 <td class="col-actions">
                                                     <div class="action-btns d-flex align-items-center flex-wrap gap-1">
