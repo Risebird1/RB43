@@ -1214,6 +1214,16 @@
             var on = ($(this).attr('data-tab') || '') === tab;
             $(this).toggleClass('is-on', on).attr('aria-selected', on ? 'true' : 'false');
         });
+        if (tab === 'inactive') {
+            // Clear any sub-tab filter hidden state left over from active tab and refresh counts.
+            $('#dmV4IvPanel .dm-v4-iv-row').removeClass('dm-v4-iv-row--subtab-hidden');
+            refreshInactiveSubTabCounts();
+            applyInactiveSubTabFilter();
+        } else {
+            // Leaving Inactive tab — reset sub-tab selection to "all" so next visit starts fresh.
+            setInactiveSubTab('all');
+            $('#dmV4IvPanel .dm-v4-iv-row').removeClass('dm-v4-iv-row--subtab-hidden');
+        }
         applyIvTabFilter();
     }
 
@@ -1226,32 +1236,27 @@
         });
         $('#dmV4IvTabActiveCount').text(active);
         $('#dmV4IvTabInactiveCount').text(inactive);
+        refreshInactiveSubTabCounts();
     }
 
     function applyIvTabFilter() {
         var $panel = $('#dmV4IvPanel');
         if (!$panel.length || !$('#dmV4IvTabs').length) return;
         var tab = getIvTab();
-        var visible = 0;
         $panel.find('.dm-v4-iv-row').each(function () {
             var $row = $(this);
             var isActive = readRowDbActive($row);
             var show = tab === 'active' ? isActive : !isActive;
             $row.toggleClass('dm-v4-iv-row--tab-hidden', !show);
-            if (show) visible += 1;
         });
-        var $empty = $('#dmV4IvTabEmpty');
-        if (!$empty.length) return;
-        if (visible === 0) {
-            $empty.text(tab === 'active' ? 'No active interviewers.' : 'No inactive interviewers.').prop('hidden', false);
-        } else {
-            $empty.prop('hidden', true);
-        }
+        if (tab === 'inactive') applyInactiveSubTabFilter();
+        else updateIvTabEmptyMessage();
     }
 
     function initIvTabs() {
         if (!$('#dmV4IvTabs').length) return;
-        $(document).off('click.dmV4IvTab', '#dmV4IvTabs .dm-v4-iv-tab').on('click.dmV4IvTab', '#dmV4IvTabs .dm-v4-iv-tab', function () {
+        $(document).off('click.dmV4IvTab', '#dmV4IvTabs .dm-v4-iv-tab').on('click.dmV4IvTab', '#dmV4IvTabs .dm-v4-iv-tab', function (e) {
+            e.preventDefault();
             var tab = ($(this).attr('data-tab') || 'active').toString();
             if (tab === getIvTab()) return;
             setIvTab(tab);
@@ -1266,6 +1271,124 @@
         if (isAvailable && clientAction !== 'rejected') return { label: 'Available', tone: 'available' };
         return { label: 'Inactive', tone: 'inactive' };
     }
+
+    // ── Inactive sub-tabs ────────────────────────────────────────────────────
+
+    /** Maps a data-subtab value to the set of data-inactive-reason-category values it shows. */
+    function subtabMatchesCategory(subtab, category) {
+        switch (subtab) {
+            case 'all': return true;
+            case 'pending': return category === 'PendingRbReview';
+            case 'removed-rb': return category === 'RemovedByRb';
+            case 'removed-client': return category === 'RemovedByClient';
+            case 'bad-quality': return isAutoQcCategory(category);
+            default: return true;
+        }
+    }
+
+    function getInactiveSubTab() {
+        var val = ($('#dmV4IvSubTabs').attr('data-inactive-subtab') || 'all').toString();
+        return val || 'all';
+    }
+
+    function setInactiveSubTab(subtab) {
+        subtab = subtab || 'all';
+        $('#dmV4IvSubTabs').attr('data-inactive-subtab', subtab);
+        $('#dmV4IvSubTabs .dm-v4-iv-subtab').each(function () {
+            var on = ($(this).attr('data-subtab') || '') === subtab;
+            $(this).toggleClass('is-on', on).attr('aria-selected', on ? 'true' : 'false');
+        });
+        applyInactiveSubTabFilter();
+    }
+
+    function getInactiveReasonCategoryFromRow($row) {
+        var reason = inferInactiveReasonFromRow($row);
+        if (!reason || !reason.category) {
+            $row.removeAttr('data-inactive-reason-category');
+            return '';
+        }
+        $row.attr('data-inactive-reason-category', reason.category);
+        return reason.category;
+    }
+
+    function refreshInactiveSubTabCounts() {
+        var counts = { all: 0, pending: 0, 'removed-rb': 0, 'removed-client': 0, 'bad-quality': 0 };
+        $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
+            var $row = $(this);
+            if (readRowDbActive($row)) return;
+            var cat = getInactiveReasonCategoryFromRow($row);
+            counts.all += 1;
+            if (cat === 'PendingRbReview') counts.pending += 1;
+            if (cat === 'RemovedByRb') counts['removed-rb'] += 1;
+            if (cat === 'RemovedByClient') counts['removed-client'] += 1;
+            if (isAutoQcCategory(cat)) counts['bad-quality'] += 1;
+        });
+        $('#dmV4SubTabAllCount').text(counts.all);
+        $('#dmV4SubTabPendingCount').text(counts.pending);
+        $('#dmV4SubTabRemovedRbCount').text(counts['removed-rb']);
+        $('#dmV4SubTabRemovedClientCount').text(counts['removed-client']);
+        $('#dmV4SubTabBadQualityCount').text(counts['bad-quality']);
+    }
+
+    function applyInactiveSubTabFilter() {
+        if (getIvTab() !== 'inactive') {
+            $('#dmV4IvPanel .dm-v4-iv-row').removeClass('dm-v4-iv-row--subtab-hidden');
+            return;
+        }
+        var subtab = getInactiveSubTab();
+        $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
+            var $row = $(this);
+            if (readRowDbActive($row)) return;
+            var cat = getInactiveReasonCategoryFromRow($row);
+            var show = subtabMatchesCategory(subtab, cat);
+            $row.toggleClass('dm-v4-iv-row--subtab-hidden', !show);
+        });
+        updateIvTabEmptyMessage();
+    }
+
+    function isInactiveRowVisibleInTab($row, mainTab) {
+        if ($row.hasClass('dm-v4-iv-row--tab-hidden')) return false;
+        if (readRowDbActive($row)) return mainTab === 'active';
+        if (mainTab !== 'inactive') return false;
+        if ($row.hasClass('dm-v4-iv-row--subtab-hidden')) return false;
+        return true;
+    }
+
+    function updateIvTabEmptyMessage() {
+        var $empty = $('#dmV4IvTabEmpty');
+        if (!$empty.length) return;
+        var tab = getIvTab();
+        var visible = 0;
+        $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
+            if (isInactiveRowVisibleInTab($(this), tab)) visible += 1;
+        });
+        if (visible === 0) {
+            if (tab === 'inactive' && getInactiveSubTab() !== 'all') {
+                $empty.text('No interviewers in this category.').prop('hidden', false);
+            } else {
+                $empty.text(tab === 'active' ? 'No active interviewers.' : 'No inactive interviewers.').prop('hidden', false);
+            }
+        } else {
+            $empty.prop('hidden', true);
+        }
+    }
+
+    function initInactiveSubTabs() {
+        if (!$('#dmV4IvSubTabs').length) return;
+        $(document).off('click.dmV4InactiveSubTab', '#dmV4IvSubTabs .dm-v4-iv-subtab')
+            .on('click.dmV4InactiveSubTab', '#dmV4IvSubTabs .dm-v4-iv-subtab', function (e) {
+                e.preventDefault();
+                if (getIvTab() !== 'inactive') {
+                    setIvTab('inactive');
+                }
+                var subtab = ($(this).attr('data-subtab') || 'all').toString();
+                if (subtab === getInactiveSubTab()) return;
+                setInactiveSubTab(subtab);
+            });
+        refreshInactiveSubTabCounts();
+    }
+
+    // ────────────────────────────────────────────────────────────────────────
 
     /** Updates status badge only — never mutates data-is-active (server truth for tab filter). */
     function updateIvRowStatus($row) {
@@ -1336,17 +1459,62 @@
                 return { label: 'Not available on channel', tone: 'muted', category: 'Unavailable' };
             case 'Unknown':
                 return { label: 'Inactive — reason unknown', tone: 'unknown', category: 'Unknown' };
+            case 'RemovedByRbAutoQcSuspicious':
+                return { label: 'Removed by RB — Suspicious (Auto QC)', tone: 'warning', category: 'RemovedByRbAutoQcSuspicious', isAutoQc: true };
+            case 'RemovedByRbAutoQcRedo':
+                return { label: 'Removed by RB — Redo (Auto QC)', tone: 'warning', category: 'RemovedByRbAutoQcRedo', isAutoQc: true };
             default:
                 return null;
         }
+    }
+
+    function isAutoQcCategory(category) {
+        return category === 'RemovedByRbAutoQcSuspicious' || category === 'RemovedByRbAutoQcRedo';
     }
 
     function readRowOnPanel($row) {
         return ($row.attr('data-on-panel') || '0') === '1';
     }
 
+    function inactiveReasonWithDetail(category, detail) {
+        var base = inactiveReasonFromCategory(category);
+        if (!base) return null;
+        if (detail) base.label = base.label + ' — ' + detail;
+        return base;
+    }
+
+    function inferInactiveReasonFromAuditRow($row) {
+        if (($row.attr('data-inactive-audit-loaded') || '0') !== '1') return null;
+
+        var evt = ($row.attr('data-inactive-audit-event') || '').trim();
+        var detail = ($row.attr('data-inactive-audit-detail') || '').trim();
+
+        if (evt === 'AutoQcRemoval') {
+            var verdict = (detail || ($row.attr('data-auto-qc-verdict') || '')).toLowerCase();
+            if (verdict === 'suspicious') return inactiveReasonFromCategory('RemovedByRbAutoQcSuspicious');
+            if (verdict === 'redo') return inactiveReasonFromCategory('RemovedByRbAutoQcRedo');
+            return inactiveReasonFromCategory('Unknown');
+        }
+        if (evt === 'ClientVetFlippedToNo') return inactiveReasonWithDetail('RemovedByClient', detail);
+        if (evt === 'RbVetFlippedToNo') return inactiveReasonWithDetail('RemovedByRb', detail);
+
+        // Match server TryResolveFromAuditLog: no removal event and never on active panel.
+        if (!evt && !readRowOnPanel($row)) {
+            return inactiveReasonFromCategory('PendingRbReview');
+        }
+
+        return null;
+    }
+
     function inferInactiveReasonFromRow($row) {
         if (readRowDbActive($row)) return null;
+
+        var fromAudit = inferInactiveReasonFromAuditRow($row);
+        if (fromAudit) return fromAudit;
+
+        var autoQcVerdict = ($row.attr('data-auto-qc-verdict') || '').toLowerCase();
+        if (autoQcVerdict === 'suspicious') return inactiveReasonFromCategory('RemovedByRbAutoQcSuspicious');
+        if (autoQcVerdict === 'redo') return inactiveReasonFromCategory('RemovedByRbAutoQcRedo');
 
         var channelLocked = isPolicyLockOn(getPolicyBar());
         var available = ($row.attr('data-is-available') || '0') === '1';
@@ -1390,22 +1558,69 @@
     }
 
     function syncInactiveReasonBadge($row) {
-        var $badge = $row.find('.dm-v4-iv-inactive-reason');
-        if (!$badge.length) return;
         var reason = inferInactiveReasonFromRow($row);
         if (!reason) {
-            $badge.text('').attr('title', '');
             $row.removeAttr('data-inactive-reason-category');
+            var $clearBadge = $row.find('.dm-v4-iv-inactive-reason');
+            if ($clearBadge.length) {
+                $clearBadge.text('').attr('title', '');
+            }
             return;
         }
         if (reason.category) {
             $row.attr('data-inactive-reason-category', reason.category);
         }
+
+        var $badge = $row.find('.dm-v4-iv-inactive-reason');
+        if (!$badge.length) return;
+
         $badge
-            .removeClass('dm-v4-iv-inactive-reason--info dm-v4-iv-inactive-reason--warning dm-v4-iv-inactive-reason--unknown dm-v4-iv-inactive-reason--muted')
-            .addClass('dm-v4-iv-inactive-reason--' + reason.tone)
-            .text(reason.label)
-            .attr('title', reason.label);
+            .removeClass('dm-v4-iv-inactive-reason--info dm-v4-iv-inactive-reason--warning dm-v4-iv-inactive-reason--unknown dm-v4-iv-inactive-reason--muted dm-v4-iv-inactive-reason--auto-qc')
+            .addClass('dm-v4-iv-inactive-reason--' + reason.tone);
+
+        if (reason.isAutoQc) {
+            $badge.addClass('dm-v4-iv-inactive-reason--auto-qc');
+            var interviewId = $row.attr('data-auto-qc-interview-id') || $row.attr('data-inactive-audit-interview-id') || '';
+            var verdictLabel = reason.category === 'RemovedByRbAutoQcSuspicious' ? 'suspicious' : 'redo';
+            var removedAt = $row.attr('data-auto-qc-removed-at') || $row.attr('data-inactive-audit-changed-at') || '';
+            var tooltipHtml = buildAutoQcTooltipHtml(interviewId, verdictLabel, removedAt);
+            $badge.empty().append(document.createTextNode(reason.label)).append(tooltipHtml);
+        } else {
+            $badge.text(reason.label);
+        }
+        $badge.attr('title', reason.isAutoQc ? '' : reason.label);
+    }
+
+    function formatAutoQcTimestamp(iso) {
+        if (!iso) return '';
+        try {
+            var d = new Date(iso);
+            if (isNaN(d.getTime())) return iso;
+            return d.toLocaleString();
+        } catch (_) {
+            return iso;
+        }
+    }
+
+    function buildAutoQcTooltipHtml(interviewId, verdict, removedAtIso) {
+        var $tip = $('<span class="dm-v4-autoqc-tooltip"></span>');
+        $tip.append('<span class="dm-v4-autoqc-tooltip__label">Auto QC Removal</span>');
+        if (interviewId) {
+            $tip.append('<br>Verdict: <strong>' + $('<span>').text(verdict).html() + '</strong>');
+            $tip.append('<br>Interview ID: <strong>' + $('<span>').text(interviewId).html() + '</strong>');
+            if (removedAtIso) {
+                $tip.append('<br>Removed: <strong>' + $('<span>').text(formatAutoQcTimestamp(removedAtIso)).html() + '</strong>');
+            }
+            var url = '/Interview/QCMergedAIDetails?interviewId=' + encodeURIComponent(interviewId);
+            $tip.append('<br><a class="dm-v4-autoqc-tooltip__link" href="' + url + '" target="_blank" rel="noopener">View QC details →</a>');
+        } else {
+            $tip.append('<br>Verdict: <strong>' + $('<span>').text(verdict).html() + '</strong>');
+            if (removedAtIso) {
+                $tip.append('<br>Removed: <strong>' + $('<span>').text(formatAutoQcTimestamp(removedAtIso)).html() + '</strong>');
+            }
+            $tip.append('<br><em>No interview ID recorded</em>');
+        }
+        return $tip;
     }
 
     function syncVetButtons($row) {
@@ -3324,9 +3539,29 @@
         });
     }
 
+    function initAutoQcBadgeTooltips() {
+        // Touch/click toggle for auto-QC badge tooltip (CSS :hover handles desktop).
+        $(document).off('click.dmV4AutoQcBadge', '.dm-v4-iv-inactive-reason--auto-qc')
+            .on('click.dmV4AutoQcBadge', '.dm-v4-iv-inactive-reason--auto-qc', function (e) {
+                // Allow clicks on the link inside the tooltip to propagate normally.
+                if ($(e.target).is('a') || $(e.target).closest('a').length) return;
+                var $badge = $(this);
+                var wasOpen = $badge.hasClass('is-open');
+                // Close any other open tooltips.
+                $('.dm-v4-iv-inactive-reason--auto-qc.is-open').not($badge).removeClass('is-open');
+                $badge.toggleClass('is-open', !wasOpen);
+                e.stopPropagation();
+            });
+        $(document).off('click.dmV4AutoQcBadgeOut').on('click.dmV4AutoQcBadgeOut', function () {
+            $('.dm-v4-iv-inactive-reason--auto-qc.is-open').removeClass('is-open');
+        });
+    }
+
     function initInterviewersV4() {
         setPolicyLockOn(getPolicyBar(), isPolicyLockOn(getPolicyBar()));
         initIvTabs();
+        initInactiveSubTabs();
+        initAutoQcBadgeTooltips();
         refreshIvBadges();
         updatePolicySubtext();
         initIvEditableFields();
@@ -3343,6 +3578,7 @@
                 dmV4EnsureKycPlayButton($row);
             }
         });
+        refreshInactiveSubTabCounts();
 
         $(document).off('click.dmV4IvInsightsGlobal', '.dm-v4-iv-insights-btn--global').on('click.dmV4IvInsightsGlobal', '.dm-v4-iv-insights-btn--global', function (e) {
             e.preventDefault();

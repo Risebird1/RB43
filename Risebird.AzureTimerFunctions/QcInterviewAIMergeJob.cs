@@ -29,6 +29,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IConfiguration _configuration;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IMeetingService _meetingService;
+        private readonly IDmIvAutoQcRemovalService _autoQcRemovalService;
         private readonly IOpenAIInterviewerAssistantHelper _ai;
         private readonly ILogger _log;
         private readonly IHttpContextAccessor _contextAccessor;
@@ -39,6 +40,7 @@ namespace Risebird.AzureTimerFunctions
             IConfiguration configuration,
             IAssistantServiceHelper assistantServiceHelper,
             IMeetingService meetingService,
+            IDmIvAutoQcRemovalService autoQcRemovalService,
             IOpenAIInterviewerAssistantHelper ai,
             IHttpContextAccessor contextAccessor)
         {
@@ -46,6 +48,7 @@ namespace Risebird.AzureTimerFunctions
             _configuration = configuration;
             _assistantServiceHelper = assistantServiceHelper;
             _meetingService = meetingService;
+            _autoQcRemovalService = autoQcRemovalService;
             _ai = ai;
             _log = loggerFactory.CreateLogger<QcInterviewAIMergeJob>();
             _contextAccessor = contextAccessor;
@@ -100,6 +103,15 @@ namespace Risebird.AzureTimerFunctions
 
                         if (row.InterviewId > 0)
                             await PersistPaymentSlaFromQcMergeAsync(row.InterviewId, combined, PaymentComplanceCount);
+
+                        if (row.InterviewId > 0)
+                        {
+                            await _autoQcRemovalService.TryApplyAutoQcRemovalAsync(
+                                row.InterviewId,
+                                row.irfId,
+                                combined.interviewer_suspicious,
+                                combined.RedoInterview);
+                        }
                     }
                     catch (Exception ex)
                     {
