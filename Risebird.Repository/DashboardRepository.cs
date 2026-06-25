@@ -1997,6 +1997,41 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task ResetAIQCAttempted(int interviewId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@interviewId", interviewId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.ExecuteAsync(con, "usp_ResetAIQCAttempted", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        public async Task ResetStuckAIQCAttempts()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.ExecuteAsync(con, "usp_ResetStuckAIQCAttempts",
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
         public async Task<IEnumerable<AINegativeVerdictQCReports>> GetAIQCNegativeVerdictReports()
         {
             try

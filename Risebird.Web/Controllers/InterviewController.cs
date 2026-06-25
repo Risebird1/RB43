@@ -9387,6 +9387,10 @@ namespace Risebird.Web.Controllers
                             return Json("Transcript summary not found.");
                         }
                     }
+                    if (isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value)
+                    {
+                        return new OkResult();
+                    }
                 }
 
                 if (isOpenAIQC.HasValue && isOpenAIQC.Value)
@@ -9513,15 +9517,33 @@ namespace Risebird.Web.Controllers
                 var ai_qcAnalysisModel = new AIReportQCAnalysisSchema();
                 if (response != null)
                 {
-                    ai_qcAnalysisModel = JsonConvert.DeserializeObject<AIReportQCAnalysisSchema>(response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
+                    var rawValue = response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value;
+                    var rawJson = rawValue?.Replace("```json", "").Replace("```", "");
+
+                    ai_qcAnalysisModel = JsonConvert.DeserializeObject<AIReportQCAnalysisSchema>(rawJson);
                     if (ai_qcAnalysisModel != null)
                     {
+                        // The assistant returns the structured QC schema (audit_summary, bucket_results,
+                        // findings, etc.) which has no "completeAnalysis" field, so it deserializes as null.
+                        // Build a readable analysis from the structured response so it is persisted and rendered.
+                        if (string.IsNullOrWhiteSpace(ai_qcAnalysisModel.completeAnalysis))
+                        {
+                            try
+                            {
+                                var reportSchema = JsonConvert.DeserializeObject<ReportAIQCResponseSchema>(rawJson);
+                                ai_qcAnalysisModel.completeAnalysis = BuildCompleteAnalysisText(reportSchema);
+                            }
+                            catch (Exception buildEx)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, buildEx);
+                            }
+                        }
+
                         //saveOperationResult = await _meetingService.SaveAITranscriptAnalysis(interviewId, aiAnalysisModel);
                         saveOperationResult = await _meetingService.SaveOpenAIReportQCV2(model.InterviewId, ai_qcAnalysisModel);//responseInJson.Replace("'", "")
                     }
                     try
                     {
-                        var rawJson = response.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
                         var reportModel = JsonConvert.DeserializeObject<ReportAIQCResponseSchema>(rawJson);
                         var reportaiModel = await MapReportAIResponseToTranscriptSchema(reportModel);
                         bool result = await _meetingService.SaveQcInterviewAIevaluation(model.InterviewId, reportaiModel, reportAIJsonResponse: rawJson, transcritAi: false);
@@ -9560,6 +9582,106 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        /// <summary>
+        /// Converts the structured OpenAI QC response into a readable, markdown-style analysis
+        /// (headings prefixed with ### and emphasis with **) so it can be saved to
+        /// <c>completeAnalysis</c> and rendered by the PerformQualityCheckV2 view.
+        /// </summary>
+        private static string BuildCompleteAnalysisText(ReportAIQCResponseSchema report)
+        {
+            if (report == null)
+            {
+                return null;
+            }
+
+            var sb = new StringBuilder();
+
+            if (!string.IsNullOrWhiteSpace(report.audit_summary))
+            {
+                sb.Append("### Audit Summary\n");
+                sb.Append(report.audit_summary.Trim()).Append("\n\n");
+            }
+
+            sb.Append("### Final Verdict\n");
+            sb.Append("**Verdict:** ").Append(report.final_verdict).Append("\n");
+            sb.Append("**Score:** ").Append(report.final_score).Append("\n");
+            if (!string.IsNullOrWhiteSpace(report.audit_confidence))
+            {
+                sb.Append("**Audit Confidence:** ").Append(report.audit_confidence).Append("\n");
+            }
+            if (!string.IsNullOrWhiteSpace(report.manual_review_recommended))
+            {
+                sb.Append("**Manual Review Recommended:** ").Append(report.manual_review_recommended).Append("\n");
+            }
+            sb.Append("\n");
+
+            if (report.bucket_results != null && report.bucket_results.Count > 0)
+            {
+                sb.Append("### Bucket Results\n");
+                foreach (var bucket in report.bucket_results)
+                {
+                    var result = bucket.Value;
+                    if (result == null)
+                    {
+                        continue;
+                    }
+                    sb.Append("**").Append(FormatLabel(bucket.Key)).Append("** — Score: ")
+                      .Append(result.score).Append(", Verdict: ").Append(result.verdict).Append("\n");
+                    if (!string.IsNullOrWhiteSpace(result.observation))
+                    {
+                        sb.Append(result.observation.Trim()).Append("\n");
+                    }
+                    sb.Append("\n");
+                }
+            }
+
+            if (report.findings != null && report.findings.Count > 0)
+            {
+                sb.Append("### Findings\n");
+                foreach (var finding in report.findings)
+                {
+                    if (finding == null)
+                    {
+                        continue;
+                    }
+                    sb.Append("**").Append(finding.issue).Append("** (Bucket: ").Append(finding.bucket)
+                      .Append(", Penalty: ").Append(finding.penalty).Append(")\n");
+                    if (!string.IsNullOrWhiteSpace(finding.reasoning))
+                    {
+                        sb.Append(finding.reasoning.Trim()).Append("\n");
+                    }
+                    if (finding.evidence != null && finding.evidence.Count > 0)
+                    {
+                        sb.Append("Evidence: ").Append(string.Join("; ", finding.evidence)).Append("\n");
+                    }
+                    sb.Append("\n");
+                }
+            }
+
+            if (report.flags != null && report.flags.Count > 0)
+            {
+                sb.Append("### Flags\n");
+                foreach (var flag in report.flags)
+                {
+                    sb.Append("- ").Append(flag).Append("\n");
+                }
+                sb.Append("\n");
+            }
+
+            return sb.ToString().Replace("\r\n", "\n").Trim();
+        }
+
+        private static string FormatLabel(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return key;
+            }
+            return System.Globalization.CultureInfo.CurrentCulture.TextInfo
+                .ToTitleCase(key.Replace("_", " ").Trim());
+        }
+
         public async Task<string> ReadPdfFromUrlAsync(string pdfUrl)
         {
             try
