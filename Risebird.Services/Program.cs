@@ -34,6 +34,8 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IMeetingService, MeetingService>();
 builder.Services.AddHttpClient<ICashfreePayoutService, CashfreePayoutService>();
 builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
+builder.Services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();
+builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();

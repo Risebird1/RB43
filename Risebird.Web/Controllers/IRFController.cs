@@ -88,6 +88,7 @@ namespace Risebird.Web.Controllers
         private readonly IOpenAISpeechToTextService _speechToTextService;
         private readonly IPlivoCXService _plivoCXService;
         private readonly IInterviewerEmailAvailabilityRepository _eaRepository;
+        private readonly ITransInterviewerAuditRepository _transInterviewerAuditRepository;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
@@ -97,7 +98,8 @@ namespace Risebird.Web.Controllers
             ISASUrlHelper sasUrlHelper, ITwilioHelper twilioHelper, IActivityTrackerService activityTrackerService, IAssistantServiceHelper assistantServiceHelper,
             IOpenAISpeechToTextService speechToTextService,
             IPlivoCXService plivoCXService,
-            IInterviewerEmailAvailabilityRepository eaRepository)
+            IInterviewerEmailAvailabilityRepository eaRepository,
+            ITransInterviewerAuditRepository transInterviewerAuditRepository)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -131,6 +133,7 @@ namespace Risebird.Web.Controllers
             _speechToTextService = speechToTextService;
             _plivoCXService = plivoCXService;
             _eaRepository = eaRepository;
+            _transInterviewerAuditRepository = transInterviewerAuditRepository;
         }
 
         [Authorize]
@@ -12176,7 +12179,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UpdateInterviewerRbVet(int transInterviewerId, bool isVerified, int irfId, int userId, string interviewerEmail)
+        public async Task<JsonResult> UpdateInterviewerRbVet(int transInterviewerId, bool isVerified, int irfId, int userId, string interviewerEmail, string reasonCategory = null)
         {
             try
             {
@@ -12199,11 +12202,18 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Forbidden" });
                 }
 
+                var channelIv = await _irfRepository.GetSkillChannelInterviewersForEdit(irfId);
+                var ti = channelIv?.InterviewerCollection?.FirstOrDefault(x => x.id == transInterviewerId);
+
                 if (string.IsNullOrWhiteSpace(interviewerEmail) && userId > 0)
                 {
-                    var ivRow = (await _irfService.GetEditIRF(irfId, 0, false))?.InterviewerCollection?
-                        .FirstOrDefault(x => x.UserId == userId);
-                    interviewerEmail = ivRow?.EmailId;
+                    interviewerEmail = ti?.EmailId;
+                    if (string.IsNullOrWhiteSpace(interviewerEmail))
+                    {
+                        var ivRow = (await _irfService.GetEditIRF(irfId, 0, false))?.InterviewerCollection?
+                            .FirstOrDefault(x => x.UserId == userId);
+                        interviewerEmail = ivRow?.EmailId;
+                    }
                 }
 
                 if (string.IsNullOrWhiteSpace(interviewerEmail))
@@ -12224,6 +12234,34 @@ namespace Risebird.Web.Controllers
 
                     var (isActive, isAvailable) = DmIvRecordHelper.ComputeFlagsFromVet(isVerified, clientAction);
                     await _interviewerService.UpdateIRFInterviewerActiveStatus(userId, isActive, irfId, emailid, isAvailable: isAvailable);
+
+                    if (ti != null)
+                    {
+                        if (!isVerified)
+                        {
+                            var rbBefore = ti.IsSMEVerified || ti.IsSMEVerifiedStored == true ? "1" : "0";
+                            await _transInterviewerAuditRepository.InsertAsync(
+                                transInterviewerId,
+                                DmIvInactiveAuditEventTypes.RbVetFlippedToNo,
+                                rbBefore,
+                                "0",
+                                reasonCategory,
+                                null,
+                                emailid);
+                        }
+                        else
+                        {
+                            await _transInterviewerAuditRepository.InsertAsync(
+                                transInterviewerId,
+                                DmIvInactiveAuditEventTypes.RbVetFlippedToYes,
+                                "0",
+                                "1",
+                                null,
+                                null,
+                                emailid);
+                            await _transInterviewerAuditRepository.ClearAutoQcFieldsAsync(transInterviewerId);
+                        }
+                    }
                 }
 
                 var rbClientAction = isVerified ? "Shortlisted" : "Rejected";
@@ -12248,7 +12286,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UpdateInterviewerClientVet(int irfId, string interviewerEmail, bool isApproved, int userId, string Type = null)
+        public async Task<JsonResult> UpdateInterviewerClientVet(int irfId, string interviewerEmail, bool isApproved, int userId, string Type = null, string reasonCategory = null)
         {
             try
             {
@@ -12307,6 +12345,31 @@ namespace Risebird.Web.Controllers
                 }
 
                 var flags = DmIvRecordHelper.ComputeFlagsFromVet(rbVetYes, action);
+                if (ti != null)
+                {
+                    if (!isApproved)
+                    {
+                        await _transInterviewerAuditRepository.InsertAsync(
+                            ti.id,
+                            DmIvInactiveAuditEventTypes.ClientVetFlippedToNo,
+                            ti.ClientAction ?? string.Empty,
+                            action,
+                            reasonCategory,
+                            null,
+                            emailid ?? "ClientShare");
+                    }
+                    else
+                    {
+                        await _transInterviewerAuditRepository.InsertAsync(
+                            ti.id,
+                            DmIvInactiveAuditEventTypes.ClientVetFlippedToYes,
+                            "Rejected",
+                            action,
+                            null,
+                            null,
+                            emailid ?? "ClientShare");
+                    }
+                }
                 return Json(new { success = true, clientAction = action, active = flags.isActive, available = flags.isAvailable });
             }
             catch (Exception ex)

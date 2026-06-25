@@ -588,6 +588,42 @@ namespace Risebird.Repository
             return dt;
         }
 
+        private async Task EnrichInactiveAuditSummariesAsync(List<TransInterviewer> interviewers, int irfId)
+        {
+            if (interviewers == null || interviewers.Count == 0)
+                return;
+
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                var summaries = (await con.QueryAsync<TransInterviewerInactiveAuditSummary>(
+                    "usp_GetTransInterviewerInactiveAuditSummariesByIrfId",
+                    new { IrfId = irfId },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 30))?.ToList();
+
+                if (summaries == null || summaries.Count == 0)
+                    return;
+
+                var byTransId = summaries.ToDictionary(x => x.TransInterviewerId);
+                foreach (var iv in interviewers)
+                {
+                    if (!byTransId.TryGetValue(iv.id, out var summary))
+                        continue;
+
+                    iv.InactiveAuditSummaryLoaded = summary.InactiveAuditSummaryLoaded;
+                    iv.LatestInactiveAuditEventType = summary.InactiveAuditEventType;
+                    iv.LatestInactiveAuditReasonDetail = summary.InactiveAuditReasonDetail;
+                    iv.LatestInactiveAuditTriggeringInterviewId = summary.InactiveAuditTriggeringInterviewId;
+                    iv.LatestInactiveAuditChangedAt = summary.InactiveAuditChangedAt;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
         public async Task<IRFVm> GetSkillChannelDetailsForUpdate(int irfId)
         {
             try
@@ -821,9 +857,15 @@ namespace Risebird.Repository
                                     AddedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "AddedAt"),
                                     LastLoginAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "LastLogin"),
                                     LastInterviewConductedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "LastInterviewConductedAt"),
+                                    AutoQcVerdict = dt.Columns.Contains("AutoQcVerdict") && !string.IsNullOrEmpty(dt.Rows[i]["AutoQcVerdict"]?.ToString())
+                                        ? dt.Rows[i]["AutoQcVerdict"].ToString() : null,
+                                    AutoQcTriggeringInterviewId = dt.Columns.Contains("AutoQcTriggeringInterviewId") && dt.Rows[i]["AutoQcTriggeringInterviewId"] != DBNull.Value && !string.IsNullOrEmpty(dt.Rows[i]["AutoQcTriggeringInterviewId"]?.ToString())
+                                        ? Convert.ToInt32(dt.Rows[i]["AutoQcTriggeringInterviewId"]) : (int?)null,
+                                    AutoQcRemovedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "AutoQcRemovedAt"),
 
                                 });
                             }
+                            await EnrichInactiveAuditSummariesAsync(transInterviewer, irfId);
                             _resultVM.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
                         }
                     }
